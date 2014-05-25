@@ -12,21 +12,33 @@
         android:fillViewport="true">
     </ListView>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#bbbbbb" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="50dp"
+        android:background="#eeeeee"
+        android:gravity="center_vertical">
+        <ImageButton
+            android:id="@+id/btn_upload_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@android:drawable/ic_menu_upload"/>
         <EditText
             android:id="@+id/edtxt_message"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+
             android:hint="Message"/>
         <ImageButton
             android:id="@+id/btn_send_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:contentDescription="Send"
             android:background="@android:drawable/ic_menu_send"/>
     </LinearLayout>
