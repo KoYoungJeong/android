@@ -10,21 +10,15 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
@@ -41,9 +35,8 @@ public class MainActivity extends Activity {
     void initUi() {
         // ActionBar 아이콘으로 네비게이션 드로어 제어
         mDrawerToggle = new CustomActionBarDrawerToggle(this, mDrawer);
-
-        mDrawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-        mDrawer.setDrawerShadow(R.drawable.shadowright, GravityCompat.END);
+        mDrawer.setDrawerShadow(R.drawable.drawer_shadow_left, GravityCompat.START);
+        mDrawer.setDrawerShadow(R.drawable.drawer_shadow_right, GravityCompat.END);
         mDrawer.setDrawerListener(mDrawerToggle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayUseLogoEnabled(true);
@@ -79,7 +72,6 @@ public class MainActivity extends Activity {
         switch (position) {
             case 0:
             default:
-                // 내 비밀 글 보기
                 baseFragment = MessageListFragment_
                         .builder()
                         .build();
