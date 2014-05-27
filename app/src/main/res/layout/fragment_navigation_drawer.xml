@@ -16,6 +16,13 @@
             android:gravity="center_vertical"
             android:text="YOUR CHANNELS"
             android:textColor="@color/nav_drawer_text"/>
+        <ImageButton
+            android:id="@+id/action_add_channel"
+            android:layout_width="@dimen/left_menu_add_action_button"
+            android:layout_height="@dimen/left_menu_add_action_button"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_add"
+            android:layout_marginRight="@dimen/right_menu_margin"/>
     </LinearLayout>
     <ListView
         android:id="@+id/list_nav_channels"
@@ -36,6 +43,13 @@
             android:gravity="center_vertical"
             android:text="DIRECT MESSAGE"
             android:textColor="@color/nav_drawer_text"/>
+        <ImageButton
+            android:id="@+id/action_add_member"
+            android:layout_width="@dimen/left_menu_add_action_button"
+            android:layout_height="@dimen/left_menu_add_action_button"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_add"
+            android:layout_marginRight="@dimen/right_menu_margin"/>
     </LinearLayout>
     <ListView
         android:id="@+id/list_nav_members"
@@ -56,6 +70,13 @@
             android:gravity="center_vertical"
             android:text="PRIVATE GROUPS"
             android:textColor="@color/nav_drawer_text"/>
+        <ImageButton
+            android:id="@+id/action_add_private_group"
+            android:layout_width="@dimen/left_menu_add_action_button"
+            android:layout_height="@dimen/left_menu_add_action_button"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_add"
+            android:layout_marginRight="@dimen/right_menu_margin"/>
     </LinearLayout>
     <ListView
         android:id="@+id/list_nav_private_groups"
