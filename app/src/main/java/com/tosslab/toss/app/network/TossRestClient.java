@@ -3,6 +3,8 @@ package com.tosslab.toss.app.network;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
+import com.tosslab.toss.app.network.entities.TossRestResId;
+import com.tosslab.toss.app.network.entities.TossRestSendingMessage;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -35,6 +37,11 @@ public interface TossRestClient {
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
     TossRestPgMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+
+    @Post("/privateGroups/{groupId}/message")
+    @RequiresHeader("Authorization")
+    TossRestResId sendGroupMessage(TossRestSendingMessage message, int groupId);
+
 
 
 }

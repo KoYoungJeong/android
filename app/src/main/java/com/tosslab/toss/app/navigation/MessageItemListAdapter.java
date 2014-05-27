@@ -29,12 +29,18 @@ public class MessageItemListAdapter extends BaseAdapter {
         mMessages = new ArrayList<MessageItem>();
     }
 
+    public void clearAdapter() {
+        mMessages.clear();
+    }
+
     public void retrievePgMessageItem(TossRestPgMessages messages) {
+        int i = 0;
         if (mMessages == null) {
             return;
         }
         for (TossRestPgMessages.Message message : messages.messages) {
-            mMessages.add(new MessageItem(message.writer.nickname, message.writer.photoUrl,
+
+            mMessages.add(i++, new MessageItem(message.writer.nickname, message.writer.photoUrl,
                     message.createTime, message.contentType, message.content));
         }
 
