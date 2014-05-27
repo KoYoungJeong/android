@@ -31,7 +31,8 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColorHint="@android:color/holo_blue_light" />
+                android:textColorHint="@android:color/holo_blue_light"
+                android:text="justin@tosslab.com"/>
             <EditText
                 android:id="@+id/et_login_password"
                 android:layout_width="match_parent"
@@ -44,8 +45,8 @@
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/holo_blue_light" />
+                android:textColorHint="@android:color/holo_blue_light"
+                android:text="1234"/>
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
