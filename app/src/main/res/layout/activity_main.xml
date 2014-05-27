@@ -11,12 +11,21 @@
         android:id="@+id/fl_activity_main_container"
         />
 
-    <!-- 네비게이션 드로어 -->
+    <!-- 네비게이션 panel -->
     <fragment
         android:id="@+id/fr_navigation_drawer"
         android:name="com.tosslab.toss.app.NavigationDrawerFragment_"
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        />
+
+    <!-- Right Menu panel -->
+    <fragment
+        android:id="@+id/fr_right_menu_drawer"
+        android:name="com.tosslab.toss.app.RightMenuFragment_"
+        android:layout_width="@dimen/right_menu_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
         />
 </android.support.v4.widget.DrawerLayout>

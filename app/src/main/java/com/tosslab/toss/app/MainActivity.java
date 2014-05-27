@@ -15,6 +15,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -27,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 public class MainActivity extends Activity {
     @ViewById(R.id.fl_activity_main_container)
     FrameLayout flContainer;
+
     @ViewById(R.id.dl_activity_main_drawer)
     DrawerLayout mDrawer;
 
@@ -39,6 +43,7 @@ public class MainActivity extends Activity {
         mDrawerToggle = new CustomActionBarDrawerToggle(this, mDrawer);
 
         mDrawer.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        mDrawer.setDrawerShadow(R.drawable.shadowright, GravityCompat.END);
         mDrawer.setDrawerListener(mDrawerToggle);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayUseLogoEnabled(true);
@@ -49,7 +54,7 @@ public class MainActivity extends Activity {
         selectItem(0);  // 기본 프레그먼트 설정
     }
 
-    protected void onPostCreate(Bundle savedInstanceState){
+    public void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
@@ -121,6 +126,7 @@ public class MainActivity extends Activity {
      */
     void expandRangeOfNavigationDrawerToggle() {
         try {
+            // 왼쪽 3배 확장
             Field dragger = mDrawer.getClass().getDeclaredField("mLeftDragger");
             dragger.setAccessible(true);
             ViewDragHelper draggerObj = (ViewDragHelper) dragger.get(mDrawer);
@@ -128,7 +134,17 @@ public class MainActivity extends Activity {
             Field edgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
             edgeSize.setAccessible(true);
             int edge = edgeSize.getInt(draggerObj);
-            edgeSize.setInt(draggerObj, edge * 4);
+            edgeSize.setInt(draggerObj, edge * 3);
+
+            // 오른쪽 3배 확장
+            dragger = mDrawer.getClass().getDeclaredField("mRightDragger");
+            dragger.setAccessible(true);
+            draggerObj = (ViewDragHelper) dragger.get(mDrawer);
+
+            edgeSize = draggerObj.getClass().getDeclaredField("mEdgeSize");
+            edgeSize.setAccessible(true);
+            edge = edgeSize.getInt(draggerObj);
+            edgeSize.setInt(draggerObj, edge * 3);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

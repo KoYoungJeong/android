@@ -3,4 +3,10 @@
     <!-- Main panel -->
     <color name="border_message_input_panel">#BBBBBB</color>
     <color name="bg_message_input_panel">#EEEEEE</color>
+
+    <!-- Side Panel -->
+    <color name="bg_nav_drawer">#2C323A</color>
+    <color name="bg_drawer">#2A3541</color>
+    <color name="bg_drawer_main_item">#324C5B</color>
+    <color name="bg_drawer_text">#FFFFFF</color>
 </resources>
