@@ -5,10 +5,15 @@
     android:orientation="vertical"
     tools:context="com.tosslab.toss.app.MainActivity">
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/list_messages"
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll"
         android:fillViewport="true">
     </ListView>
 

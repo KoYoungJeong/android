@@ -11,4 +11,7 @@
     <color name="bg_drawer_text">#FFFFFF</color>
 
     <color name="nav_drawer_text">#55FFFFFF</color>
+
+    <!-- Messages -->
+    <color name="message_date_text">#999999</color>
 </resources>

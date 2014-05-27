@@ -9,4 +9,7 @@
     <dimen name="right_menu_margin_left">15dp</dimen>
 
     <dimen name="left_menu_item_height">35dp</dimen>
+
+    <!-- Messages -->
+    <dimen name="messages_user_name">18sp</dimen>
 </resources>
