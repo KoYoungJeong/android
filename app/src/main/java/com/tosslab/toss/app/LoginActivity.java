@@ -14,9 +14,9 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends Activity {
 
-    @ViewById(R.id.edtxt_login_email)
+    @ViewById(R.id.et_login_email)
     EditText edtxtLoginId;
-    @ViewById(R.id.edtxt_login_password)
+    @ViewById(R.id.et_login_password)
     EditText edtxtLoginPassword;
 
     @Click(R.id.btn_login)

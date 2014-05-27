@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Main panel -->
+    <color name="border_message_input_panel">#BBBBBB</color>
+    <color name="bg_message_input_panel">#EEEEEE</color>
+</resources>

@@ -3,7 +3,22 @@
 
     <string name="app_name">Toss</string>
 
-    <string name="btn_login">Log In</string>
+    <!-- Login -->
+    <string name="action_login">Log In</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="user_id">E-mail Address</string>
+    <string name="password">Password</string>
 
+    <!-- Main Panel -->
+    <string name="message">Message</string>
+
+
+    <!-- Temp -->
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
 </resources>
