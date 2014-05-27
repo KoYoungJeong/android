@@ -1,5 +1,6 @@
 package com.tosslab.toss.app.network;
 
+import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
@@ -19,7 +20,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
-@Rest(rootUrl = "https://192.168.0.11:3000/inner-api", converters = { MappingJacksonHttpMessageConverter.class }, interceptors = { LoggerInterceptor.class })
+@Rest(rootUrl = "https://192.168.0.3:3000/inner-api", converters = { MappingJacksonHttpMessageConverter.class }, interceptors = { LoggerInterceptor.class })
 @Accept(MediaType.APPLICATION_JSON)
 public interface TossRestClient {
     void setHeader(String name, String value);
@@ -38,9 +39,15 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     TossRestPgMessages getGroupMessages(int groupId, int fromId, int numOfPost);
 
+    // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
     @RequiresHeader("Authorization")
     TossRestResId sendGroupMessage(TossRestSendingMessage message, int groupId);
+
+    // Private Group 생성
+    @Post("/privateGroup")
+    @RequiresHeader("Authorization")
+    TossRestResId createPrivateGroup(RestCreatePrivateGroup group);
 
 
 

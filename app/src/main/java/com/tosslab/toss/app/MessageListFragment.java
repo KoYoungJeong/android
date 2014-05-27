@@ -14,6 +14,7 @@ import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
 import com.tosslab.toss.app.network.entities.TossRestResId;
 import com.tosslab.toss.app.network.entities.TossRestSendingMessage;
+import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -48,6 +49,8 @@ public class MessageListFragment extends BaseFragment {
     @ViewById(R.id.et_message)
     EditText etMessage;
 
+    private ProgressWheel mProgressWheel;
+
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     int mFirstItemId = -1;
@@ -65,6 +68,10 @@ public class MessageListFragment extends BaseFragment {
     @AfterViews
     void bindAdapter() {
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(getActivity());
+        mProgressWheel.init();
 
         listMessages.setAdapter(messageItemListAdapter);
 
@@ -110,14 +117,13 @@ public class MessageListFragment extends BaseFragment {
      */
     public void onEvent(ChooseNaviActionEvent event) {
         mCurrentNavType = event.type;
-        refresh(mCurrentNavType, event.id, event.userId);
+        refreshAll(mCurrentNavType, event.id, event.userId);
     }
 
     @UiThread
-    public void refresh(int type, int id, String userId) {
+    public void refreshAll(int type, int id, String userId) {
         mFirstItemId = -1;
         messageItemListAdapter.clearAdapter();
-        messageItemListAdapter.notifyDataSetChanged();
         getMessages(type, id, userId);
     }
 
@@ -127,9 +133,15 @@ public class MessageListFragment extends BaseFragment {
      * @param id
      * @param userId
      */
-    @Background
+    @UiThread
     public void getMessages(int type, int id, String userId) {
         mDoLoading = true;
+        mProgressWheel.show();
+        getMessagesInBackground(type, id, userId);
+    }
+
+    @Background
+    public void getMessagesInBackground(int type, int id, String userId) {
         if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             TossRestPgMessages restPgMessages = null;
             try {
@@ -142,12 +154,18 @@ public class MessageListFragment extends BaseFragment {
                 mFirstItemId = restPgMessages.firstIdOfReceviedList;
 
                 messageItemListAdapter.retrievePgMessageItem(restPgMessages);
-                refreshListAdapter();
+                getMessagesEnd();
             } catch (RestClientException e) {
                 Log.e(TAG, "Get Fail", e);
             }
             Log.e(TAG, "Get Success");
         }
+    }
+
+    @UiThread
+    public void getMessagesEnd() {
+        mProgressWheel.dismiss();
+        refreshListAdapter();
     }
 
     @UiThread
@@ -186,7 +204,7 @@ public class MessageListFragment extends BaseFragment {
             try {
                 tossRestClient.setHeader("Authorization", myToken);
                 restResId = tossRestClient.sendGroupMessage(sendingMessage, 0);
-                refresh(mCurrentNavType, 0, null);
+                refreshAll(mCurrentNavType, 0, null);
             } catch (RestClientException e) {
                 Log.e(TAG, "Send Fail", e);
             }

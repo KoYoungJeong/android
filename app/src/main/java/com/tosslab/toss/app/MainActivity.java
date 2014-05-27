@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
+import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
@@ -44,7 +45,7 @@ public class MainActivity extends Activity {
     DrawerLayout mDrawer;
 
     @Extra
-    String myToken;
+    public String myToken;
 
     @RestService
     TossRestClient tossRestClient;
@@ -72,25 +73,36 @@ public class MainActivity extends Activity {
 
         selectItem(0);  // 기본 프레그먼트 설정
 
-        mProgressWheel.show();
         getInfosForSideMenu();  // 채널, DM, PG 리스트 획득
     }
 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
-    @Background
+    @UiThread
     public void getInfosForSideMenu() {
+        mProgressWheel.show();
+        getInfosForSideMenuInBackground();
+    }
+
+    @Background
+    public void getInfosForSideMenuInBackground() {
+
         TossRestInfosForSideMenu resTossRest = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
             resTossRest = tossRestClient.getInfosForSideMenu();
-            refreshCdpList(resTossRest);
+            getInfosForSideMenuEnd(resTossRest);
 
         } catch (RestClientException e) {
             Log.e("HI", "Get Fail", e);
         }
+    }
+
+    @UiThread
+    public void getInfosForSideMenuEnd(TossRestInfosForSideMenu resTossRest) {
         mProgressWheel.dismiss();
+        refreshCdpList(resTossRest);
     }
 
     /**
@@ -116,6 +128,14 @@ public class MainActivity extends Activity {
 
     public void onEvent(ChooseNaviActionEvent event) {
         mDrawer.closeDrawers();
+    }
+
+    /**
+     * NavigationDrawerFragment 로 전달되는 Cdp List를 다시 받아온다.
+     * @param event
+     */
+    public void onEvent(RequestCdpListEvent event) {
+        getInfosForSideMenu();
     }
 
     public void onPostCreate(Bundle savedInstanceState){

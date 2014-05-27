@@ -5,22 +5,32 @@ import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
+import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
+import com.tosslab.toss.app.network.TossRestClient;
+import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
+import com.tosslab.toss.app.network.entities.TossRestResId;
+import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.rest.RestService;
+import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_navigation_drawer)
 public class NavigationDrawerFragment extends BaseFragment {
+    private static final String TAG = "NavigationDrawerFragment";
 
     @ViewById(R.id.list_nav_channels)
     ListView listChannels;
@@ -35,6 +45,11 @@ public class NavigationDrawerFragment extends BaseFragment {
     CdpItemListAdapter memberListAdapter;
     @Bean
     CdpItemListAdapter privateGroupListAdapter;
+
+    @RestService
+    TossRestClient tossRestClient;
+
+    private ProgressWheel mProgressWheel;
 
     @Override
     public int getTitleResourceId() {
@@ -69,6 +84,23 @@ public class NavigationDrawerFragment extends BaseFragment {
         EventBus.getDefault().post(event);
     }
 
+    /**
+     * 모든 CDP 리스트를 초기화하고 서버로 다시 리스트를 요청한다.
+     */
+    @UiThread
+    void refreshAll() {
+        channelListAdapter.clearAdapter();
+        memberListAdapter.clearAdapter();
+        privateGroupListAdapter.clearAdapter();
+
+        RequestCdpListEvent event = new RequestCdpListEvent();
+        EventBus.getDefault().post(event);
+    }
+
+    @Click(R.id.btn_add_private_group)
+    void createPrivateGroup() {
+        requestCreatePrivateGroup();
+    }
 
     /**
      * MainActivity 에서 리플레쉬 명령을 받으면 List 갱신을 수행
@@ -86,6 +118,22 @@ public class NavigationDrawerFragment extends BaseFragment {
         channelListAdapter.notifyDataSetChanged();
         memberListAdapter.notifyDataSetChanged();
         privateGroupListAdapter.notifyDataSetChanged();
+    }
+
+    @Background
+    void requestCreatePrivateGroup() {
+        RestCreatePrivateGroup restCreatePrivateGroup = new RestCreatePrivateGroup();
+        restCreatePrivateGroup.name = "또 다른 비밀 그룹";
+
+        TossRestResId restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.createPrivateGroup(restCreatePrivateGroup);
+            refreshAll();
+            Log.e(TAG, "Create Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Create Fail", e);
+        }
     }
 
     /**

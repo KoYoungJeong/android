@@ -29,6 +29,11 @@ public class CdpItemListAdapter extends BaseAdapter {
         mCdpItems = new ArrayList<CdpItem>();
     }
 
+    public void clearAdapter() {
+        mCdpItems.clear();
+        notifyDataSetChanged();
+    }
+
     public void retrieveCdpItemsFromChannels(List<TossRestInfosForSideMenu.Channel> channels) {
         if (mCdpItems == null) {
             return;

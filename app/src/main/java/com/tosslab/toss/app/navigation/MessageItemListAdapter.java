@@ -31,6 +31,7 @@ public class MessageItemListAdapter extends BaseAdapter {
 
     public void clearAdapter() {
         mMessages.clear();
+        notifyDataSetChanged();
     }
 
     public void retrievePgMessageItem(TossRestPgMessages messages) {
