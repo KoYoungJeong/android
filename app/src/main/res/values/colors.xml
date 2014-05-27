@@ -9,4 +9,6 @@
     <color name="bg_drawer">#2A3541</color>
     <color name="bg_drawer_main_item">#324C5B</color>
     <color name="bg_drawer_text">#FFFFFF</color>
+
+    <color name="nav_drawer_text">#55FFFFFF</color>
 </resources>

@@ -15,8 +15,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.events.RefreshCdpListEvent;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
+import com.tosslab.toss.app.network.entities.TossRestPgMessages;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
@@ -24,17 +27,19 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.springframework.web.client.RestClientException;
 
 import java.lang.reflect.Field;
 
+import de.greenrobot.event.EventBus;
+
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
     @ViewById(R.id.fl_activity_main_container)
     FrameLayout flContainer;
-
     @ViewById(R.id.dl_activity_main_drawer)
     DrawerLayout mDrawer;
 
@@ -71,16 +76,46 @@ public class MainActivity extends Activity {
         getInfosForSideMenu();  // 채널, DM, PG 리스트 획득
     }
 
+    /**
+     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
+     */
     @Background
-    void getInfosForSideMenu() {
+    public void getInfosForSideMenu() {
         TossRestInfosForSideMenu resTossRest = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
             resTossRest = tossRestClient.getInfosForSideMenu();
+            refreshCdpList(resTossRest);
+
         } catch (RestClientException e) {
             Log.e("HI", "Get Fail", e);
         }
         mProgressWheel.dismiss();
+    }
+
+    /**
+     * Navigation Panel에 List 갱신 Event를 전송한다.
+     * @param resTossRest
+     */
+    public void refreshCdpList(TossRestInfosForSideMenu resTossRest) {
+        RefreshCdpListEvent event = new RefreshCdpListEvent(resTossRest);
+        EventBus.getDefault().post(event);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    public void onEvent(ChooseNaviActionEvent event) {
+        mDrawer.closeDrawers();
     }
 
     public void onPostCreate(Bundle savedInstanceState){
@@ -110,6 +145,7 @@ public class MainActivity extends Activity {
             default:
                 baseFragment = MessageListFragment_
                         .builder()
+                        .myToken(myToken)
                         .build();
                 break;
         }

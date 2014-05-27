@@ -10,9 +10,16 @@ public class ChooseNaviActionEvent {
 
     public int type;    // 선택 경로의 타입
     public int id;      // 선택의 ID
+    public String userId;   // Direct message 인 경우 사용자 Id
 
+    public ChooseNaviActionEvent(int type, String userId) {
+        this.type = type;
+        this.userId = userId;
+        this.id = -1;
+    }
     public ChooseNaviActionEvent(int type, int id) {
         this.type = type;
         this.id = id;
+        this.userId = null;
     }
 }

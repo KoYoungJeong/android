@@ -1,10 +1,69 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@android:id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:choiceMode="singleChoice"
-    android:divider="@android:color/transparent"
-    android:dividerHeight="0dp"
     android:background="@color/bg_nav_drawer"
-    tools:context=".NavigationDrawerFragment" />
+    android:orientation="vertical"
+    tools:context=".NavigationDrawerFragment" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="YOUR CHANNELS"
+            android:textColor="@color/nav_drawer_text"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/list_nav_channels"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="DIRECT MESSAGE"
+            android:textColor="@color/nav_drawer_text"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/list_nav_members"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="PRIVATE GROUPS"
+            android:textColor="@color/nav_drawer_text"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/list_nav_private_groups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        />
+</LinearLayout>
+

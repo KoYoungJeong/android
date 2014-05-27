@@ -7,4 +7,6 @@
     <dimen name="right_menu_width">240dp</dimen>
     <dimen name="right_menu_margin">10dp</dimen>
     <dimen name="right_menu_margin_left">15dp</dimen>
+
+    <dimen name="left_menu_item_height">35dp</dimen>
 </resources>

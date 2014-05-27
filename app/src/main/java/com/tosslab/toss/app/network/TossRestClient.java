@@ -2,6 +2,7 @@ package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
+import com.tosslab.toss.app.network.entities.TossRestPgMessages;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -29,5 +30,11 @@ public interface TossRestClient {
     @Get("/leftSideMenu")
     @RequiresHeader("Authorization")
     TossRestInfosForSideMenu getInfosForSideMenu();
+
+    // Private Group의 Message 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
+    @RequiresHeader("Authorization")
+    TossRestPgMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+
 
 }
