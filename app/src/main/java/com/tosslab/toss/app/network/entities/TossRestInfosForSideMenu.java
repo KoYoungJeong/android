@@ -8,6 +8,8 @@ import java.util.List;
 public class TossRestInfosForSideMenu {
     public int channelCount;
     public List<Channel> channels;
+    public int joinChannelCount;
+    public List<Channel> joinChannels;
     public int memberCount;
     public List<Member> members;
     public int privateGroupCount;

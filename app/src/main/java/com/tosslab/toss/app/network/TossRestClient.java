@@ -20,7 +20,7 @@ import org.springframework.http.converter.json.MappingJacksonHttpMessageConverte
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
-@Rest(rootUrl = "https://192.168.0.3:3000/inner-api", converters = { MappingJacksonHttpMessageConverter.class }, interceptors = { LoggerInterceptor.class })
+@Rest(rootUrl = "https://192.168.0.11:3000/inner-api", converters = { MappingJacksonHttpMessageConverter.class }, interceptors = { LoggerInterceptor.class })
 @Accept(MediaType.APPLICATION_JSON)
 public interface TossRestClient {
     void setHeader(String name, String value);

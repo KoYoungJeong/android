@@ -286,7 +286,7 @@ public class MessageListFragment extends BaseFragment {
                 = new HttpEntity<MultiValueMap<String, Object>>(parts, requestHeaders);
 
         try {
-            String response = restTemplate.postForObject("https://192.168.0.3:3000/inner-api/file",
+            String response = restTemplate.postForObject("https://192.168.0.11:3000/inner-api/file",
                     requestEntity, String.class);
             Log.d(TAG, response);
         } catch (RestClientException e) {

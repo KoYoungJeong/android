@@ -1,6 +1,8 @@
 package com.tosslab.toss.app;
 
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;

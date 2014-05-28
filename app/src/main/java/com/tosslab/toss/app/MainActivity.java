@@ -31,6 +31,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.RestClientException;
 
 import java.lang.reflect.Field;
@@ -93,8 +94,9 @@ public class MainActivity extends Activity {
             tossRestClient.setHeader("Authorization", myToken);
             resTossRest = tossRestClient.getInfosForSideMenu();
             getInfosForSideMenuEnd(resTossRest);
-
         } catch (RestClientException e) {
+            Log.e("HI", "Get Fail", e);
+        } catch (HttpMessageNotReadableException e) {
             Log.e("HI", "Get Fail", e);
         }
     }
@@ -124,6 +126,13 @@ public class MainActivity extends Activity {
     public void onPause() {
         EventBus.getDefault().unregister(this);
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
     }
 
     public void onEvent(ChooseNaviActionEvent event) {
