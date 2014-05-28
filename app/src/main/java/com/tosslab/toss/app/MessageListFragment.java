@@ -17,10 +17,10 @@ import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
+import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.network.entities.TossRestPgMessages;
-import com.tosslab.toss.app.network.entities.TossRestSendingMessage;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -71,7 +71,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mDoLoading = true;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
-    int mCurrentNavType = ChooseNaviActionEvent.TYPE_PRIVATE_GROUP;
+    int mCurrentNavType = ChooseNaviActionEvent.TYPE_CHENNEL;
 
     @Override
     public int getTitleResourceId() {
@@ -88,7 +88,7 @@ public class MessageListFragment extends BaseFragment {
 
         listMessages.setAdapter(messageItemListAdapter);
 
-        // 스크롤의 맨 끝으로 내려갔을 경우 (리스트 업데이트)
+        // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
         listMessages.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -149,12 +149,11 @@ public class MessageListFragment extends BaseFragment {
         getMessages(type, id, userId);
     }
 
-    /**
+    /************************************************************
+     * Message List 획득
      * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
-     * @param type
-     * @param id
-     * @param userId
-     */
+     ************************************************************/
+
     @UiThread
     public void getMessages(int type, int id, String userId) {
         mDoLoading = true;
@@ -164,23 +163,48 @@ public class MessageListFragment extends BaseFragment {
 
     @Background
     public void getMessagesInBackground(int type, int id, String userId) {
-        if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            TossRestPgMessages restPgMessages = null;
-            try {
-                tossRestClient.setHeader("Authorization", myToken);
-                restPgMessages = tossRestClient.getGroupMessages(id, mFirstItemId, 10);
+        if (type == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            getChannelMessagesInBackground(id);
+        } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            getPgMessagesInBackground(id);
+        }
+    }
 
-                // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-                mIsFirstMessage = restPgMessages.isFirst;
-                // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-                mFirstItemId = restPgMessages.firstIdOfReceviedList;
+    void getChannelMessagesInBackground(int id) {
+        ResCdpMessages restPgMessages = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restPgMessages = tossRestClient.getChannelMessages(id, mFirstItemId, 10);
 
-                messageItemListAdapter.retrievePgMessageItem(restPgMessages);
-                getMessagesEnd();
-            } catch (RestClientException e) {
-                Log.e(TAG, "Get Fail", e);
-            }
+            // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
+            mIsFirstMessage = restPgMessages.isFirst;
+            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
+            mFirstItemId = restPgMessages.firstIdOfReceviedList;
+
+            messageItemListAdapter.retrievePgMessageItem(restPgMessages);
             Log.e(TAG, "Get Success");
+            getMessagesEnd();
+        } catch (RestClientException e) {
+            Log.e(TAG, "Get Fail", e);
+        }
+    }
+
+    void getPgMessagesInBackground(int id) {
+        ResCdpMessages restPgMessages = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restPgMessages = tossRestClient.getGroupMessages(id, mFirstItemId, 10);
+
+            // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
+            mIsFirstMessage = restPgMessages.isFirst;
+            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
+            mFirstItemId = restPgMessages.firstIdOfReceviedList;
+
+            messageItemListAdapter.retrievePgMessageItem(restPgMessages);
+            Log.e(TAG, "Get Success");
+            getMessagesEnd();
+        } catch (RestClientException e) {
+            Log.e(TAG, "Get Fail", e);
         }
     }
 
@@ -196,16 +220,17 @@ public class MessageListFragment extends BaseFragment {
         mDoLoading = false;
     }
 
-    /**
+    /************************************************************
      * Message 전송
-     */
+     ************************************************************/
+
     @Click(R.id.btn_send_comment)
     void sendMessage() {
         String message = etMessage.getText().toString();
         hideSoftKeyboard();
 
         if (message.length() > 0) {
-            sendMessage(mCurrentNavType, message);
+            sendMessageInBackground(mCurrentNavType, message);
         }
     }
 
@@ -215,29 +240,58 @@ public class MessageListFragment extends BaseFragment {
         etMessage.setText("");
     }
 
-    @Background
-    public void sendMessage(int type, String message) {
-        if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            TossRestSendingMessage sendingMessage = new TossRestSendingMessage();
-            sendingMessage.type = "string";
-            sendingMessage.content = message;
 
-            ResSendCdpMessage restResId = null;
-            try {
-                tossRestClient.setHeader("Authorization", myToken);
-                restResId = tossRestClient.sendGroupMessage(sendingMessage, 0);
-                refreshAll(mCurrentNavType, 0, null);
-            } catch (RestClientException e) {
-                Log.e(TAG, "Send Fail", e);
-            }
-            Log.e(TAG, "Send Success");
+    public void sendMessageInBackground(int type, String message) {
+        if (type == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            sendChannelMessageInBackground(message);
+        } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            sendPgMessageInBackground(message);
         }
     }
 
-    /**
+    @Background
+    public void sendChannelMessageInBackground(String message) {
+        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
+        sendingMessage.type = "string";
+        sendingMessage.content = message;
+
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.sendChannelMessage(sendingMessage, 0);
+            sendMessageDone();
+            Log.e(TAG, "Send Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Send Fail", e);
+        }
+    }
+
+    @Background
+    public void sendPgMessageInBackground(String message) {
+        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
+        sendingMessage.type = "string";
+        sendingMessage.content = message;
+
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.sendGroupMessage(sendingMessage, 0);
+            sendMessageDone();
+            Log.e(TAG, "Send Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Send Fail", e);
+        }
+    }
+
+    public void sendMessageDone() {
+        refreshAll(mCurrentNavType, 0, null);
+    }
+
+    /************************************************************
      * 파일 업로드
      * TODO : 현재는 Image Upload 만...
-     */
+     ************************************************************/
+
     @Click(R.id.btn_upload_file)
     void uploadFile() {
         Intent intent = new Intent(Intent.ACTION_PICK,

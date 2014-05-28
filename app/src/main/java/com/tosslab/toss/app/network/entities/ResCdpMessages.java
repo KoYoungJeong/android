@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
-public class TossRestPgMessages {
+public class ResCdpMessages {
     public int numOfPage;
     public int firstIdOfReceviedList;
     public boolean isFirst;

@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.toss.app.network.entities.TossRestPgMessages;
+import com.tosslab.toss.app.network.entities.ResCdpMessages;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -34,12 +34,12 @@ public class MessageItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void retrievePgMessageItem(TossRestPgMessages messages) {
+    public void retrievePgMessageItem(ResCdpMessages messages) {
         int i = 0;
         if (mMessages == null) {
             return;
         }
-        for (TossRestPgMessages.Message message : messages.messages) {
+        for (ResCdpMessages.Message message : messages.messages) {
 
             mMessages.add(i++, new MessageItem(message.writer.nickname, message.writer.photoUrl,
                     message.createTime, message.contentType, message.content));
