@@ -6,14 +6,19 @@ import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
+import com.tosslab.toss.app.events.DeleteCdpEvent;
+import com.tosslab.toss.app.events.DeleteMessageEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
 import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
+import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
+import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
+import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -23,6 +28,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -90,6 +96,76 @@ public class NavigationDrawerFragment extends BaseFragment {
         EventBus.getDefault().post(event);
     }
 
+    /************************************************************
+     * C, D, P 수정 / 삭제
+     ************************************************************/
+    @ItemLongClick
+    void list_nav_channelsItemLongClicked(CdpItem cdp) {
+        showDialog(cdp);
+    }
+
+    @ItemLongClick
+    void list_nav_private_groupsItemLongClicked(CdpItem cdp) {
+        showDialog(cdp);
+    }
+
+    void showDialog(CdpItem cdp) {
+        // TODO : Direct Message 구현할 때 리펙토링
+        DialogFragment newFragment = ManipulateCdpAlertDialog.newInstance(cdp.name, cdp.id, cdp.type);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    // Message 삭제 이벤트 획득
+    public void onEvent(DeleteCdpEvent event) {
+        Log.e(TAG, "Delete Cdp :" + event.cdpId);
+        deleteCdp(event);
+    }
+
+    @UiThread
+    void deleteCdp(DeleteCdpEvent event) {
+        mProgressWheel.show();
+        deleteCdpInBackground(event);
+    }
+
+    @Background
+    void deleteCdpInBackground(DeleteCdpEvent event) {
+        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            deleteChannelInBackground(event.cdpId);
+        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            deleteGroupInBackground(event.cdpId);
+        }
+    }
+
+    void deleteChannelInBackground(int cdpId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.deleteChannel(cdpId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    void deleteGroupInBackground(int cdpId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.deleteGroup(cdpId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    @UiThread
+    void deleteCdpDone() {
+        mProgressWheel.dismiss();
+        refreshAll();
+    }
+
     /**
      * 모든 CDP 리스트를 초기화하고 서버로 다시 리스트를 요청한다.
      */
@@ -105,12 +181,12 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @Click(R.id.btn_action_add_channel)
     void createChannel() {
-        showDialog(0);
+        showDialog(ChooseNaviActionEvent.TYPE_CHENNEL);
     }
 
     @Click(R.id.btn_add_private_group)
     void createPrivateGroup() {
-        showDialog(2);
+        showDialog(ChooseNaviActionEvent.TYPE_PRIVATE_GROUP);
     }
 
     /**
@@ -206,7 +282,7 @@ public class NavigationDrawerFragment extends BaseFragment {
     void showDialog(int cdpType) {
         int titleStringId = R.string.create_channel;
         // TODO : poor implemantaion
-        if (cdpType == 2) {
+        if (cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             titleStringId = R.string.create_private_group;
         }
         DialogFragment newFragment = CreateCdpAlertDialogFragment.newInstance(titleStringId, cdpType);
@@ -215,10 +291,10 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     public void onEvent(ConfirmCreateCdpEvent event) {
         switch (event.cdpType) {
-            case 0:
+            case ChooseNaviActionEvent.TYPE_CHENNEL:
                 requestCreateChannel(event.inputName);
                 break;
-            case 2:
+            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
                 requestCreatePrivateGroup(event.inputName);
                 break;
             default:

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.R;
+import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
@@ -36,6 +37,9 @@ public class MessageItemView extends LinearLayout {
     @ViewById(R.id.img_message_user_profile)
     ImageView mUserProfileImage;
 
+    @ViewById(R.id.img_message_photo)
+    ImageView mMessagePhoto;
+
     Context mContext;
 
     public MessageItemView(Context context) {
@@ -48,7 +52,11 @@ public class MessageItemView extends LinearLayout {
         // 메시지 String
         if (item.contentType == MessageItem.TYPE_STRING) {
             mMessageContent.setText(item.contentString);
+        } else if (item.contentType == MessageItem.TYPE_IMAGE) {
+            mMessagePhoto.setVisibility(VISIBLE);
+            Picasso.with(mContext).load(sRootUrl + item.contentString).centerCrop().fit().into(mMessagePhoto);
         }
+
         // 시간
         String createTime = DateTransformator.getTimeDifference(item.createTime);
         mCreateTime.setText(createTime);

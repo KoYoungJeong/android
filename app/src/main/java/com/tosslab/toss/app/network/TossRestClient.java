@@ -58,6 +58,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendCdpMessage createChannel(ReqCreateCdp channel);
 
+    // 채널 삭제
+    @Delete("/channels/{channelId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage deleteChannel(int channelId);
+
     // 채널에서 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
@@ -89,6 +94,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendCdpMessage createPrivateGroup(ReqCreateCdp group);
 
+    // Private Group 삭제
+    @Delete("/privateGroups/{groupId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage deleteGroup(int groupId);
+
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
@@ -100,16 +110,19 @@ public interface TossRestClient {
     ResSendCdpMessage sendGroupMessage(ReqSendCdpMessage message, int groupId);
 
     // Private Group Message 수정
-    @Put("/privateGroup/{groupId}/messages/{messageId}")
+    @Put("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResSendCdpMessage modifyPrivateGroupMessage(ReqModifyCdpMessage message,
                                            int groupId, int messageId);
 
     // Private Group Message 삭제
-    @Delete("/privateGroup/{groupId}/messages/{messageId}")
+    @Delete("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResSendCdpMessage deletePrivateGroupMessage(int groupId, int messageId);
 
+    /************************************************************
+     * File upload
+     ************************************************************/
     // File Upload
     @Post("/file")
     @RequiresHeader("Authorization")

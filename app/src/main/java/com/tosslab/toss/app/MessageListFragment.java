@@ -344,9 +344,9 @@ public class MessageListFragment extends BaseFragment {
             tossRestClient.setHeader("Authorization", myToken);
             restResId = tossRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
             deleteMessageDone();
-            Log.e(TAG, "Send Success");
+            Log.e(TAG, "delete Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "Send Fail", e);
+            Log.e(TAG, "delete Fail", e);
         }
 
     }
