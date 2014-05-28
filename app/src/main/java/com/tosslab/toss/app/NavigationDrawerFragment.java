@@ -11,8 +11,8 @@ import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
-import com.tosslab.toss.app.network.entities.TossRestResId;
+import com.tosslab.toss.app.network.entities.ReqCreateCdp;
+import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
@@ -60,6 +60,10 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @AfterViews
     void bindAdapter() {
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(getActivity());
+        mProgressWheel.init();
+
         listChannels.setAdapter(channelListAdapter);
         listMembers.setAdapter(memberListAdapter);
         listPrivateGroups.setAdapter(privateGroupListAdapter);
@@ -114,6 +118,7 @@ public class NavigationDrawerFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(RefreshCdpListEvent event) {
+        mProgressWheel.show();
         channelListAdapter.retrieveCdpItemsFromChannels(event.mInfos.joinChannels);
         memberListAdapter.retrieveCdpItemsFromMembers(event.mInfos.members);
         privateGroupListAdapter.retrieveCdpItemsFromPravateGroups(event.mInfos.privateGroups);
@@ -125,6 +130,30 @@ public class NavigationDrawerFragment extends BaseFragment {
         channelListAdapter.notifyDataSetChanged();
         memberListAdapter.notifyDataSetChanged();
         privateGroupListAdapter.notifyDataSetChanged();
+        mProgressWheel.dismiss();
+    }
+
+    /**
+     * Channel 생성
+     */
+    @Background
+    void requestCreateChannel(String channelName) {
+        // TODO : Error 처리
+        if (channelName.length() <= 0) {
+            return;
+        }
+        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
+        reqCreateCdp.name = channelName;
+
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.createChannel(reqCreateCdp);
+            refreshAll();
+            Log.e(TAG, "Create Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Create Fail", e);
+        }
     }
 
     /**
@@ -136,13 +165,13 @@ public class NavigationDrawerFragment extends BaseFragment {
         if (pgName.length() <= 0) {
             return;
         }
-        RestCreatePrivateGroup restCreatePrivateGroup = new RestCreatePrivateGroup();
-        restCreatePrivateGroup.name = pgName;
+        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
+        reqCreateCdp.name = pgName;
 
-        TossRestResId restResId = null;
+        ResSendCdpMessage restResId = null;
         try {
             tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.createPrivateGroup(restCreatePrivateGroup);
+            restResId = tossRestClient.createPrivateGroup(reqCreateCdp);
             refreshAll();
             Log.e(TAG, "Create Success");
         } catch (RestClientException e) {
@@ -156,6 +185,13 @@ public class NavigationDrawerFragment extends BaseFragment {
     @AfterInject
     void calledAfterInjection() {
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
     }
 
     @Override
@@ -178,8 +214,15 @@ public class NavigationDrawerFragment extends BaseFragment {
     }
 
     public void onEvent(ConfirmCreateCdpEvent event) {
-        if (event.cdpType == 2) {
-            requestCreatePrivateGroup(event.inputName);
+        switch (event.cdpType) {
+            case 0:
+                requestCreateChannel(event.inputName);
+                break;
+            case 2:
+                requestCreatePrivateGroup(event.inputName);
+                break;
+            default:
+                break;
         }
     }
 }

@@ -1,18 +1,17 @@
 package com.tosslab.toss.app.network;
 
-import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
+import com.tosslab.toss.app.network.entities.ReqCreateCdp;
+import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
-import com.tosslab.toss.app.network.entities.TossRestResId;
 import com.tosslab.toss.app.network.entities.TossRestSendingMessage;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
-import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
 import org.androidannotations.api.rest.MediaType;
@@ -26,7 +25,7 @@ import org.springframework.util.MultiValueMap;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-        rootUrl = "https://192.168.0.3:3000/inner-api",
+        rootUrl = "https://192.168.0.11:3000/inner-api",
         converters = {
                 MappingJacksonHttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
@@ -47,6 +46,30 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     TossRestInfosForSideMenu getInfosForSideMenu();
 
+    /************************************************************
+     * 채널 관련
+     * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
+     ************************************************************/
+    // 채널에서 Message 리스트 정보 획득
+    @Get("/channel/{channelId}/messages/{fromId}/{numOfPost}")
+    @RequiresHeader("Authorization")
+    TossRestPgMessages getChannelMessages(int channelId, int fromId, int numOfPost);
+
+    // 채널에서 Message 생성
+    @Post("/channel/{channelId}/message")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage sendChannelMessage(TossRestSendingMessage message, int channelId);
+
+    // 채널 생성
+    @Post("/channel")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage createChannel(ReqCreateCdp channel);
+
+
+    /************************************************************
+     * PG 관련
+     * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
+     ************************************************************/
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
@@ -55,12 +78,12 @@ public interface TossRestClient {
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
     @RequiresHeader("Authorization")
-    TossRestResId sendGroupMessage(TossRestSendingMessage message, int groupId);
+    ResSendCdpMessage sendGroupMessage(TossRestSendingMessage message, int groupId);
 
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
-    TossRestResId createPrivateGroup(RestCreatePrivateGroup group);
+    ResSendCdpMessage createPrivateGroup(ReqCreateCdp group);
 
     // File Upload
     @Post("/file")

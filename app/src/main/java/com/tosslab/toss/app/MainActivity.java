@@ -96,6 +96,8 @@ public class MainActivity extends Activity {
             Log.e("HI", "Get Fail", e);
         } catch (HttpMessageNotReadableException e) {
             Log.e("HI", "Get Fail", e);
+        } catch (Exception e) {
+            Log.e("HI", "Get Fail", e);
         }
     }
 
