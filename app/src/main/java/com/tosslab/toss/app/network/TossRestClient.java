@@ -28,7 +28,8 @@ import org.springframework.util.MultiValueMap;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-        rootUrl = "https://192.168.0.11:3000/inner-api",
+        rootUrl = "https://121.162.244.90:3000/inner-api",
+//        rootUrl = "https://192.168.0.3:3000/inner-api",
         converters = {
                 MappingJacksonHttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,

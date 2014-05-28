@@ -40,7 +40,6 @@ public class MessageItemListAdapter extends BaseAdapter {
             return;
         }
         for (ResCdpMessages.Message message : messages.messages) {
-
             mMessages.add(i++, new MessageItem(message.id, message.writer.nickname,
                     message.writer.photoUrl, message.createTime,
                     message.contentType, message.content));

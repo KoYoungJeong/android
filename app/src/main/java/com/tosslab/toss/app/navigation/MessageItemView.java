@@ -23,7 +23,8 @@ import java.util.Date;
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
-    private static final String sRootUrl = "https://192.168.0.11:3000/";
+    private static final String sRootUrl = "https://121.162.244.90:3000/";
+//    private static final String sRootUrl = "https://192.168.0.3:3000/";
 
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;
@@ -48,6 +49,11 @@ public class MessageItemView extends LinearLayout {
     }
 
     public void bind(MessageItem item) {
+        // Initiate
+        mMessagePhoto.setVisibility(GONE);
+        mMessageContent.setText("");
+
+
         mUserName.setText(item.userNickName);
         // 메시지 String
         if (item.contentType == MessageItem.TYPE_STRING) {

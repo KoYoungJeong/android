@@ -53,6 +53,8 @@ import org.springframework.web.client.RestClientException;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 
@@ -61,6 +63,10 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment(R.layout.fragment_main)
 public class MessageListFragment extends BaseFragment {
+//    // 실시간 Messages 가져오기를 위한 테스크
+//    private TimerTask mTask;
+//    private Timer mTimer;
+
     private static final String TAG = "MessageListFragment";
     @RestService
     TossRestClient tossRestClient;
@@ -121,6 +127,17 @@ public class MessageListFragment extends BaseFragment {
             }
         });
 
+//        // 실시간 Messages 가져오기를 위한 테스크
+//        mTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                Log.e(TAG, "Do TimerTask");
+//                refreshAll(mCurrentEvent.type, mCurrentEvent.id, mCurrentEvent.userId);
+//            }
+//        };
+//        mTimer = new Timer();
+//        mTimer.schedule(mTask, 3000, 3000);
+
         // 초기에 기본으로 보여질 Message
         // TODO : 현재에는 0번 Private Group
         mFirstItemId = -1;
@@ -135,7 +152,8 @@ public class MessageListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        super.onPause();
+//        mTimer.cancel();
+        super.onDestroy();
     }
 
     /**
@@ -343,15 +361,23 @@ public class MessageListFragment extends BaseFragment {
         try {
             tossRestClient.setHeader("Authorization", myToken);
             restResId = tossRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
-            deleteMessageDone();
             Log.e(TAG, "delete Success");
         } catch (RestClientException e) {
             Log.e(TAG, "delete Fail", e);
         }
+        deleteMessageDone();
 
     }
 
     void deletePgMessageInBackground(int messageId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
         deleteMessageDone();
     }
 
