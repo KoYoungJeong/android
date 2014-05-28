@@ -103,7 +103,7 @@ public interface TossRestClient {
     @Put("/privateGroup/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResSendCdpMessage modifyPrivateGroupMessage(ReqModifyCdpMessage message,
-                                           int channegroupId, int messageId);
+                                           int groupId, int messageId);
 
     // Private Group Message 삭제
     @Delete("/privateGroup/{groupId}/messages/{messageId}")

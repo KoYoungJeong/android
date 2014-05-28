@@ -9,14 +9,16 @@ public class MessageItem {
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
 
+    public final int id;
     public final String userProfileUrl;
     public final String userNickName;
     public final Date createTime;
     public final int contentType;
     public final String contentString;
 
-    public MessageItem(String userNickName, String userProfileUrl, Date createTime,
+    public MessageItem(int id, String userNickName, String userProfileUrl, Date createTime,
                        String contentType, String contentString) {
+        this.id = id;
         this.userNickName = userNickName;
         this.userProfileUrl = userProfileUrl;
         if (contentType.equals("image")) {

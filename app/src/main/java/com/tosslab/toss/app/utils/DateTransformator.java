@@ -39,4 +39,9 @@ public class DateTransformator {
 
         return "방금";
     }
+
+    public static String getTimeString(Date date) {
+        DateFormat mCreateDateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm");
+        return mCreateDateFormat.format(date);
+    }
 }

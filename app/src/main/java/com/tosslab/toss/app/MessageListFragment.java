@@ -1,6 +1,7 @@
 package com.tosslab.toss.app;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -8,12 +9,19 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.events.DeleteMessageEvent;
+import com.tosslab.toss.app.events.EditMessageEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
@@ -21,6 +29,9 @@ import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
+import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
+import com.tosslab.toss.app.utils.DateTransformator;
+import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -40,6 +51,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import de.greenrobot.event.EventBus;
 
@@ -71,7 +84,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mDoLoading = true;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
-    int mCurrentNavType = ChooseNaviActionEvent.TYPE_CHENNEL;
+    ChooseNaviActionEvent mCurrentEvent;
 
     @Override
     public int getTitleResourceId() {
@@ -80,6 +93,7 @@ public class MessageListFragment extends BaseFragment {
 
     @AfterViews
     void bindAdapter() {
+        mCurrentEvent = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_CHENNEL, 0);
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         // Progress Wheel 설정
@@ -101,7 +115,7 @@ public class MessageListFragment extends BaseFragment {
                 if (mIsFirstMessage == false && mDoLoading == false
                         && firstVisibleItem == 0) {
                     Log.e(TAG, "Loading");
-                    getMessages(mCurrentNavType, 0, null);
+                    getMessages(mCurrentEvent.type, mCurrentEvent.id, null);
                 }
 
             }
@@ -110,7 +124,7 @@ public class MessageListFragment extends BaseFragment {
         // 초기에 기본으로 보여질 Message
         // TODO : 현재에는 0번 Private Group
         mFirstItemId = -1;
-        getMessages(mCurrentNavType, 0, null);
+        getMessages(mCurrentEvent.type, mCurrentEvent.id, null);
     }
 
     @AfterInject
@@ -125,21 +139,12 @@ public class MessageListFragment extends BaseFragment {
     }
 
     /**
-     * Message Item의 Long Click 시, 팝업 메뉴 활성화
-     * @param item
-     */
-    @ItemLongClick
-    void list_messagesItemLongClicked(MessageItem item) {
-        Log.e(TAG, "Long Clicked");
-    }
-
-    /**
      * Navigation Panel 에서 선택한 Channel, Member or PG 정보
      * @param event
      */
     public void onEvent(ChooseNaviActionEvent event) {
-        mCurrentNavType = event.type;
-        refreshAll(mCurrentNavType, event.id, event.userId);
+        mCurrentEvent = event;
+        refreshAll(mCurrentEvent.type, event.id, event.userId);
     }
 
     @UiThread
@@ -230,7 +235,7 @@ public class MessageListFragment extends BaseFragment {
         hideSoftKeyboard();
 
         if (message.length() > 0) {
-            sendMessageInBackground(mCurrentNavType, message);
+            sendMessageInBackground(mCurrentEvent.type, message);
         }
     }
 
@@ -284,7 +289,76 @@ public class MessageListFragment extends BaseFragment {
     }
 
     public void sendMessageDone() {
-        refreshAll(mCurrentNavType, 0, null);
+        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
+    }
+
+    /************************************************************
+     * Message 수정 / 삭제
+     ************************************************************/
+    /**
+     * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
+     * @param item
+     */
+    @ItemLongClick
+    void list_messagesItemLongClicked(MessageItem item) {
+        Log.e(TAG, "Long Clicked");
+        showDialog(item);
+    }
+
+    void showDialog(MessageItem item) {
+        String title = DateTransformator.getTimeString(item.createTime);
+        DialogFragment newFragment = ManipulateMessageAlertDialog.newInstance(title, item.id, mCurrentEvent.type);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    // Message 수정 이벤트 획득
+    public void onEvent(EditMessageEvent event) {
+        Log.e(TAG, "Edit Message : " + event.messageId);
+    }
+
+    // Message 삭제 이벤트 획득
+    public void onEvent(DeleteMessageEvent event) {
+        Log.e(TAG, "Delete message :" + event.messageId);
+        deleteMessage(event.messageId);
+    }
+
+    @UiThread
+    void deleteMessage(int messageId) {
+        mProgressWheel.show();
+        deleteMessageInBackground(messageId);
+    }
+
+    @Background
+    void deleteMessageInBackground(int messageId) {
+        if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            deleteChannelMessageInBackground(messageId);
+        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            deletePgMessageInBackground(messageId);
+        }
+
+    }
+
+    void deleteChannelMessageInBackground(int messageId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
+            deleteMessageDone();
+            Log.e(TAG, "Send Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Send Fail", e);
+        }
+
+    }
+
+    void deletePgMessageInBackground(int messageId) {
+        deleteMessageDone();
+    }
+
+    @UiThread
+    void deleteMessageDone() {
+        mProgressWheel.dismiss();
+        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
     }
 
     /************************************************************

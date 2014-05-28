@@ -42,7 +42,7 @@ public class CreateCdpAlertDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
-                .setIcon(android.R.drawable.ic_dialog_info)
+                .setIcon(android.R.drawable.ic_menu_agenda)
                 .setTitle(title)
                 .setPositiveButton(R.string.confirm,
                         new DialogInterface.OnClickListener() {
