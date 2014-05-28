@@ -1,6 +1,7 @@
 package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
+import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
@@ -15,12 +16,24 @@ import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
 import org.androidannotations.api.rest.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.util.MultiValueMap;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
-@Rest(rootUrl = "https://192.168.0.11:3000/inner-api", converters = { MappingJacksonHttpMessageConverter.class }, interceptors = { LoggerInterceptor.class })
+@Rest(
+        rootUrl = "https://192.168.0.3:3000/inner-api",
+        converters = {
+                MappingJacksonHttpMessageConverter.class,
+                ByteArrayHttpMessageConverter.class,
+                FormHttpMessageConverter.class,
+                StringHttpMessageConverter.class },
+        interceptors = { LoggerInterceptor.class }
+)
 @Accept(MediaType.APPLICATION_JSON)
 public interface TossRestClient {
     void setHeader(String name, String value);
@@ -49,6 +62,10 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     TossRestResId createPrivateGroup(RestCreatePrivateGroup group);
 
+    // File Upload
+    @Post("/file")
+    @RequiresHeader("Authorization")
+    RestFileUploadResponse uploadFile(MultiValueMap data);
 
 
 }

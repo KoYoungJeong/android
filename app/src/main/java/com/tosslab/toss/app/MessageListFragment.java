@@ -18,6 +18,7 @@ import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
+import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.network.entities.TossRestPgMessages;
 import com.tosslab.toss.app.network.entities.TossRestResId;
 import com.tosslab.toss.app.network.entities.TossRestSendingMessage;
@@ -38,6 +39,8 @@ import org.androidannotations.annotations.rest.RestService;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -271,25 +274,30 @@ public class MessageListFragment extends BaseFragment {
         MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
         parts.add("userFile", new FileSystemResource(new File(fileUri)));
 
-        // Authorization Header 지정
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.set("Authorization", myToken);
-
-        // Create a new RestTemplate instance
-        RestTemplate restTemplate = new RestTemplate();
-
-        // Add the Jackson and String message converters
-        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
-        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-
-        HttpEntity< MultiValueMap<String, Object>> requestEntity
-                = new HttpEntity<MultiValueMap<String, Object>>(parts, requestHeaders);
+//        // Authorization Header 지정
+//        HttpHeaders requestHeaders = new HttpHeaders();
+//        requestHeaders.set("Authorization", myToken);
+//        requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//
+//        // Create a new RestTemplate instance
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        // Add the Jackson and String message converters
+//        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
+//        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+//        restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
+//
+//        HttpEntity< MultiValueMap<String, Object>> requestEntity
+//                = new HttpEntity<MultiValueMap<String, Object>>(parts, requestHeaders);
 
         try {
-            String response = restTemplate.postForObject("https://192.168.0.11:3000/inner-api/file",
-                    requestEntity, String.class);
-            Log.d(TAG, response);
+//            RestFileUploadResponse response = restTemplate.postForObject("https://192.168.0.11:3000/inner-api/file",
+//                    requestEntity, RestFileUploadResponse.class);
+            RestFileUploadResponse response = tossRestClient.uploadFile(parts);
+            Log.d(TAG, "Returned" + response.id);
         } catch (RestClientException e) {
+            Log.e(TAG, "Error : " + e);
+        } catch (ClassCastException e) {
             Log.e(TAG, "Error : " + e);
         }
 

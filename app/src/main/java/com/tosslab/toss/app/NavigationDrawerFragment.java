@@ -1,11 +1,11 @@
 package com.tosslab.toss.app;
 
+import android.app.DialogFragment;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
 import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
@@ -13,6 +13,7 @@ import com.tosslab.toss.app.navigation.CdpItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.RestCreatePrivateGroup;
 import com.tosslab.toss.app.network.entities.TossRestResId;
+import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -20,7 +21,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
-import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
@@ -99,9 +99,14 @@ public class NavigationDrawerFragment extends BaseFragment {
         EventBus.getDefault().post(event);
     }
 
+    @Click(R.id.btn_action_add_channel)
+    void createChannel() {
+        showDialog(0);
+    }
+
     @Click(R.id.btn_add_private_group)
     void createPrivateGroup() {
-        requestCreatePrivateGroup();
+        showDialog(2);
     }
 
     /**
@@ -109,7 +114,7 @@ public class NavigationDrawerFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(RefreshCdpListEvent event) {
-        channelListAdapter.retrieveCdpItemsFromChannels(event.mInfos.channels);
+        channelListAdapter.retrieveCdpItemsFromChannels(event.mInfos.joinChannels);
         memberListAdapter.retrieveCdpItemsFromMembers(event.mInfos.members);
         privateGroupListAdapter.retrieveCdpItemsFromPravateGroups(event.mInfos.privateGroups);
         refreshListAdapter();
@@ -122,10 +127,17 @@ public class NavigationDrawerFragment extends BaseFragment {
         privateGroupListAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Private Group 생성
+     */
     @Background
-    void requestCreatePrivateGroup() {
+    void requestCreatePrivateGroup(String pgName) {
+        // TODO : Error 처리
+        if (pgName.length() <= 0) {
+            return;
+        }
         RestCreatePrivateGroup restCreatePrivateGroup = new RestCreatePrivateGroup();
-        restCreatePrivateGroup.name = "또 다른 비밀 그룹";
+        restCreatePrivateGroup.name = pgName;
 
         TossRestResId restResId = null;
         try {
@@ -150,5 +162,24 @@ public class NavigationDrawerFragment extends BaseFragment {
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onPause();
+    }
+
+    /**
+     * Alert Dialog 관련
+     */
+    void showDialog(int cdpType) {
+        int titleStringId = R.string.create_channel;
+        // TODO : poor implemantaion
+        if (cdpType == 2) {
+            titleStringId = R.string.create_private_group;
+        }
+        DialogFragment newFragment = CreateCdpAlertDialogFragment.newInstance(titleStringId, cdpType);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(ConfirmCreateCdpEvent event) {
+        if (event.cdpType == 2) {
+            requestCreatePrivateGroup(event.inputName);
+        }
     }
 }

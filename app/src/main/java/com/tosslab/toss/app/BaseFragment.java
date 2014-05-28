@@ -1,8 +1,12 @@
 package com.tosslab.toss.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 public abstract class BaseFragment extends Fragment {
