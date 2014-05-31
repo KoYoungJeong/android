@@ -7,18 +7,15 @@ import android.widget.ListView;
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
-import com.tosslab.toss.app.events.DeleteMessageEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
 import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
-import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
-import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
+import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
-import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -280,12 +277,10 @@ public class NavigationDrawerFragment extends BaseFragment {
      * Alert Dialog 관련
      */
     void showDialog(int cdpType) {
-        int titleStringId = R.string.create_channel;
-        // TODO : poor implemantaion
-        if (cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            titleStringId = R.string.create_private_group;
-        }
-        DialogFragment newFragment = CreateCdpAlertDialogFragment.newInstance(titleStringId, cdpType);
+        DialogFragment newFragment
+                = EditTextAlertDialogFragment.newInstance(EditTextAlertDialogFragment.ACTION_CREATE_CDP
+                , cdpType
+                , 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
 

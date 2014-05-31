@@ -9,15 +9,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.DeleteMessageEvent;
@@ -29,7 +24,6 @@ import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.utils.CreateCdpAlertDialogFragment;
 import com.tosslab.toss.app.utils.DateTransformator;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -51,10 +45,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 
@@ -86,8 +76,10 @@ public class MessageListFragment extends BaseFragment {
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     int mFirstItemId = -1;
-    boolean mIsFirstMessage = false;
+    boolean mIsFirstMessage = true;
     boolean mDoLoading = true;
+
+    int mCurrentPosition;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     ChooseNaviActionEvent mCurrentEvent;
@@ -120,6 +112,8 @@ public class MessageListFragment extends BaseFragment {
                                  int visibleItemCount, int totalItemCount) {
                 if (mIsFirstMessage == false && mDoLoading == false
                         && firstVisibleItem == 0) {
+                    mDoLoading = true;
+                    absListView.setSelection(firstVisibleItem + visibleItemCount);
                     Log.e(TAG, "Loading");
                     getMessages(mCurrentEvent.type, mCurrentEvent.id, null);
                 }
@@ -161,6 +155,7 @@ public class MessageListFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(ChooseNaviActionEvent event) {
+        mIsFirstMessage = true;
         mCurrentEvent = event;
         refreshAll(mCurrentEvent.type, event.id, event.userId);
     }
@@ -179,7 +174,6 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     public void getMessages(int type, int id, String userId) {
-        mDoLoading = true;
         mProgressWheel.show();
         getMessagesInBackground(type, id, userId);
     }
@@ -281,7 +275,7 @@ public class MessageListFragment extends BaseFragment {
         ResSendCdpMessage restResId = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.sendChannelMessage(sendingMessage, 0);
+            restResId = tossRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
             sendMessageDone();
             Log.e(TAG, "Send Success");
         } catch (RestClientException e) {
@@ -298,7 +292,7 @@ public class MessageListFragment extends BaseFragment {
         ResSendCdpMessage restResId = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.sendGroupMessage(sendingMessage, 0);
+            restResId = tossRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
             sendMessageDone();
             Log.e(TAG, "Send Success");
         } catch (RestClientException e) {

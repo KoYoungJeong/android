@@ -20,6 +20,13 @@
 
     <string name="create_channel">Channel 생성</string>
     <string name="create_private_group">Private Group 생성</string>
+    <string name="create_direct_message">Direct Message 생성</string>
+    <string name="modify_channel">Channel 수정</string>
+    <string name="modify_private_group">Private Group 수정</string>
+    <string name="modify_direct_message">Direct Message 수정</string>
+
+    <!-- Message -->
+    <string name="modify_message">Message 수정</string>
 
     <!-- -->
     <string name="type_files">Files</string>
