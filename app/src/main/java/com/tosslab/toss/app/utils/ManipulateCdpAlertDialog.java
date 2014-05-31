@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.toss.app.R;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
-import com.tosslab.toss.app.events.DeleteMessageEvent;
 import com.tosslab.toss.app.events.EditCdpEvent;
-import com.tosslab.toss.app.events.EditMessageEvent;
 
 import de.greenrobot.event.EventBus;
 

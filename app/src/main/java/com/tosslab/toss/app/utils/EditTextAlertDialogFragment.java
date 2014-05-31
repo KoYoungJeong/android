@@ -32,7 +32,7 @@ public class EditTextAlertDialogFragment extends DialogFragment {
     public final static int ACTION_MODIFY_MESSAGE   = 2;
 
     /**
-     * CDP 생성, CDP 수정에 사용되는 Dialog.
+     * CDP 생성에 사용되는 Dialog.
      * @param actionType
      * @param cdpType
      * @param cdpId
@@ -44,6 +44,26 @@ public class EditTextAlertDialogFragment extends DialogFragment {
         args.putInt("actionType", actionType);
         args.putInt("cdpType", cdpType);
         args.putInt("id", cdpId);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    /**
+     * CDP 수정에 사용되는 Dialog.
+     * @param actionType
+     * @param cdpType
+     * @param cdpId
+     * @param currentCdpName
+     * @return
+     */
+    public static EditTextAlertDialogFragment newInstance(int actionType, int cdpType
+            , int cdpId, String currentCdpName) {
+        EditTextAlertDialogFragment frag = new EditTextAlertDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("actionType", actionType);
+        args.putInt("cdpType", cdpType);
+        args.putInt("id", cdpId);
+        args.putString("currentMessage", currentCdpName);
         frag.setArguments(args);
         return frag;
     }
@@ -77,8 +97,8 @@ public class EditTextAlertDialogFragment extends DialogFragment {
         View mainView = inflater.inflate(R.layout.dialog_input_text, null);
 
         final EditText inputName = (EditText)mainView.findViewById(R.id.et_dialog_input);
-        // message 수정 대화상자의 경우 현재 메시지를 보여준다.
-        if (actionType == ACTION_MODIFY_MESSAGE) {
+        // 수정 대화상자의 경우 현재 메시지를 보여준다.
+        if (actionType != ACTION_CREATE_CDP) {
             inputName.setText(currentMessage);
         }
 

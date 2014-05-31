@@ -6,10 +6,10 @@ package com.tosslab.toss.app.events;
  */
 public class ConfirmModifyMessageEvent {
     public int messageId;
-    public String inputName;
+    public String inputMessage;
 
-    public ConfirmModifyMessageEvent(int messageId, String inputName) {
+    public ConfirmModifyMessageEvent(int messageId, String inputMessage) {
         this.messageId = messageId;
-        this.inputName = inputName;
+        this.inputMessage = inputMessage;
     }
 }

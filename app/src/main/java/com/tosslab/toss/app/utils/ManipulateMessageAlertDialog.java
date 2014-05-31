@@ -7,13 +7,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
-import com.tosslab.toss.app.events.DeleteMessageEvent;
-import com.tosslab.toss.app.events.EditMessageEvent;
+import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
+import com.tosslab.toss.app.events.ReqModifyMessageEvent;
+import com.tosslab.toss.app.navigation.MessageItem;
 
 import de.greenrobot.event.EventBus;
 
@@ -21,12 +20,15 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 5. 28..
  */
 public class ManipulateMessageAlertDialog extends DialogFragment {
-    public static ManipulateMessageAlertDialog newInstance(String title, int messageId, int cdpType) {
+    public static ManipulateMessageAlertDialog newInstance(MessageItem item) {
+
+        String title = DateTransformator.getTimeString(item.createTime);
+
         ManipulateMessageAlertDialog frag = new ManipulateMessageAlertDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putInt("messageId", messageId);
-        args.putInt("cdpType", cdpType);
+        args.putInt("messageId", item.id);
+        args.putString("currentMessage", item.contentString);
         frag.setArguments(args);
         return frag;
     }
@@ -35,7 +37,7 @@ public class ManipulateMessageAlertDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String title = getArguments().getString("title", "");
         final int messageId = getArguments().getInt("messageId");
-        final int cdpType = getArguments().getInt("cdpType");
+        final String currentMessage = getArguments().getString("currentMessage");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
@@ -45,7 +47,7 @@ public class ManipulateMessageAlertDialog extends DialogFragment {
         actionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new EditMessageEvent(messageId, cdpType));
+                EventBus.getDefault().post(new ReqModifyMessageEvent(messageId, currentMessage));
                 dismiss();
             }
         });
@@ -55,7 +57,7 @@ public class ManipulateMessageAlertDialog extends DialogFragment {
         actionDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new DeleteMessageEvent(messageId, cdpType));
+                EventBus.getDefault().post(new ConfirmDeleteMessageEvent(messageId));
                 dismiss();
             }
         });

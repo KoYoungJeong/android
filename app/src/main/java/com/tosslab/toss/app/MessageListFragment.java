@@ -15,16 +15,19 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
-import com.tosslab.toss.app.events.DeleteMessageEvent;
-import com.tosslab.toss.app.events.EditMessageEvent;
+import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
+import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
+import com.tosslab.toss.app.events.ReqModifyMessageEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
+import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
 import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.utils.DateTransformator;
+import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
@@ -79,7 +82,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mIsFirstMessage = true;
     boolean mDoLoading = true;
 
-    int mCurrentPosition;
+//    int mCurrentPosition;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     ChooseNaviActionEvent mCurrentEvent;
@@ -91,15 +94,16 @@ public class MessageListFragment extends BaseFragment {
 
     @AfterViews
     void bindAdapter() {
-        mCurrentEvent = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_CHENNEL, 0);
-        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(getActivity());
         mProgressWheel.init();
 
-        listMessages.setAdapter(messageItemListAdapter);
+        // TODO : 기본 채널 0번
+        mCurrentEvent = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_CHENNEL, 0);
 
+        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        listMessages.setAdapter(messageItemListAdapter);
         // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
         listMessages.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -305,7 +309,7 @@ public class MessageListFragment extends BaseFragment {
     }
 
     /************************************************************
-     * Message 수정 / 삭제
+     * Message 수정
      ************************************************************/
     /**
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
@@ -318,18 +322,83 @@ public class MessageListFragment extends BaseFragment {
     }
 
     void showDialog(MessageItem item) {
-        String title = DateTransformator.getTimeString(item.createTime);
-        DialogFragment newFragment = ManipulateMessageAlertDialog.newInstance(title, item.id, mCurrentEvent.type);
+        DialogFragment newFragment = ManipulateMessageAlertDialog.newInstance(item);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     // Message 수정 이벤트 획득
-    public void onEvent(EditMessageEvent event) {
+    public void onEvent(ReqModifyMessageEvent event) {
         Log.e(TAG, "Edit Message : " + event.messageId);
+        DialogFragment newFragment = EditTextAlertDialogFragment.newInstance(event.messageId
+                , event.currentMessage);
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
+    // Message 수정 서버 요청
+    public void onEvent(ConfirmModifyMessageEvent event) {
+        modifyMessage(event.messageId, event.inputMessage);
+    }
+
+    @UiThread
+    void modifyMessage(int messageId, String inputMessage) {
+        modifyMessageInBackground(messageId, inputMessage);
+    }
+
+    @Background
+    void modifyMessageInBackground(int messageId, String inputMessage) {
+        if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            modifyChannelMessageInBackground(messageId, inputMessage);
+        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            modifyPgMessageInBackground(messageId, inputMessage);
+        }
+    }
+
+    void modifyChannelMessageInBackground(int messageId, String inputMessage) {
+        ResSendCdpMessage restResId = null;
+        try {
+            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
+            reqModifyCdpMessage.content = inputMessage;
+
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.modifyChannelMessage(reqModifyCdpMessage
+                    , mCurrentEvent.id
+                    , messageId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        modifyMessageDone();
+    }
+
+    void modifyPgMessageInBackground(int messageId, String inputMessage) {
+        ResSendCdpMessage restResId = null;
+        try {
+            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
+            reqModifyCdpMessage.content = inputMessage;
+
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.modifyPrivateGroupMessage(reqModifyCdpMessage
+                    , mCurrentEvent.id
+                    , messageId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        modifyMessageDone();
+    }
+
+    @UiThread
+    void modifyMessageDone() {
+        mProgressWheel.dismiss();
+        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
+    }
+
+    /************************************************************
+     * Message 삭제
+     ************************************************************/
+
     // Message 삭제 이벤트 획득
-    public void onEvent(DeleteMessageEvent event) {
+    public void onEvent(ConfirmDeleteMessageEvent event) {
         Log.e(TAG, "Delete message :" + event.messageId);
         deleteMessage(event.messageId);
     }
