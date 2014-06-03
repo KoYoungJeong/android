@@ -1,8 +1,10 @@
 package com.tosslab.toss.app.network;
 
+import com.tosslab.toss.app.navigation.MessageItemView;
+import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
-import com.tosslab.toss.app.network.entities.ResCdpMessages;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
@@ -28,8 +30,8 @@ import org.springframework.util.MultiValueMap;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-        rootUrl = "https://121.162.244.90:3000/inner-api",
-//        rootUrl = "https://192.168.0.3:3000/inner-api",
+//        rootUrl = "https://121.162.244.90:3000/inner-api",
+        rootUrl = MessageItemView.sRootUrl + "inner-api",
         converters = {
                 MappingJacksonHttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
@@ -67,7 +69,7 @@ public interface TossRestClient {
     // 채널에서 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResCdpMessages getChannelMessages(int channelId, int fromId, int numOfPost);
+    ResChannelMessages getChannelMessages(int channelId, int fromId, int numOfPost);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -103,7 +105,7 @@ public interface TossRestClient {
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResCdpMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+    ResPrivateGroupMessage getGroupMessages(int groupId, int fromId, int numOfPost);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")

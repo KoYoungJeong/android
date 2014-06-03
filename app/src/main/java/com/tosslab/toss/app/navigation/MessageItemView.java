@@ -1,30 +1,24 @@
 package com.tosslab.toss.app.navigation;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.network.entities.ResCdpMessages;
 import com.tosslab.toss.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
-    private static final String sRootUrl = "https://121.162.244.90:3000/";
-//    private static final String sRootUrl = "https://192.168.0.3:3000/";
+//    private static final String sRootUrl = "https://121.162.244.90:3000/";
+    public static final String sRootUrl = "https://192.168.0.11:3000/";
 
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;

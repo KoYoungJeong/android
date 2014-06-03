@@ -5,7 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.toss.app.network.entities.ResCdpMessages;
+import com.tosslab.toss.app.network.entities.CdpMessages;
+import com.tosslab.toss.app.network.entities.ResChannelMessages;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -34,17 +36,26 @@ public class MessageItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void retrievePgMessageItem(ResCdpMessages messages) {
-        int i = 0;
+    public void retrieveChannelMessageItem(ResChannelMessages messages) {
         if (mMessages == null) {
             return;
         }
-        for (ResCdpMessages.Message message : messages.messages) {
-            mMessages.add(i++, new MessageItem(message.id, message.writer.nickname,
+        for (ResChannelMessages.ChannelMessage message : messages.messages) {
+            mMessages.add(0, new MessageItem(message.id, message.writer.nickname,
                     message.writer.photoUrl, message.createTime,
                     message.contentType, message.content));
         }
+    }
 
+    public void retrievePgMessageItem(ResPrivateGroupMessage messages) {
+        if (mMessages == null) {
+            return;
+        }
+        for (ResPrivateGroupMessage.PrivateGroupMessage message : messages.messages) {
+            mMessages.add(0, new MessageItem(message.id, message.writer.nickname,
+                    message.writer.photoUrl, message.createTime,
+                    message.contentType, message.content));
+        }
     }
 
     @Override

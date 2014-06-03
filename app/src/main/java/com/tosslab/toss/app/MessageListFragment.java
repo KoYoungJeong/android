@@ -23,10 +23,10 @@ import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
 import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
-import com.tosslab.toss.app.network.entities.ResCdpMessages;
+import com.tosslab.toss.app.network.entities.ResChannelMessages;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.utils.DateTransformator;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -192,7 +192,7 @@ public class MessageListFragment extends BaseFragment {
     }
 
     void getChannelMessagesInBackground(int id) {
-        ResCdpMessages restPgMessages = null;
+        ResChannelMessages restPgMessages = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
             restPgMessages = tossRestClient.getChannelMessages(id, mFirstItemId, 10);
@@ -202,7 +202,7 @@ public class MessageListFragment extends BaseFragment {
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restPgMessages.firstIdOfReceviedList;
 
-            messageItemListAdapter.retrievePgMessageItem(restPgMessages);
+            messageItemListAdapter.retrieveChannelMessageItem(restPgMessages);
             Log.e(TAG, "Get Success");
             getMessagesEnd();
         } catch (RestClientException e) {
@@ -211,7 +211,7 @@ public class MessageListFragment extends BaseFragment {
     }
 
     void getPgMessagesInBackground(int id) {
-        ResCdpMessages restPgMessages = null;
+        ResPrivateGroupMessage restPgMessages = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
             restPgMessages = tossRestClient.getGroupMessages(id, mFirstItemId, 10);
