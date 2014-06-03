@@ -4,6 +4,7 @@ import com.tosslab.toss.app.navigation.MessageItemView;
 import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
+import com.tosslab.toss.app.network.entities.ResDirectMessages;
 import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
@@ -61,6 +62,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendCdpMessage createChannel(ReqCreateCdp channel);
 
+    // 채널 수정
+    @Put("/channels/{channelId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage modifyChannel(ReqCreateCdp channel, int channelId);
+
     // 채널 삭제
     @Delete("/channels/{channelId}")
     @RequiresHeader("Authorization")
@@ -89,6 +95,32 @@ public interface TossRestClient {
 
 
     /************************************************************
+     * Direct Message 관련
+     * 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
+     ************************************************************/
+    // Direct Message 리스트 정보 획득
+    @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
+    @RequiresHeader("Authorization")
+    ResDirectMessages getDirectMessages(int userId, int fromId, int numOfPost);
+
+    // Direct Message 생성
+    @Post("/users/{userId}/message")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, int userId);
+
+    // Direct Message 수정
+    @Put("/users/{userId}/messages/{messageId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage modifyDirectMessage(ReqModifyCdpMessage message,
+                                           int userId, int messageId);
+
+    // Direct Message 삭제
+    @Delete("/users/{userId}/messages/{messageId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage deleteDirectMessage(int userId, int messageId);
+
+
+    /************************************************************
      * PG 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
      ************************************************************/
@@ -96,6 +128,11 @@ public interface TossRestClient {
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
     ResSendCdpMessage createPrivateGroup(ReqCreateCdp group);
+
+    // 채널 수정
+    @Put("/privateGroups/{groupId}")
+    @RequiresHeader("Authorization")
+    ResSendCdpMessage modifyGroup(ReqCreateCdp channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")

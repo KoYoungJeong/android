@@ -32,9 +32,9 @@ public class CdpMessages {
 
     public static class DirectMessage {
         public int id;
-        public String fromUser;
-        public String writerId;
-        public Writer writer;
+        public String fromUserId;
+        public Writer fromUser;
+        public String toUserId;
         public Date createTime;
         public Date updateTime;
         public String contentType;

@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import com.tosslab.toss.app.R;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
-import com.tosslab.toss.app.events.EditCdpEvent;
+import com.tosslab.toss.app.events.ModifyCdpEvent;
+import com.tosslab.toss.app.navigation.CdpItem;
 
 import de.greenrobot.event.EventBus;
 
@@ -19,12 +20,12 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 5. 28..
  */
 public class ManipulateCdpAlertDialog extends DialogFragment {
-    public static ManipulateCdpAlertDialog newInstance(String title, int cdpId, int cdpType) {
+    public static ManipulateCdpAlertDialog newInstance(CdpItem item) {
         ManipulateCdpAlertDialog frag = new ManipulateCdpAlertDialog();
         Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putInt("cdpId", cdpId);
-        args.putInt("cdpType", cdpType);
+        args.putString("title", item.name);
+        args.putInt("cdpId", item.id);
+        args.putInt("cdpType", item.type);
         frag.setArguments(args);
         return frag;
     }
@@ -43,7 +44,7 @@ public class ManipulateCdpAlertDialog extends DialogFragment {
         actionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new EditCdpEvent(cdpId, cdpType));
+                EventBus.getDefault().post(new ModifyCdpEvent(cdpId, cdpType, title));
                 dismiss();
             }
         });

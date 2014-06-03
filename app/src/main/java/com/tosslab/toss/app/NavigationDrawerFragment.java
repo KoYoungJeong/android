@@ -6,7 +6,9 @@ import android.widget.ListView;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
+import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
+import com.tosslab.toss.app.events.ModifyCdpEvent;
 import com.tosslab.toss.app.events.RefreshCdpListEvent;
 import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
@@ -93,75 +95,30 @@ public class NavigationDrawerFragment extends BaseFragment {
         EventBus.getDefault().post(event);
     }
 
+    /**
+     * Event Listener로 등록
+     */
+    @AfterInject
+    void calledAfterInjection() {
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
     /************************************************************
-     * C, D, P 수정 / 삭제
+     * List Update / Refresh
      ************************************************************/
-    @ItemLongClick
-    void list_nav_channelsItemLongClicked(CdpItem cdp) {
-        showDialog(cdp);
-    }
-
-    @ItemLongClick
-    void list_nav_private_groupsItemLongClicked(CdpItem cdp) {
-        showDialog(cdp);
-    }
-
-    void showDialog(CdpItem cdp) {
-        // TODO : Direct Message 구현할 때 리펙토링
-        DialogFragment newFragment = ManipulateCdpAlertDialog.newInstance(cdp.name, cdp.id, cdp.type);
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
-    // Message 삭제 이벤트 획득
-    public void onEvent(DeleteCdpEvent event) {
-        Log.e(TAG, "Delete Cdp :" + event.cdpId);
-        deleteCdp(event);
-    }
-
-    @UiThread
-    void deleteCdp(DeleteCdpEvent event) {
-        mProgressWheel.show();
-        deleteCdpInBackground(event);
-    }
-
-    @Background
-    void deleteCdpInBackground(DeleteCdpEvent event) {
-        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
-            deleteChannelInBackground(event.cdpId);
-        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            deleteGroupInBackground(event.cdpId);
-        }
-    }
-
-    void deleteChannelInBackground(int cdpId) {
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.deleteChannel(cdpId);
-            Log.e(TAG, "delete Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
-        }
-        deleteCdpDone();
-    }
-
-    void deleteGroupInBackground(int cdpId) {
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.deleteGroup(cdpId);
-            Log.e(TAG, "delete Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
-        }
-        deleteCdpDone();
-    }
-
-    @UiThread
-    void deleteCdpDone() {
-        mProgressWheel.dismiss();
-        refreshAll();
-    }
 
     /**
      * 모든 CDP 리스트를 초기화하고 서버로 다시 리스트를 요청한다.
@@ -174,16 +131,6 @@ public class NavigationDrawerFragment extends BaseFragment {
 
         RequestCdpListEvent event = new RequestCdpListEvent();
         EventBus.getDefault().post(event);
-    }
-
-    @Click(R.id.btn_action_add_channel)
-    void createChannel() {
-        showDialog(ChooseNaviActionEvent.TYPE_CHENNEL);
-    }
-
-    @Click(R.id.btn_add_private_group)
-    void createPrivateGroup() {
-        showDialog(ChooseNaviActionEvent.TYPE_PRIVATE_GROUP);
     }
 
     /**
@@ -204,6 +151,48 @@ public class NavigationDrawerFragment extends BaseFragment {
         memberListAdapter.notifyDataSetChanged();
         privateGroupListAdapter.notifyDataSetChanged();
         mProgressWheel.dismiss();
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup 생성
+     ************************************************************/
+
+    @Click(R.id.btn_action_add_channel)
+    void createChannel() {
+        showDialogToCreate(ChooseNaviActionEvent.TYPE_CHENNEL);
+    }
+
+    @Click(R.id.btn_add_private_group)
+    void createPrivateGroup() {
+        showDialogToCreate(ChooseNaviActionEvent.TYPE_PRIVATE_GROUP);
+    }
+
+    /**
+     * Alert Dialog 관련
+     */
+    void showDialogToCreate(int cdpType) {
+        DialogFragment newFragment
+                = EditTextAlertDialogFragment.newInstance(EditTextAlertDialogFragment.ACTION_CREATE_CDP
+                , cdpType
+                , 0);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * Channel, PrivateGroup 생성 이벤트 획득 from DialogFragment
+     * @param event
+     */
+    public void onEvent(ConfirmCreateCdpEvent event) {
+        switch (event.cdpType) {
+            case ChooseNaviActionEvent.TYPE_CHENNEL:
+                requestCreateChannel(event.inputName);
+                break;
+            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
+                requestCreatePrivateGroup(event.inputName);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -252,48 +241,137 @@ public class NavigationDrawerFragment extends BaseFragment {
         }
     }
 
-    /**
-     * Event Listener로 등록
-     */
-    @AfterInject
-    void calledAfterInjection() {
-        EventBus.getDefault().register(this);
+    /************************************************************
+     * Channel, PrivateGroup 수정 / 삭제
+     ************************************************************/
+    @ItemLongClick
+    void list_nav_channelsItemLongClicked(CdpItem cdp) {
+        showDialogToManipulate(cdp);
     }
 
-    @Override
-    public void onStop() {
-        if (mProgressWheel != null)
-            mProgressWheel.dismiss();
-        super.onStop();
+    @ItemLongClick
+    void list_nav_private_groupsItemLongClicked(CdpItem cdp) {
+        showDialogToManipulate(cdp);
     }
 
-    @Override
-    public void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    /**
-     * Alert Dialog 관련
-     */
-    void showDialog(int cdpType) {
-        DialogFragment newFragment
-                = EditTextAlertDialogFragment.newInstance(EditTextAlertDialogFragment.ACTION_CREATE_CDP
-                , cdpType
-                , 0);
+    void showDialogToManipulate(CdpItem cdp) {
+        DialogFragment newFragment = ManipulateCdpAlertDialog.newInstance(cdp);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    public void onEvent(ConfirmCreateCdpEvent event) {
-        switch (event.cdpType) {
-            case ChooseNaviActionEvent.TYPE_CHENNEL:
-                requestCreateChannel(event.inputName);
-                break;
-            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
-                requestCreatePrivateGroup(event.inputName);
-                break;
-            default:
-                break;
+    public void onEvent(ModifyCdpEvent event) {
+        DialogFragment newFragment = EditTextAlertDialogFragment.newInstance(
+                EditTextAlertDialogFragment.ACTION_MODIFY_CDP
+                , event.cdpType
+                , event.cdpId
+                , event.currentName);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * 수정 이벤트 획득 from EditTextAlertDialogFragment
+     */
+    public void onEvent(ConfirmModifyCdpEvent event) {
+        modifyCdp(event);
+    }
+
+    @UiThread
+    void modifyCdp(ConfirmModifyCdpEvent event) {
+        modifyCdpInBackground(event);
+    }
+
+    @Background
+    void modifyCdpInBackground(ConfirmModifyCdpEvent event) {
+        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            modifyChannelInBackground(event.cdpId, event.inputName);
+        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            modifyGroupInBackground(event.cdpId, event.inputName);
         }
+    }
+
+    void modifyChannelInBackground(int cdpId, String nameToBeModified) {
+        ResSendCdpMessage resId = null;
+        ReqCreateCdp channel = new ReqCreateCdp();
+        channel.name = nameToBeModified;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            resId = tossRestClient.modifyChannel(channel, cdpId);
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        modifyCdpDone();
+    }
+
+    void modifyGroupInBackground(int cdpId, String nameToBeModified) {
+        ResSendCdpMessage resId = null;
+        ReqCreateCdp privateGroup = new ReqCreateCdp();
+        privateGroup.name = nameToBeModified;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            resId = tossRestClient.modifyGroup(privateGroup, cdpId);
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        modifyCdpDone();
+    }
+
+    @UiThread
+    void modifyCdpDone() {
+        mProgressWheel.dismiss();
+        refreshAll();
+    }
+
+    /**
+     * 삭제 이벤트 획득 from DialogFragment
+     * @param event
+     */
+    public void onEvent(DeleteCdpEvent event) {
+        Log.e(TAG, "Delete Cdp :" + event.cdpId);
+        deleteCdp(event);
+    }
+
+    @UiThread
+    void deleteCdp(DeleteCdpEvent event) {
+        mProgressWheel.show();
+        deleteCdpInBackground(event);
+    }
+
+    @Background
+    void deleteCdpInBackground(DeleteCdpEvent event) {
+        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
+            deleteChannelInBackground(event.cdpId);
+        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+            deleteGroupInBackground(event.cdpId);
+        }
+    }
+
+    void deleteChannelInBackground(int cdpId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.deleteChannel(cdpId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    void deleteGroupInBackground(int cdpId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = tossRestClient.deleteGroup(cdpId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    @UiThread
+    void deleteCdpDone() {
+        mProgressWheel.dismiss();
+        refreshAll();
     }
 }
