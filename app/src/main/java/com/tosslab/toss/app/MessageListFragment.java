@@ -22,12 +22,9 @@ import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
-import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ResDirectMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
-import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
@@ -205,7 +202,7 @@ public class MessageListFragment extends BaseFragment {
     }
 
     void getPgMessagesInBackground(int id) {
-        ResPrivateGroupMessage restPgMessages = null;
+        ResPrivateGroupMessages restPgMessages = null;
         try {
             tossRestClient.setHeader("Authorization", myToken);
             restPgMessages = tossRestClient.getGroupMessages(id, mFirstItemId, 10);

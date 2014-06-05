@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 6. 3..
  */
-public class ResPrivateGroupMessage extends CdpMessages {
+public class ResPrivateGroupMessages extends CdpMessages {
     public int numOfPage;
     public int firstIdOfReceviedList;
     public boolean isFirst;

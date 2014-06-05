@@ -1,16 +1,19 @@
 package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.navigation.MessageItemView;
-import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
+import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResChannelMessages;
+import com.tosslab.toss.app.network.entities.ResChannelMessagesUpdated;
 import com.tosslab.toss.app.network.entities.ResDirectMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
+import com.tosslab.toss.app.network.entities.ResDirectMessagesUpdated;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessagesUpdated;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
-import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -26,6 +29,8 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
+
+import java.util.Date;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -77,6 +82,10 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResChannelMessages getChannelMessages(int channelId, int fromId, int numOfPost);
 
+    @Get("/channels/{channelId}/messages/update/{timeAfter}")
+    @RequiresHeader("Authorization")
+    ResChannelMessagesUpdated getChannelMessagesUpdated(int channelId, Date timeAfter);
+
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
     @RequiresHeader("Authorization")
@@ -102,6 +111,11 @@ public interface TossRestClient {
     @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
     ResDirectMessages getDirectMessages(String userId, int fromId, int numOfPost);
+
+    // Updated 된 Direct Message 리스트 정보 획득
+    @Get("/users/{userId}/messages/update/{timeAfter}")
+    @RequiresHeader("Authorization")
+    ResDirectMessagesUpdated getDirectMessagesUpdated(String userId, Date timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
@@ -142,7 +156,12 @@ public interface TossRestClient {
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResPrivateGroupMessage getGroupMessages(int groupId, int fromId, int numOfPost);
+    ResPrivateGroupMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+
+    // Updated 된 Private Group의 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
+    @RequiresHeader("Authorization")
+    ResPrivateGroupMessagesUpdated getDirectMessagesUpdated(int groupId, Date timeAfter);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")

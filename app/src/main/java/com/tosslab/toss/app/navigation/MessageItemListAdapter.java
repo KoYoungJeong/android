@@ -1,15 +1,13 @@
 package com.tosslab.toss.app.navigation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.toss.app.network.entities.CdpMessages;
 import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ResDirectMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
+import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -49,11 +47,11 @@ public class MessageItemListAdapter extends BaseAdapter {
         }
     }
 
-    public void retrievePgMessageItem(ResPrivateGroupMessage messages) {
+    public void retrievePgMessageItem(ResPrivateGroupMessages messages) {
         if (mMessages == null) {
             return;
         }
-        for (ResPrivateGroupMessage.PrivateGroupMessage message : messages.messages) {
+        for (ResPrivateGroupMessages.PrivateGroupMessage message : messages.messages) {
             mMessages.add(0, new MessageItem(message.id, message.writer.nickname,
                     message.writer.photoUrl, message.createTime,
                     message.contentType, message.content));
