@@ -101,23 +101,23 @@ public interface TossRestClient {
     // Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResDirectMessages getDirectMessages(int userId, int fromId, int numOfPost);
+    ResDirectMessages getDirectMessages(String userId, int fromId, int numOfPost);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, int userId);
+    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, String userId);
 
     // Direct Message 수정
     @Put("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResSendCdpMessage modifyDirectMessage(ReqModifyCdpMessage message,
-                                           int userId, int messageId);
+                                          String userId, int messageId);
 
     // Direct Message 삭제
     @Delete("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteDirectMessage(int userId, int messageId);
+    ResSendCdpMessage deleteDirectMessage(String userId, int messageId);
 
 
     /************************************************************

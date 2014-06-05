@@ -24,6 +24,7 @@ import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
 import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
 import com.tosslab.toss.app.network.entities.ResChannelMessages;
+import com.tosslab.toss.app.network.entities.ResDirectMessages;
 import com.tosslab.toss.app.network.entities.ResPrivateGroupMessage;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
@@ -119,27 +120,16 @@ public class MessageListFragment extends BaseFragment {
                     mDoLoading = true;
                     absListView.setSelection(firstVisibleItem + visibleItemCount);
                     Log.e(TAG, "Loading");
-                    getMessages(mCurrentEvent.type, mCurrentEvent.id, null);
+                    getMessages();
                 }
 
             }
         });
 
-//        // 실시간 Messages 가져오기를 위한 테스크
-//        mTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//                Log.e(TAG, "Do TimerTask");
-//                refreshAll(mCurrentEvent.type, mCurrentEvent.id, mCurrentEvent.userId);
-//            }
-//        };
-//        mTimer = new Timer();
-//        mTimer.schedule(mTask, 3000, 3000);
-
         // 초기에 기본으로 보여질 Message
         // TODO : 현재에는 0번 Private Group
         mFirstItemId = -1;
-        getMessages(mCurrentEvent.type, mCurrentEvent.id, null);
+        getMessages();
     }
 
     @AfterInject
@@ -154,32 +144,32 @@ public class MessageListFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    /**
-     * Navigation Panel 에서 선택한 Channel, Member or PG 정보
-     * @param event
-     */
-    public void onEvent(ChooseNaviActionEvent event) {
-        mIsFirstMessage = true;
-        mCurrentEvent = event;
-        refreshAll(mCurrentEvent.type, event.id, event.userId);
-    }
-
-    @UiThread
-    public void refreshAll(int type, int id, String userId) {
-        mFirstItemId = -1;
-        messageItemListAdapter.clearAdapter();
-        getMessages(type, id, userId);
-    }
-
     /************************************************************
      * Message List 획득
      * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
      ************************************************************/
 
+    /**
+     * Navigation Panel 에서 선택한 Channel, Member or PG 의 메시지 list 획득
+     * @param event
+     */
+    public void onEvent(ChooseNaviActionEvent event) {
+        mIsFirstMessage = true;
+        mCurrentEvent = event;
+        refreshAll();
+    }
+
     @UiThread
-    public void getMessages(int type, int id, String userId) {
+    public void refreshAll() {
+        mFirstItemId = -1;
+        messageItemListAdapter.clearAdapter();
+        getMessages();
+    }
+
+    @UiThread
+    public void getMessages() {
         mProgressWheel.show();
-        getMessagesInBackground(type, id, userId);
+        getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id, mCurrentEvent.userId);
     }
 
     @Background
@@ -188,6 +178,8 @@ public class MessageListFragment extends BaseFragment {
             getChannelMessagesInBackground(id);
         } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             getPgMessagesInBackground(id);
+        } else if (type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
+            getDirectMessagesInBackground(userId);
         }
     }
 
@@ -222,6 +214,25 @@ public class MessageListFragment extends BaseFragment {
             mFirstItemId = restPgMessages.firstIdOfReceviedList;
 
             messageItemListAdapter.retrievePgMessageItem(restPgMessages);
+            Log.e(TAG, "Get Success");
+            getMessagesEnd();
+        } catch (RestClientException e) {
+            Log.e(TAG, "Get Fail", e);
+        }
+    }
+
+    void getDirectMessagesInBackground(String userId) {
+        ResDirectMessages resDirectMessages = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            resDirectMessages = tossRestClient.getDirectMessages(userId, mFirstItemId, 10);
+
+            // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
+            mIsFirstMessage = resDirectMessages.isFirst;
+            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
+            mFirstItemId = resDirectMessages.firstIdOfReceviedList;
+
+            messageItemListAdapter.retrieveDirectMessageItem(resDirectMessages);
             Log.e(TAG, "Get Success");
             getMessagesEnd();
         } catch (RestClientException e) {
@@ -267,6 +278,8 @@ public class MessageListFragment extends BaseFragment {
             sendChannelMessageInBackground(message);
         } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             sendPgMessageInBackground(message);
+        } else if (type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
+            sendDirectMessageInBackground(message);
         }
     }
 
@@ -304,8 +317,25 @@ public class MessageListFragment extends BaseFragment {
         }
     }
 
+    @Background
+    public void sendDirectMessageInBackground(String message) {
+        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
+        sendingMessage.type = "string";
+        sendingMessage.content = message;
+
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.userId);
+            sendMessageDone();
+            Log.e(TAG, "Send Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "Send Fail", e);
+        }
+    }
+
     public void sendMessageDone() {
-        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
+        refreshAll();
     }
 
     /************************************************************
@@ -350,6 +380,8 @@ public class MessageListFragment extends BaseFragment {
             modifyChannelMessageInBackground(messageId, inputMessage);
         } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             modifyPgMessageInBackground(messageId, inputMessage);
+        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
+            modifyDirectMessageInBackground(messageId, inputMessage);
         }
     }
 
@@ -363,9 +395,9 @@ public class MessageListFragment extends BaseFragment {
             restResId = tossRestClient.modifyChannelMessage(reqModifyCdpMessage
                     , mCurrentEvent.id
                     , messageId);
-            Log.e(TAG, "delete Success");
+            Log.e(TAG, "modify Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            Log.e(TAG, "modify Fail", e);
         }
         modifyMessageDone();
     }
@@ -377,12 +409,31 @@ public class MessageListFragment extends BaseFragment {
             reqModifyCdpMessage.content = inputMessage;
 
             tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.modifyPrivateGroupMessage(reqModifyCdpMessage
+            restResId = tossRestClient.modifyPrivateGroupMessage(
+                    reqModifyCdpMessage
                     , mCurrentEvent.id
                     , messageId);
-            Log.e(TAG, "delete Success");
+            Log.e(TAG, "modify Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            Log.e(TAG, "modify Fail", e);
+        }
+        modifyMessageDone();
+    }
+
+    void modifyDirectMessageInBackground(int messageId, String inputMessage) {
+        ResSendCdpMessage restResId = null;
+        try {
+            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
+            reqModifyCdpMessage.content = inputMessage;
+
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.modifyDirectMessage(
+                    reqModifyCdpMessage
+                    , mCurrentEvent.userId
+                    , messageId);
+            Log.e(TAG, "modify Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "modify Fail", e);
         }
         modifyMessageDone();
     }
@@ -390,7 +441,7 @@ public class MessageListFragment extends BaseFragment {
     @UiThread
     void modifyMessageDone() {
         mProgressWheel.dismiss();
-        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
+        refreshAll();
     }
 
     /************************************************************
@@ -415,6 +466,8 @@ public class MessageListFragment extends BaseFragment {
             deleteChannelMessageInBackground(messageId);
         } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
             deletePgMessageInBackground(messageId);
+        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
+            deleteDirectMessageInBackground(messageId);
         }
 
     }
@@ -444,10 +497,22 @@ public class MessageListFragment extends BaseFragment {
         deleteMessageDone();
     }
 
+    void deleteDirectMessageInBackground(int messageId) {
+        ResSendCdpMessage restResId = null;
+        try {
+            tossRestClient.setHeader("Authorization", myToken);
+            restResId = tossRestClient.deleteDirectMessage(mCurrentEvent.userId, messageId);
+            Log.e(TAG, "delete Success");
+        } catch (RestClientException e) {
+            Log.e(TAG, "delete Fail", e);
+        }
+        deleteMessageDone();
+    }
+
     @UiThread
     void deleteMessageDone() {
         mProgressWheel.dismiss();
-        refreshAll(mCurrentEvent.type, mCurrentEvent.id, null);
+        refreshAll();
     }
 
     /************************************************************
