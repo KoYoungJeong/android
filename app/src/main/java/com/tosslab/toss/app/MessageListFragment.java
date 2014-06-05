@@ -20,6 +20,7 @@ import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.toss.app.events.ReqModifyMessageEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
+import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
 import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
@@ -57,10 +58,6 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment(R.layout.fragment_main)
 public class MessageListFragment extends BaseFragment {
-//    // 실시간 Messages 가져오기를 위한 테스크
-//    private TimerTask mTask;
-//    private Timer mTimer;
-
     private static final String TAG = "MessageListFragment";
     @RestService
     TossRestClient tossRestClient;
@@ -82,8 +79,6 @@ public class MessageListFragment extends BaseFragment {
     int mFirstItemId = -1;
     boolean mIsFirstMessage = true;
     boolean mDoLoading = true;
-
-//    int mCurrentPosition;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     ChooseNaviActionEvent mCurrentEvent;
@@ -135,6 +130,13 @@ public class MessageListFragment extends BaseFragment {
     @AfterInject
     void calledAfterInjection() {
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
     }
 
     @Override
@@ -262,7 +264,7 @@ public class MessageListFragment extends BaseFragment {
         hideSoftKeyboard();
 
         if (message.length() > 0) {
-            sendMessageInBackground(mCurrentEvent.type, message);
+            sendMessageInBackground(message);
         }
     }
 
@@ -273,74 +275,26 @@ public class MessageListFragment extends BaseFragment {
     }
 
 
-    public void sendMessageInBackground(int type, String message) {
-        if (type == ChooseNaviActionEvent.TYPE_CHENNEL) {
-            sendChannelMessageInBackground(message);
-        } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            sendPgMessageInBackground(message);
-        } else if (type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
-            sendDirectMessageInBackground(message);
-        }
-    }
-
     @Background
-    public void sendChannelMessageInBackground(String message) {
-        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
-        sendingMessage.type = "string";
-        sendingMessage.content = message;
-
-        ResSendCdpMessage restResId = null;
+    public void sendMessageInBackground(String message) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, mCurrentEvent, myToken);
         try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
-            sendMessageDone();
+            messageManipulator.sendMessage(message);
             Log.e(TAG, "Send Success");
         } catch (RestClientException e) {
             Log.e(TAG, "Send Fail", e);
         }
+
+        sendMessageDone();
     }
 
-    @Background
-    public void sendPgMessageInBackground(String message) {
-        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
-        sendingMessage.type = "string";
-        sendingMessage.content = message;
-
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
-            sendMessageDone();
-            Log.e(TAG, "Send Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "Send Fail", e);
-        }
-    }
-
-    @Background
-    public void sendDirectMessageInBackground(String message) {
-        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
-        sendingMessage.type = "string";
-        sendingMessage.content = message;
-
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.userId);
-            sendMessageDone();
-            Log.e(TAG, "Send Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "Send Fail", e);
-        }
-    }
-
+    @UiThread
     public void sendMessageDone() {
         refreshAll();
     }
 
-    /************************************************************
-     * Message 수정
-     ************************************************************/
+
     /**
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
      * @param item
@@ -356,6 +310,9 @@ public class MessageListFragment extends BaseFragment {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
+    /************************************************************
+     * Message 수정
+     ************************************************************/
     // Message 수정 이벤트 획득
     public void onEvent(ReqModifyMessageEvent event) {
         Log.e(TAG, "Edit Message : " + event.messageId);
@@ -371,70 +328,22 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     void modifyMessage(int messageId, String inputMessage) {
+        mProgressWheel.show();
         modifyMessageInBackground(messageId, inputMessage);
     }
 
     @Background
     void modifyMessageInBackground(int messageId, String inputMessage) {
-        if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_CHENNEL) {
-            modifyChannelMessageInBackground(messageId, inputMessage);
-        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            modifyPgMessageInBackground(messageId, inputMessage);
-        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
-            modifyDirectMessageInBackground(messageId, inputMessage);
-        }
-    }
+        MessageManipulator messageManipulator
+                = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
 
-    void modifyChannelMessageInBackground(int messageId, String inputMessage) {
-        ResSendCdpMessage restResId = null;
         try {
-            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
-            reqModifyCdpMessage.content = inputMessage;
-
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.modifyChannelMessage(reqModifyCdpMessage
-                    , mCurrentEvent.id
-                    , messageId);
-            Log.e(TAG, "modify Success");
+            messageManipulator.modifyMessage(messageId, inputMessage);
+            Log.e(TAG, "Modify Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "modify Fail", e);
+            Log.e(TAG, "Modify Fail", e);
         }
-        modifyMessageDone();
-    }
 
-    void modifyPgMessageInBackground(int messageId, String inputMessage) {
-        ResSendCdpMessage restResId = null;
-        try {
-            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
-            reqModifyCdpMessage.content = inputMessage;
-
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.modifyPrivateGroupMessage(
-                    reqModifyCdpMessage
-                    , mCurrentEvent.id
-                    , messageId);
-            Log.e(TAG, "modify Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "modify Fail", e);
-        }
-        modifyMessageDone();
-    }
-
-    void modifyDirectMessageInBackground(int messageId, String inputMessage) {
-        ResSendCdpMessage restResId = null;
-        try {
-            ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
-            reqModifyCdpMessage.content = inputMessage;
-
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.modifyDirectMessage(
-                    reqModifyCdpMessage
-                    , mCurrentEvent.userId
-                    , messageId);
-            Log.e(TAG, "modify Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "modify Fail", e);
-        }
         modifyMessageDone();
     }
 
@@ -456,62 +365,23 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     void deleteMessage(int messageId) {
-        mProgressWheel.show();
         deleteMessageInBackground(messageId);
     }
 
     @Background
     void deleteMessageInBackground(int messageId) {
-        if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_CHENNEL) {
-            deleteChannelMessageInBackground(messageId);
-        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            deletePgMessageInBackground(messageId);
-        } else if (mCurrentEvent.type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
-            deleteDirectMessageInBackground(messageId);
-        }
-
-    }
-
-    void deleteChannelMessageInBackground(int messageId) {
-        ResSendCdpMessage restResId = null;
+        MessageManipulator messageManipulator
+                = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
         try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
-            Log.e(TAG, "delete Success");
+            messageManipulator.deleteMessage(messageId);
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
-        }
-        deleteMessageDone();
-
-    }
-
-    void deletePgMessageInBackground(int messageId) {
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
-            Log.e(TAG, "delete Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
-        }
-        deleteMessageDone();
-    }
-
-    void deleteDirectMessageInBackground(int messageId) {
-        ResSendCdpMessage restResId = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restResId = tossRestClient.deleteDirectMessage(mCurrentEvent.userId, messageId);
-            Log.e(TAG, "delete Success");
-        } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            Log.e(TAG, "Delete Fail", e);
         }
         deleteMessageDone();
     }
 
     @UiThread
     void deleteMessageDone() {
-        mProgressWheel.dismiss();
         refreshAll();
     }
 

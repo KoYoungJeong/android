@@ -28,6 +28,9 @@ public class CdpMessages {
         public String contentType;
         public String content;
         public String status;
+
+        // TODO : Legacy
+        public int nTeamId;
     }
 
     public static class DirectMessage {
