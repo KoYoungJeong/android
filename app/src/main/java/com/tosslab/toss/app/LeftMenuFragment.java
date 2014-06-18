@@ -9,12 +9,12 @@ import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
 import com.tosslab.toss.app.events.ModifyCdpEvent;
-import com.tosslab.toss.app.events.RefreshCdpListEvent;
-import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
+import com.tosslab.toss.app.navigation.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
+import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
@@ -31,30 +31,23 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_navigation_drawer)
-public class NavigationDrawerFragment extends BaseFragment {
-    private static final String TAG = "NavigationDrawerFragment";
+public class LeftMenuFragment extends BaseFragment {
+    private static final String TAG = "LeftMenuFragment";
+    String mMyToken;
 
-    @ViewById(R.id.list_nav_channels)
-    ListView listChannels;
-    @ViewById(R.id.list_nav_members)
-    ListView listMembers;
-    @ViewById(R.id.list_nav_private_groups)
-    ListView listPrivateGroups;
-
+    @ViewById(R.id.list_cdps)
+    ListView mListCdps;
     @Bean
-    CdpItemListAdapter channelListAdapter;
-    @Bean
-    CdpItemListAdapter memberListAdapter;
-    @Bean
-    CdpItemListAdapter privateGroupListAdapter;
+    CdpItemListAdapter mCdpListAdapter;
 
     @RestService
-    TossRestClient tossRestClient;
+    TossRestClient mTossRestClient;
 
     private ProgressWheel mProgressWheel;
 
@@ -65,34 +58,17 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @AfterViews
     void bindAdapter() {
+        // myToken 획득
+        mMyToken = ((MainActivity)getActivity()).myToken;
+
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(getActivity());
         mProgressWheel.init();
 
-        listChannels.setAdapter(channelListAdapter);
-        listMembers.setAdapter(memberListAdapter);
-        listPrivateGroups.setAdapter(privateGroupListAdapter);
-    }
+        mListCdps.setAdapter(mCdpListAdapter);
 
-    @ItemClick
-    void list_nav_channelsItemClicked(CdpItem cdp) {
-        Log.e("HI", cdp.name + " Clicked. type is " + cdp.id);
-        ChooseNaviActionEvent event = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_CHENNEL, cdp.id);
-        EventBus.getDefault().post(event);
-    }
-
-    @ItemClick
-    void list_nav_membersItemClicked(CdpItem cdp) {
-        Log.e("HI", cdp.name + " Clicked. type is " + cdp.userId);
-        ChooseNaviActionEvent event = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE, cdp.userId);
-        EventBus.getDefault().post(event);
-    }
-
-    @ItemClick
-    void list_nav_private_groupsItemClicked(CdpItem cdp) {
-        Log.e("HI", cdp.name + " Clicked. type is " + cdp.id);
-        ChooseNaviActionEvent event = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_PRIVATE_GROUP, cdp.id);
-        EventBus.getDefault().post(event);
+        // C, D, P 리스트 획득
+        getCdpItemFromServer();
     }
 
     /**
@@ -117,41 +93,57 @@ public class NavigationDrawerFragment extends BaseFragment {
     }
 
     /************************************************************
-     * List Update / Refresh
+     * List 선택
+     * 선택한 C, D, P 에 대한 메시지 리스트 획득 이벤트가
+     * MessageListFragment로 전달됨.
      ************************************************************/
-
-    /**
-     * 모든 CDP 리스트를 초기화하고 서버로 다시 리스트를 요청한다.
-     */
-    @UiThread
-    void refreshAll() {
-        channelListAdapter.clearAdapter();
-        memberListAdapter.clearAdapter();
-        privateGroupListAdapter.clearAdapter();
-
-        RequestCdpListEvent event = new RequestCdpListEvent();
+    @ItemClick
+    void list_cdpsItemClicked(CdpItem cdp) {
+        Log.e("HI", cdp.name + " Clicked. type is " + cdp.type);
+        ChooseNaviActionEvent event = new ChooseNaviActionEvent(TossConstants.TYPE_CHANNEL, cdp.id);
         EventBus.getDefault().post(event);
     }
 
+    /************************************************************
+     * List Update / Refresh
+     ************************************************************/
     /**
-     * MainActivity 에서 리플레쉬 명령을 받으면 List 갱신을 수행
-     * @param event
+     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
-    public void onEvent(RefreshCdpListEvent event) {
+    @UiThread
+    public void getCdpItemFromServer() {
         mProgressWheel.show();
-        channelListAdapter.retrieveCdpItemsFromChannels(event.mInfos.joinChannels);
-        memberListAdapter.retrieveCdpItemsFromMembers(event.mInfos.members);
-        privateGroupListAdapter.retrieveCdpItemsFromPravateGroups(event.mInfos.privateGroups);
-        refreshListAdapter();
+        getCdpItemInBackground();
+    }
+
+    @Background
+    public void getCdpItemInBackground() {
+        ResLeftSideMenu resLeftSideMenu = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
+            getCdpItemEnd(resLeftSideMenu);
+        } catch (RestClientException e) {
+            Log.e("HI", "Get Fail", e);
+        } catch (HttpMessageNotReadableException e) {
+            Log.e("HI", "Get Fail", e);
+        } catch (Exception e) {
+            Log.e("HI", "Get Fail", e);
+        }
     }
 
     @UiThread
-    void refreshListAdapter() {
-        channelListAdapter.notifyDataSetChanged();
-        memberListAdapter.notifyDataSetChanged();
-        privateGroupListAdapter.notifyDataSetChanged();
+    public void getCdpItemEnd(ResLeftSideMenu resLeftSideMenu) {
+        refreshCdpList(resLeftSideMenu);
         mProgressWheel.dismiss();
     }
+
+    public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
+        CdpItemManager cdpItemManager = new CdpItemManager(resLeftSideMenu);
+        mCdpListAdapter.retrieveCdpItems(cdpItemManager);
+        mCdpListAdapter.notifyDataSetChanged();
+    }
+
 
     /************************************************************
      * Channel, PrivateGroup 생성
@@ -159,13 +151,15 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @Click(R.id.btn_action_add_channel)
     void createChannel() {
-        showDialogToCreate(ChooseNaviActionEvent.TYPE_CHENNEL);
+        Log.e(TAG, "Create Channel");
+        showDialogToCreate(TossConstants.TYPE_CHANNEL);
     }
 
-    @Click(R.id.btn_add_private_group)
-    void createPrivateGroup() {
-        showDialogToCreate(ChooseNaviActionEvent.TYPE_PRIVATE_GROUP);
-    }
+//    @Click(R.id.btn_add_private_group)
+//    void createPrivateGroup() {
+//        Log.e(TAG, "Create Private Group");
+//        showDialogToCreate(TossConstants.TYPE_PRIVATE_GROUP);
+//    }
 
     /**
      * Alert Dialog 관련
@@ -184,10 +178,10 @@ public class NavigationDrawerFragment extends BaseFragment {
      */
     public void onEvent(ConfirmCreateCdpEvent event) {
         switch (event.cdpType) {
-            case ChooseNaviActionEvent.TYPE_CHENNEL:
+            case TossConstants.TYPE_CHANNEL:
                 requestCreateChannel(event.inputName);
                 break;
-            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
+            case TossConstants.TYPE_PRIVATE_GROUP:
                 requestCreatePrivateGroup(event.inputName);
                 break;
             default:
@@ -209,9 +203,9 @@ public class NavigationDrawerFragment extends BaseFragment {
 
         ResSendCdpMessage restResId = null;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.createChannel(reqCreateCdp);
-            refreshAll();
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = mTossRestClient.createChannel(reqCreateCdp);
+            getCdpItemFromServer();
             Log.e(TAG, "Create Success");
         } catch (RestClientException e) {
             Log.e(TAG, "Create Fail", e);
@@ -232,9 +226,9 @@ public class NavigationDrawerFragment extends BaseFragment {
 
         ResSendCdpMessage restResId = null;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.createPrivateGroup(reqCreateCdp);
-            refreshAll();
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
+            getCdpItemFromServer();
             Log.e(TAG, "Create Success");
         } catch (RestClientException e) {
             Log.e(TAG, "Create Fail", e);
@@ -245,12 +239,7 @@ public class NavigationDrawerFragment extends BaseFragment {
      * Channel, PrivateGroup 수정 / 삭제
      ************************************************************/
     @ItemLongClick
-    void list_nav_channelsItemLongClicked(CdpItem cdp) {
-        showDialogToManipulate(cdp);
-    }
-
-    @ItemLongClick
-    void list_nav_private_groupsItemLongClicked(CdpItem cdp) {
+    void list_cdpsItemLongClicked(CdpItem cdp) {
         showDialogToManipulate(cdp);
     }
 
@@ -282,9 +271,9 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @Background
     void modifyCdpInBackground(ConfirmModifyCdpEvent event) {
-        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
+        if (event.cdpType == TossConstants.TYPE_CHANNEL) {
             modifyChannelInBackground(event.cdpId, event.inputName);
-        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+        } else if (event.cdpType == TossConstants.TYPE_PRIVATE_GROUP) {
             modifyGroupInBackground(event.cdpId, event.inputName);
         }
     }
@@ -294,8 +283,8 @@ public class NavigationDrawerFragment extends BaseFragment {
         ReqCreateCdp channel = new ReqCreateCdp();
         channel.name = nameToBeModified;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            resId = tossRestClient.modifyChannel(channel, cdpId);
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            resId = mTossRestClient.modifyChannel(channel, cdpId);
         } catch (RestClientException e) {
             Log.e(TAG, "delete Fail", e);
         }
@@ -307,8 +296,8 @@ public class NavigationDrawerFragment extends BaseFragment {
         ReqCreateCdp privateGroup = new ReqCreateCdp();
         privateGroup.name = nameToBeModified;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            resId = tossRestClient.modifyGroup(privateGroup, cdpId);
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            resId = mTossRestClient.modifyGroup(privateGroup, cdpId);
         } catch (RestClientException e) {
             Log.e(TAG, "delete Fail", e);
         }
@@ -318,7 +307,7 @@ public class NavigationDrawerFragment extends BaseFragment {
     @UiThread
     void modifyCdpDone() {
         mProgressWheel.dismiss();
-        refreshAll();
+        getCdpItemFromServer();
     }
 
     /**
@@ -338,9 +327,9 @@ public class NavigationDrawerFragment extends BaseFragment {
 
     @Background
     void deleteCdpInBackground(DeleteCdpEvent event) {
-        if (event.cdpType == ChooseNaviActionEvent.TYPE_CHENNEL) {
+        if (event.cdpType == TossConstants.TYPE_CHANNEL) {
             deleteChannelInBackground(event.cdpId);
-        } else if (event.cdpType == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
+        } else if (event.cdpType == TossConstants.TYPE_PRIVATE_GROUP) {
             deleteGroupInBackground(event.cdpId);
         }
     }
@@ -348,8 +337,8 @@ public class NavigationDrawerFragment extends BaseFragment {
     void deleteChannelInBackground(int cdpId) {
         ResSendCdpMessage restResId = null;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.deleteChannel(cdpId);
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = mTossRestClient.deleteChannel(cdpId);
             Log.e(TAG, "delete Success");
         } catch (RestClientException e) {
             Log.e(TAG, "delete Fail", e);
@@ -360,8 +349,8 @@ public class NavigationDrawerFragment extends BaseFragment {
     void deleteGroupInBackground(int cdpId) {
         ResSendCdpMessage restResId = null;
         try {
-            tossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
-            restResId = tossRestClient.deleteGroup(cdpId);
+            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            restResId = mTossRestClient.deleteGroup(cdpId);
             Log.e(TAG, "delete Success");
         } catch (RestClientException e) {
             Log.e(TAG, "delete Fail", e);
@@ -372,6 +361,6 @@ public class NavigationDrawerFragment extends BaseFragment {
     @UiThread
     void deleteCdpDone() {
         mProgressWheel.dismiss();
-        refreshAll();
+        getCdpItemFromServer();
     }
 }

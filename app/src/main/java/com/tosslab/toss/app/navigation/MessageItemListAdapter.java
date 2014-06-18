@@ -5,9 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.toss.app.network.entities.ResChannelMessages;
-import com.tosslab.toss.app.network.entities.ResDirectMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
+import com.tosslab.toss.app.network.entities.ResMessages;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -36,37 +34,13 @@ public class MessageItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void retrieveChannelMessageItem(ResChannelMessages messages) {
-        if (mMessages == null) {
-            return;
-        }
-        for (ResChannelMessages.ChannelMessage message : messages.messages) {
-            mMessages.add(0, new MessageItem(message.id, message.writer.nickname,
-                    message.writer.photoUrl, message.createTime,
-                    message.contentType, message.content));
-        }
-    }
-
-    public void retrievePgMessageItem(ResPrivateGroupMessages messages) {
-        if (mMessages == null) {
-            return;
-        }
-        for (ResPrivateGroupMessages.PrivateGroupMessage message : messages.messages) {
-            mMessages.add(0, new MessageItem(message.id, message.writer.nickname,
-                    message.writer.photoUrl, message.createTime,
-                    message.contentType, message.content));
-        }
-    }
-
-    public void retrieveDirectMessageItem(ResDirectMessages messages) {
+    public void retrieveMessageItem(ResMessages messages) {
         if (mMessages == null) {
             return;
         }
 
-        for (ResDirectMessages.DirectMessage message : messages.messages) {
-            mMessages.add(0, new MessageItem(message.id, message.fromUser.nickname,
-                    message.fromUser.photoUrl, message.createTime,
-                    message.contentType, message.content));
+        for (ResMessages.Link link : messages.messages) {
+            mMessages.add(0, new MessageItem(link));
         }
     }
 

@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
     }
 }
 apply plugin: 'android-library'
@@ -14,13 +14,11 @@ dependencies {
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
-
+    buildToolsVersion '19.1'
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 19
     }
-
     sourceSets {
         main {
             java.srcDirs = ['src']
@@ -33,5 +31,8 @@ android {
             manifest.srcFile 'AndroidManifest.xml'
         }
     }
-
+    productFlavors {
+    }
+    buildTypes {
+    }
 }

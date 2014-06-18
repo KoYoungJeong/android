@@ -14,7 +14,7 @@
     <!-- 네비게이션 panel -->
     <fragment
         android:id="@+id/fr_navigation_drawer"
-        android:name="com.tosslab.toss.app.NavigationDrawerFragment_"
+        android:name="com.tosslab.toss.app.LeftMenuFragment_"
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"

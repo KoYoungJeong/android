@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
@@ -9,4 +9,70 @@
         android:gravity="center_vertical"
         android:layout_height="@dimen/left_menu_item_height"
         android:textColor="@color/nav_drawer_text"/>
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_title_joined_channel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="YOUR CHANNELS"
+            android:textColor="@color/nav_drawer_text"/>
+        <ImageButton
+            android:id="@+id/btn_action_add_channel"
+            android:layout_width="@dimen/left_menu_add_action_button"
+            android:layout_height="@dimen/left_menu_add_action_button"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_add"
+            android:layout_marginRight="@dimen/right_menu_margin"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_title_unjoined_channel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="+ ? more..."
+            android:textColor="@color/nav_drawer_text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_title_direct_message"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="DIRECT MESSAGE"
+            android:textColor="@color/nav_drawer_text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_title_private_group"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/left_menu_item_height">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/right_menu_margin"
+            android:gravity="center_vertical"
+            android:text="PRIVATE GROUPS"
+            android:textColor="@color/nav_drawer_text"/>
+        <ImageButton
+            android:id="@+id/btn_action_add_private_group"
+            android:layout_width="@dimen/left_menu_add_action_button"
+            android:layout_height="@dimen/left_menu_add_action_button"
+            android:layout_gravity="center_vertical"
+            android:background="@android:drawable/ic_menu_add"
+            android:layout_marginRight="@dimen/right_menu_margin"/>
+    </LinearLayout>
+</FrameLayout>

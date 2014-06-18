@@ -1,14 +1,14 @@
 package com.tosslab.toss.app.events;
 
-import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
+import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
 public class RefreshCdpListEvent {
-    public TossRestInfosForSideMenu mInfos;
+    public ResLeftSideMenu mResLeftSideMenu;
 
-    public RefreshCdpListEvent(TossRestInfosForSideMenu infos) {
-        mInfos = infos;
+    public RefreshCdpListEvent(ResLeftSideMenu infos) {
+        mResLeftSideMenu = infos;
     }
 }

@@ -4,15 +4,13 @@ import com.tosslab.toss.app.navigation.MessageItemView;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
 import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
-import com.tosslab.toss.app.network.entities.ResChannelMessages;
 import com.tosslab.toss.app.network.entities.ResChannelMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResDirectMessages;
 import com.tosslab.toss.app.network.entities.ResDirectMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
+import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
+import com.tosslab.toss.app.network.entities.ResMessages;
 import com.tosslab.toss.app.network.entities.ResPrivateGroupMessagesUpdated;
 import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
@@ -56,7 +54,7 @@ public interface TossRestClient {
     // 채널, PG, DM 리스트 획득
     @Get("/leftSideMenu")
     @RequiresHeader("Authorization")
-    TossRestInfosForSideMenu getInfosForSideMenu();
+    ResLeftSideMenu getInfosForSideMenu();
 
     /************************************************************
      * 채널 관련
@@ -80,7 +78,7 @@ public interface TossRestClient {
     // 채널에서 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResChannelMessages getChannelMessages(int channelId, int fromId, int numOfPost);
+    ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
 
     @Get("/channels/{channelId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
@@ -110,28 +108,28 @@ public interface TossRestClient {
     // Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResDirectMessages getDirectMessages(String userId, int fromId, int numOfPost);
+    ResMessages getDirectMessages(int userId, int fromId, int numOfPost);
 
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
-    ResDirectMessagesUpdated getDirectMessagesUpdated(String userId, Date timeAfter);
+    ResDirectMessagesUpdated getDirectMessagesUpdated(int userId, Date timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, String userId);
+    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, int userId);
 
     // Direct Message 수정
     @Put("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResSendCdpMessage modifyDirectMessage(ReqModifyCdpMessage message,
-                                          String userId, int messageId);
+                                          int userId, int messageId);
 
     // Direct Message 삭제
     @Delete("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteDirectMessage(String userId, int messageId);
+    ResSendCdpMessage deleteDirectMessage(int userId, int messageId);
 
 
     /************************************************************
@@ -156,12 +154,12 @@ public interface TossRestClient {
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
     @RequiresHeader("Authorization")
-    ResPrivateGroupMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+    ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
 
     // Updated 된 Private Group의 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
-    ResPrivateGroupMessagesUpdated getDirectMessagesUpdated(int groupId, Date timeAfter);
+    ResPrivateGroupMessagesUpdated getGroupMessagesUpdated(int groupId, Date timeAfter);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")

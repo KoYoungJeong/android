@@ -5,13 +5,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
@@ -111,12 +110,12 @@ public class EditTextAlertDialogFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 switch (actionType) {
                                     case ACTION_CREATE_CDP:
-                                        // CDP 생성의 경우 NavigationDrawerFragment 로 해당 이벤트 전달
+                                        // CDP 생성의 경우 LeftMenuFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(new ConfirmCreateCdpEvent(cdpType
                                                 , inputName.getText().toString()));
                                         break;
                                     case ACTION_MODIFY_CDP:
-                                        // CDP 수정의 경우 NavigationDrawerFragment 로 해당 이벤트 전달
+                                        // CDP 수정의 경우 LeftMenuFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(new ConfirmModifyCdpEvent(cdpType
                                                 , id
                                                 , inputName.getText().toString()));
@@ -164,12 +163,12 @@ public class EditTextAlertDialogFragment extends DialogFragment {
 
     int obtainTitileForCreateCdp(int cdpType) {
         switch (cdpType) {
-            case ChooseNaviActionEvent.TYPE_CHENNEL:
+            case TossConstants.TYPE_CHANNEL:
                 return R.string.create_channel;
-            case ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE:
+            case TossConstants.TYPE_DIRECT_MESSAGE:
                 // TODO : Direct Message 에 생성이 필요할까?
                 return R.string.create_direct_message;
-            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
+            case TossConstants.TYPE_PRIVATE_GROUP:
             default:
                 return R.string.create_private_group;
         }
@@ -177,12 +176,12 @@ public class EditTextAlertDialogFragment extends DialogFragment {
 
     int obtainTitileForModifyCdp(int cdpType) {
         switch (cdpType) {
-            case ChooseNaviActionEvent.TYPE_CHENNEL:
+            case TossConstants.TYPE_CHANNEL:
                 return R.string.modify_channel;
-            case ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE:
+            case TossConstants.TYPE_DIRECT_MESSAGE:
                 // TODO : Direct Message 에 수정이 필요할까?
                 return R.string.modify_private_group;
-            case ChooseNaviActionEvent.TYPE_PRIVATE_GROUP:
+            case TossConstants.TYPE_PRIVATE_GROUP:
             default:
                 return R.string.modify_direct_message;
         }

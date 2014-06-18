@@ -22,9 +22,7 @@ import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.ResChannelMessages;
-import com.tosslab.toss.app.network.entities.ResDirectMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessages;
+import com.tosslab.toss.app.network.entities.ResMessages;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
@@ -90,9 +88,6 @@ public class MessageListFragment extends BaseFragment {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(getActivity());
         mProgressWheel.init();
-
-        // TODO : 기본 채널 0번
-        mCurrentEvent = new ChooseNaviActionEvent(ChooseNaviActionEvent.TYPE_CHENNEL, 0);
 
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -167,71 +162,28 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     public void getMessages() {
-        mProgressWheel.show();
-        getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id, mCurrentEvent.userId);
+        if (mCurrentEvent != null) {
+            mProgressWheel.show();
+            getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
+        } else {
+            // TODO : 시작 화면 보이기
+        }
+
     }
 
     @Background
-    public void getMessagesInBackground(int type, int id, String userId) {
-        if (type == ChooseNaviActionEvent.TYPE_CHENNEL) {
-            getChannelMessagesInBackground(id);
-        } else if (type == ChooseNaviActionEvent.TYPE_PRIVATE_GROUP) {
-            getPgMessagesInBackground(id);
-        } else if (type == ChooseNaviActionEvent.TYPE_DIRECT_MESSAGE) {
-            getDirectMessagesInBackground(userId);
-        }
-    }
-
-    void getChannelMessagesInBackground(int id) {
-        ResChannelMessages restPgMessages = null;
+    public void getMessagesInBackground(int type, int id) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, mCurrentEvent, myToken);
         try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restPgMessages = tossRestClient.getChannelMessages(id, mFirstItemId, 10);
+            ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
 
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            mIsFirstMessage = restPgMessages.isFirst;
+            mIsFirstMessage = restResMessages.isFirst;
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            mFirstItemId = restPgMessages.firstIdOfReceviedList;
+            mFirstItemId = restResMessages.firstIdOfReceviedList;
 
-            messageItemListAdapter.retrieveChannelMessageItem(restPgMessages);
-            Log.e(TAG, "Get Success");
-            getMessagesEnd();
-        } catch (RestClientException e) {
-            Log.e(TAG, "Get Fail", e);
-        }
-    }
-
-    void getPgMessagesInBackground(int id) {
-        ResPrivateGroupMessages restPgMessages = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            restPgMessages = tossRestClient.getGroupMessages(id, mFirstItemId, 10);
-
-            // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            mIsFirstMessage = restPgMessages.isFirst;
-            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            mFirstItemId = restPgMessages.firstIdOfReceviedList;
-
-            messageItemListAdapter.retrievePgMessageItem(restPgMessages);
-            Log.e(TAG, "Get Success");
-            getMessagesEnd();
-        } catch (RestClientException e) {
-            Log.e(TAG, "Get Fail", e);
-        }
-    }
-
-    void getDirectMessagesInBackground(String userId) {
-        ResDirectMessages resDirectMessages = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            resDirectMessages = tossRestClient.getDirectMessages(userId, mFirstItemId, 10);
-
-            // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            mIsFirstMessage = resDirectMessages.isFirst;
-            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            mFirstItemId = resDirectMessages.firstIdOfReceviedList;
-
-            messageItemListAdapter.retrieveDirectMessageItem(resDirectMessages);
+            messageItemListAdapter.retrieveMessageItem(restResMessages);
             Log.e(TAG, "Get Success");
             getMessagesEnd();
         } catch (RestClientException e) {

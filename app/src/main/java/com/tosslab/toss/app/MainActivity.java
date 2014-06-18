@@ -9,28 +9,20 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
-import com.tosslab.toss.app.events.RefreshCdpListEvent;
-import com.tosslab.toss.app.events.RequestCdpListEvent;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.client.RestClientException;
 
 import java.lang.reflect.Field;
 
@@ -71,50 +63,9 @@ public class MainActivity extends Activity {
         expandRangeOfNavigationDrawerToggle();
 
         selectItem(0);  // 기본 프레그먼트 설정
-
-        getInfosForSideMenu();  // 채널, DM, PG 리스트 획득
     }
 
-    /**
-     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
-     */
-    @UiThread
-    public void getInfosForSideMenu() {
-        mProgressWheel.show();
-        getInfosForSideMenuInBackground();
-    }
 
-    @Background
-    public void getInfosForSideMenuInBackground() {
-
-        TossRestInfosForSideMenu resTossRest = null;
-        try {
-            tossRestClient.setHeader("Authorization", myToken);
-            resTossRest = tossRestClient.getInfosForSideMenu();
-            getInfosForSideMenuEnd(resTossRest);
-        } catch (RestClientException e) {
-            Log.e("HI", "Get Fail", e);
-        } catch (HttpMessageNotReadableException e) {
-            Log.e("HI", "Get Fail", e);
-        } catch (Exception e) {
-            Log.e("HI", "Get Fail", e);
-        }
-    }
-
-    @UiThread
-    public void getInfosForSideMenuEnd(TossRestInfosForSideMenu resTossRest) {
-        mProgressWheel.dismiss();
-        refreshCdpList(resTossRest);
-    }
-
-    /**
-     * Navigation Panel에 List 갱신 Event를 전송한다.
-     * @param resTossRest
-     */
-    public void refreshCdpList(TossRestInfosForSideMenu resTossRest) {
-        RefreshCdpListEvent event = new RefreshCdpListEvent(resTossRest);
-        EventBus.getDefault().post(event);
-    }
 
     @Override
     public void onResume() {
@@ -136,15 +87,9 @@ public class MainActivity extends Activity {
     }
 
     public void onEvent(ChooseNaviActionEvent event) {
+        // 해당 이벤트는 LeftMenuFragment -> MessageListFragment 지만
+        // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
-    }
-
-    /**
-     * NavigationDrawerFragment 로 전달되는 Cdp List를 다시 받아온다.
-     * @param event
-     */
-    public void onEvent(RequestCdpListEvent event) {
-        getInfosForSideMenu();
     }
 
     public void onPostCreate(Bundle savedInstanceState){

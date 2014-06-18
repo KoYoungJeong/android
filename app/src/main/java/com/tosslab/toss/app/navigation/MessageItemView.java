@@ -17,8 +17,7 @@ import org.androidannotations.annotations.ViewById;
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
-//    private static final String sRootUrl = "https://121.162.244.90:3000/";
-    public static final String sRootUrl = "https://192.168.0.11:3000/";
+    public static final String sRootUrl = "https://112.219.215.146:3000/";
 
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;

@@ -1,5 +1,7 @@
 package com.tosslab.toss.app.navigation;
 
+import com.tosslab.toss.app.network.entities.ResMessages;
+
 import java.util.Date;
 
 /**
@@ -16,17 +18,19 @@ public class MessageItem {
     public final int contentType;
     public final String contentString;
 
-    public MessageItem(int id, String userNickName, String userProfileUrl, Date createTime,
-                       String contentType, String contentString) {
-        this.id = id;
-        this.userNickName = userNickName;
-        this.userProfileUrl = userProfileUrl;
-        if (contentType.equals("image")) {
-            this.contentType = TYPE_IMAGE;
-        } else {
+    public MessageItem(ResMessages.Link link) {
+        this.id = link.id;
+        this.userNickName = link.message.writer.name;
+        this.userProfileUrl = link.message.writer.u_photoUrl;
+        this.createTime = link.time;
+
+        if (link.message instanceof ResMessages.TextMessage) {
             this.contentType = TYPE_STRING;
+            this.contentString = ((ResMessages.TextMessage)link.message).content.body;
+        } else {
+            // TODO : 다른 파일들
+            this.contentType = TYPE_IMAGE;
+            this.contentString = "";
         }
-        this.createTime = createTime;
-        this.contentString = contentString;
     }
 }

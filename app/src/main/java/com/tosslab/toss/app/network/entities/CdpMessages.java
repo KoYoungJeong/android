@@ -1,6 +1,10 @@
 package com.tosslab.toss.app.network.entities;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by justinygchoi on 2014. 6. 3..
@@ -14,7 +18,7 @@ public class CdpMessages {
         public Date createTime;
         public Date updateTime;
         public String contentType;
-        public String content;
+        public Content content;
         public String status;
     }
 
@@ -26,7 +30,7 @@ public class CdpMessages {
         public Date createTime;
         public Date updateTime;
         public String contentType;
-        public String content;
+        public Content content;
         public String status;
 
         // TODO : Legacy
@@ -41,7 +45,7 @@ public class CdpMessages {
         public Date createTime;
         public Date updateTime;
         public String contentType;
-        public String content;
+        public Content content;
         public String status;
 
         // TODO : Legacy
@@ -54,5 +58,33 @@ public class CdpMessages {
         public String firstName;
         public String lastName;
         public String photoUrl;
+    }
+
+//    @JsonTypeInfo(
+//            use = JsonTypeInfo.Id.NAME,
+//            include = JsonTypeInfo.As.PROPERTY,
+//            property = "type")
+//    @JsonSubTypes({
+//            @JsonSubTypes.Type(value = String.class, name = "string"),
+//            @JsonSubTypes.Type(value = Dog.class, name = "dog") })
+    public static class Content {
+        public int id;
+        public Writer writer;
+        public String writerId;
+        public String title;
+        public String name;
+        public String type;
+        public String serverUrl;
+        public String fileUrl;
+        public Date commentUpdateTime;
+        public List<Comment> comments;
+        public Date createTime;
+        public Date updateTime;
+        public String status;
+        public int commentCount;
+    }
+
+    public static class Comment {
+
     }
 }

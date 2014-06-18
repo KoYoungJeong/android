@@ -1,12 +1,9 @@
 package com.tosslab.toss.app.navigation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
-import com.tosslab.toss.app.network.entities.TossRestInfosForSideMenu;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -35,33 +32,12 @@ public class CdpItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void retrieveCdpItemsFromChannels(List<TossRestInfosForSideMenu.Channel> channels) {
+    public void retrieveCdpItems(CdpItemManager cdpItemManager) {
         if (mCdpItems == null) {
             return;
         }
-        for (TossRestInfosForSideMenu.Channel channel : channels) {
-            mCdpItems.add(new CdpItem("# " + channel.name, CdpItem.TYPE_CHANNEL, channel.id));
-        }
-    }
-
-    public void retrieveCdpItemsFromMembers(List<TossRestInfosForSideMenu.Member> members) {
-        if (mCdpItems == null) {
-            return;
-        }
-
-        for (TossRestInfosForSideMenu.Member member : members) {
-            mCdpItems.add(new CdpItem("@" + member.nickname, member.id));
-        }
-    }
-
-    public void retrieveCdpItemsFromPravateGroups(List<TossRestInfosForSideMenu.PrivateGroup> privateGroups) {
-        if (mCdpItems == null) {
-            return;
-        }
-
-        for (TossRestInfosForSideMenu.PrivateGroup group : privateGroups) {
-            mCdpItems.add(new CdpItem(group.name, CdpItem.TYPE_PRIVATE_GROUP, group.id));
-        }
+        mCdpItems = cdpItemManager.retrieve();
+        notifyDataSetChanged();
     }
 
     @Override
