@@ -22,13 +22,13 @@ import de.greenrobot.event.EventBus;
 public class ManipulateMessageAlertDialog extends DialogFragment {
     public static ManipulateMessageAlertDialog newInstance(MessageItem item) {
 
-        String title = DateTransformator.getTimeString(item.createTime);
+        String title = DateTransformator.getTimeString(item.getTime());
 
         ManipulateMessageAlertDialog frag = new ManipulateMessageAlertDialog();
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putInt("messageId", item.id);
-        args.putString("currentMessage", item.contentString);
+        args.putInt("messageId", item.getId());
+        args.putString("currentMessage", item.getContentString());
         frag.setArguments(args);
         return frag;
     }

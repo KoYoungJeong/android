@@ -15,7 +15,7 @@ import com.tosslab.toss.app.navigation.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
 import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
-import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResSendMessage;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -201,7 +201,7 @@ public class LeftMenuFragment extends BaseFragment {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = channelName;
 
-        ResSendCdpMessage restResId = null;
+        ResSendMessage restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.createChannel(reqCreateCdp);
@@ -224,7 +224,7 @@ public class LeftMenuFragment extends BaseFragment {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = pgName;
 
-        ResSendCdpMessage restResId = null;
+        ResSendMessage restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
@@ -279,7 +279,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     void modifyChannelInBackground(int cdpId, String nameToBeModified) {
-        ResSendCdpMessage resId = null;
+        ResSendMessage resId = null;
         ReqCreateCdp channel = new ReqCreateCdp();
         channel.name = nameToBeModified;
         try {
@@ -292,7 +292,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     void modifyGroupInBackground(int cdpId, String nameToBeModified) {
-        ResSendCdpMessage resId = null;
+        ResSendMessage resId = null;
         ReqCreateCdp privateGroup = new ReqCreateCdp();
         privateGroup.name = nameToBeModified;
         try {
@@ -335,7 +335,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     void deleteChannelInBackground(int cdpId) {
-        ResSendCdpMessage restResId = null;
+        ResSendMessage restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.deleteChannel(cdpId);
@@ -347,7 +347,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     void deleteGroupInBackground(int cdpId) {
-        ResSendCdpMessage restResId = null;
+        ResSendMessage restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.deleteGroup(cdpId);

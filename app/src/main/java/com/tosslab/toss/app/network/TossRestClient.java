@@ -1,17 +1,17 @@
 package com.tosslab.toss.app.network;
 
-import com.tosslab.toss.app.navigation.MessageItemView;
+import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.entities.ReqCreateCdp;
-import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
-import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ReqModifyMessage;
+import com.tosslab.toss.app.network.entities.ReqSendMessage;
 import com.tosslab.toss.app.network.entities.ResChannelMessagesUpdated;
 import com.tosslab.toss.app.network.entities.ResDirectMessagesUpdated;
 import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
+import com.tosslab.toss.app.network.entities.ResLogin;
 import com.tosslab.toss.app.network.entities.ResMessages;
 import com.tosslab.toss.app.network.entities.ResPrivateGroupMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResSendMessage;
 import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.network.entities.TossRestLogin;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -34,8 +34,7 @@ import java.util.Date;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-//        rootUrl = "https://121.162.244.90:3000/inner-api",
-        rootUrl = MessageItemView.sRootUrl + "inner-api",
+        rootUrl = TossConstants.SERVICE_ROOT_URL + "inner-api",
         converters = {
                 MappingJacksonHttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
@@ -49,7 +48,7 @@ public interface TossRestClient {
 
     // 로그인
     @Post("/token")
-    TossRestToken loginAndReturnToken(TossRestLogin login);
+    TossRestToken loginAndReturnToken(ResLogin login);
 
     // 채널, PG, DM 리스트 획득
     @Get("/leftSideMenu")
@@ -63,17 +62,17 @@ public interface TossRestClient {
     // 채널 생성
     @Post("/channel")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage createChannel(ReqCreateCdp channel);
+    ResSendMessage createChannel(ReqCreateCdp channel);
 
     // 채널 수정
     @Put("/channels/{channelId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage modifyChannel(ReqCreateCdp channel, int channelId);
+    ResSendMessage modifyChannel(ReqCreateCdp channel, int channelId);
 
     // 채널 삭제
     @Delete("/channels/{channelId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteChannel(int channelId);
+    ResSendMessage deleteChannel(int channelId);
 
     // 채널에서 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
@@ -87,18 +86,18 @@ public interface TossRestClient {
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage sendChannelMessage(ReqSendCdpMessage message, int channelId);
+    ResSendMessage sendChannelMessage(ReqSendMessage message, int channelId);
 
     // 채널에서 Message 수정
     @Put("/channels/{channelId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage modifyChannelMessage(ReqModifyCdpMessage message,
+    ResSendMessage modifyChannelMessage(ReqModifyMessage message,
                                            int channelId, int messageId);
 
     // 채널에서 Message 삭제
     @Delete("/channels/{channelId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteChannelMessage(int channelId, int messageId);
+    ResSendMessage deleteChannelMessage(int channelId, int messageId);
 
 
     /************************************************************
@@ -118,18 +117,18 @@ public interface TossRestClient {
     // Direct Message 생성
     @Post("/users/{userId}/message")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage sendDirectMessage(ReqSendCdpMessage message, int userId);
+    ResSendMessage sendDirectMessage(ReqSendMessage message, int userId);
 
     // Direct Message 수정
     @Put("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage modifyDirectMessage(ReqModifyCdpMessage message,
+    ResSendMessage modifyDirectMessage(ReqModifyMessage message,
                                           int userId, int messageId);
 
     // Direct Message 삭제
     @Delete("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteDirectMessage(int userId, int messageId);
+    ResSendMessage deleteDirectMessage(int userId, int messageId);
 
 
     /************************************************************
@@ -139,17 +138,17 @@ public interface TossRestClient {
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage createPrivateGroup(ReqCreateCdp group);
+    ResSendMessage createPrivateGroup(ReqCreateCdp group);
 
     // 채널 수정
     @Put("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage modifyGroup(ReqCreateCdp channel, int groupId);
+    ResSendMessage modifyGroup(ReqCreateCdp channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deleteGroup(int groupId);
+    ResSendMessage deleteGroup(int groupId);
 
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
@@ -164,18 +163,18 @@ public interface TossRestClient {
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage sendGroupMessage(ReqSendCdpMessage message, int groupId);
+    ResSendMessage sendGroupMessage(ReqSendMessage message, int groupId);
 
     // Private Group Message 수정
     @Put("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage modifyPrivateGroupMessage(ReqModifyCdpMessage message,
+    ResSendMessage modifyPrivateGroupMessage(ReqModifyMessage message,
                                            int groupId, int messageId);
 
     // Private Group Message 삭제
     @Delete("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendCdpMessage deletePrivateGroupMessage(int groupId, int messageId);
+    ResSendMessage deletePrivateGroupMessage(int groupId, int messageId);
 
     /************************************************************
      * File upload

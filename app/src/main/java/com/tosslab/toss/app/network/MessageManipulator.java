@@ -2,10 +2,10 @@ package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.ChooseNaviActionEvent;
-import com.tosslab.toss.app.network.entities.ReqModifyCdpMessage;
-import com.tosslab.toss.app.network.entities.ReqSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ReqModifyMessage;
+import com.tosslab.toss.app.network.entities.ReqSendMessage;
 import com.tosslab.toss.app.network.entities.ResMessages;
-import com.tosslab.toss.app.network.entities.ResSendCdpMessage;
+import com.tosslab.toss.app.network.entities.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
 
@@ -35,8 +35,8 @@ public class MessageManipulator {
         return null;
     }
 
-    public ResSendCdpMessage sendMessage(String message) throws RestClientException {
-        ReqSendCdpMessage sendingMessage = new ReqSendCdpMessage();
+    public ResSendMessage sendMessage(String message) throws RestClientException {
+        ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.type = "string";
         sendingMessage.content = message;
 
@@ -50,21 +50,21 @@ public class MessageManipulator {
         return null;
     }
 
-    public ResSendCdpMessage modifyMessage(int messageId, String message) throws RestClientException {
-        ReqModifyCdpMessage reqModifyCdpMessage = new ReqModifyCdpMessage();
-        reqModifyCdpMessage.content = message;
+    public ResSendMessage modifyMessage(int messageId, String message) throws RestClientException {
+        ReqModifyMessage reqModifyMessage = new ReqModifyMessage();
+        reqModifyMessage.content = message;
 
         if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
-            return mRestClient.modifyChannelMessage(reqModifyCdpMessage, mCurrentEvent.id, messageId);
+            return mRestClient.modifyChannelMessage(reqModifyMessage, mCurrentEvent.id, messageId);
         } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {
-            return mRestClient.modifyPrivateGroupMessage(reqModifyCdpMessage, mCurrentEvent.id, messageId);
+            return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCurrentEvent.id, messageId);
         } else if (mCurrentEvent.type == TossConstants.TYPE_DIRECT_MESSAGE) {
-            return mRestClient.modifyDirectMessage(reqModifyCdpMessage, mCurrentEvent.id, messageId);
+            return mRestClient.modifyDirectMessage(reqModifyMessage, mCurrentEvent.id, messageId);
         }
         return null;
     }
 
-    public ResSendCdpMessage deleteMessage(int messageId) throws RestClientException {
+    public ResSendMessage deleteMessage(int messageId) throws RestClientException {
         if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
             return mRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
         } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {

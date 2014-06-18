@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.R;
+import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
@@ -17,8 +18,6 @@ import org.androidannotations.annotations.ViewById;
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
-    public static final String sRootUrl = "https://112.219.215.146:3000/";
-
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;
 
@@ -47,20 +46,20 @@ public class MessageItemView extends LinearLayout {
         mMessageContent.setText("");
 
 
-        mUserName.setText(item.userNickName);
+        mUserName.setText(item.getUserNickName());
         // 메시지 String
-        if (item.contentType == MessageItem.TYPE_STRING) {
-            mMessageContent.setText(item.contentString);
-        } else if (item.contentType == MessageItem.TYPE_IMAGE) {
+        if (item.getContentType() == MessageItem.TYPE_STRING) {
+            mMessageContent.setText(item.getContentString());
+        } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
             mMessagePhoto.setVisibility(VISIBLE);
-            Picasso.with(mContext).load(sRootUrl + item.contentString).centerCrop().fit().into(mMessagePhoto);
+//            Picasso.with(mContext).load(item.get).centerCrop().fit().into(mMessagePhoto);
         }
 
         // 시간
-        String createTime = DateTransformator.getTimeDifference(item.createTime);
+        String createTime = DateTransformator.getTimeDifference(item.getTime());
         mCreateTime.setText(createTime);
 
-        Picasso.with(mContext).load(sRootUrl + item.userProfileUrl).fit().into(mUserProfileImage);
+        Picasso.with(mContext).load(item.getUserProfileUrl()).fit().into(mUserProfileImage);
 
     }
 }

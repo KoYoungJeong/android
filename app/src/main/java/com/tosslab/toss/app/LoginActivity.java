@@ -1,14 +1,11 @@
 package com.tosslab.toss.app;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.TossRestLogin;
+import com.tosslab.toss.app.network.entities.ResLogin;
 import com.tosslab.toss.app.network.entities.TossRestToken;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
@@ -16,7 +13,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.springframework.web.client.RestClientException;
@@ -61,13 +57,13 @@ public class LoginActivity extends Activity {
 
     @Background
     void doLogin() {
-        TossRestLogin tossRestLogin = new TossRestLogin();
-        tossRestLogin.email = edtxtLoginId.getText().toString();
-        tossRestLogin.password = edtxtLoginPassword.getText().toString();
+        ResLogin resLogin = new ResLogin();
+        resLogin.email = edtxtLoginId.getText().toString();
+        resLogin.password = edtxtLoginPassword.getText().toString();
 
         TossRestToken tossRestToken = null;
         try {
-            tossRestToken = tossRestClient.loginAndReturnToken(tossRestLogin);
+            tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
             Log.e("OK", "Login Success : " + tossRestToken.token);
         } catch (RestClientException e) {
             Log.e("HI", "Login Fail", e);

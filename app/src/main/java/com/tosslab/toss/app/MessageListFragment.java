@@ -240,9 +240,12 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     public void sendMessageDone() {
-        refreshAll();
+        // TODO : Update 호출
     }
 
+    /************************************************************
+     * Message 수정
+     ************************************************************/
 
     /**
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
@@ -259,9 +262,6 @@ public class MessageListFragment extends BaseFragment {
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    /************************************************************
-     * Message 수정
-     ************************************************************/
     // Message 수정 이벤트 획득
     public void onEvent(ReqModifyMessageEvent event) {
         Log.e(TAG, "Edit Message : " + event.messageId);

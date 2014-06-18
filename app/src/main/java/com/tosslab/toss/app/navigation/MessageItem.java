@@ -1,5 +1,6 @@
 package com.tosslab.toss.app.navigation;
 
+import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.entities.ResMessages;
 
 import java.util.Date;
@@ -11,26 +12,50 @@ public class MessageItem {
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
 
-    public final int id;
-    public final String userProfileUrl;
-    public final String userNickName;
-    public final Date createTime;
-    public final int contentType;
-    public final String contentString;
+    private ResMessages.Link mLink;
 
     public MessageItem(ResMessages.Link link) {
-        this.id = link.id;
-        this.userNickName = link.message.writer.name;
-        this.userProfileUrl = link.message.writer.u_photoUrl;
-        this.createTime = link.time;
+        mLink = link;
+    }
 
-        if (link.message instanceof ResMessages.TextMessage) {
-            this.contentType = TYPE_STRING;
-            this.contentString = ((ResMessages.TextMessage)link.message).content.body;
+    public int getId() {
+        return mLink.message.id;
+    }
+
+    public String getUserNickName() {
+        return mLink.message.writer.u_firstName + " " + mLink.message.writer.u_lastName;
+    }
+
+    public String getUserProfileUrl() {
+        return TossConstants.SERVICE_ROOT_URL + mLink.message.writer.u_photoUrl;
+    }
+
+    public int getContentType() {
+        if (mLink.message instanceof ResMessages.TextMessage) {
+            return TYPE_STRING;
         } else {
             // TODO : 다른 파일들
-            this.contentType = TYPE_IMAGE;
-            this.contentString = "";
+            return TYPE_IMAGE;
         }
+    }
+
+    public String getContentString() {
+        if (mLink.message instanceof ResMessages.TextMessage) {
+            return ((ResMessages.TextMessage)mLink.message).content.body;
+        }
+        return null;
+    }
+
+    public Date getTime() {
+        return mLink.time;
+    }
+
+    public int getWriterId() {
+        return mLink.message.writerId;
+        // TODO : 본인 ID 와 비교해서 구현할 것
+//        if (mLink.message.writer.id == myUserId) {
+//            return true;
+//        }
+//        return false;
     }
 }
