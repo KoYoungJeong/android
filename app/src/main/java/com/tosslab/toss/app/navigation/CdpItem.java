@@ -1,7 +1,7 @@
 package com.tosslab.toss.app.navigation;
 
 import com.tosslab.toss.app.TossConstants;
-import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
+import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -18,13 +18,13 @@ public class CdpItem {
         this.type = typeOfTitle;
     }
     public CdpItem(ResLeftSideMenu.Channel channel) {
-        this.name = "# " + channel.name;
+        this.name = channel.name;
         this.type = TossConstants.TYPE_CHANNEL;
         this.id = channel.id;
     }
 
     public CdpItem(ResLeftSideMenu.User user) {
-        this.name = "@ " + user.name;
+        this.name = user.name;
         this.type = TossConstants.TYPE_DIRECT_MESSAGE;
         this.id = user.id;
     }

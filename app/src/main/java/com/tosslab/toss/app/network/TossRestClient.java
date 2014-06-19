@@ -1,18 +1,18 @@
 package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.TossConstants;
-import com.tosslab.toss.app.network.entities.ReqCreateCdp;
-import com.tosslab.toss.app.network.entities.ReqModifyMessage;
-import com.tosslab.toss.app.network.entities.ReqSendMessage;
-import com.tosslab.toss.app.network.entities.ResChannelMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResDirectMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
-import com.tosslab.toss.app.network.entities.ResLogin;
-import com.tosslab.toss.app.network.entities.ResMessages;
-import com.tosslab.toss.app.network.entities.ResPrivateGroupMessagesUpdated;
-import com.tosslab.toss.app.network.entities.ResSendMessage;
-import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
-import com.tosslab.toss.app.network.entities.TossRestToken;
+import com.tosslab.toss.app.network.models.ReqCreateCdp;
+import com.tosslab.toss.app.network.models.ReqModifyMessage;
+import com.tosslab.toss.app.network.models.ReqSendMessage;
+import com.tosslab.toss.app.network.models.ResChannelMessagesUpdated;
+import com.tosslab.toss.app.network.models.ResDirectMessagesUpdated;
+import com.tosslab.toss.app.network.models.ResLeftSideMenu;
+import com.tosslab.toss.app.network.models.ResLogin;
+import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.ResPrivateGroupMessagesUpdated;
+import com.tosslab.toss.app.network.models.ResSendMessage;
+import com.tosslab.toss.app.network.models.RestFileUploadResponse;
+import com.tosslab.toss.app.network.models.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;

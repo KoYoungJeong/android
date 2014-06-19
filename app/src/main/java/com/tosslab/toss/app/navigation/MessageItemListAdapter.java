@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.toss.app.network.entities.ResMessages;
+import com.tosslab.toss.app.network.models.ResMessages;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -35,7 +35,7 @@ public class MessageItemListAdapter extends BaseAdapter {
     }
 
     public void retrieveMessageItem(ResMessages messages) {
-        if (mMessages == null) {
+        if (mMessages == null || messages.messageCount <= 0) {
             return;
         }
 

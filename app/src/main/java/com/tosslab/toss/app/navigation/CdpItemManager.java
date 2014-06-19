@@ -1,7 +1,7 @@
 package com.tosslab.toss.app.navigation;
 
 import com.tosslab.toss.app.TossConstants;
-import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
+import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 
 import java.util.ArrayList;
 import java.util.List;

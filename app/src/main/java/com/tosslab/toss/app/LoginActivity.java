@@ -5,8 +5,8 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.ResLogin;
-import com.tosslab.toss.app.network.entities.TossRestToken;
+import com.tosslab.toss.app.network.models.ResLogin;
+import com.tosslab.toss.app.network.models.TossRestToken;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;

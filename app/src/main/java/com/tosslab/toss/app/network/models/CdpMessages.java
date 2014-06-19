@@ -1,7 +1,4 @@
-package com.tosslab.toss.app.network.entities;
-
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
+package com.tosslab.toss.app.network.models;
 
 import java.util.Date;
 import java.util.List;

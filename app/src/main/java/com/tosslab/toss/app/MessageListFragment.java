@@ -14,7 +14,7 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.toss.app.events.ReqModifyMessageEvent;
@@ -22,8 +22,8 @@ import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.ResMessages;
-import com.tosslab.toss.app.network.entities.RestFileUploadResponse;
+import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.RestFileUploadResponse;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -76,7 +76,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mDoLoading = true;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
-    ChooseNaviActionEvent mCurrentEvent;
+    SelectCdpItemEvent mCurrentEvent;
 
     @Override
     public int getTitleResourceId() {
@@ -147,7 +147,7 @@ public class MessageListFragment extends BaseFragment {
      * Navigation Panel 에서 선택한 Channel, Member or PG 의 메시지 list 획득
      * @param event
      */
-    public void onEvent(ChooseNaviActionEvent event) {
+    public void onEvent(SelectCdpItemEvent event) {
         mIsFirstMessage = true;
         mCurrentEvent = event;
         refreshAll();

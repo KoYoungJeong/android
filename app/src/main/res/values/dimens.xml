@@ -10,6 +10,8 @@
 
     <dimen name="left_menu_item_height">35dp</dimen>
     <dimen name="left_menu_add_action_button">25dp</dimen>
+    <dimen name="left_menu_margin">10dp</dimen>
+    <dimen name="left_menu_margin_deep">20dp</dimen>
 
     <!-- Messages -->
     <dimen name="messages_user_name">18sp</dimen>

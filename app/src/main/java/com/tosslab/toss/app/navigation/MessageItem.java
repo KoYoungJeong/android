@@ -1,7 +1,7 @@
 package com.tosslab.toss.app.navigation;
 
 import com.tosslab.toss.app.TossConstants;
-import com.tosslab.toss.app.network.entities.ResMessages;
+import com.tosslab.toss.app.network.models.ResMessages;
 
 import java.util.Date;
 

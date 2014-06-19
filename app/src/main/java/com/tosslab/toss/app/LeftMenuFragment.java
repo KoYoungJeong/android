@@ -4,7 +4,7 @@ import android.app.DialogFragment;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.tosslab.toss.app.events.ChooseNaviActionEvent;
+import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
@@ -13,9 +13,9 @@ import com.tosslab.toss.app.navigation.CdpItem;
 import com.tosslab.toss.app.navigation.CdpItemListAdapter;
 import com.tosslab.toss.app.navigation.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
-import com.tosslab.toss.app.network.entities.ReqCreateCdp;
-import com.tosslab.toss.app.network.entities.ResLeftSideMenu;
-import com.tosslab.toss.app.network.entities.ResSendMessage;
+import com.tosslab.toss.app.network.models.ReqCreateCdp;
+import com.tosslab.toss.app.network.models.ResLeftSideMenu;
+import com.tosslab.toss.app.network.models.ResSendMessage;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -24,7 +24,6 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
@@ -100,8 +99,43 @@ public class LeftMenuFragment extends BaseFragment {
     @ItemClick
     void list_cdpsItemClicked(CdpItem cdp) {
         Log.e("HI", cdp.name + " Clicked. type is " + cdp.type);
-        ChooseNaviActionEvent event = new ChooseNaviActionEvent(TossConstants.TYPE_CHANNEL, cdp.id);
-        EventBus.getDefault().post(event);
+        switch (cdp.type) {
+            case TossConstants.TYPE_TITLE_JOINED_CHANNEL:
+                // Joined channel 의 제목부를 터치했을 경우, 채널 생성 메뉴로...
+                showDialogToCreate(TossConstants.TYPE_CHANNEL);
+                break;
+            case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
+                // 비등록 체널의 목록을 보여주고 join 할 수 있게 함.
+                break;
+            case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
+                // DO NOTHING
+                break;
+            case TossConstants.TYPE_TITLE_PRIVATE_GROUP:
+                // Private Group 생성 메뉴로...
+                showDialogToCreate(TossConstants.TYPE_PRIVATE_GROUP);
+                break;
+            default:
+                // 일반 CDP 를 터치했을 경우, 해당 CDP의 메시지 리스트를 획득할수 있게 이벤트 등록
+                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp.type, cdp.id);
+                EventBus.getDefault().post(event);
+                break;
+        }
+
+    }
+
+    @ItemLongClick
+    void list_cdpsItemLongClicked(CdpItem cdp) {
+        switch (cdp.type) {
+            case TossConstants.TYPE_TITLE_JOINED_CHANNEL:
+            case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
+            case TossConstants.TYPE_TITLE_PRIVATE_GROUP:
+            case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
+                // DO NOTHING
+                break;
+            default:
+                showDialogToManipulate(cdp);
+                break;
+        }
     }
 
     /************************************************************
@@ -148,18 +182,6 @@ public class LeftMenuFragment extends BaseFragment {
     /************************************************************
      * Channel, PrivateGroup 생성
      ************************************************************/
-
-    @Click(R.id.btn_action_add_channel)
-    void createChannel() {
-        Log.e(TAG, "Create Channel");
-        showDialogToCreate(TossConstants.TYPE_CHANNEL);
-    }
-
-//    @Click(R.id.btn_add_private_group)
-//    void createPrivateGroup() {
-//        Log.e(TAG, "Create Private Group");
-//        showDialogToCreate(TossConstants.TYPE_PRIVATE_GROUP);
-//    }
 
     /**
      * Alert Dialog 관련
@@ -238,10 +260,6 @@ public class LeftMenuFragment extends BaseFragment {
     /************************************************************
      * Channel, PrivateGroup 수정 / 삭제
      ************************************************************/
-    @ItemLongClick
-    void list_cdpsItemLongClicked(CdpItem cdp) {
-        showDialogToManipulate(cdp);
-    }
 
     void showDialogToManipulate(CdpItem cdp) {
         DialogFragment newFragment = ManipulateCdpAlertDialog.newInstance(cdp);

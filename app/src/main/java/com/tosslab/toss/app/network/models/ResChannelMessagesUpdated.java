@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.network.entities;
+package com.tosslab.toss.app.network.models;
 
 import java.util.List;
 

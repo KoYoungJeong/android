@@ -1,11 +1,11 @@
 package com.tosslab.toss.app.network;
 
 import com.tosslab.toss.app.TossConstants;
-import com.tosslab.toss.app.events.ChooseNaviActionEvent;
-import com.tosslab.toss.app.network.entities.ReqModifyMessage;
-import com.tosslab.toss.app.network.entities.ReqSendMessage;
-import com.tosslab.toss.app.network.entities.ResMessages;
-import com.tosslab.toss.app.network.entities.ResSendMessage;
+import com.tosslab.toss.app.events.SelectCdpItemEvent;
+import com.tosslab.toss.app.network.models.ReqModifyMessage;
+import com.tosslab.toss.app.network.models.ReqSendMessage;
+import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
 
@@ -15,9 +15,9 @@ import org.springframework.web.client.RestClientException;
 public class MessageManipulator {
     private static final int NUMBER_OF_MESSAGES     = 10;
     TossRestClient mRestClient;
-    ChooseNaviActionEvent mCurrentEvent;
+    SelectCdpItemEvent mCurrentEvent;
 
-    public MessageManipulator(TossRestClient tossRestClient, ChooseNaviActionEvent event, String token) {
+    public MessageManipulator(TossRestClient tossRestClient, SelectCdpItemEvent event, String token) {
         mRestClient = tossRestClient;
         mCurrentEvent = event;
         mRestClient.setHeader("Authorization", token);

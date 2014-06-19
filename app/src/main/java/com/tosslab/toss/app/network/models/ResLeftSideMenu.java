@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.network.entities;
+package com.tosslab.toss.app.network.models;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonSubTypes;
