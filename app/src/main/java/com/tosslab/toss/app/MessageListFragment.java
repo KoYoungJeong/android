@@ -14,10 +14,10 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.toss.app.events.ReqModifyMessageEvent;
+import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
@@ -39,12 +39,16 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.apache.log4j.Logger;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
 
@@ -53,7 +57,7 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment(R.layout.fragment_main)
 public class MessageListFragment extends BaseFragment {
-    private static final String TAG = "MessageListFragment";
+    private final Logger log = Logger.getLogger(MessageListFragment.class);
     @RestService
     TossRestClient tossRestClient;
     @FragmentArg
@@ -70,6 +74,9 @@ public class MessageListFragment extends BaseFragment {
     private ProgressWheel mProgressWheel;
 
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+    // Update 관련
+    private Timer mTimer;
+    private Date mLastUpdateTime;
 
     int mFirstItemId = -1;
     boolean mIsFirstMessage = true;
@@ -106,15 +113,19 @@ public class MessageListFragment extends BaseFragment {
                         && firstVisibleItem == 0) {
                     mDoLoading = true;
                     absListView.setSelection(firstVisibleItem + visibleItemCount);
-                    Log.e(TAG, "Loading");
+                    log.debug("Top of scrolled list. Try to get former message list.");
                     getMessages();
                 }
 
             }
         });
 
-        // 초기에 기본으로 보여질 Message
-        // TODO : 현재에는 0번 Private Group
+        // Polling 설정
+        mLastUpdateTime = new Date();
+        TimerTask task = new UpdateTimerTask();
+        mTimer = new Timer();
+        mTimer.schedule(task, 5000, 3000);  // 5초뒤, 3초마다
+
         mFirstItemId = -1;
         getMessages();
     }
@@ -134,10 +145,17 @@ public class MessageListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-//        mTimer.cancel();
+        mTimer.cancel();
         super.onDestroy();
     }
 
+
+    private class UpdateTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            getUpdateMessages();
+        }
+    }
     /************************************************************
      * Message List 획득
      * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
@@ -150,11 +168,11 @@ public class MessageListFragment extends BaseFragment {
     public void onEvent(SelectCdpItemEvent event) {
         mIsFirstMessage = true;
         mCurrentEvent = event;
-        refreshAll();
+        getMessagesAfterCleaning();
     }
 
     @UiThread
-    public void refreshAll() {
+    public void getMessagesAfterCleaning() {
         mFirstItemId = -1;
         messageItemListAdapter.clearAdapter();
         getMessages();
@@ -183,16 +201,16 @@ public class MessageListFragment extends BaseFragment {
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceviedList;
 
-            messageItemListAdapter.retrieveMessageItem(restResMessages);
-            Log.e(TAG, "Get Success");
-            getMessagesEnd();
+            messageItemListAdapter.insertMessageItem(restResMessages);
+            log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
+            getMessagesDone();
         } catch (RestClientException e) {
-            Log.e(TAG, "Get Fail", e);
+            log.error("fail to get messages.", e);
         }
     }
 
     @UiThread
-    public void getMessagesEnd() {
+    public void getMessagesDone() {
         mProgressWheel.dismiss();
         refreshListAdapter();
     }
@@ -201,6 +219,44 @@ public class MessageListFragment extends BaseFragment {
     void refreshListAdapter() {
         messageItemListAdapter.notifyDataSetChanged();
         mDoLoading = false;
+    }
+
+    /************************************************************
+     * Message List 업데이트
+     * Message 리스트의 업데이트 획득 (from 서버)
+     ************************************************************/
+    @UiThread
+    void getUpdateMessages() {
+        if (mCurrentEvent != null) {
+            getUpdateMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
+        }
+    }
+
+    @Background
+    public void getUpdateMessagesInBackground(int type, int id) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, mCurrentEvent, myToken);
+        try {
+            ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateTime);
+            log.info("success to " + restResMessages.messageCount +
+                    " messages updated at " + mLastUpdateTime.getTime());
+            if (restResMessages.messageCount > 0) {
+                mLastUpdateTime = restResMessages.responseTime;
+            }
+
+            // Update 된 메시지만 부분 삽입한다.
+            messageItemListAdapter.updatedMessageItem(restResMessages);
+
+            getUpdateMessagesDone();
+        } catch (RestClientException e) {
+            log.error("fail to get updated messages", e);
+        }
+
+    }
+
+    @UiThread
+    public void getUpdateMessagesDone() {
+        refreshListAdapter();
     }
 
     /************************************************************
@@ -230,9 +286,9 @@ public class MessageListFragment extends BaseFragment {
                 tossRestClient, mCurrentEvent, myToken);
         try {
             messageManipulator.sendMessage(message);
-            Log.e(TAG, "Send Success");
+            log.debug("success to send message");
         } catch (RestClientException e) {
-            Log.e(TAG, "Send Fail", e);
+            log.error("fail to send message", e);
         }
 
         sendMessageDone();
@@ -240,7 +296,7 @@ public class MessageListFragment extends BaseFragment {
 
     @UiThread
     public void sendMessageDone() {
-        // TODO : Update 호출
+        getUpdateMessages();
     }
 
     /************************************************************
@@ -253,7 +309,6 @@ public class MessageListFragment extends BaseFragment {
      */
     @ItemLongClick
     void list_messagesItemLongClicked(MessageItem item) {
-        Log.e(TAG, "Long Clicked");
         showDialog(item);
     }
 
@@ -264,7 +319,6 @@ public class MessageListFragment extends BaseFragment {
 
     // Message 수정 이벤트 획득
     public void onEvent(ReqModifyMessageEvent event) {
-        Log.e(TAG, "Edit Message : " + event.messageId);
         DialogFragment newFragment = EditTextAlertDialogFragment.newInstance(event.messageId
                 , event.currentMessage);
         newFragment.show(getFragmentManager(), "dialog");
@@ -288,9 +342,9 @@ public class MessageListFragment extends BaseFragment {
 
         try {
             messageManipulator.modifyMessage(messageId, inputMessage);
-            Log.e(TAG, "Modify Success");
+            log.debug("success to modify message");
         } catch (RestClientException e) {
-            Log.e(TAG, "Modify Fail", e);
+            log.error("fail to modify message");
         }
 
         modifyMessageDone();
@@ -299,7 +353,7 @@ public class MessageListFragment extends BaseFragment {
     @UiThread
     void modifyMessageDone() {
         mProgressWheel.dismiss();
-        refreshAll();
+        getUpdateMessages();
     }
 
     /************************************************************
@@ -308,7 +362,6 @@ public class MessageListFragment extends BaseFragment {
 
     // Message 삭제 이벤트 획득
     public void onEvent(ConfirmDeleteMessageEvent event) {
-        Log.e(TAG, "Delete message :" + event.messageId);
         deleteMessage(event.messageId);
     }
 
@@ -323,15 +376,16 @@ public class MessageListFragment extends BaseFragment {
                 = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
         try {
             messageManipulator.deleteMessage(messageId);
+            log.debug("success to delete message");
         } catch (RestClientException e) {
-            Log.e(TAG, "Delete Fail", e);
+            log.error("fail to delete message", e);
         }
         deleteMessageDone();
     }
 
     @UiThread
     void deleteMessageDone() {
-        refreshAll();
+        getUpdateMessages();
     }
 
     /************************************************************
@@ -351,7 +405,7 @@ public class MessageListFragment extends BaseFragment {
 //        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             Uri targetUri = data.getData();
-            Log.e(TAG, "Get Photo from URI : " + targetUri.toString());
+            log.debug("Get Photo from URI : " + targetUri.toString());
             String realFilePath = getRealPathFromUri(targetUri);
             uploadFileInBackground(realFilePath);
         }
@@ -383,11 +437,11 @@ public class MessageListFragment extends BaseFragment {
 //            RestFileUploadResponse response = restTemplate.postForObject("https://192.168.0.11:3000/inner-api/file",
 //                    requestEntity, RestFileUploadResponse.class);
             RestFileUploadResponse response = tossRestClient.uploadFile(parts);
-            Log.d(TAG, "Returned" + response.id);
+
         } catch (RestClientException e) {
-            Log.e(TAG, "Error : " + e);
+
         } catch (ClassCastException e) {
-            Log.e(TAG, "Error : " + e);
+
         }
 
 

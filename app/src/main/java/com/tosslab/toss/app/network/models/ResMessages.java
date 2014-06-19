@@ -20,6 +20,7 @@ public class ResMessages {
     public boolean isFirst;
     public int messageCount;
     public List<Link> messages;
+    public Date responseTime;
 
     public static class Link {
         public int id;
@@ -60,6 +61,7 @@ public class ResMessages {
         public String contentType;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
     }

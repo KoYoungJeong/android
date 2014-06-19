@@ -1,5 +1,7 @@
 package com.tosslab.toss.app.network;
 
+import android.util.Log;
+
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
@@ -9,11 +11,13 @@ import com.tosslab.toss.app.network.models.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
 
+import java.util.Date;
+
 /**
  * Created by justinygchoi on 2014. 6. 5..
  */
 public class MessageManipulator {
-    private static final int NUMBER_OF_MESSAGES     = 10;
+    private static final int NUMBER_OF_MESSAGES = 10;
     TossRestClient mRestClient;
     SelectCdpItemEvent mCurrentEvent;
 
@@ -24,15 +28,30 @@ public class MessageManipulator {
     }
 
     public ResMessages getMessages(int firstItemId) throws RestClientException {
-        if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
-            return mRestClient.getChannelMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {
-            return mRestClient.getGroupMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_DIRECT_MESSAGE) {
-            return mRestClient.getDirectMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+        switch (mCurrentEvent.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return mRestClient.getChannelMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return mRestClient.getDirectMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+            case TossConstants.TYPE_PRIVATE_GROUP:
+                return mRestClient.getGroupMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+            default:
+                return null;
+
         }
-        // TODO : Error 처리
-        return null;
+    }
+
+    public ResMessages updateMessages(Date fromNow) throws RestClientException {
+        switch (mCurrentEvent.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return mRestClient.getChannelMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return mRestClient.getDirectMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+            case TossConstants.TYPE_PRIVATE_GROUP:
+                return mRestClient.getGroupMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+            default:
+                return null;
+        }
     }
 
     public ResSendMessage sendMessage(String message) throws RestClientException {
@@ -40,39 +59,45 @@ public class MessageManipulator {
         sendingMessage.type = "string";
         sendingMessage.content = message;
 
-        if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
-            return mRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {
-            return mRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_DIRECT_MESSAGE) {
-            return mRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.id);
+        switch (mCurrentEvent.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return mRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return mRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.id);
+            case TossConstants.TYPE_PRIVATE_GROUP:
+                return mRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
+            default:
+                return null;
         }
-        return null;
     }
 
     public ResSendMessage modifyMessage(int messageId, String message) throws RestClientException {
         ReqModifyMessage reqModifyMessage = new ReqModifyMessage();
         reqModifyMessage.content = message;
 
-        if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
-            return mRestClient.modifyChannelMessage(reqModifyMessage, mCurrentEvent.id, messageId);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {
-            return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCurrentEvent.id, messageId);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_DIRECT_MESSAGE) {
-            return mRestClient.modifyDirectMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+        switch (mCurrentEvent.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return mRestClient.modifyChannelMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return mRestClient.modifyDirectMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+            case TossConstants.TYPE_PRIVATE_GROUP:
+                return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+            default:
+                return null;
         }
-        return null;
     }
 
     public ResSendMessage deleteMessage(int messageId) throws RestClientException {
-        if (mCurrentEvent.type == TossConstants.TYPE_CHANNEL) {
-            return mRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_PRIVATE_GROUP) {
-            return mRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
-        } else if (mCurrentEvent.type == TossConstants.TYPE_DIRECT_MESSAGE) {
-            return mRestClient.deleteDirectMessage(mCurrentEvent.id, messageId);
+        switch (mCurrentEvent.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return mRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return mRestClient.deleteDirectMessage(mCurrentEvent.id, messageId);
+            case TossConstants.TYPE_PRIVATE_GROUP:
+                return mRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
+            default:
+                return null;
         }
-        return null;
     }
 
 }

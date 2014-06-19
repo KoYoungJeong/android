@@ -4,12 +4,9 @@ import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
-import com.tosslab.toss.app.network.models.ResChannelMessagesUpdated;
-import com.tosslab.toss.app.network.models.ResDirectMessagesUpdated;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResLogin;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.network.models.ResPrivateGroupMessagesUpdated;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 import com.tosslab.toss.app.network.models.RestFileUploadResponse;
 import com.tosslab.toss.app.network.models.TossRestToken;
@@ -59,6 +56,16 @@ public interface TossRestClient {
      * 채널 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
      ************************************************************/
+    // 채널에서 Message 리스트 정보 획득
+    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
+    @RequiresHeader("Authorization")
+    ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
+
+    // 채널의 업데이트 Message 리스트 정보 획득
+    @Get("/channels/{channelId}/messages/update/{timeAfter}")
+    @RequiresHeader("Authorization")
+    ResMessages getChannelMessagesUpdated(int channelId, long timeAfter);
+
     // 채널 생성
     @Post("/channel")
     @RequiresHeader("Authorization")
@@ -73,15 +80,6 @@ public interface TossRestClient {
     @Delete("/channels/{channelId}")
     @RequiresHeader("Authorization")
     ResSendMessage deleteChannel(int channelId);
-
-    // 채널에서 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
-    @RequiresHeader("Authorization")
-    ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
-
-    @Get("/channels/{channelId}/messages/update/{timeAfter}")
-    @RequiresHeader("Authorization")
-    ResChannelMessagesUpdated getChannelMessagesUpdated(int channelId, Date timeAfter);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -112,7 +110,7 @@ public interface TossRestClient {
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
-    ResDirectMessagesUpdated getDirectMessagesUpdated(int userId, Date timeAfter);
+    ResMessages getDirectMessagesUpdated(int userId, long timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
@@ -135,6 +133,16 @@ public interface TossRestClient {
      * PG 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
      ************************************************************/
+    // Private Group의 Message 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
+    @RequiresHeader("Authorization")
+    ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+
+    // Updated 된 Private Group의 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
+    @RequiresHeader("Authorization")
+    ResMessages getGroupMessagesUpdated(int groupId, long timeAfter);
+
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
@@ -149,16 +157,6 @@ public interface TossRestClient {
     @Delete("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
     ResSendMessage deleteGroup(int groupId);
-
-    // Private Group의 Message 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
-    @RequiresHeader("Authorization")
-    ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
-
-    // Updated 된 Private Group의 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
-    @RequiresHeader("Authorization")
-    ResPrivateGroupMessagesUpdated getGroupMessagesUpdated(int groupId, Date timeAfter);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
