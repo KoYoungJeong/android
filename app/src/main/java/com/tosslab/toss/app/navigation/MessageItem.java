@@ -11,6 +11,7 @@ import java.util.Date;
 public class MessageItem {
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
+    public static final int TYPE_COMMENT  = 1;
 
     private ResMessages.Link mLink;
 
@@ -33,15 +34,28 @@ public class MessageItem {
     public int getContentType() {
         if (mLink.message instanceof ResMessages.TextMessage) {
             return TYPE_STRING;
-        } else {
+        } else if (mLink.message instanceof ResMessages.FileMessage) {
             // TODO : 다른 파일들
             return TYPE_IMAGE;
+        } else if (mLink.message instanceof ResMessages.CommentMessage) {
+            return TYPE_COMMENT;
         }
+        return TYPE_STRING;
     }
 
     public String getContentString() {
         if (mLink.message instanceof ResMessages.TextMessage) {
             return ((ResMessages.TextMessage)mLink.message).content.body;
+        }
+        return null;
+    }
+
+    public String getContentUrl() {
+        if (mLink.message instanceof ResMessages.FileMessage) {
+            ResMessages.FileMessage message = (ResMessages.FileMessage)mLink.message;
+            if (message.content.serverUrl.equals("root")) {
+                return TossConstants.SERVICE_ROOT_URL + message.content.fileUrl;
+            }
         }
         return null;
     }

@@ -25,8 +25,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
 
-import java.util.Date;
-
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
@@ -181,6 +179,4 @@ public interface TossRestClient {
     @Post("/file")
     @RequiresHeader("Authorization")
     RestFileUploadResponse uploadFile(MultiValueMap data);
-
-
 }

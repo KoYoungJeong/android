@@ -52,7 +52,7 @@ public class MessageItemView extends LinearLayout {
             mMessageContent.setText(item.getContentString());
         } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
             mMessagePhoto.setVisibility(VISIBLE);
-//            Picasso.with(mContext).load(item.get).centerCrop().fit().into(mMessagePhoto);
+            Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mMessagePhoto);
         }
 
         // 시간

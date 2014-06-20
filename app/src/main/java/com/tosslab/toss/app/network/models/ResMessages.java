@@ -43,12 +43,15 @@ public class ResMessages {
         public String u_lastName;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
             property = "contentType")
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = TextMessage.class, name = "text")})
+            @JsonSubTypes.Type(value = TextMessage.class, name = "text"),
+            @JsonSubTypes.Type(value = FileMessage.class, name = "file"),
+            @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
     public static class OriginalMessage {
         public int id;
         public int teamId;
@@ -61,12 +64,34 @@ public class ResMessages {
         public String contentType;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+//    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
     }
 
     public static class TextContent {
         public String body;
+    }
+
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class FileMessage extends OriginalMessage {
+        public FileContent content;
+    }
+
+    public static class FileContent {
+        public String title;
+        public String name;
+        public String type;
+        public String serverUrl;
+        public String fileUrl;
+    }
+
+//    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CommentMessage extends OriginalMessage {
+        public CommentContent content;
+    }
+
+    public static class CommentContent {
+
     }
 }

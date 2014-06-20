@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
@@ -21,9 +20,9 @@ import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.navigation.MessageItem;
 import com.tosslab.toss.app.navigation.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
+import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.network.models.RestFileUploadResponse;
 import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
 import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -40,13 +39,12 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -240,8 +238,9 @@ public class MessageListFragment extends BaseFragment {
             ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateTime);
             log.info("success to " + restResMessages.messageCount +
                     " messages updated at " + mLastUpdateTime.getTime());
-            if (restResMessages.messageCount > 0) {
-                mLastUpdateTime = restResMessages.responseTime;
+            Date responseTime = restResMessages.responseTime;
+            if (responseTime != null && responseTime.getTime() > 0) {
+                mLastUpdateTime = responseTime;
             }
 
             // Update 된 메시지만 부분 삽입한다.
@@ -395,6 +394,9 @@ public class MessageListFragment extends BaseFragment {
 
     @Click(R.id.btn_upload_file)
     void uploadFile() {
+        // pause time
+        mTimer.cancel();
+
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, 0);
@@ -405,46 +407,45 @@ public class MessageListFragment extends BaseFragment {
 //        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             Uri targetUri = data.getData();
-            log.debug("Get Photo from URI : " + targetUri.toString());
             String realFilePath = getRealPathFromUri(targetUri);
+            log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
             uploadFileInBackground(realFilePath);
         }
     }
 
     @Background
     void uploadFileInBackground(String fileUri) {
-        // Upload 대상 파일 지정
-        MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
-        parts.add("userFile", new FileSystemResource(new File(fileUri)));
 
-//        // Authorization Header 지정
-//        HttpHeaders requestHeaders = new HttpHeaders();
-//        requestHeaders.set("Authorization", myToken);
-//        requestHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//
-//        // Create a new RestTemplate instance
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        // Add the Jackson and String message converters
-//        restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
-//        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
-//        restTemplate.getMessageConverters().add(new ByteArrayHttpMessageConverter());
-//
-//        HttpEntity< MultiValueMap<String, Object>> requestEntity
-//                = new HttpEntity<MultiValueMap<String, Object>>(parts, requestHeaders);
+        String requestURL = TossConstants.SERVICE_ROOT_URL + "inner-api/file";
 
+        File uploadFile = new File(fileUri);
         try {
-//            RestFileUploadResponse response = restTemplate.postForObject("https://192.168.0.11:3000/inner-api/file",
-//                    requestEntity, RestFileUploadResponse.class);
-            RestFileUploadResponse response = tossRestClient.uploadFile(parts);
+            MultipartUtility multipart = new MultipartUtility(requestURL, myToken);
 
-        } catch (RestClientException e) {
+            multipart.addFormField("title", uploadFile.getName());
+            multipart.addFormField("share", "" + mCurrentEvent.id);
+            multipart.addFormField("permission", "755");
+            multipart.addFilePart("userFile", uploadFile);
 
-        } catch (ClassCastException e) {
+            log.debug("try to upload file, " + uploadFile.getName() + ", Authorization : " + myToken);
 
+            List<String> response = multipart.finish();
+            log.debug("SERVER REPLIED:");
+            for (String line : response) {
+                log.debug(line);
+            }
+            uploadFileDone();
+        } catch (IOException ex) {
+            log.error("fail to upload file.", ex);
         }
+    }
 
-
+    @UiThread
+    void uploadFileDone() {
+        // resume timer
+        TimerTask task = new UpdateTimerTask();
+        mTimer = new Timer();
+        mTimer.schedule(task, 0, 3000);  // 즉시, 3초마다
     }
 
     // TODO : Poor Implementation
