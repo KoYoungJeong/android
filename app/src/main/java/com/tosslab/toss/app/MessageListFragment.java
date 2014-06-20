@@ -80,7 +80,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mIsFirstMessage = true;
     boolean mDoLoading = true;
 
-    // 현재 선택한 것 : Channel, Direct Message or Private Group
+    // 현재 선택한 것 : Channel, Direct Message or Private Grou   p
     SelectCdpItemEvent mCurrentEvent;
 
     @Override
@@ -404,13 +404,24 @@ public class MessageListFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == Activity.RESULT_OK) {
             Uri targetUri = data.getData();
             String realFilePath = getRealPathFromUri(targetUri);
             log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
+
             uploadFileInBackground(realFilePath);
         }
+    }
+
+    private void moveToFileDetailActivity(String realFilePath) {
+        FileDetailActivity_
+                .intent(this)
+                .myToken(myToken)
+                .selectedFileUri(realFilePath)
+                .currentCdpId(mCurrentEvent.id)
+                .start();
     }
 
     @Background

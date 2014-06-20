@@ -44,6 +44,7 @@ public class ResMessages {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
@@ -64,7 +65,6 @@ public class ResMessages {
         public String contentType;
     }
 
-//    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
     }
@@ -73,7 +73,6 @@ public class ResMessages {
         public String body;
     }
 
-//    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileMessage extends OriginalMessage {
         public FileContent content;
     }
@@ -84,9 +83,9 @@ public class ResMessages {
         public String type;
         public String serverUrl;
         public String fileUrl;
+        public int size;
     }
 
-//    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CommentMessage extends OriginalMessage {
         public CommentContent content;
     }

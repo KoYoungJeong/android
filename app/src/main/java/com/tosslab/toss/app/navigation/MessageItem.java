@@ -9,6 +9,9 @@ import java.util.Date;
  * Created by justinygchoi on 2014. 5. 27..
  */
 public class MessageItem {
+    static final int MB = 1024 * 1024;
+    static final int KB = 1024;
+
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
     public static final int TYPE_COMMENT  = 1;
@@ -57,6 +60,38 @@ public class MessageItem {
                 return TossConstants.SERVICE_ROOT_URL + message.content.fileUrl;
             }
         }
+        return null;
+    }
+
+    public String getContentFileName() {
+        if (mLink.message instanceof ResMessages.FileMessage) {
+            return ((ResMessages.FileMessage)mLink.message).content.name;
+        }
+        return null;
+    }
+
+    public String getContentFileType() {
+        if (mLink.message instanceof ResMessages.FileMessage) {
+            return ((ResMessages.FileMessage)mLink.message).content.type;
+        }
+        return null;
+    }
+
+    public String getContentFileSize() {
+
+        if (mLink.message instanceof ResMessages.FileMessage) {
+            int byteSize = ((ResMessages.FileMessage)mLink.message).content.size;
+
+            if (byteSize > MB) {
+                float f = (float)byteSize / MB;
+                return String.format("%.2f MB", f);
+            } else if (byteSize > KB) {
+                return (byteSize / KB) + " KB";
+            } else {
+                return byteSize + " bytes";
+            }
+        }
+
         return null;
     }
 

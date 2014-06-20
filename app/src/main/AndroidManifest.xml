@@ -2,18 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tosslab.toss.app" >
 
-
-
     <application
+        android:name=".TossApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name=".TossApplication">
+        android:theme="@style/AppTheme" >
         <activity
-            android:name="com.tosslab.toss.app.LoginActivity_"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
-            android:label="@string/app_name" >
+            android:name=".LoginActivity_"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +21,15 @@
         <activity
             android:name=".MainActivity_"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:logo="@drawable/ic_actionbar_logo" />
+            android:logo="@drawable/ic_actionbar_logo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FileDetailActivity_"
+            android:label="@string/title_activity_file_upload"
+            android:logo="@drawable/ic_actionbar_logo"
+            android:windowSoftInputMode="stateVisible"
+            android:configChanges="keyboardHidden|orientation|keyboard">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
