@@ -4,20 +4,20 @@ import android.app.DialogFragment;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
 import com.tosslab.toss.app.events.ModifyCdpEvent;
-import com.tosslab.toss.app.navigation.CdpItem;
-import com.tosslab.toss.app.navigation.CdpItemListAdapter;
-import com.tosslab.toss.app.navigation.CdpItemManager;
+import com.tosslab.toss.app.lists.CdpItem;
+import com.tosslab.toss.app.lists.CdpItemListAdapter;
+import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResSendMessage;
-import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
-import com.tosslab.toss.app.utils.ManipulateCdpAlertDialog;
+import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -188,7 +188,7 @@ public class LeftMenuFragment extends BaseFragment {
      */
     void showDialogToCreate(int cdpType) {
         DialogFragment newFragment
-                = EditTextAlertDialogFragment.newInstance(EditTextAlertDialogFragment.ACTION_CREATE_CDP
+                = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_CREATE_CDP
                 , cdpType
                 , 0);
         newFragment.show(getFragmentManager(), "dialog");
@@ -262,13 +262,13 @@ public class LeftMenuFragment extends BaseFragment {
      ************************************************************/
 
     void showDialogToManipulate(CdpItem cdp) {
-        DialogFragment newFragment = ManipulateCdpAlertDialog.newInstance(cdp);
+        DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     public void onEvent(ModifyCdpEvent event) {
-        DialogFragment newFragment = EditTextAlertDialogFragment.newInstance(
-                EditTextAlertDialogFragment.ACTION_MODIFY_CDP
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(
+                EditTextDialogFragment.ACTION_MODIFY_CDP
                 , event.cdpType
                 , event.cdpId
                 , event.currentName);
@@ -276,7 +276,7 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     /**
-     * 수정 이벤트 획득 from EditTextAlertDialogFragment
+     * 수정 이벤트 획득 from EditTextDialogFragment
      */
     public void onEvent(ConfirmModifyCdpEvent event) {
         modifyCdp(event);

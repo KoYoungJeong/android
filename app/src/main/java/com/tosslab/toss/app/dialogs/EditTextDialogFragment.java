@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.utils;
+package com.tosslab.toss.app.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,7 +25,7 @@ import de.greenrobot.event.EventBus;
  * Entity의 생성, 혹은 수정에 사용된다.
  */
 @EFragment
-public class EditTextAlertDialogFragment extends DialogFragment {
+public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_CREATE_CDP       = 0;
     public final static int ACTION_MODIFY_CDP       = 1;
     public final static int ACTION_MODIFY_MESSAGE   = 2;
@@ -37,8 +37,8 @@ public class EditTextAlertDialogFragment extends DialogFragment {
      * @param cdpId
      * @return
      */
-    public static EditTextAlertDialogFragment newInstance(int actionType, int cdpType, int cdpId) {
-        EditTextAlertDialogFragment frag = new EditTextAlertDialogFragment();
+    public static EditTextDialogFragment newInstance(int actionType, int cdpType, int cdpId) {
+        EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt("actionType", actionType);
         args.putInt("cdpType", cdpType);
@@ -55,9 +55,9 @@ public class EditTextAlertDialogFragment extends DialogFragment {
      * @param currentCdpName
      * @return
      */
-    public static EditTextAlertDialogFragment newInstance(int actionType, int cdpType
+    public static EditTextDialogFragment newInstance(int actionType, int cdpType
             , int cdpId, String currentCdpName) {
-        EditTextAlertDialogFragment frag = new EditTextAlertDialogFragment();
+        EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt("actionType", actionType);
         args.putInt("cdpType", cdpType);
@@ -73,8 +73,8 @@ public class EditTextAlertDialogFragment extends DialogFragment {
      * @param currentMessage
      * @return
      */
-    public static EditTextAlertDialogFragment newInstance(int messageId, String currentMessage) {
-        EditTextAlertDialogFragment frag = new EditTextAlertDialogFragment();
+    public static EditTextDialogFragment newInstance(int messageId, String currentMessage) {
+        EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt("actionType", ACTION_MODIFY_MESSAGE);
         args.putInt("id", messageId);

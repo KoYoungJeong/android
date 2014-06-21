@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.navigation;
+package com.tosslab.toss.app.lists;
 
 import android.content.Context;
 import android.view.View;
@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.utils.TossLogger;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -20,7 +19,6 @@ import java.util.List;
  */
 @EBean
 public class MessageItemListAdapter extends BaseAdapter {
-    private static final String TAG = TossLogger.makeLogTag(MessageItemListAdapter.class);
     List<MessageItem> mMessages;
 
     @RootContext

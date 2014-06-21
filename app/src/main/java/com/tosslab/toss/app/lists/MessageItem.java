@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.navigation;
+package com.tosslab.toss.app.lists;
 
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ResMessages;

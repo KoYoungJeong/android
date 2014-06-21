@@ -39,7 +39,7 @@
     <string name="action_switch_teams">Switch Teams</string>
 
     <!-- File Upload -->
-    <string name="title_activity_file_upload">File Upload</string>
+    <string name="title_file_upload">File Upload</string>
     <string name="file_upload_comment">Comment (optional)</string>
 
 </resources>

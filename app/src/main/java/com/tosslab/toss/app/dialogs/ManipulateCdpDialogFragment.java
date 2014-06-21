@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.utils;
+package com.tosslab.toss.app.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -10,25 +10,22 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
-import com.tosslab.toss.app.events.ReqModifyMessageEvent;
-import com.tosslab.toss.app.navigation.MessageItem;
+import com.tosslab.toss.app.events.DeleteCdpEvent;
+import com.tosslab.toss.app.events.ModifyCdpEvent;
+import com.tosslab.toss.app.lists.CdpItem;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 5. 28..
  */
-public class ManipulateMessageAlertDialog extends DialogFragment {
-    public static ManipulateMessageAlertDialog newInstance(MessageItem item) {
-
-        String title = DateTransformator.getTimeString(item.getTime());
-
-        ManipulateMessageAlertDialog frag = new ManipulateMessageAlertDialog();
+public class ManipulateCdpDialogFragment extends DialogFragment {
+    public static ManipulateCdpDialogFragment newInstance(CdpItem item) {
+        ManipulateCdpDialogFragment frag = new ManipulateCdpDialogFragment();
         Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putInt("messageId", item.getId());
-        args.putString("currentMessage", item.getContentString());
+        args.putString("title", item.name);
+        args.putInt("cdpId", item.id);
+        args.putInt("cdpType", item.type);
         frag.setArguments(args);
         return frag;
     }
@@ -36,28 +33,28 @@ public class ManipulateMessageAlertDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String title = getArguments().getString("title", "");
-        final int messageId = getArguments().getInt("messageId");
-        final String currentMessage = getArguments().getString("currentMessage");
+        final int cdpId = getArguments().getInt("cdpId");
+        final int cdpType = getArguments().getInt("cdpType");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
+        View mainView = inflater.inflate(R.layout.dialog_manipulate_cdp, null);
 
         // Edit 메뉴 클릭시.
-        final TextView actionEdit = (TextView)mainView.findViewById(R.id.txt_action_edit_message);
+        final TextView actionEdit = (TextView)mainView.findViewById(R.id.txt_action_edit_cdp);
         actionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ReqModifyMessageEvent(messageId, currentMessage));
+                EventBus.getDefault().post(new ModifyCdpEvent(cdpId, cdpType, title));
                 dismiss();
             }
         });
 
         // Delete 메뉴 클릭시.
-        final TextView actionDel = (TextView)mainView.findViewById(R.id.txt_action_del_message);
+        final TextView actionDel = (TextView)mainView.findViewById(R.id.txt_action_del_cdp);
         actionDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ConfirmDeleteMessageEvent(messageId));
+                EventBus.getDefault().post(new DeleteCdpEvent(cdpId, cdpType));
                 dismiss();
             }
         });

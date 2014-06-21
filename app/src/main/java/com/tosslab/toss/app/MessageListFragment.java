@@ -13,18 +13,20 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.tosslab.toss.app.dialogs.FileUploadDialogFragment;
+import com.tosslab.toss.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
+import com.tosslab.toss.app.events.ConfirmFileUploadEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.toss.app.events.ReqModifyMessageEvent;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
-import com.tosslab.toss.app.navigation.MessageItem;
-import com.tosslab.toss.app.navigation.MessageItemListAdapter;
+import com.tosslab.toss.app.lists.MessageItem;
+import com.tosslab.toss.app.lists.MessageItemListAdapter;
 import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.utils.EditTextAlertDialogFragment;
-import com.tosslab.toss.app.utils.ManipulateMessageAlertDialog;
+import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -65,12 +67,10 @@ public class MessageListFragment extends BaseFragment {
     ListView listMessages;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
-
     @ViewById(R.id.et_message)
     EditText etMessage;
 
     private ProgressWheel mProgressWheel;
-
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
     // Update 관련
     private Timer mTimer;
@@ -312,13 +312,13 @@ public class MessageListFragment extends BaseFragment {
     }
 
     void showDialog(MessageItem item) {
-        DialogFragment newFragment = ManipulateMessageAlertDialog.newInstance(item);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstance(item);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     // Message 수정 이벤트 획득
     public void onEvent(ReqModifyMessageEvent event) {
-        DialogFragment newFragment = EditTextAlertDialogFragment.newInstance(event.messageId
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageId
                 , event.currentMessage);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -410,18 +410,20 @@ public class MessageListFragment extends BaseFragment {
             Uri targetUri = data.getData();
             String realFilePath = getRealPathFromUri(targetUri);
             log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
-
-            uploadFileInBackground(realFilePath);
+            showFileUploadDialog(realFilePath);
+//            uploadFileInBackground(realFilePath);
         }
     }
 
-    private void moveToFileDetailActivity(String realFilePath) {
-        FileDetailActivity_
-                .intent(this)
-                .myToken(myToken)
-                .selectedFileUri(realFilePath)
-                .currentCdpId(mCurrentEvent.id)
-                .start();
+    // File Upload 대화상자 보여주기
+    void showFileUploadDialog(String realFilePath) {
+        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    // File Upload 확인 이벤트 획득
+    public void onEvent(ConfirmFileUploadEvent event) {
+        uploadFileInBackground(event.realFilePath);
     }
 
     @Background
@@ -461,11 +463,29 @@ public class MessageListFragment extends BaseFragment {
 
     // TODO : Poor Implementation
     private String getRealPathFromUri(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = getActivity().getContentResolver().query(contentUri, filePathColumn, null, null, null);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String filePath = cursor.getString(columnIndex);
+        cursor.close();
+        return filePath;
+
+//        String[] proj = { MediaStore.Images.Media.DATA };
+//        CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
+//        Cursor cursor = loader.loadInBackground();
+//        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//        cursor.moveToFirst();
+//        return cursor.getString(column_index);
+    }
+
+
+    private void moveToFileDetailActivity(String realFilePath) {
+        FileDetailActivity_
+                .intent(this)
+                .myToken(myToken)
+                .selectedFileUri(realFilePath)
+                .currentCdpId(mCurrentEvent.id)
+                .start();
     }
 }

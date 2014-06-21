@@ -1,4 +1,4 @@
-package com.tosslab.toss.app.navigation;
+package com.tosslab.toss.app.lists;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -8,12 +8,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.w3c.dom.Text;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..

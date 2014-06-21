@@ -25,7 +25,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".FileDetailActivity_"
-            android:label="@string/title_activity_file_upload"
+            android:label="@string/title_file_upload"
             android:logo="@drawable/ic_actionbar_logo"
             android:windowSoftInputMode="stateVisible"
             android:configChanges="keyboardHidden|orientation|keyboard">
