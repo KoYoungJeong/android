@@ -27,14 +27,22 @@ public class MessageItemView extends LinearLayout {
     @ViewById(R.id.img_message_user_profile)
     ImageView mUserProfileImage;
 
+    @ViewById(R.id.ry_file_message)
+    RelativeLayout mLayoutFileMessage;
+    @ViewById(R.id.txt_file_name)
+    TextView mTextFileName;
+    // 사진 파일
     @ViewById(R.id.img_message_photo)
-    ImageView mMessagePhoto;
-    @ViewById(R.id.ry_img_message)
-    RelativeLayout mLayoutImageMessage;
-    @ViewById(R.id.txt_img_file_name)
-    TextView mTextImageFileName;
+    ImageView mImagePhoto;
     @ViewById(R.id.txt_img_file_type)
     TextView mTextImageFileType;
+    // 일반 파일
+    @ViewById(R.id.img_message_common_file)
+    ImageView mImageCommonFile;
+    @ViewById(R.id.txt_common_file_type)
+    TextView mTextCommonFileType;
+
+
 
     Context mContext;
 
@@ -45,19 +53,28 @@ public class MessageItemView extends LinearLayout {
 
     public void bind(MessageItem item) {
         // Initiate
-        mLayoutImageMessage.setVisibility(GONE);
+        mLayoutFileMessage.setVisibility(GONE);
         mMessageContent.setText("");
-
+        mImagePhoto.setVisibility(GONE);
+        mTextImageFileType.setText("");
+        mImageCommonFile.setVisibility(GONE);
+        mTextCommonFileType.setText("");
 
         mUserName.setText(item.getUserNickName());
         // 메시지 String
         if (item.getContentType() == MessageItem.TYPE_STRING) {
             mMessageContent.setText(item.getContentString());
         } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
-            mLayoutImageMessage.setVisibility(VISIBLE);
-            mTextImageFileName.setText(item.getContentFileName());
+            mLayoutFileMessage.setVisibility(VISIBLE);
+            mTextFileName.setText(item.getContentFileName());
+            mImagePhoto.setVisibility(VISIBLE);
             mTextImageFileType.setText(item.getContentFileType() + " / " + item.getContentFileSize());
-            Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mMessagePhoto);
+            Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mImagePhoto);
+        } else if (item.getContentType() == MessageItem.TYPE_FILE) {
+            mLayoutFileMessage.setVisibility(VISIBLE);
+            mTextFileName.setText(item.getContentFileName());
+            mImageCommonFile.setVisibility(VISIBLE);
+            mTextCommonFileType.setText(item.getContentFileSize());
         }
 
         // 시간

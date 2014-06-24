@@ -3,7 +3,6 @@ package com.tosslab.toss.app;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,12 +12,15 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.dialogs.FileUploadDialogFragment;
+import com.tosslab.toss.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.toss.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.toss.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.toss.app.events.ConfirmFileUploadEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.toss.app.events.ReqModifyMessageEvent;
+import com.tosslab.toss.app.events.RequestFileUploadEvent;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.MessageItem;
 import com.tosslab.toss.app.lists.MessageItemListAdapter;
@@ -26,7 +28,6 @@ import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -118,19 +119,39 @@ public class MessageListFragment extends BaseFragment {
             }
         });
 
-        // Polling 설정
         mLastUpdateTime = new Date();
-        TimerTask task = new UpdateTimerTask();
-        mTimer = new Timer();
-        mTimer.schedule(task, 5000, 3000);  // 5초뒤, 3초마다
 
         mFirstItemId = -1;
         getMessages();
     }
 
+    private void pauseTimer() {
+        log.debug("pause polling");
+        mTimer.cancel();
+    }
+
+    private void resumeTimer() {
+        log.debug("resume polling");
+        TimerTask task = new UpdateTimerTask();
+        mTimer = new Timer();
+        mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
+    }
+
     @AfterInject
     void calledAfterInjection() {
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        resumeTimer();
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        pauseTimer();
+        super.onPause();
     }
 
     @Override
@@ -143,14 +164,18 @@ public class MessageListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        mTimer.cancel();
         super.onDestroy();
     }
 
 
+    /**
+     * Polling task
+     * Timer는 OnResume, OnPause 의 생명주기와 함께함
+     */
     private class UpdateTimerTask extends TimerTask {
         @Override
         public void run() {
+            log.debug("update messages by polling");
             getUpdateMessages();
         }
     }
@@ -394,24 +419,54 @@ public class MessageListFragment extends BaseFragment {
 
     @Click(R.id.btn_upload_file)
     void uploadFile() {
-        // pause time
-        mTimer.cancel();
+        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+    }
 
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, 0);
+    public void onEvent(RequestFileUploadEvent event) {
+        Intent intent = null;
+        switch (event.type) {
+            case TossConstants.TYPE_UPLOAD_GALLERY:
+                log.info("upload file from gallery");
+                // Gallery
+                intent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, TossConstants.TYPE_UPLOAD_GALLERY);
+                break;
+            case TossConstants.TYPE_UPLOAD_EXPLORER:
+                intent = new Intent(getActivity(), FileExplorerActivity.class);
+                startActivityForResult(intent, TossConstants.TYPE_UPLOAD_EXPLORER);
+                break;
+            default:
+                break;
+
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        log.debug("onActivityResule : " + requestCode + " / " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            Uri targetUri = data.getData();
-            String realFilePath = getRealPathFromUri(targetUri);
-            log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
-            showFileUploadDialog(realFilePath);
-//            uploadFileInBackground(realFilePath);
+            String realFilePath = null;
+            switch (requestCode) {
+                case TossConstants.TYPE_UPLOAD_GALLERY:
+                    Uri targetUri = data.getData();
+                    realFilePath = getRealPathFromUri(targetUri);
+                    log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
+                    showFileUploadDialog(realFilePath);
+                    break;
+                case TossConstants.TYPE_UPLOAD_EXPLORER:
+                    String path = data.getStringExtra("GetPath");
+                    realFilePath = path + File.separator + data.getStringExtra("GetFileName");
+                    log.debug("Get File from Explorer : " + realFilePath);
+                    showFileUploadDialog(realFilePath);
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 
@@ -456,9 +511,7 @@ public class MessageListFragment extends BaseFragment {
     @UiThread
     void uploadFileDone() {
         // resume timer
-        TimerTask task = new UpdateTimerTask();
-        mTimer = new Timer();
-        mTimer.schedule(task, 0, 3000);  // 즉시, 3초마다
+        resumeTimer();
     }
 
     // TODO : Poor Implementation

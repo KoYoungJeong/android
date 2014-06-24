@@ -3,18 +3,23 @@ package com.tosslab.toss.app.lists;
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ResMessages;
 
+import org.apache.log4j.Logger;
+
 import java.util.Date;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
 public class MessageItem {
+    private final Logger log = Logger.getLogger(MessageItem.class);
     static final int MB = 1024 * 1024;
     static final int KB = 1024;
 
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
-    public static final int TYPE_COMMENT  = 1;
+    public static final int TYPE_COMMENT  = 2;
+
+    public static final int TYPE_FILE  = 10;
 
     private ResMessages.Link mLink;
 
@@ -35,12 +40,19 @@ public class MessageItem {
     }
 
     public int getContentType() {
-        if (mLink.message instanceof ResMessages.TextMessage) {
+        ResMessages.OriginalMessage message = mLink.message;
+        if (message instanceof ResMessages.TextMessage) {
             return TYPE_STRING;
-        } else if (mLink.message instanceof ResMessages.FileMessage) {
-            // TODO : 다른 파일들
-            return TYPE_IMAGE;
-        } else if (mLink.message instanceof ResMessages.CommentMessage) {
+        } else if (message instanceof ResMessages.FileMessage) {
+            String fileType = ((ResMessages.FileMessage)message).content.type;
+            log.debug("fileType : " + fileType);
+            if (fileType == null || fileType.equals("null")) {
+                return TYPE_FILE;
+            }
+            if (fileType.startsWith("image")) {
+                return TYPE_IMAGE;
+            }
+        } else if (message instanceof ResMessages.CommentMessage) {
             return TYPE_COMMENT;
         }
         return TYPE_STRING;

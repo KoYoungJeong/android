@@ -41,5 +41,11 @@
     <!-- File Upload -->
     <string name="title_file_upload">File Upload</string>
     <string name="file_upload_comment">Comment (optional)</string>
+    <string name="menu_take_photo">Take Photo</string>
+    <string name="menu_take_video">Take Video</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_a_file">Upload a File</string>
+    <string name="title_activity_file_explorer">FileExplorer</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

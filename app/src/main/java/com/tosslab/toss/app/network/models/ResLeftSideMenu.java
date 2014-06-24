@@ -21,6 +21,8 @@ public class ResLeftSideMenu {
     public int joinEntityCount;
     public List<Entity> joinEntity;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
