@@ -60,9 +60,10 @@ public class ResMessages {
         public int writerId;
         public Date createTime;
         public Date updateTime;
-        public String status;
-        public int permission;
         public String contentType;
+        public String status;
+        public List<Integer> shareEntities;
+        public int permission;
     }
 
     public static class TextMessage extends OriginalMessage {

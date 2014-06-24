@@ -37,6 +37,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -81,7 +82,7 @@ public class MessageListFragment extends BaseFragment {
     boolean mIsFirstMessage = true;
     boolean mDoLoading = true;
 
-    // 현재 선택한 것 : Channel, Direct Message or Private Grou   p
+    // 현재 선택한 것 : Channel, Direct Message or Private Group
     SelectCdpItemEvent mCurrentEvent;
 
     @Override
@@ -478,6 +479,7 @@ public class MessageListFragment extends BaseFragment {
 
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
+        pauseTimer();
         uploadFileInBackground(event.realFilePath);
     }
 
@@ -533,12 +535,21 @@ public class MessageListFragment extends BaseFragment {
     }
 
 
-    private void moveToFileDetailActivity(String realFilePath) {
+    /************************************************************
+     * 파일 상세
+     ************************************************************/
+    @ItemClick
+    void list_messagesItemClicked(MessageItem item) {
+        if (item.getContentType() != MessageItem.TYPE_STRING) {
+            moveToFileDetailActivity(item.getId());
+        }
+    }
+
+    private void moveToFileDetailActivity(int fileId) {
         FileDetailActivity_
                 .intent(this)
                 .myToken(myToken)
-                .selectedFileUri(realFilePath)
-                .currentCdpId(mCurrentEvent.id)
+                .fileId(fileId)
                 .start();
     }
 }

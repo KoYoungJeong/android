@@ -2,6 +2,7 @@ package com.tosslab.toss.app.lists;
 
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.utils.FormatConverter;
 
 import org.apache.log4j.Logger;
 
@@ -12,8 +13,6 @@ import java.util.Date;
  */
 public class MessageItem {
     private final Logger log = Logger.getLogger(MessageItem.class);
-    static final int MB = 1024 * 1024;
-    static final int KB = 1024;
 
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE  = 1;
@@ -90,18 +89,9 @@ public class MessageItem {
     }
 
     public String getContentFileSize() {
-
         if (mLink.message instanceof ResMessages.FileMessage) {
             int byteSize = ((ResMessages.FileMessage)mLink.message).content.size;
-
-            if (byteSize > MB) {
-                float f = (float)byteSize / MB;
-                return String.format("%.2f MB", f);
-            } else if (byteSize > KB) {
-                return (byteSize / KB) + " KB";
-            } else {
-                return byteSize + " bytes";
-            }
+            return FormatConverter.formatFileSize(byteSize);
         }
 
         return null;

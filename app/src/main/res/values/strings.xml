@@ -48,4 +48,7 @@
     <string name="title_activity_file_explorer">FileExplorer</string>
     <string name="hello_world">Hello world!</string>
 
+    <string name="title_file_detail">File Detail</string>
+    <string name="comment">Comment</string>
+
 </resources>

@@ -26,12 +26,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".FileDetailActivity_"
-            android:configChanges="keyboardHidden|orientation|keyboard"
-            android:label="@string/title_file_upload"
+            android:label="@string/title_file_detail"
             android:screenOrientation="portrait"
-            android:logo="@drawable/ic_actionbar_logo"
-            android:windowSoftInputMode="stateVisible" >
-        </activity>
+            android:logo="@drawable/ic_actionbar_logo" />
         <activity
             android:name=".FileExplorerActivity"
             android:screenOrientation="portrait"

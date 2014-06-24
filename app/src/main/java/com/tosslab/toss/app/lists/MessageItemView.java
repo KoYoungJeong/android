@@ -61,6 +61,7 @@ public class MessageItemView extends LinearLayout {
         mTextCommonFileType.setText("");
 
         mUserName.setText(item.getUserNickName());
+
         // 메시지 String
         if (item.getContentType() == MessageItem.TYPE_STRING) {
             mMessageContent.setText(item.getContentString());
@@ -68,7 +69,7 @@ public class MessageItemView extends LinearLayout {
             mLayoutFileMessage.setVisibility(VISIBLE);
             mTextFileName.setText(item.getContentFileName());
             mImagePhoto.setVisibility(VISIBLE);
-            mTextImageFileType.setText(item.getContentFileType() + " / " + item.getContentFileSize());
+            mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
             Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mImagePhoto);
         } else if (item.getContentType() == MessageItem.TYPE_FILE) {
             mLayoutFileMessage.setVisibility(VISIBLE);
