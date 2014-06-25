@@ -91,6 +91,13 @@
                 android:text="channel"
                 />
         </RelativeLayout>
+        <ImageButton
+            android:id="@+id/btn_file_detail_share"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@android:drawable/ic_menu_more"
+            android:layout_margin="5dp"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

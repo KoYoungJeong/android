@@ -6,6 +6,7 @@
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
     <string name="upload">업로드</string>
+    <string name="share">공유</string>
 
     <!-- Login -->
     <string name="action_login">Log In</string>
@@ -50,5 +51,8 @@
 
     <string name="title_file_detail">File Detail</string>
     <string name="comment">Comment</string>
+
+    <!-- Share -->
+    <string name="title_cdp_to_be_shared">Share</string>
 
 </resources>

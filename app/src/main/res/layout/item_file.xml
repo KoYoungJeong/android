@@ -17,8 +17,6 @@
         android:layout_toRightOf="@+id/fd_Icon1"
         android:layout_marginTop="5dip"
         android:layout_marginLeft="5dip">
-
-
     </TextView>
     <TextView
         android:id="@+id/TextView02"

@@ -2,6 +2,7 @@ package com.tosslab.toss.app;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -577,13 +578,14 @@ public class MessageListFragment extends BaseFragment {
                 .myToken(myToken)
                 .fileId(fileId)
                 .start();
+        EventBus.getDefault().postSticky(((MainActivity)getActivity()).cdpItemManager);
     }
 
     @UiThread
     void showToast(String message) {
         SuperToast superToast = new SuperToast(getActivity());
         superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setDuration(SuperToast.Duration.SHORT);
         superToast.setBackground(SuperToast.Background.BLUE);
         superToast.setTextColor(Color.WHITE);
         superToast.show();

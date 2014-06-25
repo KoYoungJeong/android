@@ -3,6 +3,7 @@ package com.tosslab.toss.app.lists;
 import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,18 +11,24 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.R;
 import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.DateTransformator;
 import com.tosslab.toss.app.utils.FormatConverter;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.apache.log4j.Logger;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 6. 24..
  */
 @EViewGroup(R.layout.item_file_detail)
 public class FileDetailView extends FrameLayout {
+    private final Logger log = Logger.getLogger(FileDetailView.class);
+
     @ViewById(R.id.img_file_detail_user_profile)
     ImageView imageViewUserProfile;
     @ViewById(R.id.txt_file_detail_user_name)
@@ -38,6 +45,8 @@ public class FileDetailView extends FrameLayout {
     ImageView imageViewPhotoFile;
     @ViewById(R.id.ly_file_detail_unit)
     LinearLayout fileDetailLayout;
+    @ViewById(R.id.btn_file_detail_share)
+    ImageButton buttonFileDetailShare;
 
     // Comment 일 경우
     @ViewById(R.id.ly_file_detail_comment)
@@ -85,6 +94,12 @@ public class FileDetailView extends FrameLayout {
                 String photoUrl = TossConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
                 Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
             }
+            buttonFileDetailShare.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EventBus.getDefault().post(new RequestSelectionOfCdpToBeShared());
+                }
+            });
         } else if (fileDetail instanceof ResMessages.CommentMessage) {
             fileDetailLayout.setVisibility(GONE);
             fileDetailCommentLayout.setVisibility(VISIBLE);

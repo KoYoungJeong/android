@@ -5,6 +5,7 @@ import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
 import com.tosslab.toss.app.network.models.ReqSendComment;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
+import com.tosslab.toss.app.network.models.ReqShareMessage;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResLogin;
@@ -186,6 +187,11 @@ public interface TossRestClient {
     @Get("/messages/{messageId}")
     @RequiresHeader("Authorization")
     ResFileDetail getFileDetail(int messageId);
+
+    // Share Message
+    @Put("/messages/{messageId}/share")
+    @RequiresHeader("Authorization")
+    ResSendMessage shareMessage(ReqShareMessage share, int messageId);
 
     // Send Comment
     @Post("/messages/{messageId}/comment")

@@ -7,6 +7,7 @@ import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
 import com.tosslab.toss.app.network.models.ReqSendComment;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
+import com.tosslab.toss.app.network.models.ReqShareMessage;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.network.models.ResSendMessage;
@@ -116,6 +117,13 @@ public class MessageManipulator {
         ReqSendComment reqSendComment = new ReqSendComment();
         reqSendComment.comment = comment;
         return mRestClient.sendMessageComment(reqSendComment, messageId);
+
+    }
+
+    public ResSendMessage shareMessage(int messageId, int cdpIdToBeShared)  throws RestClientException {
+        ReqShareMessage reqShareMessage = new ReqShareMessage();
+        reqShareMessage.shareEntity = cdpIdToBeShared;
+        return mRestClient.shareMessage(reqShareMessage, messageId);
 
     }
 

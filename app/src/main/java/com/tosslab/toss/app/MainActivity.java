@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItem;
 import com.tosslab.toss.app.lists.CdpItemManager;
@@ -27,6 +28,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.androidannotations.annotations.sharedpreferences.Pref;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -35,6 +37,8 @@ import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_main)
 public class MainActivity extends Activity {
+    private final Logger log = Logger.getLogger(MainActivity.class);
+
     @ViewById(R.id.fl_activity_main_container)
     FrameLayout flContainer;
     @ViewById(R.id.dl_activity_main_drawer)

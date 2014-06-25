@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/bg_message_item"
     tools:context="com.tosslab.toss.app.FileDetailActivity">
     <ListView
         android:id="@+id/list_file_detail_items"
