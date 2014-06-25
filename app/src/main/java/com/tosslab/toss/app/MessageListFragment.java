@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.inputmethod.InputMethodManager;
@@ -12,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.toss.app.dialogs.FileUploadTypeDialogFragment;
@@ -527,6 +529,7 @@ public class MessageListFragment extends BaseFragment {
     void uploadFileDone() {
         // resume timer
         resumeTimer();
+        showToast("File Uploaded !!");
     }
 
     // TODO : Poor Implementation
@@ -574,5 +577,15 @@ public class MessageListFragment extends BaseFragment {
                 .myToken(myToken)
                 .fileId(fileId)
                 .start();
+    }
+
+    @UiThread
+    void showToast(String message) {
+        SuperToast superToast = new SuperToast(getActivity());
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.BLUE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
     }
 }
