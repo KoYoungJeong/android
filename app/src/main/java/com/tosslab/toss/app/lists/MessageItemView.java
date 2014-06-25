@@ -26,23 +26,25 @@ public class MessageItemView extends LinearLayout {
     TextView mMessageContent;
     @ViewById(R.id.img_message_user_profile)
     ImageView mUserProfileImage;
+    @ViewById(R.id.txt_message_commented)
+    TextView mMessageCommented;
 
     @ViewById(R.id.ry_file_message)
     RelativeLayout mLayoutFileMessage;
     @ViewById(R.id.txt_file_name)
     TextView mTextFileName;
+
     // 사진 파일
     @ViewById(R.id.img_message_photo)
     ImageView mImagePhoto;
     @ViewById(R.id.txt_img_file_type)
     TextView mTextImageFileType;
+
     // 일반 파일
     @ViewById(R.id.img_message_common_file)
     ImageView mImageCommonFile;
     @ViewById(R.id.txt_common_file_type)
     TextView mTextCommonFileType;
-
-
 
     Context mContext;
 
@@ -59,6 +61,7 @@ public class MessageItemView extends LinearLayout {
         mTextImageFileType.setText("");
         mImageCommonFile.setVisibility(GONE);
         mTextCommonFileType.setText("");
+        mMessageCommented.setVisibility(GONE);
 
         mUserName.setText(item.getUserNickName());
 
@@ -76,6 +79,9 @@ public class MessageItemView extends LinearLayout {
             mTextFileName.setText(item.getContentFileName());
             mImageCommonFile.setVisibility(VISIBLE);
             mTextCommonFileType.setText(item.getContentFileSize());
+        } else if (item.getContentType() == MessageItem.TYPE_COMMENT) {
+            mMessageContent.setText(item.getContentString());
+            mMessageCommented.setVisibility(VISIBLE);
         }
 
         // 시간

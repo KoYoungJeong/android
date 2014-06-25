@@ -64,6 +64,7 @@ public class ResMessages {
         public String status;
         public List<Integer> shareEntities;
         public int permission;
+        public int feedback;
     }
 
     public static class TextMessage extends OriginalMessage {

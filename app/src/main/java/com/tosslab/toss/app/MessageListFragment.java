@@ -269,8 +269,10 @@ public class MessageListFragment extends BaseFragment {
                 mLastUpdateTime = responseTime;
             }
 
-            // Update 된 메시지만 부분 삽입한다.
-            messageItemListAdapter.updatedMessageItem(restResMessages);
+            if (restResMessages.messageCount > 0) {
+                // Update 된 메시지만 부분 삽입한다.
+                messageItemListAdapter.updatedMessageItem(restResMessages);
+            }
 
             getUpdateMessagesDone();
         } catch (RestClientException e) {
@@ -540,8 +542,18 @@ public class MessageListFragment extends BaseFragment {
      ************************************************************/
     @ItemClick
     void list_messagesItemClicked(MessageItem item) {
-        if (item.getContentType() != MessageItem.TYPE_STRING) {
-            moveToFileDetailActivity(item.getId());
+        switch (item.getContentType()) {
+            case MessageItem.TYPE_STRING:
+                // DO NOTHING
+                break;
+            case MessageItem.TYPE_COMMENT:
+                moveToFileDetailActivity(item.getFeedbackId());
+                break;
+            case MessageItem.TYPE_IMAGE:
+            case MessageItem.TYPE_FILE:
+                moveToFileDetailActivity(item.getId());
+                break;
+
         }
     }
 

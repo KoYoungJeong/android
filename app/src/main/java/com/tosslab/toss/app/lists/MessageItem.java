@@ -30,6 +30,10 @@ public class MessageItem {
         return mLink.message.id;
     }
 
+    public int getFeedbackId() {
+        return mLink.message.feedback;
+    }
+
     public String getUserNickName() {
         return mLink.message.writer.u_firstName + " " + mLink.message.writer.u_lastName;
     }
@@ -50,6 +54,8 @@ public class MessageItem {
             }
             if (fileType.startsWith("image")) {
                 return TYPE_IMAGE;
+            } else {
+                return TYPE_FILE;
             }
         } else if (message instanceof ResMessages.CommentMessage) {
             return TYPE_COMMENT;
@@ -60,6 +66,8 @@ public class MessageItem {
     public String getContentString() {
         if (mLink.message instanceof ResMessages.TextMessage) {
             return ((ResMessages.TextMessage)mLink.message).content.body;
+        } else if (mLink.message instanceof ResMessages.CommentMessage) {
+            return ((ResMessages.CommentMessage)mLink.message).content.body;
         }
         return null;
     }

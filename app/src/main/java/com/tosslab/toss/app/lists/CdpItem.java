@@ -34,4 +34,9 @@ public class CdpItem {
         this.type = TossConstants.TYPE_PRIVATE_GROUP;
         this.id = pGroup.id;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }

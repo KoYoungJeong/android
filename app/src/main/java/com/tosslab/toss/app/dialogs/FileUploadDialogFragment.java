@@ -7,10 +7,16 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
+import com.tosslab.toss.app.MainActivity;
 import com.tosslab.toss.app.R;
 import com.tosslab.toss.app.events.ConfirmFileUploadEvent;
+import com.tosslab.toss.app.lists.CdpArrayAdapter;
+
+import org.androidannotations.annotations.EFragment;
 
 import java.io.File;
 
@@ -20,6 +26,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 6. 20..
  */
 public class FileUploadDialogFragment extends DialogFragment {
+    private CdpArrayAdapter cdpArrayAdapter;
     public static FileUploadDialogFragment newInstance(String realFilePath) {
 
         FileUploadDialogFragment frag = new FileUploadDialogFragment();
@@ -43,6 +50,12 @@ public class FileUploadDialogFragment extends DialogFragment {
         } else {
             // TODO : ERROR 처리
         }
+
+        final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_cdps);
+        spinner.setPrompt("공유");
+        cdpArrayAdapter = new CdpArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
+                ((MainActivity)getActivity()).cdpItemManager.retrieve());
+        spinner.setAdapter(cdpArrayAdapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)

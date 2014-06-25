@@ -31,12 +31,21 @@
             android:textColor="@color/message_date_text"
              />
         <TextView
-            android:id="@+id/txt_message_content"
-            android:layout_width="match_parent"
+            android:id="@+id/txt_message_commented"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_message_user_name"
             android:layout_marginTop="5dp"
-            android:text="HiHi"/>
+            android:textColor="@color/file_type"
+            android:visibility="gone"
+            android:text="Commented"/>
+        <TextView
+            android:id="@+id/txt_message_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_message_commented"
+            android:layout_marginTop="5dp"
+            android:text="Text"/>
         <!-- 이미지일 경우 -->
         <RelativeLayout
             android:id="@+id/ry_file_message"
