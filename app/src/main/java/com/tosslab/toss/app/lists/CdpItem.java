@@ -14,9 +14,16 @@ public class CdpItem {
 
     public CdpItem(int typeOfTitle) {
         this.name = null;
-        this.id = 0;
+        this.id = -1;
         this.type = typeOfTitle;
     }
+
+    public CdpItem(int typeOfTitle, int units) {
+        this.name = "+ " + units + " mores...";
+        this.id = -1;
+        this.type = typeOfTitle;
+    }
+
     public CdpItem(ResLeftSideMenu.Channel channel) {
         this.name = channel.name;
         this.type = TossConstants.TYPE_CHANNEL;
@@ -37,6 +44,13 @@ public class CdpItem {
 
     @Override
     public String toString() {
-        return this.name;
+        switch (this.type) {
+            case TossConstants.TYPE_CHANNEL:
+                return "# " + this.name;
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return "@ " + this.name;
+            default:
+                return this.name;
+        }
     }
 }

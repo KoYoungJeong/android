@@ -475,18 +475,18 @@ public class MessageListFragment extends BaseFragment {
 
     // File Upload 대화상자 보여주기
     void showFileUploadDialog(String realFilePath) {
-        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath);
+        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, mCurrentEvent.id);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseTimer();
-        uploadFileInBackground(event.realFilePath);
+        uploadFileInBackground(event.cdpId, event.realFilePath, event.comment);
     }
 
     @Background
-    void uploadFileInBackground(String fileUri) {
+    void uploadFileInBackground(int cdpIdToBeShared, String fileUri, String comment) {
 
         String requestURL = TossConstants.SERVICE_ROOT_URL + "inner-api/file";
 
@@ -495,11 +495,14 @@ public class MessageListFragment extends BaseFragment {
             MultipartUtility multipart = new MultipartUtility(requestURL, myToken);
 
             multipart.addFormField("title", uploadFile.getName());
-            multipart.addFormField("share", "" + mCurrentEvent.id);
+            multipart.addFormField("share", "" + cdpIdToBeShared);
             multipart.addFormField("permission", "755");
             multipart.addFilePart("userFile", uploadFile);
+            if (comment != null && comment.length() > 0) {
+                multipart.addFormField("comment", comment);
+            }
 
-            log.debug("try to upload file, " + uploadFile.getName() + ", Authorization : " + myToken);
+            log.debug("try to upload file, " + uploadFile.getName() + " with " + comment + ", to " + cdpIdToBeShared);
 
             List<String> response = multipart.finish();
             log.debug("SERVER REPLIED:");

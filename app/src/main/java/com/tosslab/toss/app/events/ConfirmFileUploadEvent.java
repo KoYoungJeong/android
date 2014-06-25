@@ -5,7 +5,11 @@ package com.tosslab.toss.app.events;
  */
 public class ConfirmFileUploadEvent {
     public String realFilePath;
-    public ConfirmFileUploadEvent(String realFilePath) {
+    public int cdpId;
+    public String comment;
+    public ConfirmFileUploadEvent(int cdpId, String realFilePath, String comment) {
+        this.cdpId = cdpId;
         this.realFilePath = realFilePath;
+        this.comment = comment;
     }
 }

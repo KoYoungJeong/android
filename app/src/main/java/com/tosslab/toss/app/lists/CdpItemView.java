@@ -38,7 +38,7 @@ public class CdpItemView extends FrameLayout {
                 break;
             case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 txtCdpItemName.setVisibility(VISIBLE);
-                txtCdpItemName.setText("+ ? more...");
+                txtCdpItemName.setText(cdp.name);
                 break;
             case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 lyTitleDirectMessage.setVisibility(VISIBLE);
@@ -47,18 +47,10 @@ public class CdpItemView extends FrameLayout {
                 lyTitlePrivateGroup.setVisibility(VISIBLE);
                 break;
             case TossConstants.TYPE_CHANNEL:
-                txtCdpItemName.setVisibility(VISIBLE);
-                txtCdpItemName.setText("#" + cdp.name);
-                break;
             case TossConstants.TYPE_DIRECT_MESSAGE:
-                setAllVisibilitiesByGone();
-                txtCdpItemName.setVisibility(VISIBLE);
-                txtCdpItemName.setText("@" + cdp.name);
-                break;
             default:
-                setAllVisibilitiesByGone();
                 txtCdpItemName.setVisibility(VISIBLE);
-                txtCdpItemName.setText(cdp.name);
+                txtCdpItemName.setText(cdp.toString());
                 break;
         }
 

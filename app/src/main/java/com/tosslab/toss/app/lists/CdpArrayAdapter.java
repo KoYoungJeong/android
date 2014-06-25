@@ -2,12 +2,7 @@ package com.tosslab.toss.app.lists;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
-import com.tosslab.toss.app.R;
 
 import java.util.List;
 
@@ -26,5 +21,15 @@ public class CdpArrayAdapter extends ArrayAdapter<CdpItem> {
     @Override
     public CdpItem getItem(int position) {
         return cdpItems.get(position);
+    }
+
+    public int getPosition(int cdpId) {
+        for (int i = 0; i < cdpItems.size(); i++) {
+            CdpItem cdpItem = cdpItems.get(i);
+            if (cdpItem.id == cdpId) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
