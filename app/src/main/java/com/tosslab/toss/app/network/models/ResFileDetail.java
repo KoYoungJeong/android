@@ -11,6 +11,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResFileDetail {
-    public int fileDetailCount;
-    public List<ResMessages.OriginalMessage> fileDetails;
+    public int messageCount;
+    public List<ResMessages.OriginalMessage> messageDetails;
 }

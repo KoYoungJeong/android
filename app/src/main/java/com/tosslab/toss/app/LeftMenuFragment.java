@@ -174,6 +174,7 @@ public class LeftMenuFragment extends BaseFragment {
 
     public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
         CdpItemManager cdpItemManager = new CdpItemManager(resLeftSideMenu);
+        ((MainActivity)getActivity()).cdpItemManager = cdpItemManager;
         mCdpListAdapter.retrieveCdpItems(cdpItemManager);
         mCdpListAdapter.notifyDataSetChanged();
     }

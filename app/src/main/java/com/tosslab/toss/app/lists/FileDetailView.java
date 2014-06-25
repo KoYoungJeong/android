@@ -39,6 +39,19 @@ public class FileDetailView extends FrameLayout {
     @ViewById(R.id.ly_file_detail_unit)
     LinearLayout fileDetailLayout;
 
+    // Comment 일 경우
+    @ViewById(R.id.ly_file_detail_comment)
+    LinearLayout fileDetailCommentLayout;
+    @ViewById(R.id.img_file_detail_comment_user_profile)
+    ImageView imageViewCommentUserProfile;
+    @ViewById(R.id.txt_file_detail_comment_user_name)
+    TextView textViewCommentUserName;
+    @ViewById(R.id.txt_file_detail_comment_create_date)
+    TextView textViewCommentFileCreateDate;
+    @ViewById(R.id.txt_file_detail_comment_content)
+    TextView textViewCommentContent;
+
+
     Context mContext;
 
     public FileDetailView(Context context) {
@@ -49,6 +62,8 @@ public class FileDetailView extends FrameLayout {
     public void bind(ResMessages.OriginalMessage fileDetail) {
         if (fileDetail instanceof ResMessages.FileMessage) {
             fileDetailLayout.setVisibility(VISIBLE);
+            fileDetailCommentLayout.setVisibility(GONE);
+
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
             // 사용자
             ResMessages.Writer writer = fileMessage.writer;
@@ -72,6 +87,22 @@ public class FileDetailView extends FrameLayout {
             }
         } else if (fileDetail instanceof ResMessages.CommentMessage) {
             fileDetailLayout.setVisibility(GONE);
+            fileDetailCommentLayout.setVisibility(VISIBLE);
+
+            ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) fileDetail;
+
+            // 프로필
+            ResMessages.Writer writer = commentMessage.writer;
+            String profileUrl = TossConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+            Picasso.with(mContext).load(profileUrl).centerCrop().fit().into(imageViewCommentUserProfile);
+            // 이름
+            String userName = writer.u_firstName + " " + writer.u_lastName;
+            textViewCommentUserName.setText(userName);
+            // 날짜
+            String createTime = DateTransformator.getTimeDifference(commentMessage.updateTime);
+            textViewCommentFileCreateDate.setText(createTime);
+            // 댓글 내용
+            textViewCommentContent.setText(commentMessage.content.body);
         }
     }
 }

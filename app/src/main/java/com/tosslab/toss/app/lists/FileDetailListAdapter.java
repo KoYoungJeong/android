@@ -63,7 +63,7 @@ public class FileDetailListAdapter extends BaseAdapter {
     }
 
     public void updateFileDetails(ResFileDetail resFileDetail) {
-        for (ResMessages.OriginalMessage fileDetail : resFileDetail.fileDetails) {
+        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
                 mMessages.add(0, fileDetail);
             } else if (fileDetail instanceof ResMessages.CommentMessage) {
@@ -71,5 +71,9 @@ public class FileDetailListAdapter extends BaseAdapter {
             }
         }
         log.debug("Upload done : " + mMessages.size() + " items.");
+    }
+
+    public void clear() {
+        mMessages.clear();
     }
 }

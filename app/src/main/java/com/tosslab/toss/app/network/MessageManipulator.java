@@ -5,7 +5,9 @@ import android.util.Log;
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
+import com.tosslab.toss.app.network.models.ReqSendComment;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
+import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 
@@ -20,10 +22,16 @@ public class MessageManipulator {
     private static final int NUMBER_OF_MESSAGES = 10;
     TossRestClient mRestClient;
     SelectCdpItemEvent mCurrentEvent;
+    int mMessageId;
 
     public MessageManipulator(TossRestClient tossRestClient, SelectCdpItemEvent event, String token) {
         mRestClient = tossRestClient;
         mCurrentEvent = event;
+        mRestClient.setHeader("Authorization", token);
+    }
+
+    public MessageManipulator(TossRestClient tossRestClient, String token) {
+        mRestClient = tossRestClient;
         mRestClient.setHeader("Authorization", token);
     }
 
@@ -98,6 +106,17 @@ public class MessageManipulator {
             default:
                 return null;
         }
+    }
+
+    public ResFileDetail getMessageDetail(int messageId) throws RestClientException {
+        return mRestClient.getFileDetail(messageId);
+    }
+
+    public ResSendMessage sendMessageComment(int messageId, String comment) throws RestClientException {
+        ReqSendComment reqSendComment = new ReqSendComment();
+        reqSendComment.comment = comment;
+        return mRestClient.sendMessageComment(reqSendComment, messageId);
+
     }
 
 }

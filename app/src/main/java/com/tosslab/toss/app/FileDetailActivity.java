@@ -1,8 +1,10 @@
 package com.tosslab.toss.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -10,15 +12,18 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.toss.app.lists.FileDetailListAdapter;
+import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.DateTransformator;
+import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
@@ -45,11 +50,21 @@ public class FileDetailActivity extends Activity {
     FileDetailListAdapter fileDetailListAdapter;
     @ViewById(R.id.list_file_detail_items)
     ListView listFileDetails;
+    @ViewById(R.id.et_file_detail_comment)
+    EditText etFileDetailComment;
+
+    private ProgressWheel mProgressWheel;
+    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     @AfterViews
     public void initForm() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setDisplayUseLogoEnabled(true);
+
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(this);
+        mProgressWheel.init();
+        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         listFileDetails.setAdapter(fileDetailListAdapter);
 
@@ -66,6 +81,13 @@ public class FileDetailActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
     }
 
     @Background
@@ -86,33 +108,40 @@ public class FileDetailActivity extends Activity {
         fileDetailListAdapter.notifyDataSetChanged();
     }
 
+    @Click(R.id.btn_file_detail_send_comment)
+    void sendComment() {
+        String comment = etFileDetailComment.getText().toString();
+        hideSoftKeyboard();
 
-//    @UiThread
-//    void showFileDetail(ResFileDetail resFileDetail) {
-//        for (ResMessages.OriginalMessage fileDetail : resFileDetail.fileDetails) {
-//            if (fileDetail instanceof ResMessages.FileMessage) {
-//                ResMessages.FileMessage fileMessage = (ResMessages.FileMessage)fileDetail;
-//                // 사용자
-//                ResMessages.Writer writer = fileMessage.writer;
-//                String profileUrl = TossConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
-//                Picasso.with(this).load(profileUrl).centerCrop().fit().into(imageViewUserProfile);
-//                String userName = writer.u_firstName + " " + writer.u_lastName;
-//                textViewUserName.setText(userName);
-//                // 파일
-//                String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
-//                textViewFileCreateDate.setText(createTime);
-//                textViewFileName.setText(fileMessage.content.name);
-//
-//                // 이미지일 경우
-//                if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
-//                    imageViewPhotoFile.setVisibility(View.VISIBLE);
-//                    String photoUrl = TossConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
-//                    Picasso.with(this).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
-//                }
-//            } else if (fileDetail instanceof ResMessages.CommentMessage) {
-//
-//            }
-//        }
-//
-//    }
+        if (comment.length() > 0) {
+            sendMessageInBackground(comment);
+        }
+    }
+
+    @UiThread
+    void hideSoftKeyboard() {
+        imm.hideSoftInputFromWindow(etFileDetailComment.getWindowToken(),0);
+        etFileDetailComment.setText("");
+    }
+
+
+    @Background
+    public void sendMessageInBackground(String message) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.sendMessageComment(fileId, message);
+            log.debug("success to send message");
+        } catch (RestClientException e) {
+            log.error("fail to send message", e);
+        }
+
+        sendMessageDone();
+    }
+
+    @UiThread
+    public void sendMessageDone() {
+        fileDetailListAdapter.clear();
+        getFileDetailFromServer();
+    }
 }

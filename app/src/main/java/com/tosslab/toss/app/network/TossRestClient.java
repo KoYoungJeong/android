@@ -3,6 +3,7 @@ package com.tosslab.toss.app.network;
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
+import com.tosslab.toss.app.network.models.ReqSendComment;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
@@ -181,8 +182,13 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     RestFileUploadResponse uploadFile(MultiValueMap data);
 
-    // File Detail
-    @Get("/files/{fileId}")
+    // Message Detail
+    @Get("/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResFileDetail getFileDetail(int fileId);
+    ResFileDetail getFileDetail(int messageId);
+
+    // Send Comment
+    @Post("/messages/{messageId}/comment")
+    @RequiresHeader("Authorization")
+    ResSendMessage sendMessageComment(ReqSendComment comment, int messageId);
 }

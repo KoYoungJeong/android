@@ -69,4 +69,8 @@ public class CdpItemListAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
+
+    public List<CdpItem> getmCdpItems() {
+        return mCdpItems;
+    }
 }

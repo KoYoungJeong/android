@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
+import com.tosslab.toss.app.lists.CdpItem;
+import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
@@ -25,6 +27,7 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -41,6 +44,7 @@ public class MainActivity extends Activity {
     @RestService
     TossRestClient tossRestClient;
 
+    public CdpItemManager cdpItemManager;
     private ProgressWheel mProgressWheel;
     private ActionBarDrawerToggle mDrawerToggle;
     private int mCurrentTitle = R.string.app_name;
@@ -64,8 +68,6 @@ public class MainActivity extends Activity {
 
         selectItem(0);  // 기본 프레그먼트 설정
     }
-
-
 
     @Override
     public void onResume() {

@@ -70,12 +70,16 @@ public class ResMessages {
         public TextContent content;
     }
 
-    public static class TextContent {
-        public String body;
+    public static class CommentMessage extends OriginalMessage {
+        public TextContent content;
     }
 
     public static class FileMessage extends OriginalMessage {
         public FileContent content;
+    }
+
+    public static class TextContent {
+        public String body;
     }
 
     public static class FileContent {
@@ -87,11 +91,5 @@ public class ResMessages {
         public int size;
     }
 
-    public static class CommentMessage extends OriginalMessage {
-        public CommentContent content;
-    }
 
-    public static class CommentContent {
-
-    }
 }
