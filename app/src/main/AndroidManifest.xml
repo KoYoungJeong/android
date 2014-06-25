@@ -28,6 +28,7 @@
             android:name=".FileDetailActivity_"
             android:label="@string/title_file_detail"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:logo="@drawable/ic_actionbar_logo" />
         <activity
             android:name=".FileExplorerActivity"

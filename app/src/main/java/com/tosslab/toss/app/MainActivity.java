@@ -3,6 +3,7 @@ package com.tosslab.toss.app;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -25,6 +26,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.androidannotations.annotations.sharedpreferences.Pref;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -66,7 +68,12 @@ public class MainActivity extends Activity {
         // 네비게이션 드로어 터치 영역 확장
         expandRangeOfNavigationDrawerToggle();
 
-        selectItem(0);  // 기본 프레그먼트 설정
+        // Preference 추출
+        SharedPreferences pref = getSharedPreferences("TossPref", 0);
+        int cdpType = pref.getInt("cdpType", -1);
+        int cdpId = pref.getInt("cdpId", -1);
+
+        selectItem(0, cdpType, cdpId);  // 기본 프레그먼트 설정
     }
 
     @Override
@@ -92,6 +99,11 @@ public class MainActivity extends Activity {
         // 해당 이벤트는 LeftMenuFragment -> MessageListFragment 지만
         // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
+        SharedPreferences pref = getSharedPreferences("TossPref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("cdpType", event.type);
+        editor.putInt("cdpId", event.id);
+        editor.commit();
     }
 
     public void onPostCreate(Bundle savedInstanceState){
@@ -114,7 +126,7 @@ public class MainActivity extends Activity {
     }
 
     /** Swaps fragments in the main content view */
-    private void selectItem(int position) {
+    private void selectItem(int position, int cdpType, int cdpId) {
         BaseFragment baseFragment;
         switch (position) {
             case 0:
@@ -122,6 +134,8 @@ public class MainActivity extends Activity {
                 baseFragment = MessageListFragment_
                         .builder()
                         .myToken(myToken)
+                        .cdpId(cdpId)
+                        .cdpType(cdpType)
                         .build();
                 break;
         }

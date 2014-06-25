@@ -64,6 +64,10 @@ public class MessageListFragment extends BaseFragment {
     TossRestClient tossRestClient;
     @FragmentArg
     String myToken;
+    @FragmentArg
+    int cdpId;
+    @FragmentArg
+    int cdpType;
 
     @ViewById(R.id.list_messages)
     ListView listMessages;
@@ -119,6 +123,10 @@ public class MessageListFragment extends BaseFragment {
 
             }
         });
+
+        // 만약 미리 저장해놓은 cdpId가 있다면 다시 사용
+        if (cdpType >= 0 && cdpId >= 0)
+            mCurrentEvent = new SelectCdpItemEvent(cdpType, cdpId);
 
         mLastUpdateTime = new Date();
 
