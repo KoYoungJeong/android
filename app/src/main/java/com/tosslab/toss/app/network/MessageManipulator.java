@@ -120,11 +120,20 @@ public class MessageManipulator {
 
     }
 
-    public ResSendMessage shareMessage(int messageId, int cdpIdToBeShared)  throws RestClientException {
+    public ResSendMessage shareMessage(int messageId, int cdpIdToBeShared) throws RestClientException {
         ReqShareMessage reqShareMessage = new ReqShareMessage();
         reqShareMessage.shareEntity = cdpIdToBeShared;
         return mRestClient.shareMessage(reqShareMessage, messageId);
+    }
 
+    public ResSendMessage modifyMessageComment(int messageId, String comment, int feedbackId) {
+        ReqSendComment reqModifyComment = new ReqSendComment();
+        reqModifyComment.comment = comment;
+        return mRestClient.modifyMessageComment(reqModifyComment, feedbackId, messageId);
+    }
+
+    public ResSendMessage deleteMessageComment(int messageId, int feedbackId) {
+        return mRestClient.deleteMessageComment(feedbackId, messageId);
     }
 
 }

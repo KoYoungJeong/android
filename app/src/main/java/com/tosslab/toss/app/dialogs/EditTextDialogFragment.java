@@ -73,12 +73,14 @@ public class EditTextDialogFragment extends DialogFragment {
      * @param currentMessage
      * @return
      */
-    public static EditTextDialogFragment newInstance(int messageId, String currentMessage) {
+    public static EditTextDialogFragment newInstance(int messageType, int messageId, String currentMessage, int feedbackId) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
         args.putInt("actionType", ACTION_MODIFY_MESSAGE);
         args.putInt("id", messageId);
+        args.putInt("feedbackId", feedbackId);
         args.putString("currentMessage", currentMessage);
+        args.putInt("messageType", messageType);
         frag.setArguments(args);
         return frag;
     }
@@ -89,6 +91,8 @@ public class EditTextDialogFragment extends DialogFragment {
         final int cdpType = getArguments().getInt("cdpType");
         final int id = getArguments().getInt("id");
         final String currentMessage = getArguments().getString("currentMessage");
+        final int feedbackId = getArguments().getInt("feedbackId", -1);
+        final int messageType = getArguments().getInt("messageType");
 
         int titleStringId = obtainTitleByPurpose(actionType, cdpType);
 
@@ -123,8 +127,10 @@ public class EditTextDialogFragment extends DialogFragment {
                                     case ACTION_MODIFY_MESSAGE:
                                     default:
                                         // 메시지 수정의 경우 MessageListFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(new ConfirmModifyMessageEvent(id
-                                                , inputName.getText().toString()));
+                                        EventBus.getDefault().post(new ConfirmModifyMessageEvent(messageType
+                                                , id
+                                                , inputName.getText().toString()
+                                                , feedbackId));
                                         break;
 
                                 }

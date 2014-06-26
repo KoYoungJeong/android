@@ -38,6 +38,10 @@ public class MessageItem {
         return mLink.message.writer.u_firstName + " " + mLink.message.writer.u_lastName;
     }
 
+    public int getUserId() {
+        return mLink.message.writer.id;
+    }
+
     public String getUserProfileUrl() {
         return TossConstants.SERVICE_ROOT_URL + mLink.message.writer.u_photoUrl;
     }

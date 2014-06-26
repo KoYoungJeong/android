@@ -20,6 +20,7 @@ import com.tosslab.toss.app.events.ConfirmShareEvent;
 import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.lists.FileDetailListAdapter;
+import com.tosslab.toss.app.lists.MessageItem;
 import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
@@ -34,6 +35,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -113,6 +115,18 @@ public class FileDetailActivity extends Activity {
         if (mProgressWheel != null)
             mProgressWheel.dismiss();
         super.onStop();
+    }
+
+    @ItemLongClick
+    void list_file_detail_itemsItemLongClicked(ResMessages.OriginalMessage item) {
+        if (item instanceof ResMessages.CommentMessage) {
+            if (item.writerId == cdpItemManager.mMe.id) {
+                showToast("long click");
+            } else {
+                showErrorToast("권한이 없습니다.");
+            }
+
+        }
     }
 
     @Background
@@ -213,7 +227,7 @@ public class FileDetailActivity extends Activity {
     void showToast(String message) {
         SuperToast superToast = new SuperToast(this);
         superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.SHORT);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
         superToast.setBackground(SuperToast.Background.BLUE);
         superToast.setTextColor(Color.WHITE);
         superToast.show();

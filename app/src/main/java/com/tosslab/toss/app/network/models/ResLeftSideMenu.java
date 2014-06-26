@@ -5,6 +5,7 @@ import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,6 +17,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResLeftSideMenu {
+    public User user;
     public int entityCount;
     public List<Entity> entities;
     public int joinEntityCount;
@@ -33,22 +35,29 @@ public class ResLeftSideMenu {
             @JsonSubTypes.Type(value = User.class, name = "user")})
     static public class Entity {
         public int id;
+        public int teamId;
         public String type;
         public String name;
     }
 
     static public class Channel extends Entity {
-
+        public int ch_creatorId;
+        public Date ch_createTime;
+        public List<Integer> ch_members;
     }
 
     static public class User extends Entity {
+        public String u_email;
+        public String u_authority;
         public String u_photoUrl;
         public String u_firstName;
         public String u_lastName;
     }
 
     static public class PrivateGroup extends Entity {
-
+        public int pg_creatorId;
+        public Date pg_createTime;
+        public List<Integer> pg_members;
     }
 
 }

@@ -1,9 +1,11 @@
 package com.tosslab.toss.app;
 
 import android.app.DialogFragment;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.ListView;
 
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
@@ -30,6 +32,7 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.RestClientException;
 
@@ -37,6 +40,7 @@ import de.greenrobot.event.EventBus;
 
 @EFragment(R.layout.fragment_navigation_drawer)
 public class LeftMenuFragment extends BaseFragment {
+    private final Logger log = Logger.getLogger(LeftMenuFragment.class);
     private static final String TAG = "LeftMenuFragment";
     String mMyToken;
 
@@ -49,6 +53,7 @@ public class LeftMenuFragment extends BaseFragment {
     TossRestClient mTossRestClient;
 
     private ProgressWheel mProgressWheel;
+    private CdpItemManager mCdpItemManager;
 
     @Override
     public int getTitleResourceId() {
@@ -173,9 +178,9 @@ public class LeftMenuFragment extends BaseFragment {
     }
 
     public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
-        CdpItemManager cdpItemManager = new CdpItemManager(resLeftSideMenu);
-        ((MainActivity)getActivity()).cdpItemManager = cdpItemManager;
-        mCdpListAdapter.retrieveCdpItems(cdpItemManager);
+        mCdpItemManager = new CdpItemManager(resLeftSideMenu);
+        ((MainActivity)getActivity()).cdpItemManager = mCdpItemManager;
+        mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
         mCdpListAdapter.notifyDataSetChanged();
     }
 
@@ -263,8 +268,14 @@ public class LeftMenuFragment extends BaseFragment {
      ************************************************************/
 
     void showDialogToManipulate(CdpItem cdp) {
-        DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
-        newFragment.show(getFragmentManager(), "dialog");
+        log.debug("Try to manipulate cdp owned by user, " + cdp.ownerId);
+        if (cdp.ownerId == mCdpItemManager.mMe.id) {
+            DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
+            newFragment.show(getFragmentManager(), "dialog");
+        } else {
+            showWarningToast("권한이 없습니다.");
+        }
+
     }
 
     public void onEvent(ModifyCdpEvent event) {
@@ -381,5 +392,15 @@ public class LeftMenuFragment extends BaseFragment {
     void deleteCdpDone() {
         mProgressWheel.dismiss();
         getCdpItemFromServer();
+    }
+
+    @UiThread
+    void showWarningToast(String message) {
+        SuperToast superToast = new SuperToast(getActivity());
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.ORANGE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
     }
 }

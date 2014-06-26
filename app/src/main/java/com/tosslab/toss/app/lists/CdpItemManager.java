@@ -3,6 +3,8 @@ package com.tosslab.toss.app.lists;
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,9 @@ import java.util.List;
  * Joined, Unjoined 구분
  */
 public class CdpItemManager {
+    private final Logger log = Logger.getLogger(CdpItemManager.class);
+
+    public ResLeftSideMenu.User mMe;
     private List<CdpItem> mJoinedChannels;
     public List<CdpItem> mUnJoinedChannels;
     private List<CdpItem> mUsers;
@@ -53,11 +58,13 @@ public class CdpItemManager {
     }
 
     private void arrangeCdpItems(ResLeftSideMenu resLeftSideMenu) {
+        this.mMe = resLeftSideMenu.user;
         // Joined Channel 혹은 PrivateGroup 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntity) {
             if (entity instanceof ResLeftSideMenu.Channel) {
                 // 만약 Unjoined 채널 부분에 이 항목이 존재한다면 그 항목을 삭제한다.
                 CdpItem cdpItem = new CdpItem((ResLeftSideMenu.Channel) entity);
+                log.debug("Joined entity : " + entity.name + ", owned by " + ((ResLeftSideMenu.Channel)entity).ch_creatorId + ", id : " + entity.id);
                 int position = mUnJoinedChannels.indexOf(cdpItem);
                 if (position > -1) {
                     mUnJoinedChannels.remove(position);
@@ -79,7 +86,8 @@ public class CdpItemManager {
                     mUnJoinedChannels.add(cdpItem);
                 }
             } else if (entity instanceof ResLeftSideMenu.User) {
-                mUsers.add(new CdpItem((ResLeftSideMenu.User) entity));
+                if (entity.id != mMe.id)
+                    mUsers.add(new CdpItem((ResLeftSideMenu.User) entity));
             } else {
                 // TODO : Error 처리
             }

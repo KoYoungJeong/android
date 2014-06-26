@@ -15,12 +15,16 @@ import com.tosslab.toss.app.events.ReqModifyMessageEvent;
 import com.tosslab.toss.app.lists.MessageItem;
 import com.tosslab.toss.app.utils.DateTransformator;
 
+import org.apache.log4j.Logger;
+
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 5. 28..
  */
 public class ManipulateMessageDialogFragment extends DialogFragment {
+    private final Logger log = Logger.getLogger(ManipulateMessageDialogFragment.class);
+
     public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
 
         String title = DateTransformator.getTimeString(item.getTime());
@@ -29,6 +33,10 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putInt("messageId", item.getId());
+        args.putInt("messageType", item.getContentType());
+        if (item.getContentType() == MessageItem.TYPE_COMMENT) {
+            args.putInt("feedbackId", item.getFeedbackId());
+        }
         args.putString("currentMessage", item.getContentString());
         frag.setArguments(args);
         return frag;
@@ -38,6 +46,8 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String title = getArguments().getString("title", "");
         final int messageId = getArguments().getInt("messageId");
+        final int feedbackId = getArguments().getInt("feedbackId", -1);
+        final int messageType = getArguments().getInt("messageType");
         final String currentMessage = getArguments().getString("currentMessage");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -48,7 +58,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         actionEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ReqModifyMessageEvent(messageId, currentMessage));
+                EventBus.getDefault().post(new ReqModifyMessageEvent(messageType, messageId, currentMessage, feedbackId));
                 dismiss();
             }
         });
@@ -58,7 +68,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         actionDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ConfirmDeleteMessageEvent(messageId));
+                EventBus.getDefault().post(new ConfirmDeleteMessageEvent(messageType, messageId, feedbackId));
                 dismiss();
             }
         });

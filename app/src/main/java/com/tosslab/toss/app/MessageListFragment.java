@@ -146,7 +146,7 @@ public class MessageListFragment extends BaseFragment {
         log.debug("resume polling");
         TimerTask task = new UpdateTimerTask();
         mTimer = new Timer();
-        mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
+        mTimer.schedule(task, 1000, 3000);  // 1초뒤, 3초마다
     }
 
     @AfterInject
@@ -241,6 +241,7 @@ public class MessageListFragment extends BaseFragment {
             getMessagesDone();
         } catch (RestClientException e) {
             log.error("fail to get messages.", e);
+            getMessagesError();
         }
     }
 
@@ -248,6 +249,12 @@ public class MessageListFragment extends BaseFragment {
     public void getMessagesDone() {
         mProgressWheel.dismiss();
         refreshListAdapter();
+    }
+
+    @UiThread
+    public void getMessagesError() {
+        mProgressWheel.dismiss();
+        showErrorToast("메시지 획득에 실패했습니다");
     }
 
     @UiThread
@@ -325,15 +332,16 @@ public class MessageListFragment extends BaseFragment {
         try {
             messageManipulator.sendMessage(message);
             log.debug("success to send message");
+            sendMessageDone();
         } catch (RestClientException e) {
             log.error("fail to send message", e);
+            showErrorToast("Fail to send");
         }
-
-        sendMessageDone();
     }
 
     @UiThread
     public void sendMessageDone() {
+        showToast("생성 성공");
         getUpdateMessages();
     }
 
@@ -347,50 +355,70 @@ public class MessageListFragment extends BaseFragment {
      */
     @ItemLongClick
     void list_messagesItemLongClicked(MessageItem item) {
-        showDialog(item);
+        checkPermissionForManipulateMessage(item);
     }
 
+    void checkPermissionForManipulateMessage(MessageItem item) {
+        if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
+            showWarningToast("파일 수정 기능은 차후에...");
+        } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
+            showWarningToast("파일 수정 기능은 차후에...");
+        } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
+            showDialog(item);
+        } else {
+            showWarningToast("권한이 없습니다.");
+        }
+
+
+
+    }
     void showDialog(MessageItem item) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstance(item);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
+    // TODO : Serialize 객체로 이벤트 전달할 것
     // Message 수정 이벤트 획득
     public void onEvent(ReqModifyMessageEvent event) {
-        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageId
-                , event.currentMessage);
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
+                , event.currentMessage, event.feedbackId);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     // Message 수정 서버 요청
     public void onEvent(ConfirmModifyMessageEvent event) {
-        modifyMessage(event.messageId, event.inputMessage);
+        modifyMessage(event.messageType, event.messageId, event.inputMessage, event.feedbackId);
     }
 
     @UiThread
-    void modifyMessage(int messageId, String inputMessage) {
-        mProgressWheel.show();
-        modifyMessageInBackground(messageId, inputMessage);
+    void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
+        modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
     }
 
     @Background
-    void modifyMessageInBackground(int messageId, String inputMessage) {
+    void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
+
         MessageManipulator messageManipulator
                 = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
 
         try {
-            messageManipulator.modifyMessage(messageId, inputMessage);
-            log.debug("success to modify message");
+            if (messageType == MessageItem.TYPE_STRING) {
+                log.debug("Try to modify message");
+                messageManipulator.modifyMessage(messageId, inputMessage);
+            } else if (messageType == MessageItem.TYPE_COMMENT) {
+                log.debug("Try to modify comment");
+                messageManipulator.modifyMessageComment(messageId, inputMessage, feedbackId);
+            }
+            modifyMessageDone();
         } catch (RestClientException e) {
             log.error("fail to modify message");
+            showErrorToast("수정 실패");
         }
-
-        modifyMessageDone();
     }
 
     @UiThread
     void modifyMessageDone() {
-        mProgressWheel.dismiss();
+        showToast("수정 성공");
         getUpdateMessages();
     }
 
@@ -400,29 +428,36 @@ public class MessageListFragment extends BaseFragment {
 
     // Message 삭제 이벤트 획득
     public void onEvent(ConfirmDeleteMessageEvent event) {
-        deleteMessage(event.messageId);
+        deleteMessage(event.messageType, event.messageId, event.feedbackId);
     }
 
     @UiThread
-    void deleteMessage(int messageId) {
-        deleteMessageInBackground(messageId);
+    void deleteMessage(int messageType, int messageId, int feedbackId) {
+        deleteMessageInBackground(messageType, messageId, feedbackId);
     }
 
     @Background
-    void deleteMessageInBackground(int messageId) {
+    void deleteMessageInBackground(int messageType, int messageId, int feedbackId) {
         MessageManipulator messageManipulator
                 = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
         try {
-            messageManipulator.deleteMessage(messageId);
-            log.debug("success to delete message");
+            if (messageType == MessageItem.TYPE_STRING) {
+                messageManipulator.deleteMessage(messageId);
+                log.debug("success to delete message");
+            } else if (messageType == MessageItem.TYPE_COMMENT) {
+                messageManipulator.deleteMessageComment(messageId, feedbackId);
+            }
+            deleteMessageDone();
         } catch (RestClientException e) {
             log.error("fail to delete message", e);
+            showErrorToast("Fail to delete");
         }
-        deleteMessageDone();
+
     }
 
     @UiThread
     void deleteMessageDone() {
+        showToast("Deleted !!");
         getUpdateMessages();
     }
 
@@ -523,6 +558,7 @@ public class MessageListFragment extends BaseFragment {
             uploadFileDone();
         } catch (IOException ex) {
             log.error("fail to upload file.", ex);
+            showErrorToast("Fail to upload file");
         }
     }
 
@@ -585,8 +621,28 @@ public class MessageListFragment extends BaseFragment {
     void showToast(String message) {
         SuperToast superToast = new SuperToast(getActivity());
         superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.SHORT);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
         superToast.setBackground(SuperToast.Background.BLUE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
+    @UiThread
+    void showWarningToast(String message) {
+        SuperToast superToast = new SuperToast(getActivity());
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.ORANGE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
+    @UiThread
+    void showErrorToast(String message) {
+        SuperToast superToast = new SuperToast(getActivity());
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.RED);
         superToast.setTextColor(Color.WHITE);
         superToast.show();
     }

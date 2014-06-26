@@ -197,4 +197,15 @@ public interface TossRestClient {
     @Post("/messages/{messageId}/comment")
     @RequiresHeader("Authorization")
     ResSendMessage sendMessageComment(ReqSendComment comment, int messageId);
+
+    // Modify comment
+    @Put("/messages/{messageId}/comments/{commentId}")
+    @RequiresHeader("Authorization")
+    ResSendMessage modifyMessageComment(ReqSendComment comment, int messageId, int commentId);
+
+    // Delete comment
+    @Delete("/messages/{messageId}/comments/{commentId}")
+    @RequiresHeader("Authorization")
+    ResSendMessage deleteMessageComment(int messageId, int commentId);
+
 }
