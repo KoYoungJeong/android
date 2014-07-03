@@ -40,7 +40,7 @@ public class MessageItemListAdapter extends BaseAdapter {
         }
 
         for (ResMessages.Link link : messages.messages) {
-            mMessages.add(0, new MessageItem(link));
+            mMessages.add(0, new MessageItem(link.message, link.time));
         }
     }
 
@@ -54,12 +54,12 @@ public class MessageItemListAdapter extends BaseAdapter {
         for (ResMessages.Link link : messages.messages) {
 //            TossLogger.LOGE(TAG, "update Item status : " + link.status);
             if (link.status.equals("created")) {
-                mMessages.add(new MessageItem(link));
+                mMessages.add(new MessageItem(link.message, link.time));
             } else if (link.status.equals("edited")) {
 
                 int position = searchIndexOfMessages(link.messageId);
                 if (position >= 0) {
-                    mMessages.set(position, new MessageItem(link));
+                    mMessages.set(position, new MessageItem(link.message, link.time));
                 }
             } else if (link.status.equals("archived")) {
                 int position = searchIndexOfMessages(link.messageId);

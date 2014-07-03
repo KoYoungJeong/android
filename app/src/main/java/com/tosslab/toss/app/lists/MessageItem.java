@@ -20,38 +20,40 @@ public class MessageItem {
 
     public static final int TYPE_FILE  = 10;
 
-    private ResMessages.Link mLink;
+    private ResMessages.OriginalMessage mMessage;
+    private Date mTime;
 
-    public MessageItem(ResMessages.Link link) {
-        mLink = link;
+    public MessageItem(ResMessages.OriginalMessage message, Date time) {
+        mMessage = message;
+        mTime = time;
     }
 
     public int getId() {
-        return mLink.message.id;
+        return mMessage.id;
     }
 
     public int getFeedbackId() {
-        return mLink.message.feedback;
+        return mMessage.feedbackId;
     }
 
     public String getUserNickName() {
-        return mLink.message.writer.u_firstName + " " + mLink.message.writer.u_lastName;
+        return mMessage.writer.u_firstName + " " + mMessage.writer.u_lastName;
     }
 
     public int getUserId() {
-        return mLink.message.writer.id;
+        return mMessage.writer.id;
     }
 
     public String getUserProfileUrl() {
-        return TossConstants.SERVICE_ROOT_URL + mLink.message.writer.u_photoUrl;
+        return TossConstants.SERVICE_ROOT_URL + mMessage.writer.u_photoUrl;
     }
 
     public int getContentType() {
-        ResMessages.OriginalMessage message = mLink.message;
-        if (message instanceof ResMessages.TextMessage) {
+
+        if (mMessage instanceof ResMessages.TextMessage) {
             return TYPE_STRING;
-        } else if (message instanceof ResMessages.FileMessage) {
-            String fileType = ((ResMessages.FileMessage)message).content.type;
+        } else if (mMessage instanceof ResMessages.FileMessage) {
+            String fileType = ((ResMessages.FileMessage)mMessage).content.type;
             log.debug("fileType : " + fileType);
             if (fileType == null || fileType.equals("null")) {
                 return TYPE_FILE;
@@ -61,24 +63,24 @@ public class MessageItem {
             } else {
                 return TYPE_FILE;
             }
-        } else if (message instanceof ResMessages.CommentMessage) {
+        } else if (mMessage instanceof ResMessages.CommentMessage) {
             return TYPE_COMMENT;
         }
         return TYPE_STRING;
     }
 
     public String getContentString() {
-        if (mLink.message instanceof ResMessages.TextMessage) {
-            return ((ResMessages.TextMessage)mLink.message).content.body;
-        } else if (mLink.message instanceof ResMessages.CommentMessage) {
-            return ((ResMessages.CommentMessage)mLink.message).content.body;
+        if (mMessage instanceof ResMessages.TextMessage) {
+            return ((ResMessages.TextMessage)mMessage).content.body;
+        } else if (mMessage instanceof ResMessages.CommentMessage) {
+            return ((ResMessages.CommentMessage)mMessage).content.body;
         }
         return null;
     }
 
     public String getContentUrl() {
-        if (mLink.message instanceof ResMessages.FileMessage) {
-            ResMessages.FileMessage message = (ResMessages.FileMessage)mLink.message;
+        if (mMessage instanceof ResMessages.FileMessage) {
+            ResMessages.FileMessage message = (ResMessages.FileMessage)mMessage;
             if (message.content.serverUrl.equals("root")) {
                 return TossConstants.SERVICE_ROOT_URL + message.content.fileUrl;
             }
@@ -87,22 +89,22 @@ public class MessageItem {
     }
 
     public String getContentFileName() {
-        if (mLink.message instanceof ResMessages.FileMessage) {
-            return ((ResMessages.FileMessage)mLink.message).content.name;
+        if (mMessage instanceof ResMessages.FileMessage) {
+            return ((ResMessages.FileMessage)mMessage).content.name;
         }
         return null;
     }
 
     public String getContentFileType() {
-        if (mLink.message instanceof ResMessages.FileMessage) {
-            return ((ResMessages.FileMessage)mLink.message).content.type;
+        if (mMessage instanceof ResMessages.FileMessage) {
+            return ((ResMessages.FileMessage)mMessage).content.type;
         }
         return null;
     }
 
     public String getContentFileSize() {
-        if (mLink.message instanceof ResMessages.FileMessage) {
-            int byteSize = ((ResMessages.FileMessage)mLink.message).content.size;
+        if (mMessage instanceof ResMessages.FileMessage) {
+            int byteSize = ((ResMessages.FileMessage)mMessage).content.size;
             return FormatConverter.formatFileSize(byteSize);
         }
 
@@ -110,11 +112,11 @@ public class MessageItem {
     }
 
     public Date getTime() {
-        return mLink.time;
+        return mTime;
     }
 
     public int getWriterId() {
-        return mLink.message.writerId;
+        return mMessage.writerId;
         // TODO : 본인 ID 와 비교해서 구현할 것
 //        if (mLink.message.writer.id == myUserId) {
 //            return true;

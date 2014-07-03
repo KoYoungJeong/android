@@ -13,7 +13,7 @@ import org.androidannotations.annotations.EFragment;
 @EFragment(R.layout.fragment_right_menu)
 public class RightMenuFragment extends BaseFragment {
     @Override
-    public int getTitleResourceId() {
-        return R.string.app_name;
+    public String getTitleForThisFragment() {
+        return getActivity().getString(R.string.app_name);
     }
 }

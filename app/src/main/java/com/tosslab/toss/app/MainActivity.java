@@ -15,9 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
-import com.tosslab.toss.app.lists.CdpItem;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.utils.ProgressWheel;
@@ -27,11 +25,9 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
-import org.androidannotations.annotations.sharedpreferences.Pref;
 import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -53,7 +49,7 @@ public class MainActivity extends Activity {
     public CdpItemManager cdpItemManager;
     private ProgressWheel mProgressWheel;
     private ActionBarDrawerToggle mDrawerToggle;
-    private int mCurrentTitle = R.string.app_name;
+    private String mCurrentTitle;
 
     @AfterViews
     void initUi() {
@@ -103,6 +99,10 @@ public class MainActivity extends Activity {
         // 해당 이벤트는 LeftMenuFragment -> MessageListFragment 지만
         // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
+
+        mCurrentTitle = "" + event.id;
+
+        // Preference 저장
         SharedPreferences pref = getSharedPreferences("TossPref", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("cdpType", event.type);
@@ -153,8 +153,8 @@ public class MainActivity extends Activity {
             fragmentManager.beginTransaction()
                     .replace(R.id.fl_activity_main_container, baseFragment)
                     .commit();
-            if (baseFragment.getTitleResourceId() > 0) {
-                mCurrentTitle = baseFragment.getTitleResourceId();
+            if (baseFragment.getTitleForThisFragment() != null) {
+                mCurrentTitle = baseFragment.getTitleForThisFragment();
             }
         }
     }
@@ -214,13 +214,14 @@ public class MainActivity extends Activity {
      * 액션바 토글 재정의
      */
     private class CustomActionBarDrawerToggle extends ActionBarDrawerToggle {
+
         private CustomActionBarDrawerToggle(Activity activity, DrawerLayout drawerLayout) {
             super(
                     activity,
                     drawerLayout,
                     R.drawable.ic_drawer,
                     R.string.navigation_drawer_open,
-                    mCurrentTitle);
+                    R.string.navigation_drawer_close);
         }
 
         @Override
@@ -235,7 +236,7 @@ public class MainActivity extends Activity {
         @Override
         public void onDrawerClosed(View drawerView) {
             ActionBar bar = getActionBar();
-            bar.setTitle(getString(mCurrentTitle));
+            bar.setTitle(mCurrentTitle);
 //            super.onDrawerClosed(drawerView);
 
             invalidateOptionsMenu();

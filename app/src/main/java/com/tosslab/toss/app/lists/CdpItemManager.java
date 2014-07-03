@@ -37,7 +37,8 @@ public class CdpItemManager {
         // 리스트에서 제목으로 처리할 item을 추가한다.
         cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_JOINED_CHANNEL));
         cdpItems.addAll(mJoinedChannels);
-        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_UNJOINED_CHANNEL, mUnJoinedChannels.size()));
+        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_UNJOINED_CHANNEL
+                , mUnJoinedChannels.size() - mJoinedChannels.size()));
         cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_DIRECT_MESSAGE));
         cdpItems.addAll(mUsers);
         cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_PRIVATE_GROUP));

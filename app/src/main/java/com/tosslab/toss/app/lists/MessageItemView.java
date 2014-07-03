@@ -12,12 +12,14 @@ import com.tosslab.toss.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
+    private final Logger log = Logger.getLogger(MessageItemView.class);
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;
     @ViewById(R.id.txt_message_create_date)
@@ -73,6 +75,7 @@ public class MessageItemView extends LinearLayout {
             mTextFileName.setText(item.getContentFileName());
             mImagePhoto.setVisibility(VISIBLE);
             mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
+            log.debug("try to load image from " + item.getContentUrl());
             Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mImagePhoto);
         } else if (item.getContentType() == MessageItem.TYPE_FILE) {
             mLayoutFileMessage.setVisibility(VISIBLE);

@@ -25,12 +25,12 @@ public abstract class BaseFragment extends Fragment {
 
     protected void setTitle() {
         if (getActivity() != null) {
-            getActivity().setTitle(getTitleResourceId());
-            getActivity().getActionBar().setTitle(getTitleResourceId());
+            getActivity().setTitle(getTitleForThisFragment());
+            getActivity().getActionBar().setTitle(getTitleForThisFragment());
         }
     }
 
-    public abstract int getTitleResourceId();
+    public abstract String getTitleForThisFragment();
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

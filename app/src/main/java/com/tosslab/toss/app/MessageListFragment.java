@@ -93,8 +93,11 @@ public class MessageListFragment extends BaseFragment {
     SelectCdpItemEvent mCurrentEvent;
 
     @Override
-    public int getTitleResourceId() {
-        return R.string.app_name;
+    public String getTitleForThisFragment() {
+        if (mCurrentEvent == null) {
+            return "";
+        }
+        return "" + mCurrentEvent.id;
     }
 
     @AfterViews

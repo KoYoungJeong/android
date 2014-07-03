@@ -28,6 +28,8 @@ public class ResMessages {
         public Date time;
         public int messageId;
         public String status;
+        public int feedbackId;
+        public OriginalMessage feedback;
         public OriginalMessage message;
     }
 
@@ -64,7 +66,7 @@ public class ResMessages {
         public String status;
         public List<Integer> shareEntities;
         public int permission;
-        public int feedback;
+        public int feedbackId;
     }
 
     public static class TextMessage extends OriginalMessage {

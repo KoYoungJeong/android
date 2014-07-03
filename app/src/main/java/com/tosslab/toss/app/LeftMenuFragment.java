@@ -56,8 +56,8 @@ public class LeftMenuFragment extends BaseFragment {
     private CdpItemManager mCdpItemManager;
 
     @Override
-    public int getTitleResourceId() {
-        return R.string.app_name;
+    public String getTitleForThisFragment() {
+        return getActivity().getString(R.string.app_name);
     }
 
     @AfterViews
