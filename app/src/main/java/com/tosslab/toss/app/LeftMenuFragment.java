@@ -6,12 +6,13 @@ import android.util.Log;
 import android.widget.ListView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
+import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
-import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
 import com.tosslab.toss.app.events.ModifyCdpEvent;
+import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItem;
 import com.tosslab.toss.app.lists.CdpItemListAdapter;
 import com.tosslab.toss.app.lists.CdpItemManager;
@@ -19,7 +20,6 @@ import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResSendMessage;
-import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;

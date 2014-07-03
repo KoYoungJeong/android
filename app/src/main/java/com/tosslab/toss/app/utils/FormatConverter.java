@@ -1,7 +1,5 @@
 package com.tosslab.toss.app.utils;
 
-import com.tosslab.toss.app.network.models.ResMessages;
-
 /**
  * Created by justinygchoi on 2014. 6. 24..
  */

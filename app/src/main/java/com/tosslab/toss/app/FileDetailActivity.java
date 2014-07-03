@@ -5,28 +5,20 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.github.johnpersano.supertoasts.SuperToast;
-import com.squareup.picasso.Picasso;
-import com.tosslab.toss.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.toss.app.dialogs.SelectCdpDialogFragment;
 import com.tosslab.toss.app.events.ConfirmShareEvent;
 import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.lists.FileDetailListAdapter;
-import com.tosslab.toss.app.lists.MessageItem;
 import com.tosslab.toss.app.network.MessageManipulator;
-import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.utils.DateTransformator;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -41,10 +33,6 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 

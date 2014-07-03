@@ -1,7 +1,5 @@
 package com.tosslab.toss.app.network;
 
-import android.util.Log;
-
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;

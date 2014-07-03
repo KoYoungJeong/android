@@ -8,23 +8,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.tosslab.toss.app.FileDetailActivity;
-import com.tosslab.toss.app.MainActivity;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.events.ConfirmFileUploadEvent;
 import com.tosslab.toss.app.events.ConfirmShareEvent;
 import com.tosslab.toss.app.lists.CdpArrayAdapter;
 import com.tosslab.toss.app.lists.CdpItem;
 
 import org.apache.log4j.Logger;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
