@@ -60,8 +60,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @EFragment(R.layout.fragment_main)
-public class MessageListFragment extends BaseFragment {
-    private final Logger log = Logger.getLogger(MessageListFragment.class);
+public class MainMessageListFragment extends BaseFragment {
+    private final Logger log = Logger.getLogger(MainMessageListFragment.class);
     @RestService
     TossRestClient tossRestClient;
     @FragmentArg

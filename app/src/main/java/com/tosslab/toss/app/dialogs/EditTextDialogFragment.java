@@ -126,7 +126,7 @@ public class EditTextDialogFragment extends DialogFragment {
                                         break;
                                     case ACTION_MODIFY_MESSAGE:
                                     default:
-                                        // 메시지 수정의 경우 MessageListFragment 로 해당 이벤트 전달
+                                        // 메시지 수정의 경우 MainMessageListFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(new ConfirmModifyMessageEvent(messageType
                                                 , id
                                                 , inputName.getText().toString()

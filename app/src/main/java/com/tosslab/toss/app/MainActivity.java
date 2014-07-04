@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
     }
 
     public void onEvent(SelectCdpItemEvent event) {
-        // 해당 이벤트는 MainLeftFragment -> MessageListFragment 지만
+        // 해당 이벤트는 MainLeftFragment -> MainMessageListFragment 지만
         // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
 
@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
         switch (position) {
             case 0:
             default:
-                baseFragment = MessageListFragment_
+                baseFragment = MainMessageListFragment_
                         .builder()
                         .myToken(myToken)
                         .cdpName(cdpName)

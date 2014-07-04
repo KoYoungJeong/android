@@ -6,4 +6,10 @@
         <item>@string/menu_take_video</item>
         <item>@string/menu_a_file</item>
     </string-array>
+
+    <string-array name="spinner_search_type_items">
+        <item>All Files</item>
+        <item>Images</item>
+        <item>PDF Files</item>
+    </string-array>
 </resources>
