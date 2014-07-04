@@ -1,9 +1,11 @@
 package com.tosslab.toss.app;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResLogin;
 import com.tosslab.toss.app.network.models.TossRestToken;
@@ -13,8 +15,10 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import java.security.SecureRandom;
@@ -29,6 +33,8 @@ import javax.net.ssl.X509TrustManager;
 
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends Activity {
+    private final Logger log = Logger.getLogger(LoginActivity.class);
+
     @ViewById(R.id.et_login_email)
     EditText edtxtLoginId;
     @ViewById(R.id.et_login_password)
@@ -64,9 +70,10 @@ public class LoginActivity extends Activity {
         TossRestToken tossRestToken = null;
         try {
             tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
-            Log.e("OK", "Login Success : " + tossRestToken.token);
+            log.debug("Login Success : " + tossRestToken.token);
         } catch (RestClientException e) {
-            Log.e("HI", "Login Fail", e);
+            log.error("Login Fail", e);
+            showErrorToast("Login failed");
         }
         mProgressWheel.dismiss();
 
@@ -78,6 +85,16 @@ public class LoginActivity extends Activity {
     public void moveToMainActivity(String token) {
         MainActivity_.intent(this).myToken(token).start();
         finish();
+    }
+
+    @UiThread
+    void showErrorToast(String message) {
+        SuperToast superToast = new SuperToast(this);
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
+        superToast.setBackground(SuperToast.Background.RED);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
     }
 
     // TODO : remove this

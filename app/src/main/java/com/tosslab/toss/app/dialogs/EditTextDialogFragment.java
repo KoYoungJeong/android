@@ -114,12 +114,12 @@ public class EditTextDialogFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 switch (actionType) {
                                     case ACTION_CREATE_CDP:
-                                        // CDP 생성의 경우 LeftMenuFragment 로 해당 이벤트 전달
+                                        // CDP 생성의 경우 MainLeftFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(new ConfirmCreateCdpEvent(cdpType
                                                 , inputName.getText().toString()));
                                         break;
                                     case ACTION_MODIFY_CDP:
-                                        // CDP 수정의 경우 LeftMenuFragment 로 해당 이벤트 전달
+                                        // CDP 수정의 경우 MainLeftFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(new ConfirmModifyCdpEvent(cdpType
                                                 , id
                                                 , inputName.getText().toString()));

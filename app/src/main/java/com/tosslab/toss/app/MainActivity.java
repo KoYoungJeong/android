@@ -70,10 +70,11 @@ public class MainActivity extends Activity {
 
         // Preference 추출
         SharedPreferences pref = getSharedPreferences("TossPref", 0);
+        String cdpName = pref.getString("cdpName", "");
         int cdpType = pref.getInt("cdpType", -1);
         int cdpId = pref.getInt("cdpId", -1);
 
-        selectItem(0, cdpType, cdpId);  // 기본 프레그먼트 설정
+        selectItem(0, cdpName, cdpType, cdpId);  // 기본 프레그먼트 설정
     }
 
     @Override
@@ -96,15 +97,16 @@ public class MainActivity extends Activity {
     }
 
     public void onEvent(SelectCdpItemEvent event) {
-        // 해당 이벤트는 LeftMenuFragment -> MessageListFragment 지만
+        // 해당 이벤트는 MainLeftFragment -> MessageListFragment 지만
         // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
 
-        mCurrentTitle = "" + event.id;
+        mCurrentTitle = event.name;
 
         // Preference 저장
         SharedPreferences pref = getSharedPreferences("TossPref", 0);
         SharedPreferences.Editor editor = pref.edit();
+        editor.putString("cdpName", event.name);
         editor.putInt("cdpType", event.type);
         editor.putInt("cdpId", event.id);
         editor.commit();
@@ -130,7 +132,7 @@ public class MainActivity extends Activity {
     }
 
     /** Swaps fragments in the main content view */
-    private void selectItem(int position, int cdpType, int cdpId) {
+    private void selectItem(int position, String cdpName, int cdpType, int cdpId) {
         BaseFragment baseFragment;
         switch (position) {
             case 0:
@@ -138,6 +140,7 @@ public class MainActivity extends Activity {
                 baseFragment = MessageListFragment_
                         .builder()
                         .myToken(myToken)
+                        .cdpName(cdpName)
                         .cdpId(cdpId)
                         .cdpType(cdpType)
                         .build();

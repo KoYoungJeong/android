@@ -48,11 +48,16 @@
     <string name="menu_a_file">Upload a File</string>
     <string name="title_activity_file_explorer">FileExplorer</string>
     <string name="hello_world">Hello world!</string>
-
     <string name="title_file_detail">File Detail</string>
     <string name="comment">Comment</string>
 
     <!-- Share -->
     <string name="title_cdp_to_be_shared">Share</string>
+
+    <!-- Search -->
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 
 </resources>

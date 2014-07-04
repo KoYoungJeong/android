@@ -38,10 +38,10 @@ import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
-@EFragment(R.layout.fragment_navigation_drawer)
-public class LeftMenuFragment extends BaseFragment {
-    private final Logger log = Logger.getLogger(LeftMenuFragment.class);
-    private static final String TAG = "LeftMenuFragment";
+@EFragment(R.layout.fragment_main_left)
+public class MainLeftFragment extends BaseFragment {
+    private final Logger log = Logger.getLogger(MainLeftFragment.class);
+
     String mMyToken;
 
     @ViewById(R.id.list_cdps)
@@ -121,7 +121,7 @@ public class LeftMenuFragment extends BaseFragment {
                 break;
             default:
                 // 일반 CDP 를 터치했을 경우, 해당 CDP의 메시지 리스트를 획득할수 있게 이벤트 등록
-                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp.type, cdp.id);
+                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp.name, cdp.type, cdp.id);
                 EventBus.getDefault().post(event);
                 break;
         }
@@ -234,9 +234,9 @@ public class LeftMenuFragment extends BaseFragment {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.createChannel(reqCreateCdp);
             getCdpItemFromServer();
-            Log.e(TAG, "Create Success");
+            log.debug("Create Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "Create Fail", e);
+            log.error("Create Fail", e);
         }
     }
 
@@ -257,9 +257,9 @@ public class LeftMenuFragment extends BaseFragment {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             getCdpItemFromServer();
-            Log.e(TAG, "Create Success");
+            log.debug("Create Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "Create Fail", e);
+            log.error("Create Fail", e);
         }
     }
 
@@ -316,7 +316,7 @@ public class LeftMenuFragment extends BaseFragment {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             resId = mTossRestClient.modifyChannel(channel, cdpId);
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            log.error("modify failed", e);
         }
         modifyCdpDone();
     }
@@ -329,7 +329,7 @@ public class LeftMenuFragment extends BaseFragment {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             resId = mTossRestClient.modifyGroup(privateGroup, cdpId);
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            log.error("modify failed", e);
         }
         modifyCdpDone();
     }
@@ -345,7 +345,7 @@ public class LeftMenuFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(DeleteCdpEvent event) {
-        Log.e(TAG, "Delete Cdp :" + event.cdpId);
+        log.debug("Delete Cdp :" + event.cdpId);
         deleteCdp(event);
     }
 
@@ -369,9 +369,9 @@ public class LeftMenuFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.deleteChannel(cdpId);
-            Log.e(TAG, "delete Success");
+            log.debug("delete Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            log.error("delete Fail", e);
         }
         deleteCdpDone();
     }
@@ -381,9 +381,9 @@ public class LeftMenuFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
             restResId = mTossRestClient.deleteGroup(cdpId);
-            Log.e(TAG, "delete Success");
+            log.debug("delete Success");
         } catch (RestClientException e) {
-            Log.e(TAG, "delete Fail", e);
+            log.error("delete Fail", e);
         }
         deleteCdpDone();
     }

@@ -67,6 +67,8 @@ public class MessageListFragment extends BaseFragment {
     @FragmentArg
     String myToken;
     @FragmentArg
+    String cdpName;
+    @FragmentArg
     int cdpId;
     @FragmentArg
     int cdpType;
@@ -96,7 +98,7 @@ public class MessageListFragment extends BaseFragment {
         if (mCurrentEvent == null) {
             return "";
         }
-        return "" + mCurrentEvent.id;
+        return mCurrentEvent.name;
     }
 
     @AfterViews
@@ -131,7 +133,7 @@ public class MessageListFragment extends BaseFragment {
 
         // 만약 미리 저장해놓은 cdpId가 있다면 다시 사용
         if (cdpType >= 0 && cdpId >= 0)
-            mCurrentEvent = new SelectCdpItemEvent(cdpType, cdpId);
+            mCurrentEvent = new SelectCdpItemEvent(cdpName, cdpType, cdpId);
 
         mLastUpdateTime = new Date();
 
@@ -619,6 +621,9 @@ public class MessageListFragment extends BaseFragment {
         EventBus.getDefault().postSticky(((MainActivity)getActivity()).cdpItemManager);
     }
 
+    /************************************************************
+     * 컬러 토스트
+     ************************************************************/
     @UiThread
     void showToast(String message) {
         SuperToast superToast = new SuperToast(getActivity());

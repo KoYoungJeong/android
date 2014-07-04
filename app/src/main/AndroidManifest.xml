@@ -27,13 +27,17 @@
         <activity
             android:name=".FileDetailActivity_"
             android:label="@string/title_file_detail"
+            android:logo="@drawable/ic_actionbar_logo"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:logo="@drawable/ic_actionbar_logo" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".FileExplorerActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/title_activity_file_explorer" >
+            android:label="@string/title_activity_file_explorer"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".SearchActivity_"
+            android:label="@string/title_activity_search" >
         </activity>
     </application>
 
