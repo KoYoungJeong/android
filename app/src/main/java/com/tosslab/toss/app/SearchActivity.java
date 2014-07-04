@@ -119,6 +119,17 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//
+//    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.

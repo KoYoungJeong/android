@@ -22,6 +22,7 @@ public class MainRightFragment extends BaseFragment {
     public void moveToSearchFiles() {
         Intent i = new Intent(getActivity(), SearchActivity_.class);
         startActivity(i);
+        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
     }
 }
