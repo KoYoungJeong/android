@@ -21,4 +21,8 @@ public class TossConstants {
     public static final String TYPE_CHANNEL_STRING = "channel";
     public static final String TYPE_DIRECT_MESSAGE_STRING = "user";
     public static final String TYPE_PRIVATE_GROUP_STRING = "parivateGroup";
+
+    // Search 관련
+    public static final int TYPE_SEARCH_EVERYONE    = 0;
+    public static final int TYPE_SEARCH_SPECIFIC    = 1;
 }

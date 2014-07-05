@@ -34,21 +34,17 @@ public class SearchedFileItemView extends RelativeLayout {
         mContext = context;
     }
 
-    public void bind(ResMessages.OriginalMessage searchedMessage) {
-        if (searchedMessage instanceof ResMessages.FileMessage) {
-            ResMessages.FileMessage searchedFile = (ResMessages.FileMessage)searchedMessage;
+    public void bind(ResMessages.FileMessage searchedFile) {
+        String searchedFileName = searchedFile.content.name;
+        textViewSearchedFileName.setText(searchedFileName);
 
-            String searchedFileName = searchedFile.content.name;
-            textViewSearchedFileName.setText(searchedFileName);
+        String searchedFileOwnerName = searchedFile.writer.name;
+        textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
-            String searchedFileOwnerName = searchedFile.writer.name;
-            textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
+        String searchedFileType = searchedFile.content.type;
+        textViewSearchedFileType.setText(searchedFileType);
 
-            String searchedFileType = searchedFile.content.type;
-            textViewSearchedFileType.setText(searchedFileType);
-
-            String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
-            textViewSearchedFileDate.setText(searchedFileDate);
-        }
+        String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
+        textViewSearchedFileDate.setText(searchedFileDate);
     }
 }

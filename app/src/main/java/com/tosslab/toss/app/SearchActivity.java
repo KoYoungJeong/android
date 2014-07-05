@@ -124,11 +124,6 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//
-//    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -142,7 +137,19 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
 
         @Override
         public Fragment getItem(int position) {
-            return SearchListFragment_.builder().build();
+            if (position == 0) {
+                // Everyone
+                return SearchListFragment_
+                        .builder()
+                        .searchType(TossConstants.TYPE_SEARCH_EVERYONE)
+                        .build();
+            } else {
+                // Certain user
+                return SearchListFragment_
+                        .builder()
+                        .searchType(TossConstants.TYPE_SEARCH_SPECIFIC)
+                        .build();
+            }
         }
 
         @Override
