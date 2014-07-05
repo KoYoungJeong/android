@@ -8,27 +8,6 @@ import android.view.MenuItem;
 public abstract class BaseFragment extends Fragment {
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setTitle();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setTitle();
-    }
-
-    protected void setTitle() {
-        if (getActivity() != null) {
-            getActivity().setTitle(getTitleForThisFragment());
-            getActivity().getActionBar().setTitle(getTitleForThisFragment());
-        }
-    }
-
-    public abstract String getTitleForThisFragment();
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:

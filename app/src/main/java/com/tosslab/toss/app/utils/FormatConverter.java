@@ -1,5 +1,7 @@
 package com.tosslab.toss.app.utils;
 
+import com.tosslab.toss.app.TossConstants;
+
 /**
  * Created by justinygchoi on 2014. 6. 24..
  */
@@ -16,6 +18,17 @@ public class FormatConverter {
             return (byteSize / KB) + " KB";
         } else {
             return byteSize + " bytes";
+        }
+    }
+
+    public static String cdpName(String originName, int cdpType) {
+        switch (cdpType) {
+            case TossConstants.TYPE_CHANNEL:
+                return "# " + originName;
+            case TossConstants.TYPE_DIRECT_MESSAGE:
+                return "@ " + originName;
+            default:
+                return originName;
         }
     }
 }

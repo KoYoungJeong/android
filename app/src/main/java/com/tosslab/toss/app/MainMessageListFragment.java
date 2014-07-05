@@ -93,14 +93,6 @@ public class MainMessageListFragment extends BaseFragment {
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     SelectCdpItemEvent mCurrentEvent;
 
-    @Override
-    public String getTitleForThisFragment() {
-        if (mCurrentEvent == null) {
-            return "";
-        }
-        return mCurrentEvent.name;
-    }
-
     @AfterViews
     void bindAdapter() {
         // Progress Wheel 설정

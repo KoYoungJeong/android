@@ -13,11 +13,6 @@ public class MainRightFragment extends BaseFragment {
     @ViewById(R.id.ly_main_right_action_files)
     LinearLayout lyActionFiles;
 
-    @Override
-    public String getTitleForThisFragment() {
-        return getActivity().getString(R.string.app_name);
-    }
-
     @Click(R.id.ly_main_right_action_files)
     public void moveToSearchFiles() {
         Intent i = new Intent(getActivity(), SearchActivity_.class);

@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
+import com.tosslab.toss.app.utils.FormatConverter;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -101,7 +102,7 @@ public class MainActivity extends Activity {
         // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
         mDrawer.closeDrawers();
 
-        mCurrentTitle = event.name;
+        mCurrentTitle = FormatConverter.cdpName(event.name, event.type);
 
         // Preference 저장
         SharedPreferences pref = getSharedPreferences("TossPref", 0);
@@ -135,18 +136,17 @@ public class MainActivity extends Activity {
     private void selectItem(int position, String cdpName, int cdpType, int cdpId) {
         BaseFragment baseFragment;
         switch (position) {
-            case 0:
             default:
                 baseFragment = MainMessageListFragment_
                         .builder()
                         .myToken(myToken)
-                        .cdpName(cdpName)
                         .cdpId(cdpId)
                         .cdpType(cdpType)
                         .build();
                 break;
         }
         openFragment(baseFragment);
+        getActionBar().setTitle(FormatConverter.cdpName(cdpName, cdpType));
         mDrawer.closeDrawers();
     }
 
@@ -156,9 +156,6 @@ public class MainActivity extends Activity {
             fragmentManager.beginTransaction()
                     .replace(R.id.fl_activity_main_container, baseFragment)
                     .commit();
-            if (baseFragment.getTitleForThisFragment() != null) {
-                mCurrentTitle = baseFragment.getTitleForThisFragment();
-            }
         }
     }
 
@@ -231,8 +228,8 @@ public class MainActivity extends Activity {
         public void onDrawerOpened(View drawerView) {
             ActionBar bar = getActionBar();
             bar.setTitle(getString(R.string.app_name));
-//            super.onDrawerOpened(drawerView);
-//
+            super.onDrawerOpened(drawerView);
+
             invalidateOptionsMenu();
         }
 
@@ -240,7 +237,7 @@ public class MainActivity extends Activity {
         public void onDrawerClosed(View drawerView) {
             ActionBar bar = getActionBar();
             bar.setTitle(mCurrentTitle);
-//            super.onDrawerClosed(drawerView);
+            super.onDrawerClosed(drawerView);
 
             invalidateOptionsMenu();
         }

@@ -55,11 +55,6 @@ public class MainLeftFragment extends BaseFragment {
     private ProgressWheel mProgressWheel;
     private CdpItemManager mCdpItemManager;
 
-    @Override
-    public String getTitleForThisFragment() {
-        return getActivity().getString(R.string.app_name);
-    }
-
     @AfterViews
     void bindAdapter() {
         // myToken 획득
