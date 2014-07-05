@@ -3,14 +3,14 @@ package com.tosslab.toss.app.lists;
 /**
  * Created by justinygchoi on 2014. 6. 23..
  */
-public class FileItem implements Comparable<FileItem> {
+public class FileExplorerItem implements Comparable<FileExplorerItem> {
     private String name;
     private String data;
     private String date;
     private String path;
     private String image;
 
-    public FileItem(String n,String d, String dt, String p, String img)
+    public FileExplorerItem(String n, String d, String dt, String p, String img)
     {
         name = n;
         data = d;
@@ -39,7 +39,7 @@ public class FileItem implements Comparable<FileItem> {
         return image;
     }
 
-    public int compareTo(FileItem o) {
+    public int compareTo(FileExplorerItem o) {
         if(this.name != null)
             return this.name.toLowerCase().compareTo(o.getName().toLowerCase());
         else

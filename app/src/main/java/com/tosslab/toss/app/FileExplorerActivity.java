@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.tosslab.toss.app.lists.FileItem;
-import com.tosslab.toss.app.lists.FileItemListAdapter;
+import com.tosslab.toss.app.lists.FileExplorerItem;
+import com.tosslab.toss.app.lists.FileExplorerItemListAdapter;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class FileExplorerActivity extends ListActivity {
     private File currentDir;
-    private FileItemListAdapter adapter;
+    private FileExplorerItemListAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,8 @@ public class FileExplorerActivity extends ListActivity {
     {
         File[] dirs = f.listFiles();
         this.setTitle("Current Dir: " + f.getName());
-        List<FileItem> dir = new ArrayList<FileItem>();
-        List<FileItem> fls = new ArrayList<FileItem>();
+        List<FileExplorerItem> dir = new ArrayList<FileExplorerItem>();
+        List<FileExplorerItem> fls = new ArrayList<FileExplorerItem>();
         try {
             for(File ff: dirs) {
                 Date lastModDate = new Date(ff.lastModified());
@@ -63,9 +63,9 @@ public class FileExplorerActivity extends ListActivity {
                     }
                     //String formated = lastModDate.toString();
 
-                    dir.add(new FileItem(ff.getName(), num_item, date_modify, ff.getAbsolutePath(), "tmp_directory_icon"));
+                    dir.add(new FileExplorerItem(ff.getName(), num_item, date_modify, ff.getAbsolutePath(), "tmp_directory_icon"));
                 } else {
-                    fls.add(new FileItem(ff.getName(),ff.length() + " Byte", date_modify, ff.getAbsolutePath(), "tmp_file_icon"));
+                    fls.add(new FileExplorerItem(ff.getName(),ff.length() + " Byte", date_modify, ff.getAbsolutePath(), "tmp_file_icon"));
                 }
             }
         } catch(Exception e) {
@@ -75,10 +75,10 @@ public class FileExplorerActivity extends ListActivity {
         Collections.sort(fls);
         dir.addAll(fls);
         if (!f.getName().equalsIgnoreCase(Environment.getExternalStorageDirectory().getName())) {
-            dir.add(0,new FileItem("..", "Parent Directory", "", f.getParent(), "tmp_directory_up"));
+            dir.add(0,new FileExplorerItem("..", "Parent Directory", "", f.getParent(), "tmp_directory_up"));
         }
 
-        adapter = new FileItemListAdapter(FileExplorerActivity.this, R.layout.item_file, dir);
+        adapter = new FileExplorerItemListAdapter(FileExplorerActivity.this, R.layout.item_file, dir);
         this.setListAdapter(adapter);
     }
 
@@ -86,7 +86,7 @@ public class FileExplorerActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         // TODO Auto-generated method stub
         super.onListItemClick(l, v, position, id);
-        FileItem o = adapter.getItem(position);
+        FileExplorerItem o = adapter.getItem(position);
         if (o.getImage().equalsIgnoreCase("tmp_directory_icon")||o.getImage().equalsIgnoreCase("tmp_directory_up")) {
             currentDir = new File(o.getPath());
             fill(currentDir);
@@ -94,7 +94,7 @@ public class FileExplorerActivity extends ListActivity {
             onFileClick(o);
         }
     }
-    private void onFileClick(FileItem o)
+    private void onFileClick(FileExplorerItem o)
     {
         Toast.makeText(this, "Folder Clicked: "+ currentDir, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();

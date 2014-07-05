@@ -17,18 +17,18 @@ import java.util.List;
  * Created by justinygchoi on 2014. 6. 23..
  * File 탐색기를 위한...
  */
-public class FileItemListAdapter extends ArrayAdapter<FileItem> {
+public class FileExplorerItemListAdapter extends ArrayAdapter<FileExplorerItem> {
     private Context c;
     private int id;
-    private List<FileItem> items;
+    private List<FileExplorerItem> items;
 
-    public FileItemListAdapter(Context context, int textViewResourceId, List<FileItem> objects) {
+    public FileExplorerItemListAdapter(Context context, int textViewResourceId, List<FileExplorerItem> objects) {
         super(context, textViewResourceId, objects);
         c = context;
         id = textViewResourceId;
         items = objects;
     }
-    public FileItem getItem(int i)
+    public FileExplorerItem getItem(int i)
     {
         return items.get(i);
     }
@@ -44,7 +44,7 @@ public class FileItemListAdapter extends ArrayAdapter<FileItem> {
         /* create a new view of my layout and inflate it in the row */
         //convertView = ( RelativeLayout ) inflater.inflate( resource, null );
 
-        final FileItem o = items.get(position);
+        final FileExplorerItem o = items.get(position);
         if (o != null) {
             TextView t1 = (TextView) v.findViewById(R.id.TextView01);
             TextView t2 = (TextView) v.findViewById(R.id.TextView02);

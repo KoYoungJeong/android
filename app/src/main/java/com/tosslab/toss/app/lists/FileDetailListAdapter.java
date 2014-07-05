@@ -50,16 +50,16 @@ public class FileDetailListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FileDetailView fileDetailView;
+        FileExplorerDetailView fileExplorerDetailView;
         if (convertView == null) {
-            fileDetailView = FileDetailView_.build(mContext);
+            fileExplorerDetailView = FileExplorerDetailView_.build(mContext);
         } else {
-            fileDetailView = (FileDetailView) convertView;
+            fileExplorerDetailView = (FileExplorerDetailView) convertView;
         }
 
-        fileDetailView.bind(getItem(position));
+        fileExplorerDetailView.bind(getItem(position));
 
-        return fileDetailView;
+        return fileExplorerDetailView;
     }
 
     public void updateFileDetails(ResFileDetail resFileDetail) {

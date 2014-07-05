@@ -26,8 +26,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 6. 24..
  */
 @EViewGroup(R.layout.item_file_detail)
-public class FileDetailView extends FrameLayout {
-    private final Logger log = Logger.getLogger(FileDetailView.class);
+public class FileExplorerDetailView extends FrameLayout {
+    private final Logger log = Logger.getLogger(FileExplorerDetailView.class);
 
     @ViewById(R.id.img_file_detail_user_profile)
     ImageView imageViewUserProfile;
@@ -63,7 +63,7 @@ public class FileDetailView extends FrameLayout {
 
     Context mContext;
 
-    public FileDetailView(Context context) {
+    public FileExplorerDetailView(Context context) {
         super(context);
         mContext = context;
     }

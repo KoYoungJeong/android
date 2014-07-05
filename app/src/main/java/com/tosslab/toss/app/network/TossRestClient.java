@@ -3,6 +3,7 @@ package com.tosslab.toss.app.network;
 import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
+import com.tosslab.toss.app.network.models.ReqSearchFile;
 import com.tosslab.toss.app.network.models.ReqSendComment;
 import com.tosslab.toss.app.network.models.ReqSendMessage;
 import com.tosslab.toss.app.network.models.ReqShareMessage;
@@ -10,6 +11,7 @@ import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResLogin;
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.ResSearchFile;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 import com.tosslab.toss.app.network.models.RestFileUploadResponse;
 import com.tosslab.toss.app.network.models.TossRestToken;
@@ -176,7 +178,7 @@ public interface TossRestClient {
     ResSendMessage deletePrivateGroupMessage(int groupId, int messageId);
 
     /************************************************************
-     * File upload
+     * File
      ************************************************************/
     // File Upload
     @Post("/file")
@@ -207,5 +209,13 @@ public interface TossRestClient {
     @Delete("/messages/{messageId}/comments/{commentId}")
     @RequiresHeader("Authorization")
     ResSendMessage deleteMessageComment(int messageId, int commentId);
+
+    /************************************************************
+     * Search
+     ************************************************************/
+    // File search
+    @Post("/search")
+    @RequiresHeader("Authorization")
+    ResSearchFile searchFile(ReqSearchFile reqSearchFile);
 
 }
