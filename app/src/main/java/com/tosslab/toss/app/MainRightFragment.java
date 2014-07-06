@@ -1,7 +1,6 @@
 package com.tosslab.toss.app;
 
 
-import android.content.Intent;
 import android.widget.LinearLayout;
 
 import org.androidannotations.annotations.Click;
@@ -15,8 +14,9 @@ public class MainRightFragment extends BaseFragment {
 
     @Click(R.id.ly_main_right_action_files)
     public void moveToSearchFiles() {
-        Intent i = new Intent(getActivity(), SearchActivity_.class);
-        startActivity(i);
+        SearchActivity_.intent(this).myToken(((MainActivity)getActivity()).myToken).start();
+//        Intent i = new Intent(getActivity(), SearchActivity_.class);
+//        startActivity(i);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
     }

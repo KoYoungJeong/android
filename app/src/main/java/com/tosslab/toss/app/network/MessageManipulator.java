@@ -8,6 +8,7 @@ import com.tosslab.toss.app.network.models.ReqSendMessage;
 import com.tosslab.toss.app.network.models.ReqShareMessage;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.ResSearchFile;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
@@ -133,5 +134,6 @@ public class MessageManipulator {
     public ResSendMessage deleteMessageComment(int messageId, int feedbackId) {
         return mRestClient.deleteMessageComment(feedbackId, messageId);
     }
+
 
 }

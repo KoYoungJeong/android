@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.network.models.ResSearchFile;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -32,6 +33,14 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
     public void clearAdapter() {
         searedFiles.clear();
         notifyDataSetChanged();
+    }
+
+    public void insert(ResSearchFile resSearchFile) {
+        for (ResMessages.OriginalMessage message : resSearchFile.files) {
+            if (message instanceof ResMessages.FileMessage) {
+                searedFiles.add((ResMessages.FileMessage)message);
+            }
+        }
     }
 
     @Override

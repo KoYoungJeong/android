@@ -24,6 +24,7 @@ import com.tosslab.toss.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 
 @EActivity(R.layout.activity_search)
 public class SearchActivity extends Activity implements ActionBar.TabListener {
@@ -42,6 +43,9 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+
+    @Extra
+    public String myToken;
 
     @AfterViews
     void initView() {
@@ -142,12 +146,14 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
                 return SearchListFragment_
                         .builder()
                         .searchType(TossConstants.TYPE_SEARCH_EVERYONE)
+                        .myToken(myToken)
                         .build();
             } else {
                 // Certain user
                 return SearchListFragment_
                         .builder()
                         .searchType(TossConstants.TYPE_SEARCH_SPECIFIC)
+                        .myToken(myToken)
                         .build();
             }
         }
