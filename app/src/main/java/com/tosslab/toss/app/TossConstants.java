@@ -8,6 +8,10 @@ public class TossConstants {
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
     public static final String SERVICE_ROOT_URL = "https://192.168.0.10:3000/";
 
+    // SharedPreference Key 값
+    public static final String PREF_NAME        = "JandiPref";
+    public static final String PREF_TOKEN       = "token";
+
     public static final int TYPE_CHANNEL        = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_GROUP  = 0x02;

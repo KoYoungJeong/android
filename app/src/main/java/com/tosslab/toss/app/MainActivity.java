@@ -70,7 +70,7 @@ public class MainActivity extends Activity {
         expandRangeOfNavigationDrawerToggle();
 
         // Preference 추출
-        SharedPreferences pref = getSharedPreferences("TossPref", 0);
+        SharedPreferences pref = getSharedPreferences(TossConstants.PREF_NAME, 0);
         String cdpName = pref.getString("cdpName", "");
         int cdpType = pref.getInt("cdpType", -1);
         int cdpId = pref.getInt("cdpId", -1);
@@ -81,7 +81,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().registerSticky(this);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class MainActivity extends Activity {
         mCurrentTitle = FormatConverter.cdpName(event.name, event.type);
 
         // Preference 저장
-        SharedPreferences pref = getSharedPreferences("TossPref", 0);
+        SharedPreferences pref = getSharedPreferences(TossConstants.PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("cdpName", event.name);
         editor.putInt("cdpType", event.type);

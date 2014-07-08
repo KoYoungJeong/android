@@ -1,11 +1,9 @@
 package com.tosslab.toss.app;
 
 import android.app.DialogFragment;
-import android.graphics.Color;
 import android.util.Log;
 import android.widget.ListView;
 
-import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
@@ -68,7 +66,7 @@ public class MainLeftFragment extends BaseFragment {
         mListCdps.setAdapter(mCdpListAdapter);
 
         // C, D, P 리스트 획득
-        getCdpItemFromServer();
+//        getCdpItemFromServer();
     }
 
     /**
