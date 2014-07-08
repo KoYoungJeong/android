@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.lists;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.FormatConverter;
 
@@ -45,7 +45,7 @@ public class MessageItem {
     }
 
     public String getUserProfileUrl() {
-        return TossConstants.SERVICE_ROOT_URL + mMessage.writer.u_photoUrl;
+        return JandiConstants.SERVICE_ROOT_URL + mMessage.writer.u_photoUrl;
     }
 
     public int getContentType() {
@@ -82,7 +82,7 @@ public class MessageItem {
         if (mMessage instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage message = (ResMessages.FileMessage)mMessage;
             if (message.content.serverUrl.equals("root")) {
-                return TossConstants.SERVICE_ROOT_URL + message.content.fileUrl;
+                return JandiConstants.SERVICE_ROOT_URL + message.content.fileUrl;
             }
         }
         return null;

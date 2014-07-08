@@ -20,6 +20,7 @@ import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.ColoredToast;
+import com.tosslab.toss.app.utils.JandiPreference;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -40,8 +41,7 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends Activity {
     private final Logger log = Logger.getLogger(FileDetailActivity.class);
-    @Extra
-    public String myToken;
+
     @Extra
     public int fileId;
 
@@ -53,6 +53,8 @@ public class FileDetailActivity extends Activity {
     ListView listFileDetails;
     @ViewById(R.id.et_file_detail_comment)
     EditText etFileDetailComment;
+
+    public String myToken;
 
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
@@ -70,7 +72,7 @@ public class FileDetailActivity extends Activity {
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         listFileDetails.setAdapter(fileDetailListAdapter);
-
+        myToken = JandiPreference.getMyToken(this);
         tossRestClient.setHeader("Authorization", myToken);
         getFileDetailFromServer();
     }

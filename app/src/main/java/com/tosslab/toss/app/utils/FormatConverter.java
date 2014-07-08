@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.utils;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 
 /**
  * Created by justinygchoi on 2014. 6. 24..
@@ -23,9 +23,9 @@ public class FormatConverter {
 
     public static String cdpName(String originName, int cdpType) {
         switch (cdpType) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return "# " + originName;
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return "@ " + originName;
             default:
                 return originName;

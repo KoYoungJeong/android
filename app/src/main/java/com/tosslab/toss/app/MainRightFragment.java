@@ -14,26 +14,26 @@ public class MainRightFragment extends BaseFragment {
 
     @Click(R.id.ly_main_right_action_files)
     public void moveToSearchFiles() {
-        SearchActivity_.intent(this).myToken(((MainActivity)getActivity()).myToken).searchMode(TossConstants.TYPE_SEARCH_EVERYONE).start();
+        SearchActivity_.intent(this).searchMode(JandiConstants.TYPE_SEARCH_EVERYONE).start();
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
 
     }
 
     @Click(R.id.ly_main_right_action_my_files)
     public void moveToSearchFilesMine() {
-        SearchActivity_.intent(this).myToken(((MainActivity)getActivity()).myToken).searchMode(TossConstants.TYPE_SEARCH_SPECIFIC).start();
+        SearchActivity_.intent(this).searchMode(JandiConstants.TYPE_SEARCH_SPECIFIC).start();
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Click(R.id.ly_main_right_action_all_files)
     public void moveToSearchFilesAll() {
-        SearchActivity_.intent(this).myToken(((MainActivity)getActivity()).myToken).searchMode(TossConstants.TYPE_SEARCH_EVERYONE).start();
+        SearchActivity_.intent(this).searchMode(JandiConstants.TYPE_SEARCH_EVERYONE).start();
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Click(R.id.ly_main_right_action_images)
     public void moveToSearchFilesImages() {
-        SearchActivity_.intent(this).myToken(((MainActivity)getActivity()).myToken).searchMode(TossConstants.TYPE_SEARCH_IMAGES).start();
+        SearchActivity_.intent(this).searchMode(JandiConstants.TYPE_SEARCH_IMAGES).start();
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 }

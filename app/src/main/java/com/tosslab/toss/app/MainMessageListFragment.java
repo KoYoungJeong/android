@@ -5,7 +5,6 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.inputmethod.InputMethodManager;
@@ -13,7 +12,6 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.dialogs.EditTextDialogFragment;
 import com.tosslab.toss.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.toss.app.dialogs.FileUploadTypeDialogFragment;
@@ -31,6 +29,7 @@ import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.ColoredToast;
+import com.tosslab.toss.app.utils.JandiPreference;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -66,8 +65,6 @@ public class MainMessageListFragment extends BaseFragment {
     @RestService
     TossRestClient tossRestClient;
     @FragmentArg
-    String myToken;
-    @FragmentArg
     String cdpName;
     @FragmentArg
     int cdpId;
@@ -81,6 +78,8 @@ public class MainMessageListFragment extends BaseFragment {
     @ViewById(R.id.et_message)
     EditText etMessage;
 
+    private Context mContext;
+    private String mMyToken;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
     // Update 관련
@@ -96,11 +95,14 @@ public class MainMessageListFragment extends BaseFragment {
 
     @AfterViews
     void bindAdapter() {
+        Context mContext = getActivity();
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(getActivity());
+        mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        mMyToken = JandiPreference.getMyToken(mContext);
 
         listMessages.setAdapter(messageItemListAdapter);
         // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
@@ -225,7 +227,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void getMessagesInBackground(int type, int id) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, myToken);
+                tossRestClient, mCurrentEvent, mMyToken);
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
 
@@ -249,7 +251,7 @@ public class MainMessageListFragment extends BaseFragment {
         if (isOk) {
             refreshListAdapter();
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
         }
 
     }
@@ -274,7 +276,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void getUpdateMessagesInBackground(int type, int id) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, myToken);
+                tossRestClient, mCurrentEvent, mMyToken);
         try {
             ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateTime);
             log.info("success to " + restResMessages.messageCount +
@@ -325,7 +327,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void sendMessageInBackground(String message) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, myToken);
+                tossRestClient, mCurrentEvent, mMyToken);
         try {
             messageManipulator.sendMessage(message);
             log.debug("success to send message");
@@ -339,10 +341,10 @@ public class MainMessageListFragment extends BaseFragment {
     @UiThread
     public void sendMessageDone(boolean isOk, String message) {
         if (isOk) {
-            ColoredToast.show(getActivity(), message);
+            ColoredToast.show(mContext, message);
             getUpdateMessages();
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
         }
     }
 
@@ -373,7 +375,7 @@ public class MainMessageListFragment extends BaseFragment {
 
     @UiThread
     void showWarningCheckPermission(String message) {
-        ColoredToast.showWarning(getActivity(), message);
+        ColoredToast.showWarning(mContext, message);
     }
 
     void showDialog(MessageItem item) {
@@ -403,7 +405,7 @@ public class MainMessageListFragment extends BaseFragment {
     void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
 
         MessageManipulator messageManipulator
-                = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
+                = new MessageManipulator(tossRestClient, mCurrentEvent, mMyToken);
 
         try {
             if (messageType == MessageItem.TYPE_STRING) {
@@ -423,10 +425,10 @@ public class MainMessageListFragment extends BaseFragment {
     @UiThread
     void modifyMessageDone(boolean isOk, String message) {
         if (isOk) {
-            ColoredToast.show(getActivity(), message);
+            ColoredToast.show(mContext, message);
             getUpdateMessages();
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
         }
     }
 
@@ -447,7 +449,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     void deleteMessageInBackground(int messageType, int messageId, int feedbackId) {
         MessageManipulator messageManipulator
-                = new MessageManipulator(tossRestClient, mCurrentEvent, myToken);
+                = new MessageManipulator(tossRestClient, mCurrentEvent, mMyToken);
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageManipulator.deleteMessage(messageId);
@@ -465,10 +467,10 @@ public class MainMessageListFragment extends BaseFragment {
     @UiThread
     void deleteMessageDone(boolean isOk, String message) {
         if (isOk) {
-            ColoredToast.show(getActivity(), message);
+            ColoredToast.show(mContext, message);
             getUpdateMessages();
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
         }
     }
 
@@ -486,16 +488,16 @@ public class MainMessageListFragment extends BaseFragment {
     public void onEvent(RequestFileUploadEvent event) {
         Intent intent = null;
         switch (event.type) {
-            case TossConstants.TYPE_UPLOAD_GALLERY:
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
                 log.info("upload file from gallery");
                 // Gallery
                 intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, TossConstants.TYPE_UPLOAD_GALLERY);
+                startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
-            case TossConstants.TYPE_UPLOAD_EXPLORER:
-                intent = new Intent(getActivity(), FileExplorerActivity.class);
-                startActivityForResult(intent, TossConstants.TYPE_UPLOAD_EXPLORER);
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                intent = new Intent(mContext, FileExplorerActivity.class);
+                startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
                 break;
             default:
                 break;
@@ -511,13 +513,13 @@ public class MainMessageListFragment extends BaseFragment {
         if (resultCode == Activity.RESULT_OK) {
             String realFilePath = null;
             switch (requestCode) {
-                case TossConstants.TYPE_UPLOAD_GALLERY:
+                case JandiConstants.TYPE_UPLOAD_GALLERY:
                     Uri targetUri = data.getData();
                     realFilePath = getRealPathFromUri(targetUri);
                     log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
                     showFileUploadDialog(realFilePath);
                     break;
-                case TossConstants.TYPE_UPLOAD_EXPLORER:
+                case JandiConstants.TYPE_UPLOAD_EXPLORER:
                     String path = data.getStringExtra("GetPath");
                     realFilePath = path + File.separator + data.getStringExtra("GetFileName");
                     log.debug("Get File from Explorer : " + realFilePath);
@@ -545,11 +547,11 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     void uploadFileInBackground(int cdpIdToBeShared, String fileUri, String comment) {
 
-        String requestURL = TossConstants.SERVICE_ROOT_URL + "inner-api/file";
+        String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
 
         File uploadFile = new File(fileUri);
         try {
-            MultipartUtility multipart = new MultipartUtility(requestURL, myToken);
+            MultipartUtility multipart = new MultipartUtility(requestURL, mMyToken);
 
             multipart.addFormField("title", uploadFile.getName());
             multipart.addFormField("share", "" + cdpIdToBeShared);
@@ -579,16 +581,16 @@ public class MainMessageListFragment extends BaseFragment {
         resumeTimer();  // resume timer
 
         if (isOk) {
-            ColoredToast.show(getActivity(), message);
+            ColoredToast.show(mContext, message);
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
         }
     }
 
     // TODO : Poor Implementation
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = getActivity().getContentResolver().query(contentUri, filePathColumn, null, null, null);
+        Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String filePath = cursor.getString(columnIndex);
@@ -620,9 +622,8 @@ public class MainMessageListFragment extends BaseFragment {
     private void moveToFileDetailActivity(int fileId) {
         FileDetailActivity_
                 .intent(this)
-                .myToken(myToken)
                 .fileId(fileId)
                 .start();
-        EventBus.getDefault().postSticky(((MainActivity)getActivity()).cdpItemManager);
+        EventBus.getDefault().postSticky(((MainActivity)mContext).cdpItemManager);
     }
 }

@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.lists;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 
 /**
@@ -29,21 +29,21 @@ public class CdpItem {
 
     public CdpItem(ResLeftSideMenu.Channel channel) {
         this.name = channel.name;
-        this.type = TossConstants.TYPE_CHANNEL;
+        this.type = JandiConstants.TYPE_CHANNEL;
         this.id = channel.id;
         this.ownerId = channel.ch_creatorId;
     }
 
     public CdpItem(ResLeftSideMenu.User user) {
         this.name = user.name;
-        this.type = TossConstants.TYPE_DIRECT_MESSAGE;
+        this.type = JandiConstants.TYPE_DIRECT_MESSAGE;
         this.id = user.id;
         this.ownerId = user.id;
     }
 
     public CdpItem(ResLeftSideMenu.PrivateGroup pGroup) {
         this.name = pGroup.name;
-        this.type = TossConstants.TYPE_PRIVATE_GROUP;
+        this.type = JandiConstants.TYPE_PRIVATE_GROUP;
         this.id = pGroup.id;
         this.ownerId = pGroup.pg_creatorId;
     }
@@ -51,9 +51,9 @@ public class CdpItem {
     @Override
     public String toString() {
         switch (this.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return "# " + this.name;
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return "@ " + this.name;
             default:
                 return this.name;

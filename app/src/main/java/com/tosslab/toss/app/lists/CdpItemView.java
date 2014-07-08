@@ -9,8 +9,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.TossConstants;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -33,21 +33,21 @@ public class CdpItemView extends FrameLayout {
     public void bind(CdpItem cdp) {
         setAllVisibilitiesByGone();
         switch (cdp.type) {
-            case TossConstants.TYPE_TITLE_JOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
                 lyTitleJoinedChannel.setVisibility(VISIBLE);
                 break;
-            case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 txtCdpItemName.setVisibility(VISIBLE);
                 txtCdpItemName.setText(cdp.name);
                 break;
-            case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 lyTitleDirectMessage.setVisibility(VISIBLE);
                 break;
-            case TossConstants.TYPE_TITLE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_TITLE_PRIVATE_GROUP:
                 lyTitlePrivateGroup.setVisibility(VISIBLE);
                 break;
-            case TossConstants.TYPE_CHANNEL:
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
             default:
                 txtCdpItemName.setVisibility(VISIBLE);
                 txtCdpItemName.setText(cdp.toString());

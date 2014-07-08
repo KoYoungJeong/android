@@ -9,17 +9,12 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
-import com.tosslab.toss.app.R;
+
 import com.tosslab.toss.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -44,8 +39,6 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
      */
     ViewPager mViewPager;
 
-    @Extra
-    public String myToken;
     @Extra
     public int searchMode;    // 서치 모드
 
@@ -86,11 +79,9 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
         }
 
         // 특정인 검색으로 시작한다면 두번째 텝으로 이동
-        if (searchMode == TossConstants.TYPE_SEARCH_SPECIFIC) {
+        if (searchMode == JandiConstants.TYPE_SEARCH_SPECIFIC) {
             mViewPager.setCurrentItem(1);
         }
-
-
     }
 
     @Override
@@ -154,17 +145,15 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
                 // Everyone
                 return SearchListFragment_
                         .builder()
-                        .whichTab(TossConstants.TYPE_SEARCH_EVERYONE)
+                        .whichTab(JandiConstants.TYPE_SEARCH_EVERYONE)
                         .searchMode(searchMode)
-                        .myToken(myToken)
                         .build();
             } else {
                 // Certain user
                 return SearchListFragment_
                         .builder()
-                        .whichTab(TossConstants.TYPE_SEARCH_SPECIFIC)
+                        .whichTab(JandiConstants.TYPE_SEARCH_SPECIFIC)
                         .searchMode(searchMode)
-                        .myToken(myToken)
                         .build();
             }
         }

@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.network;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
 import com.tosslab.toss.app.network.models.ReqSendComment;
@@ -8,7 +8,6 @@ import com.tosslab.toss.app.network.models.ReqSendMessage;
 import com.tosslab.toss.app.network.models.ReqShareMessage;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
-import com.tosslab.toss.app.network.models.ResSearchFile;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
@@ -37,11 +36,11 @@ public class MessageManipulator {
 
     public ResMessages getMessages(int firstItemId) throws RestClientException {
         switch (mCurrentEvent.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.getChannelMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.getDirectMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 return mRestClient.getGroupMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
             default:
                 return null;
@@ -51,11 +50,11 @@ public class MessageManipulator {
 
     public ResMessages updateMessages(Date fromNow) throws RestClientException {
         switch (mCurrentEvent.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.getChannelMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.getDirectMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 return mRestClient.getGroupMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
             default:
                 return null;
@@ -68,11 +67,11 @@ public class MessageManipulator {
         sendingMessage.content = message;
 
         switch (mCurrentEvent.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.id);
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 return mRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
             default:
                 return null;
@@ -84,11 +83,11 @@ public class MessageManipulator {
         reqModifyMessage.content = message;
 
         switch (mCurrentEvent.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.modifyChannelMessage(reqModifyMessage, mCurrentEvent.id, messageId);
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.modifyDirectMessage(reqModifyMessage, mCurrentEvent.id, messageId);
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCurrentEvent.id, messageId);
             default:
                 return null;
@@ -97,11 +96,11 @@ public class MessageManipulator {
 
     public ResSendMessage deleteMessage(int messageId) throws RestClientException {
         switch (mCurrentEvent.type) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.deleteDirectMessage(mCurrentEvent.id, messageId);
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 return mRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
             default:
                 return null;

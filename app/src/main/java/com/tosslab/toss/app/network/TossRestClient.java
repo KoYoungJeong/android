@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.network;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ReqModifyMessage;
 import com.tosslab.toss.app.network.models.ReqSearchFile;
@@ -34,7 +34,7 @@ import org.springframework.util.MultiValueMap;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-        rootUrl = TossConstants.SERVICE_ROOT_URL + "inner-api",
+        rootUrl = JandiConstants.SERVICE_ROOT_URL + "inner-api",
         converters = {
                 MappingJacksonHttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,

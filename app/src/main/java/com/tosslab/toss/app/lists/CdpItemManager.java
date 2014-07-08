@@ -1,6 +1,6 @@
 package com.tosslab.toss.app.lists;
 
-import com.tosslab.toss.app.TossConstants;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 
 import org.apache.log4j.Logger;
@@ -35,13 +35,13 @@ public class CdpItemManager {
         ArrayList<CdpItem> cdpItems = new ArrayList<CdpItem>();
 
         // 리스트에서 제목으로 처리할 item을 추가한다.
-        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_JOINED_CHANNEL));
+        cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_JOINED_CHANNEL));
         cdpItems.addAll(mJoinedChannels);
-        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_UNJOINED_CHANNEL
+        cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL
                 , mUnJoinedChannels.size() - mJoinedChannels.size()));
-        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_DIRECT_MESSAGE));
+        cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_DIRECT_MESSAGE));
         cdpItems.addAll(mUsers);
-        cdpItems.add(new CdpItem(TossConstants.TYPE_TITLE_PRIVATE_GROUP));
+        cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_PRIVATE_GROUP));
         cdpItems.addAll(mPrivateGroups);
 
         return cdpItems;

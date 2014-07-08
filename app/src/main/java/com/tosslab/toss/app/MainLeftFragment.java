@@ -1,6 +1,7 @@
 package com.tosslab.toss.app;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -9,7 +10,6 @@ import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
-import com.tosslab.toss.app.events.ForwardCdpItemManager;
 import com.tosslab.toss.app.events.ModifyCdpEvent;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItem;
@@ -20,6 +20,7 @@ import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResSendMessage;
 import com.tosslab.toss.app.utils.ColoredToast;
+import com.tosslab.toss.app.utils.JandiPreference;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -42,7 +43,7 @@ import de.greenrobot.event.EventBus;
 public class MainLeftFragment extends BaseFragment {
     private final Logger log = Logger.getLogger(MainLeftFragment.class);
 
-    String mMyToken;
+    private String mMyToken;
 
     @ViewById(R.id.list_cdps)
     ListView mListCdps;
@@ -58,7 +59,7 @@ public class MainLeftFragment extends BaseFragment {
     @AfterViews
     void bindAdapter() {
         // myToken 획득
-        mMyToken = ((MainActivity)getActivity()).myToken;
+        mMyToken = JandiPreference.getMyToken(getActivity());
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(getActivity());
@@ -67,7 +68,7 @@ public class MainLeftFragment extends BaseFragment {
         mListCdps.setAdapter(mCdpListAdapter);
 
         // C, D, P 리스트 획득
-//        getCdpItemFromServer();
+        getCdpItemFromServer();
     }
 
     /**
@@ -100,19 +101,19 @@ public class MainLeftFragment extends BaseFragment {
     void list_cdpsItemClicked(CdpItem cdp) {
         Log.e("HI", cdp.name + " Clicked. type is " + cdp.type);
         switch (cdp.type) {
-            case TossConstants.TYPE_TITLE_JOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
                 // Joined channel 의 제목부를 터치했을 경우, 채널 생성 메뉴로...
-                showDialogToCreate(TossConstants.TYPE_CHANNEL);
+                showDialogToCreate(JandiConstants.TYPE_CHANNEL);
                 break;
-            case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 // 비등록 체널의 목록을 보여주고 join 할 수 있게 함.
                 break;
-            case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 // DO NOTHING
                 break;
-            case TossConstants.TYPE_TITLE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_TITLE_PRIVATE_GROUP:
                 // Private Group 생성 메뉴로...
-                showDialogToCreate(TossConstants.TYPE_PRIVATE_GROUP);
+                showDialogToCreate(JandiConstants.TYPE_PRIVATE_GROUP);
                 break;
             default:
                 // 일반 CDP 를 터치했을 경우, 해당 CDP의 메시지 리스트를 획득할수 있게 이벤트 등록
@@ -126,10 +127,10 @@ public class MainLeftFragment extends BaseFragment {
     @ItemLongClick
     void list_cdpsItemLongClicked(CdpItem cdp) {
         switch (cdp.type) {
-            case TossConstants.TYPE_TITLE_JOINED_CHANNEL:
-            case TossConstants.TYPE_TITLE_UNJOINED_CHANNEL:
-            case TossConstants.TYPE_TITLE_PRIVATE_GROUP:
-            case TossConstants.TYPE_TITLE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
+            case JandiConstants.TYPE_TITLE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 // DO NOTHING
                 break;
             default:
@@ -156,20 +157,28 @@ public class MainLeftFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
-            getCdpItemEnd(resLeftSideMenu);
+            getCdpItemDone(true, resLeftSideMenu, null);
         } catch (RestClientException e) {
             Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
         } catch (HttpMessageNotReadableException e) {
             Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
         } catch (Exception e) {
             Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
         }
     }
 
     @UiThread
-    public void getCdpItemEnd(ResLeftSideMenu resLeftSideMenu) {
-        refreshCdpList(resLeftSideMenu);
+    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String message) {
         mProgressWheel.dismiss();
+        if (isOk) {
+            refreshCdpList(resLeftSideMenu);
+        } else {
+            ColoredToast.showError(getActivity(), message);
+            returnToLoginActivity();
+        }
     }
 
     public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
@@ -179,16 +188,11 @@ public class MainLeftFragment extends BaseFragment {
         mCdpListAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * from MainActivity
-     * @param event
-     */
-    public void onEvent(ForwardCdpItemManager event) {
-        mCdpItemManager = event.cdpItemManager;
-        mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
-        mCdpListAdapter.notifyDataSetChanged();
+    public void returnToLoginActivity() {
+        Intent intent = new Intent(getActivity(), LoginActivity_.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
-
 
     /************************************************************
      * Channel, PrivateGroup 생성
@@ -211,10 +215,10 @@ public class MainLeftFragment extends BaseFragment {
      */
     public void onEvent(ConfirmCreateCdpEvent event) {
         switch (event.cdpType) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 requestCreateChannel(event.inputName);
                 break;
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
                 requestCreatePrivateGroup(event.inputName);
                 break;
             default:
@@ -236,7 +240,7 @@ public class MainLeftFragment extends BaseFragment {
 
         ResSendMessage restResId = null;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createChannel(reqCreateCdp);
             getCdpItemFromServer();
             log.debug("Create Success");
@@ -259,7 +263,7 @@ public class MainLeftFragment extends BaseFragment {
 
         ResSendMessage restResId = null;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             getCdpItemFromServer();
             log.debug("Create Success");
@@ -310,9 +314,9 @@ public class MainLeftFragment extends BaseFragment {
 
     @Background
     void modifyCdpInBackground(ConfirmModifyCdpEvent event) {
-        if (event.cdpType == TossConstants.TYPE_CHANNEL) {
+        if (event.cdpType == JandiConstants.TYPE_CHANNEL) {
             modifyChannelInBackground(event.cdpId, event.inputName);
-        } else if (event.cdpType == TossConstants.TYPE_PRIVATE_GROUP) {
+        } else if (event.cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
             modifyGroupInBackground(event.cdpId, event.inputName);
         }
     }
@@ -322,7 +326,7 @@ public class MainLeftFragment extends BaseFragment {
         ReqCreateCdp channel = new ReqCreateCdp();
         channel.name = nameToBeModified;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             resId = mTossRestClient.modifyChannel(channel, cdpId);
         } catch (RestClientException e) {
             log.error("modify failed", e);
@@ -335,7 +339,7 @@ public class MainLeftFragment extends BaseFragment {
         ReqCreateCdp privateGroup = new ReqCreateCdp();
         privateGroup.name = nameToBeModified;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             resId = mTossRestClient.modifyGroup(privateGroup, cdpId);
         } catch (RestClientException e) {
             log.error("modify failed", e);
@@ -366,9 +370,9 @@ public class MainLeftFragment extends BaseFragment {
 
     @Background
     void deleteCdpInBackground(DeleteCdpEvent event) {
-        if (event.cdpType == TossConstants.TYPE_CHANNEL) {
+        if (event.cdpType == JandiConstants.TYPE_CHANNEL) {
             deleteChannelInBackground(event.cdpId);
-        } else if (event.cdpType == TossConstants.TYPE_PRIVATE_GROUP) {
+        } else if (event.cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
             deleteGroupInBackground(event.cdpId);
         }
     }
@@ -376,7 +380,7 @@ public class MainLeftFragment extends BaseFragment {
     void deleteChannelInBackground(int cdpId) {
         ResSendMessage restResId = null;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteChannel(cdpId);
             log.debug("delete Success");
         } catch (RestClientException e) {
@@ -388,7 +392,7 @@ public class MainLeftFragment extends BaseFragment {
     void deleteGroupInBackground(int cdpId) {
         ResSendMessage restResId = null;
         try {
-            mTossRestClient.setHeader("Authorization", ((MainActivity)getActivity()).myToken);
+            mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteGroup(cdpId);
             log.debug("delete Success");
         } catch (RestClientException e) {

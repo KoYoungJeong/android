@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 /**
  * Created by justinygchoi on 2014. 6. 19..
  */
-public class TossApplication extends Application {
+public class JandiApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -18,7 +18,7 @@ public class TossApplication extends Application {
         try {
             ConfigureLog4J.configure(getApplicationContext());
 
-            Logger logger = Logger.getLogger(TossApplication.class);
+            Logger logger = Logger.getLogger(JandiApplication.class);
             logger.info("initialize log file");
         } catch (Exception e) {
             Log.e("android-log4j", e.getMessage());

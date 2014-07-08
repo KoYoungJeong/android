@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyMessageEvent;
@@ -169,12 +169,12 @@ public class EditTextDialogFragment extends DialogFragment {
 
     int obtainTitileForCreateCdp(int cdpType) {
         switch (cdpType) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return R.string.create_channel;
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 // TODO : Direct Message 에 생성이 필요할까?
                 return R.string.create_direct_message;
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
             default:
                 return R.string.create_private_group;
         }
@@ -182,12 +182,12 @@ public class EditTextDialogFragment extends DialogFragment {
 
     int obtainTitileForModifyCdp(int cdpType) {
         switch (cdpType) {
-            case TossConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_CHANNEL:
                 return R.string.modify_channel;
-            case TossConstants.TYPE_DIRECT_MESSAGE:
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
                 // TODO : Direct Message 에 수정이 필요할까?
                 return R.string.modify_private_group;
-            case TossConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_GROUP:
             default:
                 return R.string.modify_direct_message;
         }

@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.tosslab.toss.app.events.ForwardCdpItemManager;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
@@ -24,7 +23,6 @@ import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -41,9 +39,6 @@ public class MainActivity extends Activity {
     FrameLayout flContainer;
     @ViewById(R.id.dl_activity_main_drawer)
     DrawerLayout mDrawer;
-
-    @Extra
-    public String myToken;
 
     @RestService
     TossRestClient tossRestClient;
@@ -71,7 +66,7 @@ public class MainActivity extends Activity {
         expandRangeOfNavigationDrawerToggle();
 
         // Preference 추출
-        SharedPreferences pref = getSharedPreferences(TossConstants.PREF_NAME, 0);
+        SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
         String cdpName = pref.getString("cdpName", "");
         int cdpType = pref.getInt("cdpType", -1);
         int cdpId = pref.getInt("cdpId", -1);
@@ -82,7 +77,7 @@ public class MainActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().registerSticky(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -98,16 +93,6 @@ public class MainActivity extends Activity {
         super.onStop();
     }
 
-    /**
-     * From Login Activity
-     * @param event
-     */
-    public void onEvent(CdpItemManager event) {
-        log.debug("EVENT(sticky) : from LoginActivity : CdpItemManager");
-        EventBus.getDefault().post(new ForwardCdpItemManager(event));
-        cdpItemManager = event;
-    }
-
 
     /**
      * 해당 이벤트는 MainLeftFragment -> MainMessageListFragment 지만
@@ -121,7 +106,7 @@ public class MainActivity extends Activity {
         mCurrentTitle = FormatConverter.cdpName(event.name, event.type);
 
         // Preference 저장
-        SharedPreferences pref = getSharedPreferences(TossConstants.PREF_NAME, 0);
+        SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("cdpName", event.name);
         editor.putInt("cdpType", event.type);
@@ -155,14 +140,14 @@ public class MainActivity extends Activity {
             default:
                 baseFragment = MainMessageListFragment_
                         .builder()
-                        .myToken(myToken)
                         .cdpId(cdpId)
                         .cdpType(cdpType)
                         .build();
                 break;
         }
         openFragment(baseFragment);
-        getActionBar().setTitle(FormatConverter.cdpName(cdpName, cdpType));
+        mCurrentTitle = FormatConverter.cdpName(cdpName, cdpType);
+        getActionBar().setTitle(mCurrentTitle);
         mDrawer.closeDrawers();
     }
 

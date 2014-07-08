@@ -9,8 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.tosslab.toss.app.JandiConstants;
 import com.tosslab.toss.app.R;
-import com.tosslab.toss.app.TossConstants;
 import com.tosslab.toss.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.utils.DateTransformator;
@@ -76,7 +76,7 @@ public class FileExplorerDetailView extends FrameLayout {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
             // 사용자
             ResMessages.Writer writer = fileMessage.writer;
-            String profileUrl = TossConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+            String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
             Picasso.with(mContext).load(profileUrl).centerCrop().fit().into(imageViewUserProfile);
             String userName = writer.u_firstName + " " + writer.u_lastName;
             textViewUserName.setText(userName);
@@ -91,7 +91,7 @@ public class FileExplorerDetailView extends FrameLayout {
             // 이미지일 경우
             if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
                 imageViewPhotoFile.setVisibility(View.VISIBLE);
-                String photoUrl = TossConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
+                String photoUrl = JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
                 Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
             }
             buttonFileDetailShare.setOnClickListener(new OnClickListener() {
@@ -108,7 +108,7 @@ public class FileExplorerDetailView extends FrameLayout {
 
             // 프로필
             ResMessages.Writer writer = commentMessage.writer;
-            String profileUrl = TossConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+            String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
             Picasso.with(mContext).load(profileUrl).centerCrop().fit().into(imageViewCommentUserProfile);
             // 이름
             String userName = writer.u_firstName + " " + writer.u_lastName;
