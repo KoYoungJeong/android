@@ -9,6 +9,7 @@ import com.tosslab.toss.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.toss.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.toss.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.toss.app.events.DeleteCdpEvent;
+import com.tosslab.toss.app.events.ForwardCdpItemManager;
 import com.tosslab.toss.app.events.ModifyCdpEvent;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItem;
@@ -174,6 +175,16 @@ public class MainLeftFragment extends BaseFragment {
     public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
         mCdpItemManager = new CdpItemManager(resLeftSideMenu);
         ((MainActivity)getActivity()).cdpItemManager = mCdpItemManager;
+        mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
+        mCdpListAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * from MainActivity
+     * @param event
+     */
+    public void onEvent(ForwardCdpItemManager event) {
+        mCdpItemManager = event.cdpItemManager;
         mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
         mCdpListAdapter.notifyDataSetChanged();
     }

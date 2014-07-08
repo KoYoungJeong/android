@@ -198,6 +198,7 @@ public class MainMessageListFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(SelectCdpItemEvent event) {
+        log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
         mIsFirstMessage = true;
         mCurrentEvent = event;
         getMessagesAfterCleaning();

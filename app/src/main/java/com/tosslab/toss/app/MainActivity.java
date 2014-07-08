@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.tosslab.toss.app.events.ForwardCdpItemManager;
 import com.tosslab.toss.app.events.SelectCdpItemEvent;
 import com.tosslab.toss.app.lists.CdpItemManager;
 import com.tosslab.toss.app.network.TossRestClient;
@@ -97,9 +98,24 @@ public class MainActivity extends Activity {
         super.onStop();
     }
 
+    /**
+     * From Login Activity
+     * @param event
+     */
+    public void onEvent(CdpItemManager event) {
+        log.debug("EVENT(sticky) : from LoginActivity : CdpItemManager");
+        EventBus.getDefault().post(new ForwardCdpItemManager(event));
+        cdpItemManager = event;
+    }
+
+
+    /**
+     * 해당 이벤트는 MainLeftFragment -> MainMessageListFragment 지만
+     * 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
+     * @param event
+     */
     public void onEvent(SelectCdpItemEvent event) {
-        // 해당 이벤트는 MainLeftFragment -> MainMessageListFragment 지만
-        // 네비게이션 드로어를 닫아줘야 하기 때문에 후킹
+        log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
         mDrawer.closeDrawers();
 
         mCurrentTitle = FormatConverter.cdpName(event.name, event.type);
