@@ -18,11 +18,12 @@ public class TossConstants {
     public static final int TYPE_UPLOAD_GALLERY     = 0x00;
     public static final int TYPE_UPLOAD_EXPLORER    = 0x03;
 
-    public static final String TYPE_CHANNEL_STRING = "channel";
-    public static final String TYPE_DIRECT_MESSAGE_STRING = "user";
-    public static final String TYPE_PRIVATE_GROUP_STRING = "parivateGroup";
+    public static final String TYPE_CHANNEL_STRING          = "channel";
+    public static final String TYPE_DIRECT_MESSAGE_STRING   = "user";
+    public static final String TYPE_PRIVATE_GROUP_STRING    = "parivateGroup";
 
     // Search 관련
-    public static final int TYPE_SEARCH_EVERYONE    = 0;
-    public static final int TYPE_SEARCH_SPECIFIC    = 1;
+    public static final int TYPE_SEARCH_EVERYONE    = 0x00;
+    public static final int TYPE_SEARCH_SPECIFIC    = 0x01;
+    public static final int TYPE_SEARCH_IMAGES      = 0x10;
 }

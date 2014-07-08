@@ -19,6 +19,7 @@ import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResFileDetail;
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.utils.ColoredToast;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -56,7 +57,7 @@ public class FileDetailActivity extends Activity {
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
-    public CdpItemManager cdpItemManager;
+    public CdpItemManager cdpItemManager = null;
 
     @AfterViews
     public void initForm() {
@@ -89,7 +90,6 @@ public class FileDetailActivity extends Activity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().registerSticky(this);
-//        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -108,10 +108,10 @@ public class FileDetailActivity extends Activity {
     @ItemLongClick
     void list_file_detail_itemsItemLongClicked(ResMessages.OriginalMessage item) {
         if (item instanceof ResMessages.CommentMessage) {
-            if (item.writerId == cdpItemManager.mMe.id) {
-                showToast("long click");
+            if (cdpItemManager != null && item.writerId == cdpItemManager.mMe.id) {
+                ColoredToast.show(this, "long click");
             } else {
-                showErrorToast("권한이 없습니다.");
+                ColoredToast.showError(this, "권한이 없습니다.");
             }
 
         }
@@ -134,6 +134,10 @@ public class FileDetailActivity extends Activity {
         log.debug("reload");
         fileDetailListAdapter.notifyDataSetChanged();
     }
+
+    /************************************************************
+     * 댓글 작성 관련
+     ************************************************************/
 
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
@@ -203,31 +207,11 @@ public class FileDetailActivity extends Activity {
 
     @UiThread
     public void shareMessageDone() {
-        showToast("Message has Shared !!");
+        ColoredToast.show(this, "Message has Shared !!");
     }
 
     @UiThread
     public void shareMessageDoneWithError() {
-        showToast("FAIL Message Sharing !!");
-    }
-
-    @UiThread
-    void showToast(String message) {
-        SuperToast superToast = new SuperToast(this);
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.BLUE);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
-    }
-
-    @UiThread
-    void showErrorToast(String message) {
-        SuperToast superToast = new SuperToast(this);
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.SHORT);
-        superToast.setBackground(SuperToast.Background.RED);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
+        ColoredToast.showError(this, "FAIL Message Sharing !!");
     }
 }

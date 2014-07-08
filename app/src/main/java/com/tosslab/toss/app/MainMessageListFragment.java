@@ -30,6 +30,7 @@ import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.MultipartUtility;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResMessages;
+import com.tosslab.toss.app.utils.ColoredToast;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -250,7 +251,7 @@ public class MainMessageListFragment extends BaseFragment {
     @UiThread
     public void getMessagesError() {
         mProgressWheel.dismiss();
-        showErrorToast("메시지 획득에 실패했습니다");
+        ColoredToast.showError(getActivity(), "메시지 획득에 실패했습니다");
     }
 
     @UiThread
@@ -331,13 +332,13 @@ public class MainMessageListFragment extends BaseFragment {
             sendMessageDone();
         } catch (RestClientException e) {
             log.error("fail to send message", e);
-            showErrorToast("Fail to send");
+            ColoredToast.showError(getActivity(), "Fail to send");
         }
     }
 
     @UiThread
     public void sendMessageDone() {
-        showToast("생성 성공");
+        ColoredToast.show(getActivity(), "생성 성공");
         getUpdateMessages();
     }
 
@@ -356,13 +357,13 @@ public class MainMessageListFragment extends BaseFragment {
 
     void checkPermissionForManipulateMessage(MessageItem item) {
         if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
-            showWarningToast("파일 수정 기능은 차후에...");
+            ColoredToast.showWarning(getActivity(), "파일 수정 기능은 차후에...");
         } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
-            showWarningToast("파일 수정 기능은 차후에...");
+            ColoredToast.showWarning(getActivity(), "파일 수정 기능은 차후에...");
         } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
             showDialog(item);
         } else {
-            showWarningToast("권한이 없습니다.");
+            ColoredToast.showWarning(getActivity(), "권한이 없습니다.");
         }
 
 
@@ -408,13 +409,13 @@ public class MainMessageListFragment extends BaseFragment {
             modifyMessageDone();
         } catch (RestClientException e) {
             log.error("fail to modify message");
-            showErrorToast("수정 실패");
+            ColoredToast.showError(getActivity(), "수정 실패");
         }
     }
 
     @UiThread
     void modifyMessageDone() {
-        showToast("수정 성공");
+        ColoredToast.show(getActivity(), "수정 성공");
         getUpdateMessages();
     }
 
@@ -446,14 +447,14 @@ public class MainMessageListFragment extends BaseFragment {
             deleteMessageDone();
         } catch (RestClientException e) {
             log.error("fail to delete message", e);
-            showErrorToast("Fail to delete");
+            ColoredToast.showError(getActivity(), "Fail to delete");
         }
 
     }
 
     @UiThread
     void deleteMessageDone() {
-        showToast("Deleted !!");
+        ColoredToast.show(getActivity(), "Deleted !!");
         getUpdateMessages();
     }
 
@@ -554,7 +555,7 @@ public class MainMessageListFragment extends BaseFragment {
             uploadFileDone();
         } catch (IOException ex) {
             log.error("fail to upload file.", ex);
-            showErrorToast("Fail to upload file");
+            ColoredToast.showError(getActivity(), "Fail to upload file");
         }
     }
 
@@ -562,7 +563,7 @@ public class MainMessageListFragment extends BaseFragment {
     void uploadFileDone() {
         // resume timer
         resumeTimer();
-        showToast("File Uploaded !!");
+        ColoredToast.show(getActivity(), "File Uploaded !!");
     }
 
     // TODO : Poor Implementation
@@ -574,13 +575,6 @@ public class MainMessageListFragment extends BaseFragment {
         String filePath = cursor.getString(columnIndex);
         cursor.close();
         return filePath;
-
-//        String[] proj = { MediaStore.Images.Media.DATA };
-//        CursorLoader loader = new CursorLoader(getActivity(), contentUri, proj, null, null, null);
-//        Cursor cursor = loader.loadInBackground();
-//        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-//        cursor.moveToFirst();
-//        return cursor.getString(column_index);
     }
 
 
@@ -611,38 +605,5 @@ public class MainMessageListFragment extends BaseFragment {
                 .fileId(fileId)
                 .start();
         EventBus.getDefault().postSticky(((MainActivity)getActivity()).cdpItemManager);
-    }
-
-    /************************************************************
-     * 컬러 토스트
-     ************************************************************/
-    @UiThread
-    void showToast(String message) {
-        SuperToast superToast = new SuperToast(getActivity());
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.BLUE);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
-    }
-
-    @UiThread
-    void showWarningToast(String message) {
-        SuperToast superToast = new SuperToast(getActivity());
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.ORANGE);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
-    }
-
-    @UiThread
-    void showErrorToast(String message) {
-        SuperToast superToast = new SuperToast(getActivity());
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.RED);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
     }
 }

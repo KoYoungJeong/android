@@ -9,6 +9,7 @@ import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ResLogin;
 import com.tosslab.toss.app.network.models.TossRestToken;
+import com.tosslab.toss.app.utils.ColoredToast;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -73,7 +74,7 @@ public class LoginActivity extends Activity {
             log.debug("Login Success : " + tossRestToken.token);
         } catch (RestClientException e) {
             log.error("Login Fail", e);
-            showErrorToast("Login failed");
+            ColoredToast.showError(this, "Login failed");
         }
         mProgressWheel.dismiss();
 
@@ -85,16 +86,6 @@ public class LoginActivity extends Activity {
     public void moveToMainActivity(String token) {
         MainActivity_.intent(this).myToken(token).start();
         finish();
-    }
-
-    @UiThread
-    void showErrorToast(String message) {
-        SuperToast superToast = new SuperToast(this);
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.RED);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
     }
 
     // TODO : remove this

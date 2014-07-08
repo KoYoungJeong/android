@@ -36,6 +36,7 @@
                 android:textColor="@color/bg_drawer_text"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/ly_main_right_action_my_files"
             android:layout_width="match_parent"
             android:layout_height="44dp">
             <ImageView
@@ -54,6 +55,7 @@
                 android:textColor="@color/bg_drawer_text"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/ly_main_right_action_all_files"
             android:layout_width="match_parent"
             android:layout_height="44dp">
             <ImageView
@@ -72,6 +74,7 @@
                 android:textColor="@color/bg_drawer_text"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/ly_main_right_action_images"
             android:layout_width="match_parent"
             android:layout_height="44dp">
             <ImageView

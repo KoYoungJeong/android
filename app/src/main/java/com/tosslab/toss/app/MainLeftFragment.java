@@ -20,6 +20,7 @@ import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ReqCreateCdp;
 import com.tosslab.toss.app.network.models.ResLeftSideMenu;
 import com.tosslab.toss.app.network.models.ResSendMessage;
+import com.tosslab.toss.app.utils.ColoredToast;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -268,7 +269,7 @@ public class MainLeftFragment extends BaseFragment {
             DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
             newFragment.show(getFragmentManager(), "dialog");
         } else {
-            showWarningToast("권한이 없습니다.");
+            ColoredToast.showWarning(getActivity(), "권한이 없습니다.");
         }
 
     }
@@ -387,15 +388,5 @@ public class MainLeftFragment extends BaseFragment {
     void deleteCdpDone() {
         mProgressWheel.dismiss();
         getCdpItemFromServer();
-    }
-
-    @UiThread
-    void showWarningToast(String message) {
-        SuperToast superToast = new SuperToast(getActivity());
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.ORANGE);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
     }
 }

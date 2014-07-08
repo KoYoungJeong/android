@@ -1,24 +1,22 @@
 package com.tosslab.toss.app;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.widget.ListView;
 
-import com.github.johnpersano.supertoasts.SuperToast;
 import com.tosslab.toss.app.lists.SearchedFileItemListAdapter;
-import com.tosslab.toss.app.network.MessageManipulator;
 import com.tosslab.toss.app.network.TossRestClient;
 import com.tosslab.toss.app.network.models.ReqSearchFile;
 import com.tosslab.toss.app.network.models.ResMessages;
 import com.tosslab.toss.app.network.models.ResSearchFile;
+import com.tosslab.toss.app.utils.ColoredToast;
 import com.tosslab.toss.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -34,8 +32,12 @@ public class SearchListFragment extends Fragment {
 
     @RestService
     TossRestClient tossRestClient;
+
     @FragmentArg
-    int searchType;
+    int whichTab;
+    @FragmentArg
+    int searchMode;
+
     @FragmentArg
     String myToken;
     @ViewById(R.id.list_searched_file)
@@ -53,7 +55,7 @@ public class SearchListFragment extends Fragment {
 
         listSearchedFiles.setAdapter(mAdapter);
 
-        log.debug("bind adapter for " + searchType);
+        log.debug("bind adapter for " + whichTab);
 
         doSearch();
     }
@@ -71,8 +73,16 @@ public class SearchListFragment extends Fragment {
         try {
             ReqSearchFile reqSearchFile = new ReqSearchFile();
             reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-            reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_ALL;
-            if (searchType == TossConstants.TYPE_SEARCH_EVERYONE) {
+
+            // 이미지 검색이라면...
+            if (searchMode == TossConstants.TYPE_SEARCH_IMAGES) {
+                reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_IMAGE;
+            } else {
+                reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_ALL;
+            }
+
+            //
+            if (whichTab == TossConstants.TYPE_SEARCH_EVERYONE) {
                 reqSearchFile.userId = ReqSearchFile.USER_ID_ALL;
             } else {
                 reqSearchFile.userId = ReqSearchFile.USER_ID_MINE;
@@ -98,16 +108,15 @@ public class SearchListFragment extends Fragment {
     @UiThread
     void doSearchError() {
         mProgressWheel.dismiss();
-        showErrorToast("파일 검색에 실패했습니다");
+        ColoredToast.showError(getActivity(), "파일 검색에 실패했습니다");
     }
 
-    @UiThread
-    void showErrorToast(String message) {
-        SuperToast superToast = new SuperToast(getActivity());
-        superToast.setText(message);
-        superToast.setDuration(SuperToast.Duration.VERY_SHORT);
-        superToast.setBackground(SuperToast.Background.RED);
-        superToast.setTextColor(Color.WHITE);
-        superToast.show();
+    @ItemClick
+    void list_searched_fileItemClicked(ResMessages.FileMessage searchedFile) {
+        FileDetailActivity_
+                .intent(this)
+                .myToken(myToken)
+                .fileId(searchedFile.id)
+                .start();
     }
 }

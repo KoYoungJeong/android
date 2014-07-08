@@ -46,6 +46,8 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
 
     @Extra
     public String myToken;
+    @Extra
+    public int searchMode;    // 서치 모드
 
     @AfterViews
     void initView() {
@@ -82,6 +84,13 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
         }
+
+        // 특정인 검색으로 시작한다면 두번째 텝으로 이동
+        if (searchMode == TossConstants.TYPE_SEARCH_SPECIFIC) {
+            mViewPager.setCurrentItem(1);
+        }
+
+
     }
 
     @Override
@@ -145,14 +154,16 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
                 // Everyone
                 return SearchListFragment_
                         .builder()
-                        .searchType(TossConstants.TYPE_SEARCH_EVERYONE)
+                        .whichTab(TossConstants.TYPE_SEARCH_EVERYONE)
+                        .searchMode(searchMode)
                         .myToken(myToken)
                         .build();
             } else {
                 // Certain user
                 return SearchListFragment_
                         .builder()
-                        .searchType(TossConstants.TYPE_SEARCH_SPECIFIC)
+                        .whichTab(TossConstants.TYPE_SEARCH_SPECIFIC)
+                        .searchMode(searchMode)
                         .myToken(myToken)
                         .build();
             }
