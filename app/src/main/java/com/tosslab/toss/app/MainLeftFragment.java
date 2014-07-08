@@ -269,9 +269,13 @@ public class MainLeftFragment extends BaseFragment {
             DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
             newFragment.show(getFragmentManager(), "dialog");
         } else {
-            ColoredToast.showWarning(getActivity(), "권한이 없습니다.");
+            showWarning("권한이 없습니다.");
         }
+    }
 
+    @UiThread
+    void showWarning(String message) {
+        ColoredToast.showWarning(getActivity(), message);
     }
 
     public void onEvent(ModifyCdpEvent event) {

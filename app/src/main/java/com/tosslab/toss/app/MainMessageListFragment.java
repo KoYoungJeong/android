@@ -235,23 +235,22 @@ public class MainMessageListFragment extends BaseFragment {
 
             messageItemListAdapter.insertMessageItem(restResMessages);
             log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
-            getMessagesDone();
+            getMessagesDone(true, null);
         } catch (RestClientException e) {
             log.error("fail to get messages.", e);
-            getMessagesError();
+            getMessagesDone(false, "메시지 획득에 실패했습니다");
         }
     }
 
     @UiThread
-    public void getMessagesDone() {
+    public void getMessagesDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
-        refreshListAdapter();
-    }
+        if (isOk) {
+            refreshListAdapter();
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
 
-    @UiThread
-    public void getMessagesError() {
-        mProgressWheel.dismiss();
-        ColoredToast.showError(getActivity(), "메시지 획득에 실패했습니다");
     }
 
     @UiThread
@@ -329,17 +328,21 @@ public class MainMessageListFragment extends BaseFragment {
         try {
             messageManipulator.sendMessage(message);
             log.debug("success to send message");
-            sendMessageDone();
+            sendMessageDone(true, "생성 성공");
         } catch (RestClientException e) {
             log.error("fail to send message", e);
-            ColoredToast.showError(getActivity(), "Fail to send");
+            sendMessageDone(false, "Fail to send");
         }
     }
 
     @UiThread
-    public void sendMessageDone() {
-        ColoredToast.show(getActivity(), "생성 성공");
-        getUpdateMessages();
+    public void sendMessageDone(boolean isOk, String message) {
+        if (isOk) {
+            ColoredToast.show(getActivity(), message);
+            getUpdateMessages();
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
     }
 
     /************************************************************
@@ -357,18 +360,21 @@ public class MainMessageListFragment extends BaseFragment {
 
     void checkPermissionForManipulateMessage(MessageItem item) {
         if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
-            ColoredToast.showWarning(getActivity(), "파일 수정 기능은 차후에...");
+            showWarningCheckPermission("파일 수정 기능은 차후에...");
         } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
-            ColoredToast.showWarning(getActivity(), "파일 수정 기능은 차후에...");
+            showWarningCheckPermission("파일 수정 기능은 차후에...");
         } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
             showDialog(item);
         } else {
-            ColoredToast.showWarning(getActivity(), "권한이 없습니다.");
+            showWarningCheckPermission("권한이 없습니다.");
         }
-
-
-
     }
+
+    @UiThread
+    void showWarningCheckPermission(String message) {
+        ColoredToast.showWarning(getActivity(), message);
+    }
+
     void showDialog(MessageItem item) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstance(item);
         newFragment.show(getFragmentManager(), "dialog");
@@ -406,17 +412,21 @@ public class MainMessageListFragment extends BaseFragment {
                 log.debug("Try to modify comment");
                 messageManipulator.modifyMessageComment(messageId, inputMessage, feedbackId);
             }
-            modifyMessageDone();
+            modifyMessageDone(true, "수정 성공");
         } catch (RestClientException e) {
             log.error("fail to modify message");
-            ColoredToast.showError(getActivity(), "수정 실패");
+            modifyMessageDone(false, "수정 실패");
         }
     }
 
     @UiThread
-    void modifyMessageDone() {
-        ColoredToast.show(getActivity(), "수정 성공");
-        getUpdateMessages();
+    void modifyMessageDone(boolean isOk, String message) {
+        if (isOk) {
+            ColoredToast.show(getActivity(), message);
+            getUpdateMessages();
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
     }
 
     /************************************************************
@@ -444,18 +454,21 @@ public class MainMessageListFragment extends BaseFragment {
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 messageManipulator.deleteMessageComment(messageId, feedbackId);
             }
-            deleteMessageDone();
+            deleteMessageDone(true, "Deleted !!");
         } catch (RestClientException e) {
             log.error("fail to delete message", e);
-            ColoredToast.showError(getActivity(), "Fail to delete");
+            deleteMessageDone(false, "Fail to delete");
         }
-
     }
 
     @UiThread
-    void deleteMessageDone() {
-        ColoredToast.show(getActivity(), "Deleted !!");
-        getUpdateMessages();
+    void deleteMessageDone(boolean isOk, String message) {
+        if (isOk) {
+            ColoredToast.show(getActivity(), message);
+            getUpdateMessages();
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
     }
 
     /************************************************************
@@ -552,18 +565,23 @@ public class MainMessageListFragment extends BaseFragment {
             for (String line : response) {
                 log.debug(line);
             }
-            uploadFileDone();
+            uploadFileDone(true, "File Uploaded !!");
         } catch (IOException ex) {
             log.error("fail to upload file.", ex);
-            ColoredToast.showError(getActivity(), "Fail to upload file");
+            uploadFileDone(false, "Fail to upload file");
+
         }
     }
 
     @UiThread
-    void uploadFileDone() {
-        // resume timer
-        resumeTimer();
-        ColoredToast.show(getActivity(), "File Uploaded !!");
+    void uploadFileDone(boolean isOk, String message) {
+        resumeTimer();  // resume timer
+
+        if (isOk) {
+            ColoredToast.show(getActivity(), message);
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
     }
 
     // TODO : Poor Implementation

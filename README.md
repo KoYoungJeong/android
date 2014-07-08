@@ -9,3 +9,12 @@ Tech Stack
 
 + Android Studio or IntelliJ IDE
 + Gradle
+
+Code Convention
+---------
+xml
++ EditText : et_
++ TextView : tv_
++ ImageView : img_
++ LinearLayout : ly_
++ RelativeLayout : ry_

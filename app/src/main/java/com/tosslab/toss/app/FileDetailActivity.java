@@ -198,20 +198,19 @@ public class FileDetailActivity extends Activity {
         try {
             messageManipulator.shareMessage(fileId, cdpIdToBeShared);
             log.debug("success to share message");
-            shareMessageDone();
+            shareMessageDone(true);
         } catch (RestClientException e) {
             log.error("fail to send message", e);
-            shareMessageDoneWithError();
+            shareMessageDone(false);
         }
     }
 
     @UiThread
-    public void shareMessageDone() {
-        ColoredToast.show(this, "Message has Shared !!");
-    }
-
-    @UiThread
-    public void shareMessageDoneWithError() {
-        ColoredToast.showError(this, "FAIL Message Sharing !!");
+    public void shareMessageDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "Message has Shared !!");
+        } else {
+            ColoredToast.showError(this, "FAIL Message Sharing !!");
+        }
     }
 }

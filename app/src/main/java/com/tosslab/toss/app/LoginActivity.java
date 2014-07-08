@@ -1,6 +1,7 @@
 package com.tosslab.toss.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.EditText;
@@ -48,7 +49,7 @@ public class LoginActivity extends Activity {
 
     @AfterViews
     void init() {
-        trustEveryone();    // TODO : SSL 우회! 꼭 지울 것!
+        trustEveryone();    // SSL 우회! 꼭 지울 것!
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -59,7 +60,6 @@ public class LoginActivity extends Activity {
     void pressLoginButton() {
         mProgressWheel.show();
         doLogin();
-//        moveToMainActivity();
     }
 
     @Background
@@ -74,7 +74,7 @@ public class LoginActivity extends Activity {
             log.debug("Login Success : " + tossRestToken.token);
         } catch (RestClientException e) {
             log.error("Login Fail", e);
-            ColoredToast.showError(this, "Login failed");
+            showErrorOnUiThread(this, "Login failed");
         }
         mProgressWheel.dismiss();
 
@@ -83,12 +83,22 @@ public class LoginActivity extends Activity {
         }
     }
 
+    // Error 메시지 출력
+    @UiThread
+    public void showErrorOnUiThread(Context context, String message) {
+        ColoredToast.showError(this, "Login failed");
+    }
+
     public void moveToMainActivity(String token) {
         MainActivity_.intent(this).myToken(token).start();
         finish();
     }
 
-    // TODO : remove this
+
+    /************************************************************
+     * SSL 인증서 우회
+     * TODO : remove this
+     ************************************************************/
     private void trustEveryone() {
         try {
             HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){

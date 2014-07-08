@@ -92,23 +92,22 @@ public class SearchListFragment extends Fragment {
             mAdapter.insert(resSearchFile);
 
             log.debug("success to find " + resSearchFile.fileCount + " files.");
-            doSearchDone();
+            doSearchDone(true, null);
         } catch (RestClientException e) {
             log.error("fail to get searched files.", e);
-            doSearchError();
+            doSearchDone(false, "파일 검색에 실패했습니다");
         }
     }
 
     @UiThread
-    void doSearchDone() {
+    void doSearchDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
-        mAdapter.notifyDataSetChanged();
-    }
 
-    @UiThread
-    void doSearchError() {
-        mProgressWheel.dismiss();
-        ColoredToast.showError(getActivity(), "파일 검색에 실패했습니다");
+        if (isOk) {
+            mAdapter.notifyDataSetChanged();
+        } else {
+            ColoredToast.showError(getActivity(), message);
+        }
     }
 
     @ItemClick
