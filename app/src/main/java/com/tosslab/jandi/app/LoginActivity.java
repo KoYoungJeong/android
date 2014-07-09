@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.widget.EditText;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLogin;
@@ -44,25 +46,25 @@ public class LoginActivity extends Activity {
     EditText edtxtLoginId;
     @ViewById(R.id.et_login_password)
     EditText edtxtLoginPassword;
-
     @RestService
     TossRestClient tossRestClient;
 
+    private Context mContext;
     private ProgressWheel mProgressWheel;
     private String myToken;
 
+    private GoogleCloudMessaging mGcm;
+    private String mRegId;
+
     @AfterViews
     void init() {
+        mContext = getApplicationContext();
+
         trustEveryone();    // SSL 우회! 꼭 지울 것!
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
-
-        // GCM 등록
-        if (getRegistrationId(this).length() == 0) {
-            registerInBackground();
-        }
 
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
         // MainActivity에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
@@ -74,6 +76,12 @@ public class LoginActivity extends Activity {
         } else {
             // DO NOTHING
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPlayServices();
     }
 
     /************************************************************
@@ -113,7 +121,7 @@ public class LoginActivity extends Activity {
             log.debug("Login Success : " + token.token);
             myToken = token.token;
             if (token != null && token.token != null) {
-                moveToMainActivity();
+                registerGcm();
             }
         } else {
             ColoredToast.showError(this, message);
@@ -133,6 +141,40 @@ public class LoginActivity extends Activity {
     /************************************************************
      * GCM
      ************************************************************/
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    private void registerGcm() {
+        // Check device for Play Services APK.
+        if (checkPlayServices()) {
+            mGcm = GoogleCloudMessaging.getInstance(this);
+            mRegId = getRegistrationId(mContext);
+            // GCM 등록
+            if (mRegId.isEmpty()) {
+                registerInBackground();
+            } else {
+                moveToMainActivity();
+            }
+        } else {
+            log.warn("No valid Google Play Services APK found.");
+            // TODO : Push 안 됨
+        }
+    }
+
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                log.info("This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 현재 GCM regID를 획득
      * 없으면 null 리턴, then 등록한다.
@@ -179,16 +221,16 @@ public class LoginActivity extends Activity {
      */
     @Background
     void registerInBackground() {
-        GoogleCloudMessaging gcm = null;
+
         try {
-            if (gcm == null) {
-                gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+            if (mGcm == null) {
+                mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
             }
-            String regid = gcm.register(JandiConstants.SENDER_ID);
-            log.debug("Device registered, registration ID=" + regid);
+            mRegId = mGcm.register(JandiConstants.SENDER_ID);
+            log.debug("Device registered, registration ID=" + mRegId);
 
             sendRegistrationIdToBackend();
-            storeRegistrationId(getApplicationContext(), regid);
+            storeRegistrationId(getApplicationContext(), mRegId);
         } catch (IOException ex) {
             log.error("Error :" + ex.getMessage());
             // If there is an error, don't just keep trying to register.
