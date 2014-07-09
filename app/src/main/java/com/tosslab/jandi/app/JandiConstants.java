@@ -12,6 +12,11 @@ public class JandiConstants {
     public static final String PREF_NAME        = "JandiPref";
     public static final String PREF_TOKEN       = "token";
 
+    public static final String PREF_NAME_GCM    = "JandiGcm";
+    public static final String SENDER_ID        = "558811220581";
+    public static final String PREF_REG_ID      = "registrationId";
+    public static final String PREF_APP_VERSION = "0.1";
+
     public static final int TYPE_CHANNEL        = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_GROUP  = 0x02;

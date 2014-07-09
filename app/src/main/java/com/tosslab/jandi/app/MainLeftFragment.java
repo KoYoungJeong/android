@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.ListView;
@@ -55,14 +56,16 @@ public class MainLeftFragment extends BaseFragment {
 
     private ProgressWheel mProgressWheel;
     private CdpItemManager mCdpItemManager;
+    private Context mContext;
 
     @AfterViews
     void bindAdapter() {
+        mContext = getActivity();
         // myToken 획득
-        mMyToken = JandiPreference.getMyToken(getActivity());
+        mMyToken = JandiPreference.getMyToken(mContext);
 
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(getActivity());
+        mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
         mListCdps.setAdapter(mCdpListAdapter);
@@ -176,7 +179,7 @@ public class MainLeftFragment extends BaseFragment {
         if (isOk) {
             refreshCdpList(resLeftSideMenu);
         } else {
-            ColoredToast.showError(getActivity(), message);
+            ColoredToast.showError(mContext, message);
             returnToLoginActivity();
         }
     }
@@ -189,7 +192,8 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     public void returnToLoginActivity() {
-        Intent intent = new Intent(getActivity(), LoginActivity_.class);
+        JandiPreference.clearMyToken(mContext);
+        Intent intent = new Intent(mContext, LoginActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -288,7 +292,7 @@ public class MainLeftFragment extends BaseFragment {
 
     @UiThread
     void showWarning(String message) {
-        ColoredToast.showWarning(getActivity(), message);
+        ColoredToast.showWarning(mContext, message);
     }
 
     public void onEvent(ModifyCdpEvent event) {

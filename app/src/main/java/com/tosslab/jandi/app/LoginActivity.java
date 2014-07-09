@@ -1,8 +1,13 @@
 package com.tosslab.jandi.app;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.widget.EditText;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.TossRestToken;
@@ -20,6 +25,7 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -53,7 +59,10 @@ public class LoginActivity extends Activity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-
+        // GCM 등록
+        if (getRegistrationId(this).length() == 0) {
+            registerInBackground();
+        }
 
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
         // MainActivity에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
@@ -121,6 +130,100 @@ public class LoginActivity extends Activity {
         finish();
     }
 
+    /************************************************************
+     * GCM
+     ************************************************************/
+    /**
+     * 현재 GCM regID를 획득
+     * 없으면 null 리턴, then 등록한다.
+     */
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences();
+        String registrationId = prefs.getString(JandiConstants.PREF_REG_ID, "");
+        if (registrationId.isEmpty()) {
+            log.info("Registration not found.");
+            return "";
+        }
+        // Check if app was updated; if so, it must clear the registration ID
+        // since the existing regID is not guaranteed to work with the new
+        // app version.
+        int registeredVersion = prefs.getInt(JandiConstants.PREF_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            log.info("App version changed.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences() {
+        return getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+    }
+
+    /**
+     * @return Application's version code from the {@code PackageManager}.
+     */
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    /**
+     * GCM 서버에 registration ID and app versionCode를 등록하고 shared preference 에도 등록함.
+     */
+    @Background
+    void registerInBackground() {
+        GoogleCloudMessaging gcm = null;
+        try {
+            if (gcm == null) {
+                gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+            }
+            String regid = gcm.register(JandiConstants.SENDER_ID);
+            log.debug("Device registered, registration ID=" + regid);
+
+            sendRegistrationIdToBackend();
+            storeRegistrationId(getApplicationContext(), regid);
+        } catch (IOException ex) {
+            log.error("Error :" + ex.getMessage());
+            // If there is an error, don't just keep trying to register.
+            // Require the user to click a button again, or perform
+            // exponential back-off.
+        }
+    }
+
+    /**
+     * Stores the registration ID and app versionCode in the application's
+     * {@code SharedPreferences}.
+     *
+     * @param context application's context.
+     * @param regId registration ID
+     */
+    private void storeRegistrationId(Context context, String regId) {
+        final SharedPreferences prefs = getGCMPreferences();
+        int appVersion = getAppVersion(context);
+        log.info("Saving regId on app version " + appVersion);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(JandiConstants.PREF_REG_ID, regId);
+        editor.putInt(JandiConstants.PREF_APP_VERSION, appVersion);
+        editor.commit();
+    }
+
+    /**
+     * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
+     * or CCS to send messages to your app. Not needed for this demo since the
+     * device sends upstream messages to a server that echoes back the message
+     * using the 'from' address in the message.
+     */
+    private void sendRegistrationIdToBackend() {
+        // Your implementation here.
+    }
 
     /************************************************************
      * SSL 인증서 우회
@@ -141,8 +244,7 @@ public class LoginActivity extends Activity {
                 public X509Certificate[] getAcceptedIssuers() {
                     return new X509Certificate[0];
                 }}}, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(
-                    context.getSocketFactory());
+            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
         } catch (Exception e) { // should never happen
             e.printStackTrace();
         }

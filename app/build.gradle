@@ -12,6 +12,7 @@ dependencies {
     // You must install or update the Google Repository through the SDK manager to use this dependency.
     // for HttpBasicAuthenticatorInterceptor
     compile 'com.android.support:appcompat-v7:19.+'
+    compile 'com.google.android.gms:play-services:3.1.+'
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'org.springframework.android:spring-android-core:1.0.+'
@@ -61,8 +62,14 @@ android {
     }
 
     signingConfigs {
-        tossConfig {
-//            storeFile file(project.property("tossandroid.keystore"))
+        release {
+            storeFile file("tossandroid.keystore")
+            storePassword "xhtmfoq23@#"
+            keyAlias "tossandroid"
+            keyPassword "xhtmfoq23@#"
+
+            // Console 에서 직접 입력
+//            storeFile file(System.console().readLine("Enter keystore path: "))
 //            storePassword System.console().readLine("Enter keystore password: ")
 //            keyAlias "tossandroid"
 //            keyPassword System.console().readLine("Enter key password: ")
@@ -74,7 +81,7 @@ android {
 
     buildTypes {
         release {
-//            signingConfig signingConfigs.tossConfig
+            signingConfig signingConfigs.release
         }
     }
 }
