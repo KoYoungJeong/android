@@ -64,14 +64,9 @@ android {
     signingConfigs {
         release {
             storeFile file("tossandroid.keystore")
-            storePassword "xhtmfoq23@#"
+            storePassword ''
             keyAlias "tossandroid"
-            keyPassword "xhtmfoq23@#"
-
-            // Console 에서 직접 입력
-//            storePassword new String(System.console().readLine("Enter keystore password: "))
-//            keyAlias "tossandroid"
-//            keyPassword System.console().readLine("Enter key password: ")
+            keyPassword ''
         }
         debug {
 //            storeFile file("debug.keystore")
@@ -89,5 +84,43 @@ apt {
     arguments {
         resourcePackageName android.defaultConfig.packageName
         androidManifestFile variant.processResources.manifestFile
+    }
+}
+
+import groovy.swing.SwingBuilder
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.hasTask(':app:assembleRelease')) {
+        def storePass = ''
+        def keyPass = ''
+        if (System.console() == null) {
+            new SwingBuilder().edt {
+                dialog(modal: true, title: 'Enter password', alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                    vbox { // Put everything below each other
+                        label(text: "Please enter store passphrase:")
+                        def input1 = passwordField()
+                        label(text: "Please enter key passphrase:")
+                        def input2 = passwordField()
+                        button(defaultButton: true, text: 'OK', actionPerformed: {
+                            storePass = input1.password;
+                            keyPass = input2.password;
+                            dispose();
+                        })
+                    }
+                }
+            }
+        } else {
+            storePass = System.console().readPassword("\nPlease enter store passphrase: ")
+            keyPass = System.console().readPassword("\nPlease enter key passphrase: ")
+        }
+
+        if (storePass.size() <= 0 || keyPass.size() <= 0) {
+            throw new InvalidUserDataException("You must enter the passwords to proceed.")
+        }
+
+        storePass = new String(storePass)
+        keyPass = new String(keyPass)
+
+        android.signingConfigs.release.storePassword = storePass
+        android.signingConfigs.release.keyPassword = keyPass
     }
 }
