@@ -69,8 +69,7 @@ android {
             keyPassword "xhtmfoq23@#"
 
             // Console 에서 직접 입력
-//            storeFile file(System.console().readLine("Enter keystore path: "))
-//            storePassword System.console().readLine("Enter keystore password: ")
+//            storePassword new String(System.console().readLine("Enter keystore password: "))
 //            keyAlias "tossandroid"
 //            keyPassword System.console().readLine("Enter key password: ")
         }
