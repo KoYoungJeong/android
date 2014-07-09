@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.tosslab.jandi.app.MainActivity" >
+    <item android:id="@+id/action_main_manipulate_cdp"
+        android:title="@string/action_settings"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:orderInCategory="100"
+        android:showAsAction="always" />
+    <item android:id="@+id/action_main_right_drawer"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_drawer"
+        android:orderInCategory="100"
+        android:showAsAction="always" />
+</menu>

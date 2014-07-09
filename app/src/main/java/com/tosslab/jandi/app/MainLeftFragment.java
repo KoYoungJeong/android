@@ -8,6 +8,7 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
+import com.tosslab.jandi.app.dialogs.SelectUnjoinedChannelFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
@@ -110,6 +111,7 @@ public class MainLeftFragment extends BaseFragment {
                 break;
             case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 // 비등록 체널의 목록을 보여주고 join 할 수 있게 함.
+                showDialogToJoinChannel();
                 break;
             case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 // DO NOTHING
@@ -140,6 +142,11 @@ public class MainLeftFragment extends BaseFragment {
                 showDialogToManipulate(cdp);
                 break;
         }
+    }
+
+    void showDialogToJoinChannel() {
+        DialogFragment newFragment = new SelectUnjoinedChannelFragment();
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     /************************************************************

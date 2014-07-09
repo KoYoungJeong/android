@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
@@ -177,7 +180,6 @@ public class MainMessageListFragment extends BaseFragment {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
-
 
     /**
      * Polling task

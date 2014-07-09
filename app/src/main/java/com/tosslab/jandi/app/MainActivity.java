@@ -11,6 +11,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.ViewDragHelper;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -120,10 +121,29 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
+        if (item.getItemId() == R.id.action_main_right_drawer) {
+            if (mDrawer.isDrawerOpen(GravityCompat.END)) {
+                mDrawer.closeDrawers();
+            } else {
+                mDrawer.openDrawer(GravityCompat.END);
+            }
+            return true;
+        } else if (item.getItemId() == R.id.action_main_manipulate_cdp) {
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -171,8 +191,7 @@ public class MainActivity extends Activity {
         if (keycode == KeyEvent.KEYCODE_MENU) {
             if (mDrawer.isDrawerOpen(GravityCompat.START)) {
                 mDrawer.closeDrawers();
-            }
-            else {
+            } else {
                 mDrawer.openDrawer(GravityCompat.START);
             }
         }
