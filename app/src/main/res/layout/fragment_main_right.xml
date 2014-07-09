@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_drawer"
-    tools:context="com.tosslab.toss.app.MainRightFragment">
+    tools:context="com.tosslab.jandi.app.MainRightFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

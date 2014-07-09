@@ -1,6 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.tosslab.toss.app.SearchActivity" >
+    tools:context="com.tosslab.jandi.app.SearchActivity" >
     <item android:id="@+id/action_search"
         android:title="@string/action_settings"
         android:icon="@android:drawable/ic_search_category_default"

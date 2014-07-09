@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tosslab.toss.app.SearchActivity$PlaceholderFragment">
+    tools:context="com.tosslab.jandi.app.SearchActivity$PlaceholderFragment">
     <ListView
         android:id="@+id/list_searched_file"
         android:layout_width="match_parent"
