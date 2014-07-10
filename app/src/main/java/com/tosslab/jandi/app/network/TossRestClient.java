@@ -84,6 +84,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendMessage deleteChannel(int channelId);
 
+    // 채널 Join
+    @Put("/channels/{channelId}/join")
+    @RequiresHeader("Authorization")
+    ResSendMessage joinChannel(int channelId);
+
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
     @RequiresHeader("Authorization")

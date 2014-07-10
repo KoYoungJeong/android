@@ -38,7 +38,7 @@ public class CdpItemManager {
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_JOINED_CHANNEL));
         cdpItems.addAll(mJoinedChannels);
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL
-                , mUnJoinedChannels.size() - mJoinedChannels.size()));
+                , mUnJoinedChannels.size()));
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_DIRECT_MESSAGE));
         cdpItems.addAll(mUsers);
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_PRIVATE_GROUP));

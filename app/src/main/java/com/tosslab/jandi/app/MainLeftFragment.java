@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.jandi.app.dialogs.SelectUnjoinedChannelFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
+import com.tosslab.jandi.app.events.ConfirmJoinChannelEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
@@ -144,9 +145,41 @@ public class MainLeftFragment extends BaseFragment {
         }
     }
 
-    void showDialogToJoinChannel() {
+    /************************************************************
+     * Channel Join
+     ************************************************************/
+    private void showDialogToJoinChannel() {
         DialogFragment newFragment = new SelectUnjoinedChannelFragment();
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(ConfirmJoinChannelEvent event) {
+        joinChannelInBackground(event.channelId);
+    }
+
+    @Background
+    public void joinChannelInBackground(int selectedChannelIdToBeJoined) {
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            ResSendMessage res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
+            joinChannelDone(true, null);
+        } catch (RestClientException e) {
+            log.error("fail to join channel");
+            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.");
+        } catch (Exception e) {
+            log.error("fail to join channel");
+            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.");
+        }
+
+    }
+
+    @UiThread
+    public void joinChannelDone(boolean isOk, String message) {
+        if (isOk) {
+            getCdpItemFromServer();
+        } else {
+            ColoredToast.showError(mContext, message);
+        }
     }
 
     /************************************************************
