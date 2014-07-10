@@ -21,11 +21,9 @@ public class MessageItem {
     public static final int TYPE_FILE  = 10;
 
     private ResMessages.OriginalMessage mMessage;
-    private Date mTime;
 
-    public MessageItem(ResMessages.OriginalMessage message, Date time) {
+    public MessageItem(ResMessages.OriginalMessage message) {
         mMessage = message;
-        mTime = time;
     }
 
     public int getId() {
@@ -112,7 +110,7 @@ public class MessageItem {
     }
 
     public Date getTime() {
-        return mTime;
+        return mMessage.createTime;
     }
 
     public int getWriterId() {
