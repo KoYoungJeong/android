@@ -176,19 +176,33 @@ public class FileDetailActivity extends Activity {
         getFileDetailFromServer();
     }
 
+    /**
+     * Event from FileDetailView
+     * FileDetailView 에서 파일 쉐어 버튼을 눌렀을 때, 발생하는 이벤트
+     * @param event
+     */
     public void onEvent(RequestSelectionOfCdpToBeShared event) {
-        // 파일 쉐어를 위한 이벤트
-        log.debug("GOoooooOOd");
         DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
         newFragment.show(getFragmentManager(), "dialog");
     }
 
-    public void onEvent(CdpItemManager event) {
-        cdpItemManager = event;
-    }
-
+    /**
+     * Event from SelectCdpDialogFragment
+     * Share 할 CDP를 선택한 다음에 "공유"를 눌렀을때 발생하는 이벤트
+     * @param event
+     */
     public void onEvent(ConfirmShareEvent event) {
         sharemessageInBackground(event.selectedCdpIdToBeShared);
+    }
+
+    /**
+     * Sticky Event from SearchListFragment or MainMessageListFragment
+     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
+     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
+     * @param event
+     */
+    public void onEvent(CdpItemManager event) {
+        cdpItemManager = event;
     }
 
     @Background

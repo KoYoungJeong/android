@@ -15,32 +15,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
 
+import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 
+import de.greenrobot.event.EventBus;
+
 @EActivity(R.layout.activity_search)
 public class SearchActivity extends Activity implements ActionBar.TabListener {
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v13.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
-
     @Extra
     public int searchMode;    // 서치 모드
+
+    SectionsPagerAdapter mSectionsPagerAdapter;
+    ViewPager mViewPager;
+
+    public CdpItemManager cdpItemManager = null;
 
     @AfterViews
     void initView() {
@@ -82,6 +74,27 @@ public class SearchActivity extends Activity implements ActionBar.TabListener {
         if (searchMode == JandiConstants.TYPE_SEARCH_SPECIFIC) {
             mViewPager.setCurrentItem(1);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().registerSticky(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    /**
+     * Sticky Event from MainRightFragment
+     * SearchListFragment에서 cdpItemManager를 FileDetailActivity로 넘겨주기 위해 사용
+     * @param event
+     */
+    public void onEvent(CdpItemManager event) {
+        cdpItemManager = event;
     }
 
     @Override

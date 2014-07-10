@@ -24,6 +24,8 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by justinygchoi on 2014. 7. 4..
  */
@@ -114,5 +116,6 @@ public class SearchListFragment extends Fragment {
                 .intent(this)
                 .fileId(searchedFile.id)
                 .start();
+        EventBus.getDefault().postSticky(((SearchActivity)getActivity()).cdpItemManager);
     }
 }
