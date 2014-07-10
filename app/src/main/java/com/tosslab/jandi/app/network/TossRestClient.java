@@ -89,6 +89,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendMessage joinChannel(int channelId);
 
+    // 채널 leave
+    @Put("/channels/{channelId}/leave")
+    @RequiresHeader("Authorization")
+    ResSendMessage leaveChannel(int channelId);
+
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
     @RequiresHeader("Authorization")
@@ -156,7 +161,7 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendMessage createPrivateGroup(ReqCreateCdp group);
 
-    // 채널 수정
+    // Private Group 수정
     @Put("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
     ResSendMessage modifyGroup(ReqCreateCdp channel, int groupId);
@@ -165,6 +170,11 @@ public interface TossRestClient {
     @Delete("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
     ResSendMessage deleteGroup(int groupId);
+
+    // Private Group Leave
+    @Put("/privateGroups/{groupId}/leave")
+    @RequiresHeader("Authorization")
+    ResSendMessage leaveGroup(int groupId);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")

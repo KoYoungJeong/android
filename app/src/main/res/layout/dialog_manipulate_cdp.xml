@@ -23,5 +23,17 @@
         android:gravity="center_vertical"
         android:text="Delete"
         android:textSize="20sp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+    <TextView
+        android:id="@+id/txt_action_leave_cdp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
+        android:text="Leave"
+        android:textSize="20sp" />
 
 </LinearLayout>

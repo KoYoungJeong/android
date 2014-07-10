@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.LeaveCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
 
@@ -20,12 +21,13 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 5. 28..
  */
 public class ManipulateCdpDialogFragment extends DialogFragment {
-    public static ManipulateCdpDialogFragment newInstance(CdpItem item) {
+    public static ManipulateCdpDialogFragment newInstance(CdpItem item, boolean isMyCdp) {
         ManipulateCdpDialogFragment frag = new ManipulateCdpDialogFragment();
         Bundle args = new Bundle();
         args.putString("title", item.name);
         args.putInt("cdpId", item.id);
         args.putInt("cdpType", item.type);
+        args.putBoolean("isMyCdp", isMyCdp);
         frag.setArguments(args);
         return frag;
     }
@@ -35,6 +37,7 @@ public class ManipulateCdpDialogFragment extends DialogFragment {
         final String title = getArguments().getString("title", "");
         final int cdpId = getArguments().getInt("cdpId");
         final int cdpType = getArguments().getInt("cdpType");
+        final boolean isMyCdp = getArguments().getBoolean("isMyCdp", false);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_cdp, null);
@@ -58,6 +61,21 @@ public class ManipulateCdpDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
+
+        // Leave 메뉴 클릭시.
+        final TextView actionLeave = (TextView)mainView.findViewById(R.id.txt_action_leave_cdp);
+        actionLeave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new LeaveCdpEvent(cdpId, cdpType));
+                dismiss();
+            }
+        });
+
+        if (isMyCdp == false) {
+            actionEdit.setVisibility(View.GONE);
+            actionDel.setVisibility(View.GONE);
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)

@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmJoinChannelEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.LeaveCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
 import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
@@ -317,17 +318,25 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     /************************************************************
-     * Channel, PrivateGroup 수정 / 삭제
+     * Channel, PrivateGroup 수정 / 삭제 / Leave
      ************************************************************/
 
     void showDialogToManipulate(CdpItem cdp) {
-        log.debug("Try to manipulate cdp owned by user, " + cdp.ownerId);
-        if (cdp.ownerId == mCdpItemManager.mMe.id) {
-            DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp);
-            newFragment.show(getFragmentManager(), "dialog");
-        } else {
-            showWarning("권한이 없습니다.");
+        // 아래와 같은 조건에서...
+        // Channel : owner 가 아니면 leave 만 나타남
+        // DM : 아무것도...
+        // PG : owner 가 아니면 leave 만 나타남
+        if (cdp.type == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            showWarning("수정, 삭제가 불가능합니다.");
+            return;
         }
+        log.debug("Try to manipulate cdp owned by user, " + cdp.ownerId);
+        boolean isMyCdp = false;
+        if (cdp.ownerId == mCdpItemManager.mMe.id) {
+            isMyCdp = true;
+        }
+        DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp, isMyCdp);
+        newFragment.show(getFragmentManager(), "dialog");
     }
 
     @UiThread
@@ -335,6 +344,9 @@ public class MainLeftFragment extends BaseFragment {
         ColoredToast.showWarning(mContext, message);
     }
 
+    /************************************************************
+     * Channel, PrivateGroup 수정
+     ************************************************************/
     public void onEvent(ModifyCdpEvent event) {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_CDP
@@ -397,6 +409,9 @@ public class MainLeftFragment extends BaseFragment {
         getCdpItemFromServer();
     }
 
+    /************************************************************
+     * Channel, PrivateGroup 삭제
+     ************************************************************/
     /**
      * 삭제 이벤트 획득 from DialogFragment
      * @param event
@@ -449,5 +464,33 @@ public class MainLeftFragment extends BaseFragment {
     void deleteCdpDone() {
         mProgressWheel.dismiss();
         getCdpItemFromServer();
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup Leave
+     ************************************************************/
+    // receieve event from ManipulateCdpDialogFragment
+    public void onEvent(LeaveCdpEvent event) {
+        leaveCdpInBackground(event.cdpType, event.cdpId);
+    }
+
+    @Background
+    public void leaveCdpInBackground(int cdpType, int cdpId) {
+        ResSendMessage res = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+                res = mTossRestClient.leaveChannel(cdpId);
+            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                res = mTossRestClient.leaveGroup(cdpId);
+            }
+            joinChannelDone(true, null);
+        } catch (RestClientException e) {
+            log.error("fail to leave cdp");
+            joinChannelDone(false, "탈퇴에 실패했습니다.");
+        } catch (Exception e) {
+            log.error("fail to leave cdp");
+            joinChannelDone(false, "탈퇴에 실패했습니다.");
+        }
     }
 }
