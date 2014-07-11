@@ -25,7 +25,7 @@ public class SelectUnjoinedChannelFragment extends DialogFragment {
     private final Logger log = Logger.getLogger(SelectUnjoinedChannelFragment.class);
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        List<CdpItem> unjoinedChList = ((MainActivity)getActivity()).cdpItemManager.mUnJoinedChannels;
+        List<CdpItem> unjoinedChList = ((MainActivity)getActivity()).mCdpItemManager.mUnJoinedChannels;
 
         final CdpArrayAdapter unjoinedChannels = new CdpArrayAdapter(getActivity()
 //                , R.layout.spinner_simple

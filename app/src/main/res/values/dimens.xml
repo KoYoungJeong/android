@@ -6,6 +6,8 @@
 
     <dimen name="nav_drawer_width">240dp</dimen>
     <dimen name="right_menu_width">240dp</dimen>
+    <dimen name="slidingmenu_offset">60dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
     <dimen name="right_menu_margin">10dp</dimen>
     <dimen name="right_menu_margin_left">15dp</dimen>
 

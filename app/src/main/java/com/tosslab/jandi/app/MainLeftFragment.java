@@ -227,7 +227,7 @@ public class MainLeftFragment extends BaseFragment {
 
     public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
         mCdpItemManager = new CdpItemManager(resLeftSideMenu);
-        ((MainActivity)getActivity()).cdpItemManager = mCdpItemManager;
+//        ((MainActivity)getActivity()).cdpItemManager = mCdpItemManager;
         mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
         mCdpListAdapter.notifyDataSetChanged();
     }
@@ -255,7 +255,7 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     /**
-     * Channel, PrivateGroup 생성 이벤트 획득 from DialogFragment
+     * Channel, PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
      * @param event
      */
     public void onEvent(ConfirmCreateCdpEvent event) {

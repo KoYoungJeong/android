@@ -136,7 +136,7 @@ public class MainMessageListFragment extends BaseFragment {
         mLastUpdateTime = new Date();
 
         mFirstItemId = -1;
-        getMessages();
+//        getMessages();
     }
 
     private void pauseTimer() {
@@ -158,13 +158,13 @@ public class MainMessageListFragment extends BaseFragment {
 
     @Override
     public void onResume() {
-        resumeTimer();
+//        resumeTimer();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        pauseTimer();
+//        pauseTimer();
         super.onPause();
     }
 
@@ -368,7 +368,7 @@ public class MainMessageListFragment extends BaseFragment {
             showWarningCheckPermission("파일 수정 기능은 차후에...");
         } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
             showWarningCheckPermission("파일 수정 기능은 차후에...");
-        } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
+        } else if (((MainActivity)getActivity()).mCdpItemManager.mMe.id == item.getUserId()) {
             showDialog(item);
         } else {
             showWarningCheckPermission("권한이 없습니다.");
@@ -626,6 +626,6 @@ public class MainMessageListFragment extends BaseFragment {
                 .intent(this)
                 .fileId(fileId)
                 .start();
-        EventBus.getDefault().postSticky(((MainActivity)mContext).cdpItemManager);
+        EventBus.getDefault().postSticky(((MainActivity)mContext).mCdpItemManager);
     }
 }

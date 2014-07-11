@@ -97,6 +97,7 @@
     <orderEntry type="library" exported="" name="spring-android-core-1.0.1.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.11" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-3.0.1" level="project" />
+    <orderEntry type="module" module-name="library" exported="" />
   </component>
 </module>
 
