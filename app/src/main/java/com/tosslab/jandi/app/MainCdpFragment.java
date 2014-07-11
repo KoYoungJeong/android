@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.dialogs.SelectUnjoinedChannelFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmJoinChannelEvent;
 import com.tosslab.jandi.app.events.RefreshCdpListEvent;
+import com.tosslab.jandi.app.events.RequestCdpListEvent;
 import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemListAdapter;
@@ -68,9 +69,6 @@ public class MainCdpFragment extends BaseFragment {
         mProgressWheel.init();
 
         mListCdps.setAdapter(mCdpListAdapter);
-
-        // C, D, P 리스트 획득
-        getCdpItemFromServer();
     }
 
     /**
@@ -99,64 +97,11 @@ public class MainCdpFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(RefreshCdpListEvent event) {
-        getCdpItemFromServer();
-    }
-
-    /************************************************************
-     * List Update / Refresh
-     ************************************************************/
-    /**
-     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
-     */
-    @UiThread
-    public void getCdpItemFromServer() {
-        mProgressWheel.show();
-        getCdpItemInBackground();
-    }
-
-    @Background
-    public void getCdpItemInBackground() {
-        ResLeftSideMenu resLeftSideMenu = null;
-        try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
-            resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
-            getCdpItemDone(true, resLeftSideMenu, null);
-        } catch (RestClientException e) {
-            Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
-        } catch (HttpMessageNotReadableException e) {
-            Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
-        } catch (Exception e) {
-            Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
-        }
-    }
-
-    @UiThread
-    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String message) {
-        mProgressWheel.dismiss();
-        if (isOk) {
-            refreshCdpList(resLeftSideMenu);
-        } else {
-            ColoredToast.showError(mContext, message);
-            returnToLoginActivity();
-        }
-    }
-
-    public void refreshCdpList(ResLeftSideMenu resLeftSideMenu) {
-        mCdpItemManager = new CdpItemManager(resLeftSideMenu);
-        ((MainActivity)getActivity()).mCdpItemManager = mCdpItemManager;
-        mCdpListAdapter.retrieveCdpItems(mCdpItemManager);
+        mCdpListAdapter.retrieveCdpItems(event.cdpItemManager);
         mCdpListAdapter.notifyDataSetChanged();
     }
 
-    public void returnToLoginActivity() {
-        JandiPreference.clearMyToken(mContext);
-        Intent intent = new Intent(mContext, LoginActivity_.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
+
 
     /************************************************************
      * List 선택
@@ -238,7 +183,7 @@ public class MainCdpFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createChannel(reqCreateCdp);
-            getCdpItemFromServer();
+            EventBus.getDefault().post(new RequestCdpListEvent());
             log.debug("Create Success");
         } catch (RestClientException e) {
             log.error("Create Fail", e);
@@ -261,7 +206,7 @@ public class MainCdpFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
-            getCdpItemFromServer();
+            EventBus.getDefault().post(new RequestCdpListEvent());
             log.debug("Create Success");
         } catch (RestClientException e) {
             log.error("Create Fail", e);
@@ -299,7 +244,7 @@ public class MainCdpFragment extends BaseFragment {
     @UiThread
     public void joinChannelDone(boolean isOk, String message) {
         if (isOk) {
-            getCdpItemFromServer();
+            EventBus.getDefault().post(new RequestCdpListEvent());
         } else {
             ColoredToast.showError(mContext, message);
         }

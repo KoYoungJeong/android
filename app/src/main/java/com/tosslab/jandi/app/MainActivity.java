@@ -1,23 +1,33 @@
 package com.tosslab.jandi.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.tosslab.jandi.app.events.RefreshCdpListEvent;
+import com.tosslab.jandi.app.events.RequestCdpListEvent;
 import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
@@ -56,6 +66,7 @@ public class MainActivity extends SlidingFragmentActivity {
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
 
+        getCdpItemFromServer();
     }
 
     @Override
@@ -143,5 +154,59 @@ public class MainActivity extends SlidingFragmentActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /************************************************************
+     * List Update / Refresh
+     ************************************************************/
+    public void onEvent(RequestCdpListEvent event) {
+        getCdpItemFromServer();
+    }
+
+    /**
+     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
+     */
+    @UiThread
+    public void getCdpItemFromServer() {
+        mProgressWheel.show();
+        getCdpItemInBackground();
+    }
+
+    @Background
+    public void getCdpItemInBackground() {
+        ResLeftSideMenu resLeftSideMenu = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
+            getCdpItemDone(true, resLeftSideMenu, null);
+        } catch (RestClientException e) {
+            Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        } catch (HttpMessageNotReadableException e) {
+            Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        } catch (Exception e) {
+            Log.e("HI", "Get Fail", e);
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        }
+    }
+
+    @UiThread
+    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String message) {
+        mProgressWheel.dismiss();
+        if (isOk) {
+            mCdpItemManager = new CdpItemManager(resLeftSideMenu);
+            EventBus.getDefault().post(new RefreshCdpListEvent(mCdpItemManager));
+        } else {
+            ColoredToast.showError(mContext, message);
+            returnToLoginActivity();
+        }
+    }
+
+    public void returnToLoginActivity() {
+        JandiPreference.clearMyToken(mContext);
+        Intent intent = new Intent(mContext, LoginActivity_.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
