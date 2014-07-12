@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestMessageListEvent;
-import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
 import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;

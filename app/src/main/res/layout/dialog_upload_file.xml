@@ -18,11 +18,13 @@
     <EditText
         android:id="@+id/et_comment_with_file_upload"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:lines="2"
         android:layout_marginBottom="@dimen/edittext_vertical_margin"
         android:hint="@string/file_upload_comment"
         android:gravity="top"
-        android:inputType="textMultiLine"/>
+        android:inputType="textMultiLine">
+        <requestFocus/>
+    </EditText>
 
 </LinearLayout>

@@ -3,10 +3,14 @@ package com.tosslab.jandi.app.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -83,6 +87,13 @@ public class EditTextDialogFragment extends DialogFragment {
         args.putInt("messageType", messageType);
         frag.setArguments(args);
         return frag;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        // 키보드 강제로 올리기
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override
