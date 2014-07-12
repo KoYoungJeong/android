@@ -65,4 +65,7 @@
     <string name="title_section_everyone">Everyone</string>
     <string name="title_section_me">Just me</string>
 
+    <!-- ERRORS -->
+    <string name="err_common_create">생성에 실패하였습니다.</string>
+    <string name="err_duplicated_name_of_cdp">동일한 이름이 존재합니다.</string>
 </resources>

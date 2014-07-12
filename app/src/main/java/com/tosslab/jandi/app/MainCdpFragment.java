@@ -2,7 +2,6 @@ package com.tosslab.jandi.app;
 
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.ListView;
 
@@ -18,7 +17,6 @@ import com.tosslab.jandi.app.lists.CdpItemListAdapter;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -34,7 +32,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
@@ -155,62 +153,56 @@ public class MainCdpFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(ConfirmCreateCdpEvent event) {
-        switch (event.cdpType) {
-            case JandiConstants.TYPE_CHANNEL:
-                requestCreateChannel(event.inputName);
-                break;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
-                requestCreatePrivateGroup(event.inputName);
-                break;
-            default:
-                break;
-        }
+        createCdpInBackground(event.cdpType, event.inputName);
     }
 
     /**
-     * Channel 생성
+     * Channel, privateGroup 생성
      */
     @Background
-    void requestCreateChannel(String channelName) {
+    void createCdpInBackground(int cdpType, String cdpName) {
         // TODO : Error 처리
-        if (channelName.length() <= 0) {
+        if (cdpName.length() <= 0) {
             return;
         }
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = channelName;
+        reqCreateCdp.name = cdpName;
 
         ResSendMessage restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
-            restResId = mTossRestClient.createChannel(reqCreateCdp);
+            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+                restResId = mTossRestClient.createChannel(reqCreateCdp);    
+            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
+            }
+            
+            createCdpDone(true, -1);
             EventBus.getDefault().post(new RequestCdpListEvent());
-            log.debug("Create Success");
+        } catch (HttpClientErrorException e) {
+            log.error("Create Fail", e);
+            if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
+                createCdpDone(false, R.string.err_duplicated_name_of_cdp);
+            } else {
+                createCdpDone(false, R.string.err_common_create);
+            }
         } catch (RestClientException e) {
             log.error("Create Fail", e);
+            createCdpDone(false, R.string.err_common_create);
+        } catch (Exception e) {
+            log.error("Create Fail", e);
+            createCdpDone(false, R.string.err_common_create);
         }
     }
 
-    /**
-     * Private Group 생성
-     */
-    @Background
-    void requestCreatePrivateGroup(String pgName) {
-        // TODO : Error 처리
-        if (pgName.length() <= 0) {
-            return;
-        }
-        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = pgName;
-
-        ResSendMessage restResId = null;
-        try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
-            restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
+    @UiThread
+    void createCdpDone(boolean isOk, int resId) {
+        if (isOk) {
             EventBus.getDefault().post(new RequestCdpListEvent());
-            log.debug("Create Success");
-        } catch (RestClientException e) {
-            log.error("Create Fail", e);
+        } else {
+            ColoredToast.showError(mContext, getString(resId));
         }
+
     }
 
     /************************************************************

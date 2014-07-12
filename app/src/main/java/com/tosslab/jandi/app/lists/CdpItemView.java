@@ -5,6 +5,8 @@ package com.tosslab.jandi.app.lists;
  */
 
 import android.content.Context;
+import android.graphics.Color;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,7 +55,6 @@ public class CdpItemView extends FrameLayout {
                 txtCdpItemName.setText(cdp.toString());
                 break;
         }
-
     }
 
     private void setAllVisibilitiesByGone() {

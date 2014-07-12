@@ -4,9 +4,9 @@ package com.tosslab.jandi.app;
  * Created by justinygchoi on 2014. 6. 17..
  */
 public class JandiConstants {
-    public static final String SERVICE_ROOT_URL = "https://112.219.215.146:3000/";
+//    public static final String SERVICE_ROOT_URL = "https://112.219.215.146:3000/";
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://192.168.0.10:3000/";
+    public static final String SERVICE_ROOT_URL = "https://192.168.0.10:3000/";
 
     // SharedPreference Key 값
     public static final String PREF_NAME        = "JandiPref";
@@ -36,4 +36,7 @@ public class JandiConstants {
     public static final int TYPE_SEARCH_EVERYONE    = 0x00;
     public static final int TYPE_SEARCH_SPECIFIC    = 0x01;
     public static final int TYPE_SEARCH_IMAGES      = 0x10;
+
+    // ERROR
+    public static final int BAD_REQUEST     = 400;
 }

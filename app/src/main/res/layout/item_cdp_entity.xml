@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.tosslab.jandi.app.utils.SelectedFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/cdp_list_selector">
     <TextView
         android:id="@+id/tv_cdp_item_name"
         android:layout_width="wrap_content"
@@ -62,4 +63,4 @@
             <!--android:background="@android:drawable/ic_menu_add"-->
             <!--android:layout_marginRight="@dimen/right_menu_margin"/>-->
     </LinearLayout>
-</FrameLayout>
+</com.tosslab.jandi.app.utils.SelectedFrameLayout>
