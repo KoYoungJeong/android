@@ -57,6 +57,10 @@ public class CdpItemManager {
         return cdpItems;
     }
 
+    public CdpItem getDefaultChannel() {
+        return mJoinedChannels.get(0);
+    }
+
     private int searchPosition(List<CdpItem> targets, CdpItem item) {
         int ret = 0;
         for (CdpItem target : targets) {

@@ -229,7 +229,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void getMessagesInBackground(int type, int id) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, mMyToken);
+                tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
 
@@ -278,7 +278,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void getUpdateMessagesInBackground(int type, int id) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, mMyToken);
+                tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateTime);
             log.info("success to " + restResMessages.messageCount +
@@ -329,7 +329,7 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     public void sendMessageInBackground(String message) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mCurrentEvent, mMyToken);
+                tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
         try {
             messageManipulator.sendMessage(message);
             log.debug("success to send message");
@@ -406,8 +406,8 @@ public class MainMessageListFragment extends BaseFragment {
     @Background
     void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
 
-        MessageManipulator messageManipulator
-                = new MessageManipulator(tossRestClient, mCurrentEvent, mMyToken);
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
 
         try {
             if (messageType == MessageItem.TYPE_STRING) {
@@ -450,8 +450,8 @@ public class MainMessageListFragment extends BaseFragment {
 
     @Background
     void deleteMessageInBackground(int messageType, int messageId, int feedbackId) {
-        MessageManipulator messageManipulator
-                = new MessageManipulator(tossRestClient, mCurrentEvent, mMyToken);
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageManipulator.deleteMessage(messageId);

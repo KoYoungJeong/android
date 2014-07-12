@@ -20,12 +20,13 @@ import java.util.Date;
 public class MessageManipulator {
     private static final int NUMBER_OF_MESSAGES = 10;
     TossRestClient mRestClient;
-    SelectCdpItemEvent mCurrentEvent;
-    int mMessageId;
+    int mCdpType;
+    int mCdpId;
 
-    public MessageManipulator(TossRestClient tossRestClient, SelectCdpItemEvent event, String token) {
+    public MessageManipulator(TossRestClient tossRestClient, String token, int cdpType, int cdpId) {
         mRestClient = tossRestClient;
-        mCurrentEvent = event;
+        mCdpId = cdpId;
+        mCdpType = cdpType;
         mRestClient.setHeader("Authorization", token);
     }
 
@@ -35,13 +36,13 @@ public class MessageManipulator {
     }
 
     public ResMessages getMessages(int firstItemId) throws RestClientException {
-        switch (mCurrentEvent.type) {
+        switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.getChannelMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+                return mRestClient.getChannelMessages(mCdpId, firstItemId, NUMBER_OF_MESSAGES);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.getDirectMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+                return mRestClient.getDirectMessages(mCdpId, firstItemId, NUMBER_OF_MESSAGES);
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.getGroupMessages(mCurrentEvent.id, firstItemId, NUMBER_OF_MESSAGES);
+                return mRestClient.getGroupMessages(mCdpId, firstItemId, NUMBER_OF_MESSAGES);
             default:
                 return null;
 
@@ -49,13 +50,13 @@ public class MessageManipulator {
     }
 
     public ResMessages updateMessages(Date fromNow) throws RestClientException {
-        switch (mCurrentEvent.type) {
+        switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.getChannelMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+                return mRestClient.getChannelMessagesUpdated(mCdpId, fromNow.getTime());
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.getDirectMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+                return mRestClient.getDirectMessagesUpdated(mCdpId, fromNow.getTime());
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.getGroupMessagesUpdated(mCurrentEvent.id, fromNow.getTime());
+                return mRestClient.getGroupMessagesUpdated(mCdpId, fromNow.getTime());
             default:
                 return null;
         }
@@ -66,13 +67,13 @@ public class MessageManipulator {
         sendingMessage.type = "string";
         sendingMessage.content = message;
 
-        switch (mCurrentEvent.type) {
+        switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.sendChannelMessage(sendingMessage, mCurrentEvent.id);
+                return mRestClient.sendChannelMessage(sendingMessage, mCdpId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.sendDirectMessage(sendingMessage, mCurrentEvent.id);
+                return mRestClient.sendDirectMessage(sendingMessage, mCdpId);
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.sendGroupMessage(sendingMessage, mCurrentEvent.id);
+                return mRestClient.sendGroupMessage(sendingMessage, mCdpId);
             default:
                 return null;
         }
@@ -82,26 +83,26 @@ public class MessageManipulator {
         ReqModifyMessage reqModifyMessage = new ReqModifyMessage();
         reqModifyMessage.content = message;
 
-        switch (mCurrentEvent.type) {
+        switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.modifyChannelMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+                return mRestClient.modifyChannelMessage(reqModifyMessage, mCdpId, messageId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.modifyDirectMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+                return mRestClient.modifyDirectMessage(reqModifyMessage, mCdpId, messageId);
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCurrentEvent.id, messageId);
+                return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mCdpId, messageId);
             default:
                 return null;
         }
     }
 
     public ResSendMessage deleteMessage(int messageId) throws RestClientException {
-        switch (mCurrentEvent.type) {
+        switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.deleteChannelMessage(mCurrentEvent.id, messageId);
+                return mRestClient.deleteChannelMessage(mCdpId, messageId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.deleteDirectMessage(mCurrentEvent.id, messageId);
+                return mRestClient.deleteDirectMessage(mCdpId, messageId);
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.deletePrivateGroupMessage(mCurrentEvent.id, messageId);
+                return mRestClient.deletePrivateGroupMessage(mCdpId, messageId);
             default:
                 return null;
         }
