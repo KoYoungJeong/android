@@ -9,7 +9,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="Edit"
+        android:text="@string/menu_cdp_edit"
         android:textSize="20sp"/>
     <View
         android:layout_width="match_parent"
@@ -21,7 +21,19 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="Delete"
+        android:text="@string/menu_cdp_delete"
+        android:textSize="20sp" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"/>
+    <TextView
+        android:id="@+id/txt_action_invite_cdp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
+        android:text="@string/menu_cdp_invite"
         android:textSize="20sp" />
     <View
         android:layout_width="match_parent"
@@ -33,7 +45,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="Leave"
+        android:text="@string/menu_cdp_leave"
         android:textSize="20sp" />
 
 </LinearLayout>

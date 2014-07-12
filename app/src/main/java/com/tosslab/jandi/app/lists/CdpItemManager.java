@@ -61,6 +61,25 @@ public class CdpItemManager {
         return mJoinedChannels.get(0);
     }
 
+    public CdpItem getCdpItemById(int cdpId) {
+        for (CdpItem target : mJoinedChannels) {
+            if (target.id == cdpId) {
+                return target;
+            }
+        }
+        for (CdpItem target : mUsers) {
+            if (target.id == cdpId) {
+                return target;
+            }
+        }
+        for (CdpItem target : mPrivateGroups) {
+            if (target.id == cdpId) {
+                return target;
+            }
+        }
+        return null;
+    }
+
     private int searchPosition(List<CdpItem> targets, CdpItem item) {
         int ret = 0;
         for (CdpItem target : targets) {

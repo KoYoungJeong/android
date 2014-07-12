@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,12 @@ import android.view.MenuItem;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
+import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
+import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
+import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.LeaveCdpEvent;
+import com.tosslab.jandi.app.events.ModifyCdpEvent;
 import com.tosslab.jandi.app.events.RefreshCdpListEvent;
 import com.tosslab.jandi.app.events.RequestCdpListEvent;
 import com.tosslab.jandi.app.events.RequestMessageListEvent;
@@ -17,7 +24,9 @@ import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -43,8 +52,8 @@ public class MainActivity extends SlidingFragmentActivity {
     private String mMyToken;
     public CdpItemManager mCdpItemManager;
     private ProgressWheel mProgressWheel;
-    private String mCurrentTitle;
     private Context mContext;
+    private CdpItem mCurrentSelectedCdpItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +147,7 @@ public class MainActivity extends SlidingFragmentActivity {
                 getSlidingMenu().showSecondaryMenu();
                 return true;
             case R.id.action_main_manipulate_cdp:
+                showDialogToManipulate(mCurrentSelectedCdpItem);
                 return true;
         }
 
@@ -154,14 +164,12 @@ public class MainActivity extends SlidingFragmentActivity {
     public void onEvent(SelectCdpItemEvent event) {
         log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
 
-        mCurrentTitle = FormatConverter.cdpName(event.name, event.type);
-
         // Preference 저장
         SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putString("cdpName", event.name);
-        editor.putInt("cdpType", event.type);
-        editor.putInt("cdpId", event.id);
+        editor.putString("cdpName", event.cdpItem.name);
+        editor.putInt("cdpType", event.cdpItem.type);
+        editor.putInt("cdpId", event.cdpItem.id);
         editor.commit();
 
         getSlidingMenu().showContent();
@@ -235,15 +243,19 @@ public class MainActivity extends SlidingFragmentActivity {
         int cdpId = pref.getInt("cdpId", -1);
 
         if (cdpId > 0) {
-            getActionBar().setTitle(FormatConverter.cdpName(cdpName, cdpType));
-            EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
-        } else {
-            CdpItem defaultChannel = mCdpItemManager.getDefaultChannel();
-            getActionBar().setTitle(FormatConverter.cdpName(defaultChannel.name
-                    , defaultChannel.type));
-            EventBus.getDefault().post(new RequestMessageListEvent(defaultChannel.type
-                    , defaultChannel.id));
+            mCurrentSelectedCdpItem = mCdpItemManager.getCdpItemById(cdpId);
+            if (mCurrentSelectedCdpItem != null) {
+                getActionBar().setTitle(FormatConverter.cdpName(cdpName, cdpType));
+                EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
+                return;
+            }
         }
+
+        mCurrentSelectedCdpItem = mCdpItemManager.getDefaultChannel();
+        getActionBar().setTitle(FormatConverter.cdpName(mCurrentSelectedCdpItem.name
+                , mCurrentSelectedCdpItem.type));
+        EventBus.getDefault().post(new RequestMessageListEvent(mCurrentSelectedCdpItem.type
+                , mCurrentSelectedCdpItem.id));
     }
 
     public void returnToLoginActivity() {
@@ -251,5 +263,191 @@ public class MainActivity extends SlidingFragmentActivity {
         Intent intent = new Intent(mContext, LoginActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup 수정 / 삭제 / Leave
+     ************************************************************/
+
+    void showDialogToManipulate(CdpItem cdp) {
+        // 아래와 같은 조건에서...
+        // Channel : owner 가 아니면 leave 만 나타남
+        // DM : 아무것도...
+        // PG : owner 가 아니면 leave 만 나타남
+        if (cdp.type == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            showWarning("수정, 삭제가 불가능합니다.");
+            return;
+        }
+        log.debug("Try to manipulate cdp owned by user, " + cdp.ownerId);
+        boolean isMyCdp = false;
+        if (cdp.ownerId == mCdpItemManager.mMe.id) {
+            isMyCdp = true;
+        }
+        DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp, isMyCdp);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    @UiThread
+    void showWarning(String message) {
+        ColoredToast.showWarning(mContext, message);
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup 수정
+     ************************************************************/
+    public void onEvent(ModifyCdpEvent event) {
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(
+                EditTextDialogFragment.ACTION_MODIFY_CDP
+                , event.cdpType
+                , event.cdpId
+                , event.currentName);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * 수정 이벤트 획득 from EditTextDialogFragment
+     */
+    public void onEvent(ConfirmModifyCdpEvent event) {
+        modifyCdp(event);
+    }
+
+    @UiThread
+    void modifyCdp(ConfirmModifyCdpEvent event) {
+        modifyCdpInBackground(event);
+    }
+
+    @Background
+    void modifyCdpInBackground(ConfirmModifyCdpEvent event) {
+        if (event.cdpType == JandiConstants.TYPE_CHANNEL) {
+            modifyChannelInBackground(event.cdpId, event.inputName);
+        } else if (event.cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+            modifyGroupInBackground(event.cdpId, event.inputName);
+        }
+    }
+
+    void modifyChannelInBackground(int cdpId, String nameToBeModified) {
+        ResSendMessage resId = null;
+        ReqCreateCdp channel = new ReqCreateCdp();
+        channel.name = nameToBeModified;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            resId = mTossRestClient.modifyChannel(channel, cdpId);
+        } catch (RestClientException e) {
+            log.error("modify failed", e);
+        }
+        modifyCdpDone();
+    }
+
+    void modifyGroupInBackground(int cdpId, String nameToBeModified) {
+        ResSendMessage resId = null;
+        ReqCreateCdp privateGroup = new ReqCreateCdp();
+        privateGroup.name = nameToBeModified;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            resId = mTossRestClient.modifyGroup(privateGroup, cdpId);
+        } catch (RestClientException e) {
+            log.error("modify failed", e);
+        }
+        modifyCdpDone();
+    }
+
+    @UiThread
+    void modifyCdpDone() {
+        mProgressWheel.dismiss();
+        getCdpItemFromServer();
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup 삭제
+     ************************************************************/
+    /**
+     * 삭제 이벤트 획득 from DialogFragment
+     * @param event
+     */
+    public void onEvent(DeleteCdpEvent event) {
+        log.debug("Delete Cdp :" + event.cdpId);
+        deleteCdp(event);
+    }
+
+    @UiThread
+    void deleteCdp(DeleteCdpEvent event) {
+        mProgressWheel.show();
+        deleteCdpInBackground(event);
+    }
+
+    @Background
+    void deleteCdpInBackground(DeleteCdpEvent event) {
+        if (event.cdpType == JandiConstants.TYPE_CHANNEL) {
+            deleteChannelInBackground(event.cdpId);
+        } else if (event.cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+            deleteGroupInBackground(event.cdpId);
+        }
+    }
+
+    void deleteChannelInBackground(int cdpId) {
+        ResSendMessage restResId = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            restResId = mTossRestClient.deleteChannel(cdpId);
+            log.debug("delete Success");
+        } catch (RestClientException e) {
+            log.error("delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    void deleteGroupInBackground(int cdpId) {
+        ResSendMessage restResId = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            restResId = mTossRestClient.deleteGroup(cdpId);
+            log.debug("delete Success");
+        } catch (RestClientException e) {
+            log.error("delete Fail", e);
+        }
+        deleteCdpDone();
+    }
+
+    @UiThread
+    void deleteCdpDone() {
+        mProgressWheel.dismiss();
+        getCdpItemFromServer();
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup Leave
+     ************************************************************/
+    // receieve event from ManipulateCdpDialogFragment
+    public void onEvent(LeaveCdpEvent event) {
+        leaveCdpInBackground(event.cdpType, event.cdpId);
+    }
+
+    @Background
+    public void leaveCdpInBackground(int cdpType, int cdpId) {
+        ResSendMessage res = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+                res = mTossRestClient.leaveChannel(cdpId);
+            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                res = mTossRestClient.leaveGroup(cdpId);
+            }
+            leaveCdpDone(true, null);
+        } catch (RestClientException e) {
+            log.error("fail to leave cdp");
+            leaveCdpDone(false, "탈퇴에 실패했습니다.");
+        } catch (Exception e) {
+            log.error("fail to leave cdp");
+            leaveCdpDone(false, "탈퇴에 실패했습니다.");
+        }
+    }
+
+    @UiThread
+    public void leaveCdpDone(boolean isOk, String message) {
+        if (isOk) {
+            getCdpItemFromServer();
+        } else {
+            ColoredToast.showError(mContext, message);
+        }
     }
 }

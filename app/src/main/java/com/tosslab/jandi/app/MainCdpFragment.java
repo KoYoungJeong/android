@@ -129,7 +129,7 @@ public class MainCdpFragment extends BaseFragment {
                 break;
             default:
                 // 일반 CDP 를 터치했을 경우, 해당 CDP의 메시지 리스트를 획득할수 있게 이벤트 등록
-                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp.name, cdp.type, cdp.id);
+                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp);
                 EventBus.getDefault().post(event);
                 break;
         }

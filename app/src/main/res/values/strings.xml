@@ -26,6 +26,12 @@
     <string name="modify_private_group">Private Group 수정</string>
     <string name="modify_direct_message">Direct Message 수정</string>
 
+    <!-- Manipulate CDP -->
+    <string name="menu_cdp_edit">이름 수정</string>
+    <string name="menu_cdp_delete">삭제</string>
+    <string name="menu_cdp_invite">초대</string>
+    <string name="menu_cdp_leave">탈퇴</string>
+
     <!-- Message -->
     <string name="modify_message">Message 수정</string>
 
