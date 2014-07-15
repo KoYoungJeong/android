@@ -30,6 +30,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
 
+import java.util.List;
+
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
@@ -93,6 +95,11 @@ public interface TossRestClient {
     @Put("/channels/{channelId}/leave")
     @RequiresHeader("Authorization")
     ResSendMessage leaveChannel(int channelId);
+
+    // 채널 invite
+    @Put("/channels/{channelId}/invite")
+    @RequiresHeader("Authorization")
+    ResSendMessage inviteChannel(int channelId, List<Integer> inviteUsers);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -175,6 +182,11 @@ public interface TossRestClient {
     @Put("/privateGroups/{groupId}/leave")
     @RequiresHeader("Authorization")
     ResSendMessage leaveGroup(int groupId);
+
+    // 채널 invite
+    @Put("/privateGroups/{groupId}/invite")
+    @RequiresHeader("Authorization")
+    ResSendMessage inviteGroup(int groupId, List<Integer> inviteUsers);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")

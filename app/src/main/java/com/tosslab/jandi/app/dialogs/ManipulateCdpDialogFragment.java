@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.InviteCdpEvent;
 import com.tosslab.jandi.app.events.LeaveCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
@@ -62,6 +63,15 @@ public class ManipulateCdpDialogFragment extends DialogFragment {
             }
         });
 
+        // Invite 메뉴 클릭시.
+        final TextView actionInvite = (TextView)mainView.findViewById(R.id.txt_action_invite_cdp);
+        actionInvite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new InviteCdpEvent(cdpId, cdpType));
+                dismiss();
+            }
+        });
         // Leave 메뉴 클릭시.
         final TextView actionLeave = (TextView)mainView.findViewById(R.id.txt_action_leave_cdp);
         actionLeave.setOnClickListener(new View.OnClickListener() {

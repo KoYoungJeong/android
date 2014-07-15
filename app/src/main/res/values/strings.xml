@@ -57,8 +57,9 @@
     <string name="title_file_detail">File Detail</string>
     <string name="comment">Comment</string>
 
-    <!-- Share -->
+    <!-- Share & invite -->
     <string name="title_cdp_to_be_shared">Share</string>
+    <string name="title_cdp_invite">초대할 사용자를 선택하세요</string>
 
     <!-- Search -->
     <string name="title_activity_search">SearchActivity</string>

@@ -19,7 +19,7 @@ public class CdpItemManager {
     public ResLeftSideMenu.User mMe;
     private List<CdpItem> mJoinedChannels;
     public List<CdpItem> mUnJoinedChannels;
-    private List<CdpItem> mUsers;
+    public List<CdpItem> mUsers;
     private List<CdpItem> mPrivateGroups;
 
     public CdpItemManager(ResLeftSideMenu resLeftSideMenu) {
@@ -40,7 +40,7 @@ public class CdpItemManager {
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL
                 , mUnJoinedChannels.size()));
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_DIRECT_MESSAGE));
-        cdpItems.addAll(mUsers);
+        cdpItems.addAll(getUsersWithoutMe());
         cdpItems.add(new CdpItem(JandiConstants.TYPE_TITLE_PRIVATE_GROUP));
         cdpItems.addAll(mPrivateGroups);
 
@@ -51,14 +51,40 @@ public class CdpItemManager {
         ArrayList<CdpItem> cdpItems = new ArrayList<CdpItem>();
 
         cdpItems.addAll(mJoinedChannels);
-        cdpItems.addAll(mUsers);
+        cdpItems.addAll(getUsersWithoutMe());
         cdpItems.addAll(mPrivateGroups);
 
         return cdpItems;
     }
 
+    private List<CdpItem> getUsersWithoutMe() {
+        ArrayList<CdpItem> usersWithoutMe = new ArrayList<CdpItem>();
+        for (CdpItem user : mUsers) {
+            if (user.id != mMe.id) {
+                usersWithoutMe.add(user);
+            }
+        }
+        return  usersWithoutMe;
+    }
+
+    // TODO 현재는 default channel이 그냥 첫번째 채널
     public CdpItem getDefaultChannel() {
         return mJoinedChannels.get(0);
+    }
+
+    // 현재 멤버들 중에서 선택한 Channel 혹은 PG에 속하지 않은 멤버를 반환
+    public List<CdpItem> getUnjoinedMembersByChoosenCdp(CdpItem choosenCdp) {
+        ArrayList<CdpItem> unjoinedMemebers = new ArrayList<CdpItem>(mUsers);
+        for (int id : choosenCdp.joinedMember) {
+            for (int i = 0; i < unjoinedMemebers.size(); i++) {
+                CdpItem user = unjoinedMemebers.get(i);
+                if (user.id == id) {
+                    unjoinedMemebers.remove(i);
+                    break;
+                }
+            }
+        }
+        return unjoinedMemebers;
     }
 
     public CdpItem getCdpItemById(int cdpId) {
@@ -124,8 +150,7 @@ public class CdpItemManager {
                     mUnJoinedChannels.add(cdpItem);
                 }
             } else if (entity instanceof ResLeftSideMenu.User) {
-                if (entity.id != mMe.id)
-                    mUsers.add(new CdpItem((ResLeftSideMenu.User) entity));
+                mUsers.add(new CdpItem((ResLeftSideMenu.User) entity));
             } else {
                 // TODO : Error 처리
             }

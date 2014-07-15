@@ -64,6 +64,7 @@ public class SelectCdpDialogFragment extends DialogFragment {
         builder.setView(mainView)
                 .setIcon(android.R.drawable.ic_menu_agenda)
                 .setTitle(R.string.title_cdp_to_be_shared)
+
                 .setPositiveButton(R.string.share,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {

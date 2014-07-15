@@ -1,13 +1,19 @@
 package com.tosslab.jandi.app;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -15,6 +21,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.InviteCdpEvent;
 import com.tosslab.jandi.app.events.LeaveCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
 import com.tosslab.jandi.app.events.RefreshCdpListEvent;
@@ -23,6 +30,7 @@ import com.tosslab.jandi.app.events.RequestMessageListEvent;
 import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
+import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -39,6 +47,8 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.RestClientException;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -412,6 +422,75 @@ public class MainActivity extends SlidingFragmentActivity {
     void deleteCdpDone() {
         mProgressWheel.dismiss();
         getCdpItemFromServer();
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup Invite
+     ************************************************************/
+    public void onEvent(InviteCdpEvent event) {
+        /**
+         * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+
+        // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
+        List<CdpItem> unjoinedMembers = mCdpItemManager.getUnjoinedMembersByChoosenCdp(mCurrentSelectedCdpItem);
+
+        if (unjoinedMembers.size() <= 0) {
+            ColoredToast.showWarning(mContext, "이미 모든 사용자가 가입되어 있습니다.");
+            return;
+        }
+
+        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, unjoinedMembers);
+        lv.setAdapter(adapter);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.title_cdp_invite);
+        dialog.setIcon(android.R.drawable.ic_menu_agenda);
+        dialog.setView(view);
+        dialog.setPositiveButton(R.string.menu_cdp_invite, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                List<Integer> selectedCdp = adapter.getSelectedCdpIds();
+                for (int item : selectedCdp) {
+                    log.debug("CDP ID, " + item + " is Selected");
+                }
+                inviteCdpInBackground(mCurrentSelectedCdpItem.type, mCurrentSelectedCdpItem.id, selectedCdp);
+            }
+        });
+        dialog.show();
+
+    }
+
+    @Background
+    public void inviteCdpInBackground(int cdpType, int cdpId, List<Integer> invitedUsers) {
+        ResSendMessage res = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+                res = mTossRestClient.inviteChannel(cdpId, invitedUsers);
+            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                res = mTossRestClient.inviteGroup(cdpId, invitedUsers);
+            }
+            inviteCdpDone(true, invitedUsers.size() + "명의 사용자를 초대했습니다.");
+        } catch (RestClientException e) {
+            log.error("fail to invite cdp");
+            inviteCdpDone(false, "초대에 실패했습니다.");
+        } catch (Exception e) {
+            log.error("fail to invite cdp");
+            inviteCdpDone(false, "초대에 실패했습니다.");
+        }
+    }
+
+    @UiThread
+    public void inviteCdpDone(boolean isOk, String message) {
+        if (isOk) {
+            ColoredToast.show(mContext, message);
+            getMessageListOfSelectedCdp();
+        } else {
+            ColoredToast.showError(mContext, message);
+        }
     }
 
     /************************************************************

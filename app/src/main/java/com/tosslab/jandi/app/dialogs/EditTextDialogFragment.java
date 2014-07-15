@@ -30,6 +30,7 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment
 public class EditTextDialogFragment extends DialogFragment {
+
     public final static int ACTION_CREATE_CDP       = 0;
     public final static int ACTION_MODIFY_CDP       = 1;
     public final static int ACTION_MODIFY_MESSAGE   = 2;
@@ -93,8 +94,18 @@ public class EditTextDialogFragment extends DialogFragment {
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
         // 키보드 강제로 올리기
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        Dialog me = getDialog();
+        me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        // 회면 밖 터치시 다이얼로그 종료
+        me.setCanceledOnTouchOutside(true);
     }
+//
+//    @Override
+//    public void onPause() {
+//        // 키보드가 올라가 있으면 내리기
+//
+//        super.onPause();
+//    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
