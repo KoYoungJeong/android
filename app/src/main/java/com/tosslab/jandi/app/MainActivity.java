@@ -2,10 +2,12 @@ package com.tosslab.jandi.app;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -88,10 +90,12 @@ public class MainActivity extends SlidingFragmentActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        GCMBroadcastReceiver.enableCustomReceiver(this, false);
     }
 
     @Override
     public void onPause() {
+        GCMBroadcastReceiver.enableCustomReceiver(this, true);
         EventBus.getDefault().unregister(this);
         super.onPause();
     }

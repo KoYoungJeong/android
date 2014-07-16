@@ -25,7 +25,7 @@ import org.androidannotations.annotations.Extra;
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_search)
-public class SearchActivity extends Activity implements ActionBar.TabListener {
+public class SearchActivity extends BaseActivity implements ActionBar.TabListener {
     @Extra
     public int searchMode;    // 서치 모드
 

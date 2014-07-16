@@ -37,7 +37,7 @@ import org.springframework.web.client.RestClientException;
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends Activity {
+public class FileDetailActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(FileDetailActivity.class);
 
     @Extra

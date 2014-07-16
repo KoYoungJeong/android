@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -24,4 +25,5 @@ public class JandiApplication extends Application {
             Log.e("android-log4j", e.getMessage());
         }
     }
+
 }
