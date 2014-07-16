@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -468,10 +469,11 @@ public class MainActivity extends SlidingFragmentActivity {
         ResSendMessage res = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
+            ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
             if (cdpType == JandiConstants.TYPE_CHANNEL) {
-                res = mTossRestClient.inviteChannel(cdpId, invitedUsers);
+                res = mTossRestClient.inviteChannel(cdpId, reqInviteUsers);
             } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                res = mTossRestClient.inviteGroup(cdpId, invitedUsers);
+                res = mTossRestClient.inviteGroup(cdpId, reqInviteUsers);
             }
             inviteCdpDone(true, invitedUsers.size() + "명의 사용자를 초대했습니다.");
         } catch (RestClientException e) {
@@ -487,7 +489,7 @@ public class MainActivity extends SlidingFragmentActivity {
     public void inviteCdpDone(boolean isOk, String message) {
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getMessageListOfSelectedCdp();
+            getCdpItemFromServer();
         } else {
             ColoredToast.showError(mContext, message);
         }

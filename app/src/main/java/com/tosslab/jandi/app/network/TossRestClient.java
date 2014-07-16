@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
@@ -99,7 +100,7 @@ public interface TossRestClient {
     // 채널 invite
     @Put("/channels/{channelId}/invite")
     @RequiresHeader("Authorization")
-    ResSendMessage inviteChannel(int channelId, List<Integer> inviteUsers);
+    ResSendMessage inviteChannel(int channelId, ReqInviteUsers inviteUsers);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -183,10 +184,10 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     ResSendMessage leaveGroup(int groupId);
 
-    // 채널 invite
+    // Private Group invite
     @Put("/privateGroups/{groupId}/invite")
     @RequiresHeader("Authorization")
-    ResSendMessage inviteGroup(int groupId, List<Integer> inviteUsers);
+    ResSendMessage inviteGroup(int groupId, ReqInviteUsers inviteUsers);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
