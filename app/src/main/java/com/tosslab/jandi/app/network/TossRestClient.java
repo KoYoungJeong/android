@@ -255,7 +255,7 @@ public interface TossRestClient {
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
     // Notification 켜고 끄기
-    @Post("/settings/notifications/{deviceToken}/subscribe")
+    @Put("/settings/notifications/{deviceToken}/subscribe")
     @RequiresHeader("Authorization")
     ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
 

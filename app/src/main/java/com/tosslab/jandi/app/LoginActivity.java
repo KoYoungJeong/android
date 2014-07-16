@@ -10,12 +10,14 @@ import android.widget.EditText;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.tosslab.jandi.app.network.JandiNetworkClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.TossRestToken;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -27,6 +29,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
@@ -268,21 +271,43 @@ public class LoginActivity extends Activity {
     public void sendRegistrationIdToBackend(String regId) {
         // Your implementation here.
         try {
-            ReqNotificationRegister req = new ReqNotificationRegister("android", regId);
-            tossRestClient.setHeader("Authorization", myToken);
-            ResCommon res = tossRestClient.registerNotificationToken(req);
+            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+            jandiNetworkClient.registerNotificationToken(regId);
             sendRegistrationIdDone(true, null);
-        } catch (RestClientException e) {
+        } catch (JandiException e) {
             log.error("Register Fail", e);
-            sendRegistrationIdDone(false, "register failed");
-        } catch (Exception e) {
-            log.error("Register Fail", e);
-            sendRegistrationIdDone(false, "register failed");
+            if (e.errCode == 4001) {
+                // 4001 은 duplicate token 이기 때문에 무시한다.
+                sendRegistrationIdDone(true, null);
+            } else {
+                sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
+            }
         }
     }
 
     @UiThread
     public void sendRegistrationIdDone(boolean isOk, String message) {
+        if (isOk) {
+            sendSubscriptionInBackground();
+        } else {
+            ColoredToast.showError(this, message);
+        }
+    }
+
+    @Background
+    public void sendSubscriptionInBackground() {
+        try {
+            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+            jandiNetworkClient.subscribeNotification(mRegId, true);
+            sendSubscriptionDone(true, null);
+        } catch (JandiException e) {
+            log.error("Register Fail", e);
+            sendSubscriptionDone(false, e.errCode + ":" + e.errReason);
+        }
+    }
+
+    @UiThread
+    public void sendSubscriptionDone(boolean isOk, String message) {
         if (isOk) {
             storeRegistrationId(getApplicationContext(), mRegId);
             moveToMainActivity();

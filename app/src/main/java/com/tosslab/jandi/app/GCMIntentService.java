@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -66,11 +67,13 @@ public class GCMIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, LoginActivity_.class), 0);
+                new Intent(this, MainActivity_.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_actionbar_logo)
+                        .setTicker(msg)
+                        .setDefaults(Notification.DEFAULT_ALL)
                         .setContentTitle("GCM Notification")
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg);
