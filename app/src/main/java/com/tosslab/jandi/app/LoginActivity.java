@@ -11,6 +11,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.TossRestToken;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -60,7 +62,7 @@ public class LoginActivity extends Activity {
     void init() {
         mContext = getApplicationContext();
 
-        trustEveryone();    // SSL 우회! 꼭 지울 것!
+//        trustEveryone();    // SSL 우회! 꼭 지울 것!
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -229,8 +231,7 @@ public class LoginActivity extends Activity {
             mRegId = mGcm.register(JandiConstants.SENDER_ID);
             log.debug("Device registered, registration ID=" + mRegId);
 
-            sendRegistrationIdToBackend();
-            storeRegistrationId(getApplicationContext(), mRegId);
+            sendRegistrationIdToBackend(mRegId);
         } catch (IOException ex) {
             log.error("Error :" + ex.getMessage());
             // If there is an error, don't just keep trying to register.
@@ -263,8 +264,31 @@ public class LoginActivity extends Activity {
      * device sends upstream messages to a server that echoes back the message
      * using the 'from' address in the message.
      */
-    private void sendRegistrationIdToBackend() {
+    @Background
+    public void sendRegistrationIdToBackend(String regId) {
         // Your implementation here.
+        try {
+            ReqNotificationRegister req = new ReqNotificationRegister("android", regId);
+            tossRestClient.setHeader("Authorization", myToken);
+            ResCommon res = tossRestClient.registerNotificationToken(req);
+            sendRegistrationIdDone(true, null);
+        } catch (RestClientException e) {
+            log.error("Register Fail", e);
+            sendRegistrationIdDone(false, "register failed");
+        } catch (Exception e) {
+            log.error("Register Fail", e);
+            sendRegistrationIdDone(false, "register failed");
+        }
+    }
+
+    @UiThread
+    public void sendRegistrationIdDone(boolean isOk, String message) {
+        if (isOk) {
+            storeRegistrationId(getApplicationContext(), mRegId);
+            moveToMainActivity();
+        } else {
+            ColoredToast.showError(this, message);
+        }
     }
 
     /************************************************************

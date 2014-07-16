@@ -1,14 +1,13 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResSendMessage;
 
 import org.springframework.web.client.RestClientException;
 
@@ -62,7 +61,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResSendMessage sendMessage(String message) throws RestClientException {
+    public ResCommon sendMessage(String message) throws RestClientException {
         ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.type = "string";
         sendingMessage.content = message;
@@ -79,7 +78,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResSendMessage modifyMessage(int messageId, String message) throws RestClientException {
+    public ResCommon modifyMessage(int messageId, String message) throws RestClientException {
         ReqModifyMessage reqModifyMessage = new ReqModifyMessage();
         reqModifyMessage.content = message;
 
@@ -95,7 +94,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResSendMessage deleteMessage(int messageId) throws RestClientException {
+    public ResCommon deleteMessage(int messageId) throws RestClientException {
         switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.deleteChannelMessage(mCdpId, messageId);
@@ -112,26 +111,26 @@ public class MessageManipulator {
         return mRestClient.getFileDetail(messageId);
     }
 
-    public ResSendMessage sendMessageComment(int messageId, String comment) throws RestClientException {
+    public ResCommon sendMessageComment(int messageId, String comment) throws RestClientException {
         ReqSendComment reqSendComment = new ReqSendComment();
         reqSendComment.comment = comment;
         return mRestClient.sendMessageComment(reqSendComment, messageId);
 
     }
 
-    public ResSendMessage shareMessage(int messageId, int cdpIdToBeShared) throws RestClientException {
+    public ResCommon shareMessage(int messageId, int cdpIdToBeShared) throws RestClientException {
         ReqShareMessage reqShareMessage = new ReqShareMessage();
         reqShareMessage.shareEntity = cdpIdToBeShared;
         return mRestClient.shareMessage(reqShareMessage, messageId);
     }
 
-    public ResSendMessage modifyMessageComment(int messageId, String comment, int feedbackId) {
+    public ResCommon modifyMessageComment(int messageId, String comment, int feedbackId) {
         ReqSendComment reqModifyComment = new ReqSendComment();
         reqModifyComment.comment = comment;
         return mRestClient.modifyMessageComment(reqModifyComment, feedbackId, messageId);
     }
 
-    public ResSendMessage deleteMessageComment(int messageId, int feedbackId) {
+    public ResCommon deleteMessageComment(int messageId, int feedbackId) {
         return mRestClient.deleteMessageComment(feedbackId, messageId);
     }
 

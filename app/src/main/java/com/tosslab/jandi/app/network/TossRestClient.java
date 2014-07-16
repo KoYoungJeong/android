@@ -4,16 +4,18 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
+import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
+import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.network.models.RestFileUploadResponse;
 import com.tosslab.jandi.app.network.models.TossRestToken;
 
@@ -30,8 +32,6 @@ import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
-
-import java.util.List;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -75,48 +75,48 @@ public interface TossRestClient {
     // 채널 생성
     @Post("/channel")
     @RequiresHeader("Authorization")
-    ResSendMessage createChannel(ReqCreateCdp channel);
+    ResCommon createChannel(ReqCreateCdp channel);
 
     // 채널 수정
     @Put("/channels/{channelId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyChannel(ReqCreateCdp channel, int channelId);
+    ResCommon modifyChannel(ReqCreateCdp channel, int channelId);
 
     // 채널 삭제
     @Delete("/channels/{channelId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deleteChannel(int channelId);
+    ResCommon deleteChannel(int channelId);
 
     // 채널 Join
     @Put("/channels/{channelId}/join")
     @RequiresHeader("Authorization")
-    ResSendMessage joinChannel(int channelId);
+    ResCommon joinChannel(int channelId);
 
     // 채널 leave
     @Put("/channels/{channelId}/leave")
     @RequiresHeader("Authorization")
-    ResSendMessage leaveChannel(int channelId);
+    ResCommon leaveChannel(int channelId);
 
     // 채널 invite
     @Put("/channels/{channelId}/invite")
     @RequiresHeader("Authorization")
-    ResSendMessage inviteChannel(int channelId, ReqInviteUsers inviteUsers);
+    ResCommon inviteChannel(int channelId, ReqInviteUsers inviteUsers);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
     @RequiresHeader("Authorization")
-    ResSendMessage sendChannelMessage(ReqSendMessage message, int channelId);
+    ResCommon sendChannelMessage(ReqSendMessage message, int channelId);
 
     // 채널에서 Message 수정
     @Put("/channels/{channelId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyChannelMessage(ReqModifyMessage message,
+    ResCommon modifyChannelMessage(ReqModifyMessage message,
                                            int channelId, int messageId);
 
     // 채널에서 Message 삭제
     @Delete("/channels/{channelId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deleteChannelMessage(int channelId, int messageId);
+    ResCommon deleteChannelMessage(int channelId, int messageId);
 
 
     /************************************************************
@@ -136,18 +136,18 @@ public interface TossRestClient {
     // Direct Message 생성
     @Post("/users/{userId}/message")
     @RequiresHeader("Authorization")
-    ResSendMessage sendDirectMessage(ReqSendMessage message, int userId);
+    ResCommon sendDirectMessage(ReqSendMessage message, int userId);
 
     // Direct Message 수정
     @Put("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyDirectMessage(ReqModifyMessage message,
+    ResCommon modifyDirectMessage(ReqModifyMessage message,
                                           int userId, int messageId);
 
     // Direct Message 삭제
     @Delete("/users/{userId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deleteDirectMessage(int userId, int messageId);
+    ResCommon deleteDirectMessage(int userId, int messageId);
 
 
     /************************************************************
@@ -167,43 +167,43 @@ public interface TossRestClient {
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
-    ResSendMessage createPrivateGroup(ReqCreateCdp group);
+    ResCommon createPrivateGroup(ReqCreateCdp group);
 
     // Private Group 수정
     @Put("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyGroup(ReqCreateCdp channel, int groupId);
+    ResCommon modifyGroup(ReqCreateCdp channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deleteGroup(int groupId);
+    ResCommon deleteGroup(int groupId);
 
     // Private Group Leave
     @Put("/privateGroups/{groupId}/leave")
     @RequiresHeader("Authorization")
-    ResSendMessage leaveGroup(int groupId);
+    ResCommon leaveGroup(int groupId);
 
     // Private Group invite
     @Put("/privateGroups/{groupId}/invite")
     @RequiresHeader("Authorization")
-    ResSendMessage inviteGroup(int groupId, ReqInviteUsers inviteUsers);
+    ResCommon inviteGroup(int groupId, ReqInviteUsers inviteUsers);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
     @RequiresHeader("Authorization")
-    ResSendMessage sendGroupMessage(ReqSendMessage message, int groupId);
+    ResCommon sendGroupMessage(ReqSendMessage message, int groupId);
 
     // Private Group Message 수정
     @Put("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyPrivateGroupMessage(ReqModifyMessage message,
+    ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
                                            int groupId, int messageId);
 
     // Private Group Message 삭제
     @Delete("/privateGroups/{groupId}/messages/{messageId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deletePrivateGroupMessage(int groupId, int messageId);
+    ResCommon deletePrivateGroupMessage(int groupId, int messageId);
 
     /************************************************************
      * File
@@ -221,22 +221,22 @@ public interface TossRestClient {
     // Share Message
     @Put("/messages/{messageId}/share")
     @RequiresHeader("Authorization")
-    ResSendMessage shareMessage(ReqShareMessage share, int messageId);
+    ResCommon shareMessage(ReqShareMessage share, int messageId);
 
     // Send Comment
     @Post("/messages/{messageId}/comment")
     @RequiresHeader("Authorization")
-    ResSendMessage sendMessageComment(ReqSendComment comment, int messageId);
+    ResCommon sendMessageComment(ReqSendComment comment, int messageId);
 
     // Modify comment
     @Put("/messages/{messageId}/comments/{commentId}")
     @RequiresHeader("Authorization")
-    ResSendMessage modifyMessageComment(ReqSendComment comment, int messageId, int commentId);
+    ResCommon modifyMessageComment(ReqSendComment comment, int messageId, int commentId);
 
     // Delete comment
     @Delete("/messages/{messageId}/comments/{commentId}")
     @RequiresHeader("Authorization")
-    ResSendMessage deleteMessageComment(int messageId, int commentId);
+    ResCommon deleteMessageComment(int messageId, int commentId);
 
     /************************************************************
      * Search
@@ -245,5 +245,18 @@ public interface TossRestClient {
     @Post("/search")
     @RequiresHeader("Authorization")
     ResSearchFile searchFile(ReqSearchFile reqSearchFile);
+
+    /************************************************************
+     * Notification
+     ************************************************************/
+    // Token 등록
+    @Post("/settings/notification")
+    @RequiresHeader("Authorization")
+    ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
+
+    // Notification 켜고 끄기
+    @Post("/settings/notifications/{deviceToken}/subscribe")
+    @RequiresHeader("Authorization")
+    ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
 
 }

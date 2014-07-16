@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.lists.CdpItemListAdapter;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
-import com.tosslab.jandi.app.network.models.ResSendMessage;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -168,7 +168,7 @@ public class MainCdpFragment extends BaseFragment {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = cdpName;
 
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             if (cdpType == JandiConstants.TYPE_CHANNEL) {
@@ -221,7 +221,7 @@ public class MainCdpFragment extends BaseFragment {
     public void joinChannelInBackground(int selectedChannelIdToBeJoined) {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
-            ResSendMessage res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
+            ResCommon res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
             joinChannelDone(true, null);
         } catch (RestClientException e) {
             log.error("fail to join channel");

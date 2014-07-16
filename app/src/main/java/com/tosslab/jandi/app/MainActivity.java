@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -34,8 +32,8 @@ import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -337,7 +335,7 @@ public class MainActivity extends SlidingFragmentActivity {
     }
 
     void modifyChannelInBackground(int cdpId, String nameToBeModified) {
-        ResSendMessage resId = null;
+        ResCommon resId = null;
         ReqCreateCdp channel = new ReqCreateCdp();
         channel.name = nameToBeModified;
         try {
@@ -350,7 +348,7 @@ public class MainActivity extends SlidingFragmentActivity {
     }
 
     void modifyGroupInBackground(int cdpId, String nameToBeModified) {
-        ResSendMessage resId = null;
+        ResCommon resId = null;
         ReqCreateCdp privateGroup = new ReqCreateCdp();
         privateGroup.name = nameToBeModified;
         try {
@@ -396,7 +394,7 @@ public class MainActivity extends SlidingFragmentActivity {
     }
 
     void deleteChannelInBackground(int cdpId) {
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteChannel(cdpId);
@@ -408,7 +406,7 @@ public class MainActivity extends SlidingFragmentActivity {
     }
 
     void deleteGroupInBackground(int cdpId) {
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteGroup(cdpId);
@@ -466,7 +464,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
     @Background
     public void inviteCdpInBackground(int cdpType, int cdpId, List<Integer> invitedUsers) {
-        ResSendMessage res = null;
+        ResCommon res = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
@@ -505,7 +503,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
     @Background
     public void leaveCdpInBackground(int cdpType, int cdpId) {
-        ResSendMessage res = null;
+        ResCommon res = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             if (cdpType == JandiConstants.TYPE_CHANNEL) {

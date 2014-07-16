@@ -21,8 +21,8 @@ import com.tosslab.jandi.app.lists.CdpItemListAdapter;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResSendMessage;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -162,7 +162,7 @@ public class MainLeftFragment extends BaseFragment {
     public void joinChannelInBackground(int selectedChannelIdToBeJoined) {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
-            ResSendMessage res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
+            ResCommon res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
             joinChannelDone(true, null);
         } catch (RestClientException e) {
             log.error("fail to join channel");
@@ -283,7 +283,7 @@ public class MainLeftFragment extends BaseFragment {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = channelName;
 
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createChannel(reqCreateCdp);
@@ -306,7 +306,7 @@ public class MainLeftFragment extends BaseFragment {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = pgName;
 
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
@@ -378,7 +378,7 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     void modifyChannelInBackground(int cdpId, String nameToBeModified) {
-        ResSendMessage resId = null;
+        ResCommon resId = null;
         ReqCreateCdp channel = new ReqCreateCdp();
         channel.name = nameToBeModified;
         try {
@@ -391,7 +391,7 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     void modifyGroupInBackground(int cdpId, String nameToBeModified) {
-        ResSendMessage resId = null;
+        ResCommon resId = null;
         ReqCreateCdp privateGroup = new ReqCreateCdp();
         privateGroup.name = nameToBeModified;
         try {
@@ -437,7 +437,7 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     void deleteChannelInBackground(int cdpId) {
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteChannel(cdpId);
@@ -449,7 +449,7 @@ public class MainLeftFragment extends BaseFragment {
     }
 
     void deleteGroupInBackground(int cdpId) {
-        ResSendMessage restResId = null;
+        ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             restResId = mTossRestClient.deleteGroup(cdpId);
@@ -476,7 +476,7 @@ public class MainLeftFragment extends BaseFragment {
 
     @Background
     public void leaveCdpInBackground(int cdpType, int cdpId) {
-        ResSendMessage res = null;
+        ResCommon res = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             if (cdpType == JandiConstants.TYPE_CHANNEL) {
