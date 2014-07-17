@@ -226,15 +226,17 @@ public class MainCenterFragment extends BaseFragment  {
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
 
+            if (mFirstItemId == -1) {
+                // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
+                int currentLastLinkId = restResMessages.messages.get(0).id;
+                if (currentLastLinkId >= 0) {
+                    mLastUpdateLinkId = currentLastLinkId;
+                }
+            }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
             mIsFirstMessage = restResMessages.isFirst;
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceviedList;
-            // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
-            int currentLastLinkId = restResMessages.messages.get(0).id;
-            if (currentLastLinkId >= 0) {
-                mLastUpdateLinkId = currentLastLinkId;
-            }
 
             messageItemListAdapter.insertMessageItem(restResMessages);
             log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);

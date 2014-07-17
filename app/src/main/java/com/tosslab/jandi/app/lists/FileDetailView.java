@@ -12,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestSelectionOfCdpToBeShared;
+import com.tosslab.jandi.app.events.RequestViewFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -73,7 +74,7 @@ public class FileDetailView extends FrameLayout {
             fileDetailLayout.setVisibility(VISIBLE);
             fileDetailCommentLayout.setVisibility(GONE);
 
-            ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+            final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
             // 사용자
             ResMessages.Writer writer = fileMessage.writer;
             String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
@@ -84,6 +85,14 @@ public class FileDetailView extends FrameLayout {
             String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
             textViewFileCreateDate.setText(createTime);
             textViewFileName.setText(fileMessage.content.name);
+            // 파일 이름을 터치하면 파일 연결
+            textViewFileName.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                    EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.fileUrl));
+                }
+            });
 
             String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
             textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
@@ -93,6 +102,14 @@ public class FileDetailView extends FrameLayout {
                 imageViewPhotoFile.setVisibility(View.VISIBLE);
                 String photoUrl = JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
                 Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
+                // 이미지를 터치하면 연결
+                imageViewPhotoFile.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                        EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.fileUrl));
+                    }
+                });
             }
             buttonFileDetailShare.setOnClickListener(new OnClickListener() {
                 @Override
