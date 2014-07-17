@@ -47,10 +47,11 @@ public class GCMIntentService extends IntentService {
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
                 sendNotification("Deleted messages on server: " + extras.toString());
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-
+                String lastMessage = extras.getString("lastMessage");
                 Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
+
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
+                sendNotification(lastMessage);
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }

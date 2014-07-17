@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -12,8 +11,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.network.JandiNetworkClient;
 import com.tosslab.jandi.app.network.TossRestClient;
-import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.TossRestToken;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -29,7 +26,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
@@ -44,7 +40,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.X509TrustManager;
 
 @EActivity(R.layout.activity_login)
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 
     @ViewById(R.id.et_login_email)
@@ -84,7 +80,7 @@ public class LoginActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         checkPlayServices();
     }
@@ -151,7 +147,6 @@ public class LoginActivity extends Activity {
     private void registerGcm() {
         // Check device for Play Services APK.
         if (checkPlayServices()) {
-            mGcm = GoogleCloudMessaging.getInstance(this);
             mRegId = getRegistrationId(mContext);
             // GCM 등록
             if (mRegId.isEmpty()) {
@@ -226,7 +221,6 @@ public class LoginActivity extends Activity {
      */
     @Background
     void registerInBackground() {
-
         try {
             if (mGcm == null) {
                 mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());

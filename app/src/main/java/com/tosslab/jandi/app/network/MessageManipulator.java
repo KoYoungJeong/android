@@ -48,14 +48,14 @@ public class MessageManipulator {
         }
     }
 
-    public ResMessages updateMessages(Date fromNow) throws RestClientException {
+    public ResMessages updateMessages(int fromCurrentId) throws RestClientException {
         switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
-                return mRestClient.getChannelMessagesUpdated(mCdpId, fromNow.getTime());
+                return mRestClient.getChannelMessagesUpdated(mCdpId, fromCurrentId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.getDirectMessagesUpdated(mCdpId, fromNow.getTime());
+                return mRestClient.getDirectMessagesUpdated(mCdpId, fromCurrentId);
             case JandiConstants.TYPE_PRIVATE_GROUP:
-                return mRestClient.getGroupMessagesUpdated(mCdpId, fromNow.getTime());
+                return mRestClient.getGroupMessagesUpdated(mCdpId, fromCurrentId);
             default:
                 return null;
         }

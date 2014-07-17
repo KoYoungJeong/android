@@ -68,9 +68,9 @@ public interface TossRestClient {
     ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
 
     // 채널의 업데이트 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/update/{timeAfter}")
+    @Get("/channels/{channelId}/messages/update/{currentLinkId}")
     @RequiresHeader("Authorization")
-    ResMessages getChannelMessagesUpdated(int channelId, long timeAfter);
+    ResMessages getChannelMessagesUpdated(int channelId, int currentLinkId);
 
     // 채널 생성
     @Post("/channel")

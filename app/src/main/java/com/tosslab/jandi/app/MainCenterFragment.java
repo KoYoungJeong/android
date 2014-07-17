@@ -79,7 +79,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     // Update 관련
     private Timer mTimer;
-    private Date mLastUpdateTime;
+    private int mLastUpdateLinkId;
 
     int mFirstItemId = -1;
     boolean mIsFirstMessage = true;
@@ -120,8 +120,6 @@ public class MainCenterFragment extends BaseFragment  {
 
             }
         });
-
-        mLastUpdateTime = new Date();
 
         mFirstItemId = -1;
     }
@@ -232,6 +230,11 @@ public class MainCenterFragment extends BaseFragment  {
             mIsFirstMessage = restResMessages.isFirst;
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceviedList;
+            // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
+            int currentLastLinkId = restResMessages.messages.get(0).id;
+            if (currentLastLinkId >= 0) {
+                mLastUpdateLinkId = currentLastLinkId;
+            }
 
             messageItemListAdapter.insertMessageItem(restResMessages);
             log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
@@ -275,15 +278,14 @@ public class MainCenterFragment extends BaseFragment  {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, mMyToken, type, id);
         try {
-            ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateTime);
+            ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
             log.info("success to " + restResMessages.messageCount +
-                    " messages updated at " + mLastUpdateTime.getTime());
-            Date responseTime = restResMessages.responseTime;
-            if (responseTime != null && responseTime.getTime() > 0) {
-                mLastUpdateTime = responseTime;
-            }
-
+                    " messages updated at " + mLastUpdateLinkId);
             if (restResMessages.messageCount > 0) {
+                int currentLastLinkId = restResMessages.messages.get(0).id;
+                if (currentLastLinkId >= 0) {
+                    mLastUpdateLinkId = currentLastLinkId;
+                }
                 // Update 된 메시지만 부분 삽입한다.
                 messageItemListAdapter.updatedMessageItem(restResMessages);
             }
