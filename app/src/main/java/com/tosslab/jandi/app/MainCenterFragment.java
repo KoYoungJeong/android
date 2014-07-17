@@ -279,10 +279,11 @@ public class MainCenterFragment extends BaseFragment  {
                 tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
-            log.info("success to " + restResMessages.messageCount +
+            int nMessages = restResMessages.messageCount;
+            log.info("success to " + nMessages +
                     " messages updated at " + mLastUpdateLinkId);
-            if (restResMessages.messageCount > 0) {
-                int currentLastLinkId = restResMessages.messages.get(0).id;
+            if (nMessages > 0) {
+                int currentLastLinkId = restResMessages.messages.get(nMessages - 1).id;
                 if (currentLastLinkId >= 0) {
                     mLastUpdateLinkId = currentLastLinkId;
                 }
