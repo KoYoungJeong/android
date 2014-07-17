@@ -79,7 +79,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     // Update 관련
     private Timer mTimer;
-    private int mLastUpdateLinkId;
+    private int mLastUpdateLinkId = 0;
 
     int mFirstItemId = -1;
     boolean mIsFirstMessage = true;
@@ -227,10 +227,12 @@ public class MainCenterFragment extends BaseFragment  {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
 
             if (mFirstItemId == -1) {
-                // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
-                int currentLastLinkId = restResMessages.messages.get(0).id;
-                if (currentLastLinkId >= 0) {
-                    mLastUpdateLinkId = currentLastLinkId;
+                if (restResMessages.messageCount > 0) {
+                    // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
+                    int currentLastLinkId = restResMessages.messages.get(0).id;
+                    if (currentLastLinkId >= 0) {
+                        mLastUpdateLinkId = currentLastLinkId;
+                    }
                 }
             }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
@@ -280,20 +282,22 @@ public class MainCenterFragment extends BaseFragment  {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, mMyToken, type, id);
         try {
-            ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
-            int nMessages = restResMessages.messageCount;
-            log.info("success to " + nMessages +
-                    " messages updated at " + mLastUpdateLinkId);
-            if (nMessages > 0) {
-                int currentLastLinkId = restResMessages.messages.get(nMessages - 1).id;
-                if (currentLastLinkId >= 0) {
-                    mLastUpdateLinkId = currentLastLinkId;
+            if (mLastUpdateLinkId > 0) {
+                ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
+                int nMessages = restResMessages.messageCount;
+                log.info("success to " + nMessages +
+                        " messages updated at " + mLastUpdateLinkId);
+                if (nMessages > 0) {
+                    int currentLastLinkId = restResMessages.messages.get(nMessages - 1).id;
+                    if (currentLastLinkId >= 0) {
+                        mLastUpdateLinkId = currentLastLinkId;
+                    }
+                    // Update 된 메시지만 부분 삽입한다.
+                    messageItemListAdapter.updatedMessageItem(restResMessages);
                 }
-                // Update 된 메시지만 부분 삽입한다.
-                messageItemListAdapter.updatedMessageItem(restResMessages);
-            }
 
-            getUpdateMessagesDone();
+                getUpdateMessagesDone();
+            }
         } catch (RestClientException e) {
             log.error("fail to get updated messages", e);
         }
@@ -543,6 +547,7 @@ public class MainCenterFragment extends BaseFragment  {
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseTimer();
+        mProgressWheel.show();
         uploadFileInBackground(event.cdpId, event.realFilePath, event.comment);
     }
 
@@ -580,6 +585,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     void uploadFileDone(boolean isOk, String message) {
+        mProgressWheel.dismiss();
         resumeTimer();  // resume timer
 
         if (isOk) {

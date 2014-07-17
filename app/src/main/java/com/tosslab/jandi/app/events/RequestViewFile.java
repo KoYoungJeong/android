@@ -5,9 +5,9 @@ package com.tosslab.jandi.app.events;
  */
 public class RequestViewFile {
     public String fileUrl;
-    public String fileName;
-    public RequestViewFile(String fileUrl, String fileName) {
+    public String fileType;
+    public RequestViewFile(String fileUrl, String fileType) {
         this.fileUrl = fileUrl;
-        this.fileName = fileName;
+        this.fileType = fileType;
     }
 }

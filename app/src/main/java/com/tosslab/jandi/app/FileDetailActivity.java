@@ -267,113 +267,62 @@ public class FileDetailActivity extends BaseActivity {
      * 파일 연결 관련
      ************************************************************/
     public void onEvent(RequestViewFile event) {
-        download(event.fileUrl, event.fileName);
+        download(event.fileUrl, event.fileType);
     }
 
     private DownloadManager mDownloadManager;
     private long mDownloadQueueId;
     private String mFileName;
+    private String mFileType;
 
-    public void download(String url, String fileName) {
+    public void download(String url, String fileType) {
         if (mDownloadManager == null) {
             mDownloadManager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
         }
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
 
         request.setTitle("Jandi");
         request.setDescription("downloading...");
-//        List<String> pathSegmentList = Uri.get
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+        request.setMimeType(fileType);
+
+        List<String> pathSegmentList = uri.getPathSegments();
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/temp").mkdirs();
+        mFileName = pathSegmentList.get(pathSegmentList.size()-1);
+        mFileType = fileType;
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/temp", mFileName);
         mDownloadQueueId = mDownloadManager.enqueue(request);
-        mFileName = fileName;
+
     }
 
     private BroadcastReceiver mCompleteReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String localUrl = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName;
-            viewFile(context, localUrl);
-//            String action = intent.getAction();
-//            if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
-//                ColoredToast.show(mContext, "Complete");
+            String action = intent.getAction();
+            if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                ColoredToast.show(mContext, "Complete");
+                startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
 //                Intent i = new Intent();
 //                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //                i.setAction(Intent.ACTION_VIEW);
 //                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //
 //                String localUrl = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName;
+////                String mimeType = mFileType;
 //                String extension = MimeTypeMap.getFileExtensionFromUrl(localUrl);
 //                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+//                log.debug(mimeType + " for " + localUrl);
 //
 //                File file = new File(localUrl);
 //                i.setDataAndType(Uri.fromFile(file), mimeType);
 //                try {
 //                    startActivity(i);
 //                } catch (ActivityNotFoundException e) {
-//                    ColoredToast.showError(mContext, "Not found. Cannot open file");
+//                    ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
 //                }
-//            }
+            } else {
+                ColoredToast.showError(mContext, "" + action);
+            }
         }
     };
-
-    /**
-     * 파일의 확장자 조회
-     *
-     * @param fileStr
-     * @return
-     */
-    private static String getExtension(String fileStr) {
-        return fileStr.substring(fileStr.lastIndexOf(".") + 1, fileStr.length());
-    }
-
-    private static String getFileName(String fileStr) {
-        return fileStr.substring(fileStr.lastIndexOf("/") + 1, fileStr.length());
-    }
-
-    public void viewFile(Context ctx, String filePath) {
-        Intent fileLinkIntent = new Intent(Intent.ACTION_VIEW);
-        fileLinkIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        File file = new File(filePath);
-        Uri uri = Uri.fromFile(file);
-        //확장자 구하기
-        String fileExtend = getExtension(file.getAbsolutePath());
-        // 파일 확장자 별로 mime type 지정해 준다.
-        if (fileExtend.equalsIgnoreCase("mp3")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "audio/*");
-        } else if (fileExtend.equalsIgnoreCase("mp4")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "vidio/*");
-        } else if (fileExtend.equalsIgnoreCase("jpg")
-                || fileExtend.equalsIgnoreCase("jpeg")
-                || fileExtend.equalsIgnoreCase("gif")
-                || fileExtend.equalsIgnoreCase("png")
-                || fileExtend.equalsIgnoreCase("bmp")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "image/*");
-        } else if (fileExtend.equalsIgnoreCase("txt")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "text/*");
-        } else if (fileExtend.equalsIgnoreCase("doc")
-                || fileExtend.equalsIgnoreCase("docx")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "application/msword");
-        } else if (fileExtend.equalsIgnoreCase("xls")
-                || fileExtend.equalsIgnoreCase("xlsx")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file),
-                    "application/vnd.ms-excel");
-        } else if (fileExtend.equalsIgnoreCase("ppt")
-                || fileExtend.equalsIgnoreCase("pptx")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file),
-                    "application/vnd.ms-powerpoint");
-        } else if (fileExtend.equalsIgnoreCase("pdf")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file), "application/pdf");
-        } else if (fileExtend.equalsIgnoreCase("hwp")) {
-            fileLinkIntent.setDataAndType(Uri.fromFile(file),
-                    "application/haansofthwp");
-        }
-        PackageManager pm = ctx.getPackageManager();
-        List<ResolveInfo> list = pm.queryIntentActivities(fileLinkIntent,
-                PackageManager.GET_META_DATA);
-        if (list.size() == 0) {
-            ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
-        } else {
-            ctx.startActivity(fileLinkIntent);
-        }
-    }
 }

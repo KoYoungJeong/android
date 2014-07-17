@@ -90,7 +90,7 @@ public class FileDetailView extends FrameLayout {
                 @Override
                 public void onClick(View view) {
                     String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
-                    EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.fileUrl));
+                    EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.type));
                 }
             });
 
@@ -102,14 +102,6 @@ public class FileDetailView extends FrameLayout {
                 imageViewPhotoFile.setVisibility(View.VISIBLE);
                 String photoUrl = JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
                 Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
-                // 이미지를 터치하면 연결
-                imageViewPhotoFile.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
-                        EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.fileUrl));
-                    }
-                });
             }
             buttonFileDetailShare.setOnClickListener(new OnClickListener() {
                 @Override
