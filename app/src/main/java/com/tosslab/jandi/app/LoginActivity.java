@@ -144,19 +144,31 @@ public class LoginActivity extends BaseActivity {
      ************************************************************/
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    private void registerGcm() {
+    @Background
+    public void registerGcm() {
         // Check device for Play Services APK.
         if (checkPlayServices()) {
-            mRegId = getRegistrationId(mContext);
-            // GCM 등록
-            if (mRegId.isEmpty()) {
-                registerInBackground();
-            } else {
-                moveToMainActivity();
+            try {
+                if (mGcm == null) {
+                    mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                }
+                String justGeneratedRegId = mGcm.register(JandiConstants.SENDER_ID);
+                String furtherGeneratedRegId = getRegistrationId(mContext);
+                if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+                    moveToMainActivity();
+                } else {
+                    registerInBackground(furtherGeneratedRegId, justGeneratedRegId);
+                }
+            } catch (IOException ex) {
+                log.error("Error :" + ex.getMessage());
+                ColoredToast.showError(mContext, "Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+                return;
             }
         } else {
             log.warn("No valid Google Play Services APK found.");
             // TODO : Push 안 됨
+            ColoredToast.showWarning(mContext, "Push 서비스를 사용할 수 없는 단말입니다");
+            moveToMainActivity();
         }
     }
 
@@ -186,6 +198,7 @@ public class LoginActivity extends BaseActivity {
             log.info("Registration not found.");
             return "";
         }
+
         // Check if app was updated; if so, it must clear the registration ID
         // since the existing regID is not guaranteed to work with the new
         // app version.
@@ -220,21 +233,8 @@ public class LoginActivity extends BaseActivity {
      * GCM 서버에 registration ID and app versionCode를 등록하고 shared preference 에도 등록함.
      */
     @Background
-    void registerInBackground() {
-        try {
-            if (mGcm == null) {
-                mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-            }
-            mRegId = mGcm.register(JandiConstants.SENDER_ID);
-            log.debug("Device registered, registration ID=" + mRegId);
-
-            sendRegistrationIdToBackend(mRegId);
-        } catch (IOException ex) {
-            log.error("Error :" + ex.getMessage());
-            // If there is an error, don't just keep trying to register.
-            // Require the user to click a button again, or perform
-            // exponential back-off.
-        }
+    void registerInBackground(String futherGenRegId, String justGenRegId) {
+        sendRegistrationIdToBackend(futherGenRegId, justGenRegId);
     }
 
     /**
@@ -262,11 +262,21 @@ public class LoginActivity extends BaseActivity {
      * using the 'from' address in the message.
      */
     @Background
-    public void sendRegistrationIdToBackend(String regId) {
+    public void sendRegistrationIdToBackend(String futherGenRegId, String justGenRegId) {
         // Your implementation here.
         try {
+            mRegId = justGenRegId;
             JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
-            jandiNetworkClient.registerNotificationToken(regId);
+            if (futherGenRegId.isEmpty()) {
+                // 새로 등록
+                log.debug("Device registered, registration ID=" + mRegId);
+                jandiNetworkClient.registerNotificationToken(justGenRegId);
+            } else {
+                // 기존 Dev Token 갱신
+                log.debug("Device updated, registration ID=" + mRegId);
+                jandiNetworkClient.updateNotificateionToken(futherGenRegId, justGenRegId);
+            }
+
             sendRegistrationIdDone(true, null);
         } catch (JandiException e) {
             log.error("Register Fail", e);
@@ -303,6 +313,7 @@ public class LoginActivity extends BaseActivity {
     @UiThread
     public void sendSubscriptionDone(boolean isOk, String message) {
         if (isOk) {
+            log.debug("subscribe OK");
             storeRegistrationId(getApplicationContext(), mRegId);
             moveToMainActivity();
         } else {

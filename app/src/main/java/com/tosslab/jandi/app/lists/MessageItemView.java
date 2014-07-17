@@ -75,8 +75,8 @@ public class MessageItemView extends LinearLayout {
             mTextFileName.setText(item.getContentFileName());
             mImagePhoto.setVisibility(VISIBLE);
             mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
-            log.debug("try to load image from " + item.getContentUrl());
-            Picasso.with(mContext).load(item.getContentUrl()).centerCrop().fit().into(mImagePhoto);
+            String imageUrl = item.getContentUrl().replaceAll(" ", "%20");
+            Picasso.with(mContext).load(imageUrl).centerCrop().fit().into(mImagePhoto);
         } else if (item.getContentType() == MessageItem.TYPE_FILE) {
             mLayoutFileMessage.setVisibility(VISIBLE);
             mTextFileName.setText(item.getContentFileName());

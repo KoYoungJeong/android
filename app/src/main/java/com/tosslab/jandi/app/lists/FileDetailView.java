@@ -21,6 +21,9 @@ import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -100,7 +103,7 @@ public class FileDetailView extends FrameLayout {
             // 이미지일 경우
             if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
                 imageViewPhotoFile.setVisibility(View.VISIBLE);
-                String photoUrl = JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl;
+                String photoUrl = (JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl).replaceAll(" ", "%20");
                 Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
             }
             buttonFileDetailShare.setOnClickListener(new OnClickListener() {

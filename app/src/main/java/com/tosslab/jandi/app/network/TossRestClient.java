@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
+import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -253,6 +254,11 @@ public interface TossRestClient {
     @Post("/settings/notification")
     @RequiresHeader("Authorization")
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
+
+    // Token 갱신
+    @Put("/settings/notifications/{deviceToken}")
+    @RequiresHeader("Authorization")
+    ResCommon updateNotificationToken(String deviceToken, ReqNotificationUpdate reqNotificationUpdate);
 
     // Notification 켜고 끄기
     @Put("/settings/notifications/{deviceToken}/subscribe")

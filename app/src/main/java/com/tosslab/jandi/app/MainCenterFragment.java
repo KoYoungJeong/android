@@ -5,8 +5,10 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
@@ -482,7 +484,6 @@ public class MainCenterFragment extends BaseFragment  {
 
     /************************************************************
      * 파일 업로드
-     * TODO : 현재는 Image Upload 만...
      ************************************************************/
 
     @Click(R.id.btn_upload_file)
@@ -521,6 +522,7 @@ public class MainCenterFragment extends BaseFragment  {
             switch (requestCode) {
                 case JandiConstants.TYPE_UPLOAD_GALLERY:
                     Uri targetUri = data.getData();
+//                    realFilePath = getFilePathFromUri(targetUri);
                     realFilePath = getRealPathFromUri(targetUri);
                     log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
                     showFileUploadDialog(realFilePath);
@@ -534,7 +536,6 @@ public class MainCenterFragment extends BaseFragment  {
                 default:
                     break;
             }
-
         }
     }
 
@@ -595,15 +596,35 @@ public class MainCenterFragment extends BaseFragment  {
         }
     }
 
-    // TODO : Poor Implementation
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
         Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String filePath = cursor.getString(columnIndex);
+        String picturePath = cursor.getString(columnIndex);
         cursor.close();
-        return filePath;
+        return picturePath;
+    }
+
+    // TODO : Poor Implementation
+    private String getFilePathFromUri(Uri contentUri) {
+
+        final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
+        Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
+
+        // some devices (OS versions return an URI of com.android instead of com.google.android
+        if (contentUri.toString().startsWith("content://com.android.gallery3d.provider"))  {
+            // use the com.google provider, not the com.android provider.
+            contentUri = Uri.parse(contentUri.toString().replace("com.android.gallery3d", "com.google.android.gallery3d"));
+        }
+        if (cursor != null) {
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+            String filePath = cursor.getString(columnIndex);
+            cursor.close();
+            return filePath;
+        }
+        return null;
     }
 
 

@@ -72,6 +72,8 @@ public class FileDetailActivity extends BaseActivity {
     @ViewById(R.id.et_file_detail_comment)
     EditText etFileDetailComment;
 
+    private BroadcastReceiver mCompleteReceiver = new FileDownloadBroadcastReceiver();
+
     public String myToken;
 
     private Context mContext;
@@ -112,18 +114,14 @@ public class FileDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-//        if (mCompleteReceiver != null) {
-            IntentFilter completeFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-            registerReceiver(mCompleteReceiver, completeFilter);
-//        }
+        IntentFilter completeFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(mCompleteReceiver, completeFilter);
         EventBus.getDefault().registerSticky(this);
     }
 
     @Override
     public void onPause() {
-//        if (mCompleteReceiver != null) {
-            unregisterReceiver(mCompleteReceiver);
-//        }
+        unregisterReceiver(mCompleteReceiver);
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
@@ -133,10 +131,6 @@ public class FileDetailActivity extends BaseActivity {
         if (mProgressWheel != null)
             mProgressWheel.dismiss();
         super.onStop();
-    }
-
-    private void patchEOFException() {
-        System.setProperty("http.keepAlive", "false");
     }
 
     @ItemLongClick
@@ -282,23 +276,27 @@ public class FileDetailActivity extends BaseActivity {
         Uri uri = Uri.parse(url);
         DownloadManager.Request request = new DownloadManager.Request(uri);
 
-        request.setTitle("Jandi");
-        request.setDescription("downloading...");
-        request.setMimeType(fileType);
-
         List<String> pathSegmentList = uri.getPathSegments();
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/temp").mkdirs();
         mFileName = pathSegmentList.get(pathSegmentList.size()-1);
+
+        request.setTitle("Jandi");
+        request.setDescription("download " + mFileName);
+        request.setMimeType(fileType);
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/temp").mkdirs();
+
         mFileType = fileType;
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/temp", mFileName);
         mDownloadQueueId = mDownloadManager.enqueue(request);
 
     }
 
-    private BroadcastReceiver mCompleteReceiver = new BroadcastReceiver() {
+    private class FileDownloadBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
             if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                 ColoredToast.show(mContext, "Complete");
                 startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
@@ -321,8 +319,9 @@ public class FileDetailActivity extends BaseActivity {
 //                    ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
 //                }
             } else {
-                ColoredToast.showError(mContext, "" + action);
+                ColoredToast.showError(mContext, action);
             }
         }
-    };
+    }
+
 }

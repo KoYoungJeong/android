@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
+import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.JandiException;
 
@@ -29,6 +30,19 @@ public class JandiNetworkClient {
         }
         return res;
     }
+
+    public ResCommon updateNotificateionToken(String oldRegId, String newRegId) throws JandiException {
+        ReqNotificationUpdate req = new ReqNotificationUpdate(newRegId);
+        ResCommon res = null;
+        try {
+            res = mRestClient.updateNotificationToken(oldRegId, req);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+        return res;
+    }
+
+
 
     public ResCommon subscribeNotification(String regId, boolean isSubscribe) throws JandiException {
         ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
