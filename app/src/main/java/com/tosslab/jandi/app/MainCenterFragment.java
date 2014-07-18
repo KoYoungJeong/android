@@ -171,7 +171,7 @@ public class MainCenterFragment extends BaseFragment  {
         log.debug("resume polling");
         TimerTask task = new UpdateTimerTask();
         mTimer = new Timer();
-        mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
+        mTimer.schedule(task, 1500, 3000);  // 1.5초뒤, 3초마다
     }
 
     /**
@@ -588,7 +588,6 @@ public class MainCenterFragment extends BaseFragment  {
     void uploadFileDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
         resumeTimer();  // resume timer
-
         if (isOk) {
             ColoredToast.show(mContext, message);
         } else {

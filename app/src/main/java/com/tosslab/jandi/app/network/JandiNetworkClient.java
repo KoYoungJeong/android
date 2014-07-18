@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
+import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.JandiException;
@@ -22,36 +23,46 @@ public class JandiNetworkClient {
 
     public ResCommon registerNotificationToken(String regId) throws JandiException {
         ReqNotificationRegister req = new ReqNotificationRegister("android", regId);
-        ResCommon res = null;
         try {
-            res = mRestClient.registerNotificationToken(req);
+            return mRestClient.registerNotificationToken(req);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
-        return res;
     }
 
     public ResCommon updateNotificateionToken(String oldRegId, String newRegId) throws JandiException {
         ReqNotificationUpdate req = new ReqNotificationUpdate(newRegId);
-        ResCommon res = null;
         try {
-            res = mRestClient.updateNotificationToken(oldRegId, req);
+            return mRestClient.updateNotificationToken(oldRegId, req);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
-        return res;
     }
 
-
+    public ResCommon deleteNotificationToken(String regId) throws JandiException {
+        try {
+            return mRestClient.deleteNotificationToken(regId);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
 
     public ResCommon subscribeNotification(String regId, boolean isSubscribe) throws JandiException {
         ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
-        ResCommon res = null;
+
         try {
-            res = mRestClient.subscribeNotification(regId, req);
+            return mRestClient.subscribeNotification(regId, req);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
-        return res;
+    }
+
+    public ResCommon setNotificationTarget(String target) throws JandiException {
+        ReqNotificationTarget req = new ReqNotificationTarget(target);
+        try {
+            return mRestClient.setNotificationTarget(req);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
     }
 }

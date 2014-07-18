@@ -61,21 +61,18 @@ public class LoginActivity extends BaseActivity {
     void init() {
         mContext = getApplicationContext();
 
-//        trustEveryone();    // SSL 우회! 꼭 지울 것!
-
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
+        // 자동 로그인 과정.
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
-        // MainActivity에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
+        // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
         // 다시 본 activity를 실행한다.
         myToken = JandiPreference.getMyToken(this);
 
         if (myToken.length() > 0) {
-            moveToMainActivity();
-        } else {
-            // DO NOTHING
+            registerGcmInBackground();
         }
     }
 
@@ -89,6 +86,9 @@ public class LoginActivity extends BaseActivity {
      * Login
      ************************************************************/
 
+    /**
+     * 로그인 버튼을 눌렀을 때, 로그인 실행
+     */
     @Click(R.id.btn_login)
     void pressLoginButton() {
         mProgressWheel.show();
@@ -104,28 +104,28 @@ public class LoginActivity extends BaseActivity {
         TossRestToken tossRestToken = null;
         try {
             tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
-            doneLogin(true, tossRestToken, null);
+            doneLogin(true, tossRestToken, -1);
         } catch (RestClientException e) {
             log.error("Login Fail", e);
-            doneLogin(false, null, "Login failed");
+            doneLogin(false, null, R.string.err_login);
         } catch (Exception e) {
             log.error("Login Fail", e);
-            doneLogin(false, null, "Login failed");
+            doneLogin(false, null, R.string.err_login);
         }
     }
 
     @UiThread
-    void doneLogin(boolean isOk, TossRestToken token, String message) {
+    void doneLogin(boolean isOk, TossRestToken token, int resId) {
         mProgressWheel.dismiss();
 
         if (isOk) {
             log.debug("Login Success : " + token.token);
             myToken = token.token;
             if (token != null && token.token != null) {
-                registerGcm();
+                registerGcmInBackground();
             }
         } else {
-            ColoredToast.showError(this, message);
+            ColoredToast.showError(this, getString(resId));
         }
     }
 
@@ -145,7 +145,7 @@ public class LoginActivity extends BaseActivity {
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @Background
-    public void registerGcm() {
+    public void registerGcmInBackground() {
         // Check device for Play Services APK.
         if (checkPlayServices()) {
             try {
@@ -154,10 +154,12 @@ public class LoginActivity extends BaseActivity {
                 }
                 String justGeneratedRegId = mGcm.register(JandiConstants.SENDER_ID);
                 String furtherGeneratedRegId = getRegistrationId(mContext);
+
+                // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
                 if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
                     moveToMainActivity();
                 } else {
-                    registerInBackground(furtherGeneratedRegId, justGeneratedRegId);
+                    sendRegistrationIdToBackend(furtherGeneratedRegId, justGeneratedRegId);
                 }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
@@ -230,14 +232,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * GCM 서버에 registration ID and app versionCode를 등록하고 shared preference 에도 등록함.
-     */
-    @Background
-    void registerInBackground(String futherGenRegId, String justGenRegId) {
-        sendRegistrationIdToBackend(futherGenRegId, justGenRegId);
-    }
-
-    /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      *
@@ -252,6 +246,16 @@ public class LoginActivity extends BaseActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(JandiConstants.PREF_REG_ID, regId);
         editor.putInt(JandiConstants.PREF_APP_VERSION, appVersion);
+        editor.commit();
+    }
+
+    private void clearRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences();
+        int appVersion = getAppVersion(context);
+        log.info("Saving regId on app version " + appVersion);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(JandiConstants.PREF_REG_ID, "");
         editor.commit();
     }
 
@@ -280,7 +284,14 @@ public class LoginActivity extends BaseActivity {
             sendRegistrationIdDone(true, null);
         } catch (JandiException e) {
             log.error("Register Fail", e);
-            if (e.errCode == 4001) {
+            if (e.errCode == 1839) {
+                // 기존 토큰이 서버에 존재하지 않기 때문에 다시 로그인하라는 메시지 표시.
+                clearRegistrationId(mContext);
+                registerGcmInBackground();
+            } else if (e.errCode == 2000) {
+                // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
+                sendRegistrationIdDone(false, "만료된 토큰입니다.");
+            } else if (e.errCode == 4001) {
                 // 4001 은 duplicate token 이기 때문에 무시한다.
                 sendRegistrationIdDone(true, null);
             } else {

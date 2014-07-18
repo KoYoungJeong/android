@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
+import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
@@ -250,19 +251,28 @@ public interface TossRestClient {
     /************************************************************
      * Notification
      ************************************************************/
-    // Token 등록
+    // Notification Token 등록
     @Post("/settings/notification")
     @RequiresHeader("Authorization")
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
-    // Token 갱신
+    // Notification Token 갱신
     @Put("/settings/notifications/{deviceToken}")
     @RequiresHeader("Authorization")
     ResCommon updateNotificationToken(String deviceToken, ReqNotificationUpdate reqNotificationUpdate);
+
+    // Notification Token 삭제
+    @Delete("/settings/notifications/{deviceToken}")
+    @RequiresHeader("Authorization")
+    ResCommon deleteNotificationToken(String deviceToken);
 
     // Notification 켜고 끄기
     @Put("/settings/notifications/{deviceToken}/subscribe")
     @RequiresHeader("Authorization")
     ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
 
+    // Notification Target 설정
+    @Put("/settings/notification/target")
+    @RequiresHeader("Authorization")
+    ResCommon setNotificationTarget(ReqNotificationTarget reqNotificationTarget);
 }
