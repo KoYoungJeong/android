@@ -53,8 +53,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 7. 19..
  */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity2 extends BaseActivity {
-    private final Logger log = Logger.getLogger(FileDetailActivity2.class);
+public class FileDetailActivity extends BaseActivity {
+    private final Logger log = Logger.getLogger(FileDetailActivity.class);
     @Extra
     public int fileId;
 
@@ -62,7 +62,7 @@ public class FileDetailActivity2 extends BaseActivity {
     TossRestClient tossRestClient;
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
-    @ViewById(R.id.list_file_detail_items)
+    @ViewById(R.id.list_file_detail_comments)
     ListView listFileDetailComments;
     @ViewById(R.id.et_file_detail_comment)
     EditText etFileDetailComment;
@@ -103,13 +103,13 @@ public class FileDetailActivity2 extends BaseActivity {
 
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile_2);
-        textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name_2);
-        textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date_2);
-        textViewFileName = (TextView)header.findViewById(R.id.txt_file_detail_name_2);
+        imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile);
+        textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name);
+        textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date);
+        textViewFileName = (TextView)header.findViewById(R.id.txt_file_detail_name);
         textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info_2);
         imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo_2);
-        buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share_2);
+        buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
         listFileDetailComments.addHeaderView(header);
 
         myToken = JandiPreference.getMyToken(this);
@@ -151,7 +151,7 @@ public class FileDetailActivity2 extends BaseActivity {
     }
 
     @ItemLongClick
-    void list_file_detail_itemsItemLongClicked(ResMessages.OriginalMessage item) {
+    void list_file_detail_commentsItemLongClicked(ResMessages.OriginalMessage item) {
         if (item instanceof ResMessages.CommentMessage) {
             if (cdpItemManager != null && item.writerId == cdpItemManager.mMe.id) {
                 ColoredToast.show(this, "long click");

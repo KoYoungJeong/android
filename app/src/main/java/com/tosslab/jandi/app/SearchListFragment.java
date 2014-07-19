@@ -112,7 +112,7 @@ public class SearchListFragment extends Fragment {
 
     @ItemClick
     void list_searched_fileItemClicked(ResMessages.FileMessage searchedFile) {
-        FileDetailActivity2_
+        FileDetailActivity_
                 .intent(this)
                 .fileId(searchedFile.id)
                 .start();

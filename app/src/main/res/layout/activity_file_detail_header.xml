@@ -11,21 +11,21 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp">
         <ImageView
-            android:id="@+id/img_file_detail_user_profile_2"
+            android:id="@+id/img_file_detail_user_profile"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:background="@drawable/ic_action_switchteams"/>
         <TextView
-            android:id="@+id/txt_file_detail_user_name_2"
+            android:id="@+id/txt_file_detail_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/img_file_detail_user_profile_2"
+            android:layout_toRightOf="@id/img_file_detail_user_profile"
             android:layout_marginLeft="15dp"
             android:text="justin"
             android:textSize="@dimen/messages_user_name"
             />
         <TextView
-            android:id="@+id/txt_file_detail_create_date_2"
+            android:id="@+id/txt_file_detail_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -33,12 +33,12 @@
             android:textColor="@color/message_date_text"
             />
         <TextView
-            android:id="@+id/txt_file_detail_name_2"
+            android:id="@+id/txt_file_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_below="@id/txt_file_detail_user_name_2"
-            android:layout_alignLeft="@id/txt_file_detail_user_name_2"
+            android:layout_below="@id/txt_file_detail_user_name"
+            android:layout_alignLeft="@id/txt_file_detail_user_name"
             android:textColor="@color/file_name"
             android:text="file name"/>
     </RelativeLayout>
@@ -78,7 +78,7 @@
             android:textColor="@color/file_name"
             android:text="Shared in" />
         <TextView
-            android:id="@+id/txt_file_detail_shared_cdp_2"
+            android:id="@+id/txt_file_detail_shared_cdp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/txt_file_detail_shared"
@@ -87,7 +87,7 @@
             />
     </RelativeLayout>
     <ImageView
-        android:id="@+id/btn_file_detail_share_2"
+        android:id="@+id/btn_file_detail_share"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_gravity="center_horizontal"
@@ -97,14 +97,4 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/border_message_input_panel" />
-    <ListView
-        android:id="@+id/list_file_detail_comments"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:isScrollContainer="false"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:transcriptMode="normal">
-    </ListView>
 </LinearLayout>
