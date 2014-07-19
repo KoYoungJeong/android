@@ -2,34 +2,33 @@ package com.tosslab.jandi.app;
 
 import android.app.DialogFragment;
 import android.app.DownloadManager;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.dialogs.SelectCdpDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmShareEvent;
-import com.tosslab.jandi.app.events.RequestSelectionOfCdpToBeShared;
 import com.tosslab.jandi.app.events.RequestViewFile;
 import com.tosslab.jandi.app.lists.CdpItemManager;
-import com.tosslab.jandi.app.lists.FileDetailListAdapter;
+import com.tosslab.jandi.app.lists.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -46,31 +45,37 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * Created by justinygchoi on 2014. 7. 19..
+ */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseActivity {
-    private final Logger log = Logger.getLogger(FileDetailActivity.class);
-
+public class FileDetailActivity2 extends BaseActivity {
+    private final Logger log = Logger.getLogger(FileDetailActivity2.class);
     @Extra
     public int fileId;
 
     @RestService
     TossRestClient tossRestClient;
     @Bean
-    FileDetailListAdapter fileDetailListAdapter;
+    FileDetailCommentListAdapter fileDetailCommentListAdapter;
     @ViewById(R.id.list_file_detail_items)
-    ListView listFileDetails;
+    ListView listFileDetailComments;
     @ViewById(R.id.et_file_detail_comment)
     EditText etFileDetailComment;
+
+    // in File Detail Header
+    ImageView imageViewUserProfile;
+    TextView textViewUserName;
+    TextView textViewFileCreateDate;
+    TextView textViewFileName;
+    TextView textViewFileContentInfo;
+
+    ImageView imageViewPhotoFile;
+    ImageView buttonFileDetailShare;
 
     private BroadcastReceiver mCompleteReceiver = new FileDownloadBroadcastReceiver();
 
@@ -94,7 +99,19 @@ public class FileDetailActivity extends BaseActivity {
         mProgressWheel.init();
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        listFileDetails.setAdapter(fileDetailListAdapter);
+        listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
+
+        // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
+        View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
+        imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile_2);
+        textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name_2);
+        textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date_2);
+        textViewFileName = (TextView)header.findViewById(R.id.txt_file_detail_name_2);
+        textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info_2);
+        imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo_2);
+        buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share_2);
+        listFileDetailComments.addHeaderView(header);
+
         myToken = JandiPreference.getMyToken(this);
         tossRestClient.setHeader("Authorization", myToken);
         getFileDetailFromServer();
@@ -150,7 +167,8 @@ public class FileDetailActivity extends BaseActivity {
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = tossRestClient.getFileDetail(fileId);
-            fileDetailListAdapter.updateFileDetails(resFileDetail);
+            drawFileDetail(resFileDetail);
+            fileDetailCommentListAdapter.updateFileComments(resFileDetail);
             reloadList();
         } catch (RestClientException e) {
             log.error("fail to get file detail.", e);
@@ -160,7 +178,53 @@ public class FileDetailActivity extends BaseActivity {
     @UiThread
     void reloadList() {
         log.debug("reload");
-        fileDetailListAdapter.notifyDataSetChanged();
+        fileDetailCommentListAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread
+    public void drawFileDetail(ResFileDetail resFileDetail) {
+        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
+            if (fileDetail instanceof ResMessages.FileMessage) {
+                final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+                // 사용자
+                ResMessages.Writer writer = fileMessage.writer;
+                String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+                Picasso.with(mContext).load(profileUrl).centerCrop().fit().into(imageViewUserProfile);
+                String userName = writer.u_firstName + " " + writer.u_lastName;
+                textViewUserName.setText(userName);
+                // 파일
+                String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
+                textViewFileCreateDate.setText(createTime);
+                textViewFileName.setText(fileMessage.content.name);
+                // 파일 이름을 터치하면 파일 연결
+                textViewFileName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                        EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.type));
+                    }
+                });
+
+                String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
+
+                // 이미지일 경우
+                if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
+                    imageViewPhotoFile.setVisibility(View.VISIBLE);
+                    String photoUrl = (JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl).replaceAll(" ", "%20");
+                    Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
+                }
+                buttonFileDetailShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
+                        newFragment.show(getFragmentManager(), "dialog");
+                    }
+                });
+                break;
+            }
+
+        }
     }
 
     /************************************************************
@@ -200,19 +264,19 @@ public class FileDetailActivity extends BaseActivity {
 
     @UiThread
     public void sendCommentDone() {
-        fileDetailListAdapter.clear();
+        fileDetailCommentListAdapter.clear();
         getFileDetailFromServer();
     }
 
-    /**
-     * Event from FileDetailView
-     * FileDetailView 에서 파일 쉐어 버튼을 눌렀을 때, 발생하는 이벤트
-     * @param event
-     */
-    public void onEvent(RequestSelectionOfCdpToBeShared event) {
-        DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
-        newFragment.show(getFragmentManager(), "dialog");
-    }
+//    /**
+//     * Event from FileDetailView
+//     * FileDetailView 에서 파일 쉐어 버튼을 눌렀을 때, 발생하는 이벤트
+//     * @param event
+//     */
+//    public void onEvent(RequestSelectionOfCdpToBeShared event) {
+//        DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
+//        newFragment.show(getFragmentManager(), "dialog");
+//    }
 
     /**
      * Event from SelectCdpDialogFragment
@@ -323,5 +387,4 @@ public class FileDetailActivity extends BaseActivity {
             }
         }
     }
-
 }

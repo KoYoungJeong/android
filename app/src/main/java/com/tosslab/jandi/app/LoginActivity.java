@@ -174,15 +174,20 @@ public class LoginActivity extends BaseActivity {
                 }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
-                ColoredToast.showError(mContext, "Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+                registerGcmError("Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
                 return;
             }
         } else {
             log.warn("No valid Google Play Services APK found.");
             // TODO : Push 안 됨
-            ColoredToast.showWarning(mContext, "Push 서비스를 사용할 수 없는 단말입니다");
+            registerGcmError("Push 서비스를 사용할 수 없는 단말입니다");
             moveToMainActivity();
         }
+    }
+
+    @UiThread
+    public void registerGcmError(String message) {
+        ColoredToast.showWarning(mContext, message);
     }
 
     private boolean checkPlayServices() {
@@ -285,15 +290,15 @@ public class LoginActivity extends BaseActivity {
             log.debug("New device token registered, registration ID=" + regId);
             sendRegistrationIdDone(true, null);
         } catch (JandiException e) {
-            log.error("Register Fail", e);
-
             if (e.errCode == 2000) {
                 // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
                 sendRegistrationIdDone(false, "만료된 토큰입니다.");
             } else if (e.errCode == 4001) {
                 // 4001 은 duplicate token 이기 때문에 무시한다.
+                log.warn("duplicated notification token");
                 moveToMainActivity();
             } else {
+                log.error("Register Fail", e);
                 sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
             }
         }

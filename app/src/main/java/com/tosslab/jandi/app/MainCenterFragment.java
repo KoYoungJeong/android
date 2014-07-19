@@ -648,7 +648,7 @@ public class MainCenterFragment extends BaseFragment  {
     }
 
     private void moveToFileDetailActivity(int fileId) {
-        FileDetailActivity_
+        FileDetailActivity2_
                 .intent(this)
                 .fileId(fileId)
                 .start();

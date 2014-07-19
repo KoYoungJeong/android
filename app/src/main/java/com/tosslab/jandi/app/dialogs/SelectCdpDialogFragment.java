@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import com.tosslab.jandi.app.FileDetailActivity;
+import com.tosslab.jandi.app.FileDetailActivity2;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmShareEvent;
 import com.tosslab.jandi.app.lists.CdpArrayAdapter;
@@ -44,7 +44,7 @@ public class SelectCdpDialogFragment extends DialogFragment {
         final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_select_cdp_tbs);
         spinner.setPrompt("공유");
         cdpArrayAdapter = new CdpArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
-                ((FileDetailActivity)getActivity()).cdpItemManager.retrieveWithoutTitle());
+                ((FileDetailActivity2)getActivity()).cdpItemManager.retrieveWithoutTitle());
         spinner.setAdapter(cdpArrayAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

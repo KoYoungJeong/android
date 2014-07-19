@@ -28,7 +28,7 @@
             android:logo="@drawable/ic_actionbar_logo"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FileDetailActivity_"
+            android:name=".FileDetailActivity2_"
             android:label="@string/title_file_detail"
             android:logo="@drawable/ic_actionbar_logo"
             android:screenOrientation="portrait"

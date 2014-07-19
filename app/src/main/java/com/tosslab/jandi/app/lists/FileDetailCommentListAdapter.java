@@ -17,19 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by justinygchoi on 2014. 6. 24..
+ * Created by justinygchoi on 2014. 7. 19..
  */
 @EBean
-public class FileDetailListAdapter extends BaseAdapter {
-    private final Logger log = Logger.getLogger(FileDetailListAdapter.class);
-    List<ResMessages.OriginalMessage> mMessages;
+public class FileDetailCommentListAdapter extends BaseAdapter {
+    private final Logger log = Logger.getLogger(FileDetailCommentListAdapter.class);
+    List<ResMessages.CommentMessage> mMessages;
 
     @RootContext
     Context mContext;
 
     @AfterInject
     void initAdapter() {
-        mMessages = new ArrayList<ResMessages.OriginalMessage>();
+        mMessages = new ArrayList<ResMessages.CommentMessage>();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FileDetailListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ResMessages.OriginalMessage getItem(int position) {
+    public ResMessages.CommentMessage getItem(int position) {
         return mMessages.get(position);
     }
 
@@ -50,11 +50,11 @@ public class FileDetailListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FileDetailView fileDetailView;
+        FileDetailCommentView fileDetailView;
         if (convertView == null) {
-            fileDetailView = FileDetailView_.build(mContext);
+            fileDetailView = FileDetailCommentView_.build(mContext);
         } else {
-            fileDetailView = (FileDetailView) convertView;
+            fileDetailView = (FileDetailCommentView) convertView;
         }
 
         fileDetailView.bind(getItem(position));
@@ -62,12 +62,10 @@ public class FileDetailListAdapter extends BaseAdapter {
         return fileDetailView;
     }
 
-    public void updateFileDetails(ResFileDetail resFileDetail) {
+    public void updateFileComments(ResFileDetail resFileDetail) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.FileMessage) {
-                mMessages.add(0, fileDetail);
-            } else if (fileDetail instanceof ResMessages.CommentMessage) {
-                mMessages.add(fileDetail);
+            if (fileDetail instanceof ResMessages.CommentMessage) {
+                mMessages.add((ResMessages.CommentMessage)fileDetail);
             }
         }
         log.debug("Upload done : " + mMessages.size() + " items.");

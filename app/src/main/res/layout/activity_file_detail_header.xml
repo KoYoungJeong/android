@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <!-- 파일 제목과 사용자 프로필 부분 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp">
+        <ImageView
+            android:id="@+id/img_file_detail_user_profile_2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_action_switchteams"/>
+        <TextView
+            android:id="@+id/txt_file_detail_user_name_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/img_file_detail_user_profile_2"
+            android:layout_marginLeft="15dp"
+            android:text="justin"
+            android:textSize="@dimen/messages_user_name"
+            />
+        <TextView
+            android:id="@+id/txt_file_detail_create_date_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="date"
+            android:textColor="@color/message_date_text"
+            />
+        <TextView
+            android:id="@+id/txt_file_detail_name_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/txt_file_detail_user_name_2"
+            android:layout_alignLeft="@id/txt_file_detail_user_name_2"
+            android:textColor="@color/file_name"
+            android:text="file name"/>
+    </RelativeLayout>
+    <!-- 이미지 일 경우 사진을 보여준다 -->
+    <ImageView
+        android:id="@+id/img_file_detail_photo_2"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"/>
+    <!-- 파일의 상세 정보 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp">
+        <ImageView
+            android:id="@+id/icon_file_detail_content_type_2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/tmp_file_icon"/>
+        <TextView
+            android:id="@+id/txt_file_detail_file_info_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/icon_file_detail_content_type_2"
+            android:layout_marginLeft="15dp"
+            android:text="0 KB Text"
+            android:textSize="@dimen/messages_user_name"/>
+        <TextView
+            android:id="@+id/txt_file_detail_shared"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_below="@id/txt_file_detail_file_info_2"
+            android:layout_alignLeft="@id/txt_file_detail_file_info_2"
+            android:textColor="@color/file_name"
+            android:text="Shared in" />
+        <TextView
+            android:id="@+id/txt_file_detail_shared_cdp_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/txt_file_detail_shared"
+            android:layout_alignBottom="@id/txt_file_detail_shared"
+            android:text="channel"
+            />
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/btn_file_detail_share_2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@android:drawable/ic_menu_share"
+        android:layout_margin="5dp"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border_message_input_panel" />
+    <ListView
+        android:id="@+id/list_file_detail_comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="false"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:transcriptMode="normal">
+    </ListView>
+</LinearLayout>
