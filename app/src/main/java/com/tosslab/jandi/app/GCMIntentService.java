@@ -43,15 +43,18 @@ public class GCMIntentService extends IntentService {
              * recognize.
              */
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+                sendNotification("Send error: " + extras.toString(), -1, -1);
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " + extras.toString());
+                sendNotification("Deleted messages on server: " + extras.toString(), -1, -1);
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 String lastMessage = extras.getString("lastMessage");
+                String strCdpId = extras.getString("toEntityId");
+                int cdpId = Integer.parseInt(strCdpId);
+                int cdpType = convertCdpTypeFromString(extras.getString("toEntityType", ""));
                 Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 
                 // Post notification of received message.
-                sendNotification(lastMessage);
+                sendNotification(lastMessage, cdpType, cdpId);
                 Log.i(TAG, "Received: " + extras.toString());
             }
         }
@@ -59,22 +62,42 @@ public class GCMIntentService extends IntentService {
         GCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    private int convertCdpTypeFromString(String cdpType) {
+        if (cdpType.equals("channel")) {
+            return JandiConstants.TYPE_CHANNEL;
+        } else if (cdpType.equals("privateGroup")) {
+            return JandiConstants.TYPE_PRIVATE_GROUP;
+        } else if (cdpType.equals("user")) {
+            return JandiConstants.TYPE_DIRECT_MESSAGE;
+        } else {
+            return -1;
+        }
+    }
+
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(String msg, int cdpType, int cdpId) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity_.class), 0);
+        Intent intent = new Intent(getApplicationContext(), MainActivity_.class);
+        if (cdpType >= 0 && cdpId >= 0) {
+            intent.putExtra(JandiConstants.EXTRA_CDP_ID, cdpId);
+            intent.putExtra(JandiConstants.EXTRA_CDP_TYPE, cdpType);
+        }
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext()
+                , 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+//                new Intent(this, MainActivity_.class), 0);
+
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_actionbar_logo)
                         .setTicker(msg)
                         .setDefaults(Notification.DEFAULT_ALL)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle("Jandi")
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg);
 

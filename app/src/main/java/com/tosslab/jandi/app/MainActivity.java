@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -82,6 +83,16 @@ public class MainActivity extends SlidingFragmentActivity {
 
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
+
+        // 만일 push로부터 MainActivity가 시작된 경우 Extra에 값을 넣는다.
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            int cdpTypeFromPush = getIntent().getExtras().getInt(JandiConstants.EXTRA_CDP_TYPE, -1);
+            int cdpIdFromPush = getIntent().getExtras().getInt(JandiConstants.EXTRA_CDP_ID, -1);
+            if (cdpTypeFromPush >= 0 && cdpIdFromPush >= 0) {
+                saveSharedPreference(cdpTypeFromPush, cdpIdFromPush);
+            }
+        }
 
         getCdpItemFromServer();
     }
@@ -178,15 +189,18 @@ public class MainActivity extends SlidingFragmentActivity {
         log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
 
         // Preference 저장
-        SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("cdpName", event.cdpItem.name);
-        editor.putInt("cdpType", event.cdpItem.type);
-        editor.putInt("cdpId", event.cdpItem.id);
-        editor.commit();
+        saveSharedPreference(event.cdpItem.type, event.cdpItem.id);
 
         getSlidingMenu().showContent();
         getMessageListOfSelectedCdp();
+    }
+
+    private void saveSharedPreference(int cdpType, int cdpId) {
+        SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("cdpType", cdpType);
+        editor.putInt("cdpId", cdpId);
+        editor.commit();
     }
 
     /************************************************************
@@ -251,22 +265,20 @@ public class MainActivity extends SlidingFragmentActivity {
     public void getMessageListOfSelectedCdp() {
         // Preference 추출
         SharedPreferences pref = getSharedPreferences(JandiConstants.PREF_NAME, 0);
-        String cdpName = pref.getString("cdpName", "");
         int cdpType = pref.getInt("cdpType", -1);
         int cdpId = pref.getInt("cdpId", -1);
 
         if (cdpId > 0) {
             mCurrentSelectedCdpItem = mCdpItemManager.getCdpItemById(cdpId);
             if (mCurrentSelectedCdpItem != null) {
-                getActionBar().setTitle(FormatConverter.cdpName(cdpName, cdpType));
+                getActionBar().setTitle(mCdpItemManager.getCdpNameById(cdpId));
                 EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
                 return;
             }
         }
 
         mCurrentSelectedCdpItem = mCdpItemManager.getDefaultChannel();
-        getActionBar().setTitle(FormatConverter.cdpName(mCurrentSelectedCdpItem.name
-                , mCurrentSelectedCdpItem.type));
+        getActionBar().setTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
         EventBus.getDefault().post(new RequestMessageListEvent(mCurrentSelectedCdpItem.type
                 , mCurrentSelectedCdpItem.id));
     }

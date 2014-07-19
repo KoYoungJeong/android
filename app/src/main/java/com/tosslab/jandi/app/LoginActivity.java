@@ -144,6 +144,12 @@ public class LoginActivity extends BaseActivity {
      ************************************************************/
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    /**
+     * 현재 디바이스의 notification token을 가져온다. 아래와 같은 조건에서 갱신한다.
+     * - 앱 버전이 바뀜
+     * - GCM에서 현재 생성된 토큰이 기존과 다름
+     *
+     */
     @Background
     public void registerGcmInBackground() {
         // Check device for Play Services APK.
@@ -153,13 +159,18 @@ public class LoginActivity extends BaseActivity {
                     mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
                 }
                 String justGeneratedRegId = mGcm.register(JandiConstants.SENDER_ID);
-                String furtherGeneratedRegId = getRegistrationId(mContext);
+                String furtherGeneratedRegId = getRegistrationId();
 
-                // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
-                if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+                if (furtherGeneratedRegId.isEmpty()) {
+                    // 버전이 바뀌었거나, 기존에 notification 토큰이 존재하지 않는다면
+                    // 새로 notification 토큰을 생성한다.
+                    sendRegistrationIdInBackground(justGeneratedRegId);
+                } else if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+                    // 기존 토큰과 같다면 바로 main activity로 이동
                     moveToMainActivity();
                 } else {
-                    sendRegistrationIdToBackend(furtherGeneratedRegId, justGeneratedRegId);
+                    // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
+                    updateRegistrationIdInBackground(furtherGeneratedRegId, justGeneratedRegId);
                 }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
@@ -193,43 +204,43 @@ public class LoginActivity extends BaseActivity {
      * 현재 GCM regID를 획득
      * 없으면 null 리턴, then 등록한다.
      */
-    private String getRegistrationId(Context context) {
+    private String getRegistrationId() {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(JandiConstants.PREF_REG_ID, "");
         if (registrationId.isEmpty()) {
             log.info("Registration not found.");
             return "";
         }
-
-        // Check if app was updated; if so, it must clear the registration ID
-        // since the existing regID is not guaranteed to work with the new
-        // app version.
-        int registeredVersion = prefs.getInt(JandiConstants.PREF_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            log.info("App version changed.");
-            return "";
-        }
         return registrationId;
     }
+
+//    /**
+//     * 현재 앱 버전의 변경 여부 조사
+//     * @param context
+//     * @return
+//     */
+//    private boolean isChangedAppVersion(Context context) {
+//        final SharedPreferences prefs = getGCMPreferences();
+//        int registeredVersion = prefs.getInt(JandiConstants.PREF_APP_VERSION, Integer.MIN_VALUE);
+//        int currentVersion = getAppVersion(context);
+//        return (registeredVersion != currentVersion);
+//    }
+//
+//    private static int getAppVersion(Context context) {
+//        try {
+//            PackageInfo packageInfo = context.getPackageManager()
+//                    .getPackageInfo(context.getPackageName(), 0);
+//            return packageInfo.versionCode;
+//        } catch (PackageManager.NameNotFoundException e) {
+//            // should never happen
+//            throw new RuntimeException("Could not get package name: " + e);
+//        }
+//    }
 
     private SharedPreferences getGCMPreferences() {
         return getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
     }
 
-    /**
-     * @return Application's version code from the {@code PackageManager}.
-     */
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
 
     /**
      * Stores the registration ID and app versionCode in the application's
@@ -240,19 +251,19 @@ public class LoginActivity extends BaseActivity {
      */
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences();
-        int appVersion = getAppVersion(context);
-        log.info("Saving regId on app version " + appVersion);
+//        int appVersion = getAppVersion(context);
+//        log.info("Saving regId on app version " + appVersion);
 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(JandiConstants.PREF_REG_ID, regId);
-        editor.putInt(JandiConstants.PREF_APP_VERSION, appVersion);
+//        editor.putInt(JandiConstants.PREF_APP_VERSION, appVersion);
         editor.commit();
     }
 
     private void clearRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences();
-        int appVersion = getAppVersion(context);
-        log.info("Saving regId on app version " + appVersion);
+//        int appVersion = getAppVersion(context);
+//        log.info("Saving regId on app version " + appVersion);
 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(JandiConstants.PREF_REG_ID, "");
@@ -266,34 +277,46 @@ public class LoginActivity extends BaseActivity {
      * using the 'from' address in the message.
      */
     @Background
-    public void sendRegistrationIdToBackend(String futherGenRegId, String justGenRegId) {
-        // Your implementation here.
+    public void sendRegistrationIdInBackground(String regId) {
         try {
-            mRegId = justGenRegId;
             JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
-            if (futherGenRegId.isEmpty()) {
-                // 새로 등록
-                log.debug("Device registered, registration ID=" + mRegId);
-                jandiNetworkClient.registerNotificationToken(justGenRegId);
-            } else {
-                // 기존 Dev Token 갱신
-                log.debug("Device updated, registration ID=" + mRegId);
-                jandiNetworkClient.updateNotificateionToken(futherGenRegId, justGenRegId);
-            }
-
+            jandiNetworkClient.registerNotificationToken(regId);
+            mRegId = regId;
+            log.debug("New device token registered, registration ID=" + regId);
             sendRegistrationIdDone(true, null);
         } catch (JandiException e) {
             log.error("Register Fail", e);
-            if (e.errCode == 1839) {
-                // 기존 토큰이 서버에 존재하지 않기 때문에 다시 로그인하라는 메시지 표시.
-                clearRegistrationId(mContext);
-                registerGcmInBackground();
-            } else if (e.errCode == 2000) {
+
+            if (e.errCode == 2000) {
                 // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
                 sendRegistrationIdDone(false, "만료된 토큰입니다.");
             } else if (e.errCode == 4001) {
                 // 4001 은 duplicate token 이기 때문에 무시한다.
-                sendRegistrationIdDone(true, null);
+                moveToMainActivity();
+            } else {
+                sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
+            }
+        }
+    }
+
+    @Background
+    public void updateRegistrationIdInBackground(String futherGenRegId, String justGenRegId) {
+        try {
+            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+            // 기존 Dev Token 갱신
+            jandiNetworkClient.updateNotificateionToken(futherGenRegId, justGenRegId);
+            mRegId = justGenRegId;
+            log.debug("Device token updated, registration ID=" + mRegId);
+            sendRegistrationIdDone(true, null);
+        } catch (JandiException e) {
+            log.error("Register Fail", e);
+            if (e.errCode == 1839) {
+                // 기존 토큰이 서버에 존재하지 않기 때문에 다시 새로 등록.
+                clearRegistrationId(mContext);
+                sendRegistrationIdInBackground(justGenRegId);
+            } else if (e.errCode == 2000) {
+                // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
+                sendRegistrationIdDone(false, "만료된 토큰입니다.");
             } else {
                 sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
             }
