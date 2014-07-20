@@ -1,8 +1,5 @@
 package com.tosslab.jandi.app;
 
-import java.util.Locale;
-
-import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -13,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import com.tosslab.jandi.app.lists.CdpItemManager;
@@ -21,11 +19,15 @@ import com.tosslab.jandi.app.utils.ViewGroupUtils;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.apache.log4j.Logger;
+
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
 @EActivity(R.layout.activity_search)
 public class SearchActivity extends BaseActivity implements ActionBar.TabListener {
+    private final Logger log = Logger.getLogger(BaseActivity.class);
     @Extra
     public int searchMode;    // 서치 모드
 
@@ -47,6 +49,13 @@ public class SearchActivity extends BaseActivity implements ActionBar.TabListene
 
         // attach listener to this spinnerView for handling spinner selection change
         Spinner spinnerView = (Spinner) getLayoutInflater().inflate(R.layout.spinner_search_type, null);
+        spinnerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // All tab으로 이동하여 다시 서치를 수행
+                log.debug(i + " selected");
+            }
+        });
         ViewGroupUtils.replaceView(titleView, spinnerView);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
@@ -67,7 +76,8 @@ public class SearchActivity extends BaseActivity implements ActionBar.TabListene
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
-                            .setTabListener(this));
+                            .setTabListener(this)
+            );
         }
 
         // 특정인 검색으로 시작한다면 두번째 텝으로 이동

@@ -194,9 +194,11 @@ public class FileDetailActivity extends BaseActivity {
         if (!mResFileDetail.shareEntities.isEmpty()) {
             int nSharedEntities = mResFileDetail.shareEntities.size();
             for (int i=0; i<nSharedEntities; i++) {
-                int sharedEntityId = mResFileDetail.shareEntities.get(i);
-                sharedEntityNames += cdpItemManager.getCdpNameById(sharedEntityId);
-                sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
+                String sharedEntityName = cdpItemManager.getCdpNameById(mResFileDetail.shareEntities.get(i));
+                if (!sharedEntityName.isEmpty()) {
+                    sharedEntityNames += sharedEntityName;
+                    sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
+                }
             }
         }
         textViewFileSharedCdp.setText(sharedEntityNames);

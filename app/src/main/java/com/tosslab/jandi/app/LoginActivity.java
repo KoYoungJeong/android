@@ -72,7 +72,7 @@ public class LoginActivity extends BaseActivity {
         myToken = JandiPreference.getMyToken(this);
 
         if (myToken.length() > 0) {
-            registerGcmInBackground();
+            registerGcm();
         }
     }
 
@@ -122,7 +122,7 @@ public class LoginActivity extends BaseActivity {
             log.debug("Login Success : " + token.token);
             myToken = token.token;
             if (token != null && token.token != null) {
-                registerGcmInBackground();
+                registerGcm();
             }
         } else {
             ColoredToast.showError(this, getString(resId));
@@ -144,6 +144,11 @@ public class LoginActivity extends BaseActivity {
      ************************************************************/
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    @UiThread
+    public void registerGcm() {
+        mProgressWheel.show();
+        registerGcmInBackground();
+    }
     /**
      * 현재 디바이스의 notification token을 가져온다. 아래와 같은 조건에서 갱신한다.
      * - 앱 버전이 바뀜
@@ -172,6 +177,12 @@ public class LoginActivity extends BaseActivity {
                     // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
                     updateRegistrationIdInBackground(furtherGeneratedRegId, justGeneratedRegId);
                 }
+//                if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+//                    // 기존 토큰과 같다면 바로 main activity로 이동
+//                    moveToMainActivity();
+//                } else {
+//                    sendRegistrationIdInBackground(justGeneratedRegId);
+//                }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
                 registerGcmError("Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
