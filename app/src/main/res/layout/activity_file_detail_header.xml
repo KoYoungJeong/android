@@ -52,7 +52,7 @@
     <!-- 파일의 상세 정보 -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_margin="15dp">
         <ImageView
             android:id="@+id/icon_file_detail_content_type_2"
@@ -82,8 +82,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/txt_file_detail_shared"
-            android:layout_alignBottom="@id/txt_file_detail_shared"
-            android:text="channel"
+            android:layout_alignBaseline="@id/txt_file_detail_shared"
+            android:text="Names\n of shared entities"
             />
     </RelativeLayout>
     <ImageView

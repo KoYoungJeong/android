@@ -108,18 +108,7 @@ public class CdpItemManager {
 
     public String getCdpNameById(int cdpId) {
         CdpItem cdpItem = getCdpItemById(cdpId);
-        return convertCdpName(cdpItem.name, cdpItem.type);
-    }
-
-    private String convertCdpName(String originName, int cdpType) {
-        switch (cdpType) {
-            case JandiConstants.TYPE_CHANNEL:
-                return "# " + originName;
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return "@ " + originName;
-            default:
-                return originName;
-        }
+        return (cdpItem != null) ? cdpItem.toString() : "";
     }
 
     private int searchPosition(List<CdpItem> targets, CdpItem item) {

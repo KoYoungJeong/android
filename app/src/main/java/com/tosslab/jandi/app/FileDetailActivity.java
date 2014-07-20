@@ -73,6 +73,7 @@ public class FileDetailActivity extends BaseActivity {
     TextView textViewFileCreateDate;
     TextView textViewFileName;
     TextView textViewFileContentInfo;
+    TextView textViewFileSharedCdp;
 
     ImageView imageViewPhotoFile;
     ImageView buttonFileDetailShare;
@@ -81,6 +82,7 @@ public class FileDetailActivity extends BaseActivity {
 
     public String myToken;
 
+    private ResMessages.FileMessage mResFileDetail;
     private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
@@ -108,6 +110,7 @@ public class FileDetailActivity extends BaseActivity {
         textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date);
         textViewFileName = (TextView)header.findViewById(R.id.txt_file_detail_name);
         textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info_2);
+        textViewFileSharedCdp = (TextView)header.findViewById(R.id.txt_file_detail_shared_cdp);
         imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo_2);
         buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
         listFileDetailComments.addHeaderView(header);
@@ -182,10 +185,29 @@ public class FileDetailActivity extends BaseActivity {
     }
 
     @UiThread
+    public void drawFileSharedEntities() {
+        if (mResFileDetail == null) return;
+        if (cdpItemManager == null) return;
+
+        // 공유 CDP 이름
+        String sharedEntityNames = "";
+        if (!mResFileDetail.shareEntities.isEmpty()) {
+            int nSharedEntities = mResFileDetail.shareEntities.size();
+            for (int i=0; i<nSharedEntities; i++) {
+                int sharedEntityId = mResFileDetail.shareEntities.get(i);
+                sharedEntityNames += cdpItemManager.getCdpNameById(sharedEntityId);
+                sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
+            }
+        }
+        textViewFileSharedCdp.setText(sharedEntityNames);
+    }
+
+    @UiThread
     public void drawFileDetail(ResFileDetail resFileDetail) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
                 final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+                mResFileDetail = fileMessage;
                 // 사용자
                 ResMessages.Writer writer = fileMessage.writer;
                 String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
@@ -207,6 +229,9 @@ public class FileDetailActivity extends BaseActivity {
 
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
+
+                // 공유 CDP 이름
+                drawFileSharedEntities();
 
                 // 이미지일 경우
                 if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
@@ -294,7 +319,9 @@ public class FileDetailActivity extends BaseActivity {
      * @param event
      */
     public void onEvent(CdpItemManager event) {
+        log.debug("cdpItemManager is set");
         cdpItemManager = event;
+        drawFileSharedEntities();
     }
 
     @Background
