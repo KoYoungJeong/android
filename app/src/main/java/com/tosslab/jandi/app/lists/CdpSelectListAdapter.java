@@ -47,7 +47,7 @@ public class CdpSelectListAdapter extends BaseAdapter {
     public View getView(int i, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.item_check_user, null);
+            convertView = layoutInflater.inflate(R.layout.item_select_cdp, null);
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
             holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);

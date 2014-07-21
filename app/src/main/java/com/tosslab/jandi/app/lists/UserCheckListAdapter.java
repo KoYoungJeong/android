@@ -52,9 +52,9 @@ public class UserCheckListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.item_check_user, null);
             holder = new ViewHolder();
-            holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.cb_select_cdp);
+            holder.textView = (TextView) convertView.findViewById(R.id.txt_check_user_name);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.img_check_user_icon);
+            holder.checkBox = (CheckBox) convertView.findViewById(R.id.cb_check_user);
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {

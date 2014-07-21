@@ -2,7 +2,6 @@ package com.tosslab.jandi.app;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
 import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.lists.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.lists.UserCheckListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -51,17 +49,15 @@ import de.greenrobot.event.EventBus;
 public class SearchMessageActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(SearchMessageActivity.class);
     @Extra
-    public int mSearchMode;     // 서치 모드.   ALL || Images || PDFs
-
+    public int mSearchMode;         // 서치 모드.   ALL || Images || PDFs
     private String mSearchUser;     // 사용자.     ALL || Mine || UserID
-    private String mCurrentUserId;  // 현재 UserId
+    private String mCurrentUserName;    // 현재 UserName
+    private String mCurrentUserId;      // 현재 UserId
 
     @ViewById(R.id.ly_search_message_all_files)
     LinearLayout layoutSearchMessageAllFiles;
     @ViewById(R.id.ly_search_message_user)
     LinearLayout layoutSearchMessageUser;
-    @ViewById(R.id.txt_search_message_file_type)
-    TextView textViewSearchMessageFileType;
     @ViewById(R.id.txt_search_message_user_name)
     TextView textViewSearchMessageUserName;
 
@@ -80,8 +76,9 @@ public class SearchMessageActivity extends BaseActivity {
     private String mMyToken;
 
     private CdpItemManager mCdpItemManager = null;
-    private Spinner mSpinner;
     private boolean isFirst = true;
+
+    private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
 
     @AfterViews
     void initView() {
@@ -93,12 +90,11 @@ public class SearchMessageActivity extends BaseActivity {
         View titleView = findViewById(titleId);
 
         // attach listener to this spinnerView for handling spinner selection change
-        mSpinner = (Spinner) getLayoutInflater().inflate(R.layout.spinner_search_type, null);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        Spinner spinner = (Spinner) getLayoutInflater().inflate(R.layout.spinner_search_type, null);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (isFirst) {
-                    isFirst = false;
                     return;
                 }
                 // All tab으로 이동하여 다시 서치를 수행
@@ -112,10 +108,9 @@ public class SearchMessageActivity extends BaseActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
-        ViewGroupUtils.replaceView(titleView, mSpinner);
+        ViewGroupUtils.replaceView(titleView, spinner);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -127,9 +122,11 @@ public class SearchMessageActivity extends BaseActivity {
         // 선택한 서치 모드와 사용자를 셋팅
         // 내 파일 검색으로 시작한다면 두번째 텝으로 이동
         mCurrentUserId = ReqSearchFile.USER_ID_MINE;
+        mCurrentUserName = "Just Me";
         if (mSearchMode == JandiConstants.TYPE_SEARCH_MODE_USER) {
             setFlagSelectedAllFilesTab(false);
         } else {
+            spinner.setSelection(mSearchMode);
             setFlagSelectedAllFilesTab(true);
         }
         drawLayout();
@@ -203,8 +200,10 @@ public class SearchMessageActivity extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mUserSelectDialog != null)
+                    mUserSelectDialog.dismiss();
                 mCurrentUserId = teamMember.get(i).id + "";
-                mSearchMode = JandiConstants.TYPE_SEARCH_USER_SPECIFIC;
+//                mSearchMode = JandiConstants.TYPE_SEARCH_USER_SPECIFIC;
                 setFlagSelectedAllFilesTab(false);
                 drawLayout();
                 // 서치 시작
@@ -216,7 +215,7 @@ public class SearchMessageActivity extends BaseActivity {
         dialog.setTitle(R.string.title_search_user_select);
         dialog.setIcon(android.R.drawable.ic_menu_agenda);
         dialog.setView(view);
-        dialog.show();
+        mUserSelectDialog = dialog.show();
     }
 
     /************************************************************
@@ -242,30 +241,17 @@ public class SearchMessageActivity extends BaseActivity {
             layoutSearchMessageAllFiles.setBackgroundColor(getResources().getColor(R.color.bg_unselected_tab));
             layoutSearchMessageUser.setBackgroundColor(getResources().getColor(R.color.bg_selected_tab));
         }
-        String strUserName = "Just Me";
-        if (mSearchUser.equals(ReqSearchFile.USER_ID_ALL) || mSearchUser.equals(ReqSearchFile.USER_ID_MINE)) {
-            // DO Nothing
+
+        if (mSearchUser.equals(ReqSearchFile.USER_ID_MINE)) {
+            mCurrentUserName = "Just Me";
+        } else if (mSearchUser.equals(ReqSearchFile.USER_ID_ALL)) {
+            // DO NOTHING
         } else {
             if (mCdpItemManager != null) {
-                strUserName = mCdpItemManager.getCdpNameById(Integer.parseInt(mSearchUser));
+                mCurrentUserName = mCdpItemManager.getCdpNameById(Integer.parseInt(mSearchUser));
             }
         }
-        textViewSearchMessageUserName.setText(strUserName);
-
-        switch (mSearchMode) {
-            case JandiConstants.TYPE_SEARCH_MODE_IMAGES:
-                textViewSearchMessageFileType.setText("Images");
-                mSpinner.setSelection(1);
-                break;
-            case JandiConstants.TYPE_SEARCH_MODE_PDF:
-                textViewSearchMessageFileType.setText("PDFs");
-                mSpinner.setSelection(2);
-                break;
-            default:
-                textViewSearchMessageFileType.setText("All Files");
-                mSpinner.setSelection(0);
-                break;
-        }
+        textViewSearchMessageUserName.setText(mCurrentUserName);
     }
 
     /**
@@ -334,9 +320,9 @@ public class SearchMessageActivity extends BaseActivity {
     @UiThread
     void doSearchDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
-
         if (isOk) {
             mAdapter.notifyDataSetChanged();
+            isFirst = false;
         } else {
             ColoredToast.showError(this, message);
         }
