@@ -66,6 +66,7 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_section_everyone">Everyone</string>
     <string name="title_section_me">Just me</string>
+    <string name="title_search_user_select">검색할 사용자를 선택하세요</string>
 
     <!-- ERRORS -->
     <string name="err_common_create">생성에 실패하였습니다.</string>

@@ -5,8 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,18 +12,17 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by justinygchoi on 2014. 7. 15..
+ * Created by justinygchoi on 2014. 7. 21..
  */
-public class UserCheckListAdapter extends BaseAdapter {
+public class CdpSelectListAdapter extends BaseAdapter {
     private List<CdpItem> listSelectCdp;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public UserCheckListAdapter(Context context, List<CdpItem> listSelectCdp) {
+    public CdpSelectListAdapter(Context context, List<CdpItem> listSelectCdp) {
         this.listSelectCdp = listSelectCdp;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
@@ -54,15 +51,6 @@ public class UserCheckListAdapter extends BaseAdapter {
             holder = new ViewHolder();
             holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
             holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
-            holder.checkBox = (CheckBox) convertView.findViewById(R.id.cb_select_cdp);
-            holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    CdpItem item = (CdpItem)compoundButton.getTag();
-                    item.isSelected = b;
-                }
-            });
-
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,24 +62,12 @@ public class UserCheckListAdapter extends BaseAdapter {
             Picasso.with(this.context).load(item.getProfileUrl()).fit().into(holder.imageView);
         }
         holder.textView.setText(item.name);
-        holder.checkBox.setTag(item);
 
         return convertView;
-    }
-
-    public List<Integer> getSelectedCdpIds() {
-        ArrayList<Integer> selectedCdp = new ArrayList<Integer>();
-        for (CdpItem selectedItem : listSelectCdp) {
-            if (selectedItem.isSelected) {
-                selectedCdp.add(selectedItem.id);
-            }
-        }
-        return selectedCdp;
     }
 
     static class ViewHolder {
         TextView textView;
         ImageView imageView;
-        CheckBox checkBox;
     }
 }

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,8 +13,11 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
+import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.lists.SearchedFileItemListAdapter;
+import com.tosslab.jandi.app.lists.UserCheckListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -34,6 +39,8 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -185,7 +192,31 @@ public class SearchMessageActivity extends BaseActivity {
 
     @Click(R.id.img_search_message_select_user)
     public void showUsersDialog() {
+        /**
+         * 사용자 리스트 Dialog 를 보여준 뒤, 선택된 사용자가 올린 파일을 검색
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        final List<CdpItem> teamMember = mCdpItemManager.mUsers;
+        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, teamMember);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mCurrentUserId = teamMember.get(i).id + "";
+                mSearchMode = JandiConstants.TYPE_SEARCH_USER_SPECIFIC;
+                setFlagSelectedAllFilesTab(false);
+                drawLayout();
+                // 서치 시작
+                doSearch();
+            }
+        });
 
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.title_search_user_select);
+        dialog.setIcon(android.R.drawable.ic_menu_agenda);
+        dialog.setView(view);
+        dialog.show();
     }
 
     /************************************************************

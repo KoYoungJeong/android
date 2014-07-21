@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
-        android:text="CDP Name"/>
+        android:text="User Name"/>
     <CheckBox
         android:id="@+id/cb_select_cdp"
         android:layout_width="wrap_content"
