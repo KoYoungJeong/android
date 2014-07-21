@@ -75,14 +75,14 @@ public class SearchListFragment extends Fragment {
             reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
 
             // 이미지 검색이라면...
-            if (searchMode == JandiConstants.TYPE_SEARCH_IMAGES) {
+            if (searchMode == JandiConstants.TYPE_SEARCH_MODE_IMAGES) {
                 reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_IMAGE;
             } else {
                 reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_ALL;
             }
 
             //
-            if (whichTab == JandiConstants.TYPE_SEARCH_EVERYONE) {
+            if (whichTab == JandiConstants.TYPE_SEARCH_USER_ALL) {
                 reqSearchFile.userId = ReqSearchFile.USER_ID_ALL;
             } else {
                 reqSearchFile.userId = ReqSearchFile.USER_ID_MINE;

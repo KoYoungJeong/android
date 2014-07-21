@@ -38,9 +38,14 @@ public class JandiConstants {
     public static final String TYPE_PRIVATE_GROUP_STRING    = "parivateGroup";
 
     // Search 관련
-    public static final int TYPE_SEARCH_EVERYONE    = 0x00;
-    public static final int TYPE_SEARCH_SPECIFIC    = 0x01;
-    public static final int TYPE_SEARCH_IMAGES      = 0x10;
+    public static final int TYPE_SEARCH_MODE_ALL        = 0x00;
+    public static final int TYPE_SEARCH_MODE_IMAGES     = 0x01;
+    public static final int TYPE_SEARCH_MODE_PDF        = 0x02;
+    public static final int TYPE_SEARCH_MODE_USER       = 0x0F;
+    public static final int TYPE_SEARCH_USER_ALL        = 0x10;
+    public static final int TYPE_SEARCH_USER_SPECIFIC   = 0x11;
+
+
 
     // ERROR
     public static final int BAD_REQUEST     = 400;

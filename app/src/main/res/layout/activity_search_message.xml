@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@android:color/darker_gray">
+        <LinearLayout
+            android:id="@+id/ly_search_message_all_files"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/holo_blue_dark"
+            android:gravity="center"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/txt_search_message_file_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All Files"
+                android:textColor="@android:color/white"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ly_search_message_user"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/holo_green_dark">
+            <TextView
+                android:id="@+id/txt_search_message_user_name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Just Me"
+                android:textColor="@android:color/white"
+                />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="30dp"
+                android:layout_margin="5dp"
+                android:layout_gravity="center_vertical"
+                android:background="@android:color/white"/>
+            <ImageView
+                android:id="@+id/img_search_message_select_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:src="@android:drawable/ic_media_rew"/>
+        </LinearLayout>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/list_searched_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:transcriptMode="normal"
+        android:fillViewport="true"
+        />
+</LinearLayout>

@@ -81,7 +81,7 @@ public class SearchActivity extends BaseActivity implements ActionBar.TabListene
         }
 
         // 특정인 검색으로 시작한다면 두번째 텝으로 이동
-        if (searchMode == JandiConstants.TYPE_SEARCH_SPECIFIC) {
+        if (searchMode == JandiConstants.TYPE_SEARCH_MODE_USER) {
             mViewPager.setCurrentItem(1);
         }
     }
@@ -168,14 +168,14 @@ public class SearchActivity extends BaseActivity implements ActionBar.TabListene
                 // Everyone
                 return SearchListFragment_
                         .builder()
-                        .whichTab(JandiConstants.TYPE_SEARCH_EVERYONE)
+                        .whichTab(JandiConstants.TYPE_SEARCH_USER_ALL)
                         .searchMode(searchMode)
                         .build();
             } else {
                 // Certain user
                 return SearchListFragment_
                         .builder()
-                        .whichTab(JandiConstants.TYPE_SEARCH_SPECIFIC)
+                        .whichTab(JandiConstants.TYPE_SEARCH_USER_SPECIFIC)
                         .searchMode(searchMode)
                         .build();
             }

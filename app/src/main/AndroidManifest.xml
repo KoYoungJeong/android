@@ -39,7 +39,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".SearchActivity_"
+            android:name=".SearchMessageActivity_"
             android:label="@string/title_activity_search"
             android:logo="@drawable/ic_actionbar_logo"
             android:screenOrientation="portrait" >

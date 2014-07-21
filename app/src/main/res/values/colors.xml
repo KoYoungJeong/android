@@ -18,4 +18,8 @@
     <color name="message_date_text">#999999</color>
     <color name="file_name">#3388C1</color>
     <color name="file_type">#777777</color>
+
+    <!-- Search -->
+    <color name="bg_selected_tab">@android:color/holo_green_dark</color>
+    <color name="bg_unselected_tab">@android:color/darker_gray</color>
 </resources>

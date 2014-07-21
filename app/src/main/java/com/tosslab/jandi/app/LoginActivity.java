@@ -82,6 +82,13 @@ public class LoginActivity extends BaseActivity {
         checkPlayServices();
     }
 
+    @Override
+    protected void onStop() {
+        if (mProgressWheel != null)
+            mProgressWheel.dismiss();
+        super.onStop();
+    }
+
     /************************************************************
      * Login
      ************************************************************/
