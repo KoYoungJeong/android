@@ -2,12 +2,10 @@ package com.tosslab.jandi.app;
 
 import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,20 +28,18 @@ import com.tosslab.jandi.app.events.RequestMessageListEvent;
 import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
-import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
+import com.tosslab.jandi.app.lists.UserCheckListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -457,7 +453,7 @@ public class MainActivity extends SlidingFragmentActivity {
             return;
         }
 
-        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, unjoinedMembers);
+        final UserCheckListAdapter adapter = new UserCheckListAdapter(this, unjoinedMembers);
         lv.setAdapter(adapter);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);

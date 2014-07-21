@@ -20,12 +20,12 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 7. 15..
  */
-public class CdpSelectListAdapter extends BaseAdapter {
+public class UserCheckListAdapter extends BaseAdapter {
     private List<CdpItem> listSelectCdp;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public CdpSelectListAdapter(Context context, List<CdpItem> listSelectCdp) {
+    public UserCheckListAdapter(Context context, List<CdpItem> listSelectCdp) {
         this.listSelectCdp = listSelectCdp;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;

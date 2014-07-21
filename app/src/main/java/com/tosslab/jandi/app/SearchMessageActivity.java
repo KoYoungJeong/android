@@ -183,6 +183,15 @@ public class SearchMessageActivity extends BaseActivity {
         mCdpItemManager = event;
     }
 
+    @Click(R.id.img_search_message_select_user)
+    public void showUsersDialog() {
+
+    }
+
+    /************************************************************
+     * 레이아웃 디스플레이
+     ************************************************************/
+
     private void setFlagSelectedAllFilesTab(boolean isSelectedAllFilesTab) {
         if (isSelectedAllFilesTab) {
             mSearchUser = ReqSearchFile.USER_ID_ALL;
