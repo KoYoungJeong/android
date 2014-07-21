@@ -64,6 +64,19 @@ public class CdpItem {
         this.joinedMember = pGroup.pg_members;
     }
 
+    public boolean hasGivenId(int cdpId) {
+        return (this.id == cdpId);
+    }
+
+    public boolean hasGivenIds(List<Integer> cdpIds) {
+        for (int cdpId : cdpIds) {
+            if (hasGivenId(cdpId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         switch (this.type) {

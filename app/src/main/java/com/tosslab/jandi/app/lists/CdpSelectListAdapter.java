@@ -60,6 +60,8 @@ public class CdpSelectListAdapter extends BaseAdapter {
         if (item.type == JandiConstants.TYPE_DIRECT_MESSAGE) {
             // 프로필 사진
             Picasso.with(this.context).load(item.getProfileUrl()).fit().into(holder.imageView);
+        } else {
+            holder.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.ic_menu_file));
         }
         holder.textView.setText(item.name);
 

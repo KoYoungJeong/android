@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app;
 
-import android.app.DialogFragment;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,16 +12,19 @@ import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 import com.squareup.picasso.Picasso;
-import com.tosslab.jandi.app.dialogs.SelectCdpDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmShareEvent;
-import com.tosslab.jandi.app.events.RequestViewFile;
+import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
+import com.tosslab.jandi.app.lists.CdpSelectListAdapter;
 import com.tosslab.jandi.app.lists.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
@@ -45,6 +49,7 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
+import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -77,8 +82,7 @@ public class FileDetailActivity extends BaseActivity {
 
     ImageView imageViewPhotoFile;
     ImageView buttonFileDetailShare;
-
-    private BroadcastReceiver mCompleteReceiver = new FileDownloadBroadcastReceiver();
+    ImageView buttonFileDetailMore;
 
     public String myToken;
 
@@ -105,6 +109,7 @@ public class FileDetailActivity extends BaseActivity {
 
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
+
         imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile);
         textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name);
         textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date);
@@ -113,11 +118,12 @@ public class FileDetailActivity extends BaseActivity {
         textViewFileSharedCdp = (TextView)header.findViewById(R.id.txt_file_detail_shared_cdp);
         imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo_2);
         buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
+        buttonFileDetailMore = (ImageView)header.findViewById(R.id.btn_file_detail_more);
         listFileDetailComments.addHeaderView(header);
 
         myToken = JandiPreference.getMyToken(this);
         tossRestClient.setHeader("Authorization", myToken);
-        getFileDetailFromServer();
+        getFileDetail();
     }
 
     @Override
@@ -135,13 +141,11 @@ public class FileDetailActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         IntentFilter completeFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
-        registerReceiver(mCompleteReceiver, completeFilter);
         EventBus.getDefault().registerSticky(this);
     }
 
     @Override
     public void onPause() {
-        unregisterReceiver(mCompleteReceiver);
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
@@ -151,6 +155,19 @@ public class FileDetailActivity extends BaseActivity {
         if (mProgressWheel != null)
             mProgressWheel.dismiss();
         super.onStop();
+    }
+
+
+    /**
+     * Sticky Event from SearchListFragment or MainMessageListFragment
+     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
+     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
+     * @param event
+     */
+    public void onEvent(CdpItemManager event) {
+        log.debug("cdpItemManager is set");
+        cdpItemManager = event;
+        drawFileSharedEntities();
     }
 
     @ItemLongClick
@@ -165,23 +182,39 @@ public class FileDetailActivity extends BaseActivity {
         }
     }
 
+    /************************************************************
+     * 파일 상세 출력 관련
+     ************************************************************/
+    @UiThread
+    void getFileDetail() {
+        mProgressWheel.show();
+        getFileDetailInBackend();
+    }
+
     @Background
-    void getFileDetailFromServer() {
+    void getFileDetailInBackend() {
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = tossRestClient.getFileDetail(fileId);
             drawFileDetail(resFileDetail);
             fileDetailCommentListAdapter.updateFileComments(resFileDetail);
-            reloadList();
+            getFileDetailDone(true, null);
         } catch (RestClientException e) {
             log.error("fail to get file detail.", e);
+            getFileDetailDone(false, "File detail failed");
         }
     }
 
     @UiThread
-    void reloadList() {
-        log.debug("reload");
-        fileDetailCommentListAdapter.notifyDataSetChanged();
+    void getFileDetailDone(boolean isOk, String message) {
+        mProgressWheel.dismiss();
+        if (isOk) {
+            log.debug("reload");
+            fileDetailCommentListAdapter.notifyDataSetChanged();
+        } else {
+            ColoredToast.showError(this, message);
+        }
+
     }
 
     @UiThread
@@ -220,14 +253,6 @@ public class FileDetailActivity extends BaseActivity {
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
                 textViewFileName.setText(fileMessage.content.name);
-                // 파일 이름을 터치하면 파일 연결
-                textViewFileName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
-                        EventBus.getDefault().post(new RequestViewFile(serverUrl + fileMessage.content.fileUrl, fileMessage.content.type));
-                    }
-                });
 
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
@@ -244,13 +269,77 @@ public class FileDetailActivity extends BaseActivity {
                 buttonFileDetailShare.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
-                        newFragment.show(getFragmentManager(), "dialog");
+                        // 전체 CDP 리스트를 보여주고 선택한 CDP를 공유 액션으로 연결
+                        clickShareButton();
+                    }
+                });
+                buttonFileDetailMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                        String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
+                        download(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
                     }
                 });
                 break;
             }
 
+        }
+    }
+
+    /************************************************************
+     * 파일 공유
+     ************************************************************/
+    void clickShareButton() {
+        /**
+         * 사용자 리스트 Dialog 를 보여준 뒤, 선택된 사용자가 올린 파일을 검색
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.title_cdp_to_be_shared);
+        dialog.setIcon(android.R.drawable.ic_menu_agenda);
+        dialog.setView(view);
+        final AlertDialog cdpSelectDialog = dialog.show();
+
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        // 현재 이 파일을 share 하지 않는 CDP를 추출
+        List<Integer> shareEntities = mResFileDetail.shareEntities;
+        final List<CdpItem> unSharedEntities = cdpItemManager.retrieveExceptGivenEntities(shareEntities);
+        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, unSharedEntities);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cdpSelectDialog != null)
+                    cdpSelectDialog.dismiss();
+                shareMessageInBackground(unSharedEntities.get(i).id);
+            }
+        });
+    }
+
+    @Background
+    public void shareMessageInBackground(int cdpIdToBeShared) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.shareMessage(fileId, cdpIdToBeShared);
+            log.debug("success to share message");
+            shareMessageDone(true);
+        } catch (RestClientException e) {
+            log.error("fail to send message", e);
+            shareMessageDone(false);
+        }
+    }
+
+    @UiThread
+    public void shareMessageDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "Message has Shared !!");
+            fileDetailCommentListAdapter.clear();
+            getFileDetail();
+        } else {
+            ColoredToast.showError(this, "FAIL Message Sharing !!");
         }
     }
 
@@ -292,128 +381,59 @@ public class FileDetailActivity extends BaseActivity {
     @UiThread
     public void sendCommentDone() {
         fileDetailCommentListAdapter.clear();
-        getFileDetailFromServer();
+        getFileDetail();
     }
-
-//    /**
-//     * Event from FileDetailView
-//     * FileDetailView 에서 파일 쉐어 버튼을 눌렀을 때, 발생하는 이벤트
-//     * @param event
-//     */
-//    public void onEvent(RequestSelectionOfCdpToBeShared event) {
-//        DialogFragment newFragment = SelectCdpDialogFragment.newInstance();
-//        newFragment.show(getFragmentManager(), "dialog");
-//    }
-
-    /**
-     * Event from SelectCdpDialogFragment
-     * Share 할 CDP를 선택한 다음에 "공유"를 눌렀을때 발생하는 이벤트
-     * @param event
-     */
-    public void onEvent(ConfirmShareEvent event) {
-        sharemessageInBackground(event.selectedCdpIdToBeShared);
-    }
-
-    /**
-     * Sticky Event from SearchListFragment or MainMessageListFragment
-     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
-     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
-     * @param event
-     */
-    public void onEvent(CdpItemManager event) {
-        log.debug("cdpItemManager is set");
-        cdpItemManager = event;
-        drawFileSharedEntities();
-    }
-
-    @Background
-    public void sharemessageInBackground(int cdpIdToBeShared) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, myToken);
-        try {
-            messageManipulator.shareMessage(fileId, cdpIdToBeShared);
-            log.debug("success to share message");
-            shareMessageDone(true);
-        } catch (RestClientException e) {
-            log.error("fail to send message", e);
-            shareMessageDone(false);
-        }
-    }
-
-    @UiThread
-    public void shareMessageDone(boolean isOk) {
-        if (isOk) {
-            ColoredToast.show(this, "Message has Shared !!");
-        } else {
-            ColoredToast.showError(this, "FAIL Message Sharing !!");
-        }
-    }
-
 
     /************************************************************
      * 파일 연결 관련
      ************************************************************/
-    public void onEvent(RequestViewFile event) {
-        download(event.fileUrl, event.fileType);
+    public void download(String url, String fileName, final String fileType) {
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
+        dir.mkdirs();
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage("Downloading " + fileName);
+        progressDialog.show();
+
+        log.debug("download " + url);
+        Ion.with(this)
+                .load(url)
+                .progress(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long downloaded, long total) {
+                        progressDialog.setProgress((int) (downloaded / total));
+                    }
+                })
+                .write(new File(dir, fileName))
+                .setCallback(new FutureCallback<File>() {
+                    @Override
+                    public void onCompleted(Exception e, File result) {
+                        progressDialog.dismiss();
+                        downloadDone(e, result, fileType);
+                    }
+                });
     }
 
-    private DownloadManager mDownloadManager;
-    private long mDownloadQueueId;
-    private String mFileName;
-    private String mFileType;
+    @UiThread
+    public void downloadDone(Exception exception, File file, String fileType) {
+        if (exception == null) {
+            // Success
+            Intent i = new Intent();
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.setAction(Intent.ACTION_VIEW);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-    public void download(String url, String fileType) {
-        if (mDownloadManager == null) {
-            mDownloadManager = (DownloadManager) this.getSystemService(Context.DOWNLOAD_SERVICE);
-        }
-        Uri uri = Uri.parse(url);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-
-        List<String> pathSegmentList = uri.getPathSegments();
-        mFileName = pathSegmentList.get(pathSegmentList.size()-1);
-
-        request.setTitle("Jandi");
-        request.setDescription("download " + mFileName);
-        request.setMimeType(fileType);
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/temp").mkdirs();
-
-        mFileType = fileType;
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS + "/temp", mFileName);
-        mDownloadQueueId = mDownloadManager.enqueue(request);
-
-    }
-
-    private class FileDownloadBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
-                ColoredToast.show(mContext, "Complete");
-                startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
-//                Intent i = new Intent();
-//                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                i.setAction(Intent.ACTION_VIEW);
-//                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//                String localUrl = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + mFileName;
-////                String mimeType = mFileType;
-//                String extension = MimeTypeMap.getFileExtensionFromUrl(localUrl);
-//                String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-//                log.debug(mimeType + " for " + localUrl);
-//
-//                File file = new File(localUrl);
-//                i.setDataAndType(Uri.fromFile(file), mimeType);
-//                try {
-//                    startActivity(i);
-//                } catch (ActivityNotFoundException e) {
-//                    ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
-//                }
-            } else {
-                ColoredToast.showError(mContext, action);
+            i.setDataAndType(Uri.fromFile(file), fileType);
+            try {
+                startActivity(i);
+            } catch (ActivityNotFoundException e) {
+                ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
             }
+        } else {
+            log.error("Download failed", exception);
+            ColoredToast.showError(mContext, "파일 다운로드에 실패하였습니다");
         }
+
     }
 }

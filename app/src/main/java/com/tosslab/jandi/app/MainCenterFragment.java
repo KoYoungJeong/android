@@ -2,6 +2,7 @@ package com.tosslab.jandi.app;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,6 +13,10 @@ import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -48,6 +53,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -545,8 +551,37 @@ public class MainCenterFragment extends BaseFragment  {
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseTimer();
-        mProgressWheel.show();
-        uploadFileInBackground(event.cdpId, event.realFilePath, event.comment);
+//        mProgressWheel.show();
+//        uploadFileInBackground(event.cdpId, event.realFilePath, event.comment);
+        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage("Downloading " + event.realFilePath);
+        progressDialog.show();
+
+        File uploadFile = new File(event.realFilePath);
+        String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
+        Ion.with(mContext, requestURL)
+                .uploadProgressDialog(progressDialog)
+                .progress(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long downloaded, long total) {
+                        progressDialog.setProgress((int)(downloaded/total));
+                    }
+                })
+                .setHeader("Authorization", mMyToken)
+                .setMultipartParameter("title", uploadFile.getName())
+                .setMultipartParameter("share", "" + event.cdpId)
+                .setMultipartParameter("permission", "755")
+
+                .setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        progressDialog.dismiss();
+                        uploadFileDone(e, result);
+                    }
+                });
     }
 
     @Background
@@ -592,6 +627,19 @@ public class MainCenterFragment extends BaseFragment  {
         }
     }
 
+    @UiThread
+    void uploadFileDone(Exception exception, JsonObject result) {
+        if (exception == null) {
+            log.debug(result);
+            ColoredToast.show(mContext, "File uploaded");
+        } else {
+            log.error("Upload failed", exception);
+            ColoredToast.showError(mContext, "Upload failed");
+        }
+
+        resumeTimer();  // resume timer
+    }
+
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
         Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
@@ -601,28 +649,6 @@ public class MainCenterFragment extends BaseFragment  {
         cursor.close();
         return picturePath;
     }
-
-    // TODO : Poor Implementation
-    private String getFilePathFromUri(Uri contentUri) {
-
-        final String[] filePathColumn = { MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DISPLAY_NAME };
-        Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
-
-        // some devices (OS versions return an URI of com.android instead of com.google.android
-        if (contentUri.toString().startsWith("content://com.android.gallery3d.provider"))  {
-            // use the com.google provider, not the com.android provider.
-            contentUri = Uri.parse(contentUri.toString().replace("com.android.gallery3d", "com.google.android.gallery3d"));
-        }
-        if (cursor != null) {
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-            String filePath = cursor.getString(columnIndex);
-            cursor.close();
-            return filePath;
-        }
-        return null;
-    }
-
 
     /************************************************************
      * 파일 상세
