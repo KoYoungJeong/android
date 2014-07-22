@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.lists.CdpItemManager;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
- * MainActivity -> MainCdpFragment
+ * MainActivity -> MainLeftFragment
  */
 public class RefreshCdpListEvent {
     public CdpItemManager cdpItemManager;

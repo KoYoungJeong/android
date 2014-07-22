@@ -4,10 +4,8 @@ package com.tosslab.jandi.app;
  * Created by justinygchoi on 2014. 6. 17..
  */
 public class JandiConstants {
-//    public static final String SERVICE_ROOT_URL = "https://112.219.215.146:3000/";
     public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://192.168.0.10:3000/";
+//    public static final String SERVICE_ROOT_URL = "https://jandi.com:3000/";
 
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_CDP_TYPE   = "cdpTypeFromPush";

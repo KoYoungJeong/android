@@ -41,8 +41,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 7. 11..
  */
 @EFragment(R.layout.fragment_main_left)
-public class MainCdpFragment extends BaseFragment {
-    private final Logger log = Logger.getLogger(MainCdpFragment.class);
+public class MainLeftFragment extends BaseFragment {
+    private final Logger log = Logger.getLogger(MainLeftFragment.class);
 
     @ViewById(R.id.list_cdps)
     ListView mListCdps;

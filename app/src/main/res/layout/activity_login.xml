@@ -8,9 +8,11 @@
     >
     <!-- Login form 컴포넌트 (화면 정중앙) -->
     <LinearLayout
+        android:id="@+id/ly_login_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="invisible">
         <ImageView
             android:layout_width="214dp"
             android:layout_height="wrap_content"
@@ -32,7 +34,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColorHint="@android:color/holo_blue_light"
-                android:text="justin@tosslab.com"
+                android:text="gun@tosslab.com"
                 android:textColor="@android:color/holo_blue_dark"/>
             <EditText
                 android:id="@+id/et_login_password"

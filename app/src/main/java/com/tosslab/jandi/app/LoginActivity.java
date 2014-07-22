@@ -2,9 +2,9 @@ package com.tosslab.jandi.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -43,6 +43,8 @@ import javax.net.ssl.X509TrustManager;
 public class LoginActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 
+    @ViewById(R.id.ly_login_form)
+    LinearLayout lyLoginForm;
     @ViewById(R.id.et_login_email)
     EditText edtxtLoginId;
     @ViewById(R.id.et_login_password)
@@ -70,9 +72,10 @@ public class LoginActivity extends BaseActivity {
         // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
         // 다시 본 activity를 실행한다.
         myToken = JandiPreference.getMyToken(this);
-
         if (myToken.length() > 0) {
             registerGcm();
+        } else {
+            showLoginForm();
         }
     }
 
@@ -92,6 +95,10 @@ public class LoginActivity extends BaseActivity {
     /************************************************************
      * Login
      ************************************************************/
+    @UiThread
+    public void showLoginForm() {
+        lyLoginForm.setVisibility(View.VISIBLE);
+    }
 
     /**
      * 로그인 버튼을 눌렀을 때, 로그인 실행
@@ -136,7 +143,9 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    @UiThread
     public void moveToMainActivity() {
+        mProgressWheel.dismiss();
         // Preference 저장 - Token
         JandiPreference.setMyToken(this, myToken);
 
@@ -160,7 +169,6 @@ public class LoginActivity extends BaseActivity {
      * 현재 디바이스의 notification token을 가져온다. 아래와 같은 조건에서 갱신한다.
      * - 앱 버전이 바뀜
      * - GCM에서 현재 생성된 토큰이 기존과 다름
-     *
      */
     @Background
     public void registerGcmInBackground() {
@@ -173,39 +181,50 @@ public class LoginActivity extends BaseActivity {
                 String justGeneratedRegId = mGcm.register(JandiConstants.SENDER_ID);
                 String furtherGeneratedRegId = getRegistrationId();
 
-                if (furtherGeneratedRegId.isEmpty()) {
-                    // 버전이 바뀌었거나, 기존에 notification 토큰이 존재하지 않는다면
-                    // 새로 notification 토큰을 생성한다.
-                    sendRegistrationIdInBackground(justGeneratedRegId);
-                } else if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
-                    // 기존 토큰과 같다면 바로 main activity로 이동
-                    moveToMainActivity();
-                } else {
-                    // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
-                    updateRegistrationIdInBackground(furtherGeneratedRegId, justGeneratedRegId);
-                }
-//                if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+//                if (furtherGeneratedRegId.isEmpty()) {
+//                    // 버전이 바뀌었거나, 기존에 notification 토큰이 존재하지 않는다면
+//                    // 새로 notification 토큰을 생성한다.
+//                    sendRegistrationIdInBackground(justGeneratedRegId);
+//                } else if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
 //                    // 기존 토큰과 같다면 바로 main activity로 이동
 //                    moveToMainActivity();
 //                } else {
-//                    sendRegistrationIdInBackground(justGeneratedRegId);
+//                    // GCM에서 막 생성된 토큰이 기존과 다르다면, 서버에 토큰 업데이트를 수행한다.
+//                    updateRegistrationIdInBackground(furtherGeneratedRegId, justGeneratedRegId);
 //                }
+                if (justGeneratedRegId.equals(furtherGeneratedRegId)) {
+                    // 기존 토큰과 같다면 바로 main activity로 이동
+                    registerGcmDone(true, null, null);
+                } else {
+                    // 새로 생성된 토큰이면 sendRegistrationId로 이동
+                    registerGcmDone(true, justGeneratedRegId, null);
+                }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
-                registerGcmError("Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+                registerGcmDone(false, null, "Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
                 return;
             }
         } else {
             log.warn("No valid Google Play Services APK found.");
             // TODO : Push 안 됨
-            registerGcmError("Push 서비스를 사용할 수 없는 단말입니다");
-            moveToMainActivity();
+            registerGcmDone(false, null, "Push 서비스를 사용할 수 없는 단말입니다");
         }
     }
 
     @UiThread
-    public void registerGcmError(String message) {
-        ColoredToast.showWarning(mContext, message);
+    public void registerGcmDone(boolean isOk, String justGeneratedRegId, String errMessage) {
+        if (isOk) {
+            if (justGeneratedRegId == null) {
+                moveToMainActivity();
+            } else {
+                sendRegistrationIdInBackground(justGeneratedRegId);
+            }
+        } else {
+            mProgressWheel.dismiss();
+            showLoginForm();
+            ColoredToast.showWarning(mContext, errMessage);
+        }
+
     }
 
     private boolean checkPlayServices() {
@@ -322,35 +341,37 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    @Background
-    public void updateRegistrationIdInBackground(String futherGenRegId, String justGenRegId) {
-        try {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
-            // 기존 Dev Token 갱신
-            jandiNetworkClient.updateNotificateionToken(futherGenRegId, justGenRegId);
-            mRegId = justGenRegId;
-            log.debug("Device token updated, registration ID=" + mRegId);
-            sendRegistrationIdDone(true, null);
-        } catch (JandiException e) {
-            log.error("Register Fail", e);
-            if (e.errCode == 1839) {
-                // 기존 토큰이 서버에 존재하지 않기 때문에 다시 새로 등록.
-                clearRegistrationId(mContext);
-                sendRegistrationIdInBackground(justGenRegId);
-            } else if (e.errCode == 2000) {
-                // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
-                sendRegistrationIdDone(false, "만료된 토큰입니다.");
-            } else {
-                sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
-            }
-        }
-    }
+//    @Background
+//    public void updateRegistrationIdInBackground(String futherGenRegId, String justGenRegId) {
+//        try {
+//            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+//            // 기존 Dev Token 갱신
+//            jandiNetworkClient.updateNotificateionToken(futherGenRegId, justGenRegId);
+//            mRegId = justGenRegId;
+//            log.debug("Device token updated, registration ID=" + mRegId);
+//            sendRegistrationIdDone(true, null);
+//        } catch (JandiException e) {
+//            log.error("Register Fail", e);
+//            if (e.errCode == 1839) {
+//                // 기존 토큰이 서버에 존재하지 않기 때문에 다시 새로 등록.
+//                clearRegistrationId(mContext);
+//                sendRegistrationIdInBackground(justGenRegId);
+//            } else if (e.errCode == 2000) {
+//                // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
+//                sendRegistrationIdDone(false, "만료된 토큰입니다.");
+//            } else {
+//                sendRegistrationIdDone(false, e.errCode + ":" + e.errReason);
+//            }
+//        }
+//    }
 
     @UiThread
     public void sendRegistrationIdDone(boolean isOk, String message) {
         if (isOk) {
             sendSubscriptionInBackground();
         } else {
+            mProgressWheel.dismiss();
+            showLoginForm();
             ColoredToast.showError(this, message);
         }
     }
@@ -374,6 +395,8 @@ public class LoginActivity extends BaseActivity {
             storeRegistrationId(getApplicationContext(), mRegId);
             moveToMainActivity();
         } else {
+            mProgressWheel.dismiss();
+            showLoginForm();
             ColoredToast.showError(this, message);
         }
     }

@@ -132,7 +132,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
         // 왼쪽 Fragment - CDP List
         setBehindContentView(R.layout.frame_cdp);
-        BaseFragment menuLeftFragment = MainCdpFragment_.builder().build();
+        BaseFragment menuLeftFragment = MainLeftFragment_.builder().build();
         getFragmentManager().beginTransaction().replace(R.id.cdp_frame, menuLeftFragment).commit();
 
         // customize the SlidingMenu
@@ -176,7 +176,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
 
     /**
-     * Event from MainCdpFragment
+     * Event from MainLeftFragment
      * 선택한 CDP 정보를 저장하고 MainCenterFragment에 전달한다.
      * 슬라이딩 메뉴를 닫고, 선택한 CDP 이름을 타이틀바에 셋팅
      * @param event
@@ -204,7 +204,7 @@ public class MainActivity extends SlidingFragmentActivity {
      ************************************************************/
 
     /**
-     * event from MainCdpFragment
+     * event from MainLeftFragment
      * CDP List에서 생성, 삭제 등의 통신이 일어난 이후에 List를 refresh 하기 위한 이벤트
      * @param event
      */
@@ -241,14 +241,14 @@ public class MainActivity extends SlidingFragmentActivity {
     }
 
     @UiThread
-    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String message) {
+    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
         mProgressWheel.dismiss();
         if (isOk) {
             mCdpItemManager = new CdpItemManager(resLeftSideMenu);
             EventBus.getDefault().post(new RefreshCdpListEvent(mCdpItemManager));
             getMessageListOfSelectedCdp();
         } else {
-            ColoredToast.showError(mContext, message);
+            ColoredToast.showError(mContext, errMessage);
             returnToLoginActivity();
         }
     }

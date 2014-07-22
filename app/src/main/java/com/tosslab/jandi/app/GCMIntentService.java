@@ -91,13 +91,27 @@ public class GCMIntentService extends IntentService {
 //        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 //                new Intent(this, MainActivity_.class), 0);
 
+        String notificationTitle = "Push from ";
+        switch (cdpType) {
+            case JandiConstants.TYPE_CHANNEL:
+                notificationTitle += "Channel";
+                break;
+            case JandiConstants.TYPE_DIRECT_MESSAGE:
+                notificationTitle += "Direct Message";
+                break;
+            case JandiConstants.TYPE_PRIVATE_GROUP:
+                notificationTitle += "Private Group";
+                break;
+            default:
+                break;
+        }
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_actionbar_logo)
                         .setTicker(msg)
                         .setDefaults(Notification.DEFAULT_ALL)
-                        .setContentTitle("Jandi")
+                        .setContentTitle(notificationTitle)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg);
 
