@@ -17,6 +17,9 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
+import com.koushikdutta.ion.builder.Builders;
+import com.koushikdutta.ion.builder.MultipartBodyBuilder;
+import com.koushikdutta.ion.builder.RequestBuilder;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -230,11 +233,12 @@ public class MainCenterFragment extends BaseFragment  {
                 tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
+            messageItemListAdapter.insertMessageItem(restResMessages);
 
             if (mFirstItemId == -1) {
                 if (restResMessages.messageCount > 0) {
-                    // 업데이트를 위해 가장 마지막 Link ID를 저장한다.
-                    int currentLastLinkId = restResMessages.messages.get(0).id;
+                    // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
+                    int currentLastLinkId = messageItemListAdapter.getLastLinkId();
                     if (currentLastLinkId >= 0) {
                         mLastUpdateLinkId = currentLastLinkId;
                     }
@@ -245,7 +249,7 @@ public class MainCenterFragment extends BaseFragment  {
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceviedList;
 
-            messageItemListAdapter.insertMessageItem(restResMessages);
+
             log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
             getMessagesDone(true, null);
         } catch (RestClientException e) {
@@ -293,12 +297,13 @@ public class MainCenterFragment extends BaseFragment  {
                 log.info("success to " + nMessages +
                         " messages updated at " + mLastUpdateLinkId);
                 if (nMessages > 0) {
-                    int currentLastLinkId = restResMessages.messages.get(nMessages - 1).id;
+                    // Update 된 메시지만 부분 삽입한다.
+                    messageItemListAdapter.updatedMessageItem(restResMessages);
+                    // 가장 최신의 LinkId를 업데이트한다.
+                    int currentLastLinkId = messageItemListAdapter.getLastLinkId();
                     if (currentLastLinkId >= 0) {
                         mLastUpdateLinkId = currentLastLinkId;
                     }
-                    // Update 된 메시지만 부분 삽입한다.
-                    messageItemListAdapter.updatedMessageItem(restResMessages);
                 }
 
                 getUpdateMessagesDone();
@@ -320,20 +325,13 @@ public class MainCenterFragment extends BaseFragment  {
 
     @Click(R.id.btn_send_comment)
     void sendMessage() {
+        pauseTimer();
         String message = etMessage.getText().toString();
-        hideSoftKeyboard();
-
+        etMessage.setText("");
         if (message.length() > 0) {
             sendMessageInBackground(message);
         }
     }
-
-    @UiThread
-    void hideSoftKeyboard() {
-        imm.hideSoftInputFromWindow(etMessage.getWindowToken(),0);
-        etMessage.setText("");
-    }
-
 
     @Background
     public void sendMessageInBackground(String message) {
@@ -351,9 +349,9 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     public void sendMessageDone(boolean isOk, String message) {
+        resumeTimer();
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getUpdateMessages();
         } else {
             ColoredToast.showError(mContext, message);
         }
@@ -551,8 +549,6 @@ public class MainCenterFragment extends BaseFragment  {
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseTimer();
-//        mProgressWheel.show();
-//        uploadFileInBackground(event.cdpId, event.realFilePath, event.comment);
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage("Downloading " + event.realFilePath);
@@ -560,7 +556,10 @@ public class MainCenterFragment extends BaseFragment  {
 
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
-        Ion.with(mContext, requestURL)
+
+        Builders.Any.M ionBuilder
+                = Ion
+                .with(mContext, requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress(new ProgressCallback() {
                     @Override
@@ -571,9 +570,12 @@ public class MainCenterFragment extends BaseFragment  {
                 .setHeader("Authorization", mMyToken)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.cdpId)
-                .setMultipartParameter("permission", "755")
-
-                .setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .setMultipartParameter("permission", "755");
+        // Comment가 함께 등록될 경우 추가
+        if (event.comment != null && !event.comment.isEmpty()) {
+            ionBuilder.setMultipartParameter("comment", event.comment);
+        }
+        ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
@@ -664,7 +666,7 @@ public class MainCenterFragment extends BaseFragment  {
                 break;
             case MessageItem.TYPE_IMAGE:
             case MessageItem.TYPE_FILE:
-                moveToFileDetailActivity(item.getId());
+                moveToFileDetailActivity(item.getMessageId());
                 break;
 
         }

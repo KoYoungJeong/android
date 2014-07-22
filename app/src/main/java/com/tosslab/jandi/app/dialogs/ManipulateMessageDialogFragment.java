@@ -28,12 +28,12 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
     public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
 
-        String title = DateTransformator.getTimeString(item.getTime());
+        String title = DateTransformator.getTimeString(item.getLinkTime());
 
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putInt("messageId", item.getId());
+        args.putInt("messageId", item.getMessageId());
         args.putInt("messageType", item.getContentType());
         if (item.getContentType() == MessageItem.TYPE_COMMENT) {
             args.putInt("feedbackId", item.getFeedbackId());

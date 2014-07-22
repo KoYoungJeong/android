@@ -20,33 +20,46 @@ import org.apache.log4j.Logger;
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
     private final Logger log = Logger.getLogger(MessageItemView.class);
+    // 날짜 경계선
+    @ViewById(R.id.ly_message_date_devider)
+    LinearLayout mLayoutDateDevider;
+    @ViewById(R.id.txt_message_date_devider)
+    TextView mDateDevider;
+
+    // 진짜 메시지 본문
+    @ViewById(R.id.ly_message_item)
+    LinearLayout mLayoutMessageItem;
+    // 메시지에선 항상 보이는 컨텐츠들...
+    @ViewById(R.id.img_message_user_profile)
+    ImageView mUserProfileImage;
     @ViewById(R.id.txt_message_user_name)
     TextView mUserName;
     @ViewById(R.id.txt_message_create_date)
     TextView mCreateTime;
     @ViewById(R.id.txt_message_content)
     TextView mMessageContent;
-    @ViewById(R.id.img_message_user_profile)
-    ImageView mUserProfileImage;
-    @ViewById(R.id.txt_message_commented)
-    TextView mMessageCommented;
 
-    @ViewById(R.id.ry_file_message)
-    RelativeLayout mLayoutFileMessage;
-    @ViewById(R.id.txt_file_name)
-    TextView mTextFileName;
+    // 댓글에 대한 표시일 경우
+    @ViewById(R.id.ly_message_commented)
+    LinearLayout mLayoutMessageComment;
 
-    // 사진 파일
+    // 이미지일 경우
+    @ViewById(R.id.ry_message_image_file)
+    RelativeLayout mLayoutMessageImageFile;
+    @ViewById(R.id.txt_message_image_file_name)
+    TextView mTextImageFileName;
     @ViewById(R.id.img_message_photo)
     ImageView mImagePhoto;
     @ViewById(R.id.txt_img_file_type)
     TextView mTextImageFileType;
 
     // 일반 파일
-    @ViewById(R.id.img_message_common_file)
-    ImageView mImageCommonFile;
+    @ViewById(R.id.ry_message_common_file)
+    RelativeLayout mLayoutMessageCommonFile;
+    @ViewById(R.id.txt_message_common_file_name)
+    TextView mTextMessageCommonFileName;
     @ViewById(R.id.txt_common_file_type)
-    TextView mTextCommonFileType;
+    TextView mTextMessageCommonFileType;
 
     Context mContext;
 
@@ -57,42 +70,49 @@ public class MessageItemView extends LinearLayout {
 
     public void bind(MessageItem item) {
         // Initiate
-        mLayoutFileMessage.setVisibility(GONE);
+        mLayoutDateDevider.setVisibility(GONE);
+        mLayoutMessageItem.setVisibility(GONE);
+        mLayoutMessageComment.setVisibility(GONE);
+        mLayoutMessageImageFile.setVisibility(GONE);
+        mLayoutMessageCommonFile.setVisibility(GONE);
+
         mMessageContent.setText("");
-        mImagePhoto.setVisibility(GONE);
-        mTextImageFileType.setText("");
-        mImageCommonFile.setVisibility(GONE);
-        mTextCommonFileType.setText("");
-        mMessageCommented.setVisibility(GONE);
 
-        mUserName.setText(item.getUserNickName());
+        if (item.isDate) {
+            // 날짜 경계선으로 표시
+            mLayoutDateDevider.setVisibility(VISIBLE);
+            mDateDevider.setText(DateTransformator.getTimeString(item.getCurrentDateDevider()));
+        } else {
+            // 실제 컨탠츠를 표시
+            mLayoutMessageItem.setVisibility(VISIBLE);
+            mUserName.setText(item.getUserNickName());
+            // 시간
+            String createTime = DateTransformator.getTimeDifference(item.getLinkTime());
+            mCreateTime.setText(createTime);
+            // 프로필 사진
+            Picasso.with(mContext).load(item.getUserProfileUrl()).fit().into(mUserProfileImage);
 
-        // 메시지 String
-        if (item.getContentType() == MessageItem.TYPE_STRING) {
-            mMessageContent.setText(item.getContentString());
-        } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
-            mLayoutFileMessage.setVisibility(VISIBLE);
-            mTextFileName.setText(item.getContentFileName());
-            mImagePhoto.setVisibility(VISIBLE);
-            mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
-            String imageUrl = item.getContentUrl().replaceAll(" ", "%20");
-            Picasso.with(mContext).load(imageUrl).centerCrop().fit().into(mImagePhoto);
-        } else if (item.getContentType() == MessageItem.TYPE_FILE) {
-            mLayoutFileMessage.setVisibility(VISIBLE);
-            mTextFileName.setText(item.getContentFileName());
-            mImageCommonFile.setVisibility(VISIBLE);
-            mTextCommonFileType.setText(item.getContentFileSize());
-        } else if (item.getContentType() == MessageItem.TYPE_COMMENT) {
-            mMessageContent.setText(item.getContentString());
-            mMessageCommented.setVisibility(VISIBLE);
+            // 메시지 String
+            if (item.getContentType() == MessageItem.TYPE_STRING) {
+                // 일반 메시지일 경우
+                mMessageContent.setText(item.getContentString());
+            } else if (item.getContentType() == MessageItem.TYPE_COMMENT) {
+                // 메시지 타입이 댓글 표시일 경우
+                mLayoutMessageComment.setVisibility(VISIBLE);
+                mMessageContent.setText(item.getContentString());
+            } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
+                // 메시지 타입이 이미지인 경우
+                mLayoutMessageImageFile.setVisibility(VISIBLE);
+                mTextImageFileName.setText(item.getContentFileName());
+                mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
+                String imageUrl = item.getContentUrl().replaceAll(" ", "%20");
+                Picasso.with(mContext).load(imageUrl).centerCrop().fit().into(mImagePhoto);
+            } else if (item.getContentType() == MessageItem.TYPE_FILE) {
+                // 일반 파일인 경우
+                mLayoutMessageCommonFile.setVisibility(VISIBLE);
+                mTextMessageCommonFileName.setText(item.getContentFileName());
+                mTextMessageCommonFileType.setText(item.getContentFileSize());
+            }
         }
-
-        // 시간
-        String createTime = DateTransformator.getTimeDifference(item.getTime());
-        mCreateTime.setText(createTime);
-
-        // 프로필 사진
-        Picasso.with(mContext).load(item.getUserProfileUrl()).fit().into(mUserProfileImage);
-
     }
 }

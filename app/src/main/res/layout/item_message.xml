@@ -1,119 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_message_item">
-    <ImageView
-        android:id="@+id/img_message_user_profile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="15dp"
-        android:background="@drawable/ic_action_switchteams"/>
-    <RelativeLayout
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/ly_message_date_devider"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/txt_message_date_devider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ly_message_item"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp">
-        <TextView
-            android:id="@+id/txt_message_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="justin"
-            android:textSize="@dimen/messages_user_name"
-             />
-        <TextView
-            android:id="@+id/txt_message_create_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/txt_message_user_name"
-            android:layout_alignBaseline="@id/txt_message_user_name"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/message_date_text"
-             />
-        <TextView
-            android:id="@+id/txt_message_commented"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_message_user_name"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/file_type"
-            android:visibility="gone"
-            android:text="Commented"/>
-        <TextView
-            android:id="@+id/txt_message_content"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/img_message_user_profile"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/ic_action_switchteams"/>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_message_commented"
-            android:layout_marginTop="5dp"
-            android:text="Text"/>
-        <!-- 이미지일 경우 -->
-        <RelativeLayout
-            android:id="@+id/ry_file_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_below="@+id/txt_message_user_name"
-            android:visibility="gone">
-            <ImageView
-                android:id="@+id/img_icon_upload"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_marginTop="2dp"
-                android:src="@drawable/ic_upload"/>
-            <TextView
-                android:id="@+id/txt_file_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_alignBaseline="@id/img_icon_upload"
-                android:layout_toRightOf="@+id/img_icon_upload"
-                android:textColor="@color/file_name"
-                android:text="file name"/>
+            android:orientation="vertical">
+            <!-- 기본 표시 레이어 -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/txt_message_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="User name"
+                    android:textSize="@dimen/messages_user_name"
+                    />
+                <TextView
+                    android:id="@+id/txt_message_create_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/txt_message_user_name"
+                    android:layout_alignBaseline="@id/txt_message_user_name"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/message_date_text"
+                    android:text="date"
+                    />
+            </RelativeLayout>
+            <!-- 댓글일 경우 표시 레이어 -->
+            <LinearLayout
+                android:id="@+id/ly_message_commented"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/txt_message_commented"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/file_type"
+                    android:text="Commented"/>
+            </LinearLayout>
             <!-- 이미지일 경우 -->
-            <ImageView
-                android:id="@+id/img_message_photo"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginTop="5dp"
-                android:layout_below="@+id/txt_file_name"
-                />
-            <TextView
-                android:id="@+id/txt_img_file_type"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/ry_message_image_file"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/img_message_photo"
-                android:layout_alignBottom="@+id/img_message_photo"
-                android:layout_margin="8dp"
-                android:textColor="@color/file_type"
-                android:text="file type"/>
-            <!-- 일반 파일일 경우 -->
-            <ImageView
-                android:id="@+id/img_message_common_file"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:src="@drawable/tmp_file_icon"
-                android:layout_below="@+id/txt_file_name"
-                />
+                android:layout_marginTop="5dp">
+                <ImageView
+                    android:id="@+id/img_message_image_icon_upload"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="2dp"
+                    android:src="@drawable/ic_upload"/>
+                <TextView
+                    android:id="@+id/txt_message_image_file_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_alignBaseline="@id/img_message_image_icon_upload"
+                    android:layout_toRightOf="@+id/img_message_image_icon_upload"
+                    android:textColor="@color/file_name"
+                    android:text="image file name"/>
+                <ImageView
+                    android:id="@+id/img_message_photo"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@+id/txt_message_image_file_name"
+                    />
+                <TextView
+                    android:id="@+id/txt_img_file_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/img_message_photo"
+                    android:layout_alignBottom="@+id/img_message_photo"
+                    android:layout_margin="8dp"
+                    android:textColor="@color/file_type"
+                    android:text="file type"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/ry_message_common_file"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <!-- 일반 파일일 경우 -->
+                <ImageView
+                    android:id="@+id/img_message_common_file"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_margin="5dp"
+                    android:src="@drawable/tmp_file_icon" />
+                <ImageView
+                    android:id="@+id/img_message_common_file_icon_upload"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/img_message_common_file"
+                    android:src="@drawable/ic_upload"/>
+                <TextView
+                    android:id="@+id/txt_message_common_file_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_alignBaseline="@id/img_message_common_file_icon_upload"
+                    android:layout_toRightOf="@+id/img_message_common_file_icon_upload"
+                    android:textColor="@color/file_name"
+                    android:text="file name"/>
+                <TextView
+                    android:id="@+id/txt_common_file_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/img_message_common_file"
+                    android:layout_alignBottom="@+id/img_message_common_file"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/file_type"
+                    android:text="file type"/>
+            </RelativeLayout>
+            <!-- 실제 내용 (메시지, 댓글) -->
             <TextView
-                android:id="@+id/txt_common_file_type"
-                android:layout_width="wrap_content"
+                android:id="@+id/txt_message_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/img_message_common_file"
-                android:layout_alignBottom="@+id/img_message_common_file"
-                android:layout_margin="8dp"
-                android:textColor="@color/file_type"
-                android:text="file type"/>
+                android:layout_marginTop="5dp"
+                android:text="Text"/>
+        </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:textColor="@color/file_type"
-                android:textSize="20dp"
-                android:text=">"/>
-        </RelativeLayout>
-    </RelativeLayout>
-</LinearLayout>
+    </LinearLayout>
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:textColor="@color/file_type"-->
+            <!--android:textSize="20dp"-->
+            <!--android:text=">"/>-->
+    <!--</RelativeLayout>-->
+</FrameLayout>

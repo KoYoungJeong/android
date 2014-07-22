@@ -20,30 +20,47 @@ public class MessageItem {
 
     public static final int TYPE_FILE  = 10;
 
-    private ResMessages.OriginalMessage mMessage;
+    public boolean isDate;
+    private Date mCurrentDate;
 
-    public MessageItem(ResMessages.OriginalMessage message) {
-        mMessage = message;
+    private ResMessages.Link mLink;
+    private ResMessages.OriginalMessage mMessage;
+    private ResMessages.Writer mWriter;
+
+    public MessageItem(ResMessages.Link message) {
+        mLink = message;
+        mMessage = mLink.message;
+        mWriter = mMessage.writer;
+        mCurrentDate = null;
+        isDate = false;
     }
 
-    public int getId() {
-        return mMessage.id;
+    public MessageItem(Date currentDate) {
+        mCurrentDate = currentDate;
+        isDate = true;
+    }
+
+    public int getLinkId() {
+        return mLink.id;
+    }
+    public int getMessageId() {
+        return mLink.messageId;
     }
 
     public int getFeedbackId() {
-        return mMessage.feedbackId;
+        return mLink.feedbackId;
     }
 
     public String getUserNickName() {
-        return mMessage.writer.u_firstName + " " + mMessage.writer.u_lastName;
+        return mWriter.u_firstName + " " + mWriter.u_lastName;
     }
 
     public int getUserId() {
-        return mMessage.writer.id;
+        return mWriter.id;
     }
 
     public String getUserProfileUrl() {
-        return JandiConstants.SERVICE_ROOT_URL + mMessage.writer.u_photoUrl;
+        return JandiConstants.SERVICE_ROOT_URL + mWriter.u_photoUrl;
     }
 
     public int getContentType() {
@@ -51,7 +68,7 @@ public class MessageItem {
         if (mMessage instanceof ResMessages.TextMessage) {
             return TYPE_STRING;
         } else if (mMessage instanceof ResMessages.FileMessage) {
-            String fileType = ((ResMessages.FileMessage)mMessage).content.type;
+            String fileType = ((ResMessages.FileMessage) mMessage).content.type;
             log.debug("fileType : " + fileType);
             if (fileType == null || fileType.equals("null")) {
                 return TYPE_FILE;
@@ -69,16 +86,16 @@ public class MessageItem {
 
     public String getContentString() {
         if (mMessage instanceof ResMessages.TextMessage) {
-            return ((ResMessages.TextMessage)mMessage).content.body;
+            return ((ResMessages.TextMessage) mMessage).content.body;
         } else if (mMessage instanceof ResMessages.CommentMessage) {
-            return ((ResMessages.CommentMessage)mMessage).content.body;
+            return ((ResMessages.CommentMessage) mMessage).content.body;
         }
         return null;
     }
 
     public String getContentUrl() {
         if (mMessage instanceof ResMessages.FileMessage) {
-            ResMessages.FileMessage message = (ResMessages.FileMessage)mMessage;
+            ResMessages.FileMessage message = (ResMessages.FileMessage) mMessage;
             if (message.content.serverUrl.equals("root")) {
                 return JandiConstants.SERVICE_ROOT_URL + message.content.fileUrl;
             }
@@ -88,37 +105,35 @@ public class MessageItem {
 
     public String getContentFileName() {
         if (mMessage instanceof ResMessages.FileMessage) {
-            return ((ResMessages.FileMessage)mMessage).content.name;
+            return ((ResMessages.FileMessage) mMessage).content.name;
         }
         return null;
     }
 
     public String getContentFileType() {
         if (mMessage instanceof ResMessages.FileMessage) {
-            return ((ResMessages.FileMessage)mMessage).content.type;
+            return ((ResMessages.FileMessage) mMessage).content.type;
         }
         return null;
     }
 
     public String getContentFileSize() {
         if (mMessage instanceof ResMessages.FileMessage) {
-            int byteSize = ((ResMessages.FileMessage)mMessage).content.size;
+            int byteSize = ((ResMessages.FileMessage) mMessage).content.size;
             return FormatConverter.formatFileSize(byteSize);
         }
 
         return null;
     }
 
-    public Date getTime() {
-        return mMessage.createTime;
+    public Date getCurrentDateDevider() {
+        return mCurrentDate;
     }
 
-    public int getWriterId() {
-        return mMessage.writerId;
-        // TODO : 본인 ID 와 비교해서 구현할 것
-//        if (mLink.message.writer.id == myUserId) {
-//            return true;
-//        }
-//        return false;
+    public Date getLinkTime() {
+        return mLink.time;
+    }
+    public Date getCreatTime() {
+        return mMessage.createTime;
     }
 }
