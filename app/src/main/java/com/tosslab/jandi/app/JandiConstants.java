@@ -30,7 +30,7 @@ public class JandiConstants {
     public static final int TYPE_TITLE_PRIVATE_GROUP    = 0x13;
 
     public static final int TYPE_UPLOAD_GALLERY     = 0x00;
-    public static final int TYPE_UPLOAD_EXPLORER    = 0x03;
+    public static final int TYPE_UPLOAD_EXPLORER    = 0x01;
 
     public static final String TYPE_CHANNEL_STRING          = "channel";
     public static final String TYPE_DIRECT_MESSAGE_STRING   = "user";

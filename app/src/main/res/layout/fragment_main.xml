@@ -6,6 +6,7 @@
     android:background="@drawable/bg_login"
     tools:context="com.tosslab.jandi.app.MainActivity">
     <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
         android:layout_height="0px"
@@ -16,7 +17,10 @@
         android:stackFromBottom="true"
         android:transcriptMode="normal"
         android:smoothScrollbar="true"
-        android:fillViewport="true"/>
+        android:fillViewport="true"
+        ptr:ptrPullLabel="당겨서 이전 메시지"
+        ptr:ptrRefreshLabel="놓아서 이전 메시지"
+        ptr:ptrReleaseLabel="완료" />
 
     <!-- Message Input Layout -->
     <View

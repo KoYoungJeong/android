@@ -78,7 +78,7 @@ public class MessageItemView extends LinearLayout {
 
         mMessageContent.setText("");
 
-        if (item.isDate) {
+        if (item.isDateDivider) {
             // 날짜 경계선으로 표시
             mLayoutDateDevider.setVisibility(VISIBLE);
             mDateDevider.setText(DateTransformator.getTimeString(item.getCurrentDateDevider()));

@@ -20,7 +20,7 @@ public class MessageItem {
 
     public static final int TYPE_FILE  = 10;
 
-    public boolean isDate;
+    public boolean isDateDivider;
     private Date mCurrentDate;
 
     private ResMessages.Link mLink;
@@ -32,12 +32,12 @@ public class MessageItem {
         mMessage = mLink.message;
         mWriter = mMessage.writer;
         mCurrentDate = null;
-        isDate = false;
+        isDateDivider = false;
     }
 
     public MessageItem(Date currentDate) {
         mCurrentDate = currentDate;
-        isDate = true;
+        isDateDivider = true;
     }
 
     public int getLinkId() {

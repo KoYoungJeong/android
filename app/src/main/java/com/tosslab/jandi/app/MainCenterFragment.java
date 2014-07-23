@@ -7,11 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,8 +23,6 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
-import com.koushikdutta.ion.builder.MultipartBodyBuilder;
-import com.koushikdutta.ion.builder.RequestBuilder;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -38,7 +36,6 @@ import com.tosslab.jandi.app.events.RequestMessageListEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
 import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
-import com.tosslab.jandi.app.network.MultipartUtility;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -51,8 +48,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -60,9 +55,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -79,7 +72,8 @@ public class MainCenterFragment extends BaseFragment  {
     TossRestClient tossRestClient;
 
     @ViewById(R.id.list_messages)
-    PullToRefreshListView listMessages;
+    PullToRefreshListView mPullToRefreshListMessages;
+    ListView mActualListView;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
     @ViewById(R.id.et_message)
@@ -96,7 +90,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     int mFirstItemId = -1;
     boolean mIsFirstMessage = true;
-    boolean mDoLoading = true;
+
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     RequestMessageListEvent mCurrentEvent;
@@ -112,7 +106,8 @@ public class MainCenterFragment extends BaseFragment  {
 
         mMyToken = JandiPreference.getMyToken(mContext);
 
-        listMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
+        // Set up of PullToRefresh
+        mPullToRefreshListMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
                 String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(),
@@ -120,46 +115,26 @@ public class MainCenterFragment extends BaseFragment  {
 
                 // Update the LastUpdatedLabel
                 listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                new GetFutherMessagesTask().execute();
             }
         });
-
-        ListView actualListView = listMessages.getRefreshableView();
-        actualListView.setAdapter(messageItemListAdapter);
-        actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mActualListView = mPullToRefreshListMessages.getRefreshableView();
+        mActualListView.setAdapter(messageItemListAdapter);
+        mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 log.debug("click, " + i);
-                list_messagesItemClicked(messageItemListAdapter.getItem(i));
+                messagesItemClicked(messageItemListAdapter.getItem(i - 1));
+
             }
         });
-        actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mActualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                list_messagesItemLongClicked(messageItemListAdapter.getItem(i));
+                messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
                 return false;
             }
         });
-//        listMessages.setAdapter(messageItemListAdapter);
-//        // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
-//        listMessages.setOnScrollListener(new AbsListView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(AbsListView absListView, int i) {
-//                // not using this
-//            }
-//
-//            @Override
-//            public void onScroll(AbsListView absListView, int firstVisibleItem,
-//                                 int visibleItemCount, int totalItemCount) {
-//                if (mIsFirstMessage == false && mDoLoading == false
-//                        && firstVisibleItem == 0) {
-//                    mDoLoading = true;
-//                    absListView.setSelection(firstVisibleItem + visibleItemCount);
-//                    log.debug("Top of scrolled list. Try to get former message list.");
-//                    getMessages();
-//                }
-//
-//            }
-//        });
 
         mFirstItemId = -1;
     }
@@ -304,7 +279,52 @@ public class MainCenterFragment extends BaseFragment  {
     @UiThread
     void refreshListAdapter() {
         messageItemListAdapter.notifyDataSetChanged();
-        mDoLoading = false;
+    }
+
+    /**
+     * Full To Refresh 전용
+     */
+    private class GetFutherMessagesTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            pauseTimer();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            MessageManipulator messageManipulator = new MessageManipulator(
+                    tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
+            try {
+                ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
+                messageItemListAdapter.insertMessageItem(restResMessages);
+                // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
+                mIsFirstMessage = restResMessages.isFirst;
+                // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
+                mFirstItemId = restResMessages.firstIdOfReceviedList;
+
+                log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
+                return null;
+            } catch (RestClientException e) {
+                log.error("fail to get messages.", e);
+                return "메시지 획득에 실패했습니다";
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String errMessage) {
+            mPullToRefreshListMessages.onRefreshComplete();
+
+            if (errMessage == null) {
+                // Success
+                refreshListAdapter();
+            } else {
+                ColoredToast.showError(mContext, errMessage);
+            }
+            resumeTimer();
+            super.onPostExecute(errMessage);
+        }
     }
 
     /************************************************************
@@ -397,9 +417,10 @@ public class MainCenterFragment extends BaseFragment  {
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
      * @param item
      */
-//    @ItemLongClick
-    void list_messagesItemLongClicked(MessageItem item) {
-        checkPermissionForManipulateMessage(item);
+    void messagesItemLongClicked(MessageItem item) {
+        if (!item.isDateDivider) {
+            checkPermissionForManipulateMessage(item);
+        }
     }
 
     void checkPermissionForManipulateMessage(MessageItem item) {
@@ -555,7 +576,6 @@ public class MainCenterFragment extends BaseFragment  {
             switch (requestCode) {
                 case JandiConstants.TYPE_UPLOAD_GALLERY:
                     Uri targetUri = data.getData();
-//                    realFilePath = getFilePathFromUri(targetUri);
                     realFilePath = getRealPathFromUri(targetUri);
                     log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
                     showFileUploadDialog(realFilePath);
@@ -600,6 +620,7 @@ public class MainCenterFragment extends BaseFragment  {
                     }
                 })
                 .setHeader("Authorization", mMyToken)
+                .setHeader("Accept", "application/vnd.tosslab.jandi-v1+json")
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.cdpId)
                 .setMultipartParameter("permission", "755");
@@ -616,49 +637,6 @@ public class MainCenterFragment extends BaseFragment  {
                         uploadFileDone(e, result);
                     }
                 });
-    }
-
-    @Background
-    void uploadFileInBackground(int cdpIdToBeShared, String fileUri, String comment) {
-
-        String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
-
-        File uploadFile = new File(fileUri);
-        try {
-            MultipartUtility multipart = new MultipartUtility(requestURL, mMyToken);
-
-            multipart.addFormField("title", uploadFile.getName());
-            multipart.addFormField("share", "" + cdpIdToBeShared);
-            multipart.addFormField("permission", "755");
-            multipart.addFilePart("userFile", uploadFile);
-            if (comment != null && comment.length() > 0) {
-                multipart.addFormField("comment", comment);
-            }
-
-            log.debug("try to upload file, " + uploadFile.getName() + " with " + comment + ", to " + cdpIdToBeShared);
-
-            List<String> response = multipart.finish();
-            log.debug("SERVER REPLIED:");
-            for (String line : response) {
-                log.debug(line);
-            }
-            uploadFileDone(true, "File Uploaded !!");
-        } catch (IOException ex) {
-            log.error("fail to upload file.", ex);
-            uploadFileDone(false, "Fail to upload file");
-
-        }
-    }
-
-    @UiThread
-    void uploadFileDone(boolean isOk, String message) {
-        mProgressWheel.dismiss();
-        resumeTimer();  // resume timer
-        if (isOk) {
-            ColoredToast.show(mContext, message);
-        } else {
-            ColoredToast.showError(mContext, message);
-        }
     }
 
     @UiThread
@@ -687,20 +665,21 @@ public class MainCenterFragment extends BaseFragment  {
     /************************************************************
      * 파일 상세
      ************************************************************/
-//    @ItemClick
-    void list_messagesItemClicked(MessageItem item) {
-        switch (item.getContentType()) {
-            case MessageItem.TYPE_STRING:
-                // DO NOTHING
-                break;
-            case MessageItem.TYPE_COMMENT:
-                moveToFileDetailActivity(item.getFeedbackId());
-                break;
-            case MessageItem.TYPE_IMAGE:
-            case MessageItem.TYPE_FILE:
-                moveToFileDetailActivity(item.getMessageId());
-                break;
+    void messagesItemClicked(MessageItem item) {
+        if (!item.isDateDivider) {
+            switch (item.getContentType()) {
+                case MessageItem.TYPE_STRING:
+                    // DO NOTHING
+                    break;
+                case MessageItem.TYPE_COMMENT:
+                    moveToFileDetailActivity(item.getFeedbackId());
+                    break;
+                case MessageItem.TYPE_IMAGE:
+                case MessageItem.TYPE_FILE:
+                    moveToFileDetailActivity(item.getMessageId());
+                    break;
 
+            }
         }
     }
 

@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hideybarphotoviewscreen.HideyBarPhotoViewIntent;
+import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
+import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -263,8 +266,23 @@ public class FileDetailActivity extends BaseActivity {
                 // 이미지일 경우
                 if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
                     imageViewPhotoFile.setVisibility(View.VISIBLE);
-                    String photoUrl = (JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl).replaceAll(" ", "%20");
+                    final String photoUrl = (JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl).replaceAll(" ", "%20");
                     Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
+                    // 이미지를 터치하면 큰 화면 보기로 넘어감
+                    imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
+                                    .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
+                                            .setPlaceHolderResId(R.drawable.ic_actionbar_logo)
+                                            .showProgressView(false))
+                                    .timeToStartHideyMode(2000)
+                                    .screenTitle(fileMessage.content.name)
+                                    .create(mContext, HideyBarPhotoViewScreen.class);
+                            startActivity(hideyBarPhotoViewIntent);
+                        }
+                    });
+
                 }
                 buttonFileDetailShare.setOnClickListener(new View.OnClickListener() {
                     @Override

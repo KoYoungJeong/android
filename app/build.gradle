@@ -14,6 +14,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.google.android.gms:play-services:3.1.+'
     compile 'com.navercorp.pulltorefresh:library:3.2.0@aar'
+    compile 'com.github.jfragosoperez:hideybarphotoviewscreen:1.+'
     compile 'de.greenrobot:eventbus:2.2.+'
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'org.springframework.android:spring-android-core:1.0.+'

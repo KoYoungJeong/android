@@ -20,7 +20,7 @@ import java.util.List;
  * Created by justinygchoi on 2014. 6. 5..
  */
 public class MessageManipulator {
-    private static final int NUMBER_OF_MESSAGES = 10;
+    private static final int NUMBER_OF_MESSAGES = 20;
     TossRestClient mRestClient;
     int mCdpType;
     int mCdpId;
