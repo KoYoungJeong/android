@@ -133,17 +133,17 @@ public class MessageItemListAdapter extends BaseAdapter {
     private void reformatMessages() {
         mFormattedMessages.clear();
         for (MessageItem item : mMessages) {
-            String strDay = DATE_FORMATTER.format(item.getLinkTime());
-            if (!mCurrentDay.equals(strDay)) {
-                // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
-                mCurrentDay = strDay;
-                try {
-                    mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay)));
-                } catch (ParseException e) {
-                    log.error("Date Parse Error", e);
-                }
-
-            }
+//            String strDay = DATE_FORMATTER.format(item.getLinkTime());
+//            if (!mCurrentDay.equals(strDay)) {
+//                // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
+//                mCurrentDay = strDay;
+//                try {
+//                    mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay)));
+//                } catch (ParseException e) {
+//                    log.error("Date Parse Error", e);
+//                }
+//
+//            }
             mFormattedMessages.add(item);
         }
     }

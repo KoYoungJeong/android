@@ -8,12 +8,17 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.text.format.DateUtils;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -74,7 +79,7 @@ public class MainCenterFragment extends BaseFragment  {
     TossRestClient tossRestClient;
 
     @ViewById(R.id.list_messages)
-    ListView listMessages;
+    PullToRefreshListView listMessages;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
     @ViewById(R.id.et_message)
@@ -107,27 +112,54 @@ public class MainCenterFragment extends BaseFragment  {
 
         mMyToken = JandiPreference.getMyToken(mContext);
 
-        listMessages.setAdapter(messageItemListAdapter);
-        // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
-        listMessages.setOnScrollListener(new AbsListView.OnScrollListener() {
+        listMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
             @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-                // not using this
-            }
+            public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
+                String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(),
+                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 
-            @Override
-            public void onScroll(AbsListView absListView, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if (mIsFirstMessage == false && mDoLoading == false
-                        && firstVisibleItem == 0) {
-                    mDoLoading = true;
-                    absListView.setSelection(firstVisibleItem + visibleItemCount);
-                    log.debug("Top of scrolled list. Try to get former message list.");
-                    getMessages();
-                }
-
+                // Update the LastUpdatedLabel
+                listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
             }
         });
+
+        ListView actualListView = listMessages.getRefreshableView();
+        actualListView.setAdapter(messageItemListAdapter);
+        actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                log.debug("click, " + i);
+                list_messagesItemClicked(messageItemListAdapter.getItem(i));
+            }
+        });
+        actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                list_messagesItemLongClicked(messageItemListAdapter.getItem(i));
+                return false;
+            }
+        });
+//        listMessages.setAdapter(messageItemListAdapter);
+//        // 스크롤의 맨 위으로 올라갔을 경우 (리스트 업데이트)
+//        listMessages.setOnScrollListener(new AbsListView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(AbsListView absListView, int i) {
+//                // not using this
+//            }
+//
+//            @Override
+//            public void onScroll(AbsListView absListView, int firstVisibleItem,
+//                                 int visibleItemCount, int totalItemCount) {
+//                if (mIsFirstMessage == false && mDoLoading == false
+//                        && firstVisibleItem == 0) {
+//                    mDoLoading = true;
+//                    absListView.setSelection(firstVisibleItem + visibleItemCount);
+//                    log.debug("Top of scrolled list. Try to get former message list.");
+//                    getMessages();
+//                }
+//
+//            }
+//        });
 
         mFirstItemId = -1;
     }
@@ -365,7 +397,7 @@ public class MainCenterFragment extends BaseFragment  {
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
      * @param item
      */
-    @ItemLongClick
+//    @ItemLongClick
     void list_messagesItemLongClicked(MessageItem item) {
         checkPermissionForManipulateMessage(item);
     }
@@ -655,7 +687,7 @@ public class MainCenterFragment extends BaseFragment  {
     /************************************************************
      * 파일 상세
      ************************************************************/
-    @ItemClick
+//    @ItemClick
     void list_messagesItemClicked(MessageItem item) {
         switch (item.getContentType()) {
             case MessageItem.TYPE_STRING:

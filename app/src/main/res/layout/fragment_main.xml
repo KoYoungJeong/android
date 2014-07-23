@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:background="@drawable/bg_login"
     tools:context="com.tosslab.jandi.app.MainActivity">
-    <ListView
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
         android:layout_height="0px"
@@ -15,8 +15,8 @@
         android:dividerHeight="0dp"
         android:stackFromBottom="true"
         android:transcriptMode="normal"
-        android:fillViewport="true">
-    </ListView>
+        android:smoothScrollbar="true"
+        android:fillViewport="true"/>
 
     <!-- Message Input Layout -->
     <View
