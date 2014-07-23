@@ -19,6 +19,7 @@ public class JandiNetworkClient {
     public JandiNetworkClient(TossRestClient tossRestClient, String token) {
         mRestClient = tossRestClient;
         mRestClient.setHeader("Authorization", token);
+        mRestClient.setHeader("Accept", "application/vnd.tosslab.jandi-v1+json");
     }
 
     public ResCommon registerNotificationToken(String regId) throws JandiException {

@@ -26,6 +26,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
@@ -66,6 +67,8 @@ public class LoginActivity extends BaseActivity {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
+
+//        trustEveryone();
 
         // 자동 로그인 과정.
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
@@ -119,8 +122,10 @@ public class LoginActivity extends BaseActivity {
         try {
             tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
             doneLogin(true, tossRestToken, -1);
-        } catch (RestClientException e) {
+        } catch (HttpStatusCodeException e) {
             log.error("Login Fail", e);
+            JandiException je = new JandiException(e);
+            log.error("Jandi Exception : " + je.errCode + " : " + je.errReason);
             doneLogin(false, null, R.string.err_login);
         } catch (Exception e) {
             log.error("Login Fail", e);
@@ -139,6 +144,7 @@ public class LoginActivity extends BaseActivity {
                 registerGcm();
             }
         } else {
+            JandiPreference.clearMyToken(this);
             ColoredToast.showError(this, getString(resId));
         }
     }

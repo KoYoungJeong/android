@@ -41,13 +41,14 @@ import org.springframework.util.MultiValueMap;
 @Rest(
         rootUrl = JandiConstants.SERVICE_ROOT_URL + "inner-api",
         converters = {
-                MappingJacksonHttpMessageConverter.class,
+                JandiV1HttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class },
         interceptors = { LoggerInterceptor.class }
 )
-@Accept(MediaType.APPLICATION_JSON)
+//@Accept(MediaType.APPLICATION_JSON)
+@Accept("application/vnd.tosslab.jandi-v1+json")
 public interface TossRestClient {
     void setHeader(String name, String value);
 
