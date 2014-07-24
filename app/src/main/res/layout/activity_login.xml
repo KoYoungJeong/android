@@ -34,7 +34,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textColorHint="@android:color/holo_blue_light"
-                android:text="gyu@tosslab.com"
+                android:text="mk@tosslab.com"
                 android:textColor="@android:color/holo_blue_dark"/>
             <EditText
                 android:id="@+id/et_login_password"

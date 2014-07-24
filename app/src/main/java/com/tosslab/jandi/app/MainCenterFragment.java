@@ -3,6 +3,7 @@ package com.tosslab.jandi.app;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,10 +12,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
@@ -83,7 +86,6 @@ public class MainCenterFragment extends BaseFragment  {
     private Context mContext;
     private String mMyToken;
     private ProgressWheel mProgressWheel;
-//    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     // Update 관련
     private Timer mTimer;
@@ -92,6 +94,8 @@ public class MainCenterFragment extends BaseFragment  {
     int mFirstItemId = -1;
     boolean mIsFirstMessage = false;
 
+    // 현재 소프트웨어 키보드가 올라와 있는지 여부
+    boolean mIsShownKeyboard = false;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     RequestMessageListEvent mCurrentEvent;
@@ -103,10 +107,9 @@ public class MainCenterFragment extends BaseFragment  {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-//        imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-
         mMyToken = JandiPreference.getMyToken(mContext);
 
+        //
         // Set up of PullToRefresh
         mPullToRefreshListMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
             @Override
@@ -137,6 +140,7 @@ public class MainCenterFragment extends BaseFragment  {
             }
         });
 
+        //
         // 리스트의 내용이 업데이트 되면...
         messageItemListAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -145,12 +149,18 @@ public class MainCenterFragment extends BaseFragment  {
                 // 만약 리스트의 맨 마지막 근처라면 맨 마지막으로 리스트를 이동한다.
                 int index = messageItemListAdapter.getCount() - mActualListView.getLastVisiblePosition();
                 log.debug("position : " + index);
-                if (index <= 2) {
+                if (index <= 3) {
                     mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
                 }
             }
         });
         mFirstItemId = -1;
+
+        // Software 키보드가 올라왔을 때 리스트도 맨 마지막으로 이동한다.
+//
+//        LinearLayout mainLayout = (LinearLayout)getActivity().findViewById(R.layout.frame_main);
+//        InputMethodManager im = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+
     }
 
     @AfterInject
