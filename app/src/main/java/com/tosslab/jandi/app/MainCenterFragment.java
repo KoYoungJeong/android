@@ -82,14 +82,14 @@ public class MainCenterFragment extends BaseFragment  {
     private Context mContext;
     private String mMyToken;
     private ProgressWheel mProgressWheel;
-    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+//    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     // Update 관련
     private Timer mTimer;
     private int mLastUpdateLinkId = 0;
 
     int mFirstItemId = -1;
-    boolean mIsFirstMessage = true;
+    boolean mIsFirstMessage = false;
 
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
@@ -102,7 +102,7 @@ public class MainCenterFragment extends BaseFragment  {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mMyToken = JandiPreference.getMyToken(mContext);
 
@@ -111,7 +111,7 @@ public class MainCenterFragment extends BaseFragment  {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
                 String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(),
-                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                            DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 
                 // Update the LastUpdatedLabel
                 listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
@@ -211,7 +211,8 @@ public class MainCenterFragment extends BaseFragment  {
     public void onEvent(RequestMessageListEvent event) {
         log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
 
-        mIsFirstMessage = true;
+        mIsFirstMessage = false;
+        mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mCurrentEvent = event;
         getMessagesAfterCleaning();
     }
@@ -269,6 +270,10 @@ public class MainCenterFragment extends BaseFragment  {
     public void getMessagesDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
         if (isOk) {
+            if (mIsFirstMessage) {
+                ColoredToast.showWarning(mContext, "처음입니다.");
+                mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+            }
             refreshListAdapter();
         } else {
             ColoredToast.showError(mContext, message);
@@ -285,9 +290,11 @@ public class MainCenterFragment extends BaseFragment  {
      * Full To Refresh 전용
      */
     private class GetFutherMessagesTask extends AsyncTask<Void, Void, String> {
+        private int currentMessagesSize;
 
         @Override
         protected void onPreExecute() {
+            currentMessagesSize = messageItemListAdapter.getCount();
             pauseTimer();
         }
 
@@ -315,10 +322,20 @@ public class MainCenterFragment extends BaseFragment  {
         @Override
         protected void onPostExecute(String errMessage) {
             mPullToRefreshListMessages.onRefreshComplete();
+            if (mIsFirstMessage) {
+                ColoredToast.showWarning(mContext, "처음입니다.");
+                mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+            }
 
             if (errMessage == null) {
                 // Success
                 refreshListAdapter();
+                // 리스트에 아이템이 추가되더라도 현재 위치를 고수하도록 이동한다.
+                // +1 은 이전 메시지의 0번째 item은 실제 아이템이 아닌 날짜 경계선이기에 그 포지션을 뺀다.
+                // +1 은 인덱스 0 - 사이즈는 1부터...
+                int index = messageItemListAdapter.getCount() - currentMessagesSize + 2;
+                log.debug(">>REFRESH<< @" + index);
+                mActualListView.setSelectionFromTop(index, 0);
             } else {
                 ColoredToast.showError(mContext, errMessage);
             }

@@ -127,10 +127,11 @@ public class MessageItemListAdapter extends BaseAdapter {
                 }
             }
         }
-        reformatMessages();
+        // poor implement : 현재 isDescendingOrder면 신규 추가임.
+        reformatMessages(isDescendingOrder);
     }
 
-    private void reformatMessages() {
+    private void reformatMessages(boolean isInsert) {
         mFormattedMessages.clear();
         for (MessageItem item : mMessages) {
             String strDay = DATE_FORMATTER.format(item.getLinkTime());
