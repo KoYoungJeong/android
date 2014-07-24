@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -136,6 +137,19 @@ public class MainCenterFragment extends BaseFragment  {
             }
         });
 
+        // 리스트의 내용이 업데이트 되면...
+        messageItemListAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                // 만약 리스트의 맨 마지막 근처라면 맨 마지막으로 리스트를 이동한다.
+                int index = messageItemListAdapter.getCount() - mActualListView.getLastVisiblePosition();
+                log.debug("position : " + index);
+                if (index <= 2) {
+                    mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
+                }
+            }
+        });
         mFirstItemId = -1;
     }
 
@@ -184,7 +198,7 @@ public class MainCenterFragment extends BaseFragment  {
         log.debug("resume polling");
         TimerTask task = new UpdateTimerTask();
         mTimer = new Timer();
-        mTimer.schedule(task, 1500, 3000);  // 1.5초뒤, 3초마다
+        mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
     }
 
     /**
@@ -418,12 +432,13 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     public void sendMessageDone(boolean isOk, String message) {
-        resumeTimer();
+        getUpdateMessages();
         if (isOk) {
             ColoredToast.show(mContext, message);
         } else {
             ColoredToast.showError(mContext, message);
         }
+        resumeTimer();
     }
 
     /************************************************************
@@ -477,6 +492,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
+        pauseTimer();
         modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
     }
 
@@ -509,6 +525,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else {
             ColoredToast.showError(mContext, message);
         }
+        resumeTimer();
     }
 
     /************************************************************
@@ -522,6 +539,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     void deleteMessage(int messageType, int messageId, int feedbackId) {
+        pauseTimer();
         deleteMessageInBackground(messageType, messageId, feedbackId);
     }
 
@@ -551,6 +569,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else {
             ColoredToast.showError(mContext, message);
         }
+        resumeTimer();
     }
 
     /************************************************************
@@ -666,6 +685,7 @@ public class MainCenterFragment extends BaseFragment  {
             ColoredToast.showError(mContext, "Upload failed");
         }
 
+        getUpdateMessages();
         resumeTimer();  // resume timer
     }
 
