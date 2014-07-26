@@ -76,29 +76,33 @@ public class MessageItemView extends LinearLayout {
         mLayoutMessageComment.setVisibility(GONE);
         mLayoutMessageImageFile.setVisibility(GONE);
         mLayoutMessageCommonFile.setVisibility(GONE);
-
-        mMessageContent.setText("");
+        mMessageContent.setVisibility(GONE);
 
         if (item.isDateDivider) {
             // 날짜 경계선으로 표시
             mLayoutDateDevider.setVisibility(VISIBLE);
-            mDateDevider.setText(DateTransformator.getTimeString(item.getCurrentDateDevider()));
+            if (item.isToday)
+                mDateDevider.setText(R.string.today);
+            else
+                mDateDevider.setText(DateTransformator.getTimeStringForDivider(item.getCurrentDateDevider()));
         } else {
             // 실제 컨탠츠를 표시
             mLayoutMessageItem.setVisibility(VISIBLE);
             mUserName.setText(item.getUserNickName());
             // 시간
-            String createTime = DateTransformator.getTimeDifference(item.getLinkTime());
+            String createTime = DateTransformator.getTimeStringForSimple(item.getLinkTime());
             mCreateTime.setText(createTime);
             // 프로필 사진
             Picasso.with(mContext).load(item.getUserProfileUrl()).transform(new CircleTransform()).into(mUserProfileImage);
             // 메시지 String
             if (item.getContentType() == MessageItem.TYPE_STRING) {
                 // 일반 메시지일 경우
+                mMessageContent.setVisibility(VISIBLE);
                 mMessageContent.setText(item.getContentString());
             } else if (item.getContentType() == MessageItem.TYPE_COMMENT) {
                 // 메시지 타입이 댓글 표시일 경우
                 mLayoutMessageComment.setVisibility(VISIBLE);
+                mMessageContent.setVisibility(VISIBLE);
                 mMessageContent.setText(item.getContentString());
             } else if (item.getContentType() == MessageItem.TYPE_IMAGE) {
                 // 메시지 타입이 이미지인 경우

@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -135,11 +136,15 @@ public class MessageItemListAdapter extends BaseAdapter {
         mFormattedMessages.clear();
         for (MessageItem item : mMessages) {
             String strDay = DATE_FORMATTER.format(item.getLinkTime());
+            String strToday = DATE_FORMATTER.format(new Date());
             if (!mCurrentDay.equals(strDay)) {
                 // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
                 mCurrentDay = strDay;
                 try {
-                    mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay)));
+                    if (mCurrentDay.equals(strToday))
+                        mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), true));
+                    else
+                        mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
                 } catch (ParseException e) {
                     log.error("Date Parse Error", e);
                 }

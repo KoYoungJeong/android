@@ -37,6 +37,7 @@
 
     <!-- Message -->
     <string name="modify_message">Message 수정</string>
+    <string name="today">오늘</string>
 
     <!--  -->
     <string name="type_files">Files</string>

@@ -49,4 +49,14 @@ public class DateTransformator {
         DateFormat mCreateDateFormat = new SimpleDateFormat("yyyy/MM/dd, HH:mm");
         return mCreateDateFormat.format(date);
     }
+
+    public static String getTimeStringForDivider(Date date) {
+        DateFormat mCreateDateFormat = new SimpleDateFormat("yyyy/MM/dd, EEE");
+        return mCreateDateFormat.format(date);
+    }
+
+    public static String getTimeStringForSimple(Date date) {
+        DateFormat mCreateDateFormat = new SimpleDateFormat("a h:mm");
+        return mCreateDateFormat.format(date);
+    }
 }

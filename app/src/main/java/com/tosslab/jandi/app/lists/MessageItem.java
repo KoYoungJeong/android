@@ -22,6 +22,7 @@ public class MessageItem {
 
     public boolean isDateDivider;
     private Date mCurrentDate;
+    public boolean isToday;
 
     private ResMessages.Link mLink;
     private ResMessages.OriginalMessage mMessage;
@@ -35,9 +36,15 @@ public class MessageItem {
         isDateDivider = false;
     }
 
-    public MessageItem(Date currentDate) {
+    /**
+     * 날짜 경계선 용...
+     * @param currentDate
+     * @param isToday
+     */
+    public MessageItem(Date currentDate, boolean isToday) {
         mCurrentDate = currentDate;
         isDateDivider = true;
+        this.isToday = isToday;
     }
 
     public int getLinkId() {

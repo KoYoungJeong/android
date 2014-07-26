@@ -7,25 +7,41 @@
         android:id="@+id/ly_message_date_devider"
         android:layout_width="match_parent"
         android:layout_height="36dp"
+        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="invisible">
+        <View
+            android:layout_width="50dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/jandi_main"/>
         <TextView
             android:id="@+id/txt_message_date_devider"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Date"/>
+            android:textStyle="bold"
+            android:textColor="@color/jandi_messages_date_divider"
+            android:textSize="@dimen/jandi_messages_date_divider"
+            android:text="When" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ly_message_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:paddingTop="5dp"
+        android:paddingLeft="@dimen/jandi_messages_padding_left"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingBottom="10dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+        <!-- 사용자 프로필 사진 -->
         <ImageView
             android:id="@+id/img_message_user_profile"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_margin="15dp"
+            android:layout_width="@dimen/jandi_messages_profile_size"
+            android:layout_height="@dimen/jandi_messages_profile_size"
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
             android:background="@drawable/jandi_profile"/>
+        <!-- 내용 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -33,14 +49,17 @@
             <!-- 기본 표시 레이어 -->
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom">
                 <TextView
                     android:id="@+id/txt_message_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="4dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/jandi_messages_name"
+                    android:textSize="@dimen/jandi_messages_user_name"
                     android:text="User name"
-                    android:textSize="@dimen/messages_user_name"
                     />
                 <TextView
                     android:id="@+id/txt_message_create_date"
@@ -48,9 +67,10 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/txt_message_user_name"
                     android:layout_alignBaseline="@id/txt_message_user_name"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="@color/message_date_text"
-                    android:text="date"
+                    android:layout_marginLeft="6dp"
+                    android:textColor="@color/jandi_messages_date"
+                    android:textSize="@dimen/jandi_messages_date"
+                    android:text="AM ??:??"
                     />
             </RelativeLayout>
             <!-- 댓글일 경우 표시 레이어 -->
@@ -62,92 +82,81 @@
                     android:id="@+id/txt_message_commented"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/file_type"
+                    android:textColor="@color/jandi_messages_commented"
+                    android:textSize="@dimen/jandi_messages_commented"
                     android:text="Commented"/>
             </LinearLayout>
             <!-- 이미지일 경우 -->
             <RelativeLayout
                 android:id="@+id/ry_message_image_file"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:layout_height="wrap_content">
                 <ImageView
-                    android:id="@+id/img_message_image_icon_upload"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginTop="2dp"
-                    android:src="@drawable/ic_upload"/>
+                    android:id="@+id/img_message_photo"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginRight="5dp"/>
                 <TextView
                     android:id="@+id/txt_message_image_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_alignBaseline="@id/img_message_image_icon_upload"
-                    android:layout_toRightOf="@+id/img_message_image_icon_upload"
-                    android:textColor="@color/file_name"
-                    android:text="image file name"/>
-                <ImageView
-                    android:id="@+id/img_message_photo"
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
                     android:layout_marginTop="5dp"
-                    android:layout_below="@+id/txt_message_image_file_name"
-                    />
+                    android:layout_alignTop="@id/img_message_photo"
+                    android:layout_toRightOf="@+id/img_message_photo"
+                    android:textSize="14sp"
+                    android:textColor="@color/jandi_messages_file_name"
+                    android:text="image file name"/>
                 <TextView
                     android:id="@+id/txt_img_file_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_toRightOf="@+id/img_message_photo"
-                    android:layout_alignBottom="@+id/img_message_photo"
-                    android:layout_margin="8dp"
-                    android:textColor="@color/file_type"
+                    android:layout_alignBottom="@id/img_message_photo"
+                    android:textColor="#999999"
                     android:text="file type"/>
             </RelativeLayout>
             <RelativeLayout
                 android:id="@+id/ry_message_common_file"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp">
                 <!-- 일반 파일일 경우 -->
                 <ImageView
                     android:id="@+id/img_message_common_file"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_margin="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="40dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="10dp"
                     android:src="@drawable/tmp_file_icon" />
-                <ImageView
-                    android:id="@+id/img_message_common_file_icon_upload"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_toRightOf="@id/img_message_common_file"
-                    android:src="@drawable/ic_upload"/>
                 <TextView
                     android:id="@+id/txt_message_common_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_alignBaseline="@id/img_message_common_file_icon_upload"
-                    android:layout_toRightOf="@+id/img_message_common_file_icon_upload"
-                    android:textColor="@color/file_name"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/img_message_common_file"
+                    android:textColor="@color/jandi_messages_file_name"
+                    android:textSize="14sp"
                     android:text="file name"/>
                 <TextView
                     android:id="@+id/txt_common_file_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/img_message_common_file"
-                    android:layout_alignBottom="@+id/img_message_common_file"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="@color/file_type"
+                    android:layout_alignLeft="@id/txt_message_common_file_name"
+                    android:layout_below="@id/txt_message_common_file_name"
+                    android:layout_marginTop="5dp"
+                    android:textColor="#999999"
                     android:text="file type"/>
+
             </RelativeLayout>
             <!-- 실제 내용 (메시지, 댓글) -->
             <TextView
                 android:id="@+id/txt_message_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:textSize="@dimen/jandi_messages_content"
+                android:textColor="@color/jandi_messages_content"
                 android:text="Text"/>
         </LinearLayout>
 

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="justin"
-            android:textSize="@dimen/messages_user_name"
+            android:textSize="@dimen/jandi_messages_user_name"
             />
         <TextView
             android:id="@+id/txt_file_detail_comment_create_date_2"

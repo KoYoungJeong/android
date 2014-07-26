@@ -387,9 +387,11 @@ public class MainCenterFragment extends BaseFragment  {
             if (mLastUpdateLinkId > 0) {
                 ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
                 int nMessages = restResMessages.messageCount;
+                boolean isEmpty = true;
                 log.info("success to " + nMessages +
                         " messages updated at " + mLastUpdateLinkId);
                 if (nMessages > 0) {
+                    isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
                     messageItemListAdapter.updatedMessageItem(restResMessages);
                     // 가장 최신의 LinkId를 업데이트한다.
@@ -399,7 +401,7 @@ public class MainCenterFragment extends BaseFragment  {
                     }
                 }
 
-                getUpdateMessagesDone();
+                getUpdateMessagesDone(isEmpty);
             }
         } catch (RestClientException e) {
             log.error("fail to get updated messages", e);
@@ -408,7 +410,11 @@ public class MainCenterFragment extends BaseFragment  {
     }
 
     @UiThread
-    public void getUpdateMessagesDone() {
+    public void getUpdateMessagesDone(boolean isEmpty) {
+        if (isEmpty) {
+            // DO NOTHING
+            return;
+        }
         refreshListAdapter();
     }
 
