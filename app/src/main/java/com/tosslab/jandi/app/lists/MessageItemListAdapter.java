@@ -30,7 +30,7 @@ public class MessageItemListAdapter extends BaseAdapter {
     private final Logger log = Logger.getLogger(MessageItemListAdapter.class);
     private List<MessageItem> mFormattedMessages;
     private List<MessageItem> mMessages;
-    private String mCurrentDay = "";
+//    private String mCurrentDay = "";
 
     @RootContext
     Context mContext;
@@ -110,7 +110,7 @@ public class MessageItemListAdapter extends BaseAdapter {
         // 업데이트 된 메시지들의 상태를 보고,
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.
         for (ResMessages.Link link : sortedLinks) {
-            log.debug("updatedMessageItem : " + link.status);
+            log.debug("patchMessageItem, LinkId:" + link.id + " / status:"+ link.status);
             if (link.status.equals("created") || link.status.equals("shared")) {
                 if (isDescendingOrder)
                     mMessages.add(0, new MessageItem(link));
@@ -126,6 +126,11 @@ public class MessageItemListAdapter extends BaseAdapter {
                 if (position >= 0) {
                     mMessages.remove(position);
                 }
+//            } else if (link.status.equals("unshared")) {
+//                if (isDescendingOrder)
+//                    mMessages.add(0, new MessageItem(link));
+//                else
+//                    mMessages.add(new MessageItem(link));
             }
         }
         // poor implement : 현재 isDescendingOrder면 신규 추가임.
@@ -134,14 +139,15 @@ public class MessageItemListAdapter extends BaseAdapter {
 
     private void reformatMessages(boolean isInsert) {
         mFormattedMessages.clear();
+        String currentDay = "";
         for (MessageItem item : mMessages) {
             String strDay = DATE_FORMATTER.format(item.getLinkTime());
             String strToday = DATE_FORMATTER.format(new Date());
-            if (!mCurrentDay.equals(strDay)) {
+            if (!currentDay.equals(strDay)) {
                 // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
-                mCurrentDay = strDay;
+                currentDay = strDay;
                 try {
-                    if (mCurrentDay.equals(strToday))
+                    if (currentDay.equals(strToday))
                         mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), true));
                     else
                         mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
