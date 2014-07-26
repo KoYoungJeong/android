@@ -281,7 +281,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
     public void returnToLoginActivity() {
         JandiPreference.clearMyToken(mContext);
-        Intent intent = new Intent(mContext, LoginActivity_.class);
+        Intent intent = new Intent(mContext, IntroActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

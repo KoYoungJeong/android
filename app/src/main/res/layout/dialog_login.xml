@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/jandi_dialog_background">
+    <EditText
+        android:id="@+id/et_login_email"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:hint="@string/user_id"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColorHint="@android:color/holo_green_dark"
+        android:textColor="@android:color/holo_green_dark"
+        android:text="justin@tosslab.com"/>
+    <EditText
+        android:id="@+id/et_login_password"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:layout_margin="20dp"
+        android:imeActionId="@+id/login"
+        android:imeActionLabel="Sign In"
+        android:imeOptions="actionUnspecified"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColorHint="@android:color/holo_green_dark"
+        android:textColor="@android:color/holo_green_dark"/>
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_gravity="right"
+        android:layout_margin="16dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        android:background="@drawable/temp_button"
+        android:text="@string/action_login"
+        android:textColor="@color/button_text"/>
+</LinearLayout>

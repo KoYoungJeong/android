@@ -13,6 +13,8 @@
     <string name="user_id">E-mail Address</string>
     <string name="password">Password</string>
     <string name="err_login">로그인이 실패하였습니다</string>
+    <string name="err_login_invalid_id">이메일 주소가 정확하지 않습니다</string>
+    <string name="err_login_invalid_passwd">정확한 비밀번호를 입력해주세요</string>
 
     <!-- Main Panel -->
     <string name="message">Message</string>

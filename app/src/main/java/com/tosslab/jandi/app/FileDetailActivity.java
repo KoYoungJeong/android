@@ -108,8 +108,6 @@ public class FileDetailActivity extends BaseActivity {
         mProgressWheel.init();
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
-
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
 
@@ -123,6 +121,7 @@ public class FileDetailActivity extends BaseActivity {
         buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
         buttonFileDetailMore = (ImageView)header.findViewById(R.id.btn_file_detail_more);
         listFileDetailComments.addHeaderView(header);
+        listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
 
         myToken = JandiPreference.getMyToken(this);
         tossRestClient.setHeader("Authorization", myToken);
