@@ -22,10 +22,10 @@
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/img_message_user_profile"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_margin="15dp"
-            android:background="@drawable/ic_action_switchteams"/>
+            android:background="@drawable/jandi_profile"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

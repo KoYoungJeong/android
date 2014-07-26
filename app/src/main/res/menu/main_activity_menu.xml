@@ -3,12 +3,12 @@
     tools:context="com.tosslab.jandi.app.MainActivity" >
     <item android:id="@+id/action_main_manipulate_cdp"
         android:title="@string/action_settings"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/jandi_actionb_search"
         android:orderInCategory="100"
         android:showAsAction="always" />
     <item android:id="@+id/action_main_right_drawer"
         android:title="@string/action_settings"
-        android:icon="@drawable/ic_drawer"
+        android:icon="@drawable/jandi_actionb_menu"
         android:orderInCategory="100"
         android:showAsAction="always" />
 </menu>

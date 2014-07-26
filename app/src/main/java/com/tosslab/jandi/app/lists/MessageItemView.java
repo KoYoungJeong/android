@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
@@ -90,8 +91,7 @@ public class MessageItemView extends LinearLayout {
             String createTime = DateTransformator.getTimeDifference(item.getLinkTime());
             mCreateTime.setText(createTime);
             // 프로필 사진
-            Picasso.with(mContext).load(item.getUserProfileUrl()).fit().into(mUserProfileImage);
-
+            Picasso.with(mContext).load(item.getUserProfileUrl()).transform(new CircleTransform()).into(mUserProfileImage);
             // 메시지 String
             if (item.getContentType() == MessageItem.TYPE_STRING) {
                 // 일반 메시지일 경우
