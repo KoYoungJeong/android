@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -79,13 +81,13 @@ public class FileDetailActivity extends BaseActivity {
     ImageView imageViewUserProfile;
     TextView textViewUserName;
     TextView textViewFileCreateDate;
-    TextView textViewFileName;
     TextView textViewFileContentInfo;
     TextView textViewFileSharedCdp;
 
     ImageView imageViewPhotoFile;
     ImageView buttonFileDetailShare;
-    ImageView buttonFileDetailMore;
+    ImageView iconFileType;
+//    ImageView buttonFileDetailMore;
 
     public String myToken;
 
@@ -99,7 +101,9 @@ public class FileDetailActivity extends BaseActivity {
     @AfterViews
     public void initForm() {
         getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayUseLogoEnabled(true);
+        getActionBar().setDisplayUseLogoEnabled(false);
+        getActionBar().setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         mContext = getApplicationContext();
 
@@ -110,16 +114,15 @@ public class FileDetailActivity extends BaseActivity {
 
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
-
         imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile);
         textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name);
         textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date);
-        textViewFileName = (TextView)header.findViewById(R.id.txt_file_detail_name);
-        textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info_2);
+        textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView)header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo_2);
+        imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo);
         buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
-        buttonFileDetailMore = (ImageView)header.findViewById(R.id.btn_file_detail_more);
+        iconFileType = (ImageView)header.findViewById(R.id.icon_file_detail_content_type);
+//        buttonFileDetailMore = (ImageView)header.findViewById(R.id.btn_file_detail_more);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
 
@@ -248,13 +251,13 @@ public class FileDetailActivity extends BaseActivity {
                 // 사용자
                 ResMessages.Writer writer = fileMessage.writer;
                 String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
-                Picasso.with(mContext).load(profileUrl).centerCrop().fit().into(imageViewUserProfile);
+                Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
                 String userName = writer.u_firstName + " " + writer.u_lastName;
                 textViewUserName.setText(userName);
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
-                textViewFileName.setText(fileMessage.content.name);
+                getActionBar().setTitle(fileMessage.content.name);
 
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
@@ -262,27 +265,62 @@ public class FileDetailActivity extends BaseActivity {
                 // 공유 CDP 이름
                 drawFileSharedEntities();
 
-                // 이미지일 경우
-                if (fileMessage.content.type != null && fileMessage.content.type.startsWith("image")) {
-                    imageViewPhotoFile.setVisibility(View.VISIBLE);
-                    final String photoUrl = (JandiConstants.SERVICE_ROOT_URL + fileMessage.content.fileUrl).replaceAll(" ", "%20");
-                    Picasso.with(mContext).load(photoUrl).centerCrop().fit().into(imageViewPhotoFile);
-                    // 이미지를 터치하면 큰 화면 보기로 넘어감
-                    imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
-                                    .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
-                                            .setPlaceHolderResId(R.drawable.ic_actionbar_logo)
-                                            .showProgressView(false))
-                                    .timeToStartHideyMode(2000)
-                                    .screenTitle(fileMessage.content.name)
-                                    .create(mContext, HideyBarPhotoViewScreen.class);
-                            startActivity(hideyBarPhotoViewIntent);
-                        }
-                    });
+                if (fileMessage.content.type != null) {
+                    String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                    String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
 
+                    if (fileMessage.content.type.startsWith("image")) {
+                        // 이미지일 경우
+                        iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
+                        final String photoUrl = serverUrl + fileName;
+                        Picasso.with(mContext).load(photoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
+                        // 이미지를 터치하면 큰 화면 보기로 넘어감
+                        imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
+                                        .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
+                                                .setPlaceHolderResId(R.drawable.jandi_down_img)
+                                                .showProgressView(false))
+                                        .timeToStartHideyMode(2000)
+                                        .screenTitle(fileMessage.content.name)
+                                        .create(mContext, HideyBarPhotoViewScreen.class);
+                                startActivity(hideyBarPhotoViewIntent);
+                            }
+                        });
+                    } else {
+                        if (fileMessage.content.type.startsWith("audio")) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_audio);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_audio);
+                        } else if (fileMessage.content.type.startsWith("video")) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_video);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_video);
+                        } else if (fileMessage.content.type.startsWith("application/pdf")) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_pdf);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_pdf);
+                        } else if (fileMessage.content.type.startsWith("text")) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
+                        } else if (FormatConverter.isMsOfficeMimeType(fileMessage.content.type)) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
+                        } else {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_etc);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_etc);
+                        }
+
+                        // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
+                        imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                                String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
+                                download(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
+                            }
+                        });
+                    }
                 }
+
                 buttonFileDetailShare.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -290,14 +328,7 @@ public class FileDetailActivity extends BaseActivity {
                         clickShareButton();
                     }
                 });
-                buttonFileDetailMore.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
-                        String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
-                        download(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
-                    }
-                });
+
                 break;
             }
 

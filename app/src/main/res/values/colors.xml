@@ -30,7 +30,15 @@
     <color name="jandi_pannel_header_text">#999999</color>
     <color name="jandi_pannel_rm_text">@color/jandi_main</color>
 
-    <color name="border_message_input_panel">#BBBBBB</color>
+    <!-- File detail -->
+    <color name="jandi_file_detail_bg">#FFFFFF</color>
+    <color name="jandi_file_detail_date">#999999</color>
+    <color name="jandi_file_detail_comment_text">#333333</color>
+    <color name="jandi_file_detail_comments_bg">#F6F6F6</color>
+    <color name="jandi_file_detail_type_text">#999999</color>
+    <color name="jandi_file_detail_share_text">@color/jandi_main</color>
+    <color name="jandi_message_input_border">#999999</color>
+
     <color name="bg_message_input_panel">#EEEEEE</color>
     <color name="button_text">#FFFFFF</color>
 

@@ -3,41 +3,49 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+    android:paddingRight="@dimen/jandi_file_detail_padding_sides">
     <ImageView
-        android:id="@+id/img_file_detail_comment_user_profile_2"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="15dp"
-        android:background="@drawable/ic_action_switchteams"/>
+        android:id="@+id/img_file_detail_comment_user_profile"
+        android:layout_width="@dimen/jandi_file_detail_comment_profile_size"
+        android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
+        android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_top"
+        android:layout_marginRight="@dimen/jandi_file_detail_comment_profile_margin_right"
+        android:background="@drawable/jandi_profile_comment"/>
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="@dimen/jandi_file_detail_comment_margin_top">
         <TextView
-            android:id="@+id/txt_file_detail_comment_user_name_2"
+            android:id="@+id/txt_file_detail_comment_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="justin"
-            android:textSize="@dimen/jandi_messages_user_name"
+            android:layout_marginRight="@dimen/jandi_file_detail_comment_name_margin_right"
+            android:text="UserName"
+            android:textStyle="bold"
+            android:textSize="@dimen/jandi_file_detail_comment_name_text"
             />
         <TextView
-            android:id="@+id/txt_file_detail_comment_create_date_2"
+            android:id="@+id/txt_file_detail_comment_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/txt_file_detail_comment_user_name_2"
-            android:layout_alignBaseline="@id/txt_file_detail_comment_user_name_2"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/message_date_text"
+            android:layout_toRightOf="@+id/txt_file_detail_comment_user_name"
+            android:layout_alignBaseline="@id/txt_file_detail_comment_user_name"
+            android:textColor="@color/jandi_file_detail_date"
+            android:textSize="@dimen/jandi_file_detail_comment_date_text"
+            android:text="Date"
             />
         <TextView
             android:id="@+id/txt_file_detail_comment_content_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/txt_file_detail_comment_user_name_2"
-            android:layout_marginTop="5dp"
-            android:text="HiHi"/>
+            android:layout_below="@+id/txt_file_detail_comment_user_name"
+            android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_right"
+            android:textColor="@color/jandi_file_detail_comment_text"
+            android:textSize="@dimen/jandi_file_detail_comment_date_text"
+            android:text="HiHi\nThis is Comment"/>
     </RelativeLayout>
 
 </LinearLayout>

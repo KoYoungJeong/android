@@ -33,14 +33,30 @@ public class FormatConverter {
     public static boolean isInvalidString(String targetString) {
         return targetString.matches(REG_EX_START_WHITE_SPACE);
     }
-//    public static String cdpName(String originName, int cdpType) {
-//        switch (cdpType) {
-//            case JandiConstants.TYPE_CHANNEL:
-//                return "# " + originName;
-//            case JandiConstants.TYPE_DIRECT_MESSAGE:
-//                return "@ " + originName;
-//            default:
-//                return originName;
-//        }
-//    }
+
+    public static boolean isMsOfficeMimeType(String type) {
+        String mineTypes[] = {
+                // DOC
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-word.document.macroEnabled.12",
+                // XLS
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.ms-excel.sheet.macroEnabled.12",
+                // PPT
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+                "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
+                "application/vnd.ms-powerpoint.slideshow.macroEnabled.12"
+        };
+
+        for (String mimeType : mineTypes) {
+            if (type.startsWith(mimeType)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

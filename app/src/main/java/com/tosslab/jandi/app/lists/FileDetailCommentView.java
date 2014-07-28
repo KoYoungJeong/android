@@ -22,11 +22,11 @@ import org.apache.log4j.Logger;
 public class FileDetailCommentView extends LinearLayout {
     private final Logger log = Logger.getLogger(FileDetailCommentView.class);
 
-    @ViewById(R.id.img_file_detail_comment_user_profile_2)
+    @ViewById(R.id.img_file_detail_comment_user_profile)
     ImageView imageViewCommentUserProfile;
-    @ViewById(R.id.txt_file_detail_comment_user_name_2)
+    @ViewById(R.id.txt_file_detail_comment_user_name)
     TextView textViewCommentUserName;
-    @ViewById(R.id.txt_file_detail_comment_create_date_2)
+    @ViewById(R.id.txt_file_detail_comment_create_date)
     TextView textViewCommentFileCreateDate;
     @ViewById(R.id.txt_file_detail_comment_content_2)
     TextView textViewCommentContent;

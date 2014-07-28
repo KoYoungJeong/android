@@ -4,126 +4,106 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/jandi_file_detail_bg">
     <!-- 파일 제목과 사용자 프로필 부분 -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        android:layout_height="@dimen/jandi_file_detail_uploder_layout_height"
+        android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+        android:paddingRight="@dimen/jandi_file_detail_padding_sides"
+        android:gravity="center_vertical">
         <ImageView
             android:id="@+id/img_file_detail_user_profile"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_action_switchteams"/>
+            android:layout_width="@dimen/jandi_file_detail_uploder_profile_size"
+            android:layout_height="@dimen/jandi_file_detail_uploder_profile_size"
+            android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right"
+            android:background="@drawable/jandi_profile"/>
         <TextView
             android:id="@+id/txt_file_detail_user_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/img_file_detail_user_profile"
-            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
             android:text="justin"
-            android:textSize="@dimen/jandi_messages_user_name"
-            />
+            android:textStyle="bold"
+            android:textSize="@dimen/jandi_file_detail_text_user_name"/>
         <TextView
             android:id="@+id/txt_file_detail_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:text="date"
-            android:textColor="@color/message_date_text"
+            android:textColor="@color/jandi_file_detail_date"
+            android:textSize="@dimen/jandi_file_detail_text_date"
             />
-        <TextView
-            android:id="@+id/txt_file_detail_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_below="@id/txt_file_detail_user_name"
-            android:layout_alignLeft="@id/txt_file_detail_user_name"
-            android:textColor="@color/file_name"
-            android:text="file name"/>
-    </RelativeLayout>
-    <!-- 이미지 일 경우 사진을 보여준다 -->
+    </LinearLayout>
+    <!-- 이미지나 파일 타입 출력 -->
     <ImageView
-        android:id="@+id/img_file_detail_photo_2"
+        android:id="@+id/img_file_detail_photo"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="@dimen/jandi_file_detail_image_height"
+        android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
+        android:layout_marginRight="@dimen/jandi_file_detail_padding_sides"
         android:scaleType="centerCrop"
-        android:visibility="gone"/>
+        android:src="@drawable/jandi_down_etc"
+        />
     <!-- 파일의 상세 정보 -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp">
+        android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+        android:paddingRight="@dimen/jandi_file_detail_padding_sides"
+        android:paddingBottom="12dp">
         <ImageView
-            android:id="@+id/icon_file_detail_content_type_2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/tmp_file_icon"/>
-        <TextView
-            android:id="@+id/txt_file_detail_file_info_2"
-            android:layout_width="wrap_content"
+            android:id="@+id/icon_file_detail_content_type"
+            android:layout_width="@dimen/jandi_file_detail_file_icon_width"
+            android:layout_height="@dimen/jandi_file_detail_file_icon_height"
+            android:layout_marginTop="@dimen/jandi_file_detail_file_margin_top"
+            android:background="@drawable/jandi_fview_icon_etc"/>
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/icon_file_detail_content_type_2"
-            android:layout_marginLeft="15dp"
-            android:text="0 KB Text"
-            android:textSize="@dimen/jandi_messages_user_name"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txt_file_detail_file_info_2"
-            android:layout_alignLeft="@id/txt_file_detail_file_info_2">
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/jandi_file_detail_file_margin_top"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
+            <TextView
+                android:id="@+id/txt_file_detail_file_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/jandi_file_detail_file_type_text"
+                android:textColor="@color/jandi_file_detail_type_text"
+                android:text="0 Kb Text"/>
             <TextView
                 android:id="@+id/txt_file_detail_shared"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:textColor="@color/file_name"
-                android:text="Shared in" />
+                android:layout_below="@id/txt_file_detail_file_info"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/jandi_file_detail_share_text"
+                android:textSize="@dimen/jandi_file_detail_file_share_text"
+                android:text="Shared in " />
             <TextView
                 android:id="@+id/txt_file_detail_shared_cdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="5dp"
-                android:text="Names of shared entities"
+                android:layout_toRightOf="@id/txt_file_detail_shared"
+                android:layout_alignBaseline="@id/txt_file_detail_shared"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textColor="@color/jandi_file_detail_share_text"
+                android:textSize="@dimen/jandi_file_detail_file_share_text"
                 />
-        </LinearLayout>
-
-
-    </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1">
-            <ImageView
-                android:id="@+id/btn_file_detail_share"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@android:drawable/ic_menu_share"
-                android:layout_margin="5dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1">
-            <ImageView
-                android:id="@+id/btn_file_detail_more"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@android:drawable/ic_menu_more"
-                android:layout_margin="5dp"/>
-        </LinearLayout>
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/btn_file_detail_share"
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/jandi_fview_bt_more"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/border_message_input_panel" />
+        android:background="@color/jandi_message_input_border" />
 </LinearLayout>

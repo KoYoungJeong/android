@@ -14,31 +14,37 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:transcriptMode="normal"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:background="@color/jandi_file_detail_comments_bg">
     </ListView>
 
     <!-- Message Input Layout -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/border_message_input_panel" />
+        android:background="@color/jandi_message_input_border" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/bg_message_input_panel"
-        android:gravity="center_vertical">
+        android:background="@color/jandi_messages_bottom_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
         <EditText
             android:id="@+id/et_file_detail_comment"
             android:layout_width="0px"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
+            android:background="@drawable/edtxt_messages_input"
             android:hint="@string/comment"/>
-        <ImageButton
+        <Button
             android:id="@+id/btn_file_detail_send_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:contentDescription="Send"
-            android:background="@android:drawable/ic_menu_send"/>
+            android:layout_width="55dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:text="@string/send_message"
+            android:textSize="14sp"
+            android:textColor="@color/jandi_messages_button_text"
+            android:background="@drawable/btn_send_selector"/>
     </LinearLayout>
 </LinearLayout>
