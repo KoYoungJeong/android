@@ -29,6 +29,9 @@
     <string name="modify_channel">Channel 수정</string>
     <string name="modify_private_group">Private Group 수정</string>
     <string name="modify_direct_message">Direct Message 수정</string>
+    <string name="jandi_cdp_title_channel">CHANNEL</string>
+    <string name="jandi_cdp_title_direct_message">DIRECT MESSAGE</string>
+    <string name="jandi_cdp_title_private_group">PRIVATE GROUP</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_cdp_edit">이름 수정</string>
@@ -46,6 +49,7 @@
     <string name="type_files_all">All Files</string>
     <string name="type_posts">Posts</string>
     <string name="type_images">Images</string>
+    <string name="type_pdf">PDF Files</string>
     <string name="type_team">Team</string>
     <string name="type_starred">Starred Items</string>
     <string name="action_switch_teams">Switch Teams</string>

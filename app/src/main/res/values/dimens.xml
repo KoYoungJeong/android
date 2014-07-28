@@ -6,20 +6,28 @@
 
     <dimen name="nav_drawer_width">240dp</dimen>
     <dimen name="right_menu_width">240dp</dimen>
-    <dimen name="slidingmenu_offset">60dp</dimen>
-    <dimen name="shadow_width">15dp</dimen>
-    <dimen name="right_menu_margin">10dp</dimen>
-    <dimen name="right_menu_margin_left">15dp</dimen>
+    <dimen name="slidingmenu_offset">155dp</dimen>
+    <dimen name="shadow_width">0dp</dimen>
+    <!--<dimen name="right_menu_margin">10dp</dimen>-->
+    <!--<dimen name="right_menu_margin_left">15dp</dimen>-->
 
-    <dimen name="left_menu_item_height">35dp</dimen>
-    <dimen name="left_menu_add_action_button">25dp</dimen>
+    <!--<dimen name="left_menu_item_height">35dp</dimen>-->
+    <!--<dimen name="left_menu_add_action_button">25dp</dimen>-->
     <dimen name="left_menu_margin">10dp</dimen>
-    <dimen name="left_menu_margin_deep">20dp</dimen>
+    <!--<dimen name="left_menu_margin_deep">20dp</dimen>-->
 
     <!-- Left (CDP) Pannel -->
     <dimen name="jandi_cdp_header_text">12sp</dimen>
     <dimen name="jandi_cdp_name_text">14sp</dimen>
     <dimen name="jandi_cdp_pannel_height">33dp</dimen>
+    <dimen name="jandi_cdp_pannel_header_padding_left">30dp</dimen>
+    <dimen name="jandi_cdp_pannel_normal_padding_left">18dp</dimen>
+
+    <!-- Right (MENU) Pannel -->
+    <dimen name="jandi_menu_pannel_height">40dp</dimen>
+    <dimen name="jandi_menu_pannel_padding_left">13dp</dimen>
+    <dimen name="jandi_menu_pannel_icon_margin_right">6dp</dimen>
+    <dimen name="jandi_menu_pannel_icon_size">20dp</dimen>
 
 
     <!-- Messages -->

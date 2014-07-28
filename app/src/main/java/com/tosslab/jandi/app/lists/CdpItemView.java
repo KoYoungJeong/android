@@ -5,8 +5,6 @@ package com.tosslab.jandi.app.lists;
  */
 
 import android.content.Context;
-import android.graphics.Color;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,12 +19,11 @@ import org.androidannotations.annotations.ViewById;
 public class CdpItemView extends FrameLayout {
     @ViewById(R.id.tv_cdp_item_name)
     TextView txtCdpItemName;
-    @ViewById(R.id.ly_title_direct_message)
-    LinearLayout lyTitleDirectMessage;
-    @ViewById(R.id.ly_title_joined_channel)
-    LinearLayout lyTitleJoinedChannel;
-    @ViewById(R.id.ly_title_private_group)
-    LinearLayout lyTitlePrivateGroup;
+    @ViewById(R.id.ly_title_cdp)
+    LinearLayout lyTitleCdp;
+    @ViewById(R.id.txt_title_cdp_name)
+    TextView txtTitleCdpName;
+
 
     public CdpItemView(Context context) {
         super(context);
@@ -36,17 +33,20 @@ public class CdpItemView extends FrameLayout {
         setAllVisibilitiesByGone();
         switch (cdp.type) {
             case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
-                lyTitleJoinedChannel.setVisibility(VISIBLE);
+                lyTitleCdp.setVisibility(VISIBLE);
+                txtTitleCdpName.setText(R.string.jandi_cdp_title_channel);
                 break;
             case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 txtCdpItemName.setVisibility(VISIBLE);
                 txtCdpItemName.setText(cdp.name);
                 break;
             case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
-                lyTitleDirectMessage.setVisibility(VISIBLE);
+                lyTitleCdp.setVisibility(VISIBLE);
+                txtTitleCdpName.setText(R.string.jandi_cdp_title_direct_message);
                 break;
             case JandiConstants.TYPE_TITLE_PRIVATE_GROUP:
-                lyTitlePrivateGroup.setVisibility(VISIBLE);
+                lyTitleCdp.setVisibility(VISIBLE);
+                txtTitleCdpName.setText(R.string.jandi_cdp_title_private_group);
                 break;
             case JandiConstants.TYPE_CHANNEL:
             case JandiConstants.TYPE_DIRECT_MESSAGE:
@@ -58,10 +58,7 @@ public class CdpItemView extends FrameLayout {
     }
 
     private void setAllVisibilitiesByGone() {
-        lyTitleJoinedChannel.setVisibility(GONE);
-        lyTitleDirectMessage.setVisibility(GONE);
-        lyTitlePrivateGroup.setVisibility(GONE);
         txtCdpItemName.setVisibility(GONE);
-
+        lyTitleCdp.setVisibility(GONE);
     }
 }

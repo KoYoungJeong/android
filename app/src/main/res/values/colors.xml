@@ -22,8 +22,13 @@
     <color name="jandi_messages_button_fg_active">#FFFFFF</color>
     <color name="jandi_messages_edittext_bg">#FFFFFF</color>
 
-
-
+    <!-- Side Panel -->
+    <color name="jandi_pannel_bg_normal">#313131</color>
+    <color name="jandi_pannel_bg_header">#505050</color>
+    <color name="jandi_pannel_bg_active">@color/jandi_main</color>
+    <color name="jandi_pannel_normal_text">#FFFFFF</color>
+    <color name="jandi_pannel_header_text">#999999</color>
+    <color name="jandi_pannel_rm_text">@color/jandi_main</color>
 
     <color name="border_message_input_panel">#BBBBBB</color>
     <color name="bg_message_input_panel">#EEEEEE</color>
