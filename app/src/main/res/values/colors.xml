@@ -3,6 +3,7 @@
     <color name="jandi_main">#1A9B6A</color>
     <color name="jandi_text">#333333</color>
     <color name="jandi_text_light">#999999</color>
+    <color name="jandi_border">#999999</color>
 
     <!-- Message List -->
     <color name="jandi_messages_date_divider">@color/jandi_main</color>
@@ -13,11 +14,17 @@
     <color name="jandi_messages_commented">@color/jandi_main</color>
     <color name="jandi_messages_file_name">@color/jandi_text</color>
 
-
-
-
-
     <!-- Main panel -->
+    <color name="jandi_messages_bottom_bg">#FFFFFF</color>
+    <color name="jandi_messages_button_text">#FFFFFF</color>
+    <color name="jandi_messages_button_bg_normal">#B21A9B6A</color>
+    <color name="jandi_messages_button_bg_active">#1A9B6A</color>
+    <color name="jandi_messages_button_fg_active">#FFFFFF</color>
+    <color name="jandi_messages_edittext_bg">#FFFFFF</color>
+
+
+
+
     <color name="border_message_input_panel">#BBBBBB</color>
     <color name="bg_message_input_panel">#EEEEEE</color>
     <color name="button_text">#FFFFFF</color>

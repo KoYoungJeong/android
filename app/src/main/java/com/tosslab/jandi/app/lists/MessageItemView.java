@@ -93,7 +93,7 @@ public class MessageItemView extends LinearLayout {
             String createTime = DateTransformator.getTimeStringForSimple(item.getLinkTime());
             mCreateTime.setText(createTime);
             // 프로필 사진
-            Picasso.with(mContext).load(item.getUserProfileUrl()).transform(new CircleTransform()).into(mUserProfileImage);
+            Picasso.with(mContext).load(item.getUserProfileUrl()).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(mUserProfileImage);
             // 메시지 String
             if (item.getContentType() == MessageItem.TYPE_STRING) {
                 // 일반 메시지일 경우
@@ -110,7 +110,7 @@ public class MessageItemView extends LinearLayout {
                 mTextImageFileName.setText(item.getContentFileName());
                 mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
                 String imageUrl = item.getContentUrl().replaceAll(" ", "%20");
-                Picasso.with(mContext).load(imageUrl).centerCrop().fit().into(mImagePhoto);
+                Picasso.with(mContext).load(imageUrl).placeholder(R.drawable.jandi_sicon_thumbnail).centerCrop().fit().into(mImagePhoto);
             } else if (item.getContentType() == MessageItem.TYPE_FILE) {
                 // 일반 파일인 경우
                 mLayoutMessageCommonFile.setVisibility(VISIBLE);

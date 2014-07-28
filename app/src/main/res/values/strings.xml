@@ -18,6 +18,7 @@
 
     <!-- Main Panel -->
     <string name="message">Message</string>
+    <string name="send_message">send</string>
 
     <!-- Navigation Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
