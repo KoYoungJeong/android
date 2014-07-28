@@ -91,6 +91,7 @@ public class SearchMessageActivity extends BaseActivity {
 
         // attach listener to this spinnerView for handling spinner selection change
         Spinner spinner = (Spinner) getLayoutInflater().inflate(R.layout.spinner_search_type, null);
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -160,12 +161,11 @@ public class SearchMessageActivity extends BaseActivity {
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.search, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -176,9 +176,8 @@ public class SearchMessageActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_search:
-                return true;
-
+//            case R.id.action_search:
+//                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -241,11 +240,11 @@ public class SearchMessageActivity extends BaseActivity {
     @UiThread
     public void drawLayout() {
         if (isSelectedAllFilesTab) {
-            layoutSearchMessageAllFiles.setBackgroundColor(getResources().getColor(R.color.bg_selected_tab));
-            layoutSearchMessageUser.setBackgroundColor(getResources().getColor(R.color.bg_unselected_tab));
+            layoutSearchMessageAllFiles.setBackgroundColor(getResources().getColor(R.color.jandi_file_search_tab_bg_active));
+            layoutSearchMessageUser.setBackgroundColor(getResources().getColor(R.color.jandi_file_search_tab_bg_inactive));
         } else {
-            layoutSearchMessageAllFiles.setBackgroundColor(getResources().getColor(R.color.bg_unselected_tab));
-            layoutSearchMessageUser.setBackgroundColor(getResources().getColor(R.color.bg_selected_tab));
+            layoutSearchMessageAllFiles.setBackgroundColor(getResources().getColor(R.color.jandi_file_search_tab_bg_inactive));
+            layoutSearchMessageUser.setBackgroundColor(getResources().getColor(R.color.jandi_file_search_tab_bg_active));
         }
 
         if (mSearchUser.equals(ReqSearchFile.USER_ID_MINE)) {

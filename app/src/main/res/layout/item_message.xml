@@ -170,6 +170,7 @@
                 android:id="@+id/txt_message_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autoLink="web"
                 android:textSize="@dimen/jandi_messages_content"
                 android:textColor="@color/jandi_messages_content"
                 android:text="Text"/>

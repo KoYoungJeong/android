@@ -85,6 +85,7 @@ public class ResMessages {
         public String body;
     }
 
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class FileContent {
         public String title;
         public String name;
@@ -92,7 +93,13 @@ public class ResMessages {
         public String serverUrl;
         public String fileUrl;
         public int size;
+        public ExtraInfo extraInfo;
     }
 
+    public static class ExtraInfo {
+        public String smallThumbnailUrl;
+        public String mediumThumbnailUrl;
+        public String largeThumbnailUrl;
+    }
 
 }

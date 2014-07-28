@@ -49,6 +49,7 @@ public class MessageItemListAdapter extends BaseAdapter {
 
     /**
      * Get Message 혹은, Update Message에서 들어오는 message를 link id로 정렬
+     * TODO : 메소드 합치기~
      */
     private List<ResMessages.Link> descSortByLinkId(List<ResMessages.Link> links) {
         List<ResMessages.Link> ret = new ArrayList<ResMessages.Link>(links);

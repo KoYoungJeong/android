@@ -17,10 +17,25 @@
     <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
+        <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
     </style>
 
+    <!-- Actionbar -->
     <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/jandi_main</item>
+    </style>
+
+    <!-- Spinner in Actionbar -->
+    <style name="JandiSpinnerStyle" parent="@android:style/Widget.Holo.Spinner"/>
+    <style name="JandiSpinnerItem" parent="@android:style/Widget.Holo.TextView.SpinnerItem">
+        <item name="android:textColor">@color/jandi_text_white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="JandiSpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/jandi_dropdown_menu_text</item>
+        <item name="android:background">@color/jandi_file_detail_comments_bg</item>
     </style>
 
 </resources>

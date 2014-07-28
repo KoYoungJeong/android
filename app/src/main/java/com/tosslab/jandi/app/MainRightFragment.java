@@ -28,6 +28,11 @@ public class MainRightFragment extends BaseFragment {
         goToSearchActivity(JandiConstants.TYPE_SEARCH_MODE_IMAGES);
     }
 
+    @Click(R.id.ly_main_right_action_pdf)
+    public void moveToSearchFilesPdfs() {
+        goToSearchActivity(JandiConstants.TYPE_SEARCH_MODE_PDF);
+    }
+
     private void goToSearchActivity(int searchMode) {
         SearchMessageActivity_.intent(this).mSearchMode(searchMode).start();
         EventBus.getDefault().postSticky(((MainActivity)getActivity()).mCdpItemManager);

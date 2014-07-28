@@ -81,4 +81,17 @@
     <dimen name="jandi_file_detail_comment_name_text">14dp</dimen>
     <dimen name="jandi_file_detail_comment_name_margin_right">6dp</dimen>
 
+    <!-- File Search -->
+    <dimen name="jandi_file_search_tab_height">50dp</dimen>
+    <dimen name="jandi_file_search_tab_text">14sp</dimen>
+    <dimen name="jandi_file_search_tab_icon_members_width">18dp</dimen>
+    <dimen name="jandi_file_search_tab_icon_members_height">13dp</dimen>
+    <dimen name="jandi_file_search_item_height">72dp</dimen>
+    <dimen name="jandi_file_search_item_padding">15dp</dimen>
+    <dimen name="jandi_file_search_item_type_icon_width">32dp</dimen>
+    <dimen name="jandi_file_search_item_type_icon_height">42dp</dimen>
+    <dimen name="jandi_file_search_item_type_icon_margin_right">11dp</dimen>
+    <dimen name="jandi_file_search_item_text_margin">4dp</dimen>
+    <dimen name="jandi_file_search_item_name_text">14sp</dimen>
+    <dimen name="jandi_file_search_item_type_text">10sp</dimen>
 </resources>

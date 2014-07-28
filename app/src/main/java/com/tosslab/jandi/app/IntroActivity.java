@@ -60,6 +60,7 @@ public class IntroActivity extends Activity {
 
     @AfterViews
     void initView() {
+//        trustEveryone();
         mContext = getApplicationContext();
 
         // Progress Wheel 설정
