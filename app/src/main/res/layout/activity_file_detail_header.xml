@@ -95,12 +95,12 @@
                 android:textSize="@dimen/jandi_file_detail_file_share_text"
                 />
         </RelativeLayout>
-        <ImageView
-            android:id="@+id/btn_file_detail_share"
-            android:layout_width="31dp"
-            android:layout_height="31dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/jandi_fview_bt_more"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/btn_file_detail_share"-->
+            <!--android:layout_width="31dp"-->
+            <!--android:layout_height="31dp"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:src="@drawable/jandi_fview_bt_more"/>-->
     </LinearLayout>
     <View
         android:layout_width="match_parent"

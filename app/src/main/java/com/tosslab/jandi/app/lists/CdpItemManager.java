@@ -58,6 +58,23 @@ public class CdpItemManager {
     }
 
     /**
+     * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
+     * @param givenEntityIds
+     * @return
+     */
+    public List<CdpItem> retrieveGivenEntities(List<Integer> givenEntityIds) {
+        List<CdpItem> cdpItems = retrieveWithoutTitle();
+        ArrayList<CdpItem> retCdpItems = new ArrayList<CdpItem>();
+
+        for (CdpItem cdpItem : cdpItems) {
+            if (cdpItem.hasGivenIds(givenEntityIds)) {
+                retCdpItems.add(cdpItem);
+            }
+        }
+        return retCdpItems;
+    }
+
+    /**
      * 인자로 주어진 ID 를 제외한 공유 대상 CDP를 추출한다.
      * @param givenEntityIds
      * @return

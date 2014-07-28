@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
+import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -127,6 +128,11 @@ public class MessageManipulator {
         return mRestClient.shareMessage(reqShareMessage, messageId);
     }
 
+    public ResCommon unshareMessage(int messageId, int cdpIdToBeunshared) throws RestClientException {
+        ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(cdpIdToBeunshared);
+        return mRestClient.unshareMessage(reqUnshareMessage, messageId);
+    }
+
     public ResCommon modifyMessageComment(int messageId, String comment, int feedbackId) {
         ReqSendComment reqModifyComment = new ReqSendComment();
         reqModifyComment.comment = comment;
@@ -137,5 +143,7 @@ public class MessageManipulator {
         return mRestClient.deleteMessageComment(feedbackId, messageId);
     }
 
-
+    public ResCommon deleteFile(int fileId) throws RestClientException {
+        return mRestClient.deleteFile(fileId);
+    }
 }

@@ -653,9 +653,10 @@ public class MainCenterFragment extends BaseFragment  {
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseTimer();
+
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage("Downloading " + event.realFilePath);
+        progressDialog.setMessage("Uploading " + event.realFilePath);
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);

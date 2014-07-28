@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
+import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -216,6 +217,11 @@ public interface TossRestClient {
     @RequiresHeader("Authorization")
     RestFileUploadResponse uploadFile(MultiValueMap data);
 
+    // Delete file
+    @Delete("/files/{fileId}")
+    @RequiresHeader("Authorization")
+    ResCommon deleteFile(int fileId);
+
     // Message Detail
     @Get("/messages/{messageId}")
     @RequiresHeader("Authorization")
@@ -225,6 +231,11 @@ public interface TossRestClient {
     @Put("/messages/{messageId}/share")
     @RequiresHeader("Authorization")
     ResCommon shareMessage(ReqShareMessage share, int messageId);
+
+    // Unshare Message
+    @Put("/messages/{messageId}/unshare")
+    @RequiresHeader("Authorization")
+    ResCommon unshareMessage(ReqUnshareMessage share, int messageId);
 
     // Send Comment
     @Post("/messages/{messageId}/comment")

@@ -1,15 +1,14 @@
 package com.tosslab.jandi.app;
 
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,7 +23,6 @@ import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
 import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.lists.CdpItemManager;
@@ -85,9 +83,7 @@ public class FileDetailActivity extends BaseActivity {
     TextView textViewFileSharedCdp;
 
     ImageView imageViewPhotoFile;
-    ImageView buttonFileDetailShare;
     ImageView iconFileType;
-//    ImageView buttonFileDetailMore;
 
     public String myToken;
 
@@ -120,9 +116,7 @@ public class FileDetailActivity extends BaseActivity {
         textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView)header.findViewById(R.id.txt_file_detail_shared_cdp);
         imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo);
-        buttonFileDetailShare = (ImageView)header.findViewById(R.id.btn_file_detail_share);
         iconFileType = (ImageView)header.findViewById(R.id.icon_file_detail_content_type);
-//        buttonFileDetailMore = (ImageView)header.findViewById(R.id.btn_file_detail_more);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
 
@@ -132,10 +126,28 @@ public class FileDetailActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_file_detail_download:
+                download();
+                return true;
+            case R.id.action_file_detail_share:
+                clickShareButton();
+                return true;
+            case R.id.action_file_detail_unshare:
+                clickUnshareButton();
+                return true;
+            case R.id.action_file_detail_delete:
+                deleteFileInBackground();
                 return true;
         }
 
@@ -145,7 +157,6 @@ public class FileDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter completeFilter = new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE);
         EventBus.getDefault().registerSticky(this);
     }
 
@@ -315,19 +326,11 @@ public class FileDetailActivity extends BaseActivity {
                             public void onClick(View view) {
                                 String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
                                 String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
-                                download(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
+                                downloadInBackground(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
                             }
                         });
                     }
                 }
-
-                buttonFileDetailShare.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        // 전체 CDP 리스트를 보여주고 선택한 CDP를 공유 액션으로 연결
-                        clickShareButton();
-                    }
-                });
 
                 break;
             }
@@ -340,12 +343,12 @@ public class FileDetailActivity extends BaseActivity {
      ************************************************************/
     void clickShareButton() {
         /**
-         * 사용자 리스트 Dialog 를 보여준 뒤, 선택된 사용자가 올린 파일을 검색
+         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
         View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.title_cdp_to_be_shared);
+        dialog.setTitle(R.string.jandi_title_cdp_to_be_shared);
         dialog.setIcon(android.R.drawable.ic_menu_agenda);
         dialog.setView(view);
         final AlertDialog cdpSelectDialog = dialog.show();
@@ -388,6 +391,90 @@ public class FileDetailActivity extends BaseActivity {
             getFileDetail();
         } else {
             ColoredToast.showError(this, "FAIL Message Sharing !!");
+        }
+    }
+
+    /************************************************************
+     * 파일 공유 해제
+     ************************************************************/
+    void clickUnshareButton() {
+        /**
+         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        dialog.setIcon(android.R.drawable.ic_menu_agenda);
+        dialog.setView(view);
+        final AlertDialog cdpSelectDialog = dialog.show();
+
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        // 현재 이 파일을 share 하지 않는 CDP를 추출
+        List<Integer> shareEntitiesIds = mResFileDetail.shareEntities;
+        final List<CdpItem> sharedEntities = cdpItemManager.retrieveGivenEntities(shareEntitiesIds);
+        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, sharedEntities);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cdpSelectDialog != null)
+                    cdpSelectDialog.dismiss();
+                unshareMessageInBackground(sharedEntities.get(i).id);
+            }
+        });
+    }
+
+    @Background
+    public void unshareMessageInBackground(int cdpIdToBeShared) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.unshareMessage(fileId, cdpIdToBeShared);
+            log.debug("success to unshare message");
+            unshareMessageDone(true);
+        } catch (RestClientException e) {
+            log.error("fail to send message", e);
+            unshareMessageDone(false);
+        }
+    }
+
+    @UiThread
+    public void unshareMessageDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "공유가 해제되었습니다");
+            fileDetailCommentListAdapter.clear();
+            getFileDetail();
+        } else {
+            ColoredToast.showError(this, "FAIL Message Sharing !!");
+        }
+    }
+
+    /************************************************************
+     * 파일 삭제
+     ************************************************************/
+
+    @Background
+    public void deleteFileInBackground() {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.deleteFile(fileId);
+            log.debug("success to delete file");
+            deleteFileDone(true);
+        } catch (RestClientException e) {
+            log.error("delete file failed", e);
+            deleteFileDone(false);
+        }
+    }
+
+    @UiThread
+    public void deleteFileDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "파일이 삭제되었습니다");
+            finish();
+        } else {
+            ColoredToast.showError(this, "파일 삭제가 실패하였습니다");
         }
     }
 
@@ -435,7 +522,13 @@ public class FileDetailActivity extends BaseActivity {
     /************************************************************
      * 파일 연결 관련
      ************************************************************/
-    public void download(String url, String fileName, final String fileType) {
+    public void download() {
+        String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:mResFileDetail.content.serverUrl;
+        String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
+        downloadInBackground(serverUrl + fileName, mResFileDetail.content.name, mResFileDetail.content.type);
+    }
+
+    public void downloadInBackground(String url, String fileName, final String fileType) {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
@@ -444,15 +537,10 @@ public class FileDetailActivity extends BaseActivity {
         progressDialog.setMessage("Downloading " + fileName);
         progressDialog.show();
 
-        log.debug("download " + url);
+        log.debug("downloadInBackground " + url);
         Ion.with(this)
                 .load(url)
-                .progress(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long downloaded, long total) {
-                        progressDialog.setProgress((int) (downloaded / total));
-                    }
-                })
+                .progressDialog(progressDialog)
                 .write(new File(dir, fileName))
                 .setCallback(new FutureCallback<File>() {
                     @Override
