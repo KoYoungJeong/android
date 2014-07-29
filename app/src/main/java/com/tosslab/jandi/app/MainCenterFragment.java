@@ -3,7 +3,6 @@ package com.tosslab.jandi.app;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,12 +11,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
-import android.view.MotionEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
@@ -124,6 +121,9 @@ public class MainCenterFragment extends BaseFragment  {
             }
         });
         mActualListView = mPullToRefreshListMessages.getRefreshableView();
+        LayoutInflater li = LayoutInflater.from(mContext);
+        View emptyView = li.inflate(R.layout.view_message_list_empty, null);
+        mActualListView.setEmptyView(emptyView);
         mActualListView.setAdapter(messageItemListAdapter);
         mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -234,8 +234,6 @@ public class MainCenterFragment extends BaseFragment  {
      * @param event
      */
     public void onEvent(RequestMessageListEvent event) {
-        log.debug("RequestMessageListEvent from MainLeftFragment, " + event.id);
-
         // 왼쪽 패널에서 선택한 CDP 의 이름을 하일라이트 표시
         EventBus.getDefault().post(new ChoicedCdpEvent(event.id));
 

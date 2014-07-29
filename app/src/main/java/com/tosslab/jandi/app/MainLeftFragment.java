@@ -113,7 +113,6 @@ public class MainLeftFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(ChoicedCdpEvent event) {
-        log.debug("ChoicedCdpEvent from MainActivity, " + event.cdpId);
         mCdpListAdapter.selectCdpItemById(event.cdpId);
     }
 

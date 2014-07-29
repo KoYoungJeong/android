@@ -3,6 +3,7 @@ package com.tosslab.jandi.app;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.res.Resources;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -119,6 +120,8 @@ public class SearchMessageActivity extends BaseActivity {
 
         mMyToken = JandiPreference.getMyToken(this);
         listSearchedMessages.setAdapter(mAdapter);
+//        View emptyView = getLayoutInflater().inflate(R.layout.view_search_list_empty, null);
+//        listSearchedMessages.setEmptyView(emptyView);
 
         // 선택한 서치 모드와 사용자를 셋팅
         // 내 파일 검색으로 시작한다면 두번째 텝으로 이동
