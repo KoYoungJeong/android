@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.androidannotations.annotations.AfterInject;
@@ -83,6 +84,11 @@ public class MessageItemListAdapter extends BaseAdapter {
         patchMessageItem(messages, false);
     }
 
+    /**
+     * Message Item을 정렬하여 각 상태에 따라 삭제하고 추가하는 작업.
+     * @param messages
+     * @param isDescendingOrder
+     */
     public void patchMessageItem(ResMessages messages, boolean isDescendingOrder) {
         if (mMessages == null || messages.messageCount <= 0) {
             return;
@@ -116,13 +122,22 @@ public class MessageItemListAdapter extends BaseAdapter {
 //                    mMessages.add(new MessageItem(link));
             }
         }
-        // poor implement : 현재 isDescendingOrder면 신규 추가임.
-        reformatMessages(isDescendingOrder);
+        reformatMessages();
     }
 
-    private void reformatMessages(boolean isInsert) {
+    /**
+     * 출력을 위한 그룹핑
+     * 그룹핑의 조건은 날짜별, 코멘트의 대상이 같은 경우, 동일한 사용자의 경우 등이 있다.
+     * 1. 날짜별로 경계선으로 구분한다.
+     * 2. 현재 코멘트 타입인데 바로 상위 아이템이 feedback 아이템이면 그 아래에 종속된다.
+     * 3. 현재 코멘트 타입인데 바로 상위 아이템 또한 동일 feedback의 코멘트이면 그 아래 종속된다.
+     * -- 2, 3의 경우 상위 아이템과 내가 같은 작성자이면 이름을 표시하지 않는다.
+     */
+    private void reformatMessages() {
         mFormattedMessages.clear();
         String currentDay = "";
+        MessageItem formerMessageItem = null;
+
         for (MessageItem item : mMessages) {
             String strDay = DATE_FORMATTER.format(item.getLinkTime());
             String strToday = DATE_FORMATTER.format(new Date());
@@ -134,12 +149,31 @@ public class MessageItemListAdapter extends BaseAdapter {
                         mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), true));
                     else
                         mFormattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
+                    formerMessageItem = null;   // 날짜 경계선이 바뀌면 다른 그룹핑은 초기화된다.
                 } catch (ParseException e) {
                     log.error("Date Parse Error", e);
                 }
 
             }
+
+            if (formerMessageItem != null && formerMessageItem.isDateDivider == false) {
+                if (item.getContentType() == MessageItem.TYPE_COMMENT) {
+                    if (formerMessageItem.getMessageId() == item.getFeedbackId()) {
+                        // 바로 상위 아이템이 feedback 아이템이면 그 아래에 종속된다.
+                        item.isNested = true;
+                    } else if (formerMessageItem.getFeedbackId() == item.getFeedbackId()) {
+                        // 바로 상위 아이템 또한 동일 feedback의 코멘트이면 그 아래 종속된다.
+                        item.isNested = true;
+                    }
+
+                    if (formerMessageItem.getUserId() == item.getUserId()) {
+                        // 상위 아이템과 내가 같은 작성자이면 이름을 표시하지 않는다.
+                        item.isNestedOfMine = true;
+                    }
+                }
+            }
             mFormattedMessages.add(item);
+            formerMessageItem = item;
         }
     }
 

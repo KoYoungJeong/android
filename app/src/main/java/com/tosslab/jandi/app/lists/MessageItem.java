@@ -20,7 +20,9 @@ public class MessageItem {
 
     public static final int TYPE_FILE  = 10;
 
-    public boolean isDateDivider;
+    public boolean isDateDivider;   // 날짜 경계선인지 여부
+    public boolean isNested;        // 상위 메시지 아이템에 종속된 댓글인지의 여부
+    public boolean isNestedOfMine;  // 상위 메시지 아이템이 본인의 것인지의 여부
     private Date mCurrentDate;
     public boolean isToday;
 
@@ -34,6 +36,8 @@ public class MessageItem {
         mWriter = mMessage.writer;
         mCurrentDate = null;
         isDateDivider = false;
+        isNested = false;
+        isNestedOfMine = false;
     }
 
     /**
@@ -45,6 +49,8 @@ public class MessageItem {
         mCurrentDate = currentDate;
         isDateDivider = true;
         this.isToday = isToday;
+        isNested = false;
+        isNestedOfMine = false;
     }
 
     public int getLinkId() {
@@ -57,6 +63,19 @@ public class MessageItem {
     public int getFeedbackId() {
         return mLink.feedbackId;
     }
+    public String getFeedbackWriterNickName() {
+        if (mLink.feedback != null) {
+            return mLink.feedback.writer.u_firstName + " " + mLink.feedback.writer.u_lastName;
+        }
+        return null;
+    }
+    public String getFeedbackFileName() {
+        if (mLink.feedback != null) {
+            return ((ResMessages.FileMessage)mLink.feedback).content.name;
+        }
+        return null;
+    }
+
 
     public String getUserNickName() {
         return mWriter.u_firstName + " " + mWriter.u_lastName;

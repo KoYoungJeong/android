@@ -62,13 +62,38 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
         return fileDetailView;
     }
 
+    /**
+     * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
+     * @param resFileDetail
+     */
     public void updateFileComments(ResFileDetail resFileDetail) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.CommentMessage) {
-                mMessages.add((ResMessages.CommentMessage)fileDetail);
+                if (fileDetail.status.equals("created") || fileDetail.status.equals("shared")) {
+                    mMessages.add((ResMessages.CommentMessage)fileDetail);
+                } else if (fileDetail.status.equals("edited")) {
+                    int position = searchIndexOfMessages(fileDetail.id);
+                    if (position >= 0) {
+                        mMessages.set(position, (ResMessages.CommentMessage)fileDetail);
+                    }
+                } else if (fileDetail.status.equals("archived")) {
+                    int position = searchIndexOfMessages(fileDetail.id);
+                    if (position >= 0) {
+                        mMessages.remove(position);
+                    }
+                }
+
             }
         }
-        log.debug("Upload done : " + mMessages.size() + " items.");
+    }
+
+    // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
+    private int searchIndexOfMessages(int commentId) {
+        for (int i=0; i< mMessages.size(); i++) {
+            if (mMessages.get(i).id == commentId)
+                return i;
+        }
+        return -1;
     }
 
     public void clear() {

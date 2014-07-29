@@ -67,6 +67,7 @@ public class ResMessages {
         public List<Integer> shareEntities;
         public int permission;
         public int feedbackId;
+        public FileMessage feedback;
     }
 
     public static class TextMessage extends OriginalMessage {
