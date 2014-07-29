@@ -17,6 +17,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
+import com.tosslab.jandi.app.events.ChoicedCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
 import com.tosslab.jandi.app.events.InviteCdpEvent;
@@ -182,7 +183,7 @@ public class MainActivity extends SlidingFragmentActivity {
      * @param event
      */
     public void onEvent(SelectCdpItemEvent event) {
-        log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
+        log.debug("SelectCdpItemEvent from MainLeftFragment, " + event.cdpItem.id);
 
         // Preference 저장
         saveSharedPreference(event.cdpItem.type, event.cdpItem.id);

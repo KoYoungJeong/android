@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.SelectUnjoinedChannelFragment;
+import com.tosslab.jandi.app.events.ChoicedCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmJoinChannelEvent;
 import com.tosslab.jandi.app.events.RefreshCdpListEvent;
@@ -106,6 +107,16 @@ public class MainLeftFragment extends BaseFragment {
      * 선택한 C, D, P 에 대한 메시지 리스트 획득 이벤트가
      * MessageListFragment로 전달됨.
      ************************************************************/
+
+    /**
+     * MainActivity에서 CDP 에 대한 MessageList 가 실행될 때 해당 CDP에 하일라이트를 해줌.
+     * @param event
+     */
+    public void onEvent(ChoicedCdpEvent event) {
+        log.debug("ChoicedCdpEvent from MainActivity, " + event.cdpId);
+        mCdpListAdapter.selectCdpItemById(event.cdpId);
+    }
+
     @ItemClick
     void list_cdpsItemClicked(CdpItem cdp) {
         Log.e("HI", cdp.name + " Clicked. type is " + cdp.type);
@@ -132,6 +143,8 @@ public class MainLeftFragment extends BaseFragment {
                 break;
         }
     }
+
+
 
     /************************************************************
      * Channel, PrivateGroup 생성

@@ -23,15 +23,17 @@ public class CdpItemListAdapter extends BaseAdapter {
     @RootContext
     Context mContext;
 
+    private int mSelectedCdpId = -1;
+
     @AfterInject
     void initAdapter() {
         mCdpItems = new ArrayList<CdpItem>();
     }
 
-    public void clearAdapter() {
-        mCdpItems.clear();
-        notifyDataSetChanged();
-    }
+//    public void clearAdapter() {
+//        mCdpItems.clear();
+//        notifyDataSetChanged();
+//    }
 
     public void retrieveCdpItems(CdpItemManager cdpItemManager) {
         if (mCdpItems == null) {
@@ -41,18 +43,20 @@ public class CdpItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void selectCdpItemById(int cdpId) {
+        mSelectedCdpId = cdpId;
+        notifyDataSetChanged();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         CdpItemView cdpItemView;
         if (convertView == null) {
             cdpItemView = CdpItemView_.build(mContext);
         } else {
             cdpItemView = (CdpItemView) convertView;
         }
-
-        cdpItemView.bind(getItem(position));
-
+        cdpItemView.bind(getItem(position), mSelectedCdpId);
         return cdpItemView;
     }
 

@@ -14,9 +14,11 @@ import com.tosslab.jandi.app.R;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+import org.apache.log4j.Logger;
 
 @EViewGroup(R.layout.item_cdp_entity)
 public class CdpItemView extends FrameLayout {
+    private final Logger log = Logger.getLogger(CdpItemView.class);
     @ViewById(R.id.tv_cdp_item_name)
     TextView txtCdpItemName;
     @ViewById(R.id.ly_title_cdp)
@@ -29,7 +31,7 @@ public class CdpItemView extends FrameLayout {
         super(context);
     }
 
-    public void bind(CdpItem cdp) {
+    public void bind(CdpItem cdp, int selectedCdpId) {
         setAllVisibilitiesByGone();
         switch (cdp.type) {
             case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
@@ -53,6 +55,11 @@ public class CdpItemView extends FrameLayout {
             default:
                 txtCdpItemName.setVisibility(VISIBLE);
                 txtCdpItemName.setText(cdp.toString());
+                if (selectedCdpId == cdp.id) {
+                    txtCdpItemName.setTextColor(getResources().getColor(R.color.jandi_main));
+                } else {
+                    txtCdpItemName.setTextColor(getResources().getColor(R.color.jandi_text_white));
+                }
                 break;
         }
     }

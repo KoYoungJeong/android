@@ -17,10 +17,17 @@
     <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
+    </style>
+
+    <!-- Application theme for SearchActivity -->
+    <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/JandiActionBar</item>
         <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
         <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
     </style>
+
 
     <!-- Actionbar -->
     <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">

@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true"
-        android:drawable="@color/jandi_pannel_bg_active" /> <!-- pressed -->
-    <item android:state_selected="true"
-        android:drawable="@android:color/holo_green_dark" /> <!-- focused -->
-    <item android:state_focused="true"
-        android:drawable="@android:color/holo_blue_bright" /> <!-- focused -->
+    <item android:state_pressed="true" android:drawable="@color/jandi_pannel_bg_active" /> <!-- pressed -->
+    <item android:state_selected="true" android:drawable="@android:color/holo_green_dark" /> <!-- focused -->
+    <item android:state_focused="true" android:drawable="@android:color/holo_blue_bright" /> <!-- focused -->
     <item android:drawable="@android:color/transparent" /> <!-- default -->
 
 </selector>

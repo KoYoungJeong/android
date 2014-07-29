@@ -42,6 +42,7 @@
             android:name=".SearchMessageActivity_"
             android:label="@string/title_activity_search"
             android:logo="@drawable/jandi_actionb_logo"
+            android:theme="@style/JandiSearchTheme"
             android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".SettingsActivity_"

@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.ChoicedCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
@@ -233,7 +234,10 @@ public class MainCenterFragment extends BaseFragment  {
      * @param event
      */
     public void onEvent(RequestMessageListEvent event) {
-        log.debug("EVENT : from MainLeftFragment : SelectCdpItemEvent");
+        log.debug("RequestMessageListEvent from MainLeftFragment, " + event.id);
+
+        // 왼쪽 패널에서 선택한 CDP 의 이름을 하일라이트 표시
+        EventBus.getDefault().post(new ChoicedCdpEvent(event.id));
 
         mIsFirstMessage = false;
         mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
@@ -620,7 +624,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        log.debug("onActivityResule : " + requestCode + " / " + resultCode);
+        log.debug("onActivityResult : " + requestCode + " / " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
