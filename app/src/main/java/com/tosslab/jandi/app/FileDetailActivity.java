@@ -278,12 +278,17 @@ public class FileDetailActivity extends BaseActivity {
 
                 if (fileMessage.content.type != null) {
                     String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
-                    String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
+//                    String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
 
                     if (fileMessage.content.type.startsWith("image")) {
                         // 이미지일 경우
                         iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
-                        final String photoUrl = serverUrl + fileName;
+                        // 중간 썸네일을 가져온다.
+                        String thumbnailUrl = "";
+                        if (fileMessage.content.extraInfo != null) {
+                            thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
+                        }
+                        final String photoUrl = serverUrl + thumbnailUrl;
                         Picasso.with(mContext).load(photoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {

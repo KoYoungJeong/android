@@ -49,38 +49,22 @@ public class MessageItemListAdapter extends BaseAdapter {
 
     /**
      * Get Message 혹은, Update Message에서 들어오는 message를 link id로 정렬
-     * TODO : 메소드 합치기~
+     * @param links
+     * @param isDescendingOrder 내림 차순으로 정렬 여부
+     * @return
      */
-    private List<ResMessages.Link> descSortByLinkId(List<ResMessages.Link> links) {
+    private List<ResMessages.Link> sortByLinkId(List<ResMessages.Link> links, final boolean isDescendingOrder) {
         List<ResMessages.Link> ret = new ArrayList<ResMessages.Link>(links);
 
         Comparator<ResMessages.Link> sort = new Comparator<ResMessages.Link>() {
             @Override
             public int compare(ResMessages.Link link, ResMessages.Link link2) {
                 if (link.id > link2.id)
-                    return -1;
+                    return (isDescendingOrder)?-1:1;
                 else if (link.id == link2.id)
                     return 0;
                 else
-                    return 1;
-            }
-        };
-        Collections.sort(ret, sort);
-        return ret;
-    }
-
-    private List<ResMessages.Link> asceSortByLinkId(List<ResMessages.Link> links) {
-        List<ResMessages.Link> ret = new ArrayList<ResMessages.Link>(links);
-
-        Comparator<ResMessages.Link> sort = new Comparator<ResMessages.Link>() {
-            @Override
-            public int compare(ResMessages.Link link, ResMessages.Link link2) {
-                if (link.id > link2.id)
-                    return 1;
-                else if (link.id == link2.id)
-                    return 0;
-                else
-                    return -1;
+                    return (isDescendingOrder)?1:-1;
             }
         };
         Collections.sort(ret, sort);
@@ -104,9 +88,7 @@ public class MessageItemListAdapter extends BaseAdapter {
             return;
         }
 
-        List<ResMessages.Link> sortedLinks = (isDescendingOrder)
-                ? descSortByLinkId(messages.messages)
-                : asceSortByLinkId(messages.messages);
+        List<ResMessages.Link> sortedLinks = sortByLinkId(messages.messages, isDescendingOrder);
 
         // 업데이트 된 메시지들의 상태를 보고,
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.

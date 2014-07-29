@@ -110,6 +110,19 @@ public class MessageItem {
         return null;
     }
 
+    public String getContentSmallThumbnailUrl() {
+        if (mMessage instanceof ResMessages.FileMessage) {
+            ResMessages.FileMessage message = (ResMessages.FileMessage) mMessage;
+            if (message.content.extraInfo == null) {
+                return null;
+            }
+            if (message.content.serverUrl.equals("root")) {
+                return JandiConstants.SERVICE_ROOT_URL + message.content.extraInfo.mediumThumbnailUrl;
+            }
+        }
+        return null;
+    }
+
     public String getContentFileName() {
         if (mMessage instanceof ResMessages.FileMessage) {
             return ((ResMessages.FileMessage) mMessage).content.name;

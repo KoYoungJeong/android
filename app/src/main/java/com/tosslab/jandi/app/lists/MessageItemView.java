@@ -109,8 +109,10 @@ public class MessageItemView extends LinearLayout {
                 mLayoutMessageImageFile.setVisibility(VISIBLE);
                 mTextImageFileName.setText(item.getContentFileName());
                 mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
-                String imageUrl = item.getContentUrl().replaceAll(" ", "%20");
-                Picasso.with(mContext).load(imageUrl).placeholder(R.drawable.jandi_sicon_thumbnail).centerCrop().fit().into(mImagePhoto);
+                if (item.getContentSmallThumbnailUrl() != null) {
+                    String imageUrl = item.getContentSmallThumbnailUrl().replaceAll(" ", "%20");
+                    Picasso.with(mContext).load(imageUrl).placeholder(R.drawable.jandi_sicon_thumbnail).centerCrop().fit().into(mImagePhoto);
+                }
             } else if (item.getContentType() == MessageItem.TYPE_FILE) {
                 // 일반 파일인 경우
                 mLayoutMessageCommonFile.setVisibility(VISIBLE);
