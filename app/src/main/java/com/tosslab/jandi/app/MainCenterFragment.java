@@ -121,14 +121,14 @@ public class MainCenterFragment extends BaseFragment  {
             }
         });
         mActualListView = mPullToRefreshListMessages.getRefreshableView();
-        LayoutInflater li = LayoutInflater.from(mContext);
-        View emptyView = li.inflate(R.layout.view_message_list_empty, null);
+
+        // Empty View를 가진 ListView 설정
+        View emptyView = LayoutInflater.from(mContext).inflate(R.layout.view_message_list_empty, null);
         mActualListView.setEmptyView(emptyView);
         mActualListView.setAdapter(messageItemListAdapter);
         mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                log.debug("click, " + i);
                 messagesItemClicked(messageItemListAdapter.getItem(i - 1));
 
             }

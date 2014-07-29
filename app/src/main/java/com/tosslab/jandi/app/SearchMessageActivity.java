@@ -87,12 +87,9 @@ public class SearchMessageActivity extends BaseActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(true);
-        int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
-        View titleView = findViewById(titleId);
 
-        // attach listener to this spinnerView for handling spinner selection change
+        // ActionBar의 타이틀 Text 를 강제로 Spinner 로 바꾼다.
         Spinner spinner = (Spinner) getLayoutInflater().inflate(R.layout.spinner_search_type, null);
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,11 +104,11 @@ public class SearchMessageActivity extends BaseActivity {
                 // 서치 시작
                 doSearch();
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
+        int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+        View titleView = findViewById(titleId);
         ViewGroupUtils.replaceView(titleView, spinner);
 
         // Progress Wheel 설정
@@ -119,9 +116,11 @@ public class SearchMessageActivity extends BaseActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(this);
+
+        // Empty View를 가진 ListView 설정
+        View emptyView = getLayoutInflater().inflate(R.layout.view_search_list_empty, null);
+        listSearchedMessages.setEmptyView(emptyView);
         listSearchedMessages.setAdapter(mAdapter);
-//        View emptyView = getLayoutInflater().inflate(R.layout.view_search_list_empty, null);
-//        listSearchedMessages.setEmptyView(emptyView);
 
         // 선택한 서치 모드와 사용자를 셋팅
         // 내 파일 검색으로 시작한다면 두번째 텝으로 이동
@@ -315,7 +314,9 @@ public class SearchMessageActivity extends BaseActivity {
             reqSearchFile.userId = mSearchUser;
 
             ResSearchFile resSearchFile = tossRestClient.searchFile(reqSearchFile);
-            mAdapter.insert(resSearchFile);
+            if (resSearchFile.fileCount > 0) {
+                mAdapter.insert(resSearchFile);
+            }
 
             log.debug("success to find " + resSearchFile.fileCount + " files.");
             doSearchDone(true, null);
