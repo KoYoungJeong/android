@@ -6,6 +6,7 @@ package com.tosslab.jandi.app.lists;
 
 import android.content.Context;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,6 +26,8 @@ public class CdpItemView extends FrameLayout {
     LinearLayout lyTitleCdp;
     @ViewById(R.id.txt_title_cdp_name)
     TextView txtTitleCdpName;
+    @ViewById(R.id.btn_title_cdp_create)
+    ImageView imgTitleCdpCreate;
 
 
     public CdpItemView(Context context) {
@@ -36,18 +39,22 @@ public class CdpItemView extends FrameLayout {
         switch (cdp.type) {
             case JandiConstants.TYPE_TITLE_JOINED_CHANNEL:
                 lyTitleCdp.setVisibility(VISIBLE);
+                imgTitleCdpCreate.setVisibility(VISIBLE);
                 txtTitleCdpName.setText(R.string.jandi_cdp_title_channel);
                 break;
             case JandiConstants.TYPE_TITLE_UNJOINED_CHANNEL:
                 txtCdpItemName.setVisibility(VISIBLE);
                 txtCdpItemName.setText(cdp.name);
+                txtCdpItemName.setTextColor(getResources().getColor(R.color.jandi_text_white));
                 break;
             case JandiConstants.TYPE_TITLE_DIRECT_MESSAGE:
                 lyTitleCdp.setVisibility(VISIBLE);
+                imgTitleCdpCreate.setVisibility(INVISIBLE);
                 txtTitleCdpName.setText(R.string.jandi_cdp_title_direct_message);
                 break;
             case JandiConstants.TYPE_TITLE_PRIVATE_GROUP:
                 lyTitleCdp.setVisibility(VISIBLE);
+                imgTitleCdpCreate.setVisibility(VISIBLE);
                 txtTitleCdpName.setText(R.string.jandi_cdp_title_private_group);
                 break;
             case JandiConstants.TYPE_CHANNEL:

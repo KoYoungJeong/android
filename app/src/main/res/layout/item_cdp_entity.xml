@@ -29,6 +29,7 @@
             android:text="CDP NAME"
             android:textColor="@color/jandi_pannel_header_text"/>
         <ImageView
+            android:id="@+id/btn_title_cdp_create"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_marginRight="18dp"

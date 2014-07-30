@@ -17,7 +17,6 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
-import com.tosslab.jandi.app.events.ChoicedCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
 import com.tosslab.jandi.app.events.InviteCdpEvent;
@@ -178,15 +177,15 @@ public class MainActivity extends SlidingFragmentActivity {
 
     /**
      * Event from MainLeftFragment
-     * 선택한 CDP 정보를 저장하고 MainCenterFragment에 전달한다.
+     * 선택한 CDP 정보를 저장한다. 이 저장 내역은 MainCenterFragment에서 사용.
      * 슬라이딩 메뉴를 닫고, 선택한 CDP 이름을 타이틀바에 셋팅
      * @param event
      */
     public void onEvent(SelectCdpItemEvent event) {
-        log.debug("SelectCdpItemEvent from MainLeftFragment, " + event.cdpItem.id);
+        log.debug("SelectCdpItemEvent from MainLeftFragment, " + event.cdpId);
 
         // Preference 저장
-        saveSharedPreference(event.cdpItem.type, event.cdpItem.id);
+        saveSharedPreference(event.cdpType, event.cdpId);
 
         getSlidingMenu().showContent();
         getMessageListOfSelectedCdp();

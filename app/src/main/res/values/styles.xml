@@ -19,6 +19,10 @@
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
     </style>
 
+    <!-- NoActionBar theme -->
+    <style name="JandiTheme.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+    </style>
+
     <!-- Application theme for SearchActivity -->
     <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>

@@ -137,7 +137,7 @@ public class MainLeftFragment extends BaseFragment {
                 break;
             default:
                 // 일반 CDP 를 터치했을 경우, 해당 CDP의 메시지 리스트를 획득할수 있게 이벤트 등록
-                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp);
+                SelectCdpItemEvent event = new SelectCdpItemEvent(cdp.type, cdp.id);
                 EventBus.getDefault().post(event);
                 break;
         }
@@ -189,28 +189,28 @@ public class MainLeftFragment extends BaseFragment {
                 restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             }
             
-            createCdpDone(true, -1);
-            EventBus.getDefault().post(new RequestCdpListEvent());
+            createCdpDone(true, -1, new SelectCdpItemEvent(cdpType, restResId.id));
         } catch (HttpClientErrorException e) {
             log.error("Create Fail", e);
             if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
-                createCdpDone(false, R.string.err_duplicated_name_of_cdp);
+                createCdpDone(false, R.string.err_duplicated_name_of_cdp, null);
             } else {
-                createCdpDone(false, R.string.err_common_create);
+                createCdpDone(false, R.string.err_common_create, null);
             }
         } catch (RestClientException e) {
             log.error("Create Fail", e);
-            createCdpDone(false, R.string.err_common_create);
+            createCdpDone(false, R.string.err_common_create, null);
         } catch (Exception e) {
             log.error("Create Fail", e);
-            createCdpDone(false, R.string.err_common_create);
+            createCdpDone(false, R.string.err_common_create, null);
         }
     }
 
     @UiThread
-    void createCdpDone(boolean isOk, int resId) {
+    void createCdpDone(boolean isOk, int resId, SelectCdpItemEvent event) {
         if (isOk) {
             EventBus.getDefault().post(new RequestCdpListEvent());
+            EventBus.getDefault().post(event);
         } else {
             ColoredToast.showError(mContext, getString(resId));
         }
@@ -234,21 +234,22 @@ public class MainLeftFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             ResCommon res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
-            joinChannelDone(true, null);
+            joinChannelDone(true, null, new SelectCdpItemEvent(JandiConstants.TYPE_CHANNEL, selectedChannelIdToBeJoined));
         } catch (RestClientException e) {
             log.error("fail to join channel");
-            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.");
+            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.", null);
         } catch (Exception e) {
             log.error("fail to join channel");
-            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.");
+            joinChannelDone(false, "해당 채널 가입에 실패하였습니다.", null);
         }
 
     }
 
     @UiThread
-    public void joinChannelDone(boolean isOk, String message) {
+    public void joinChannelDone(boolean isOk, String message, SelectCdpItemEvent event) {
         if (isOk) {
             EventBus.getDefault().post(new RequestCdpListEvent());
+            EventBus.getDefault().post(event);
         } else {
             ColoredToast.showError(mContext, message);
         }

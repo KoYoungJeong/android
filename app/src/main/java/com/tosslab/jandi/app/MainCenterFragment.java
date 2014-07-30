@@ -276,6 +276,9 @@ public class MainCenterFragment extends BaseFragment  {
                     if (currentLastLinkId >= 0) {
                         mLastUpdateLinkId = currentLastLinkId;
                     }
+                } else {
+                    showWarningEmpty();
+                    return;
                 }
             }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
@@ -293,11 +296,16 @@ public class MainCenterFragment extends BaseFragment  {
     }
 
     @UiThread
+    public void showWarningEmpty() {
+        mProgressWheel.dismiss();
+        ColoredToast.showWarning(mContext, "등록된 메시지가 없습니다.");
+    }
+
+    @UiThread
     public void getMessagesDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
         if (isOk) {
             if (mIsFirstMessage) {
-                ColoredToast.showWarning(mContext, "처음입니다.");
                 mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
             }
             refreshListAdapter();
