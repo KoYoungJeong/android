@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -126,18 +127,18 @@ public class MainCenterFragment extends BaseFragment  {
         View emptyView = LayoutInflater.from(mContext).inflate(R.layout.view_message_list_empty, null);
         mActualListView.setEmptyView(emptyView);
         mActualListView.setAdapter(messageItemListAdapter);
-        mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                messagesItemClicked(messageItemListAdapter.getItem(i - 1));
 
-            }
-        });
         mActualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
-                return false;
+                return true;
+            }
+        });
+        mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                messagesItemClicked(messageItemListAdapter.getItem(i - 1));
             }
         });
 
@@ -184,13 +185,13 @@ public class MainCenterFragment extends BaseFragment  {
 
     @Override
     public void onResume() {
-        resumeTimer();
+        resumeUpdateTimer();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        pauseTimer();
+        pauseUpdateTimer();
         super.onPause();
     }
 
@@ -199,13 +200,13 @@ public class MainCenterFragment extends BaseFragment  {
      * 주기적으로 message update 내역을 polling
      ************************************************************/
 
-    private void pauseTimer() {
+    private void pauseUpdateTimer() {
         log.debug("pause polling");
         if (mTimer != null)
             mTimer.cancel();
     }
 
-    private void resumeTimer() {
+    private void resumeUpdateTimer() {
         log.debug("resume polling");
         TimerTask task = new UpdateTimerTask();
         mTimer = new Timer();
@@ -253,6 +254,7 @@ public class MainCenterFragment extends BaseFragment  {
     @UiThread
     public void getMessages() {
         if (mCurrentEvent != null) {
+            pauseUpdateTimer();
             mProgressWheel.show();
             getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
         } else {
@@ -299,11 +301,13 @@ public class MainCenterFragment extends BaseFragment  {
     public void showWarningEmpty() {
         mProgressWheel.dismiss();
         ColoredToast.showWarning(mContext, "등록된 메시지가 없습니다.");
+        resumeUpdateTimer();
     }
 
     @UiThread
     public void getMessagesDone(boolean isOk, String message) {
         mProgressWheel.dismiss();
+        resumeUpdateTimer();
         if (isOk) {
             if (mIsFirstMessage) {
                 mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
@@ -329,7 +333,7 @@ public class MainCenterFragment extends BaseFragment  {
         @Override
         protected void onPreExecute() {
             currentMessagesSize = messageItemListAdapter.getCount();
-            pauseTimer();
+            pauseUpdateTimer();
         }
 
         @Override
@@ -373,7 +377,7 @@ public class MainCenterFragment extends BaseFragment  {
             } else {
                 ColoredToast.showError(mContext, errMessage);
             }
-            resumeTimer();
+            resumeUpdateTimer();
             super.onPostExecute(errMessage);
         }
     }
@@ -434,7 +438,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @Click(R.id.btn_send_comment)
     void sendMessage() {
-        pauseTimer();
+        pauseUpdateTimer();
         String message = etMessage.getText().toString();
         etMessage.setText("");
         if (message.length() > 0) {
@@ -464,7 +468,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeTimer();
+        resumeUpdateTimer();
     }
 
     /************************************************************
@@ -518,7 +522,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
-        pauseTimer();
+        pauseUpdateTimer();
         modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
     }
 
@@ -551,7 +555,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeTimer();
+        resumeUpdateTimer();
     }
 
     /************************************************************
@@ -565,7 +569,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     void deleteMessage(int messageType, int messageId, int feedbackId) {
-        pauseTimer();
+        pauseUpdateTimer();
         deleteMessageInBackground(messageType, messageId, feedbackId);
     }
 
@@ -595,7 +599,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeTimer();
+        resumeUpdateTimer();
     }
 
     /************************************************************
@@ -662,7 +666,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     // File Upload 확인 이벤트 획득
     public void onEvent(ConfirmFileUploadEvent event) {
-        pauseTimer();
+        pauseUpdateTimer();
 
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -713,7 +717,7 @@ public class MainCenterFragment extends BaseFragment  {
         }
 
         getUpdateMessages();
-        resumeTimer();  // resume timer
+        resumeUpdateTimer();  // resume timer
     }
 
     private String getRealPathFromUri(Uri contentUri) {

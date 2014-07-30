@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <item name="android:alertDialogStyle">@style/JandiDialogStyle</item>
+    </style>
+
+    <!-- NoActionBar theme -->
+    <style name="JandiTheme.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+    </style>
+
+    <!-- Application theme for SearchActivity -->
+    <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
+        <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
+        <item name="android:alertDialogStyle">@style/JandiDialogStyle</item>
+    </style>
+
+
+    <!-- Actionbar -->
+    <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/jandi_main</item>
+    </style>
+
+    <!-- Spinner in Actionbar -->
+    <style name="JandiSpinnerStyle" parent="@android:style/Widget.Holo.Spinner"/>
+    <style name="JandiSpinnerItem" parent="@android:style/Widget.Holo.TextView.SpinnerItem">
+        <item name="android:textColor">@color/jandi_text_white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="JandiSpinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/jandi_dropdown_menu_text</item>
+        <item name="android:background">@color/jandi_file_detail_comments_bg</item>
+    </style>
+
+    <style name="JandiDialogStyle" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:textColor">#00FF00</item>
+        <item name="android:typeface">monospace</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <!--<style name="JandiDialogStyle">-->
+        <!--&lt;!&ndash; anything can be left out: &ndash;&gt;-->
+        <!--<item name="titleTextColor">@color/dialog_title_text</item>-->
+        <!--<item name="titleSeparatorColor">@color/dialog_title_separator</item>-->
+        <!--<item name="messageTextColor">@color/dialog_message_text</item>-->
+        <!--<item name="buttonTextColor">@color/dialog_button_text</item>-->
+        <!--<item name="buttonSeparatorColor">@color/dialog_button_separator</item>-->
+        <!--<item name="buttonBackgroundColorNormal">@color/dialog_button_normal</item>-->
+        <!--<item name="buttonBackgroundColorPressed">@color/dialog_button_pressed</item>-->
+        <!--<item name="buttonBackgroundColorFocused">@color/dialog_button_focused</item>-->
+        <!--&lt;!&ndash;<item name="dialogBackground">@drawable/dialog_background</item>&ndash;&gt;-->
+    <!--</style>-->
+</resources>

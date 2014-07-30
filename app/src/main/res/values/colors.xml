@@ -17,6 +17,7 @@
     <color name="jandi_messages_joined_cdp">@color/jandi_text_light</color>
     <color name="jandi_messages_commented">@color/jandi_main</color>
     <color name="jandi_messages_file_name">@color/jandi_text</color>
+    <color name="jandi_messages_item_click">#EEEEEE</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -71,4 +72,20 @@
     <color name="message_date_text">#999999</color>
     <color name="file_name">#3388C1</color>
     <color name="file_type">#777777</color>
+
+
+
+
+
+
+    <!-- custom light theme: -->
+    <color name="dialog_message_text">#333333</color>
+    <color name="dialog_title_text">#f3a71e</color>
+    <color name="dialog_title_separator">#f3a71e</color>
+    <color name="dialog_button_text">#333333</color>
+    <color name="dialog_button_normal">@android:color/transparent</color>
+    <color name="dialog_button_pressed">#99f3a71e</color> <!-- 60 % opacity -->
+    <color name="dialog_button_focused">#4Cf3a71e</color> <!-- 30 % opacity -->
+    <color name="dialog_button_separator">#25000000</color> <!-- 7% opacity -->
+    <color name="background">#FFA500</color>
 </resources>
