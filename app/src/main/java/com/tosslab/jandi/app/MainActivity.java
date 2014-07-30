@@ -1,17 +1,24 @@
 package com.tosslab.jandi.app;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -37,6 +44,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
@@ -62,6 +70,10 @@ public class MainActivity extends SlidingFragmentActivity {
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private CdpItem mCurrentSelectedCdpItem;
+
+    // 커스텀 Actionbar 타이틀 부분
+    private LinearLayout mLyCustomActionBarTitle;
+    private TextView mTextCustomActionBarTitle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,8 +133,12 @@ public class MainActivity extends SlidingFragmentActivity {
      * 오른쪽 - File Search & ETC
      */
     void drawFragments() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayUseLogoEnabled(true);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(true);
+
+        // ActionBar의 타이틀 Text 를 강제로 custom view로 바꾼다.
+        replaceToCustomActionBarTitle();
 
         // 중앙 Fragment - Message List
         BaseFragment baseFragment = MainCenterFragment_.builder().build();
@@ -151,6 +167,26 @@ public class MainActivity extends SlidingFragmentActivity {
         getFragmentManager().beginTransaction().replace(R.id.menu_frame, menuRightFragment).commit();
     }
 
+    // ActionBar의 타이틀 Text 를 강제로 custom view로 바꾼다.
+    private void replaceToCustomActionBarTitle() {
+        mLyCustomActionBarTitle = (LinearLayout) getLayoutInflater().inflate(R.layout.title_actionbar_custom, null);
+        mTextCustomActionBarTitle = (TextView) mLyCustomActionBarTitle.findViewById(R.id.action_bar_title_jandi_custom);
+        mLyCustomActionBarTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 타이틀 부분을 터치하면 CDP 관리 Dialog
+                showDialogToManipulate(mCurrentSelectedCdpItem);
+            }
+        });
+        int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
+        View titleView = findViewById(titleId);
+        ViewGroupUtils.replaceView(titleView, mLyCustomActionBarTitle);
+    }
+
+    private void setCustomActionBarTitle(java.lang.CharSequence charSequence) {
+        mTextCustomActionBarTitle.setText(charSequence);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
@@ -165,9 +201,6 @@ public class MainActivity extends SlidingFragmentActivity {
                 return true;
             case R.id.action_main_right_drawer:
                 getSlidingMenu().showSecondaryMenu();
-                return true;
-            case R.id.action_main_manipulate_cdp:
-                showDialogToManipulate(mCurrentSelectedCdpItem);
                 return true;
         }
 
@@ -267,14 +300,16 @@ public class MainActivity extends SlidingFragmentActivity {
         if (cdpId > 0) {
             mCurrentSelectedCdpItem = mCdpItemManager.getCdpItemById(cdpId);
             if (mCurrentSelectedCdpItem != null) {
-                getActionBar().setTitle(mCdpItemManager.getCdpNameById(cdpId));
+//                getActionBar().setTitle(mCdpItemManager.getCdpNameById(cdpId));
+                setCustomActionBarTitle(mCdpItemManager.getCdpNameById(cdpId));
                 EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
                 return;
             }
         }
 
         mCurrentSelectedCdpItem = mCdpItemManager.getDefaultChannel();
-        getActionBar().setTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
+//        getActionBar().setTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
+        setCustomActionBarTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
         EventBus.getDefault().post(new RequestMessageListEvent(mCurrentSelectedCdpItem.type
                 , mCurrentSelectedCdpItem.id));
     }
