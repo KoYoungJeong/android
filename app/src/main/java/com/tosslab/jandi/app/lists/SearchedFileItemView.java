@@ -54,7 +54,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String fileType = searchedFile.content.type;
         if (fileType != null) {
             if (fileType.startsWith("image")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_folder);
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_img);
             } else if (fileType.startsWith("audio")) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_audio);
             } else if (fileType.startsWith("video")) {
@@ -66,7 +66,7 @@ public class SearchedFileItemView extends RelativeLayout {
             } else if (FormatConverter.isMsOfficeMimeType(fileType)) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
             } else {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_folder);
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_etc);
             }
         }
 

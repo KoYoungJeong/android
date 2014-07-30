@@ -5,7 +5,7 @@
     tools:context="com.tosslab.jandi.app.FileDetailActivity" >
     <item
         android:id="@+id/menu_overflow"
-        android:icon="@drawable/jandi_fview_bt_more"
+        android:icon="@drawable/jandi_icon_moremenu"
         android:showAsAction="always"
         android:title="">
         <menu>

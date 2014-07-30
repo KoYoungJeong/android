@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.CircleTransform;
 
 import java.util.List;
 
@@ -59,9 +60,15 @@ public class CdpSelectListAdapter extends BaseAdapter {
         CdpItem item = (CdpItem)getItem(i);
         if (item.type == JandiConstants.TYPE_DIRECT_MESSAGE) {
             // 프로필 사진
-            Picasso.with(this.context).load(item.getProfileUrl()).fit().into(holder.imageView);
+            Picasso.with(this.context)
+                    .load(item.getProfileUrl())
+                    .placeholder(R.drawable.jandi_icon_directmsg)
+                    .transform(new CircleTransform())
+                    .into(holder.imageView);
+        } else if (item.type == JandiConstants.TYPE_PRIVATE_GROUP) {
+            holder.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.jandi_icon_privategroup));
         } else {
-            holder.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.ic_menu_file));
+            holder.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.jandi_icon_channel));
         }
         holder.textView.setText(item.name);
 
