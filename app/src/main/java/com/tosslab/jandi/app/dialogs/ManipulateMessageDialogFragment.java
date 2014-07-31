@@ -46,8 +46,9 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        // 키보드 강제로 올리기
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        // 회면 밖 터치시 다이얼로그 종료
+        Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
     }
 
     @Override

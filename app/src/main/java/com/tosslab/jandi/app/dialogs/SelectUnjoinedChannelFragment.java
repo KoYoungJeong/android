@@ -24,6 +24,14 @@ import de.greenrobot.event.EventBus;
 public class SelectUnjoinedChannelFragment extends DialogFragment {
     private final Logger log = Logger.getLogger(SelectUnjoinedChannelFragment.class);
 
+    @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        // 회면 밖 터치시 다이얼로그 종료
+        Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
+    }
+
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         List<CdpItem> unjoinedChList = ((MainActivity)getActivity()).mCdpItemManager.mUnJoinedChannels;
 

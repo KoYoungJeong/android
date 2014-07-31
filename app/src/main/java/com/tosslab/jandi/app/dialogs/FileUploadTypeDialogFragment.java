@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
@@ -18,6 +19,14 @@ import de.greenrobot.event.EventBus;
  */
 public class FileUploadTypeDialogFragment extends DialogFragment {
     private final Logger log = Logger.getLogger(FileUploadTypeDialogFragment.class);
+
+    @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        // 회면 밖 터치시 다이얼로그 종료
+        Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
+    }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

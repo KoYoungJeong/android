@@ -34,6 +34,14 @@ public class ManipulateCdpDialogFragment extends DialogFragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        // 회면 밖 터치시 다이얼로그 종료
+        Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
+    }
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String title = getArguments().getString("title", "");
         final int cdpId = getArguments().getInt("cdpId");

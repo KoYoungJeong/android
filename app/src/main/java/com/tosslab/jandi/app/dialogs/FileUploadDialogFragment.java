@@ -46,8 +46,12 @@ public class FileUploadDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
-        // 키보드 강제로 올리기
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        // 회면 밖 터치시 다이얼로그 종료
+        Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
+        // 키보드 자동 올리기
+        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override

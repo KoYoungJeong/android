@@ -19,7 +19,7 @@
         android:singleLine="true"
         android:textColorHint="@android:color/holo_green_dark"
         android:textColor="@android:color/holo_green_dark"
-        android:text="grant@tosslab.com"/>
+        />
     <EditText
         android:id="@+id/et_login_password"
         android:layout_width="240dp"
