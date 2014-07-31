@@ -12,12 +12,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -102,7 +99,7 @@ public class MainActivity extends SlidingFragmentActivity {
             }
         }
 
-        getCdpItemFromServer();
+        getCdpItemFromServerAndGetMessages();
     }
 
     @Override
@@ -221,7 +218,9 @@ public class MainActivity extends SlidingFragmentActivity {
         saveSharedPreference(event.cdpType, event.cdpId);
 
         getSlidingMenu().showContent();
-        getMessageListOfSelectedCdp();
+        if (event.doGetMessageAfterThisWork) {
+            getMessageListOfSelectedCdp();
+        }
     }
 
     private void saveSharedPreference(int cdpType, int cdpId) {
@@ -242,44 +241,46 @@ public class MainActivity extends SlidingFragmentActivity {
      * @param event
      */
     public void onEvent(RequestCdpListEvent event) {
-        getCdpItemFromServer();
+        getCdpItemFromServerAndGetMessages();
     }
 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
     @UiThread
-    public void getCdpItemFromServer() {
+    public void getCdpItemFromServerAndGetMessages() {
         mProgressWheel.show();
-        getCdpItemInBackground();
+        getCdpItemInBackground(true);
     }
 
     @Background
-    public void getCdpItemInBackground() {
+    public void getCdpItemInBackground(boolean doGetMessagesAfterThis) {
         ResLeftSideMenu resLeftSideMenu = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
-            getCdpItemDone(true, resLeftSideMenu, null);
+            getCdpItemDone(true, resLeftSideMenu, null, doGetMessagesAfterThis);
         } catch (RestClientException e) {
             Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.", doGetMessagesAfterThis);
         } catch (HttpMessageNotReadableException e) {
             Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.", doGetMessagesAfterThis);
         } catch (Exception e) {
             Log.e("HI", "Get Fail", e);
-            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+            getCdpItemDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.", doGetMessagesAfterThis);
         }
     }
 
     @UiThread
-    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
+    public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage, boolean doGetMessagesAfterThis) {
         mProgressWheel.dismiss();
         if (isOk) {
             mCdpItemManager = new CdpItemManager(resLeftSideMenu);
             EventBus.getDefault().post(new RefreshCdpListEvent(mCdpItemManager));
-            getMessageListOfSelectedCdp();
+            if (doGetMessagesAfterThis) {
+                getMessageListOfSelectedCdp();
+            }
         } else {
             ColoredToast.showError(mContext, errMessage);
             returnToLoginActivity();
@@ -297,6 +298,7 @@ public class MainActivity extends SlidingFragmentActivity {
         int cdpType = pref.getInt("cdpType", -1);
         int cdpId = pref.getInt("cdpId", -1);
 
+        log.debug("This CdpId is " + cdpId);
         if (cdpId > 0) {
             mCurrentSelectedCdpItem = mCdpItemManager.getCdpItemById(cdpId);
             if (mCurrentSelectedCdpItem != null) {
@@ -410,7 +412,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @UiThread
     void modifyCdpDone() {
         mProgressWheel.dismiss();
-        getCdpItemFromServer();
+        getCdpItemFromServerAndGetMessages();
     }
 
     /************************************************************
@@ -467,7 +469,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @UiThread
     void deleteCdpDone() {
         mProgressWheel.dismiss();
-        getCdpItemFromServer();
+        getCdpItemFromServerAndGetMessages();
     }
 
     /************************************************************
@@ -534,7 +536,7 @@ public class MainActivity extends SlidingFragmentActivity {
     public void inviteCdpDone(boolean isOk, String message) {
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getCdpItemFromServer();
+            getCdpItemFromServerAndGetMessages();
         } else {
             ColoredToast.showError(mContext, message);
         }
@@ -571,7 +573,7 @@ public class MainActivity extends SlidingFragmentActivity {
     @UiThread
     public void leaveCdpDone(boolean isOk, String message) {
         if (isOk) {
-            getCdpItemFromServer();
+            getCdpItemFromServerAndGetMessages();
         } else {
             ColoredToast.showError(mContext, message);
         }

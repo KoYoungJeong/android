@@ -12,7 +12,6 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;

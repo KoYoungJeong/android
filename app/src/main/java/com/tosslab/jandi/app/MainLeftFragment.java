@@ -189,7 +189,7 @@ public class MainLeftFragment extends BaseFragment {
                 restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             }
             
-            createCdpDone(true, -1, new SelectCdpItemEvent(cdpType, restResId.id));
+            createCdpDone(true, -1, new SelectCdpItemEvent(cdpType, restResId.id, false));
         } catch (HttpClientErrorException e) {
             log.error("Create Fail", e);
             if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
@@ -209,8 +209,8 @@ public class MainLeftFragment extends BaseFragment {
     @UiThread
     void createCdpDone(boolean isOk, int resId, SelectCdpItemEvent event) {
         if (isOk) {
-            EventBus.getDefault().post(new RequestCdpListEvent());
             EventBus.getDefault().post(event);
+            EventBus.getDefault().post(new RequestCdpListEvent());
         } else {
             ColoredToast.showError(mContext, getString(resId));
         }
@@ -234,7 +234,7 @@ public class MainLeftFragment extends BaseFragment {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
             ResCommon res = mTossRestClient.joinChannel(selectedChannelIdToBeJoined);
-            joinChannelDone(true, null, new SelectCdpItemEvent(JandiConstants.TYPE_CHANNEL, selectedChannelIdToBeJoined));
+            joinChannelDone(true, null, new SelectCdpItemEvent(JandiConstants.TYPE_CHANNEL, selectedChannelIdToBeJoined, false));
         } catch (RestClientException e) {
             log.error("fail to join channel");
             joinChannelDone(false, "해당 채널 가입에 실패하였습니다.", null);
@@ -248,8 +248,8 @@ public class MainLeftFragment extends BaseFragment {
     @UiThread
     public void joinChannelDone(boolean isOk, String message, SelectCdpItemEvent event) {
         if (isOk) {
-            EventBus.getDefault().post(new RequestCdpListEvent());
             EventBus.getDefault().post(event);
+            EventBus.getDefault().post(new RequestCdpListEvent());
         } else {
             ColoredToast.showError(mContext, message);
         }
