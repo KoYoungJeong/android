@@ -6,13 +6,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -141,27 +141,31 @@ public class MainCenterFragment extends BaseFragment  {
             }
         });
 
-        //
-        // 리스트의 내용이 업데이트 되면...
-        messageItemListAdapter.registerDataSetObserver(new DataSetObserver() {
+        // 스크롤이 맨 아래 근처에 위치하면 업데이트 내역이 생기면 바로 최하단으로 이동하고
+        // 스크롤이 중간에서 위로 존재하면 최하단으로 이동하지 않는다.
+        mActualListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onChanged() {
-                super.onChanged();
-                // 만약 리스트의 맨 마지막 근처라면 맨 마지막으로 리스트를 이동한다.
-                int index = messageItemListAdapter.getCount() - mActualListView.getLastVisiblePosition();
-                log.debug("position : " + index);
-                if (index <= 3) {
-                    mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                // not using this
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                int thresholdOfStickingBottom = totalItemCount - firstVisibleItem - visibleItemCount;
+                if (thresholdOfStickingBottom >= 5) {   // 이게 적절한 threshold 인지는 계속 하면서...
+                    mActualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_NORMAL);
+                } else {
+                    mActualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 }
+
             }
         });
-        mFirstItemId = -1;
 
-        // Software 키보드가 올라왔을 때 리스트도 맨 마지막으로 이동한다.
-//
-//        LinearLayout mainLayout = (LinearLayout)getActivity().findViewById(R.layout.frame_main);
-//        InputMethodManager im = (InputMethodManager) mContext.getSystemService(Service.INPUT_METHOD_SERVICE);
+    }
 
+    private void goToBottomOfListView() {
+        mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
     }
 
     @AfterInject
@@ -312,6 +316,7 @@ public class MainCenterFragment extends BaseFragment  {
                 mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
             }
             refreshListAdapter();
+            goToBottomOfListView();
         } else {
             ColoredToast.showError(mContext, message);
         }

@@ -73,7 +73,10 @@ public class MessageItemListAdapter extends BaseAdapter {
     }
 
     public int getLastLinkId() {
-        return mMessages.get(mMessages.size()-1).getLinkId();
+        if (mMessages.size() > 0) {
+            return mMessages.get(mMessages.size()-1).getLinkId();
+        }
+        return -1;
     }
 
     public void insertMessageItem(ResMessages messages) {

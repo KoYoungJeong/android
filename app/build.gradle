@@ -16,7 +16,7 @@ dependencies {
     compile 'com.navercorp.pulltorefresh:library:3.2.0@aar'
     compile 'com.github.jfragosoperez:hideybarphotoviewscreen:1.+'
     compile 'de.greenrobot:eventbus:2.2.+'
-//    compile 'eu.inmite.android.lib:android-styled-dialogs:1.2.+'
+    compile 'eu.inmite.android.lib:android-styled-dialogs:1.2.+'
     compile 'org.androidannotations:androidannotations-api:3.0.1'
     compile 'org.springframework.android:spring-android-core:1.0.+'
     compile 'org.springframework.android:spring-android-rest-template:1.0.+'

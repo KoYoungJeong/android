@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -95,7 +94,7 @@ public class EditTextDialogFragment extends DialogFragment {
         super.onActivityCreated(bundle);
         // 키보드 강제로 올리기
         Dialog me = getDialog();
-        me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+//        me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         // 회면 밖 터치시 다이얼로그 종료
         me.setCanceledOnTouchOutside(true);
     }
@@ -122,6 +121,8 @@ public class EditTextDialogFragment extends DialogFragment {
         View mainView = inflater.inflate(R.layout.dialog_input_text, null);
 
         final EditText inputName = (EditText)mainView.findViewById(R.id.et_dialog_input);
+        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.showSoftInput(inputName, InputMethodManager.SHOW_FORCED);
         // 수정 대화상자의 경우 현재 메시지를 보여준다.
         if (actionType != ACTION_CREATE_CDP) {
             inputName.setText(currentMessage);
@@ -129,7 +130,6 @@ public class EditTextDialogFragment extends DialogFragment {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
-                .setIcon(android.R.drawable.ic_menu_agenda)
                 .setTitle(titleStringId)
                 .setPositiveButton(R.string.confirm,
                         new DialogInterface.OnClickListener() {

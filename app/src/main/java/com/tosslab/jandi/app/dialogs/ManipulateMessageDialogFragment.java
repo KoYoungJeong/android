@@ -83,7 +83,6 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
-                .setIcon(android.R.drawable.ic_menu_agenda)
                 .setTitle(title)
                 .setNegativeButton(R.string.cancel,
                         new DialogInterface.OnClickListener() {

@@ -91,7 +91,6 @@ public class FileUploadDialogFragment extends DialogFragment {
         final EditText editTextFileComment = (EditText)mainView.findViewById(R.id.et_comment_with_file_upload);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
-                .setIcon(android.R.drawable.ic_menu_agenda)
                 .setTitle(R.string.title_file_upload)
                 .setPositiveButton(R.string.upload,
                         new DialogInterface.OnClickListener() {

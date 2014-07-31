@@ -1,10 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@android:color/white"
-    tools:context="com.tosslab.jandi.app.MainActivity">
+    android:background="@android:color/white" >
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/list_messages"
@@ -14,7 +12,7 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:transcriptMode="normal"
+        android:transcriptMode="alwaysScroll"
         android:smoothScrollbar="true"
         android:fillViewport="true"
         ptr:ptrPullLabel="당겨서 이전 메시지"
