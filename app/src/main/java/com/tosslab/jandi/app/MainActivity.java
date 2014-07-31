@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateCdpDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.DeleteCdpEvent;
+import com.tosslab.jandi.app.events.HideSoftKeyboardForMessageInput;
 import com.tosslab.jandi.app.events.InviteCdpEvent;
 import com.tosslab.jandi.app.events.LeaveCdpEvent;
 import com.tosslab.jandi.app.events.ModifyCdpEvent;
@@ -195,15 +196,23 @@ public class MainActivity extends SlidingFragmentActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 getSlidingMenu().showMenu();
+                hideSoftKeyboard();
                 return true;
             case R.id.action_main_right_drawer:
                 getSlidingMenu().showSecondaryMenu();
+                hideSoftKeyboard();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 메시지 입력 창을 터치했을 때 나타나는 키보드를 강제로 내린다.
+     */
+    private void hideSoftKeyboard() {
+        EventBus.getDefault().post(new HideSoftKeyboardForMessageInput());
+    }
 
     /**
      * Event from MainLeftFragment

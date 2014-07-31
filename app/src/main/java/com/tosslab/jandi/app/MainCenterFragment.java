@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ import com.tosslab.jandi.app.events.ChoicedCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
+import com.tosslab.jandi.app.events.HideSoftKeyboardForMessageInput;
 import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestMessageListEvent;
@@ -164,8 +166,20 @@ public class MainCenterFragment extends BaseFragment  {
 
     }
 
+    /**
+     * 리스트 뷰의 최하단으로 이동한다.
+     */
     private void goToBottomOfListView() {
         mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
+    }
+
+    /**
+     * 액션바의 왼쪽 오른쪽 패널이 열릴 경우 키보드를 강제로 내린다.
+     * @param event
+     */
+    public void onEvent(HideSoftKeyboardForMessageInput event) {
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
     }
 
     @AfterInject
