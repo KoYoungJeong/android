@@ -173,6 +173,12 @@ public class FileDetailActivity extends BaseActivity {
         super.onStop();
     }
 
+    @Override
+    public void finish() {
+        setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        super.finish();
+    }
+
 
     /**
      * Sticky Event from SearchListFragment or MainMessageListFragment

@@ -31,6 +31,7 @@ public class LoginFragmentDialog extends DialogFragment {
             public void onClick(View view) {
                 ((IntroActivity)getActivity()).doLogin(etLoginId.getEditableText().toString()
                         , etLoginPasswd.getEditableText().toString());
+                dismiss();
             }
         });
 

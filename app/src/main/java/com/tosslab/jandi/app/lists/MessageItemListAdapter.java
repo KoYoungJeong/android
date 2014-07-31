@@ -115,11 +115,16 @@ public class MessageItemListAdapter extends BaseAdapter {
                 if (position >= 0) {
                     mMessages.remove(position);
                 }
-//            } else if (link.status.equals("unshared")) {
-//                if (isDescendingOrder)
-//                    mMessages.add(0, new MessageItem(link));
-//                else
-//                    mMessages.add(new MessageItem(link));
+            } else if (link.status.equals("unshared")) {
+                int position = searchIndexOfMessages(link.messageId);
+                if (position >= 0) {
+                    mMessages.set(position, new MessageItem(link));
+                } else {
+                    if (isDescendingOrder)
+                        mMessages.add(0, new MessageItem(link));
+                    else
+                        mMessages.add(new MessageItem(link));
+                }
             }
         }
         reformatMessages();

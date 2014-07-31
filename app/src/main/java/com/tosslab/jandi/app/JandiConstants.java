@@ -5,8 +5,8 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://jandi.com:3000/";
+//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:3000/";
+    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
 
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_CDP_TYPE   = "cdpTypeFromPush";
@@ -31,6 +31,7 @@ public class JandiConstants {
 
     public static final int TYPE_UPLOAD_GALLERY     = 0x00;
     public static final int TYPE_UPLOAD_EXPLORER    = 0x01;
+    public static final int TYPE_FILE_DETAIL_REFRESH    = 0x02;
 
     public static final String TYPE_CHANNEL_STRING          = "channel";
     public static final String TYPE_DIRECT_MESSAGE_STRING   = "user";

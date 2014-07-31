@@ -148,10 +148,13 @@ public class IntroActivity extends Activity {
             TossRestToken tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
             doneLogin(true, tossRestToken, -1);
         } catch (HttpStatusCodeException e) {
-            log.error("Login Fail", e);
             JandiException je = new JandiException(e);
             log.error("Jandi Exception : " + je.errCode + " : " + je.errReason);
-            doneLogin(false, null, R.string.err_login);
+            if (je.errCode == 1818) {
+                doneLogin(false, null, R.string.err_login_invalid_info);
+            } else {
+                doneLogin(false, null, R.string.err_login);
+            }
         } catch (Exception e) {
             log.error("Login Fail", e);
             doneLogin(false, null, R.string.err_login);

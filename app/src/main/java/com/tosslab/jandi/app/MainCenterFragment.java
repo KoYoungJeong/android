@@ -637,24 +637,32 @@ public class MainCenterFragment extends BaseFragment  {
         log.debug("onActivityResult : " + requestCode + " / " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK) {
-            String realFilePath = null;
-            switch (requestCode) {
-                case JandiConstants.TYPE_UPLOAD_GALLERY:
+
+        String realFilePath = null;
+        switch (requestCode) {
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
+                if (resultCode == Activity.RESULT_OK) {
                     Uri targetUri = data.getData();
                     realFilePath = getRealPathFromUri(targetUri);
                     log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
                     showFileUploadDialog(realFilePath);
-                    break;
-                case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                }
+                break;
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                if (resultCode == Activity.RESULT_OK) {
                     String path = data.getStringExtra("GetPath");
                     realFilePath = path + File.separator + data.getStringExtra("GetFileName");
                     log.debug("Get File from Explorer : " + realFilePath);
                     showFileUploadDialog(realFilePath);
-                    break;
-                default:
-                    break;
-            }
+                }
+                break;
+            case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
+                log.info("Return to MainCenterFragment from FileDetailActivity");
+                // 파일 상세 Activity에서 넘어온 경우, 댓글이 달렸을 수도 있으니 바로 업데이트한다.
+                getUpdateMessages();
+                break;
+            default:
+                break;
         }
     }
 
@@ -716,8 +724,8 @@ public class MainCenterFragment extends BaseFragment  {
             ColoredToast.showError(mContext, "Upload failed");
         }
 
-        getUpdateMessages();
-        resumeUpdateTimer();  // resume timer
+        getUpdateMessages();    // update immediately
+        resumeUpdateTimer();    // resume update timer
     }
 
     private String getRealPathFromUri(Uri contentUri) {
@@ -755,7 +763,8 @@ public class MainCenterFragment extends BaseFragment  {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)
-                .start();
-        EventBus.getDefault().postSticky(((MainActivity)mContext).mCdpItemManager);
+                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        EventBus.getDefault().postSticky(((MainActivity) mContext).mCdpItemManager);
     }
+
 }

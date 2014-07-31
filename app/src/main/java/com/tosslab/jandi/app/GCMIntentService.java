@@ -13,11 +13,14 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.log4j.Logger;
+
 /**
  * Created by justinygchoi on 2014. 7. 9..
  */
 public class GCMIntentService extends IntentService {
-    static final String TAG = "Jandi CGM Service";
+    private final Logger log = Logger.getLogger(GCMIntentService.class);
+//    static final String TAG = "Jandi CGM Service";
 
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
@@ -51,11 +54,10 @@ public class GCMIntentService extends IntentService {
                 String strCdpId = extras.getString("toEntityId");
                 int cdpId = Integer.parseInt(strCdpId);
                 int cdpType = convertCdpTypeFromString(extras.getString("toEntityType", ""));
-                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
 
                 // Post notification of received message.
                 sendNotification(lastMessage, cdpType, cdpId);
-                Log.i(TAG, "Received: " + extras.toString());
+                log.info("Received: " + extras.toString());
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -108,9 +110,10 @@ public class GCMIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_actionbar_logo)
+                        .setSmallIcon(R.drawable.jandi_actionb_logo)
                         .setTicker(msg)
                         .setDefaults(Notification.DEFAULT_ALL)
+                        .setAutoCancel(true)
                         .setContentTitle(notificationTitle)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg);
