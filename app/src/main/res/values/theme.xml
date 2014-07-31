@@ -4,6 +4,7 @@
     <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <item name="android:splitMotionEvents">false</item>
     </style>
 
     <!-- NoActionBar theme -->

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app;
 
 
+import android.content.Intent;
+
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 
@@ -34,14 +36,14 @@ public class MainRightFragment extends BaseFragment {
     }
 
     private void goToSearchActivity(int searchMode) {
-        SearchMessageActivity_.intent(this).mSearchMode(searchMode).start();
+        SearchMessageActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).mSearchMode(searchMode).start();
         EventBus.getDefault().postSticky(((MainActivity)getActivity()).mCdpItemManager);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
     @Click(R.id.ly_main_right_action_settings)
     public void moveToSetting() {
-        SettingsActivity_.intent(this).start();
+        SettingsActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP) .start();
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 }
