@@ -1,10 +1,13 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.network.models.ResAuthToken;
+import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.JandiException;
 
 import org.springframework.web.client.HttpStatusCodeException;
@@ -16,10 +19,30 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class JandiNetworkClient {
     TossRestClient mRestClient;
 
-    public JandiNetworkClient(TossRestClient tossRestClient, String token) {
+    public JandiNetworkClient(TossRestClient tossRestClient) {
         mRestClient = tossRestClient;
-        mRestClient.setHeader("Authorization", token);
         mRestClient.setHeader("Accept", "application/vnd.tosslab.jandi-v1+json");
+    }
+
+    public ResMyTeam getMyTeamId(String id) throws JandiException {
+        try {
+            return mRestClient.getTeamId(id);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+    public ResAuthToken login(int teamId, String id, String passwd) throws JandiException {
+        ReqLogin reqLogin = new ReqLogin(teamId, id, passwd);
+        try {
+            return mRestClient.loginAndReturnToken(reqLogin);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+    public void setAuthToken(String token) {
+        mRestClient.setHeader("Authorization", token);
     }
 
     public ResCommon registerNotificationToken(String regId) throws JandiException {

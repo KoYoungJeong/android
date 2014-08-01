@@ -74,7 +74,8 @@ public class SettingsActivity extends PreferenceActivity {
         String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
 
         if (!regId.isEmpty()) {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
+            jandiNetworkClient.setAuthToken(myToken);
             try {
                 jandiNetworkClient.deleteNotificationToken(regId);
                 log.debug("notification token has been deleted.");
@@ -101,7 +102,8 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {
-        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
+        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
+        jandiNetworkClient.setAuthToken(myToken);
         try {
             jandiNetworkClient.setNotificationTarget(notificationTarget);
             log.debug("notification target has been changed : " + notificationTarget);

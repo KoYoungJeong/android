@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
+import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
@@ -16,11 +18,10 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResLogin;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.RestFileUploadResponse;
-import com.tosslab.jandi.app.network.models.TossRestToken;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -29,11 +30,9 @@ import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
-import org.androidannotations.api.rest.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
 
 /**
@@ -53,9 +52,13 @@ import org.springframework.util.MultiValueMap;
 public interface TossRestClient {
     void setHeader(String name, String value);
 
+    // 내 팀 정보 획득
+    @Get("/{userEmail}/teamlist")
+    ResMyTeam getTeamId(String userEmail);
+
     // 로그인
     @Post("/token")
-    TossRestToken loginAndReturnToken(ResLogin login);
+    ResAuthToken loginAndReturnToken(ReqLogin login);
 
     // 채널, PG, DM 리스트 획득
     @Get("/leftSideMenu")

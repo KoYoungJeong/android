@@ -13,6 +13,7 @@
     <string name="user_id">E-mail Address</string>
     <string name="password">Password</string>
     <string name="err_login">로그인이 실패하였습니다</string>
+    <string name="err_login_unregistered_id">아직 가입되지 않은 이메일입니다</string>
     <string name="err_login_invalid_id">이메일 주소가 정확하지 않습니다</string>
     <string name="err_login_invalid_passwd">정확한 비밀번호를 입력해주세요</string>
     <string name="err_login_invalid_info">ID, 비밀번호가 일치하지 않습니다.</string>

@@ -5,14 +5,15 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.network.JandiNetworkClient;
 import com.tosslab.jandi.app.network.TossRestClient;
-import com.tosslab.jandi.app.network.models.ResLogin;
-import com.tosslab.jandi.app.network.models.TossRestToken;
+import com.tosslab.jandi.app.network.models.ResAuthToken;
+import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiException;
@@ -27,9 +28,9 @@ import org.androidannotations.annotations.NoTitle;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -140,19 +141,22 @@ public class IntroActivity extends Activity {
             doneLogin(false, null, R.string.err_login_invalid_passwd);
             return;
         }
-        ResLogin resLogin = new ResLogin();
-        resLogin.email = id;
-        resLogin.password = passwd;
-
         try {
-            TossRestToken tossRestToken = tossRestClient.loginAndReturnToken(resLogin);
-            doneLogin(true, tossRestToken, -1);
-        } catch (HttpStatusCodeException e) {
-            JandiException je = new JandiException(e);
-            log.error("Jandi Exception : " + je.errCode + " : " + je.errReason);
-            if (je.errCode == 1818) {
+            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
+            // 나의 팀 ID 획득
+            ResMyTeam resMyTeam = jandiNetworkClient.getMyTeamId(id);
+            if (resMyTeam.teamList.size() <= 0) {
+                doneLogin(false, null, R.string.err_login_unregistered_id);
+                return;
+            }
+            // 진짜 로그인
+            ResAuthToken resAuthToken = jandiNetworkClient.login(resMyTeam.teamList.get(0).teamId, id, passwd);
+            doneLogin(true, resAuthToken, -1);
+        } catch (JandiException e) {
+            if (e.errCode == 1818) {
                 doneLogin(false, null, R.string.err_login_invalid_info);
             } else {
+                log.error("Login failed", e);
                 doneLogin(false, null, R.string.err_login);
             }
         } catch (Exception e) {
@@ -162,7 +166,7 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    void doneLogin(boolean isOk, TossRestToken token, int resId) {
+    void doneLogin(boolean isOk, ResAuthToken token, int resId) {
         mProgressWheel.dismiss();
 
         if (isOk) {
@@ -283,8 +287,9 @@ public class IntroActivity extends Activity {
      */
     @Background
     public void sendRegistrationIdInBackground(String regId) {
+        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
+        jandiNetworkClient.setAuthToken(myToken);
         try {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
             jandiNetworkClient.registerNotificationToken(regId);
             mRegId = regId;
             log.debug("New device token registered, registration ID=" + regId);
@@ -318,8 +323,9 @@ public class IntroActivity extends Activity {
 
     @Background
     public void sendSubscriptionInBackground() {
+        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
+        jandiNetworkClient.setAuthToken(myToken);
         try {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient, myToken);
             jandiNetworkClient.subscribeNotification(mRegId, true);
             sendSubscriptionDone(true, null);
         } catch (JandiException e) {

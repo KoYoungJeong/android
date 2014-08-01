@@ -2,11 +2,13 @@ package com.tosslab.jandi.app;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -29,18 +31,20 @@ public class LoginFragmentDialog extends DialogFragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((IntroActivity)getActivity()).doLogin(etLoginId.getEditableText().toString()
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etLoginPasswd.getWindowToken(), 0);
+                ((IntroActivity)getActivity()).pressLoginButton(etLoginId.getEditableText().toString()
                         , etLoginPasswd.getEditableText().toString());
-                dismiss();
             }
         });
 
         // creating the fullscreen dialog
         final Dialog dialog = new Dialog(getActivity());
+        dialog.setCancelable(false);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(mainView);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
         return dialog;
     }
 }
