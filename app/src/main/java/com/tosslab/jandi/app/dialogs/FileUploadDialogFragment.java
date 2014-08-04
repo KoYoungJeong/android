@@ -75,7 +75,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt("공유");
         cdpArrayAdapter = new CdpArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
-                ((MainActivity)getActivity()).mCdpItemManager.retrieveWithoutTitle());
+                ((MainActivity)getActivity()).cdpItemManager.retrieveWithoutTitle());
         spinner.setAdapter(cdpArrayAdapter);
         spinner.setSelection(cdpArrayAdapter.getPosition(currentCdpId));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

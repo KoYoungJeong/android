@@ -64,7 +64,6 @@ public class MainActivity extends SlidingFragmentActivity {
     TossRestClient mTossRestClient;
 
     private String mMyToken;
-    public CdpItemManager mCdpItemManager;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private CdpItem mCurrentSelectedCdpItem;
@@ -72,6 +71,8 @@ public class MainActivity extends SlidingFragmentActivity {
     // 커스텀 Actionbar 타이틀 부분
     private LinearLayout mLyCustomActionBarTitle;
     private TextView mTextCustomActionBarTitle;
+
+    public CdpItemManager cdpItemManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,12 +108,12 @@ public class MainActivity extends SlidingFragmentActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        GCMBroadcastReceiver.enableCustomReceiver(this, false);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
     }
 
     @Override
     public void onPause() {
-        GCMBroadcastReceiver.enableCustomReceiver(this, true);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
@@ -285,8 +286,8 @@ public class MainActivity extends SlidingFragmentActivity {
     public void getCdpItemDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage, boolean doGetMessagesAfterThis) {
         mProgressWheel.dismiss();
         if (isOk) {
-            mCdpItemManager = new CdpItemManager(resLeftSideMenu);
-            EventBus.getDefault().post(new RefreshCdpListEvent(mCdpItemManager));
+            cdpItemManager = new CdpItemManager(resLeftSideMenu);
+            EventBus.getDefault().post(new RefreshCdpListEvent(cdpItemManager));
             if (doGetMessagesAfterThis) {
                 getMessageListOfSelectedCdp();
             }
@@ -309,18 +310,18 @@ public class MainActivity extends SlidingFragmentActivity {
 
         log.debug("This CdpId is " + cdpId);
         if (cdpId > 0) {
-            mCurrentSelectedCdpItem = mCdpItemManager.getCdpItemById(cdpId);
+            mCurrentSelectedCdpItem = cdpItemManager.getCdpItemById(cdpId);
             if (mCurrentSelectedCdpItem != null) {
-//                getActionBar().setTitle(mCdpItemManager.getCdpNameById(cdpId));
-                setCustomActionBarTitle(mCdpItemManager.getCdpNameById(cdpId));
+//                getActionBar().setTitle(cdpItemManager.getCdpNameById(cdpId));
+                setCustomActionBarTitle(cdpItemManager.getCdpNameById(cdpId));
                 EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
                 return;
             }
         }
 
-        mCurrentSelectedCdpItem = mCdpItemManager.getDefaultChannel();
-//        getActionBar().setTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
-        setCustomActionBarTitle(mCdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
+        mCurrentSelectedCdpItem = cdpItemManager.getDefaultChannel();
+//        getActionBar().setTitle(cdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
+        setCustomActionBarTitle(cdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
         EventBus.getDefault().post(new RequestMessageListEvent(mCurrentSelectedCdpItem.type
                 , mCurrentSelectedCdpItem.id));
     }
@@ -347,7 +348,7 @@ public class MainActivity extends SlidingFragmentActivity {
         }
         log.debug("Try to manipulate cdp owned by user, " + cdp.ownerId);
         boolean isMyCdp = false;
-        if (cdp.ownerId == mCdpItemManager.mMe.id) {
+        if (cdp.ownerId == cdpItemManager.mMe.id) {
             isMyCdp = true;
         }
         DialogFragment newFragment = ManipulateCdpDialogFragment.newInstance(cdp, isMyCdp);
@@ -492,7 +493,7 @@ public class MainActivity extends SlidingFragmentActivity {
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<CdpItem> unjoinedMembers = mCdpItemManager.getUnjoinedMembersByChoosenCdp(mCurrentSelectedCdpItem);
+        List<CdpItem> unjoinedMembers = cdpItemManager.getUnjoinedMembersByChoosenCdp(mCurrentSelectedCdpItem);
 
         if (unjoinedMembers.size() <= 0) {
             ColoredToast.showWarning(mContext, "이미 모든 사용자가 가입되어 있습니다.");

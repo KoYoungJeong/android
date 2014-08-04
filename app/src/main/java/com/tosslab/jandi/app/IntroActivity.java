@@ -49,6 +49,7 @@ import javax.net.ssl.X509TrustManager;
 @EActivity(R.layout.activity_intro)
 public class IntroActivity extends Activity {
     private final Logger log = Logger.getLogger(IntroActivity.class);
+
     @RestService
     TossRestClient tossRestClient;
 
@@ -61,7 +62,6 @@ public class IntroActivity extends Activity {
 
     @AfterViews
     void initView() {
-//        trustEveryone();
         mContext = getApplicationContext();
 
         // Progress Wheel 설정

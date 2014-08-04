@@ -10,12 +10,12 @@ public class BaseActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        GCMBroadcastReceiver.enableCustomReceiver(this, false);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
     }
 
     @Override
     public void onPause() {
-        GCMBroadcastReceiver.enableCustomReceiver(this, true);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
         super.onPause();
     }
 
@@ -24,7 +24,7 @@ public class BaseActivity extends Activity {
 //     * @param enabled
 //     */
 //    private void enableCustomReceiver(Context context, boolean enabled) {
-//        ComponentName receiver = new ComponentName(context, GCMBroadcastReceiver.class);
+//        ComponentName receiver = new ComponentName(context, JandiGCMBroadcastReceiver.class);
 //        PackageManager pm = context.getPackageManager();
 //
 //        if (receiver != null && pm != null) {

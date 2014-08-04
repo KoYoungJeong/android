@@ -33,7 +33,7 @@ public class SelectUnjoinedChannelFragment extends DialogFragment {
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        List<CdpItem> unjoinedChList = ((MainActivity)getActivity()).mCdpItemManager.mUnJoinedChannels;
+        List<CdpItem> unjoinedChList = ((MainActivity)getActivity()).cdpItemManager.mUnJoinedChannels;
 
         final CdpArrayAdapter unjoinedChannels = new CdpArrayAdapter(getActivity()
 //                , R.layout.spinner_simple

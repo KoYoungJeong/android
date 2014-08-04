@@ -32,12 +32,12 @@ public class FileExplorerActivity extends ListActivity {
     @Override
     public void onResume() {
         super.onResume();
-        GCMBroadcastReceiver.enableCustomReceiver(this, false);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
     }
 
     @Override
     public void onPause() {
-        GCMBroadcastReceiver.enableCustomReceiver(this, true);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
         super.onPause();
     }
 

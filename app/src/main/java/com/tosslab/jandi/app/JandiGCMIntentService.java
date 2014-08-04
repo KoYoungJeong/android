@@ -7,9 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -18,16 +16,15 @@ import org.apache.log4j.Logger;
 /**
  * Created by justinygchoi on 2014. 7. 9..
  */
-public class GCMIntentService extends IntentService {
-    private final Logger log = Logger.getLogger(GCMIntentService.class);
-//    static final String TAG = "Jandi CGM Service";
+public class JandiGCMIntentService extends IntentService {
+    private final Logger log = Logger.getLogger(JandiGCMIntentService.class);
+    static final String TAG = "JandiCGMIntentService";
 
-    public static final int NOTIFICATION_ID = 1;
-    private NotificationManager mNotificationManager;
+    public static final int NOTIFICATION_ID = 100;
     NotificationCompat.Builder builder;
 
-    public GCMIntentService() {
-        super("GCMIntentService");
+    public JandiGCMIntentService() {
+        super(TAG);
     }
 
     @Override
@@ -61,7 +58,7 @@ public class GCMIntentService extends IntentService {
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GCMBroadcastReceiver.completeWakefulIntent(intent);
+        JandiGCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     private int convertCdpTypeFromString(String cdpType) {
@@ -80,8 +77,8 @@ public class GCMIntentService extends IntentService {
     // This is just one simple example of what you might choose to do with
     // a GCM message.
     private void sendNotification(String msg, int cdpType, int cdpId) {
-        mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Intent intent = new Intent(getApplicationContext(), MainActivity_.class);
         if (cdpType >= 0 && cdpId >= 0) {
@@ -89,9 +86,7 @@ public class GCMIntentService extends IntentService {
             intent.putExtra(JandiConstants.EXTRA_CDP_TYPE, cdpType);
         }
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext()
-                , 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-//                new Intent(this, MainActivity_.class), 0);
+                , 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         String notificationTitle = "Push from ";
         switch (cdpType) {
@@ -119,6 +114,6 @@ public class GCMIntentService extends IntentService {
                         .setContentText(msg);
 
         mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        nm.notify(NOTIFICATION_ID, mBuilder.build());
     }
 }

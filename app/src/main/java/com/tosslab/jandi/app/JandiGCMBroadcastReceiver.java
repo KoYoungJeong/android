@@ -11,12 +11,12 @@ import android.util.Log;
 /**
  * Created by justinygchoi on 2014. 7. 9..
  */
-public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
+public class JandiGCMBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         // Explicitly specify that GcmIntentService will handle the intent.
         ComponentName comp = new ComponentName(context.getPackageName(),
-                GCMIntentService.class.getName());
+                JandiGCMIntentService.class.getName());
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, (intent.setComponent(comp)));
         setResultCode(Activity.RESULT_OK);
@@ -27,7 +27,7 @@ public class GCMBroadcastReceiver extends WakefulBroadcastReceiver {
      * @param enabled
      */
     public static void enableCustomReceiver(Context context, boolean enabled) {
-        ComponentName receiver = new ComponentName(context, GCMBroadcastReceiver.class);
+        ComponentName receiver = new ComponentName(context, JandiGCMBroadcastReceiver.class);
         PackageManager pm = context.getPackageManager();
 
         if (receiver != null && pm != null) {

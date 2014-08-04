@@ -508,7 +508,7 @@ public class MainCenterFragment extends BaseFragment  {
             showWarningCheckPermission("파일 수정 기능은 차후에...");
         } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
             showWarningCheckPermission("파일 수정 기능은 차후에...");
-        } else if (((MainActivity)getActivity()).mCdpItemManager.mMe.id == item.getUserId()) {
+        } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
             showDialog(item);
         } else {
             showWarningCheckPermission("권한이 없습니다.");
@@ -782,7 +782,7 @@ public class MainCenterFragment extends BaseFragment  {
                 .intent(this)
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-        EventBus.getDefault().postSticky(((MainActivity) mContext).mCdpItemManager);
+        EventBus.getDefault().postSticky(((MainActivity) mContext).cdpItemManager);
     }
 
 }

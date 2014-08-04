@@ -37,7 +37,7 @@ public class MainRightFragment extends BaseFragment {
 
     private void goToSearchActivity(int searchMode) {
         SearchMessageActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).mSearchMode(searchMode).start();
-        EventBus.getDefault().postSticky(((MainActivity)getActivity()).mCdpItemManager);
+        EventBus.getDefault().postSticky(((MainActivity)getActivity()).cdpItemManager);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
