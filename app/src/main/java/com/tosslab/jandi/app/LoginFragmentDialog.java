@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.tosslab.jandi.app.utils.JandiPreference;
+
 /**
  * Created by justinygchoi on 2014. 7. 25..
  */
@@ -27,6 +29,10 @@ public class LoginFragmentDialog extends DialogFragment {
 
         final EditText etLoginId = (EditText) mainView.findViewById(R.id.et_login_email);
         final EditText etLoginPasswd = (EditText) mainView.findViewById(R.id.et_login_password);
+        String savedId = JandiPreference.getMyId(getActivity());
+        if (!savedId.isEmpty()) {
+            etLoginId.setText(savedId);
+        }
         Button btnLogin = (Button) mainView.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -151,6 +151,7 @@ public class IntroActivity extends Activity {
             }
             // 진짜 로그인
             ResAuthToken resAuthToken = jandiNetworkClient.login(resMyTeam.teamList.get(0).teamId, id, passwd);
+            JandiPreference.setMyId(mContext, id);
             doneLogin(true, resAuthToken, -1);
         } catch (JandiException e) {
             if (e.errCode == 1818) {

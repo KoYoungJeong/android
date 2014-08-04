@@ -15,6 +15,7 @@ public class JandiConstants {
     // SharedPreference Key 값
     public static final String PREF_NAME        = "JandiPref";
     public static final String PREF_TOKEN       = "token";
+    public static final String PREF_LOGIN_ID    = "loginId";
 
     public static final String PREF_NAME_GCM    = "JandiGcm";
     public static final String SENDER_ID        = "558811220581";
