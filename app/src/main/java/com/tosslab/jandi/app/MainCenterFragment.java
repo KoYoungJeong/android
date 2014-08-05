@@ -100,6 +100,10 @@ public class MainCenterFragment extends BaseFragment  {
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     RequestMessageListEvent mCurrentEvent;
 
+    @AfterInject
+    void test() {
+        log.debug("When??");
+    }
     @AfterViews
     void bindAdapter() {
         mContext = getActivity();
@@ -252,6 +256,7 @@ public class MainCenterFragment extends BaseFragment  {
      * @param event
      */
     public void onEvent(RequestMessageListEvent event) {
+        log.debug("on RequestMessageListEvent");
         // 왼쪽 패널에서 선택한 CDP 의 이름을 하일라이트 표시
         EventBus.getDefault().post(new ChoicedCdpEvent(event.id));
 
@@ -275,7 +280,7 @@ public class MainCenterFragment extends BaseFragment  {
             mProgressWheel.show();
             getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
         } else {
-            // TODO : 시작 화면 보이기
+            log.warn("empty current event");
         }
 
     }
@@ -403,10 +408,12 @@ public class MainCenterFragment extends BaseFragment  {
      * Message List 업데이트
      * Message 리스트의 업데이트 획득 (from 서버)
      ************************************************************/
-    @UiThread
+//    @UiThread
     void getUpdateMessages(boolean doWithResumingUpdateTimer) {
         if (mCurrentEvent != null) {
             getUpdateMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id, doWithResumingUpdateTimer);
+        } else {
+            log.warn("empty current event");
         }
     }
 
@@ -415,7 +422,7 @@ public class MainCenterFragment extends BaseFragment  {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, mMyToken, type, id);
         try {
-            if (mLastUpdateLinkId > 0) {
+            if (mLastUpdateLinkId >= 0) {
                 ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
                 int nMessages = restResMessages.messageCount;
                 boolean isEmpty = true;
