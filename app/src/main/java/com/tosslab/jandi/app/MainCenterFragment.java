@@ -238,7 +238,7 @@ public class MainCenterFragment extends BaseFragment  {
         @Override
         public void run() {
             log.debug("update messages by polling");
-            getUpdateMessages();
+            getUpdateMessages(false);
         }
     }
 
@@ -337,7 +337,6 @@ public class MainCenterFragment extends BaseFragment  {
 
     }
 
-    @UiThread
     void refreshListAdapter() {
         messageItemListAdapter.notifyDataSetChanged();
     }
@@ -405,14 +404,14 @@ public class MainCenterFragment extends BaseFragment  {
      * Message 리스트의 업데이트 획득 (from 서버)
      ************************************************************/
     @UiThread
-    void getUpdateMessages() {
+    void getUpdateMessages(boolean doWithResumingUpdateTimer) {
         if (mCurrentEvent != null) {
-            getUpdateMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
+            getUpdateMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id, doWithResumingUpdateTimer);
         }
     }
 
     @Background
-    public void getUpdateMessagesInBackground(int type, int id) {
+    public void getUpdateMessagesInBackground(int type, int id, boolean doWithResumingUpdateTimer) {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, mMyToken, type, id);
         try {
@@ -433,7 +432,7 @@ public class MainCenterFragment extends BaseFragment  {
                     }
                 }
 
-                getUpdateMessagesDone(isEmpty);
+                getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
             }
         } catch (RestClientException e) {
             log.error("fail to get updated messages", e);
@@ -442,12 +441,15 @@ public class MainCenterFragment extends BaseFragment  {
     }
 
     @UiThread
-    public void getUpdateMessagesDone(boolean isEmpty) {
+    public void getUpdateMessagesDone(boolean isEmpty, boolean doWithResumingUpdateTimer) {
         if (isEmpty) {
             // DO NOTHING
             return;
         }
         refreshListAdapter();
+        if (doWithResumingUpdateTimer) {
+            resumeUpdateTimer();
+        }
     }
 
     /************************************************************
@@ -480,13 +482,12 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     public void sendMessageDone(boolean isOk, String message) {
-        getUpdateMessages();
         if (isOk) {
             ColoredToast.show(mContext, message);
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeUpdateTimer();
+        getUpdateMessages(true);
     }
 
     /************************************************************
@@ -569,11 +570,10 @@ public class MainCenterFragment extends BaseFragment  {
     void modifyMessageDone(boolean isOk, String message) {
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getUpdateMessages();
+            getUpdateMessages(true);
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeUpdateTimer();
     }
 
     /************************************************************
@@ -613,16 +613,19 @@ public class MainCenterFragment extends BaseFragment  {
     void deleteMessageDone(boolean isOk, String message) {
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getUpdateMessages();
+            getUpdateMessages(true);
         } else {
             ColoredToast.showError(mContext, message);
         }
-        resumeUpdateTimer();
     }
 
     /************************************************************
      * 파일 업로드
      ************************************************************/
+
+    public interface FinishUpdateCallback {
+        public void doneUpdate();
+    }
 
     @Click(R.id.btn_upload_file)
     void uploadFile() {
@@ -677,7 +680,7 @@ public class MainCenterFragment extends BaseFragment  {
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
                 log.info("Return to MainCenterFragment from FileDetailActivity");
                 // 파일 상세 Activity에서 넘어온 경우, 댓글이 달렸을 수도 있으니 바로 업데이트한다.
-                getUpdateMessages();
+                getUpdateMessages(false);
                 break;
             default:
                 break;
@@ -742,8 +745,7 @@ public class MainCenterFragment extends BaseFragment  {
             ColoredToast.showError(mContext, "Upload failed");
         }
 
-        getUpdateMessages();    // update immediately
-        resumeUpdateTimer();    // resume update timer
+        getUpdateMessages(true);
     }
 
     private String getRealPathFromUri(Uri contentUri) {
