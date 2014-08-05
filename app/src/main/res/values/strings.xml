@@ -21,6 +21,17 @@
     <!-- Main Panel -->
     <string name="message">Message</string>
     <string name="send_message">send</string>
+    <string name="warn_empty_messages">등록된 메시지가 없습니다</string>
+    <string name="warn_no_more_messages">더 이상 메시지가 없습니다</string>
+    <string name="warn_no_permission">권한이 없습니다</string>
+    <string name="modify_messages_succeed">수정 성공</string>
+    <string name="file_uploading">업로드...</string>
+    <string name="err_get_messages_failed">메시지 획득에 실패했습니다</string>
+    <string name="err_send_messages_failed">메시지 전송에 실패했습니다</string>
+    <string name="err_modify_messages_failed">메시지 수정에 실패했습니다</string>
+    <string name="err_delete_messages_failed">메시지 삭제에 실패했습니다</string>
+    <string name="upload_file_succeed">파일 업로드 성공</string>
+    <string name="err_upload_file_failed">파일 업로드에 실패했습니다</string>
 
     <!-- Navigation Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

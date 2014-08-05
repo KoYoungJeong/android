@@ -71,13 +71,14 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.fragment_main)
 public class MainCenterFragment extends BaseFragment  {
     private final Logger log = Logger.getLogger(MainCenterFragment.class);
+    private final String DIALOG_TAG = "dialog";
 
     @RestService
     TossRestClient tossRestClient;
 
     @ViewById(R.id.list_messages)
-    PullToRefreshListView mPullToRefreshListMessages;
-    ListView mActualListView;
+    PullToRefreshListView pullToRefreshListViewMessages;
+    ListView actualListView;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
     @ViewById(R.id.et_message)
@@ -89,21 +90,14 @@ public class MainCenterFragment extends BaseFragment  {
 
     // Update 관련
     private Timer mTimer;
-    private int mLastUpdateLinkId = 0;
+    private int mLastUpdateLinkId = -1;
 
-    int mFirstItemId = -1;
-    boolean mIsFirstMessage = false;
-
-    // 현재 소프트웨어 키보드가 올라와 있는지 여부
-    boolean mIsShownKeyboard = false;
+    private int mFirstItemId = -1;
+    private boolean mIsFirstMessage = false;
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
-    RequestMessageListEvent mCurrentEvent;
+    private RequestMessageListEvent mCurrentEvent;
 
-    @AfterInject
-    void test() {
-        log.debug("When??");
-    }
     @AfterViews
     void bindAdapter() {
         mContext = getActivity();
@@ -115,32 +109,32 @@ public class MainCenterFragment extends BaseFragment  {
 
         //
         // Set up of PullToRefresh
-        mPullToRefreshListMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
+        pullToRefreshListViewMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
                 String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(),
-                            DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 
                 // Update the LastUpdatedLabel
                 listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
                 new GetFutherMessagesTask().execute();
             }
         });
-        mActualListView = mPullToRefreshListMessages.getRefreshableView();
+        actualListView = pullToRefreshListViewMessages.getRefreshableView();
 
         // Empty View를 가진 ListView 설정
         View emptyView = LayoutInflater.from(mContext).inflate(R.layout.view_message_list_empty, null);
-        mActualListView.setEmptyView(emptyView);
-        mActualListView.setAdapter(messageItemListAdapter);
+        actualListView.setEmptyView(emptyView);
+        actualListView.setAdapter(messageItemListAdapter);
 
-        mActualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
                 return true;
             }
         });
-        mActualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 messagesItemClicked(messageItemListAdapter.getItem(i - 1));
@@ -149,7 +143,7 @@ public class MainCenterFragment extends BaseFragment  {
 
         // 스크롤이 맨 아래 근처에 위치하면 업데이트 내역이 생기면 바로 최하단으로 이동하고
         // 스크롤이 중간에서 위로 존재하면 최하단으로 이동하지 않는다.
-        mActualListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        actualListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
                 // not using this
@@ -160,9 +154,9 @@ public class MainCenterFragment extends BaseFragment  {
                                  int visibleItemCount, int totalItemCount) {
                 int thresholdOfStickingBottom = totalItemCount - firstVisibleItem - visibleItemCount;
                 if (thresholdOfStickingBottom >= 5) {   // 이게 적절한 threshold 인지는 계속 하면서...
-                    mActualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_NORMAL);
+                    actualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_NORMAL);
                 } else {
-                    mActualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+                    actualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 }
 
             }
@@ -174,16 +168,7 @@ public class MainCenterFragment extends BaseFragment  {
      * 리스트 뷰의 최하단으로 이동한다.
      */
     private void goToBottomOfListView() {
-        mActualListView.setSelection(messageItemListAdapter.getCount() - 1);
-    }
-
-    /**
-     * 액션바의 왼쪽 오른쪽 패널이 열릴 경우 키보드를 강제로 내린다.
-     * @param event
-     */
-    public void onEvent(HideSoftKeyboardForMessageInput event) {
-        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
+        actualListView.setSelection(messageItemListAdapter.getCount() - 1);
     }
 
     @AfterInject
@@ -216,19 +201,29 @@ public class MainCenterFragment extends BaseFragment  {
         super.onPause();
     }
 
+
+    /**
+     * 액션바의 왼쪽 오른쪽 패널이 열릴 경우 키보드를 강제로 내린다.
+     * @param event
+     */
+    public void onEvent(HideSoftKeyboardForMessageInput event) {
+        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etMessage.getWindowToken(), 0);
+    }
+
     /************************************************************
      * Timer Task
      * 주기적으로 message update 내역을 polling
      ************************************************************/
 
     private void pauseUpdateTimer() {
-        log.debug("pause polling");
+        log.info("pauseUpdateTimer");
         if (mTimer != null)
             mTimer.cancel();
     }
 
     private void resumeUpdateTimer() {
-        log.debug("resume polling");
+        log.info("resumeUpdateTimer");
         TimerTask task = new UpdateTimerTask();
         mTimer = new Timer();
         mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
@@ -241,8 +236,7 @@ public class MainCenterFragment extends BaseFragment  {
     private class UpdateTimerTask extends TimerTask {
         @Override
         public void run() {
-            log.debug("update messages by polling");
-            getUpdateMessages(false);
+            getUpdateMessagesWithoutResumingUpdateTimer();
         }
     }
 
@@ -261,7 +255,7 @@ public class MainCenterFragment extends BaseFragment  {
         EventBus.getDefault().post(new ChoicedCdpEvent(event.id));
 
         mIsFirstMessage = false;
-        mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
+        pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mCurrentEvent = event;
         getMessagesAfterCleaning();
     }
@@ -280,7 +274,7 @@ public class MainCenterFragment extends BaseFragment  {
             mProgressWheel.show();
             getMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id);
         } else {
-            log.warn("empty current event");
+            log.warn("getMessages : empty CurrentEvent");
         }
 
     }
@@ -310,19 +304,20 @@ public class MainCenterFragment extends BaseFragment  {
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceviedList;
 
-
-            log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
+            log.debug("getMessagesInBackground : " + restResMessages.messageCount
+                    + " messages from " + mFirstItemId);
             getMessagesDone(true, null);
         } catch (RestClientException e) {
-            log.error("fail to get messages.", e);
-            getMessagesDone(false, "메시지 획득에 실패했습니다");
+            log.error("getMessagesInBackground : FAILED", e);
+            getMessagesDone(false, getString(R.string.err_get_messages_failed));
         }
     }
 
     @UiThread
     public void showWarningEmpty() {
         mProgressWheel.dismiss();
-        ColoredToast.showWarning(mContext, "등록된 메시지가 없습니다.");
+        mLastUpdateLinkId = 0;
+        ColoredToast.showWarning(mContext, getString(R.string.warn_empty_messages));
         resumeUpdateTimer();
     }
 
@@ -332,7 +327,8 @@ public class MainCenterFragment extends BaseFragment  {
         resumeUpdateTimer();
         if (isOk) {
             if (mIsFirstMessage) {
-                mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+                // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
+                pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
             }
             refreshListAdapter();
             goToBottomOfListView();
@@ -370,21 +366,22 @@ public class MainCenterFragment extends BaseFragment  {
                 // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
                 mFirstItemId = restResMessages.firstIdOfReceviedList;
 
-                log.debug("success to " + restResMessages.messageCount + " messages from " + mFirstItemId);
+                log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
+                        + " messages from " + mFirstItemId);
                 return null;
             } catch (RestClientException e) {
-                log.error("fail to get messages.", e);
-                return "메시지 획득에 실패했습니다";
+                log.error("GetFutherMessagesTask : FAILED", e);
+                return getString(R.string.err_get_messages_failed);
             }
 
         }
 
         @Override
         protected void onPostExecute(String errMessage) {
-            mPullToRefreshListMessages.onRefreshComplete();
+            pullToRefreshListViewMessages.onRefreshComplete();
             if (mIsFirstMessage) {
-                ColoredToast.showWarning(mContext, "처음입니다.");
-                mPullToRefreshListMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+                ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_messages));
+                pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
             }
 
             if (errMessage == null) {
@@ -394,8 +391,8 @@ public class MainCenterFragment extends BaseFragment  {
                 // +1 은 이전 메시지의 0번째 item은 실제 아이템이 아닌 날짜 경계선이기에 그 포지션을 뺀다.
                 // +1 은 인덱스 0 - 사이즈는 1부터...
                 int index = messageItemListAdapter.getCount() - currentMessagesSize + 2;
-                log.debug(">>REFRESH<< @" + index);
-                mActualListView.setSelectionFromTop(index, 0);
+                log.debug("GetFutherMessagesTask : REFRESH at " + index);
+                actualListView.setSelectionFromTop(index, 0);
             } else {
                 ColoredToast.showError(mContext, errMessage);
             }
@@ -408,12 +405,19 @@ public class MainCenterFragment extends BaseFragment  {
      * Message List 업데이트
      * Message 리스트의 업데이트 획득 (from 서버)
      ************************************************************/
-//    @UiThread
+    void getUpdateMessagesAndResumeUpdateTimer() {
+        getUpdateMessages(true);
+    }
+
+    void getUpdateMessagesWithoutResumingUpdateTimer() {
+        getUpdateMessages(false);
+    }
+
     void getUpdateMessages(boolean doWithResumingUpdateTimer) {
         if (mCurrentEvent != null) {
             getUpdateMessagesInBackground(mCurrentEvent.type, mCurrentEvent.id, doWithResumingUpdateTimer);
         } else {
-            log.warn("empty current event");
+            log.warn("getUpdateMessages : empty current event");
         }
     }
 
@@ -426,8 +430,8 @@ public class MainCenterFragment extends BaseFragment  {
                 ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
                 int nMessages = restResMessages.messageCount;
                 boolean isEmpty = true;
-                log.info("success to " + nMessages +
-                        " messages updated at " + mLastUpdateLinkId);
+                log.info("getUpdateMessagesInBackground : " + nMessages
+                        + " messages updated at ID, " + mLastUpdateLinkId);
                 if (nMessages > 0) {
                     isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
@@ -438,8 +442,9 @@ public class MainCenterFragment extends BaseFragment  {
                         mLastUpdateLinkId = currentLastLinkId;
                     }
                 }
-
                 getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
+            } else {
+                log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + mLastUpdateLinkId);
             }
         } catch (RestClientException e) {
             log.error("fail to get updated messages", e);
@@ -479,22 +484,20 @@ public class MainCenterFragment extends BaseFragment  {
                 tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
         try {
             messageManipulator.sendMessage(message);
-            log.debug("success to send message");
-            sendMessageDone(true, "생성 성공");
+            log.debug("sendMessageInBackground : succeed");
+            sendMessageDone(true, null);
         } catch (RestClientException e) {
-            log.error("fail to send message", e);
-            sendMessageDone(false, "Fail to send");
+            log.error("sendMessageInBackground : FAILED", e);
+            sendMessageDone(false, getString(R.string.err_send_messages_failed));
         }
     }
 
     @UiThread
     public void sendMessageDone(boolean isOk, String message) {
-        if (isOk) {
-            ColoredToast.show(mContext, message);
-        } else {
+        if (!isOk) {
             ColoredToast.showError(mContext, message);
         }
-        getUpdateMessages(true);
+        getUpdateMessagesAndResumeUpdateTimer();
     }
 
     /************************************************************
@@ -519,7 +522,7 @@ public class MainCenterFragment extends BaseFragment  {
         } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
             showDialog(item);
         } else {
-            showWarningCheckPermission("권한이 없습니다.");
+            showWarningCheckPermission(getString(R.string.warn_no_permission));
         }
     }
 
@@ -530,7 +533,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     void showDialog(MessageItem item) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstance(item);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
 
     // TODO : Serialize 객체로 이벤트 전달할 것
@@ -538,7 +541,7 @@ public class MainCenterFragment extends BaseFragment  {
     public void onEvent(ReqModifyMessageEvent event) {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
                 , event.currentMessage, event.feedbackId);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
 
     // Message 수정 서버 요청
@@ -560,16 +563,16 @@ public class MainCenterFragment extends BaseFragment  {
 
         try {
             if (messageType == MessageItem.TYPE_STRING) {
-                log.debug("Try to modify message");
+                log.debug("modifyMessageInBackground : Try for message");
                 messageManipulator.modifyMessage(messageId, inputMessage);
             } else if (messageType == MessageItem.TYPE_COMMENT) {
-                log.debug("Try to modify comment");
+                log.debug("modifyMessageInBackground : Try for comment");
                 messageManipulator.modifyMessageComment(messageId, inputMessage, feedbackId);
             }
-            modifyMessageDone(true, "수정 성공");
+            modifyMessageDone(true, getString(R.string.modify_messages_succeed));
         } catch (RestClientException e) {
-            log.error("fail to modify message");
-            modifyMessageDone(false, "수정 실패");
+            log.error("modifyMessageInBackground : FAILED");
+            modifyMessageDone(false, getString(R.string.err_modify_messages_failed));
         }
     }
 
@@ -577,7 +580,7 @@ public class MainCenterFragment extends BaseFragment  {
     void modifyMessageDone(boolean isOk, String message) {
         if (isOk) {
             ColoredToast.show(mContext, message);
-            getUpdateMessages(true);
+            getUpdateMessagesAndResumeUpdateTimer();
         } else {
             ColoredToast.showError(mContext, message);
         }
@@ -605,22 +608,21 @@ public class MainCenterFragment extends BaseFragment  {
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageManipulator.deleteMessage(messageId);
-                log.debug("success to delete message");
+                log.debug("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 messageManipulator.deleteMessageComment(messageId, feedbackId);
             }
-            deleteMessageDone(true, "Deleted !!");
+            deleteMessageDone(true, null);
         } catch (RestClientException e) {
-            log.error("fail to delete message", e);
-            deleteMessageDone(false, "Fail to delete");
+            log.error("deleteMessageInBackground : FAILED", e);
+            deleteMessageDone(false, getString(R.string.err_delete_messages_failed));
         }
     }
 
     @UiThread
     void deleteMessageDone(boolean isOk, String message) {
         if (isOk) {
-            ColoredToast.show(mContext, message);
-            getUpdateMessages(true);
+            getUpdateMessagesAndResumeUpdateTimer();
         } else {
             ColoredToast.showError(mContext, message);
         }
@@ -629,28 +631,24 @@ public class MainCenterFragment extends BaseFragment  {
     /************************************************************
      * 파일 업로드
      ************************************************************/
-
-    public interface FinishUpdateCallback {
-        public void doneUpdate();
-    }
-
     @Click(R.id.btn_upload_file)
     void uploadFile() {
         DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+        fileUploadTypeDialog.show(getFragmentManager(), DIALOG_TAG);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
         Intent intent = null;
         switch (event.type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                log.info("upload file from gallery");
+                log.info("RequestFileUploadEvent : from gallery");
                 // Gallery
                 intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                log.info("RequestFileUploadEvent : from explorer");
                 intent = new Intent(mContext, FileExplorerActivity.class);
                 startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
                 break;
@@ -672,7 +670,8 @@ public class MainCenterFragment extends BaseFragment  {
                 if (resultCode == Activity.RESULT_OK) {
                     Uri targetUri = data.getData();
                     realFilePath = getRealPathFromUri(targetUri);
-                    log.debug("Get Photo from URI : " + targetUri.toString() + ", FilePath : " + realFilePath);
+                    log.debug("onActivityResult : Photo URI : " + targetUri.toString()
+                            + ", FilePath : " + realFilePath);
                     showFileUploadDialog(realFilePath);
                 }
                 break;
@@ -680,14 +679,14 @@ public class MainCenterFragment extends BaseFragment  {
                 if (resultCode == Activity.RESULT_OK) {
                     String path = data.getStringExtra("GetPath");
                     realFilePath = path + File.separator + data.getStringExtra("GetFileName");
-                    log.debug("Get File from Explorer : " + realFilePath);
+                    log.debug("onActivityResult : from Explorer : " + realFilePath);
                     showFileUploadDialog(realFilePath);
                 }
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
-                log.info("Return to MainCenterFragment from FileDetailActivity");
+                log.info("onActivityResult : Come from FileDetailActivity");
                 // 파일 상세 Activity에서 넘어온 경우, 댓글이 달렸을 수도 있으니 바로 업데이트한다.
-                getUpdateMessages(false);
+                getUpdateMessagesWithoutResumingUpdateTimer();
                 break;
             default:
                 break;
@@ -697,7 +696,7 @@ public class MainCenterFragment extends BaseFragment  {
     // File Upload 대화상자 보여주기
     void showFileUploadDialog(String realFilePath) {
         DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, mCurrentEvent.id);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
 
     // File Upload 확인 이벤트 획득
@@ -706,7 +705,7 @@ public class MainCenterFragment extends BaseFragment  {
 
         final ProgressDialog progressDialog = new ProgressDialog(mContext);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage("Uploading " + event.realFilePath);
+        progressDialog.setMessage(getString(R.string.file_uploading)+ " " + event.realFilePath);
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
@@ -746,13 +745,12 @@ public class MainCenterFragment extends BaseFragment  {
     void uploadFileDone(Exception exception, JsonObject result) {
         if (exception == null) {
             log.debug(result);
-            ColoredToast.show(mContext, "File uploaded");
+            ColoredToast.show(mContext, getString(R.string.upload_file_succeed));
         } else {
-            log.error("Upload failed", exception);
-            ColoredToast.showError(mContext, "Upload failed");
+            log.error("uploadFileDone: FAILED", exception);
+            ColoredToast.showError(mContext, getString(R.string.err_upload_file_failed));
         }
-
-        getUpdateMessages(true);
+        getUpdateMessagesAndResumeUpdateTimer();
     }
 
     private String getRealPathFromUri(Uri contentUri) {
