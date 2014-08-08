@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestMessageListEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
+import com.tosslab.jandi.app.lists.MessageItemConverter;
 import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
@@ -97,6 +98,9 @@ public class MainCenterFragment extends BaseFragment  {
 
     // 현재 선택한 것 : Channel, Direct Message or Private Group
     private RequestMessageListEvent mCurrentEvent;
+    // The content of the adapter has changed but ListView did not receive a notification
+    // 오류를 막기 위해 Adapter가 원본 List를 들고 있는 것이 아니라 외부에서 들고 있음.
+    private MessageItemConverter mMessageItemConverter;
 
     @AfterViews
     void bindAdapter() {
@@ -106,6 +110,7 @@ public class MainCenterFragment extends BaseFragment  {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
+        mMessageItemConverter = new MessageItemConverter();
 
         //
         // Set up of PullToRefresh
@@ -255,6 +260,7 @@ public class MainCenterFragment extends BaseFragment  {
         EventBus.getDefault().post(new ChoicedCdpEvent(event.id));
 
         mIsFirstMessage = false;
+
         pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
         mCurrentEvent = event;
         getMessagesAfterCleaning();
@@ -263,6 +269,7 @@ public class MainCenterFragment extends BaseFragment  {
     @UiThread
     public void getMessagesAfterCleaning() {
         mFirstItemId = -1;
+        mMessageItemConverter.clear();
         messageItemListAdapter.clearAdapter();
         getMessages();
     }
@@ -285,7 +292,9 @@ public class MainCenterFragment extends BaseFragment  {
                 tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
-            messageItemListAdapter.insertMessageItem(restResMessages);
+            mMessageItemConverter.insertMessageItem(restResMessages);
+            messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
+//            messageItemListAdapter.insertMessageItem(restResMessages, mOriginalMessageList);
 
             if (mFirstItemId == -1) {
                 if (restResMessages.messageCount > 0) {
@@ -360,7 +369,8 @@ public class MainCenterFragment extends BaseFragment  {
                     tossRestClient, mMyToken, mCurrentEvent.type, mCurrentEvent.id);
             try {
                 ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
-                messageItemListAdapter.insertMessageItem(restResMessages);
+                mMessageItemConverter.insertMessageItem(restResMessages);
+                messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
                 // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
                 mIsFirstMessage = restResMessages.isFirst;
                 // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
@@ -435,7 +445,8 @@ public class MainCenterFragment extends BaseFragment  {
                 if (nMessages > 0) {
                     isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
-                    messageItemListAdapter.updatedMessageItem(restResMessages);
+                    mMessageItemConverter.updatedMessageItem(restResMessages);
+                    messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
                     // 가장 최신의 LinkId를 업데이트한다.
                     int currentLastLinkId = messageItemListAdapter.getLastLinkId();
                     if (currentLastLinkId >= 0) {
@@ -454,6 +465,7 @@ public class MainCenterFragment extends BaseFragment  {
 
     @UiThread
     public void getUpdateMessagesDone(boolean isEmpty, boolean doWithResumingUpdateTimer) {
+        log.info("getUpdateMessagesDone : and resumeTimer? " + doWithResumingUpdateTimer);
         if (isEmpty) {
             // DO NOTHING
             return;
