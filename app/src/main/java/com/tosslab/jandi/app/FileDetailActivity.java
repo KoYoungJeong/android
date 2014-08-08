@@ -53,10 +53,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
-
-import javax.net.ssl.SSLContext;
 
 import de.greenrobot.event.EventBus;
 

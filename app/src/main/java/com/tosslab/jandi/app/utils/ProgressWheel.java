@@ -23,7 +23,7 @@ public class ProgressWheel extends ProgressDialog {
 
     public void init() {
         setIndeterminate(true);
-        setCancelable(false);
+        setCancelable(true);
     }
 
     @Override

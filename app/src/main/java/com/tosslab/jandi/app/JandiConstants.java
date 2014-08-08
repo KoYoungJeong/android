@@ -5,7 +5,7 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:3000/";
+//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com/";
     public static final String SERVICE_ROOT_URL = "https://jandi.com/";
 
     // Push로 부터 넘어온 MainActivity의 Extra

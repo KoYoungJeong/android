@@ -22,6 +22,8 @@ public class ResMessages {
     public List<Link> messages;
     public Date responseTime;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
         public int id;
         public ResLeftSideMenu.Entity fromEntity;
@@ -29,6 +31,7 @@ public class ResMessages {
         public int messageId;
         public String status;
         public int feedbackId;
+        public int teamId;
         public OriginalMessage feedback;
         public OriginalMessage message;
     }
@@ -36,6 +39,8 @@ public class ResMessages {
     /**
      * ResLeftSideMenu.User 와 합칠것.
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Writer {
         public int id;
         public String type;
@@ -87,6 +92,7 @@ public class ResMessages {
     }
 
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileContent {
         public String title;
         public String name;
@@ -97,6 +103,8 @@ public class ResMessages {
         public ExtraInfo extraInfo;
     }
 
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ExtraInfo {
         public String smallThumbnailUrl;
         public String mediumThumbnailUrl;
