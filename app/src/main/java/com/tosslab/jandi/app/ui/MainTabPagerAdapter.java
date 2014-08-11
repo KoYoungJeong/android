@@ -10,13 +10,12 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter {
-    private final String[] TITLES = { "채널", "유저", "비밀그룹", "검색", "셋팅" };
+    private final String[] TITLES = { "공개채널", "유저", "비밀그룹", "설정" };
     private final int[] ICONS = {
-            R.drawable.jandi_icon_channel,
-            R.drawable.jandi_icon_directmsg,
-            R.drawable.jandi_icon_privategroup,
-            R.drawable.jandi_icon_rm_file,
-            R.drawable.jandi_icon_rm_setting
+            R.drawable.tmp_icon_channel,
+            R.drawable.tmp_icon_dm,
+            R.drawable.tmp_icon_private_group,
+            R.drawable.tmp_icon_setting
     };
 
     public MainTabPagerAdapter(FragmentManager fm) {
@@ -31,6 +30,8 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return MainUserListFragment_.builder().build();
             case 2:
+                return MainPrivateGroupListFragment_.builder().build();
+            case 3:
                 return MainPrivateGroupListFragment_.builder().build();
 //            case 4:
 //                return SettingsFragment_.builder().build();

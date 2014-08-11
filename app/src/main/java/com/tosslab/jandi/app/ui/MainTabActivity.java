@@ -106,31 +106,14 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void addTabToActionBar(ActionBar actionBar, ActionBar.TabListener tabListener) {
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setIcon(mMainTabPagerAdapter.getIcon(0))
+        for (int i = 0; i < mMainTabPagerAdapter.getCount(); i++) {
+            actionBar.addTab(
+                    actionBar.newTab()
+                        .setText(mMainTabPagerAdapter.getPageTitle(i))
+//                        .setIcon(mMainTabPagerAdapter.getIcon(i))
                         .setTabListener(tabListener)
-        );
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setIcon(mMainTabPagerAdapter.getIcon(1))
-                        .setTabListener(tabListener)
-        );
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setIcon(mMainTabPagerAdapter.getIcon(2))
-                        .setTabListener(tabListener)
-        );
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setIcon(mMainTabPagerAdapter.getIcon(3))
-                        .setTabListener(tabListener)
-        );
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setIcon(mMainTabPagerAdapter.getIcon(4))
-                        .setTabListener(tabListener)
-        );
+            );
+        }
     }
 
     public void onEvent(ReadyToRetrieveChannelList event) {
