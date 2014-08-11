@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.tosslab.jandi.app.ui.LoginActivity;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 /**
@@ -39,7 +40,7 @@ public class LoginFragmentDialog extends DialogFragment {
             public void onClick(View view) {
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etLoginPasswd.getWindowToken(), 0);
-                ((IntroActivity)getActivity()).pressLoginButton(etLoginId.getEditableText().toString()
+                ((LoginActivity)getActivity()).pressLoginButton(etLoginId.getEditableText().toString()
                         , etLoginPasswd.getEditableText().toString());
             }
         });

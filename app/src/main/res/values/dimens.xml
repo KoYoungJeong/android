@@ -1,4 +1,6 @@
 <resources>
+    <dimen name="jandi_keyline_vertical_spacing">72dp</dimen>
+    <dimen name="jandi_keyline_horizontal_margin">16dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>

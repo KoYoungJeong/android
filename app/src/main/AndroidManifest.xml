@@ -55,16 +55,16 @@
             <!--android:logo="@drawable/jandi_actionb_logo"-->
             <!--android:theme="@style/AppTheme_ActionBarOverlay">-->
         <!--</activity>-->
-        <!--<receiver-->
-            <!--android:name=".JandiGCMBroadcastReceiver"-->
-            <!--android:permission="com.google.android.c2dm.permission.SEND" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
-                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
-                <!--<category android:name="com.tosslab.jandi.app" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-        <!--<service android:name=".JandiGCMIntentService" />-->
+        <receiver
+            android:name=".JandiGCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <category android:name="com.tosslab.jandi.app" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".JandiGCMIntentService" />
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />

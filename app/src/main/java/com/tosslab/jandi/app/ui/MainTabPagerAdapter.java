@@ -2,14 +2,15 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.support.v13.app.FragmentStatePagerAdapter;
+import android.support.v13.app.FragmentPagerAdapter;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.SettingsFragment_;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class MainTabPagerAdapter extends FragmentStatePagerAdapter {
+public class MainTabPagerAdapter extends FragmentPagerAdapter {
     private final String[] TITLES = { "채널", "유저", "비밀그룹", "검색", "셋팅" };
     private final int[] ICONS = {
             R.drawable.jandi_icon_channel,
@@ -25,8 +26,16 @@ public class MainTabPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = new MainChannelListFragment();
-        return fragment;
+        switch (position) {
+            case 0:
+                return MainChannelListFragment_.builder().build();
+            case 1:
+                return MainUserListFragment_.builder().build();
+            case 4:
+                return SettingsFragment_.builder().build();
+            default:
+                return MainChannelListFragment_.builder().build();
+        }
     }
 
     @Override

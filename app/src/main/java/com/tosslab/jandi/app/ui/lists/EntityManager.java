@@ -28,6 +28,18 @@ public class EntityManager {
         arrangeEntities(resLeftSideMenu);
     }
 
+    public List<ResLeftSideMenu.Channel> getJoinedChannels() {
+        return mJoinedChannels;
+    }
+
+    public List<ResLeftSideMenu.Channel> getUnJoinedChannels() {
+        return mUnJoinedChannels;
+    }
+
+    public List<ResLeftSideMenu.User> getUsers() {
+        return mUsers;
+    }
+
     private int searchDuplicatedPosition(List<ResLeftSideMenu.Channel> targets, int channelId) {
         int ret = 0;
         for (ResLeftSideMenu.Channel target : targets) {
@@ -92,7 +104,21 @@ public class EntityManager {
     }
 
 
+    public class FormattedEntity {
+        public int ownerId;
+        public String name;
+        public int type;
+        public int id;
+        public List<Integer> joinedMember;
 
+        public FormattedEntity(ResLeftSideMenu.Channel channel, int type) {
+            this.name = channel.name;
+            this.id = channel.id;
+            this.joinedMember = channel.ch_members;
+            this.type = type;
+            this.ownerId = channel.ch_creatorId;
+        }
+    }
 
     //
 //    public List<CdpItem> retrieveAllEntities() {

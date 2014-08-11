@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainChannelListFragment" >
+    tools:context=".MainUserListFragment" >
     <ListView
-        android:id="@+id/main_list_channels"
+        android:id="@+id/main_list_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
