@@ -1,24 +1,54 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.os.Bundle;
+import android.content.Context;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.ProgressWheel;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.rest.RestService;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.client.RestClientException;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class MainTabActivity extends Activity {
-    MainTabPagerAdapter mMainTabPagerAdapter;
-    ViewPager mViewPager;
+@EActivity(R.layout.activity_main_tab)
+public class MainTabActivity extends BaseActivity {
+    @RestService
+    TossRestClient mTossRestClient;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_tab);
+    private String mMyToken;
+    private ProgressWheel mProgressWheel;
+    private Context mContext;
+
+    private EntityManager mEntityManager;
+
+    private MainTabPagerAdapter mMainTabPagerAdapter;
+    private ViewPager mViewPager;
+
+    @AfterViews
+    void initView() {
+        mContext = getApplicationContext();
+
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(this);
+        mProgressWheel.init();
+
+        // myToken 획득
+        mMyToken = JandiPreference.getMyToken(mContext);
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -48,33 +78,79 @@ public class MainTabActivity extends Activity {
 
         // add a tab to the action bar
         addTabToActionBar(actionBar, tabListener);
+
+        // Entity의 리스트를 획득하여 저장한다.
+        getEntities();
     }
 
     private void addTabToActionBar(ActionBar actionBar, ActionBar.TabListener tabListener) {
         actionBar.addTab(
                 actionBar.newTab()
-                        .setIcon(R.drawable.jandi_icon_channel)
+                        .setIcon(mMainTabPagerAdapter.getIcon(0))
                         .setTabListener(tabListener)
         );
         actionBar.addTab(
                 actionBar.newTab()
-                        .setIcon(R.drawable.jandi_icon_directmsg)
+                        .setIcon(mMainTabPagerAdapter.getIcon(1))
                         .setTabListener(tabListener)
         );
         actionBar.addTab(
                 actionBar.newTab()
-                        .setIcon(R.drawable.jandi_icon_privategroup)
+                        .setIcon(mMainTabPagerAdapter.getIcon(2))
                         .setTabListener(tabListener)
         );
         actionBar.addTab(
                 actionBar.newTab()
-                        .setIcon(R.drawable.jandi_icon_rm_file)
+                        .setIcon(mMainTabPagerAdapter.getIcon(3))
                         .setTabListener(tabListener)
         );
         actionBar.addTab(
                 actionBar.newTab()
-                        .setIcon(R.drawable.jandi_icon_rm_setting)
+                        .setIcon(mMainTabPagerAdapter.getIcon(4))
                         .setTabListener(tabListener)
         );
+    }
+
+    /************************************************************
+     * Entities List Update / Refresh
+     ************************************************************/
+
+    /**
+     * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
+     */
+    @UiThread
+    public void getEntities() {
+        mProgressWheel.show();
+        getEntitiesInBackground();
+    }
+
+    @Background
+    public void getEntitiesInBackground() {
+        ResLeftSideMenu resLeftSideMenu = null;
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
+            getEntitiesDone(true, resLeftSideMenu, null);
+        } catch (RestClientException e) {
+            Log.e("HI", "Get Fail", e);
+            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        } catch (HttpMessageNotReadableException e) {
+            Log.e("HI", "Get Fail", e);
+            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        } catch (Exception e) {
+            Log.e("HI", "Get Fail", e);
+            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        }
+    }
+
+    @UiThread
+    public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
+        mProgressWheel.dismiss();
+        if (isOk) {
+            mEntityManager = new EntityManager(resLeftSideMenu);
+        } else {
+            ColoredToast.showError(mContext, errMessage);
+            returnToLoginActivity();
+        }
     }
 }
