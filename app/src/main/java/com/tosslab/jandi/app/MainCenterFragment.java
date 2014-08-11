@@ -438,22 +438,7 @@ public class MainCenterFragment extends BaseFragment  {
         try {
             if (mLastUpdateLinkId >= 0) {
                 ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
-                int nMessages = restResMessages.messageCount;
-                boolean isEmpty = true;
-                log.info("getUpdateMessagesInBackground : " + nMessages
-                        + " messages updated at ID, " + mLastUpdateLinkId);
-                if (nMessages > 0) {
-                    isEmpty = false;
-                    // Update 된 메시지만 부분 삽입한다.
-                    mMessageItemConverter.updatedMessageItem(restResMessages);
-                    messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
-                    // 가장 최신의 LinkId를 업데이트한다.
-                    int currentLastLinkId = messageItemListAdapter.getLastLinkId();
-                    if (currentLastLinkId >= 0) {
-                        mLastUpdateLinkId = currentLastLinkId;
-                    }
-                }
-                getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
+                getUpdateMessagesDone(restResMessages, doWithResumingUpdateTimer);
             } else {
                 log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + mLastUpdateLinkId);
             }
@@ -464,13 +449,26 @@ public class MainCenterFragment extends BaseFragment  {
     }
 
     @UiThread
-    public void getUpdateMessagesDone(boolean isEmpty, boolean doWithResumingUpdateTimer) {
-        log.info("getUpdateMessagesDone : and resumeTimer? " + doWithResumingUpdateTimer);
-        if (isEmpty) {
+    public void getUpdateMessagesDone(ResMessages resMessages, boolean doWithResumingUpdateTimer) {
+        int nMessages = resMessages.messageCount;
+        log.info("getUpdateMessagesInBackground : " + nMessages
+                + " messages updated at ID, " + mLastUpdateLinkId);
+        if (nMessages <= 0) {
             // DO NOTHING
             return;
         }
+
+        // Update 된 메시지만 부분 삽입한다.
+        mMessageItemConverter.updatedMessageItem(resMessages);
+        messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
+        // 가장 최신의 LinkId를 업데이트한다.
+        int currentLastLinkId = messageItemListAdapter.getLastLinkId();
+        if (currentLastLinkId >= 0) {
+            mLastUpdateLinkId = currentLastLinkId;
+        }
         refreshListAdapter();
+
+        log.info("getUpdateMessagesDone : and resumeTimer? " + doWithResumingUpdateTimer);
         if (doWithResumingUpdateTimer) {
             resumeUpdateTimer();
         }
