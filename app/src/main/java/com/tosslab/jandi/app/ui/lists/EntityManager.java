@@ -40,6 +40,10 @@ public class EntityManager {
         return mUsers;
     }
 
+    public List<ResLeftSideMenu.PrivateGroup> getPrivateGroups() {
+        return mPrivateGroups;
+    }
+
     private int searchDuplicatedPosition(List<ResLeftSideMenu.Channel> targets, int channelId) {
         int ret = 0;
         for (ResLeftSideMenu.Channel target : targets) {

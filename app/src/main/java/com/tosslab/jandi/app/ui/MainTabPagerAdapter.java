@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.SettingsFragment_;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -31,8 +30,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
                 return MainChannelListFragment_.builder().build();
             case 1:
                 return MainUserListFragment_.builder().build();
-            case 4:
-                return SettingsFragment_.builder().build();
+            case 2:
+                return MainPrivateGroupListFragment_.builder().build();
+//            case 4:
+//                return SettingsFragment_.builder().build();
             default:
                 return MainChannelListFragment_.builder().build();
         }

@@ -30,6 +30,7 @@ public class UserEntityItemListAdapter extends BaseAdapter {
     }
 
     public void retrieveList(List<ResLeftSideMenu.User> users) {
+        mUsers.clear();
         mUsers.addAll(users);
         notifyDataSetChanged();
     }

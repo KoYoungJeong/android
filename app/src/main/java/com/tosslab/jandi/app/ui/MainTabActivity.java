@@ -11,8 +11,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
+import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
+import com.tosslab.jandi.app.ui.events.RetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.RetrieveUserList;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -145,6 +147,13 @@ public class MainTabActivity extends BaseActivity {
         }
     }
 
+    public void onEvent(ReadyToRetrievePrivateGroupList event) {
+        log.debug("onEvent : ReadyToRetrievePrivateGroupList");
+        if (isReadyToRetrieveEntityList) {
+            postShowPrivateGroupListEvent();
+        }
+    }
+
     /************************************************************
      * Entities List Update / Refresh
      ************************************************************/
@@ -204,6 +213,6 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void postShowPrivateGroupListEvent() {
-
+        EventBus.getDefault().post(new RetrievePrivateGroupList(mEntityManager.getPrivateGroups()));
     }
 }

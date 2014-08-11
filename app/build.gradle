@@ -14,7 +14,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.google.android.gms:play-services:3.1.+'
     compile 'com.android.support:support-v13:19.+'
-    compile 'com.astuetz:pagerslidingtabstrip:1.0.+'
     compile 'com.navercorp.pulltorefresh:library:3.2.0@aar'
     compile 'com.github.jfragosoperez:hideybarphotoviewscreen:1.+'
     compile 'de.greenrobot:eventbus:2.2.+'

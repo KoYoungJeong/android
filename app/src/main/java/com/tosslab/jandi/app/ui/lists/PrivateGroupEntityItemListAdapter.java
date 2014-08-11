@@ -18,32 +18,31 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EBean
-public class ChannelEntityItemListAdapter extends BaseAdapter {
-    private List<ResLeftSideMenu.Channel> mChannels;
+public class PrivateGroupEntityItemListAdapter extends BaseAdapter {
+    private List<ResLeftSideMenu.PrivateGroup> mPrivateGroups;
 
     @RootContext
     Context mContext;
 
     @AfterInject
     void initAdapter() {
-        mChannels = new ArrayList<ResLeftSideMenu.Channel>();
+        mPrivateGroups = new ArrayList<ResLeftSideMenu.PrivateGroup>();
     }
 
-    public void retrieveList(List<ResLeftSideMenu.Channel> joinedChannel, List<ResLeftSideMenu.Channel> unJoinedChannel) {
-        mChannels.clear();
-        mChannels.addAll(joinedChannel);
-        mChannels.addAll(unJoinedChannel);
+    public void retrieveList(List<ResLeftSideMenu.PrivateGroup> joinedChannel) {
+        mPrivateGroups.clear();
+        mPrivateGroups.addAll(joinedChannel);
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mChannels.size();
+        return mPrivateGroups.size();
     }
 
     @Override
-    public ResLeftSideMenu.Channel getItem(int position) {
-        return mChannels.get(position);
+    public ResLeftSideMenu.PrivateGroup getItem(int position) {
+        return mPrivateGroups.get(position);
     }
 
     @Override
@@ -53,13 +52,14 @@ public class ChannelEntityItemListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ChannelEntityItemView channelEntityItemView;
+        PrivateGroupEntityItemView privateGroupEntityItemView;
         if (convertView == null) {
-            channelEntityItemView = ChannelEntityItemView_.build(mContext);
+            privateGroupEntityItemView = PrivateGroupEntityItemView_.build(mContext);
         } else {
-            channelEntityItemView = (ChannelEntityItemView) convertView;
+            privateGroupEntityItemView = (PrivateGroupEntityItemView) convertView;
         }
-        channelEntityItemView.bind(getItem(position));
-        return channelEntityItemView;
+        privateGroupEntityItemView.bind(getItem(position));
+        return privateGroupEntityItemView;
     }
+
 }
