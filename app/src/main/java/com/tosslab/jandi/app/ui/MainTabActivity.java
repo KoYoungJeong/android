@@ -88,15 +88,14 @@ public class MainTabActivity extends BaseActivity {
 
         // add a tab to the action bar
         addTabToActionBar(actionBar, tabListener);
-
-        // Entity의 리스트를 획득하여 저장한다.
-        getEntities();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        // Entity의 리스트를 획득하여 저장한다.
+        getEntities();
     }
 
     @Override

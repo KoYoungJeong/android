@@ -10,7 +10,7 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter {
-    private final String[] TITLES = { "공개채널", "유저", "비밀그룹", "설정" };
+    private final String[] TITLES = { "공개채널", "사용자", "비밀그룹", "설정" };
     private final int[] ICONS = {
             R.drawable.tmp_icon_channel,
             R.drawable.tmp_icon_dm,

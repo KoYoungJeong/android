@@ -2,9 +2,12 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Handler;
 import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
@@ -15,6 +18,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
@@ -58,5 +62,20 @@ public class MainPrivateGroupListFragment extends Fragment {
      */
     public void onEvent(RetrievePrivateGroupList event) {
         mPrivateGroupListAdapter.retrieveList(event.privateGroups);
+    }
+
+    @ItemClick
+    void main_list_channelsItemClicked(final ResLeftSideMenu.PrivateGroup privateGroup) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageActivity_.intent(mContext)
+                        .entityType(JandiConstants.TYPE_PRIVATE_GROUP)
+                        .entityId(privateGroup.id)
+                        .entityName(privateGroup.name)
+                        .start();
+            }
+        }, 250);
     }
 }
