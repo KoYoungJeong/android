@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
 import com.tosslab.jandi.app.ui.lists.ChannelEntityItemListAdapter;
+import com.tosslab.jandi.app.ui.models.FormattedChannel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -60,19 +61,22 @@ public class MainChannelListFragment extends Fragment {
      * @param event
      */
     public void onEvent(RetrieveChannelList event) {
-        mChannelListAdapter.retrieveList(event.joinedChannels, event.unJoinedChannels);
+        mChannelListAdapter.retrieveList(event.channels);
     }
 
     @ItemClick
-    void main_list_channelsItemClicked(final ResLeftSideMenu.Channel channel) {
+    void main_list_channelsItemClicked(final FormattedChannel channel) {
+        if (channel.type != FormattedChannel.TYPE_REAL_CHANNEL) {
+            return;
+        }
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 MessageActivity_.intent(mContext)
                         .entityType(JandiConstants.TYPE_CHANNEL)
-                        .entityId(channel.id)
-                        .entityName(channel.name)
+                        .entityId(channel.original.id)
+                        .entityName(channel.original.name)
                         .start();
             }
         }, 250);

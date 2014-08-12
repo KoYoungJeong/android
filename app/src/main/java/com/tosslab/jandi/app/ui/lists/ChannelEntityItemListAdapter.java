@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.models.FormattedChannel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -19,20 +20,19 @@ import java.util.List;
  */
 @EBean
 public class ChannelEntityItemListAdapter extends BaseAdapter {
-    private List<ResLeftSideMenu.Channel> mChannels;
+    private List<FormattedChannel> mChannels;
 
     @RootContext
     Context mContext;
 
     @AfterInject
     void initAdapter() {
-        mChannels = new ArrayList<ResLeftSideMenu.Channel>();
+        mChannels = new ArrayList<FormattedChannel>();
     }
 
-    public void retrieveList(List<ResLeftSideMenu.Channel> joinedChannel, List<ResLeftSideMenu.Channel> unJoinedChannel) {
+    public void retrieveList(List<FormattedChannel> formattedChannels) {
         mChannels.clear();
-        mChannels.addAll(joinedChannel);
-        mChannels.addAll(unJoinedChannel);
+        mChannels.addAll(formattedChannels);
         notifyDataSetChanged();
     }
 
@@ -42,7 +42,7 @@ public class ChannelEntityItemListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ResLeftSideMenu.Channel getItem(int position) {
+    public FormattedChannel getItem(int position) {
         return mChannels.get(position);
     }
 

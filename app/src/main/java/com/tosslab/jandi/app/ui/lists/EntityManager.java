@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.lists;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.models.FormattedChannel;
 
 import org.apache.log4j.Logger;
 
@@ -28,12 +29,17 @@ public class EntityManager {
         arrangeEntities(resLeftSideMenu);
     }
 
-    public List<ResLeftSideMenu.Channel> getJoinedChannels() {
-        return mJoinedChannels;
-    }
-
-    public List<ResLeftSideMenu.Channel> getUnJoinedChannels() {
-        return mUnJoinedChannels;
+    public List<FormattedChannel> getFormattedChannels() {
+        List<FormattedChannel> formattedEntities = new ArrayList<FormattedChannel>();
+        formattedEntities.add(new FormattedChannel(FormattedChannel.TYPE_TITLE_JOINED));
+        for (ResLeftSideMenu.Channel channel : mJoinedChannels) {
+            formattedEntities.add(new FormattedChannel(channel, FormattedChannel.JOINED));
+        }
+        formattedEntities.add(new FormattedChannel(FormattedChannel.TYPE_TITLE_UNJOINED));
+        for (ResLeftSideMenu.Channel channel : mUnJoinedChannels) {
+            formattedEntities.add(new FormattedChannel(channel, FormattedChannel.UNJOINED));
+        }
+        return formattedEntities;
     }
 
     public List<ResLeftSideMenu.User> getUsers() {
@@ -104,23 +110,6 @@ public class EntityManager {
             } else {
                 // TODO : Error 처리
             }
-        }
-    }
-
-
-    public class FormattedEntity {
-        public int ownerId;
-        public String name;
-        public int type;
-        public int id;
-        public List<Integer> joinedMember;
-
-        public FormattedEntity(ResLeftSideMenu.Channel channel, int type) {
-            this.name = channel.name;
-            this.id = channel.id;
-            this.joinedMember = channel.ch_members;
-            this.type = type;
-            this.ownerId = channel.ch_creatorId;
         }
     }
 

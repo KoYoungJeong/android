@@ -183,10 +183,7 @@ public class MainTabActivity extends BaseActivity {
 
     private void postShowChannelListEvent() {
         EventBus.getDefault().post(
-                new RetrieveChannelList(
-                        mEntityManager.getJoinedChannels(),
-                        mEntityManager.getUnJoinedChannels()
-                )
+                new RetrieveChannelList(mEntityManager.getFormattedChannels())
         );
     }
 
@@ -195,6 +192,8 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void postShowPrivateGroupListEvent() {
-        EventBus.getDefault().post(new RetrievePrivateGroupList(mEntityManager.getPrivateGroups()));
+        EventBus.getDefault().post(
+                new RetrievePrivateGroupList(mEntityManager.getPrivateGroups())
+        );
     }
 }
