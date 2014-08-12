@@ -3,6 +3,9 @@ package com.tosslab.jandi.app.ui;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -40,6 +43,8 @@ public class MainPrivateGroupListFragment extends Fragment {
 
     @AfterViews
     void bindAdapter() {
+        setHasOptionsMenu(true);
+
         mContext = getActivity();
         mListViewPrivateGroups.setAdapter(mPrivateGroupListAdapter);
         EventBus.getDefault().post(new ReadyToRetrievePrivateGroupList());
@@ -54,6 +59,21 @@ public class MainPrivateGroupListFragment extends Fragment {
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onPause();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.add_entity_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_channel:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

@@ -100,8 +100,6 @@ public class MainLeftFragment extends BaseFragment {
         mCdpListAdapter.notifyDataSetChanged();
     }
 
-
-
     /************************************************************
      * List 선택
      * 선택한 C, D, P 에 대한 메시지 리스트 획득 이벤트가

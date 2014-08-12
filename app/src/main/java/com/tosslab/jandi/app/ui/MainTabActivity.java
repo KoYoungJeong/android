@@ -109,7 +109,6 @@ public class MainTabActivity extends BaseActivity {
             actionBar.addTab(
                     actionBar.newTab()
                         .setText(mMainTabPagerAdapter.getPageTitle(i))
-//                        .setIcon(mMainTabPagerAdapter.getIcon(i))
                         .setTabListener(tabListener)
             );
         }
