@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
+import com.tosslab.jandi.app.events.DeleteCdpEvent;
 import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
@@ -45,6 +46,7 @@ import com.tosslab.jandi.app.lists.MessageItemConverter;
 import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
@@ -238,6 +240,13 @@ public class MessageListActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_my_entity_delete:
+                deleteEntityInBackground();
+                return true;
+            case R.id.action_entity_leave:
+            case R.id.action_my_entity_leave:
+                leaveEntityInBackground();
                 return true;
         }
 
@@ -809,5 +818,69 @@ public class MessageListActivity extends BaseActivity {
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
 //        EventBus.getDefault().postSticky(((MainActivity) mContext).cdpItemManager);
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup Leave
+     ************************************************************/
+
+    @Background
+    public void leaveEntityInBackground() {
+        try {
+            tossRestClient.setHeader("Authorization", mMyToken);
+            if (entityType == JandiConstants.TYPE_CHANNEL) {
+                tossRestClient.leaveChannel(entityId);
+            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                tossRestClient.leaveGroup(entityId);
+            }
+            leaveEntitySucceed();
+        } catch (RestClientException e) {
+            log.error("fail to leave cdp");
+            leaveEntityFailed("탈퇴에 실패했습니다.");
+        } catch (Exception e) {
+            log.error("fail to leave cdp");
+            leaveEntityFailed("탈퇴에 실패했습니다.");
+        }
+    }
+
+    @UiThread
+    public void leaveEntitySucceed() {
+        finish();
+    }
+
+    @UiThread
+    public void leaveEntityFailed(String errMessage) {
+        ColoredToast.showError(mContext, errMessage);
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup 삭제
+     ************************************************************/
+
+    @Background
+    void deleteEntityInBackground() {
+        try {
+            tossRestClient.setHeader("Authorization", mMyToken);
+            if (entityType == JandiConstants.TYPE_CHANNEL) {
+                tossRestClient.deleteChannel(entityId);
+            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                tossRestClient.deleteGroup(entityId);
+            }
+            log.debug("delete success");
+            deleteEntitySucceed();
+        } catch (RestClientException e) {
+            log.error("delete failed");
+            deleteEntityFailed("삭제에 실패했습니다.");
+        }
+    }
+
+    @UiThread
+    public void deleteEntitySucceed() {
+        finish();
+    }
+
+    @UiThread
+    public void deleteEntityFailed(String errMessage) {
+        ColoredToast.showError(mContext, errMessage);
     }
 }
