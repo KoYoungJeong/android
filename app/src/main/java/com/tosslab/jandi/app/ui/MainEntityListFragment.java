@@ -14,15 +14,16 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
-import com.tosslab.jandi.app.events.RequestCdpListEvent;
-import com.tosslab.jandi.app.events.SelectCdpItemEvent;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
+import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
-import com.tosslab.jandi.app.ui.lists.ChannelEntityItemListAdapter;
-import com.tosslab.jandi.app.ui.models.FormattedChannel;
+import com.tosslab.jandi.app.ui.events.RetrievePrivateGroupList;
+import com.tosslab.jandi.app.ui.lists.EntityItemListAdapter;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -32,6 +33,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -46,13 +48,15 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EFragment(R.layout.fragment_main_channel_list)
-public class MainChannelListFragment extends Fragment {
-    private final Logger log = Logger.getLogger(MainChannelListFragment.class);
+public class MainEntityListFragment extends Fragment {
+    private final Logger log = Logger.getLogger(MainEntityListFragment.class);
 
+    @FragmentArg
+    int entityType;     // Channel 혹은 PrivateGroup
     @ViewById(R.id.main_list_channels)
     ListView mListViewChannels;
     @Bean
-    ChannelEntityItemListAdapter mChannelListAdapter;
+    EntityItemListAdapter mChannelListAdapter;
 
     @RestService
     TossRestClient mTossRestClient;
@@ -75,7 +79,11 @@ public class MainChannelListFragment extends Fragment {
         mProgressWheel.init();
 
         mListViewChannels.setAdapter(mChannelListAdapter);
-        EventBus.getDefault().post(new ReadyToRetrieveChannelList());
+        if (entityType == JandiConstants.TYPE_CHANNEL) {
+            EventBus.getDefault().post(new ReadyToRetrieveChannelList());
+        } else {
+            EventBus.getDefault().post(new ReadyToRetrievePrivateGroupList());
+        }
     }
 
     @AfterInject
@@ -105,7 +113,7 @@ public class MainChannelListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add_channel:
-                // 채널 생성
+                // 채널, private group 생성
                 showDialogToCreateChannel();
                 return true;
             default:
@@ -118,7 +126,13 @@ public class MainChannelListFragment extends Fragment {
      * @param event
      */
     public void onEvent(RetrieveChannelList event) {
-        mChannelListAdapter.retrieveList(event.channels);
+        if (entityType == JandiConstants.TYPE_CHANNEL)
+            mChannelListAdapter.retrieveList(event.channels);
+    }
+
+    public void onEvent(RetrievePrivateGroupList event) {
+        if (entityType == JandiConstants.TYPE_PRIVATE_GROUP)
+            mChannelListAdapter.retrieveList(event.privateGroups);
     }
 
     /************************************************************
@@ -127,76 +141,51 @@ public class MainChannelListFragment extends Fragment {
 
     /**
      * 채널에 대한 리스트를 눌렀을 때...
-     * @param channel
+     * @param formattedEntity
      */
     @ItemClick
-    void main_list_channelsItemClicked(final FormattedChannel channel) {
-        if (channel.type != FormattedChannel.TYPE_REAL_CHANNEL) {
-            return;
+    void main_list_channelsItemClicked(final FormattedEntity formattedEntity) {
+        if (formattedEntity.type == FormattedEntity.TYPE_REAL_CHANNEL) {
+            if (formattedEntity.isJoined) {
+                ResLeftSideMenu.Channel channel = formattedEntity.getChannel();
+                if (channel == null) {
+                    return;     // ERROR
+                }
+                moveToChannelMessageActivity(channel.id, channel.name);
+            } else {
+                // 채널 가입 API 호출 (후 해당 채널로 이동)
+                joinChannel(formattedEntity);
+            }
+        } else if (formattedEntity.type == FormattedEntity.TYPE_REAL_PRIVATE_GROUP) {
+            ResLeftSideMenu.PrivateGroup privateGroup = formattedEntity.getPrivateGroup();
+            if (privateGroup == null) {
+                return;     // ERROR
+            }
+            moveToPrivateGroupMessageActivity(privateGroup.id, privateGroup.name);
         }
-        if (channel.isJoined) {
-            moveToChannelMessageActivity(channel.original.id, channel.original.name);
-        } else {
-            // 채널 가입 API 호출 후 해당 채널로 이동
-            joinChannel(channel);
-        }
-
+        return;
     }
 
-    void moveToChannelMessageActivity(final int channelId, final String channelName) {
+    private void moveToChannelMessageActivity(int channelId, String channelName) {
+        moveToMessageActivity(channelId, channelName, JandiConstants.TYPE_CHANNEL);
+    }
+    private void moveToPrivateGroupMessageActivity(int privateGroupId, String privateGroupName) {
+        moveToMessageActivity(privateGroupId, privateGroupName, JandiConstants.TYPE_PRIVATE_GROUP);
+    }
+
+    private void moveToMessageActivity(final int channelId, final String channelName, final int entityType) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageActivity_.intent(mContext)
+                MessageListActivity_.intent(mContext)
                         .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .entityType(JandiConstants.TYPE_CHANNEL)
+                        .entityType(entityType)
                         .entityId(channelId)
                         .entityName(channelName)
                         .start();
             }
         }, 250);
-    }
-
-    /************************************************************
-     * Join Channel
-     ************************************************************/
-    @UiThread
-    public void joinChannel(final FormattedChannel channel) {
-        ColoredToast.show(mContext, channel.original.name + "에 가입합니다");
-        joinChannelInBackground(channel);
-    }
-
-    @Background
-    public void joinChannelInBackground(final FormattedChannel channel) {
-        try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
-            ResCommon res = mTossRestClient.joinChannel(channel.original.id);
-            joinChannelSucceed(channel);
-        } catch (RestClientException e) {
-            log.error("fail to join channel", e);
-            joinChannelFailed();
-        } catch (Exception e) {
-            log.error("fail to join channel", e);
-            joinChannelFailed();
-        }
-    }
-
-    private void joinChannelSucceed(final FormattedChannel channel) {
-        joinChannelDone(channel, null);
-    }
-
-    private void joinChannelFailed() {
-        joinChannelDone(null, "해당 채널 가입에 실패하였습니다.");
-    }
-
-    @UiThread
-    public void joinChannelDone(final FormattedChannel channel, String message) {
-        if (channel == null) {
-            ColoredToast.showError(mContext, message);
-        } else {
-            moveToChannelMessageActivity(channel.original.id, channel.original.name);
-        }
     }
 
     /************************************************************
@@ -209,7 +198,7 @@ public class MainChannelListFragment extends Fragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment
                 = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_CREATE_CDP
-                , JandiConstants.TYPE_CHANNEL
+                , entityType
                 , 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -244,7 +233,7 @@ public class MainChannelListFragment extends Fragment {
                 restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             }
 
-            createChannelSucceed(restResId.id, cdpName);
+            createChannelSucceed(restResId.id, cdpName, cdpType);
         } catch (HttpClientErrorException e) {
             // TODO RestClient 에서 JandiException으로 유도하는 랩퍼 클래스 만들기
             log.error("Create Fail", e);
@@ -263,12 +252,54 @@ public class MainChannelListFragment extends Fragment {
     }
 
     @UiThread
-    public void createChannelSucceed(int channelId, String channelName) {
-        moveToChannelMessageActivity(channelId, channelName);
+    public void createChannelSucceed(int channelId, String channelName, int cdpType) {
+        moveToMessageActivity(channelId, channelName, cdpType);
     }
 
     @UiThread
     public void createChannelFailed(int errStringResId) {
         ColoredToast.showError(mContext, getString(errStringResId));
+    }
+
+
+    /************************************************************
+     * Join Channel
+     ************************************************************/
+    @UiThread
+    public void joinChannel(final FormattedEntity channel) {
+        ColoredToast.show(mContext, channel.getChannel().name + "에 가입합니다");
+        joinChannelInBackground(channel);
+    }
+
+    @Background
+    public void joinChannelInBackground(final FormattedEntity channel) {
+        try {
+            mTossRestClient.setHeader("Authorization", mMyToken);
+            ResCommon res = mTossRestClient.joinChannel(channel.getChannel().id);
+            joinChannelSucceed(channel);
+        } catch (RestClientException e) {
+            log.error("fail to join channel", e);
+            joinChannelFailed();
+        } catch (Exception e) {
+            log.error("fail to join channel", e);
+            joinChannelFailed();
+        }
+    }
+
+    private void joinChannelSucceed(final FormattedEntity channel) {
+        joinChannelDone(channel, null);
+    }
+
+    private void joinChannelFailed() {
+        joinChannelDone(null, "해당 채널 가입에 실패하였습니다.");
+    }
+
+    @UiThread
+    public void joinChannelDone(final FormattedEntity channel, String message) {
+        if (channel == null) {
+            ColoredToast.showError(mContext, message);
+        } else {
+            moveToChannelMessageActivity(channel.getChannel().id, channel.getChannel().name);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.lists;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.models.FormattedChannel;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 
 import org.apache.log4j.Logger;
 
@@ -29,15 +29,15 @@ public class EntityManager {
         arrangeEntities(resLeftSideMenu);
     }
 
-    public List<FormattedChannel> getFormattedChannels() {
-        List<FormattedChannel> formattedEntities = new ArrayList<FormattedChannel>();
-        formattedEntities.add(new FormattedChannel(FormattedChannel.TYPE_TITLE_JOINED));
+    public List<FormattedEntity> getFormattedChannels() {
+        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
+        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_JOINED_CHANNEL));
         for (ResLeftSideMenu.Channel channel : mJoinedChannels) {
-            formattedEntities.add(new FormattedChannel(channel, FormattedChannel.JOINED));
+            formattedEntities.add(new FormattedEntity(channel, FormattedEntity.JOINED));
         }
-        formattedEntities.add(new FormattedChannel(FormattedChannel.TYPE_TITLE_UNJOINED));
+        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL));
         for (ResLeftSideMenu.Channel channel : mUnJoinedChannels) {
-            formattedEntities.add(new FormattedChannel(channel, FormattedChannel.UNJOINED));
+            formattedEntities.add(new FormattedEntity(channel, FormattedEntity.UNJOINED));
         }
         return formattedEntities;
     }
@@ -46,8 +46,12 @@ public class EntityManager {
         return mUsers;
     }
 
-    public List<ResLeftSideMenu.PrivateGroup> getPrivateGroups() {
-        return mPrivateGroups;
+    public List<FormattedEntity> getFormattedPrivateGroups() {
+        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
+        for (ResLeftSideMenu.PrivateGroup privateGroup : mPrivateGroups) {
+            formattedEntities.add(new FormattedEntity(privateGroup));
+        }
+        return formattedEntities;
     }
 
     private int searchDuplicatedPosition(List<ResLeftSideMenu.Channel> targets, int channelId) {

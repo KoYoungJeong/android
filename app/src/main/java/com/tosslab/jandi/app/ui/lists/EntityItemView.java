@@ -2,12 +2,13 @@ package com.tosslab.jandi.app.ui.lists;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.models.FormattedChannel;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -17,8 +18,8 @@ import org.apache.log4j.Logger;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EViewGroup(R.layout.item_entity)
-public class ChannelEntityItemView extends LinearLayout {
-    private final Logger log = Logger.getLogger(ChannelEntityItemView.class);
+public class EntityItemView extends LinearLayout {
+    private final Logger log = Logger.getLogger(EntityItemView.class);
 
     @ViewById(R.id.main_list_entitiy_title_layout)
     LinearLayout linearLayoutChannelTitle;
@@ -27,6 +28,8 @@ public class ChannelEntityItemView extends LinearLayout {
     @ViewById(R.id.main_list_entities_real_layout)
     LinearLayout linearLayoutReal;
 
+    @ViewById(R.id.main_list_entities_icon)
+    ImageView imageViewEntityIcon;
     @ViewById(R.id.main_list_entities_unjoined)
     View viewBlindForUnjoined;
 
@@ -37,27 +40,37 @@ public class ChannelEntityItemView extends LinearLayout {
     @ViewById(R.id.main_list_entities_cnt_joined_users_text)
     TextView textViewCntJoinedUsers;
 
-    public ChannelEntityItemView(Context context) {
+    public EntityItemView(Context context) {
         super(context);
     }
 
-    public void bind(FormattedChannel formattedChannel) {
+    public void bind(FormattedEntity formattedEntity) {
         goneAllLayout();
 
-        switch (formattedChannel.type) {
-            case FormattedChannel.TYPE_REAL_CHANNEL:
+        switch (formattedEntity.type) {
+            case FormattedEntity.TYPE_REAL_CHANNEL:
+                ResLeftSideMenu.Channel channel = formattedEntity.getChannel();
+                if (channel == null) return;
                 linearLayoutReal.setVisibility(VISIBLE);
-                textViewChannelName.setText(formattedChannel.original.name);
-                textViewCntJoinedUsers.setText(formattedChannel.original.ch_members.size() + " Users");
-                if (!formattedChannel.isJoined) {
+                textViewChannelName.setText(channel.name);
+                textViewCntJoinedUsers.setText(channel.ch_members.size() + " Users");
+                if (!formattedEntity.isJoined) {
                     viewBlindForUnjoined.setVisibility(VISIBLE);
                 }
                 return;
-            case FormattedChannel.TYPE_TITLE_JOINED:
+            case FormattedEntity.TYPE_REAL_PRIVATE_GROUP:
+                ResLeftSideMenu.PrivateGroup privateGroup = formattedEntity.getPrivateGroup();
+                if (privateGroup == null) return;
+                linearLayoutReal.setVisibility(VISIBLE);
+                imageViewEntityIcon.setImageResource(R.drawable.jandi_icon_privategroup);
+                textViewChannelName.setText(privateGroup.name);
+                textViewCntJoinedUsers.setText(privateGroup.pg_members.size() + " Users");
+                return;
+            case FormattedEntity.TYPE_TITLE_JOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
                 textViewChannelTypeTitle.setText("가입된 채널");
                 return;
-            case FormattedChannel.TYPE_TITLE_UNJOINED:
+            case FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
                 linearLayoutChannelSecondTitle.setVisibility(VISIBLE);
                 textViewChannelTypeTitle.setText("미가입 채널");

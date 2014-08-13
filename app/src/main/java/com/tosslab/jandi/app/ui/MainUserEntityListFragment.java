@@ -26,8 +26,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EFragment(R.layout.fragment_main_user_list)
-public class MainUserListFragment  extends Fragment {
-    private final Logger log = Logger.getLogger(MainChannelListFragment.class);
+public class MainUserEntityListFragment extends Fragment {
+    private final Logger log = Logger.getLogger(MainEntityListFragment.class);
 
     @ViewById(R.id.main_list_users)
     ListView mListViewUsers;
@@ -68,7 +68,7 @@ public class MainUserListFragment  extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageActivity_.intent(mContext)
+                MessageListActivity_.intent(mContext)
                         .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                         .entityId(user.id)
                         .entityName(user.name)

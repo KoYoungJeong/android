@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-import com.tosslab.jandi.app.JandiGCMBroadcastReceiver;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -27,8 +26,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
@@ -192,7 +189,7 @@ public class MainTabActivity extends BaseActivity {
 
     private void postShowPrivateGroupListEvent() {
         EventBus.getDefault().post(
-                new RetrievePrivateGroupList(mEntityManager.getPrivateGroups())
+                new RetrievePrivateGroupList(mEntityManager.getFormattedPrivateGroups())
         );
     }
 }

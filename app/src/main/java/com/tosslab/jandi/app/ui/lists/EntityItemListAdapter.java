@@ -5,8 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.models.FormattedChannel;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -19,31 +18,31 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EBean
-public class ChannelEntityItemListAdapter extends BaseAdapter {
-    private List<FormattedChannel> mChannels;
+public class EntityItemListAdapter extends BaseAdapter {
+    private List<FormattedEntity> mEntities;
 
     @RootContext
     Context mContext;
 
     @AfterInject
     void initAdapter() {
-        mChannels = new ArrayList<FormattedChannel>();
+        mEntities = new ArrayList<FormattedEntity>();
     }
 
-    public void retrieveList(List<FormattedChannel> formattedChannels) {
-        mChannels.clear();
-        mChannels.addAll(formattedChannels);
+    public void retrieveList(List<FormattedEntity> formattedEntities) {
+        mEntities.clear();
+        mEntities.addAll(formattedEntities);
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mChannels.size();
+        return mEntities.size();
     }
 
     @Override
-    public FormattedChannel getItem(int position) {
-        return mChannels.get(position);
+    public FormattedEntity getItem(int position) {
+        return mEntities.get(position);
     }
 
     @Override
@@ -53,13 +52,13 @@ public class ChannelEntityItemListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ChannelEntityItemView channelEntityItemView;
+        EntityItemView entityItemView;
         if (convertView == null) {
-            channelEntityItemView = ChannelEntityItemView_.build(mContext);
+            entityItemView = EntityItemView_.build(mContext);
         } else {
-            channelEntityItemView = (ChannelEntityItemView) convertView;
+            entityItemView = (EntityItemView) convertView;
         }
-        channelEntityItemView.bind(getItem(position));
-        return channelEntityItemView;
+        entityItemView.bind(getItem(position));
+        return entityItemView;
     }
 }

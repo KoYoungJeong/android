@@ -29,7 +29,6 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.FileExplorerActivity;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.MainActivity;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
@@ -73,8 +72,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 12..
  */
 @EActivity(R.layout.fragment_main)
-public class MessageActivity extends Activity {
-    private final Logger log = Logger.getLogger(MessageActivity.class);
+public class MessageListActivity extends Activity {
+    private final Logger log = Logger.getLogger(MessageListActivity.class);
     private final String DIALOG_TAG = "dialog";
     @Extra
     int entityType;
