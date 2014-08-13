@@ -36,6 +36,14 @@ public class FormattedEntity {
         this.type = type;
     }
 
+    public boolean isChannel() {
+        return (type == FormattedEntity.TYPE_REAL_CHANNEL);
+    }
+
+    public boolean isPrivateGroup() {
+        return (type == FormattedEntity.TYPE_REAL_PRIVATE_GROUP);
+    }
+
     public ResLeftSideMenu.Channel getChannel() {
         return (entity instanceof ResLeftSideMenu.Channel)
                 ? (ResLeftSideMenu.Channel) entity

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Handler;
@@ -10,6 +11,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.ui.events.RetrieveUserList;
+import com.tosslab.jandi.app.ui.events.StickyEntityManager;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.UserEntityItemListAdapter;
 
 import org.androidannotations.annotations.AfterInject;
@@ -68,11 +71,19 @@ public class MainUserEntityListFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageListActivity_.intent(mContext)
-                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                        .entityId(user.id)
-                        .entityName(user.name)
-                        .start();
+                Activity activity = getActivity();
+                if (activity instanceof MainTabActivity_) {
+                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
+
+                    MessageListActivity_.intent(mContext)
+                            .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                            .entityId(user.id)
+                            .entityName(user.name)
+                            .isMyEntity(false)
+                            .start();
+
+                    EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
+                }
             }
         }, 250);
     }

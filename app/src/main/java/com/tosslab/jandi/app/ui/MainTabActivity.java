@@ -192,4 +192,8 @@ public class MainTabActivity extends BaseActivity {
                 new RetrievePrivateGroupList(mEntityManager.getFormattedPrivateGroups())
         );
     }
+
+    public EntityManager getEntityManager() {
+        return mEntityManager;
+    }
 }

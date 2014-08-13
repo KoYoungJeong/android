@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context=".MainChannelListFragment" >
     <ListView
-        android:id="@+id/main_list_channels"
+        android:id="@+id/main_list_entities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"

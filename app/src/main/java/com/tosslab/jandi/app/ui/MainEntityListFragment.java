@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
@@ -22,7 +23,9 @@ import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.RetrievePrivateGroupList;
+import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityItemListAdapter;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -47,16 +50,16 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-@EFragment(R.layout.fragment_main_channel_list)
+@EFragment(R.layout.fragment_main_entity_list)
 public class MainEntityListFragment extends Fragment {
     private final Logger log = Logger.getLogger(MainEntityListFragment.class);
 
     @FragmentArg
     int entityType;     // Channel 혹은 PrivateGroup
-    @ViewById(R.id.main_list_channels)
-    ListView mListViewChannels;
+    @ViewById(R.id.main_list_entities)
+    ListView mListViewEntities;
     @Bean
-    EntityItemListAdapter mChannelListAdapter;
+    EntityItemListAdapter mEntityListAdapter;
 
     @RestService
     TossRestClient mTossRestClient;
@@ -78,12 +81,9 @@ public class MainEntityListFragment extends Fragment {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        mListViewChannels.setAdapter(mChannelListAdapter);
-        if (entityType == JandiConstants.TYPE_CHANNEL) {
-            EventBus.getDefault().post(new ReadyToRetrieveChannelList());
-        } else {
-            EventBus.getDefault().post(new ReadyToRetrievePrivateGroupList());
-        }
+        mListViewEntities.setAdapter(mEntityListAdapter);
+
+        sendReadyEventToMainTabActivity();
     }
 
     @AfterInject
@@ -121,18 +121,30 @@ public class MainEntityListFragment extends Fragment {
         }
     }
 
+    /************************************************************
+     * Events & Actions
+     ************************************************************/
+    private void sendReadyEventToMainTabActivity() {
+        // 이 프레그먼트들의 main 에 리스트 받을 준비가 되었다고 알림
+        if (entityType == JandiConstants.TYPE_CHANNEL) {
+            EventBus.getDefault().post(new ReadyToRetrieveChannelList());
+        } else {
+            EventBus.getDefault().post(new ReadyToRetrievePrivateGroupList());
+        }
+    }
+
     /**
      * Event from MainTabActivity
      * @param event
      */
     public void onEvent(RetrieveChannelList event) {
         if (entityType == JandiConstants.TYPE_CHANNEL)
-            mChannelListAdapter.retrieveList(event.channels);
+            mEntityListAdapter.retrieveList(event.channels);
     }
 
     public void onEvent(RetrievePrivateGroupList event) {
         if (entityType == JandiConstants.TYPE_PRIVATE_GROUP)
-            mChannelListAdapter.retrieveList(event.privateGroups);
+            mEntityListAdapter.retrieveList(event.privateGroups);
     }
 
     /************************************************************
@@ -144,8 +156,8 @@ public class MainEntityListFragment extends Fragment {
      * @param formattedEntity
      */
     @ItemClick
-    void main_list_channelsItemClicked(final FormattedEntity formattedEntity) {
-        if (formattedEntity.type == FormattedEntity.TYPE_REAL_CHANNEL) {
+    void main_list_entitiesItemClicked(final FormattedEntity formattedEntity) {
+        if (formattedEntity.isChannel()) {
             if (formattedEntity.isJoined) {
                 ResLeftSideMenu.Channel channel = formattedEntity.getChannel();
                 if (channel == null) {
@@ -156,12 +168,14 @@ public class MainEntityListFragment extends Fragment {
                 // 채널 가입 API 호출 (후 해당 채널로 이동)
                 joinChannel(formattedEntity);
             }
-        } else if (formattedEntity.type == FormattedEntity.TYPE_REAL_PRIVATE_GROUP) {
+        } else if (formattedEntity.isPrivateGroup()) {
             ResLeftSideMenu.PrivateGroup privateGroup = formattedEntity.getPrivateGroup();
             if (privateGroup == null) {
                 return;     // ERROR
             }
             moveToPrivateGroupMessageActivity(privateGroup.id, privateGroup.name);
+        } else {
+            // DO NOTHING
         }
         return;
     }
@@ -178,12 +192,20 @@ public class MainEntityListFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageListActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .entityType(entityType)
-                        .entityId(channelId)
-                        .entityName(channelName)
-                        .start();
+                Activity activity = getActivity();
+                if (activity instanceof MainTabActivity_) {
+                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
+
+                    MessageListActivity_.intent(mContext)
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .entityType(entityType)
+                            .entityId(channelId)
+                            .entityName(channelName)
+                            .isMyEntity(entityManager.isMyEntity(channelId))
+                            .start();
+
+                    EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
+                }
             }
         }, 250);
     }
@@ -208,8 +230,10 @@ public class MainEntityListFragment extends Fragment {
      * @param event
      */
     public void onEvent(ConfirmCreateCdpEvent event) {
-        ColoredToast.show(mContext, event.inputName + " 채널을 생성합니다");
-        createCdpInBackground(event.cdpType, event.inputName);
+        if (event.cdpType == entityType) {
+            ColoredToast.show(mContext, event.inputName + " 을 생성합니다");
+            createCdpInBackground(event.cdpType, event.inputName);
+        }
     }
 
     /**

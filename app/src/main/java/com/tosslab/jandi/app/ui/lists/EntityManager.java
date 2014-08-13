@@ -201,27 +201,39 @@ public class EntityManager {
         return unjoinedMemebers;
     }
 
-//    public CdpItem getCdpItemById(int cdpId) {
-//        for (CdpItem target : mJoinedChannels) {
-//            if (target.id == cdpId) {
-//                return target;
-//            }
-//        }
-//        for (CdpItem target : mUsers) {
-//            if (target.id == cdpId) {
-//                return target;
-//            }
-//        }
-//        for (CdpItem target : mPrivateGroups) {
-//            if (target.id == cdpId) {
-//                return target;
-//            }
-//        }
-//        return null;
-//    }
+    public boolean isMyEntity(int entityId) {
+        ResLeftSideMenu.Channel searchedEntity = searchChannelById(entityId);
+        if (searchedEntity != null && searchedEntity.ch_creatorId == mMe.id) {
+            return true;
+        }
 
-//    public String getCdpNameById(int cdpId) {
-//        CdpItem cdpItem = getCdpItemById(cdpId);
-//        return (cdpItem != null) ? cdpItem.toString() : "";
-//    }
+        ResLeftSideMenu.PrivateGroup searchedPrivateGroup = searchPrivateGroupById(entityId);
+        if (searchedPrivateGroup != null && searchedPrivateGroup.pg_creatorId == mMe.id) {
+            return true;
+        }
+        return false;
+    }
+
+    private ResLeftSideMenu.Channel searchChannelById(int channelId) {
+        for (ResLeftSideMenu.Channel target : mJoinedChannels) {
+            if (target.id == channelId) {
+                return target;
+            }
+        }
+        for (ResLeftSideMenu.Channel target : mUnJoinedChannels) {
+            if (target.id == channelId) {
+                return target;
+            }
+        }
+        return null;
+    }
+
+    private ResLeftSideMenu.PrivateGroup searchPrivateGroupById(int privateGroupId) {
+        for (ResLeftSideMenu.PrivateGroup target : mPrivateGroups) {
+            if (target.id == privateGroupId) {
+                return target;
+            }
+        }
+        return null;
+    }
 }

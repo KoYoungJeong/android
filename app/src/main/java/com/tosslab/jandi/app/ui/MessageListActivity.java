@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -45,6 +46,8 @@ import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.events.StickyEntityManager;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -72,9 +75,12 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 12..
  */
 @EActivity(R.layout.fragment_main)
-public class MessageListActivity extends Activity {
+public class MessageListActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(MessageListActivity.class);
     private final String DIALOG_TAG = "dialog";
+
+    @Extra
+    boolean isMyEntity;
     @Extra
     int entityType;
     @Extra
@@ -105,6 +111,8 @@ public class MessageListActivity extends Activity {
     private boolean mIsFirstMessage = false;
 
     private MessageItemConverter mMessageItemConverter;
+
+    private EntityManager mEntityManager;
 
     @AfterViews
     void bindAdapter() {
@@ -192,7 +200,7 @@ public class MessageListActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().registerSticky(this);
         resumeUpdateTimer();
     }
 
@@ -210,11 +218,20 @@ public class MessageListActivity extends Activity {
         super.onStop();
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
-//        return true;
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            // DON'T SHOW OPTION MENU
+            return true;
+        }
+        if (isMyEntity) {
+            getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
+        }
+
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -225,6 +242,11 @@ public class MessageListActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onEvent(StickyEntityManager event) {
+        log.debug("onEvent : StickyEntityManager");
+        mEntityManager = event.entityManager;
     }
 
     /************************************************************
