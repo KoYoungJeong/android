@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.models;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.util.List;
+
 /**
  * Created by justinygchoi on 2014. 8. 12..
  */
@@ -9,6 +11,7 @@ public class FormattedEntity {
     // 채널 일 경우
     public static final int TYPE_REAL_CHANNEL           = 0;
     public static final int TYPE_REAL_PRIVATE_GROUP     = 1;
+
     public static final int TYPE_TITLE_JOINED_CHANNEL   = 2;
     public static final int TYPE_TITLE_UNJOINED_CHANNEL = 3;
 
@@ -54,5 +57,15 @@ public class FormattedEntity {
         return (entity instanceof ResLeftSideMenu.PrivateGroup)
                 ? (ResLeftSideMenu.PrivateGroup) entity
                 : null;
+    }
+
+    public List<Integer> getMembers() {
+        if (this.type == TYPE_REAL_CHANNEL) {
+            return getChannel().ch_members;
+        } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
+            return getPrivateGroup().pg_members;
+        } else {
+            return null;
+        }
     }
 }

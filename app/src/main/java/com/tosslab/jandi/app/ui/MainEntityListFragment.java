@@ -181,29 +181,51 @@ public class MainEntityListFragment extends Fragment {
     }
 
     private void moveToChannelMessageActivity(int channelId, String channelName) {
-        moveToMessageActivity(channelId, channelName, JandiConstants.TYPE_CHANNEL);
+        Activity activity = getActivity();
+        if (activity instanceof MainTabActivity_) {
+            EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
+            moveToMessageActivity(
+                    channelId,
+                    channelName,
+                    JandiConstants.TYPE_CHANNEL,
+                    entityManager.isMyEntity(channelId));
+        }
     }
     private void moveToPrivateGroupMessageActivity(int privateGroupId, String privateGroupName) {
-        moveToMessageActivity(privateGroupId, privateGroupName, JandiConstants.TYPE_PRIVATE_GROUP);
+        Activity activity = getActivity();
+        if (activity instanceof MainTabActivity_) {
+            EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
+            moveToMessageActivity(
+                    privateGroupId,
+                    privateGroupName,
+                    JandiConstants.TYPE_PRIVATE_GROUP,
+                    entityManager.isMyEntity(privateGroupId));
+        }
     }
 
-    private void moveToMessageActivity(final int channelId, final String channelName, final int entityType) {
+    private void moveToMessageActivityAfterCreation(final int channelId,
+                                                    final String channelName,
+                                                    final int entityType) {
+        moveToMessageActivity(channelId, channelName, entityType, true);
+    }
+
+    private void moveToMessageActivity(final int entityId, final String entityName,
+                                       final int entityType, final boolean isMyEntity) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Activity activity = getActivity();
                 if (activity instanceof MainTabActivity_) {
-                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
-
                     MessageListActivity_.intent(mContext)
                             .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             .entityType(entityType)
-                            .entityId(channelId)
-                            .entityName(channelName)
-                            .isMyEntity(entityManager.isMyEntity(channelId))
+                            .entityId(entityId)
+                            .entityName(entityName)
+                            .isMyEntity(isMyEntity)
                             .start();
 
+                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
                     EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
                 }
             }
@@ -277,7 +299,7 @@ public class MainEntityListFragment extends Fragment {
 
     @UiThread
     public void createChannelSucceed(int channelId, String channelName, int cdpType) {
-        moveToMessageActivity(channelId, channelName, cdpType);
+        moveToMessageActivityAfterCreation(channelId, channelName, cdpType);
     }
 
     @UiThread

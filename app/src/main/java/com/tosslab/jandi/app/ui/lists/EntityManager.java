@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.lists;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.models.FormattedEntity;
+import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
 
 import org.apache.log4j.Logger;
 
@@ -15,16 +17,16 @@ public class EntityManager {
     private final Logger log = Logger.getLogger(EntityManager.class);
 
     private ResLeftSideMenu.User mMe;
-    private List<ResLeftSideMenu.Channel> mJoinedChannels;
-    private List<ResLeftSideMenu.Channel> mUnJoinedChannels;
-    private List<ResLeftSideMenu.User> mUsers;
-    private List<ResLeftSideMenu.PrivateGroup> mPrivateGroups;
+    private List<FormattedEntity> mJoinedChannels;
+    private List<FormattedEntity> mUnJoinedChannels;
+    private List<FormattedUserEntity> mUsers;
+    private List<FormattedEntity> mPrivateGroups;
 
     public EntityManager(ResLeftSideMenu resLeftSideMenu) {
-        mJoinedChannels = new ArrayList<ResLeftSideMenu.Channel>();
-        mUnJoinedChannels = new ArrayList<ResLeftSideMenu.Channel>();
-        mUsers = new ArrayList<ResLeftSideMenu.User>();
-        mPrivateGroups = new ArrayList<ResLeftSideMenu.PrivateGroup>();
+        mJoinedChannels = new ArrayList<FormattedEntity>();
+        mUnJoinedChannels = new ArrayList<FormattedEntity>();
+        mUsers = new ArrayList<FormattedUserEntity>();
+        mPrivateGroups = new ArrayList<FormattedEntity>();
 
         arrangeEntities(resLeftSideMenu);
     }
@@ -32,32 +34,38 @@ public class EntityManager {
     public List<FormattedEntity> getFormattedChannels() {
         List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
         formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_JOINED_CHANNEL));
-        for (ResLeftSideMenu.Channel channel : mJoinedChannels) {
-            formattedEntities.add(new FormattedEntity(channel, FormattedEntity.JOINED));
-        }
+        formattedEntities.addAll(mJoinedChannels);
         formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL));
-        for (ResLeftSideMenu.Channel channel : mUnJoinedChannels) {
-            formattedEntities.add(new FormattedEntity(channel, FormattedEntity.UNJOINED));
-        }
+        formattedEntities.addAll(mUnJoinedChannels);
         return formattedEntities;
-    }
-
-    public List<ResLeftSideMenu.User> getUsers() {
-        return mUsers;
     }
 
     public List<FormattedEntity> getFormattedPrivateGroups() {
-        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
-        for (ResLeftSideMenu.PrivateGroup privateGroup : mPrivateGroups) {
-            formattedEntities.add(new FormattedEntity(privateGroup));
-        }
-        return formattedEntities;
+        return mPrivateGroups;
     }
 
-    private int searchDuplicatedPosition(List<ResLeftSideMenu.Channel> targets, int channelId) {
+    public List<ResLeftSideMenu.User> getUsers() {
+        List<ResLeftSideMenu.User> users = new ArrayList<ResLeftSideMenu.User>();
+        for (FormattedUserEntity userEntity : mUsers) {
+            users.add(userEntity.getUser());
+        }
+        return users;
+    }
+
+    public List<ResLeftSideMenu.User> getUsersWithoutMe() {
+        ArrayList<ResLeftSideMenu.User> usersWithoutMe = new ArrayList<ResLeftSideMenu.User>();
+        for (FormattedUserEntity user : mUsers) {
+            if (user.getUser().id != mMe.id) {
+                usersWithoutMe.add(user.getUser());
+            }
+        }
+        return  usersWithoutMe;
+    }
+
+    private int searchDuplicatedChannelPosition(List<FormattedEntity> targets, int channelId) {
         int ret = 0;
-        for (ResLeftSideMenu.Channel target : targets) {
-            if (target.id == channelId) {
+        for (FormattedEntity target : targets) {
+            if (target.getChannel().id == channelId) {
                 return ret;
             }
             ret++;
@@ -66,7 +74,7 @@ public class EntityManager {
     }
 
     private void removeDuplicatedEntityInUnjoinedChannels(ResLeftSideMenu.Channel channel) {
-        int position = searchDuplicatedPosition(mUnJoinedChannels, channel.id);
+        int position = searchDuplicatedChannelPosition(mUnJoinedChannels, channel.id);
         if (position > -1) {
             mUnJoinedChannels.remove(position);
         }
@@ -75,14 +83,14 @@ public class EntityManager {
     private void addInJoinedChannels(ResLeftSideMenu.Channel channel) {
         // 만약 Unjoined 채널 부분에 이 항목이 존재한다면 그 항목을 삭제한다.
         removeDuplicatedEntityInUnjoinedChannels(channel);
-        mJoinedChannels.add(channel);
+        mJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.JOINED));
     }
 
     private void addInUnjoinedChannels(ResLeftSideMenu.Channel channel) {
         // 만약 Join 된 채널에 이 항목이 존재한다면 추가하지 않는다.
-        int position = searchDuplicatedPosition(mJoinedChannels, channel.id);
+        int position = searchDuplicatedChannelPosition(mJoinedChannels, channel.id);
         if (position == -1) {
-            mUnJoinedChannels.add(channel);
+            mUnJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.UNJOINED));
         }
     }
 
@@ -99,7 +107,8 @@ public class EntityManager {
 
                 addInJoinedChannels(channel);
             } else if (entity instanceof ResLeftSideMenu.PrivateGroup) {
-                mPrivateGroups.add((ResLeftSideMenu.PrivateGroup) entity);
+                ResLeftSideMenu.PrivateGroup privateGroup = (ResLeftSideMenu.PrivateGroup) entity;
+                mPrivateGroups.add(new FormattedEntity(privateGroup));
             } else {
                 // TODO : Error 처리
             }
@@ -110,7 +119,7 @@ public class EntityManager {
             if (entity instanceof ResLeftSideMenu.Channel) {
                 addInUnjoinedChannels((ResLeftSideMenu.Channel) entity);
             } else if (entity instanceof ResLeftSideMenu.User) {
-                mUsers.add((ResLeftSideMenu.User) entity);
+                mUsers.add(new FormattedUserEntity((ResLeftSideMenu.User) entity));
             } else {
                 // TODO : Error 처리
             }
@@ -162,37 +171,29 @@ public class EntityManager {
 //        return retCdpItems;
 //    }
 
-    private List<ResLeftSideMenu.User> getUsersWithoutMe() {
-        ArrayList<ResLeftSideMenu.User> usersWithoutMe = new ArrayList<ResLeftSideMenu.User>();
-        for (ResLeftSideMenu.User user : mUsers) {
-            if (user.id != mMe.id) {
-                usersWithoutMe.add(user);
-            }
+//    // TODO 현재는 default channel이 그냥 첫번째 채널
+//    public ResLeftSideMenu.Channel getDefaultChannel() {
+//        return mJoinedChannels.get(0);
+//    }
+
+    public List<FormattedUserEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
+        FormattedEntity entity;
+        if (entityType == JandiConstants.TYPE_CHANNEL) {
+            entity = searchChannelById(entityId);
+        } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+            entity = searchPrivateGroupById(entityId);
+        } else {
+            return null;
         }
-        return  usersWithoutMe;
+        return getUnjoinedMembersOfEntity(entity.getMembers());
     }
 
-    // TODO 현재는 default channel이 그냥 첫번째 채널
-    public ResLeftSideMenu.Channel getDefaultChannel() {
-        return mJoinedChannels.get(0);
-    }
-
-    // 현재 멤버들 중에서 선택한 Channel에 속하지 않은 멤버를 반환
-    public List<ResLeftSideMenu.User> getUnjoinedMembersOfChannel(ResLeftSideMenu.Channel choosenChannel) {
-        return getUnjoinedMembersOfEntity(choosenChannel.ch_members);
-    }
-
-    // 현재 멤버들 중에서 선택한 PrivateGroup에 속하지 않은 멤버를 반환
-    public List<ResLeftSideMenu.User> getUnjoinedMembersOfPrivateGroup(ResLeftSideMenu.PrivateGroup choosenGroup) {
-        return getUnjoinedMembersOfEntity(choosenGroup.pg_members);
-    }
-
-    private List<ResLeftSideMenu.User> getUnjoinedMembersOfEntity(List<Integer> joinedMembers) {
-        ArrayList<ResLeftSideMenu.User> unjoinedMemebers = new ArrayList<ResLeftSideMenu.User>(mUsers);
+    private List<FormattedUserEntity> getUnjoinedMembersOfEntity(List<Integer> joinedMembers) {
+        ArrayList<FormattedUserEntity> unjoinedMemebers = new ArrayList<FormattedUserEntity>(mUsers);
         for (int id : joinedMembers) {
             for (int i = 0; i < unjoinedMemebers.size(); i++) {
-                ResLeftSideMenu.User user = unjoinedMemebers.get(i);
-                if (user.id == id) {
+                FormattedUserEntity user = unjoinedMemebers.get(i);
+                if (user.getUser().id == id) {
                     unjoinedMemebers.remove(i);
                     break;
                 }
@@ -202,35 +203,35 @@ public class EntityManager {
     }
 
     public boolean isMyEntity(int entityId) {
-        ResLeftSideMenu.Channel searchedEntity = searchChannelById(entityId);
-        if (searchedEntity != null && searchedEntity.ch_creatorId == mMe.id) {
+        FormattedEntity searchedEntity = searchChannelById(entityId);
+        if (searchedEntity != null && searchedEntity.getChannel().ch_creatorId == mMe.id) {
             return true;
         }
 
-        ResLeftSideMenu.PrivateGroup searchedPrivateGroup = searchPrivateGroupById(entityId);
-        if (searchedPrivateGroup != null && searchedPrivateGroup.pg_creatorId == mMe.id) {
+        FormattedEntity searchedPrivateGroup = searchPrivateGroupById(entityId);
+        if (searchedPrivateGroup != null && searchedPrivateGroup.getPrivateGroup().pg_creatorId == mMe.id) {
             return true;
         }
         return false;
     }
 
-    private ResLeftSideMenu.Channel searchChannelById(int channelId) {
-        for (ResLeftSideMenu.Channel target : mJoinedChannels) {
-            if (target.id == channelId) {
+    private FormattedEntity searchChannelById(int channelId) {
+        for (FormattedEntity target : mJoinedChannels) {
+            if (target.getChannel().id == channelId) {
                 return target;
             }
         }
-        for (ResLeftSideMenu.Channel target : mUnJoinedChannels) {
-            if (target.id == channelId) {
+        for (FormattedEntity target : mUnJoinedChannels) {
+            if (target.getChannel().id == channelId) {
                 return target;
             }
         }
         return null;
     }
 
-    private ResLeftSideMenu.PrivateGroup searchPrivateGroupById(int privateGroupId) {
-        for (ResLeftSideMenu.PrivateGroup target : mPrivateGroups) {
-            if (target.id == privateGroupId) {
+    private FormattedEntity searchPrivateGroupById(int privateGroupId) {
+        for (FormattedEntity target : mPrivateGroups) {
+            if (target.getPrivateGroup().id == privateGroupId) {
                 return target;
             }
         }

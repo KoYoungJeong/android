@@ -184,7 +184,7 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void postShowUserListEvent() {
-        EventBus.getDefault().post(new RetrieveUserList(mEntityManager.getUsers()));
+        EventBus.getDefault().post(new RetrieveUserList(mEntityManager.getUsersWithoutMe()));
     }
 
     private void postShowPrivateGroupListEvent() {

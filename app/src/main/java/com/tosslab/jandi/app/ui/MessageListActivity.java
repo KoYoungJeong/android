@@ -2,9 +2,11 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
@@ -37,8 +39,8 @@ import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
-import com.tosslab.jandi.app.events.DeleteCdpEvent;
 import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
@@ -46,10 +48,14 @@ import com.tosslab.jandi.app.lists.MessageItemConverter;
 import com.tosslab.jandi.app.lists.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
+import com.tosslab.jandi.app.ui.lists.UnjoinedUserListAdapter;
+import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -68,6 +74,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -240,6 +247,13 @@ public class MessageListActivity extends BaseActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_entity_invite:
+            case R.id.action_my_entity_invite:
+                inviteMembersToEntity();
+                return true;
+            case R.id.action_my_entity_rename:
+                modifyEntity();
                 return true;
             case R.id.action_my_entity_delete:
                 deleteEntityInBackground();
@@ -854,6 +868,60 @@ public class MessageListActivity extends BaseActivity {
     }
 
     /************************************************************
+     * Channel, PrivateGroup 수정
+     ************************************************************/
+    private void modifyEntity() {
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(
+                EditTextDialogFragment.ACTION_MODIFY_CDP
+                , entityType
+                , entityId
+                , entityName);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    /**
+     * 수정 이벤트 획득 from EditTextDialogFragment
+     */
+    public void onEvent(ConfirmModifyCdpEvent event) {
+        modifyEntity(event);
+    }
+
+    @UiThread
+    void modifyEntity(ConfirmModifyCdpEvent event) {
+        modifyEntityInBackground(event);
+    }
+
+    @Background
+    void modifyEntityInBackground(ConfirmModifyCdpEvent event) {
+        ReqCreateCdp channel = new ReqCreateCdp();
+        channel.name = event.inputName;
+
+        try {
+            tossRestClient.setHeader("Authorization", mMyToken);
+            if (entityType == JandiConstants.TYPE_CHANNEL) {
+                tossRestClient.modifyChannel(channel, entityId);
+            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                tossRestClient.modifyGroup(channel, entityId);
+            }
+            modifyEntitySucceed(event.inputName);
+        } catch (RestClientException e) {
+            log.error("modify failed", e);
+            modifyEntityFailed("수정 실패");
+        }
+    }
+
+    @UiThread
+    void modifyEntitySucceed(String changedEntityName) {
+        entityName = changedEntityName;
+        getActionBar().setTitle(changedEntityName);
+    }
+
+    @UiThread
+    void modifyEntityFailed(String errMessage) {
+        ColoredToast.showError(this, errMessage);
+    }
+
+    /************************************************************
      * Channel, PrivateGroup 삭제
      ************************************************************/
 
@@ -881,6 +949,77 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     public void deleteEntityFailed(String errMessage) {
+        ColoredToast.showError(mContext, errMessage);
+    }
+
+    /************************************************************
+     * Channel, PrivateGroup Invite
+     ************************************************************/
+    public void inviteMembersToEntity() {
+        /**
+         * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+
+        // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
+        List<FormattedUserEntity> unjoinedMembers
+                = mEntityManager.getUnjoinedMembersOfEntity(entityId, entityType);
+
+        if (unjoinedMembers.size() <= 0) {
+            ColoredToast.showWarning(mContext, "이미 모든 사용자가 가입되어 있습니다.");
+            return;
+        }
+
+        final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(this, unjoinedMembers);
+        lv.setAdapter(adapter);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.title_cdp_invite);
+        dialog.setIcon(android.R.drawable.ic_menu_agenda);
+        dialog.setView(view);
+        dialog.setPositiveButton(R.string.menu_cdp_invite, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                List<Integer> selectedCdp = adapter.getSelectedUserIds();
+                for (int item : selectedCdp) {
+                    log.debug("CDP ID, " + item + " is Selected");
+                }
+                inviteInBackground(entityType, entityId, selectedCdp);
+            }
+        });
+        dialog.show();
+
+    }
+
+    @Background
+    public void inviteInBackground(int cdpType, int cdpId, List<Integer> invitedUsers) {
+        ResCommon res = null;
+        try {
+            tossRestClient.setHeader("Authorization", mMyToken);
+            ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
+            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+                res = tossRestClient.inviteChannel(cdpId, reqInviteUsers);
+            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                res = tossRestClient.inviteGroup(cdpId, reqInviteUsers);
+            }
+            inviteSucceed(invitedUsers.size() + "명의 사용자를 초대했습니다.");
+        } catch (RestClientException e) {
+            log.error("fail to invite cdp");
+            inviteFailed("초대에 실패했습니다.");
+        } catch (Exception e) {
+            log.error("fail to invite cdp");
+            inviteFailed("초대에 실패했습니다.");
+        }
+    }
+
+    @UiThread
+    public void inviteSucceed(String message) {
+        ColoredToast.show(mContext, message);
+    }
+
+    @UiThread
+    public void inviteFailed(String errMessage) {
         ColoredToast.showError(mContext, errMessage);
     }
 }
