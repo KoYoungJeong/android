@@ -3,12 +3,19 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.events.ChangeActionBarForFileList;
+import com.tosslab.jandi.app.ui.events.ChangeActionBarForTeamTitle;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveUserList;
@@ -19,6 +26,7 @@ import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -80,11 +88,47 @@ public class MainTabActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
                 actionBar.setSelectedNavigationItem(position);
+                switch (position) {
+                    case 3:
+                        setActionBarForFileList();
+                        break;
+                    default:
+                        setActionBar();
+                        break;
+                }
             }
         });
 
         // add a tab to the action bar
         addTabToActionBar(actionBar, tabListener);
+    }
+
+    private Spinner Spin1;
+    private Spinner Spin2;
+
+    public void setActionBar() {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(true);
+    }
+
+    public void setActionBarForFileList() {
+        final String[] choices = { "All", "Images", "PDFs" };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                MainTabActivity.this, android.R.layout.simple_dropdown_item_1line,
+                choices);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setCustomView(R.layout.actionbar_file_list_tab);
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(true);
+
+        Spin1 = (Spinner) findViewById(R.id.action_bar_file_list_type_spinner);
+        Spin2 = (Spinner) findViewById(R.id.action_bar_file_list_user_spinner);
+
+        Spin1.setAdapter(adapter);
+        Spin2.setAdapter(adapter);
     }
 
     @Override

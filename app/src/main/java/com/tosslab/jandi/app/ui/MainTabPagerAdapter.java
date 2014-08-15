@@ -38,6 +38,10 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
                         .builder()
                         .entityType(JandiConstants.TYPE_PRIVATE_GROUP)
                         .build();
+            case 3:
+                return FileListFragment_
+                        .builder()
+                        .build();
             default:
                 return MainUserEntityListFragment_.builder().build();
         }
