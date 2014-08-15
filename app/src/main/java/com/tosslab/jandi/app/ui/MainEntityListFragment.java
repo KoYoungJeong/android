@@ -1,21 +1,14 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -25,7 +18,6 @@ import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.events.ChangeActionBarForTeamTitle;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
@@ -37,7 +29,6 @@ import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;

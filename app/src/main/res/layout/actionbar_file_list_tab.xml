@@ -3,27 +3,55 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:weightSum="4">
-
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
     <TextView
-        android:id="@+id/action_bar_file_list_custom_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/white"
-        android:layout_weight="2"
         android:text="Files"
         android:textSize="18sp"/>
-    <Spinner
-        android:id="@+id/action_bar_file_list_type_spinner"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        />
-
-    <Spinner
-        android:id="@+id/action_bar_file_list_user_spinner"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+    <LinearLayout
+        android:id="@+id/actionbar_file_list_type"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/actionbar_file_list_type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="14sp"
+            android:text="All"
+            android:ellipsize="end"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:src="@drawable/jandi_arrow_down"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/actionbar_file_list_user"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical|end"
+        android:layout_marginRight="16dp"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/actionbar_file_list_user_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="14sp"
+            android:text="Everyone"
+            android:ellipsize="end"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:src="@drawable/jandi_arrow_down"/>
+    </LinearLayout>
 </LinearLayout>

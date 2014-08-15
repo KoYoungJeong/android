@@ -1,24 +1,18 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Handler;
-import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.events.ChangeActionBarForTeamTitle;
 import com.tosslab.jandi.app.ui.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.ui.events.RetrieveUserList;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.UserEntityItemListAdapter;
-import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;

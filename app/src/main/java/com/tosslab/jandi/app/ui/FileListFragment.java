@@ -1,13 +1,8 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Spinner;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -16,11 +11,11 @@ import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.ui.events.ChangeActionBarForFileList;
+import com.tosslab.jandi.app.ui.events.CategorizingAsFileType;
+import com.tosslab.jandi.app.ui.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.ViewGroupUtils;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -50,7 +45,7 @@ public class FileListFragment extends BaseFragment {
     @RestService
     TossRestClient tossRestClient;
 
-    private int mSearchMode;                // 서치 모드.   ALL || Images || PDFs
+    private String mSearchMode  = "all";                // 서치 모드.   ALL || Images || PDFs
     private String mSearchUser  = "all";    // 사용자.     ALL || Mine || UserID
 
     private ProgressWheel mProgressWheel;
@@ -90,33 +85,14 @@ public class FileListFragment extends BaseFragment {
         super.onPause();
     }
 
-    public void onEvent(ChangeActionBarForFileList event) {
-        // Set up the action bar.
-        final ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayUseLogoEnabled(true);
+    public void onEvent(CategorizingAsFileType event) {
+        mSearchMode = event.getServerQuery();
+        doSearch();
+    }
 
-        // ActionBar의 타이틀 Text 를 강제로 Spinner 로 바꾼다.
-        Spinner spinner = (Spinner) getActivity().getLayoutInflater().inflate(R.layout.spinner_search_type, null);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (isFirst) {
-//                    return;
-//                }
-                // All tab으로 이동하여 다시 서치를 수행
-                log.debug(i + " selected");
-                mSearchMode = i;
-//                setFlagSelectedAllFilesTab(true);
-//                drawLayout();
-                // 서치 시작
-                doSearch();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {}
-        });
-        int titleId = Resources.getSystem().getIdentifier("action_bar_title", "id", "android");
-        View titleView = getActivity().findViewById(titleId);
-        ViewGroupUtils.replaceView(titleView, spinner);
+    public void onEvent(CategorizingAsOwner event) {
+        mSearchUser = event.userId + "";
+        doSearch();
     }
 
     /************************************************************
@@ -135,15 +111,7 @@ public class FileListFragment extends BaseFragment {
         try {
             ReqSearchFile reqSearchFile = new ReqSearchFile();
             reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-
-            if (mSearchMode == JandiConstants.TYPE_SEARCH_MODE_IMAGES) {
-                reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_IMAGE;
-            } else if (mSearchMode == JandiConstants.TYPE_SEARCH_MODE_PDF) {
-                reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_PDF;
-            } else {
-                reqSearchFile.fileType = ReqSearchFile.FILE_TYPE_ALL;
-            }
-
+            reqSearchFile.fileType = mSearchMode;
             reqSearchFile.userId = mSearchUser;
 
             ResSearchFile resSearchFile = tossRestClient.searchFile(reqSearchFile);
