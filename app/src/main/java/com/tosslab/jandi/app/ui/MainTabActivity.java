@@ -2,10 +2,15 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -13,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
+import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -58,6 +65,9 @@ public class MainTabActivity extends BaseActivity {
 
     private EntityManager mEntityManager;
 
+    private DrawerLayout mDrawerLayout;
+    private LinearLayout mDrawer;
+    private ActionBarDrawerToggle mDrawerToggle;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private ViewPager mViewPager;
 
@@ -74,25 +84,48 @@ public class MainTabActivity extends BaseActivity {
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
 
-        // Set up the action bar.
+        // Drawer
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        mDrawer = (LinearLayout)findViewById(R.id.drawer);
+        mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+
         final ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                mViewPager.setCurrentItem(tab.getPosition());
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.drawable.ic_drawer,
+                R.string.drawer_open,
+                R.string.drawer_close) {
+
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
             }
-            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {}
-            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {}
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
         };
 
-        // Create the dapter and ViewPager
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        // ViewPager
         mMainTabPagerAdapter = new MainTabPagerAdapter(getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setAdapter(mMainTabPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+        // Bind the tabs to the ViewPager
+        PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
+        tabs.setViewPager(mViewPager);
+        tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
             @Override
             public void onPageSelected(int position) {
-                actionBar.setSelectedNavigationItem(position);
                 switch (position) {
                     case 3:
                         setActionBarForFileList();
@@ -102,17 +135,16 @@ public class MainTabActivity extends BaseActivity {
                         break;
                 }
             }
-        });
 
-        // add a tab to the action bar
-        addTabToActionBar(actionBar, tabListener);
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     public void setActionBar() {
         final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayShowCustomEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(true);
     }
 
     @Override
@@ -127,16 +159,6 @@ public class MainTabActivity extends BaseActivity {
     public void onPause() {
         EventBus.getDefault().unregister(this);
         super.onPause();
-    }
-
-    private void addTabToActionBar(ActionBar actionBar, ActionBar.TabListener tabListener) {
-        for (int i = 0; i < mMainTabPagerAdapter.getCount(); i++) {
-            actionBar.addTab(
-                    actionBar.newTab()
-                        .setText(mMainTabPagerAdapter.getPageTitle(i))
-                        .setTabListener(tabListener)
-            );
-        }
     }
 
     public void onEvent(ReadyToRetrieveChannelList event) {
@@ -158,6 +180,31 @@ public class MainTabActivity extends BaseActivity {
         if (isReadyToRetrieveEntityList) {
             postShowPrivateGroupListEvent();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            if (mDrawerLayout.isDrawerOpen(mDrawer)) {
+                mDrawerLayout.closeDrawer(mDrawer);
+            } else {
+                mDrawerLayout.openDrawer(mDrawer);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggles
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     /************************************************************
@@ -239,9 +286,7 @@ public class MainTabActivity extends BaseActivity {
     private void setActionBarForFileList() {
         final ActionBar actionBar = getActionBar();
         actionBar.setCustomView(R.layout.actionbar_file_list_tab);
-        actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(true);
 
         setSpinnerAsCategorizingAccodingByFileType();
         setSpinnerAsCategorizingAccodingByUser();

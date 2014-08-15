@@ -12,4 +12,15 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
     </style>
+
+    <style name="PagerSlidingTabStrip">
+        <!--<item name="pstsTabBackground">@color/jandi_tab_background</item>-->
+        <item name="pstsIndicatorColor">@color/jandi_tab_indicator</item>
+        <item name="pstsUnderlineColor">#DDDDDD</item>
+        <item name="pstsIndicatorHeight">4dp</item>
+        <item name="pstsUnderlineHeight">1dp</item>
+        <item name="pstsDividerColor">@android:color/transparent</item>
+        <item name="pstsShouldExpand">true</item>
+        <item name="pstsTextAllCaps">false</item>
+    </style>
 </resources>

@@ -8,6 +8,9 @@
     <string name="upload">업로드</string>
     <string name="share">공유</string>
 
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
     <!-- Login -->
     <string name="action_login">Log In</string>
     <string name="user_id">E-mail Address</string>
