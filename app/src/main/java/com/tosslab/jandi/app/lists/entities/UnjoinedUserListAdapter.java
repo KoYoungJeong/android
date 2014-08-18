@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.util.ArrayList;

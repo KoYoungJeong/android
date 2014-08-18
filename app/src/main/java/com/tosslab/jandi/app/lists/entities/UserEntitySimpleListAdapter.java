@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 import android.view.LayoutInflater;

@@ -7,7 +7,7 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.SearchedFileItemListAdapter;
+import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.events.CategorizingAsFileType;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.StickyEntityManager;
-import com.tosslab.jandi.app.lists.EntityManager;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;

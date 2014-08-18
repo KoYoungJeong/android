@@ -1,9 +1,11 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.tosslab.jandi.app.lists.FormattedEntity;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;

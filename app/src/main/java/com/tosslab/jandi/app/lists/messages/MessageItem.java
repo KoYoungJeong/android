@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ResMessages;

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 import android.view.View;
@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.androidannotations.annotations.EViewGroup;

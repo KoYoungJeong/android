@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
 import com.tosslab.jandi.app.events.StickyEntityManager;
-import com.tosslab.jandi.app.lists.EntityManager;
-import com.tosslab.jandi.app.lists.UserEntityItemListAdapter;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.UserEntityItemListAdapter;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;

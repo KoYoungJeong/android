@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
-import com.tosslab.jandi.app.lists.MessageItem;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import org.apache.log4j.Logger;

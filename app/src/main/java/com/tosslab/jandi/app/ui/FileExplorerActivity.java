@@ -9,8 +9,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FileExplorerItem;
-import com.tosslab.jandi.app.lists.FileExplorerItemListAdapter;
+import com.tosslab.jandi.app.lists.files.FileExplorerItem;
+import com.tosslab.jandi.app.lists.files.FileExplorerItemListAdapter;
 
 import java.io.File;
 import java.text.DateFormat;

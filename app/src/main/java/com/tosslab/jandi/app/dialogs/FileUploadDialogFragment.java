@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.ui.MessageListActivity;
-import com.tosslab.jandi.app.lists.EntityArrayAdapter;
+import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 
 import org.apache.log4j.Logger;

@@ -1,6 +1,7 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.apache.log4j.Logger;

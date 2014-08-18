@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.files;
 
 /**
  * Created by justinygchoi on 2014. 6. 23..

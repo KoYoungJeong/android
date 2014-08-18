@@ -1,8 +1,10 @@
-package com.tosslab.jandi.app.lists;
+package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
+
+import com.tosslab.jandi.app.lists.FormattedEntity;
 
 import java.util.List;
 
