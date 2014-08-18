@@ -12,12 +12,12 @@ import com.tosslab.jandi.app.R;
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter {
     private final String[] TITLES = { "공개채널", "비밀그룹", "1:1", "파일" };
-    private final int[] ICONS = {
-            R.drawable.tmp_icon_channel,
-            R.drawable.tmp_icon_dm,
-            R.drawable.tmp_icon_private_group,
-            R.drawable.tmp_icon_setting
-    };
+//    private final int[] ICONS = {
+//            R.drawable.tmp_icon_channel,
+//            R.drawable.tmp_icon_dm,
+//            R.drawable.tmp_icon_private_group,
+//            R.drawable.tmp_icon_setting
+//    };
 
     public MainTabPagerAdapter(FragmentManager fm) {
         super(fm);
@@ -52,9 +52,9 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
         return TITLES[position];
     }
 
-    public int getIcon(int position) {
-        return ICONS[position];
-    }
+//    public int getIcon(int position) {
+//        return ICONS[position];
+//    }
 
     @Override
     public int getCount() {
