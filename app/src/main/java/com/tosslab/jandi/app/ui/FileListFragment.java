@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
@@ -13,6 +14,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.events.CategorizingAsFileType;
 import com.tosslab.jandi.app.ui.events.CategorizingAsOwner;
+import com.tosslab.jandi.app.ui.events.StickyEntityManager;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -139,6 +142,20 @@ public class FileListFragment extends BaseFragment {
 
     @ItemClick
     void list_searched_messagesItemClicked(ResMessages.FileMessage searchedFile) {
+        moveToFileDetailActivity(searchedFile.id);
+    }
+
+    private void moveToFileDetailActivity(int fileId) {
+        FileDetailActivity_
+                .intent(this)
+                .fileId(fileId)
+                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        Activity activity = getActivity();
+        if (activity instanceof MainTabActivity_) {
+            EntityManager entityManager = ((MainTabActivity_) activity).getEntityManager();
+            EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
+        }
 
     }
 }

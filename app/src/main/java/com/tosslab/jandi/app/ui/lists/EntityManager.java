@@ -126,6 +126,10 @@ public class EntityManager {
         }
     }
 
+    public FormattedUserEntity getMe() {
+        return new FormattedUserEntity(mMe);
+    }
+
     //
 //    public List<CdpItem> retrieveAllEntities() {
 //        ArrayList<CdpItem> cdpItems = new ArrayList<CdpItem>();

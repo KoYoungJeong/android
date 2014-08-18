@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.FileExplorerActivity;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.MainActivity;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
@@ -831,7 +833,8 @@ public class MessageListActivity extends BaseActivity {
                 .intent(this)
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-//        EventBus.getDefault().postSticky(((MainActivity) mContext).cdpItemManager);
+        overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
     }
 
     /************************************************************

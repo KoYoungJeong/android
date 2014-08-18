@@ -20,6 +20,16 @@ public class FormattedUserEntity {
                 : null;
     }
 
+    public String getUserName() {
+        ResLeftSideMenu.User me = getUser();
+        return me.u_lastName + " " + me.u_firstName;
+    }
+
+    public String getUserEmail() {
+        ResLeftSideMenu.User me = getUser();
+        return me.u_email;
+    }
+
     public String getProfileUrl() {
         return JandiConstants.SERVICE_ROOT_URL + getUser().u_photoUrl;
     }

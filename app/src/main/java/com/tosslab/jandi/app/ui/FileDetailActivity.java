@@ -179,8 +179,8 @@ public class FileDetailActivity extends BaseActivity {
     @Override
     public void finish() {
         setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
-        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
         super.finish();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
 

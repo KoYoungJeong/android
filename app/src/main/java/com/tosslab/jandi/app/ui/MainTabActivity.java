@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -19,7 +20,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.jeremyfeinstein.slidingmenu.lib.CustomViewAbove;
+import com.squareup.picasso.Picasso;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -34,14 +36,18 @@ import com.tosslab.jandi.app.ui.events.RetrieveUserList;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.lists.UserEntitySimpleListAdapter;
+import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
+import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
@@ -58,6 +64,13 @@ public class MainTabActivity extends BaseActivity {
 
     @RestService
     TossRestClient mTossRestClient;
+
+    @ViewById(R.id.drawer_user_profile)
+    ImageView imageViewUserProfile;
+    @ViewById(R.id.drawer_user_id)
+    TextView textViewUserEmail;
+    @ViewById(R.id.drawer_user_name)
+    TextView textViewUserName;
 
     private String mMyToken;
     private ProgressWheel mProgressWheel;
@@ -208,6 +221,27 @@ public class MainTabActivity extends BaseActivity {
     }
 
     /************************************************************
+     * 왼쪽 메뉴 설정
+     ************************************************************/
+
+    private void showDrawerUserProfile() {
+        FormattedUserEntity me = mEntityManager.getMe();
+        textViewUserEmail.setText(me.getUserEmail());
+        textViewUserName.setText(me.getUserName());
+        Picasso.with(mContext)
+                .load(me.getProfileUrl())
+                .placeholder(R.drawable.jandi_profile)
+                .transform(new CircleTransform())
+                .into(imageViewUserProfile);
+    }
+
+    @Click(R.id.drawer_action_setting)
+    public void closeDrawerAndMoveToSettingActivity() {
+        mDrawerLayout.closeDrawer(mDrawer);
+        SettingsActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
+    }
+
+    /************************************************************
      * Entities List Update / Refresh
      ************************************************************/
 
@@ -239,6 +273,7 @@ public class MainTabActivity extends BaseActivity {
         if (isOk) {
             mEntityManager = new EntityManager(resLeftSideMenu);
             isReadyToRetrieveEntityList = true;
+            showDrawerUserProfile();
             postAllEvents();
         } else {
             ColoredToast.showError(mContext, errMessage);
