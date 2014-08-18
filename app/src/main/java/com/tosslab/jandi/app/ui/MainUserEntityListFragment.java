@@ -8,11 +8,11 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.events.ReadyToRetrieveUserList;
-import com.tosslab.jandi.app.ui.events.RetrieveUserList;
-import com.tosslab.jandi.app.ui.events.StickyEntityManager;
-import com.tosslab.jandi.app.ui.lists.EntityManager;
-import com.tosslab.jandi.app.ui.lists.UserEntityItemListAdapter;
+import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
+import com.tosslab.jandi.app.events.RetrieveUserList;
+import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.EntityManager;
+import com.tosslab.jandi.app.lists.UserEntityItemListAdapter;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;

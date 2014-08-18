@@ -7,12 +7,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
-import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
@@ -62,15 +60,15 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
 
-        // Edit 메뉴 클릭시.
-        final TextView actionEdit = (TextView)mainView.findViewById(R.id.txt_action_edit_message);
-        actionEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(new ReqModifyMessageEvent(messageType, messageId, currentMessage, feedbackId));
-                dismiss();
-            }
-        });
+//        // Edit 메뉴 클릭시.
+//        final TextView actionEdit = (TextView)mainView.findViewById(R.id.txt_action_edit_message);
+//        actionEdit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                EventBus.getDefault().post(new ReqModifyMessageEvent(messageType, messageId, currentMessage, feedbackId));
+//                dismiss();
+//            }
+//        });
 
         // Delete 메뉴 클릭시.
         final TextView actionDel = (TextView)mainView.findViewById(R.id.txt_action_del_message);

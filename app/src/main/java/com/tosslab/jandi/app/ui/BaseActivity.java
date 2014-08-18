@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui;
 import android.app.Activity;
 import android.content.Intent;
 
-import com.tosslab.jandi.app.JandiGCMBroadcastReceiver;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 /**

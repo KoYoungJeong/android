@@ -30,7 +30,6 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
-import com.tosslab.jandi.app.FileExplorerActivity;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -40,7 +39,7 @@ import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
-import com.tosslab.jandi.app.events.ReqModifyMessageEvent;
+import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.lists.MessageItem;
 import com.tosslab.jandi.app.lists.MessageItemConverter;
@@ -51,11 +50,11 @@ import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.dialog.FileUploadDialogFragment;
-import com.tosslab.jandi.app.ui.events.StickyEntityManager;
-import com.tosslab.jandi.app.ui.lists.EntityManager;
-import com.tosslab.jandi.app.ui.lists.UnjoinedUserListAdapter;
-import com.tosslab.jandi.app.ui.models.FormattedEntity;
+import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
+import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.EntityManager;
+import com.tosslab.jandi.app.lists.UnjoinedUserListAdapter;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -160,13 +159,13 @@ public class MessageListActivity extends BaseActivity {
         actualListView.setEmptyView(emptyView);
         actualListView.setAdapter(messageItemListAdapter);
 
-//        actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
-//                return true;
-//            }
-//        });
+        actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
+                return true;
+            }
+        });
         actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -556,15 +555,15 @@ public class MessageListActivity extends BaseActivity {
     }
 
     void checkPermissionForManipulateMessage(MessageItem item) {
-//        if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
-//            showWarningCheckPermission("파일 수정 기능은 차후에...");
-//        } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
-//            showWarningCheckPermission("파일 수정 기능은 차후에...");
-//        } else if (((MainActivity)getActivity()).cdpItemManager.mMe.id == item.getUserId()) {
-//            showDialog(item);
-//        } else {
-//            showWarningCheckPermission(getString(R.string.warn_no_permission));
-//        }
+        if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
+            showWarningCheckPermission("파일 수정 기능은 차후에...");
+        } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
+            showWarningCheckPermission("파일 수정 기능은 차후에...");
+        } else if (mEntityManager.getMe().getUser().id == item.getUserId()) {
+            showDialog(item);
+        } else {
+            showWarningCheckPermission(getString(R.string.warn_no_permission));
+        }
     }
 
     @UiThread
@@ -579,7 +578,7 @@ public class MessageListActivity extends BaseActivity {
 
     // TODO : Serialize 객체로 이벤트 전달할 것
     // Message 수정 이벤트 획득
-    public void onEvent(ReqModifyMessageEvent event) {
+    public void onEvent(RequestModifyMessageEvent event) {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
                 , event.currentMessage, event.feedbackId);
         newFragment.show(getFragmentManager(), DIALOG_TAG);

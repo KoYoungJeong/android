@@ -10,7 +10,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.LoginFragmentDialog;
+import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.JandiNetworkClient;
 import com.tosslab.jandi.app.network.TossRestClient;

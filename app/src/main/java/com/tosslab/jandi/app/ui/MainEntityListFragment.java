@@ -13,19 +13,19 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
+import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.events.ReadyToRetrieveChannelList;
-import com.tosslab.jandi.app.ui.events.ReadyToRetrievePrivateGroupList;
-import com.tosslab.jandi.app.ui.events.RetrieveChannelList;
-import com.tosslab.jandi.app.ui.events.RetrievePrivateGroupList;
-import com.tosslab.jandi.app.ui.events.StickyEntityManager;
-import com.tosslab.jandi.app.ui.lists.EntityItemListAdapter;
-import com.tosslab.jandi.app.ui.lists.EntityManager;
-import com.tosslab.jandi.app.ui.models.FormattedEntity;
+import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
+import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
+import com.tosslab.jandi.app.events.RetrieveChannelList;
+import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
+import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.EntityItemListAdapter;
+import com.tosslab.jandi.app.lists.EntityManager;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -251,7 +251,7 @@ public class MainEntityListFragment extends BaseFragment {
      * Channel, PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
      * @param event
      */
-    public void onEvent(ConfirmCreateCdpEvent event) {
+    public void onEvent(ConfirmCreateEntityEvent event) {
         if (event.cdpType == entityType) {
             ColoredToast.show(mContext, event.inputName + " 을 생성합니다");
             createCdpInBackground(event.cdpType, event.inputName);

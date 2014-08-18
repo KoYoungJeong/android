@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmCreateCdpEvent;
+import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 
@@ -133,7 +133,7 @@ public class EditTextDialogFragment extends DialogFragment {
                                 switch (actionType) {
                                     case ACTION_CREATE_CDP:
                                         // CDP 생성의 경우 MainLeftFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(new ConfirmCreateCdpEvent(cdpType
+                                        EventBus.getDefault().post(new ConfirmCreateEntityEvent(cdpType
                                                 , inputName.getText().toString()));
                                         break;
                                     case ACTION_MODIFY_CDP:
