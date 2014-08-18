@@ -37,6 +37,8 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
+import com.tosslab.jandi.app.ui.lists.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -145,12 +147,12 @@ public class FileDetailActivity extends BaseActivity {
             case R.id.action_file_detail_download:
                 download();
                 return true;
-//            case R.id.action_file_detail_share:
-//                clickShareButton();
-//                return true;
-//            case R.id.action_file_detail_unshare:
-//                clickUnshareButton();
-//                return true;
+            case R.id.action_file_detail_share:
+                clickShareButton();
+                return true;
+            case R.id.action_file_detail_unshare:
+                clickUnshareButton();
+                return true;
             case R.id.action_file_detail_delete:
                 deleteFileInBackground();
                 return true;
@@ -354,117 +356,115 @@ public class FileDetailActivity extends BaseActivity {
         }
     }
 
-//    /************************************************************
-//     * 파일 공유
-//     ************************************************************/
-//    void clickShareButton() {
-//        /**
-//         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
-//         */
-//        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
-//
-//        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-//        dialog.setTitle(R.string.jandi_title_cdp_to_be_shared);
-//        dialog.setIcon(android.R.drawable.ic_menu_agenda);
-//        dialog.setView(view);
-//        final AlertDialog cdpSelectDialog = dialog.show();
-//
-//        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-//        // 현재 이 파일을 share 하지 않는 CDP를 추출
-//        List<Integer> shareEntities = mResFileDetail.shareEntities;
-//        final List<CdpItem> unSharedEntities = cdpItemManager.retrieveExceptGivenEntities(shareEntities);
-//        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, unSharedEntities);
-//        lv.setAdapter(adapter);
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (cdpSelectDialog != null)
-//                    cdpSelectDialog.dismiss();
-//                shareMessageInBackground(unSharedEntities.get(i).id);
-//            }
-//        });
-//    }
-//
-//    @Background
-//    public void shareMessageInBackground(int cdpIdToBeShared) {
-//        MessageManipulator messageManipulator = new MessageManipulator(
-//                tossRestClient, myToken);
-//        try {
-//            messageManipulator.shareMessage(fileId, cdpIdToBeShared);
-//            log.debug("success to share message");
-//            shareMessageDone(true);
-//        } catch (RestClientException e) {
-//            log.error("fail to send message", e);
-//            shareMessageDone(false);
-//        }
-//    }
-//
-//    @UiThread
-//    public void shareMessageDone(boolean isOk) {
-//        if (isOk) {
-//            ColoredToast.show(this, "Message has Shared !!");
-//            fileDetailCommentListAdapter.clear();
-//            getFileDetail();
-//        } else {
-//            ColoredToast.showError(this, "FAIL Message Sharing !!");
-//        }
-//    }
-//
-//    /************************************************************
-//     * 파일 공유 해제
-//     ************************************************************/
-//    void clickUnshareButton() {
-//        /**
-//         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
-//         */
-//        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
-//
-//        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-//        dialog.setTitle(R.string.jandi_title_cdp_to_be_unshared);
-//        dialog.setIcon(android.R.drawable.ic_menu_agenda);
-//        dialog.setView(view);
-//        final AlertDialog cdpSelectDialog = dialog.show();
-//
-//        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-//        // 현재 이 파일을 share 하지 않는 CDP를 추출
-//        List<Integer> shareEntitiesIds = mResFileDetail.shareEntities;
-//        final List<CdpItem> sharedEntities = cdpItemManager.retrieveGivenEntities(shareEntitiesIds);
-//        final CdpSelectListAdapter adapter = new CdpSelectListAdapter(this, sharedEntities);
-//        lv.setAdapter(adapter);
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                if (cdpSelectDialog != null)
-//                    cdpSelectDialog.dismiss();
-//                unshareMessageInBackground(sharedEntities.get(i).id);
-//            }
-//        });
-//    }
-//
-//    @Background
-//    public void unshareMessageInBackground(int cdpIdToBeShared) {
-//        MessageManipulator messageManipulator = new MessageManipulator(
-//                tossRestClient, myToken);
-//        try {
-//            messageManipulator.unshareMessage(fileId, cdpIdToBeShared);
-//            log.debug("success to unshare message");
-//            unshareMessageDone(true);
-//        } catch (RestClientException e) {
-//            log.error("fail to send message", e);
-//            unshareMessageDone(false);
-//        }
-//    }
-//
-//    @UiThread
-//    public void unshareMessageDone(boolean isOk) {
-//        if (isOk) {
-//            ColoredToast.show(this, "공유가 해제되었습니다");
-//            fileDetailCommentListAdapter.clear();
-//            getFileDetail();
-//        } else {
-//            ColoredToast.showError(this, "FAIL Message Sharing !!");
-//        }
-//    }
+    /************************************************************
+     * 파일 공유
+     ************************************************************/
+    void clickShareButton() {
+        /**
+         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.jandi_title_cdp_to_be_shared);
+        dialog.setView(view);
+        final AlertDialog cdpSelectDialog = dialog.show();
+
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        // 현재 이 파일을 share 하지 않는 CDP를 추출
+        List<Integer> shareEntities = mResFileDetail.shareEntities;
+        final List<FormattedEntity> unSharedEntities = mEntityManager.retrieveExceptGivenEntities(shareEntities);
+        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, unSharedEntities);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cdpSelectDialog != null)
+                    cdpSelectDialog.dismiss();
+                shareMessageInBackground(unSharedEntities.get(i).getEntity().id);
+            }
+        });
+    }
+
+    @Background
+    public void shareMessageInBackground(int cdpIdToBeShared) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.shareMessage(fileId, cdpIdToBeShared);
+            log.debug("success to share message");
+            shareMessageDone(true);
+        } catch (RestClientException e) {
+            log.error("fail to send message", e);
+            shareMessageDone(false);
+        }
+    }
+
+    @UiThread
+    public void shareMessageDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "Message has Shared !!");
+            fileDetailCommentListAdapter.clear();
+            getFileDetail();
+        } else {
+            ColoredToast.showError(this, "FAIL Message Sharing !!");
+        }
+    }
+
+    /************************************************************
+     * 파일 공유 해제
+     ************************************************************/
+    void clickUnshareButton() {
+        /**
+         * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
+         */
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.jandi_title_cdp_to_be_unshared);
+        dialog.setView(view);
+        final AlertDialog cdpSelectDialog = dialog.show();
+
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        // 현재 이 파일을 share 하지 않는 CDP를 추출
+        List<Integer> shareEntitiesIds = mResFileDetail.shareEntities;
+        final List<FormattedEntity> sharedEntities = mEntityManager.retrieveGivenEntities(shareEntitiesIds);
+        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, sharedEntities);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (cdpSelectDialog != null)
+                    cdpSelectDialog.dismiss();
+                unshareMessageInBackground(sharedEntities.get(i).getEntity().id);
+            }
+        });
+    }
+
+    @Background
+    public void unshareMessageInBackground(int cdpIdToBeShared) {
+        MessageManipulator messageManipulator = new MessageManipulator(
+                tossRestClient, myToken);
+        try {
+            messageManipulator.unshareMessage(fileId, cdpIdToBeShared);
+            log.debug("success to unshare message");
+            unshareMessageDone(true);
+        } catch (RestClientException e) {
+            log.error("fail to send message", e);
+            unshareMessageDone(false);
+        }
+    }
+
+    @UiThread
+    public void unshareMessageDone(boolean isOk) {
+        if (isOk) {
+            ColoredToast.show(this, "공유가 해제되었습니다");
+            fileDetailCommentListAdapter.clear();
+            getFileDetail();
+        } else {
+            ColoredToast.showError(this, "FAIL Message Sharing !!");
+        }
+    }
 
     /************************************************************
      * 파일 삭제

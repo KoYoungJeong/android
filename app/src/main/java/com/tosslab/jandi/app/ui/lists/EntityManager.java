@@ -141,39 +141,43 @@ public class EntityManager {
 //        return cdpItems;
 //    }
 //
-//    /**
-//     * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
-//     * @param givenEntityIds
-//     * @return
-//     */
-//    public List<CdpItem> retrieveGivenEntities(List<Integer> givenEntityIds) {
-//        List<CdpItem> cdpItems = retrieveAllEntities();
-//        ArrayList<CdpItem> retCdpItems = new ArrayList<CdpItem>();
-//
-//        for (CdpItem cdpItem : cdpItems) {
-//            if (cdpItem.hasGivenIds(givenEntityIds)) {
-//                retCdpItems.add(cdpItem);
-//            }
-//        }
-//        return retCdpItems;
-//    }
-//
-//    /**
-//     * 인자로 주어진 ID 를 제외한 공유 대상 CDP를 추출한다.
-//     * @param givenEntityIds
-//     * @return
-//     */
-//    public List<CdpItem> retrieveExceptGivenEntities(List<Integer> givenEntityIds) {
-//        List<CdpItem> cdpItems = retrieveWithoutTitle();
-//        ArrayList<CdpItem> retCdpItems = new ArrayList<CdpItem>();
-//
-//        for (CdpItem cdpItem : cdpItems) {
-//            if (!cdpItem.hasGivenIds(givenEntityIds)) {
-//                retCdpItems.add(cdpItem);
-//            }
-//        }
-//        return retCdpItems;
-//    }
+    /**
+     * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
+     * @param givenEntityIds
+     * @return
+     */
+    public List<FormattedEntity> retrieveGivenEntities(List<Integer> givenEntityIds) {
+        return retrieveByGivenEntities(givenEntityIds, true);
+    }
+
+    /**
+     * 인자로 주어진 ID 를 제외한 공유 대상 CDP를 추출한다.
+     * @param givenEntityIds
+     * @return
+     */
+    public List<FormattedEntity> retrieveExceptGivenEntities(List<Integer> givenEntityIds) {
+        return retrieveByGivenEntities(givenEntityIds, false);
+    }
+
+    private List<FormattedEntity> retrieveByGivenEntities(List<Integer> givenEntityIds, boolean includable) {
+        List<FormattedEntity> accessableEntities = retrieveAccessableEntities();
+        ArrayList<FormattedEntity> retCdpItems = new ArrayList<FormattedEntity>();
+
+        for (FormattedEntity accessableEntity : accessableEntities) {
+            if (accessableEntity.hasGivenIds(givenEntityIds) == includable) {
+                retCdpItems.add(accessableEntity);
+            }
+        }
+        return retCdpItems;
+    }
+
+    public List<FormattedEntity> retrieveAccessableEntities() {
+        List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
+        entities.addAll(mJoinedChannels);
+        entities.addAll(mPrivateGroups);
+        entities.addAll(mUsers);
+        return entities;
+    }
 
 //    // TODO 현재는 default channel이 그냥 첫번째 채널
 //    public ResLeftSideMenu.Channel getDefaultChannel() {

@@ -58,6 +58,10 @@ public class FormattedEntity {
         return (type == FormattedEntity.TYPE_REAL_USER);
     }
 
+    public ResLeftSideMenu.Entity getEntity() {
+        return entity;
+    }
+
     public ResLeftSideMenu.Channel getChannel() {
         return (entity instanceof ResLeftSideMenu.Channel)
                 ? (ResLeftSideMenu.Channel) entity
@@ -98,6 +102,19 @@ public class FormattedEntity {
 
     public String getUserProfileUrl() {
         return JandiConstants.SERVICE_ROOT_URL + getUser().u_photoUrl;
+    }
+
+    public boolean hasGivenId(int entityId) {
+        return (this.entity.id == entityId);
+    }
+
+    public boolean hasGivenIds(List<Integer> entityIds) {
+        for (int entityId : entityIds) {
+            if (hasGivenId(entityId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
