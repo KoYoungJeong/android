@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.models;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.util.List;
@@ -11,17 +12,20 @@ public class FormattedEntity {
     // 채널 일 경우
     public static final int TYPE_REAL_CHANNEL           = 0;
     public static final int TYPE_REAL_PRIVATE_GROUP     = 1;
+    public static final int TYPE_REAL_USER              = 3;
 
-    public static final int TYPE_TITLE_JOINED_CHANNEL   = 2;
-    public static final int TYPE_TITLE_UNJOINED_CHANNEL = 3;
+    public static final int TYPE_TITLE_JOINED_CHANNEL   = 4;
+    public static final int TYPE_TITLE_UNJOINED_CHANNEL = 5;
 
     public static final boolean JOINED      = true;
     public static final boolean UNJOINED    = false;
 
     private ResLeftSideMenu.Entity entity;
 
-    public boolean isJoined;
     public int type;
+    public boolean isJoined;                        // if type is channel
+    public boolean isSelectedToBeJoined = false;    // if type is user
+
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
         this.entity = channel;
@@ -34,6 +38,11 @@ public class FormattedEntity {
         this.type = TYPE_REAL_PRIVATE_GROUP;
     }
 
+    public FormattedEntity(ResLeftSideMenu.User user) {
+        this.entity = user;
+        this.type = TYPE_REAL_USER;
+    }
+
     public FormattedEntity(int type) {
         this.isJoined = JOINED;   // NO MATTER
         this.type = type;
@@ -42,9 +51,11 @@ public class FormattedEntity {
     public boolean isChannel() {
         return (type == FormattedEntity.TYPE_REAL_CHANNEL);
     }
-
     public boolean isPrivateGroup() {
         return (type == FormattedEntity.TYPE_REAL_PRIVATE_GROUP);
+    }
+    public boolean isUser() {
+        return (type == FormattedEntity.TYPE_REAL_USER);
     }
 
     public ResLeftSideMenu.Channel getChannel() {
@@ -59,6 +70,12 @@ public class FormattedEntity {
                 : null;
     }
 
+    public ResLeftSideMenu.User getUser() {
+        return (entity instanceof ResLeftSideMenu.User)
+                ? (ResLeftSideMenu.User) entity
+                : null;
+    }
+
     public List<Integer> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
             return getChannel().ch_members;
@@ -66,6 +83,32 @@ public class FormattedEntity {
             return getPrivateGroup().pg_members;
         } else {
             return null;
+        }
+    }
+
+    public String getUserName() {
+        ResLeftSideMenu.User me = getUser();
+        return me.u_lastName + " " + me.u_firstName;
+    }
+
+    public String getUserEmail() {
+        ResLeftSideMenu.User me = getUser();
+        return me.u_email;
+    }
+
+    public String getUserProfileUrl() {
+        return JandiConstants.SERVICE_ROOT_URL + getUser().u_photoUrl;
+    }
+
+    @Override
+    public String toString() {
+        switch (this.type) {
+            case TYPE_REAL_CHANNEL:
+                return "#" + entity.name;
+            case TYPE_REAL_USER:
+                return "@" + entity.name;
+            default:
+                return entity.name;
         }
     }
 }

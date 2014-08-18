@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.ui.lists;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.models.FormattedEntity;
-import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
 
 import org.apache.log4j.Logger;
 
@@ -19,13 +19,13 @@ public class EntityManager {
     private ResLeftSideMenu.User mMe;
     private List<FormattedEntity> mJoinedChannels;
     private List<FormattedEntity> mUnJoinedChannels;
-    private List<FormattedUserEntity> mUsers;
+    private List<FormattedEntity> mUsers;
     private List<FormattedEntity> mPrivateGroups;
 
     public EntityManager(ResLeftSideMenu resLeftSideMenu) {
         mJoinedChannels = new ArrayList<FormattedEntity>();
         mUnJoinedChannels = new ArrayList<FormattedEntity>();
-        mUsers = new ArrayList<FormattedUserEntity>();
+        mUsers = new ArrayList<FormattedEntity>();
         mPrivateGroups = new ArrayList<FormattedEntity>();
 
         arrangeEntities(resLeftSideMenu);
@@ -46,7 +46,7 @@ public class EntityManager {
 
     public List<ResLeftSideMenu.User> getUsers() {
         List<ResLeftSideMenu.User> users = new ArrayList<ResLeftSideMenu.User>();
-        for (FormattedUserEntity userEntity : mUsers) {
+        for (FormattedEntity userEntity : mUsers) {
             users.add(userEntity.getUser());
         }
         return users;
@@ -54,7 +54,7 @@ public class EntityManager {
 
     public List<ResLeftSideMenu.User> getUsersWithoutMe() {
         ArrayList<ResLeftSideMenu.User> usersWithoutMe = new ArrayList<ResLeftSideMenu.User>();
-        for (FormattedUserEntity user : mUsers) {
+        for (FormattedEntity user : mUsers) {
             if (user.getUser().id != mMe.id) {
                 usersWithoutMe.add(user.getUser());
             }
@@ -119,15 +119,15 @@ public class EntityManager {
             if (entity instanceof ResLeftSideMenu.Channel) {
                 addInUnjoinedChannels((ResLeftSideMenu.Channel) entity);
             } else if (entity instanceof ResLeftSideMenu.User) {
-                mUsers.add(new FormattedUserEntity((ResLeftSideMenu.User) entity));
+                mUsers.add(new FormattedEntity((ResLeftSideMenu.User) entity));
             } else {
                 // TODO : Error 처리
             }
         }
     }
 
-    public FormattedUserEntity getMe() {
-        return new FormattedUserEntity(mMe);
+    public FormattedEntity getMe() {
+        return new FormattedEntity(mMe);
     }
 
     //
@@ -180,7 +180,31 @@ public class EntityManager {
 //        return mJoinedChannels.get(0);
 //    }
 
-    public List<FormattedUserEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
+    public FormattedEntity getEntityById(int entityId) {
+        for (FormattedEntity target : mJoinedChannels) {
+            if (target.getChannel().id == entityId) {
+                return target;
+            }
+        }
+        for (FormattedEntity target : mUsers) {
+            if (target.getUser().id == entityId) {
+                return target;
+            }
+        }
+        for (FormattedEntity target : mPrivateGroups) {
+            if (target.getPrivateGroup().id == entityId) {
+                return target;
+            }
+        }
+        return null;
+    }
+
+    public String getEntityNameById(int cdpId) {
+        FormattedEntity entity = getEntityById(cdpId);
+        return (entity != null) ? entity.toString() : "";
+    }
+
+    public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
         FormattedEntity entity;
         if (entityType == JandiConstants.TYPE_CHANNEL) {
             entity = searchChannelById(entityId);
@@ -192,11 +216,11 @@ public class EntityManager {
         return getUnjoinedMembersOfEntity(entity.getMembers());
     }
 
-    private List<FormattedUserEntity> getUnjoinedMembersOfEntity(List<Integer> joinedMembers) {
-        ArrayList<FormattedUserEntity> unjoinedMemebers = new ArrayList<FormattedUserEntity>(mUsers);
+    private List<FormattedEntity> getUnjoinedMembersOfEntity(List<Integer> joinedMembers) {
+        ArrayList<FormattedEntity> unjoinedMemebers = new ArrayList<FormattedEntity>(mUsers);
         for (int id : joinedMembers) {
             for (int i = 0; i < unjoinedMemebers.size(); i++) {
-                FormattedUserEntity user = unjoinedMemebers.get(i);
+                FormattedEntity user = unjoinedMemebers.get(i);
                 if (user.getUser().id == id) {
                     unjoinedMemebers.remove(i);
                     break;

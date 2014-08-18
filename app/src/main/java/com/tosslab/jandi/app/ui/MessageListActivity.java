@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -33,7 +32,6 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.FileExplorerActivity;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.MainActivity;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
@@ -57,7 +55,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.UnjoinedUserListAdapter;
-import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -966,7 +964,7 @@ public class MessageListActivity extends BaseActivity {
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<FormattedUserEntity> unjoinedMembers
+        List<FormattedEntity> unjoinedMembers
                 = mEntityManager.getUnjoinedMembersOfEntity(entityId, entityType);
 
         if (unjoinedMembers.size() <= 0) {

@@ -312,7 +312,7 @@ public class MainActivity extends SlidingFragmentActivity {
         if (cdpId > 0) {
             mCurrentSelectedCdpItem = cdpItemManager.getCdpItemById(cdpId);
             if (mCurrentSelectedCdpItem != null) {
-//                getActionBar().setTitle(cdpItemManager.getCdpNameById(cdpId));
+//                getActionBar().setTitle(cdpItemManager.getEntityNameById(cdpId));
                 setCustomActionBarTitle(cdpItemManager.getCdpNameById(cdpId));
                 EventBus.getDefault().post(new RequestMessageListEvent(cdpType, cdpId));
                 return;
@@ -320,7 +320,7 @@ public class MainActivity extends SlidingFragmentActivity {
         }
 
         mCurrentSelectedCdpItem = cdpItemManager.getDefaultChannel();
-//        getActionBar().setTitle(cdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
+//        getActionBar().setTitle(cdpItemManager.getEntityNameById(mCurrentSelectedCdpItem.id));
         setCustomActionBarTitle(cdpItemManager.getCdpNameById(mCurrentSelectedCdpItem.id));
         EventBus.getDefault().post(new RequestMessageListEvent(mCurrentSelectedCdpItem.type
                 , mCurrentSelectedCdpItem.id));

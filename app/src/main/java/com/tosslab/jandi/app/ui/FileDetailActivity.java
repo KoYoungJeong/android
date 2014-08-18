@@ -35,6 +35,8 @@ import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.events.StickyEntityManager;
+import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -95,7 +97,7 @@ public class FileDetailActivity extends BaseActivity {
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
-//    public CdpItemManager cdpItemManager = null;
+    private EntityManager mEntityManager;
 
     @AfterViews
     public void initForm() {
@@ -160,12 +162,12 @@ public class FileDetailActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-//        EventBus.getDefault().registerSticky(this);
+        EventBus.getDefault().registerSticky(this);
     }
 
     @Override
     public void onPause() {
-//        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(this);
         super.onPause();
     }
 
@@ -184,17 +186,17 @@ public class FileDetailActivity extends BaseActivity {
     }
 
 
-//    /**
-//     * Sticky Event from SearchListFragment or MainMessageListFragment
-//     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
-//     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
-//     * @param event
-//     */
-//    public void onEvent(CdpItemManager event) {
-//        log.debug("cdpItemManager is set");
-//        cdpItemManager = event;
-//        drawFileSharedEntities();
-//    }
+    /**
+     * Sticky Event from SearchListFragment or MainMessageListFragment
+     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
+     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
+     * @param event
+     */
+    public void onEvent(StickyEntityManager event) {
+        log.debug("cdpItemManager is set");
+        mEntityManager = event.entityManager;
+        drawFileSharedEntities();
+    }
 
 //    @ItemLongClick
 //    void list_file_detail_commentsItemLongClicked(ResMessages.OriginalMessage item) {
@@ -243,25 +245,25 @@ public class FileDetailActivity extends BaseActivity {
 
     }
 
-//    @UiThread
-//    public void drawFileSharedEntities() {
-//        if (mResFileDetail == null) return;
-//        if (cdpItemManager == null) return;
-//
-//        // 공유 CDP 이름
-//        String sharedEntityNames = "";
-//        if (!mResFileDetail.shareEntities.isEmpty()) {
-//            int nSharedEntities = mResFileDetail.shareEntities.size();
-//            for (int i=0; i<nSharedEntities; i++) {
-//                String sharedEntityName = cdpItemManager.getCdpNameById(mResFileDetail.shareEntities.get(i));
-//                if (!sharedEntityName.isEmpty()) {
-//                    sharedEntityNames += sharedEntityName;
-//                    sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
-//                }
-//            }
-//        }
-//        textViewFileSharedCdp.setText(sharedEntityNames);
-//    }
+    @UiThread
+    public void drawFileSharedEntities() {
+        if (mResFileDetail == null) return;
+        if (mEntityManager == null) return;
+
+        // 공유 CDP 이름
+        String sharedEntityNames = "";
+        if (!mResFileDetail.shareEntities.isEmpty()) {
+            int nSharedEntities = mResFileDetail.shareEntities.size();
+            for (int i=0; i<nSharedEntities; i++) {
+                String sharedEntityName = mEntityManager.getEntityNameById(mResFileDetail.shareEntities.get(i));
+                if (!sharedEntityName.isEmpty()) {
+                    sharedEntityNames += sharedEntityName;
+                    sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
+                }
+            }
+        }
+        textViewFileSharedCdp.setText(sharedEntityNames);
+    }
 
     @UiThread
     public void drawFileDetail(ResFileDetail resFileDetail) {
@@ -283,8 +285,8 @@ public class FileDetailActivity extends BaseActivity {
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
 
-//                // 공유 CDP 이름
-//                drawFileSharedEntities();
+                // 공유 CDP 이름
+                drawFileSharedEntities();
 
                 if (fileMessage.content.type != null) {
                     String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;

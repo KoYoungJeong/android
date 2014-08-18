@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.picasso.Picasso;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -36,7 +35,7 @@ import com.tosslab.jandi.app.ui.events.RetrieveUserList;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.lists.UserEntitySimpleListAdapter;
-import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -225,11 +224,11 @@ public class MainTabActivity extends BaseActivity {
      ************************************************************/
 
     private void showDrawerUserProfile() {
-        FormattedUserEntity me = mEntityManager.getMe();
+        FormattedEntity me = mEntityManager.getMe();
         textViewUserEmail.setText(me.getUserEmail());
         textViewUserName.setText(me.getUserName());
         Picasso.with(mContext)
-                .load(me.getProfileUrl())
+                .load(me.getUserProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .into(imageViewUserProfile);

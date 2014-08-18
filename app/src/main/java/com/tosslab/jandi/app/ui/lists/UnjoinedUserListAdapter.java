@@ -11,11 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.CdpItem;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.models.FormattedUserEntity;
+import com.tosslab.jandi.app.ui.models.FormattedEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +22,11 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 14..
  */
 public class UnjoinedUserListAdapter extends BaseAdapter {
-    private List<FormattedUserEntity> listUserToBeJoined;
+    private List<FormattedEntity> listUserToBeJoined;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public UnjoinedUserListAdapter(Context context, List<FormattedUserEntity> users) {
+    public UnjoinedUserListAdapter(Context context, List<FormattedEntity> users) {
         this.listUserToBeJoined = users;
         this.layoutInflater = LayoutInflater.from(context);
         this.context = context;
@@ -40,7 +38,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
     }
 
     @Override
-    public FormattedUserEntity getItem(int i) {
+    public FormattedEntity getItem(int i) {
         return listUserToBeJoined.get(i);
     }
 
@@ -61,7 +59,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    FormattedUserEntity item = (FormattedUserEntity)compoundButton.getTag();
+                    FormattedEntity item = (FormattedEntity)compoundButton.getTag();
                     item.isSelectedToBeJoined = b;
                 }
             });
@@ -71,11 +69,11 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FormattedUserEntity item = getItem(i);
+        FormattedEntity item = getItem(i);
         ResLeftSideMenu.User user = item.getUser();
         if (user != null) {
             // 프로필 사진
-            Picasso.with(this.context).load(item.getProfileUrl()).fit().into(holder.imageView);
+            Picasso.with(this.context).load(item.getUserProfileUrl()).fit().into(holder.imageView);
             holder.textView.setText(user.name);
             holder.checkBox.setTag(item);
         }
@@ -85,7 +83,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
 
     public List<Integer> getSelectedUserIds() {
         ArrayList<Integer> selectedUserIds = new ArrayList<Integer>();
-        for (FormattedUserEntity selectedItem : listUserToBeJoined) {
+        for (FormattedEntity selectedItem : listUserToBeJoined) {
             if (selectedItem.isSelectedToBeJoined) {
                 selectedUserIds.add(selectedItem.getUser().id);
             }
