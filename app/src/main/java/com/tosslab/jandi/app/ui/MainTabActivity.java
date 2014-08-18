@@ -400,7 +400,7 @@ public class MainTabActivity extends BaseActivity {
         // TODO : 뭐가 더 나은지는 모르겠네잉
         final List<ResLeftSideMenu.User> teamMember = mEntityManager.getUsers();
         final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(this, teamMember);
-        lv.setAdapter(adapter);
+
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -422,6 +422,8 @@ public class MainTabActivity extends BaseActivity {
             }
         });
         lv.addHeaderView(getHeaderViewAsAllUser());
+        lv.setAdapter(adapter);
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.title_search_user_select);
         dialog.setView(view);
