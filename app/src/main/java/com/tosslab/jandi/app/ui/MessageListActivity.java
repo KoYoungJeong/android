@@ -34,7 +34,6 @@ import com.tosslab.jandi.app.FileExplorerActivity;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
@@ -52,6 +51,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.dialog.FileUploadDialogFragment;
 import com.tosslab.jandi.app.ui.events.StickyEntityManager;
 import com.tosslab.jandi.app.ui.lists.EntityManager;
 import com.tosslab.jandi.app.ui.lists.UnjoinedUserListAdapter;
@@ -118,10 +118,9 @@ public class MessageListActivity extends BaseActivity {
 
     private int mFirstItemId = -1;
     private boolean mIsFirstMessage = false;
-
     private MessageItemConverter mMessageItemConverter;
 
-    private EntityManager mEntityManager;
+    public EntityManager mEntityManager;
 
     @AfterViews
     void bindAdapter() {
@@ -745,7 +744,7 @@ public class MessageListActivity extends BaseActivity {
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseUpdateTimer();
 
-        final ProgressDialog progressDialog = new ProgressDialog(mContext);
+        final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(getString(R.string.file_uploading)+ " " + event.realFilePath);
         progressDialog.show();
