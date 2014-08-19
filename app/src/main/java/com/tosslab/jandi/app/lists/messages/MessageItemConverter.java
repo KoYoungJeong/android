@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.messages;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import org.apache.log4j.Logger;
 
@@ -53,24 +54,24 @@ public class MessageItemConverter {
     }
 
     public void insertMessageItem(ResMessages messages) {
-        patchMessageItem(messages, true);
+        patchMessageItem(messages.messages, true);
     }
 
-    public void updatedMessageItem(ResMessages messages) {
-        patchMessageItem(messages, false);
+    public void updatedMessageItem(ResUpdateMessages messages) {
+        patchMessageItem(messages.updateInfo.messages, false);
     }
 
     /**
      * Message Item을 정렬하여 각 상태에 따라 삭제하고 추가하는 작업.
-     * @param messages
+     * @param links
      * @param isDescendingOrder
      */
-    public void patchMessageItem(ResMessages messages, boolean isDescendingOrder) {
-        if (messages.messageCount <= 0) {
+    public void patchMessageItem(List<ResMessages.Link> links, boolean isDescendingOrder) {
+        if (links.size() <= 0) {
             return;
         }
 
-        List<ResMessages.Link> sortedLinks = sortByLinkId(messages.messages, isDescendingOrder);
+        List<ResMessages.Link> sortedLinks = sortByLinkId(links, isDescendingOrder);
 
         // 업데이트 된 메시지들의 상태를 보고,
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.

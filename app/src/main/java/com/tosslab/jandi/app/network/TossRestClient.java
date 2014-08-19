@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.RestFileUploadResponse;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -77,7 +78,7 @@ public interface TossRestClient {
     // 채널의 업데이트 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/update/{currentLinkId}")
     @RequiresHeader("Authorization")
-    ResMessages getChannelMessagesUpdated(int channelId, int currentLinkId);
+    ResUpdateMessages getChannelMessagesUpdated(int channelId, int currentLinkId);
 
     // 채널 생성
     @Post("/channel")
@@ -138,7 +139,7 @@ public interface TossRestClient {
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
-    ResMessages getDirectMessagesUpdated(int userId, long timeAfter);
+    ResUpdateMessages getDirectMessagesUpdated(int userId, long timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
@@ -169,7 +170,7 @@ public interface TossRestClient {
     // Updated 된 Private Group의 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
     @RequiresHeader("Authorization")
-    ResMessages getGroupMessagesUpdated(int groupId, long timeAfter);
+    ResUpdateMessages getGroupMessagesUpdated(int groupId, long timeAfter);
 
     // Private Group 생성
     @Post("/privateGroup")

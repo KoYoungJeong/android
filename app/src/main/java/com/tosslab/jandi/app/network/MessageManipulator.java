@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import org.springframework.web.client.RestClientException;
 
@@ -52,7 +53,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResMessages updateMessages(int fromCurrentId) throws RestClientException {
+    public ResUpdateMessages updateMessages(int fromCurrentId) throws RestClientException {
         switch (mCdpType) {
             case JandiConstants.TYPE_CHANNEL:
                 return mRestClient.getChannelMessagesUpdated(mCdpId, fromCurrentId);

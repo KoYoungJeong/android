@@ -33,14 +33,19 @@ import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
+import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
-import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
+import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
@@ -50,11 +55,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
-import com.tosslab.jandi.app.events.StickyEntityManager;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -329,13 +330,9 @@ public class MessageListActivity extends BaseActivity {
             messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
 
             if (mFirstItemId == -1) {
-                if (restResMessages.messageCount > 0) {
-                    // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
-                    int currentLastLinkId = messageItemListAdapter.getLastLinkId();
-                    if (currentLastLinkId >= 0) {
-                        mLastUpdateLinkId = currentLastLinkId;
-                    }
-                } else {
+                // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
+                mLastUpdateLinkId = restResMessages.lastLinkId;
+                if (restResMessages.messageCount <= 0) {
                     showWarningEmpty();
                     return;
                 }
@@ -464,21 +461,19 @@ public class MessageListActivity extends BaseActivity {
                 tossRestClient, mMyToken, type, id);
         try {
             if (mLastUpdateLinkId >= 0) {
-                ResMessages restResMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
-                int nMessages = restResMessages.messageCount;
+                ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
+                int nMessages = resUpdateMessages.updateInfo.messageCount;
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
                         + " messages updated at ID, " + mLastUpdateLinkId);
+
+                // 가장 최신의 LinkId를 업데이트한다.
+                mLastUpdateLinkId = resUpdateMessages.lastLinkId;
                 if (nMessages > 0) {
                     isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
-                    mMessageItemConverter.updatedMessageItem(restResMessages);
+                    mMessageItemConverter.updatedMessageItem(resUpdateMessages);
                     messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
-                    // 가장 최신의 LinkId를 업데이트한다.
-                    int currentLastLinkId = messageItemListAdapter.getLastLinkId();
-                    if (currentLastLinkId >= 0) {
-                        mLastUpdateLinkId = currentLastLinkId;
-                    }
                 }
                 getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
             } else {
