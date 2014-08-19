@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqLogin;
@@ -13,8 +12,10 @@ import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
+import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -65,6 +66,11 @@ public interface TossRestClient {
     @Get("/leftSideMenu")
     @RequiresHeader("Authorization")
     ResLeftSideMenu getInfosForSideMenu();
+
+    // Entity별 badge 설정
+    @Post("/entities/{entityId}/marker")
+    @RequiresHeader("Authorization")
+    ResCommon setMarker(int entityId, ReqSetMarker reqSetMarker);
 
     /************************************************************
      * 채널 관련

@@ -28,6 +28,7 @@ public class ResMessages {
         public int id;
         public int teamId;
         public ResLeftSideMenu.Entity fromEntity;
+//        public int fromEntity;
         public Date time;
         public int messageId;
         public String status;
@@ -51,8 +52,11 @@ public class ResMessages {
         public String u_lastName;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Info {
+        public int invitorId;
+        public List<Integer> inviteUsers;
         public String eventType;
     }
 

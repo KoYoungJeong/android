@@ -215,6 +215,7 @@ public class MessageListActivity extends BaseActivity {
     @Override
     public void onPause() {
         pauseUpdateTimer();
+        setMarker();
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
@@ -1014,5 +1015,23 @@ public class MessageListActivity extends BaseActivity {
     @UiThread
     public void inviteFailed(String errMessage) {
         ColoredToast.showError(mContext, errMessage);
+    }
+
+    /************************************************************
+     * Set Marker
+     ************************************************************/
+    @Background
+    public void setMarker() {
+        try {
+            if (mLastUpdateLinkId > 0) {
+                MessageManipulator messageManipulator = new MessageManipulator(
+                        tossRestClient, mMyToken, entityType, entityId);
+                messageManipulator.setMarker(mLastUpdateLinkId);
+            }
+        } catch (RestClientException e) {
+            log.error("set marker failed", e);
+        } catch (Exception e) {
+            log.error("set marker failed", e);
+        }
     }
 }
