@@ -5,8 +5,8 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com/";
-    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
+    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com/";
+//    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
 
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_CDP_TYPE   = "cdpTypeFromPush";
@@ -25,28 +25,10 @@ public class JandiConstants {
     public static final int TYPE_CHANNEL        = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_GROUP  = 0x02;
-    public static final int TYPE_TITLE_JOINED_CHANNEL   = 0x10;
-    public static final int TYPE_TITLE_UNJOINED_CHANNEL = 0x11;
-    public static final int TYPE_TITLE_DIRECT_MESSAGE   = 0x12;
-    public static final int TYPE_TITLE_PRIVATE_GROUP    = 0x13;
 
     public static final int TYPE_UPLOAD_GALLERY     = 0x00;
     public static final int TYPE_UPLOAD_EXPLORER    = 0x01;
     public static final int TYPE_FILE_DETAIL_REFRESH    = 0x02;
-
-    public static final String TYPE_CHANNEL_STRING          = "channel";
-    public static final String TYPE_DIRECT_MESSAGE_STRING   = "user";
-    public static final String TYPE_PRIVATE_GROUP_STRING    = "parivateGroup";
-
-    // Search 관련
-    public static final int TYPE_SEARCH_MODE_ALL        = 0x00;
-    public static final int TYPE_SEARCH_MODE_IMAGES     = 0x01;
-    public static final int TYPE_SEARCH_MODE_PDF        = 0x02;
-    public static final int TYPE_SEARCH_MODE_USER       = 0x0F;
-    public static final int TYPE_SEARCH_USER_ALL        = 0x10;
-    public static final int TYPE_SEARCH_USER_SPECIFIC   = 0x11;
-
-
 
     // ERROR
     public static final int BAD_REQUEST     = 400;

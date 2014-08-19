@@ -97,7 +97,7 @@ public class EntityManager {
         this.mMe = resLeftSideMenu.user;
 
         // Joined Channel 혹은 PrivateGroup 리스트 정리
-        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntity) {
+        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntities) {
             if (entity instanceof ResLeftSideMenu.Channel) {
                 ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
                 log.debug("Joined channel : " + channel.name
@@ -267,5 +267,16 @@ public class EntityManager {
             }
         }
         return null;
+    }
+
+    private void patchMessageMarker(List<ResLeftSideMenu.MessageMarker> markers) {
+        for (ResLeftSideMenu.MessageMarker marker : markers) {
+            if (marker.alarmCount > 0) {
+                FormattedEntity entity = getEntityById(marker.entityId);
+                if (entity != null) {
+                    entity.alarmCount = marker.alarmCount;
+                }
+            }
+        }
     }
 }

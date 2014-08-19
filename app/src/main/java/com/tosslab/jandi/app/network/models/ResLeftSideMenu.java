@@ -17,12 +17,19 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResLeftSideMenu {
+    public Team team;
     public User user;
     public int entityCount;
     public List<Entity> entities;
     public int joinEntityCount;
-    public List<Entity> joinEntity;
+    public List<Entity> joinEntities;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    static public class Team {
+        public int id;
+        public String name;
+        public int t_defaultChannelId;
+    }
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     @JsonTypeInfo(
@@ -52,6 +59,7 @@ public class ResLeftSideMenu {
         public String u_photoUrl;
         public String u_firstName;
         public String u_lastName;
+        public List<MessageMarker> u_messageMarkers;
     }
 
     static public class PrivateGroup extends Entity {
@@ -60,4 +68,10 @@ public class ResLeftSideMenu {
         public List<Integer> pg_members;
     }
 
+    static public class MessageMarker {
+        public String entityType;
+        public int entityId;
+        public int lastLinkId;
+        public int alarmCount;
+    }
 }

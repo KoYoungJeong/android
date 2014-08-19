@@ -26,6 +26,10 @@ public class FormattedEntity {
     public boolean isJoined;                        // if type is channel
     public boolean isSelectedToBeJoined = false;    // if type is user
 
+    // MessageMarker
+    public int lastLinkId;
+    public int alarmCount;
+
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
         this.entity = channel;
