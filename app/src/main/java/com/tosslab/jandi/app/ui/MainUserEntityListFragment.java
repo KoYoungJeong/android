@@ -7,6 +7,7 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
@@ -65,7 +66,7 @@ public class MainUserEntityListFragment extends BaseFragment {
     }
 
     @ItemClick
-    void main_list_usersItemClicked(final ResLeftSideMenu.User user) {
+    void main_list_usersItemClicked(final FormattedEntity user) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -76,8 +77,8 @@ public class MainUserEntityListFragment extends BaseFragment {
 
                     MessageListActivity_.intent(mContext)
                             .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                            .entityId(user.id)
-                            .entityName(user.name)
+                            .entityId(user.getEntity().id)
+                            .entityName(user.getEntity().name)
                             .isMyEntity(false)
                             .start();
 

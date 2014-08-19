@@ -343,7 +343,7 @@ public class MessageListActivity extends BaseActivity {
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
             mIsFirstMessage = restResMessages.isFirst;
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            mFirstItemId = restResMessages.firstIdOfReceviedList;
+            mFirstItemId = restResMessages.firstIdOfReceivedList;
 
             log.debug("getMessagesInBackground : " + restResMessages.messageCount
                     + " messages from " + mFirstItemId);
@@ -406,7 +406,7 @@ public class MessageListActivity extends BaseActivity {
                 // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
                 mIsFirstMessage = restResMessages.isFirst;
                 // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-                mFirstItemId = restResMessages.firstIdOfReceviedList;
+                mFirstItemId = restResMessages.firstIdOfReceivedList;
 
                 log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
                         + " messages from " + mFirstItemId);
@@ -415,7 +415,6 @@ public class MessageListActivity extends BaseActivity {
                 log.error("GetFutherMessagesTask : FAILED", e);
                 return getString(R.string.err_get_messages_failed);
             }
-
         }
 
         @Override

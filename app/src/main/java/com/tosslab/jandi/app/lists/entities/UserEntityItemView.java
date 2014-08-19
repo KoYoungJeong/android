@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 
@@ -29,19 +30,27 @@ public class UserEntityItemView extends LinearLayout {
     TextView textViewUserName;
     @ViewById(R.id.main_list_entities_user_nick_text)
     TextView textViewUserNick;
+    @ViewById(R.id.main_list_entities_user_badge)
+    TextView textViewUserBadge;
 
     public UserEntityItemView(Context context) {
         super(context);
         mContext = context;
     }
 
-    public void bind(ResLeftSideMenu.User user) {
+    public void bind(FormattedEntity user) {
         Picasso.with(mContext)
-                .load(JandiConstants.SERVICE_ROOT_URL + user.u_photoUrl)
+                .load(user.getUserProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .into(imageViewUserProfile);
-        textViewUserName.setText(user.u_lastName + " " + user.u_firstName);
-        textViewUserNick.setText(user.name);
+        textViewUserName.setText(user.getUserName());
+        textViewUserNick.setText(user.getUser().name);
+        if (user.alarmCount > 0) {
+            textViewUserBadge.setVisibility(VISIBLE);
+            textViewUserBadge.setText(user.alarmCount + "");
+        } else {
+            textViewUserBadge.setVisibility(GONE);
+        }
     }
 }

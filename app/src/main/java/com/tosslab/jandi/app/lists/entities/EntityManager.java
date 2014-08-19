@@ -15,7 +15,7 @@ import java.util.List;
 public class EntityManager {
     private final Logger log = Logger.getLogger(EntityManager.class);
 
-    private ResLeftSideMenu.User mMe;
+    private ResLeftSideMenu.User mMe;   // with MessageMarker
     private List<FormattedEntity> mJoinedChannels;
     private List<FormattedEntity> mUnJoinedChannels;
     private List<FormattedEntity> mUsers;
@@ -30,35 +30,35 @@ public class EntityManager {
         arrangeEntities(resLeftSideMenu);
     }
 
-    public List<FormattedEntity> getFormattedChannels() {
-        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
-        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_JOINED_CHANNEL));
-        formattedEntities.addAll(mJoinedChannels);
-        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL));
-        formattedEntities.addAll(mUnJoinedChannels);
-        return formattedEntities;
-    }
+    private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
+        this.mMe = resLeftSideMenu.user;
+        // Joined Channel 혹은 PrivateGroup 리스트 정리
+        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntities) {
+            if (entity instanceof ResLeftSideMenu.Channel) {
+                ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
+                log.debug("Joined channel : " + channel.name
+                        + ", owned by " + channel.ch_creatorId
+                        + ", id : " + channel.id);
 
-    public List<FormattedEntity> getFormattedPrivateGroups() {
-        return mPrivateGroups;
-    }
-
-    public List<ResLeftSideMenu.User> getUsers() {
-        List<ResLeftSideMenu.User> users = new ArrayList<ResLeftSideMenu.User>();
-        for (FormattedEntity userEntity : mUsers) {
-            users.add(userEntity.getUser());
-        }
-        return users;
-    }
-
-    public List<ResLeftSideMenu.User> getUsersWithoutMe() {
-        ArrayList<ResLeftSideMenu.User> usersWithoutMe = new ArrayList<ResLeftSideMenu.User>();
-        for (FormattedEntity user : mUsers) {
-            if (user.getUser().id != mMe.id) {
-                usersWithoutMe.add(user.getUser());
+                addInJoinedChannels(channel);
+            } else if (entity instanceof ResLeftSideMenu.PrivateGroup) {
+                ResLeftSideMenu.PrivateGroup privateGroup = (ResLeftSideMenu.PrivateGroup) entity;
+                mPrivateGroups.add(new FormattedEntity(privateGroup, mMe.u_messageMarkers));
+            } else {
+                // TODO : Error 처리
             }
         }
-        return  usersWithoutMe;
+
+        // Unjoined channel 혹은 User 리스트 정리
+        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
+            if (entity instanceof ResLeftSideMenu.Channel) {
+                addInUnjoinedChannels((ResLeftSideMenu.Channel) entity);
+            } else if (entity instanceof ResLeftSideMenu.User) {
+                mUsers.add(new FormattedEntity((ResLeftSideMenu.User) entity, mMe.u_messageMarkers));
+            } else {
+                // TODO : Error 처리
+            }
+        }
     }
 
     private int searchDuplicatedChannelPosition(List<FormattedEntity> targets, int channelId) {
@@ -82,47 +82,47 @@ public class EntityManager {
     private void addInJoinedChannels(ResLeftSideMenu.Channel channel) {
         // 만약 Unjoined 채널 부분에 이 항목이 존재한다면 그 항목을 삭제한다.
         removeDuplicatedEntityInUnjoinedChannels(channel);
-        mJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.JOINED));
+        mJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.JOINED, mMe.u_messageMarkers));
     }
 
     private void addInUnjoinedChannels(ResLeftSideMenu.Channel channel) {
         // 만약 Join 된 채널에 이 항목이 존재한다면 추가하지 않는다.
         int position = searchDuplicatedChannelPosition(mJoinedChannels, channel.id);
         if (position == -1) {
-            mUnJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.UNJOINED));
+            mUnJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.UNJOINED, mMe.u_messageMarkers));
         }
     }
 
-    private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
-        this.mMe = resLeftSideMenu.user;
 
-        // Joined Channel 혹은 PrivateGroup 리스트 정리
-        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntities) {
-            if (entity instanceof ResLeftSideMenu.Channel) {
-                ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
-                log.debug("Joined channel : " + channel.name
-                        + ", owned by " + channel.ch_creatorId
-                        + ", id : " + channel.id);
+    /************************************************************
+     * Getter
+     ************************************************************/
 
-                addInJoinedChannels(channel);
-            } else if (entity instanceof ResLeftSideMenu.PrivateGroup) {
-                ResLeftSideMenu.PrivateGroup privateGroup = (ResLeftSideMenu.PrivateGroup) entity;
-                mPrivateGroups.add(new FormattedEntity(privateGroup));
-            } else {
-                // TODO : Error 처리
+    public List<FormattedEntity> getFormattedChannels() {
+        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
+        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_JOINED_CHANNEL));
+        formattedEntities.addAll(mJoinedChannels);
+        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL));
+        formattedEntities.addAll(mUnJoinedChannels);
+        return formattedEntities;
+    }
+
+    public List<FormattedEntity> getFormattedPrivateGroups() {
+        return mPrivateGroups;
+    }
+
+    public List<FormattedEntity> getUsers() {
+        return mUsers;
+    }
+
+    public List<FormattedEntity> getUsersWithoutMe() {
+        ArrayList<FormattedEntity> usersWithoutMe = new ArrayList<FormattedEntity>();
+        for (FormattedEntity user : mUsers) {
+            if (user.getUser().id != mMe.id) {
+                usersWithoutMe.add(user);
             }
         }
-
-        // Unjoined channel 혹은 User 리스트 정리
-        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
-            if (entity instanceof ResLeftSideMenu.Channel) {
-                addInUnjoinedChannels((ResLeftSideMenu.Channel) entity);
-            } else if (entity instanceof ResLeftSideMenu.User) {
-                mUsers.add(new FormattedEntity((ResLeftSideMenu.User) entity));
-            } else {
-                // TODO : Error 처리
-            }
-        }
+        return  usersWithoutMe;
     }
 
     public FormattedEntity getMe() {
@@ -267,16 +267,5 @@ public class EntityManager {
             }
         }
         return null;
-    }
-
-    private void patchMessageMarker(List<ResLeftSideMenu.MessageMarker> markers) {
-        for (ResLeftSideMenu.MessageMarker marker : markers) {
-            if (marker.alarmCount > 0) {
-                FormattedEntity entity = getEntityById(marker.entityId);
-                if (entity != null) {
-                    entity.alarmCount = marker.alarmCount;
-                }
-            }
-        }
     }
 }

@@ -40,6 +40,9 @@ public class EntityItemView extends LinearLayout {
     @ViewById(R.id.main_list_entities_cnt_joined_users_text)
     TextView textViewCntJoinedUsers;
 
+    @ViewById(R.id.main_list_entities_badge)
+    TextView textViewBadge;
+
     public EntityItemView(Context context) {
         super(context);
     }
@@ -54,6 +57,10 @@ public class EntityItemView extends LinearLayout {
                 linearLayoutReal.setVisibility(VISIBLE);
                 textViewChannelName.setText(channel.name);
                 textViewCntJoinedUsers.setText(channel.ch_members.size() + " Users");
+                if (formattedEntity.alarmCount > 0) {
+                    textViewBadge.setVisibility(VISIBLE);
+                    textViewBadge.setText(formattedEntity.alarmCount + "");
+                }
                 if (!formattedEntity.isJoined) {
                     viewBlindForUnjoined.setVisibility(VISIBLE);
                 }
@@ -65,6 +72,10 @@ public class EntityItemView extends LinearLayout {
                 imageViewEntityIcon.setImageResource(R.drawable.jandi_icon_privategroup);
                 textViewChannelName.setText(privateGroup.name);
                 textViewCntJoinedUsers.setText(privateGroup.pg_members.size() + " Users");
+                if (formattedEntity.alarmCount > 0) {
+                    textViewBadge.setVisibility(VISIBLE);
+                    textViewBadge.setText(formattedEntity.alarmCount + "");
+                }
                 return;
             case FormattedEntity.TYPE_TITLE_JOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
@@ -83,5 +94,6 @@ public class EntityItemView extends LinearLayout {
         linearLayoutChannelTitle.setVisibility(GONE);
         linearLayoutChannelSecondTitle.setVisibility(GONE);
         viewBlindForUnjoined.setVisibility(GONE);
+        textViewBadge.setVisibility(GONE);
     }
 }

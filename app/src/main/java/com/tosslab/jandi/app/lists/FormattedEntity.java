@@ -27,17 +27,19 @@ public class FormattedEntity {
     public boolean isSelectedToBeJoined = false;    // if type is user
 
     // MessageMarker
-    public int lastLinkId;
-    public int alarmCount;
+    public int lastLinkId = -1;
+    public int alarmCount = 0;
 
 
-    public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
+    public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined, List<ResLeftSideMenu.MessageMarker> markers) {
+        patchMessageMarker(channel, markers);
         this.entity = channel;
         this.isJoined = isJoined;
         this.type = TYPE_REAL_CHANNEL;
     }
 
-    public FormattedEntity(ResLeftSideMenu.PrivateGroup privateGroup) {
+    public FormattedEntity(ResLeftSideMenu.PrivateGroup privateGroup, List<ResLeftSideMenu.MessageMarker> markers) {
+        patchMessageMarker(privateGroup, markers);
         this.entity = privateGroup;
         this.type = TYPE_REAL_PRIVATE_GROUP;
     }
@@ -47,9 +49,24 @@ public class FormattedEntity {
         this.type = TYPE_REAL_USER;
     }
 
+    public FormattedEntity(ResLeftSideMenu.User user, List<ResLeftSideMenu.MessageMarker> markers) {
+        patchMessageMarker(user, markers);
+        this.entity = user;
+        this.type = TYPE_REAL_USER;
+    }
+
     public FormattedEntity(int type) {
         this.isJoined = JOINED;   // NO MATTER
         this.type = type;
+    }
+
+    private void patchMessageMarker(ResLeftSideMenu.Entity entity, List<ResLeftSideMenu.MessageMarker> markers) {
+        for (ResLeftSideMenu.MessageMarker marker : markers) {
+            if (entity.id == marker.entityId) {
+                alarmCount = marker.alarmCount;
+                lastLinkId = marker.lastLinkId;
+            }
+        }
     }
 
     public boolean isChannel() {

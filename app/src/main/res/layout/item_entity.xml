@@ -66,6 +66,18 @@
                 android:textSize="14sp"
                 android:textColor="#666666"
                 android:text="0 users"/>
+            <TextView
+                android:id="@+id/main_list_entities_badge"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="16dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:background="@android:color/holo_red_light"
+                android:textColor="@color/jandi_text_white"
+                android:textSize="12dp"
+                android:text="00"/>
         </RelativeLayout>
     </LinearLayout>
     <View

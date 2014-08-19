@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.androidannotations.annotations.AfterInject;
@@ -19,17 +20,17 @@ import java.util.List;
  */
 @EBean
 public class UserEntityItemListAdapter extends BaseAdapter {
-    private List<ResLeftSideMenu.User> mUsers;
+    private List<FormattedEntity> mUsers;
 
     @RootContext
     Context mContext;
 
     @AfterInject
     void initAdapter() {
-        mUsers = new ArrayList<ResLeftSideMenu.User>();
+        mUsers = new ArrayList<FormattedEntity>();
     }
 
-    public void retrieveList(List<ResLeftSideMenu.User> users) {
+    public void retrieveList(List<FormattedEntity> users) {
         mUsers.clear();
         mUsers.addAll(users);
         notifyDataSetChanged();
@@ -41,7 +42,7 @@ public class UserEntityItemListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ResLeftSideMenu.User getItem(int position) {
+    public FormattedEntity getItem(int position) {
         return mUsers.get(position);
     }
 

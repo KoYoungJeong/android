@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 
@@ -20,11 +21,11 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 15..
  */
 public class UserEntitySimpleListAdapter extends BaseAdapter {
-    private List<ResLeftSideMenu.User> mUserList;
+    private List<FormattedEntity> mUserList;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public UserEntitySimpleListAdapter(Context context, List<ResLeftSideMenu.User> userList) {
+    public UserEntitySimpleListAdapter(Context context, List<FormattedEntity> userList) {
         this.mUserList = userList;
         this.mLayoutInflater = LayoutInflater.from(context);
         this.mContext = context;
@@ -36,7 +37,7 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public FormattedEntity getItem(int i) {
         return mUserList.get(i);
     }
 
@@ -58,7 +59,7 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ResLeftSideMenu.User user = (ResLeftSideMenu.User)getItem(i);
+        ResLeftSideMenu.User user = getItem(i).getUser();
 
         // 프로필 사진
         Picasso.with(this.mContext)

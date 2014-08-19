@@ -15,23 +15,24 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResMessages {
+    public int lastLinkId;
     public int numOfPage;
-    public int firstIdOfReceviedList;
+    public int firstIdOfReceivedList;
     public boolean isFirst;
     public int messageCount;
     public List<Link> messages;
-    public Date responseTime;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
         public int id;
+        public int teamId;
         public ResLeftSideMenu.Entity fromEntity;
         public Date time;
         public int messageId;
         public String status;
         public int feedbackId;
-        public int teamId;
+        public Info info;
         public OriginalMessage feedback;
         public OriginalMessage message;
     }
@@ -48,6 +49,11 @@ public class ResMessages {
         public String u_photoUrl;
         public String u_firstName;
         public String u_lastName;
+    }
+
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    public static class Info {
+        public String eventType;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -398,8 +398,9 @@ public class MainTabActivity extends BaseActivity {
         // TODO : List를 User가 아닌 FormattedUser로 바꾸면 addHeader가 아니라 List에서
         // TODO : Everyone 용으로 0번째 item을 추가할 수 있음. 그럼 아래 note 로 적힌 인덱스가 밀리는 현상 해결됨.
         // TODO : 뭐가 더 나은지는 모르겠네잉
-        final List<ResLeftSideMenu.User> teamMember = mEntityManager.getUsers();
-        final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(this, teamMember);
+
+        final List<FormattedEntity> teamMember = mEntityManager.getUsers();
+        final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(this, mEntityManager.getUsers());
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -413,7 +414,7 @@ public class MainTabActivity extends BaseActivity {
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else {
-                    ResLeftSideMenu.User owner = teamMember.get(i - 1);
+                    ResLeftSideMenu.User owner = teamMember.get(i - 1).getUser();
                     log.debug(owner.id + " is selected");
                     mCurrentUserNameCategorizingAccodingBy = owner.name;
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
