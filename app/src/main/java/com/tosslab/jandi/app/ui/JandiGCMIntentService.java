@@ -54,6 +54,9 @@ public class JandiGCMIntentService extends IntentService {
                 int cdpId = Integer.parseInt(strCdpId);
                 int cdpType = convertCdpTypeFromString(extras.getString("toEntityType", ""));
 
+                // Update count of badge
+                updateBadge(1);
+
                 // Post notification of received message.
                 sendNotification(lastMessage, cdpType, cdpId);
                 log.info("Received: " + extras.toString());
@@ -75,6 +78,18 @@ public class JandiGCMIntentService extends IntentService {
         }
     }
 
+    private void updateBadge(int badgeCount) {
+        if (badgeCount >= 0) {
+            Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+            // 패키지 네임과 클래스 네임 설정
+            intent.putExtra("badge_count_package_name", getApplication().getPackageName());
+            intent.putExtra("badge_count_class_name", "com.tosslab.jandi.app.ui.MainTabActivity");
+            // 업데이트 카운트
+            intent.putExtra("badge_count", badgeCount);
+            sendBroadcast(intent);
+        }
+    }
+
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
@@ -87,8 +102,12 @@ public class JandiGCMIntentService extends IntentService {
             intent.putExtra(JandiConstants.EXTRA_CDP_ID, cdpId);
             intent.putExtra(JandiConstants.EXTRA_CDP_TYPE, cdpType);
         }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext()
                 , 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
         String notificationTitle = "Push from ";
         switch (cdpType) {
@@ -105,16 +124,19 @@ public class JandiGCMIntentService extends IntentService {
                 break;
         }
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.jandi_actionb_logo)
-                        .setTicker(msg)
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setAutoCancel(true)
-                        .setContentTitle(notificationTitle)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                        .setContentText(msg);
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        bigTextStyle.setBigContentTitle(notificationTitle);
+        bigTextStyle.bigText(msg);
 
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setContentTitle(notificationTitle);
+        mBuilder.setContentText(msg);
+        mBuilder.setStyle(bigTextStyle);
+        mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
+//        mBuilder.setNumber(3);
+
+        // 텍스트 또는 이미지가 첨부되어있는 푸시일 경우 아래 코드를 써주면 Notification이 펼쳐진 상태로 나오게 됩니다.
+        mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
         mBuilder.setContentIntent(contentIntent);
         nm.notify(NOTIFICATION_ID, mBuilder.build());
     }

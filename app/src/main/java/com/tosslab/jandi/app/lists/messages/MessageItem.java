@@ -78,7 +78,7 @@ public class MessageItem {
 
 
     public String getUserNickName() {
-        return mWriter.u_firstName + " " + mWriter.u_lastName;
+        return mWriter.u_lastName + " " + mWriter.u_firstName;
     }
 
     public int getUserId() {

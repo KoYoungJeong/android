@@ -19,6 +19,8 @@
         <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
         <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
     </style>
 
 
