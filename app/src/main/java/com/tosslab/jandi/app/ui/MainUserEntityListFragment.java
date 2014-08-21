@@ -67,6 +67,10 @@ public class MainUserEntityListFragment extends BaseFragment {
 
     @ItemClick
     void main_list_usersItemClicked(final FormattedEntity user) {
+        // 알람 카운트가 있던 아이템이면 이를 0으로 바꾼다.
+        user.alarmCount = 0;
+        mUserListAdapter.notifyDataSetChanged();
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override

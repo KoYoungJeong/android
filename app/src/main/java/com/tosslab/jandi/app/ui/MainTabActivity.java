@@ -1,9 +1,12 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.picasso.Picasso;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizingAsFileType;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
@@ -163,6 +167,11 @@ public class MainTabActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        // Push가 MainTabActivity를 보고 있을 때
+        // 발생한다면 알람 카운트 갱신을 위한 BR 등록
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(JandiConstants.PUSH_REFRESH_ACTION);
+        registerReceiver(mRefreshEntities, intentFilter);
         // Entity의 리스트를 획득하여 저장한다.
         getEntities();
     }
@@ -170,6 +179,7 @@ public class MainTabActivity extends BaseActivity {
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
+        unregisterReceiver(mRefreshEntities);
         super.onPause();
     }
 
@@ -440,4 +450,15 @@ public class MainTabActivity extends BaseActivity {
         imageView.setImageResource(R.drawable.jandi_profile);
         return headerView;
     }
+
+    /**
+     * JandiGCMBroadcastReceiver로부터 Push가 들어왔다는 event가 MainTabActivity를 보고 있을 때
+     * 발생한다면 알람 카운트 갱신을 위해 다시 받아온다.
+     */
+    private BroadcastReceiver mRefreshEntities = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getEntities();
+        }
+    };
 }

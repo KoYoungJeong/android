@@ -157,6 +157,10 @@ public class MainEntityListFragment extends BaseFragment {
      */
     @ItemClick
     void main_list_entitiesItemClicked(final FormattedEntity formattedEntity) {
+        // 알람 카운트가 있던 아이템이면 이를 0으로 바꾼다.
+        formattedEntity.alarmCount = 0;
+        mEntityListAdapter.notifyDataSetChanged();
+
         if (formattedEntity.isChannel()) {
             if (formattedEntity.isJoined) {
                 ResLeftSideMenu.Channel channel = formattedEntity.getChannel();

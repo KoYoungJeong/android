@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
 
@@ -21,9 +22,6 @@ import org.apache.log4j.Logger;
 public class JandiGCMIntentService extends IntentService {
     private final Logger log = Logger.getLogger(JandiGCMIntentService.class);
     static final String TAG = "JandiCGMIntentService";
-
-    public static final int NOTIFICATION_ID = 100;
-    NotificationCompat.Builder builder;
 
     public JandiGCMIntentService() {
         super(TAG);
@@ -50,13 +48,17 @@ public class JandiGCMIntentService extends IntentService {
                 sendNotification("Deleted messages on server: " + extras.toString(), -1, -1);
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 String lastMessage = extras.getString("lastMessage");
-                String strCdpId = extras.getString("toEntityId");
-                int cdpId = Integer.parseInt(strCdpId);
+
                 int cdpType = convertCdpTypeFromString(extras.getString("toEntityType", ""));
+                String strCdpId = (cdpType == JandiConstants.TYPE_DIRECT_MESSAGE)
+                        ? extras.getString("fromEntityId")
+                        : extras.getString("toEntityId");
+                int cdpId = Integer.parseInt(strCdpId);
 
                 // Update count of badge
                 updateBadge(1);
 
+                JandiPreference.setEntityId(getApplicationContext(), cdpId);
                 // Post notification of received message.
                 sendNotification(lastMessage, cdpType, cdpId);
                 log.info("Received: " + extras.toString());
@@ -138,6 +140,6 @@ public class JandiGCMIntentService extends IntentService {
         // 텍스트 또는 이미지가 첨부되어있는 푸시일 경우 아래 코드를 써주면 Notification이 펼쳐진 상태로 나오게 됩니다.
         mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
         mBuilder.setContentIntent(contentIntent);
-        nm.notify(NOTIFICATION_ID, mBuilder.build());
+        nm.notify(JandiConstants.NOTIFICATION_ID, mBuilder.build());
     }
 }

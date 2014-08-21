@@ -8,6 +8,9 @@ import android.content.pm.PackageManager;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.utils.JandiPreference;
+
 /**
  * Created by justinygchoi on 2014. 7. 9..
  */
@@ -19,7 +22,14 @@ public class JandiGCMBroadcastReceiver extends WakefulBroadcastReceiver {
                 JandiGCMIntentService.class.getName());
         // Start the service, keeping the device awake while it is launching.
         startWakefulService(context, (intent.setComponent(comp)));
+        sendRefreshEntities(context);
         setResultCode(Activity.RESULT_OK);
+    }
+
+    private void sendRefreshEntities(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(JandiConstants.PUSH_REFRESH_ACTION);
+        context.sendBroadcast(intent);
     }
 
     /**

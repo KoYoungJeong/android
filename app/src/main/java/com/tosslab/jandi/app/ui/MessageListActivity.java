@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -191,9 +192,16 @@ public class MessageListActivity extends BaseActivity {
                 } else {
                     actualListView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
                 }
-
             }
         });
+
+        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
+        int entityId = JandiPreference.getEntityId(this);
+        if (entityId == this.entityId) {
+            NotificationManager notificationManager;
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
 
         getMessages();
     }
@@ -209,6 +217,7 @@ public class MessageListActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().registerSticky(this);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
         resumeUpdateTimer();
     }
 
@@ -217,6 +226,7 @@ public class MessageListActivity extends BaseActivity {
         pauseUpdateTimer();
         setMarker();
         EventBus.getDefault().unregister(this);
+        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
         super.onPause();
     }
 

@@ -8,6 +8,8 @@ public class JandiConstants {
     public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
 //    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
 
+    public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
+
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_CDP_TYPE   = "cdpTypeFromPush";
     public static final String EXTRA_CDP_ID     = "cdpIdFromPush";
@@ -16,7 +18,9 @@ public class JandiConstants {
     public static final String PREF_NAME        = "JandiPref";
     public static final String PREF_TOKEN       = "token";
     public static final String PREF_LOGIN_ID    = "loginId";
+    public static final String PREF_PUSH_ENTITY = "pushEntity";
 
+    // GCM
     public static final String PREF_NAME_GCM    = "JandiGcm";
     public static final String SENDER_ID        = "558811220581";
     public static final String PREF_REG_ID      = "registrationId";
@@ -30,6 +34,7 @@ public class JandiConstants {
     public static final int TYPE_UPLOAD_EXPLORER    = 0x01;
     public static final int TYPE_FILE_DETAIL_REFRESH    = 0x02;
 
+    public static final int NOTIFICATION_ID = 100;
     // ERROR
     public static final int BAD_REQUEST     = 400;
 }

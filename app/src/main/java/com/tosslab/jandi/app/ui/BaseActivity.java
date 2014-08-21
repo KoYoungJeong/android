@@ -9,17 +9,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class BaseActivity extends Activity {
-    @Override
-    public void onResume() {
-        super.onResume();
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
-    }
-
-    @Override
-    public void onPause() {
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
-        super.onPause();
-    }
 
     protected void returnToLoginActivity() {
         JandiPreference.clearMyToken(this);
