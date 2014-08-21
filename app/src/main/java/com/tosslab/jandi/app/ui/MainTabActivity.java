@@ -49,6 +49,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -259,7 +260,7 @@ public class MainTabActivity extends BaseActivity {
      */
     @UiThread
     public void getEntities() {
-        mProgressWheel.show();
+//        mProgressWheel.show();
         getEntitiesInBackground();
     }
 
@@ -278,9 +279,10 @@ public class MainTabActivity extends BaseActivity {
     @UiThread
     public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
         log.debug("getEntitiesDone");
-        mProgressWheel.dismiss();
+//        mProgressWheel.dismiss();
         if (isOk) {
             mEntityManager = new EntityManager(resLeftSideMenu);
+
             isReadyToRetrieveEntityList = true;
             showDrawerUserProfile();
             postAllEvents();

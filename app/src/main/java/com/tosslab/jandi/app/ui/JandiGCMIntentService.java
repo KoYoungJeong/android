@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -95,14 +94,15 @@ public class JandiGCMIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg, int cdpType, int cdpId) {
+    private void sendNotification(String msg, int entityType, int entityId) {
         NotificationManager nm =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent intent = new Intent(getApplicationContext(), MainTabActivity_.class);
-        if (cdpType >= 0 && cdpId >= 0) {
-            intent.putExtra(JandiConstants.EXTRA_CDP_ID, cdpId);
-            intent.putExtra(JandiConstants.EXTRA_CDP_TYPE, cdpType);
+        Intent intent = new Intent(getApplicationContext(), MessageListActivity_.class);
+        if (entityType >= 0 && entityId >= 0) {
+            intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, entityId);
+            intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, entityType);
+            intent.putExtra(JandiConstants.EXTRA_IS_FROM_PUSH, true);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -111,28 +111,17 @@ public class JandiGCMIntentService extends IntentService {
                 , 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 
-        String notificationTitle = "Push from ";
-        switch (cdpType) {
-            case JandiConstants.TYPE_CHANNEL:
-                notificationTitle += "Channel";
-                break;
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                notificationTitle += "Direct Message";
-                break;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
-                notificationTitle += "Private Group";
-                break;
-            default:
-                break;
-        }
+        // msg 에서 제목으로 쓸 부분 [ ] 을 추출하여 나눈다.
+        String title = msg.substring(msg.indexOf("[") + 1, msg.indexOf("]"));
+        String body = msg.substring(msg.indexOf("]") + 1);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-        bigTextStyle.setBigContentTitle(notificationTitle);
-        bigTextStyle.bigText(msg);
+        bigTextStyle.setBigContentTitle(title);
+        bigTextStyle.bigText(body);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle(notificationTitle);
-        mBuilder.setContentText(msg);
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(body);
         mBuilder.setStyle(bigTextStyle);
         mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
 //        mBuilder.setNumber(3);

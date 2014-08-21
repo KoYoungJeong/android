@@ -235,14 +235,10 @@ public class EntityManager {
 
     public boolean isMyEntity(int entityId) {
         FormattedEntity searchedEntity = searchChannelById(entityId);
-        if (searchedEntity != null && searchedEntity.getChannel().ch_creatorId == mMe.id) {
-            return true;
+        if (searchedEntity != null) {
+            return searchedEntity.isMine(mMe.id);
         }
 
-        FormattedEntity searchedPrivateGroup = searchPrivateGroupById(entityId);
-        if (searchedPrivateGroup != null && searchedPrivateGroup.getPrivateGroup().pg_creatorId == mMe.id) {
-            return true;
-        }
         return false;
     }
 

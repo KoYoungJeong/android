@@ -11,8 +11,9 @@ public class JandiConstants {
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
     // Push로 부터 넘어온 MainActivity의 Extra
-    public static final String EXTRA_CDP_TYPE   = "cdpTypeFromPush";
-    public static final String EXTRA_CDP_ID     = "cdpIdFromPush";
+    public static final String EXTRA_ENTITY_TYPE    = "entityType";
+    public static final String EXTRA_ENTITY_ID      = "entityId";
+    public static final String EXTRA_IS_FROM_PUSH   = "isFromPush";
 
     // SharedPreference Key 값
     public static final String PREF_NAME        = "JandiPref";

@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,6 +56,7 @@ import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -91,6 +93,8 @@ public class MessageListActivity extends BaseActivity {
 
     @Extra
     boolean isMyEntity;
+    @Extra
+    boolean isFromPush = false;
     @Extra
     int entityType;
     @Extra
@@ -238,6 +242,16 @@ public class MessageListActivity extends BaseActivity {
     }
 
     @Override
+    public void finish() {
+        if (isFromPush) {
+            // TODO Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
+            super.finish();
+        } else {
+            super.finish();
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
             // DON'T SHOW OPTION MENU
@@ -319,6 +333,12 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     public void getMessages() {
+        pauseUpdateTimer();
+
+        // 만약 push로부터 실행되었다면 Entity List도 받아옴.
+        if (mEntityManager == null) {
+            getEntitiesInBackground();
+        }
         mIsFirstMessage = false;
         pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
 
@@ -326,9 +346,45 @@ public class MessageListActivity extends BaseActivity {
         mMessageItemConverter.clear();
         messageItemListAdapter.clearAdapter();
 
-        pauseUpdateTimer();
         mProgressWheel.show();
         getMessagesInBackground(entityType, entityId);
+    }
+
+    @Background
+    public void getEntitiesInBackground() {
+        try {
+            tossRestClient.setHeader("Authorization", mMyToken);
+            ResLeftSideMenu resLeftSideMenu = tossRestClient.getInfosForSideMenu();
+            getEntitiesDone(true, resLeftSideMenu, null);
+        } catch (Exception e) {
+            // TODO 에러 상황 나누기
+            Log.e("HI", "Get Fail", e);
+            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+        }
+    }
+
+    @UiThread
+    public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
+        if (isOk) {
+            mEntityManager = new EntityManager(resLeftSideMenu);
+            FormattedEntity entity = mEntityManager.getEntityById(entityId);
+            if (entity == null) {
+                // TODO 현재 Entity 획득 실패. 이런 Activity로 돌아간다.
+                ColoredToast.showError(mContext, "유효하지 않은 방입니다");
+                returnToLoginActivity();
+                return;
+            }
+            entityType = entity.type;
+            entityName = (entity.isUser()) ? entity.getUserName() : entity.toString();
+            isMyEntity = mEntityManager.isMyEntity(entityId);
+
+            getActionBar().setTitle(entityName);
+
+            getMessages();
+        } else {
+            ColoredToast.showError(mContext, errMessage);
+            returnToLoginActivity();
+        }
     }
 
     @Background
@@ -337,8 +393,6 @@ public class MessageListActivity extends BaseActivity {
                 tossRestClient, mMyToken, type, id);
         try {
             ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
-            mMessageItemConverter.insertMessageItem(restResMessages);
-            messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
 
             if (mFirstItemId == -1) {
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
@@ -355,10 +409,10 @@ public class MessageListActivity extends BaseActivity {
 
             log.debug("getMessagesInBackground : " + restResMessages.messageCount
                     + " messages from " + mFirstItemId);
-            getMessagesDone(true, null);
+            getMessagesSucceed(restResMessages);
         } catch (RestClientException e) {
             log.error("getMessagesInBackground : FAILED", e);
-            getMessagesDone(false, getString(R.string.err_get_messages_failed));
+            getMessagesFailed(getString(R.string.err_get_messages_failed));
         }
     }
 
@@ -371,20 +425,24 @@ public class MessageListActivity extends BaseActivity {
     }
 
     @UiThread
-    public void getMessagesDone(boolean isOk, String message) {
+    public void getMessagesSucceed(ResMessages resMessages) {
         mProgressWheel.dismiss();
-        resumeUpdateTimer();
-        if (isOk) {
-            if (mIsFirstMessage) {
-                // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
-                pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
-            }
-            refreshListAdapter();
-            goToBottomOfListView();
-        } else {
-            ColoredToast.showError(mContext, message);
+        if (mIsFirstMessage) {
+            // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
+            pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
         }
+        mMessageItemConverter.insertMessageItem(resMessages);
+        messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
+        refreshListAdapter();
+        goToBottomOfListView();
 
+        resumeUpdateTimer();
+    }
+
+    @UiThread
+    public void getMessagesFailed(String errMessage) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(mContext, errMessage);
     }
 
     void refreshListAdapter() {

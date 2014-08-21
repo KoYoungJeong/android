@@ -11,8 +11,8 @@ import java.util.List;
 public class FormattedEntity {
     // 채널 일 경우
     public static final int TYPE_REAL_CHANNEL           = 0;
-    public static final int TYPE_REAL_PRIVATE_GROUP     = 1;
-    public static final int TYPE_REAL_USER              = 3;
+    public static final int TYPE_REAL_USER              = 1;
+    public static final int TYPE_REAL_PRIVATE_GROUP     = 2;
 
     public static final int TYPE_TITLE_JOINED_CHANNEL   = 4;
     public static final int TYPE_TITLE_UNJOINED_CHANNEL = 5;
@@ -136,6 +136,16 @@ public class FormattedEntity {
             }
         }
         return false;
+    }
+
+    public boolean isMine(int myId) {
+        if (this.type == TYPE_REAL_CHANNEL) {
+            return (getChannel().ch_creatorId == myId) ? true : false;
+        } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
+            return (getPrivateGroup().pg_creatorId == myId) ? true : false;
+        } else {
+            return false;
+        }
     }
 
     @Override
