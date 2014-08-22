@@ -94,13 +94,15 @@ public class MessageListActivity extends BaseActivity {
     @Extra
     boolean isMyEntity;
     @Extra
-    boolean isFromPush = false;
-    @Extra
     int entityType;
     @Extra
     int entityId;
     @Extra
     String entityName;
+
+    @Extra
+    boolean isFromPush = false;
+    boolean willBeFinishedFromPush = false;
 
     @RestService
     TossRestClient tossRestClient;
@@ -207,6 +209,7 @@ public class MessageListActivity extends BaseActivity {
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
         }
 
+        willBeFinishedFromPush = isFromPush;
         getMessages();
     }
 
@@ -243,8 +246,13 @@ public class MessageListActivity extends BaseActivity {
 
     @Override
     public void finish() {
-        if (isFromPush) {
-            // TODO Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
+        if (willBeFinishedFromPush) {
+            // Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
+            MainTabActivity_.intent(this)
+                    .flags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .start();
             super.finish();
         } else {
             super.finish();
@@ -335,9 +343,11 @@ public class MessageListActivity extends BaseActivity {
     public void getMessages() {
         pauseUpdateTimer();
 
-        // 만약 push로부터 실행되었다면 Entity List도 받아옴.
-        if (mEntityManager == null) {
+        // 만약 push로부터 실행되었다면 Entity List를 우선 받는다.
+        if (isFromPush) {
+            isFromPush = false;
             getEntitiesInBackground();
+            return;
         }
         mIsFirstMessage = false;
         pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
@@ -376,6 +386,7 @@ public class MessageListActivity extends BaseActivity {
             }
             entityType = entity.type;
             entityName = (entity.isUser()) ? entity.getUserName() : entity.toString();
+            log.debug("entity name from push : " + entityName);
             isMyEntity = mEntityManager.isMyEntity(entityId);
 
             getActionBar().setTitle(entityName);

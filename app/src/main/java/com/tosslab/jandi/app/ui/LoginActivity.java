@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.R;
@@ -86,9 +87,9 @@ public class LoginActivity extends Activity {
     @UiThread
     public void moveToMainActivity() {
         mProgressWheel.dismiss();
+
         // Preference 저장 - Token
         JandiPreference.setMyToken(this, myToken);
-
         // MainActivity 이동
         MainTabActivity_.intent(this).start();
 

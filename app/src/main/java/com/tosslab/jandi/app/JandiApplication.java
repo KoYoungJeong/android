@@ -8,6 +8,7 @@ import com.koushikdutta.async.http.AsyncSSLEngineConfigurator;
 import com.koushikdutta.async.http.socketio.ErrorCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;

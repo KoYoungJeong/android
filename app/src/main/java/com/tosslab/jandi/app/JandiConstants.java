@@ -5,10 +5,12 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:3000/";
-    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
-//    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
+//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
+    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
 
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
+
+    public static final String MIXPANEL_TOKEN   = "081e1e9730e547f43bdbf59be36a4e31";
 
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_ENTITY_TYPE    = "entityType";

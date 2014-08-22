@@ -28,6 +28,7 @@ public class ResLeftSideMenu {
     static public class Team {
         public int id;
         public String name;
+        public String t_domain;
         public int t_defaultChannelId;
     }
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -34,10 +34,11 @@ import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveChannelList;
 import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
+import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
+import com.tosslab.jandi.app.network.AnalyticsClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
@@ -49,7 +50,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -157,6 +157,7 @@ public class MainTabActivity extends BaseActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+        MixpanelAPI.getInstance(this, JandiConstants.MIXPANEL_TOKEN);
     }
 
     public void setActionBar() {
@@ -282,7 +283,7 @@ public class MainTabActivity extends BaseActivity {
 //        mProgressWheel.dismiss();
         if (isOk) {
             mEntityManager = new EntityManager(resLeftSideMenu);
-
+            trackingSingInByMixpanel(mEntityManager);
             isReadyToRetrieveEntityList = true;
             showDrawerUserProfile();
             postAllEvents();
@@ -291,6 +292,8 @@ public class MainTabActivity extends BaseActivity {
             returnToLoginActivity();
         }
     }
+
+
 
     private void postAllEvents() {
         postShowChannelListEvent();

@@ -15,6 +15,7 @@ import java.util.List;
 public class EntityManager {
     private final Logger log = Logger.getLogger(EntityManager.class);
 
+    private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
     private List<FormattedEntity> mJoinedChannels;
     private List<FormattedEntity> mUnJoinedChannels;
@@ -27,11 +28,12 @@ public class EntityManager {
         mUsers = new ArrayList<FormattedEntity>();
         mPrivateGroups = new ArrayList<FormattedEntity>();
 
+        this.mMyTeam = resLeftSideMenu.team;
+        this.mMe = resLeftSideMenu.user;
         arrangeEntities(resLeftSideMenu);
     }
 
     private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
-        this.mMe = resLeftSideMenu.user;
         // Joined Channel 혹은 PrivateGroup 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntities) {
             if (entity instanceof ResLeftSideMenu.Channel) {
@@ -129,6 +131,9 @@ public class EntityManager {
         return new FormattedEntity(mMe);
     }
 
+    public String getDistictId() {
+        return mMyTeam.t_domain + "@" + mMe.u_email;
+    }
     //
 //    public List<CdpItem> retrieveAllEntities() {
 //        ArrayList<CdpItem> cdpItems = new ArrayList<CdpItem>();

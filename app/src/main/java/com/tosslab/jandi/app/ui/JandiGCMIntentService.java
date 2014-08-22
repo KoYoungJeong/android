@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -113,7 +114,7 @@ public class JandiGCMIntentService extends IntentService {
 
         // msg 에서 제목으로 쓸 부분 [ ] 을 추출하여 나눈다.
         String title = msg.substring(msg.indexOf("[") + 1, msg.indexOf("]"));
-        String body = msg.substring(msg.indexOf("]") + 1);
+        String body = msg.substring(msg.indexOf("]") + 2);
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
@@ -123,6 +124,7 @@ public class JandiGCMIntentService extends IntentService {
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(body);
         mBuilder.setStyle(bigTextStyle);
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
 //        mBuilder.setNumber(3);
 
