@@ -22,7 +22,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -38,7 +37,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
-import com.tosslab.jandi.app.network.AnalyticsClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
@@ -157,7 +155,7 @@ public class MainTabActivity extends BaseActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        MixpanelAPI.getInstance(this, JandiConstants.MIXPANEL_TOKEN);
+
     }
 
     public void setActionBar() {
@@ -261,7 +259,6 @@ public class MainTabActivity extends BaseActivity {
      */
     @UiThread
     public void getEntities() {
-//        mProgressWheel.show();
         getEntitiesInBackground();
     }
 
@@ -280,10 +277,9 @@ public class MainTabActivity extends BaseActivity {
     @UiThread
     public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
         log.debug("getEntitiesDone");
-//        mProgressWheel.dismiss();
         if (isOk) {
             mEntityManager = new EntityManager(resLeftSideMenu);
-            trackingSingInByMixpanel(mEntityManager);
+            trackSigningIn(mEntityManager);
             isReadyToRetrieveEntityList = true;
             showDrawerUserProfile();
             postAllEvents();
@@ -292,8 +288,6 @@ public class MainTabActivity extends BaseActivity {
             returnToLoginActivity();
         }
     }
-
-
 
     private void postAllEvents() {
         postShowChannelListEvent();

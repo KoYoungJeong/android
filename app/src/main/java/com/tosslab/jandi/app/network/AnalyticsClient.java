@@ -5,6 +5,10 @@ import android.content.Context;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
 
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
+
 /**
  * Created by justinygchoi on 2014. 8. 22..
  */

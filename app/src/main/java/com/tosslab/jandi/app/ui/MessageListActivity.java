@@ -390,6 +390,7 @@ public class MessageListActivity extends BaseActivity {
             isMyEntity = mEntityManager.isMyEntity(entityId);
 
             getActionBar().setTitle(entityName);
+            trackSigningInFromPush(mEntityManager);
 
             getMessages();
         } else {

@@ -18,7 +18,7 @@ public class BaseActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        mAnalyticsClient = new AnalyticsClient(BaseActivity.this);
+        mAnalyticsClient = new AnalyticsClient(this);
     }
 
     protected void returnToLoginActivity() {
@@ -28,16 +28,22 @@ public class BaseActivity extends Activity {
         startActivity(intent);
     }
 
-    protected void trackingSingInByMixpanel(EntityManager entityManager) {
+    protected void trackSigningIn(EntityManager entityManager) {
         if (entityManager != null && !mDoneAnalizeTrackingSignIn) {
-//            mAnalyticsClient.trackForSingIn(entityManager.getDistictId());
+            mAnalyticsClient.trackForSingIn(entityManager.getDistictId());
             mDoneAnalizeTrackingSignIn = true;
+        }
+    }
+
+    protected void trackSigningInFromPush(EntityManager entityManager) {
+        if (entityManager != null) {
+            mAnalyticsClient.trackForSingIn(entityManager.getDistictId());
         }
     }
 
     @Override
     protected void onDestroy() {
-//        mAnalyticsClient.flush();
+        mAnalyticsClient.flush();
         super.onDestroy();
     }
 }
