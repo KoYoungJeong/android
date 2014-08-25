@@ -1,16 +1,14 @@
 package com.tosslab.jandi.app.events;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-
-import java.util.List;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class RetrieveChannelList {
-    public List<FormattedEntity> channels;
+    public EntityManager entityManager;
 
-    public RetrieveChannelList(List<FormattedEntity> channels) {
-        this.channels = channels;
+    public RetrieveChannelList(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 }

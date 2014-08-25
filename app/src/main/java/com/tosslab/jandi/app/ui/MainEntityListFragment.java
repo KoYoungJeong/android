@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
+import com.tosslab.jandi.app.network.AnalyticsClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -41,6 +41,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 
@@ -59,18 +60,17 @@ public class MainEntityListFragment extends BaseFragment {
     ListView mListViewEntities;
     @Bean
     EntityItemListAdapter mEntityListAdapter;
-
     @RestService
     TossRestClient mTossRestClient;
 
     private ProgressWheel mProgressWheel;
     private String mMyToken;
     private Context mContext;
+    private EntityManager mEntityManager;
 
     @AfterViews
     void bindAdapter() {
         setHasOptionsMenu(true);
-
         mContext = getActivity();
 
         // myToken 획득
@@ -138,13 +138,17 @@ public class MainEntityListFragment extends BaseFragment {
      * @param event
      */
     public void onEvent(RetrieveChannelList event) {
-        if (entityType == JandiConstants.TYPE_CHANNEL)
-            mEntityListAdapter.retrieveList(event.channels);
+        if (entityType == JandiConstants.TYPE_CHANNEL) {
+            mEntityManager = event.entityManager;
+            mEntityListAdapter.retrieveList(event.entityManager.getFormattedChannels());
+        }
     }
 
     public void onEvent(RetrievePrivateGroupList event) {
-        if (entityType == JandiConstants.TYPE_PRIVATE_GROUP)
-            mEntityListAdapter.retrieveList(event.privateGroups);
+        if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+            mEntityManager = event.entityManager;
+            mEntityListAdapter.retrieveList(event.entityManager.getFormattedPrivateGroups());
+        }
     }
 
     /************************************************************
@@ -185,26 +189,12 @@ public class MainEntityListFragment extends BaseFragment {
     }
 
     private void moveToChannelMessageActivity(int channelId, String channelName) {
-        Activity activity = getActivity();
-        if (activity instanceof MainTabActivity_) {
-            EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
-            moveToMessageActivity(
-                    channelId,
-                    channelName,
-                    JandiConstants.TYPE_CHANNEL,
-                    entityManager.isMyEntity(channelId));
-        }
+        moveToMessageActivity(channelId, channelName, JandiConstants.TYPE_CHANNEL,
+                mEntityManager.isMyEntity(channelId));
     }
     private void moveToPrivateGroupMessageActivity(int privateGroupId, String privateGroupName) {
-        Activity activity = getActivity();
-        if (activity instanceof MainTabActivity_) {
-            EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
-            moveToMessageActivity(
-                    privateGroupId,
-                    privateGroupName,
-                    JandiConstants.TYPE_PRIVATE_GROUP,
-                    entityManager.isMyEntity(privateGroupId));
-        }
+        moveToMessageActivity(privateGroupId, privateGroupName, JandiConstants.TYPE_PRIVATE_GROUP,
+                mEntityManager.isMyEntity(privateGroupId));
     }
 
     private void moveToMessageActivityAfterCreation(final int channelId,
@@ -219,19 +209,14 @@ public class MainEntityListFragment extends BaseFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Activity activity = getActivity();
-                if (activity instanceof MainTabActivity_) {
-                    MessageListActivity_.intent(mContext)
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .entityType(entityType)
-                            .entityId(entityId)
-                            .entityName(entityName)
-                            .isMyEntity(isMyEntity)
-                            .start();
-
-                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
-                    EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
-                }
+                MessageListActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .entityType(entityType)
+                        .entityId(entityId)
+                        .entityName(entityName)
+                        .isMyEntity(isMyEntity)
+                        .start();
+                EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
             }
         }, 250);
     }
@@ -258,7 +243,7 @@ public class MainEntityListFragment extends BaseFragment {
     public void onEvent(ConfirmCreateEntityEvent event) {
         if (event.cdpType == entityType) {
             ColoredToast.show(mContext, event.inputName + " 을 생성합니다");
-            createCdpInBackground(event.cdpType, event.inputName);
+            createEntityInBackground(event.cdpType, event.inputName);
         }
     }
 
@@ -266,48 +251,55 @@ public class MainEntityListFragment extends BaseFragment {
      * Channel, privateGroup 생성
      */
     @Background
-    void createCdpInBackground(int cdpType, String cdpName) {
+    void createEntityInBackground(int entityType, String entityName) {
         // TODO : Error 처리
-        if (cdpName.length() <= 0) {
+        if (entityName.length() <= 0) {
             return;
         }
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = cdpName;
+        reqCreateCdp.name = entityName;
 
         ResCommon restResId = null;
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
-            if (cdpType == JandiConstants.TYPE_CHANNEL) {
+            if (entityType == JandiConstants.TYPE_CHANNEL) {
                 restResId = mTossRestClient.createChannel(reqCreateCdp);
-            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
+            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
                 restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
             }
 
-            createChannelSucceed(restResId.id, cdpName, cdpType);
+            createEntitySucceed(restResId.id, entityName, entityType);
         } catch (HttpClientErrorException e) {
             // TODO RestClient 에서 JandiException으로 유도하는 랩퍼 클래스 만들기
             log.error("Create Fail", e);
             if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
-                createChannelFailed(R.string.err_duplicated_name_of_cdp);
+                createEntityFailed(R.string.err_duplicated_name_of_cdp);
             } else {
-                createChannelFailed(R.string.err_common_create);
+                createEntityFailed(R.string.err_common_create);
             }
         } catch (RestClientException e) {
             log.error("Create Fail", e);
-            createChannelFailed(R.string.err_common_create);
+            createEntityFailed(R.string.err_common_create);
         } catch (Exception e) {
             log.error("Create Fail", e);
-            createChannelFailed(R.string.err_common_create);
+            createEntityFailed(R.string.err_common_create);
         }
     }
 
     @UiThread
-    public void createChannelSucceed(int channelId, String channelName, int cdpType) {
-        moveToMessageActivityAfterCreation(channelId, channelName, cdpType);
+    public void createEntitySucceed(int entityId, String entityName, int entityType) {
+        try {
+            AnalyticsClient
+                    .getInstance(mContext, mEntityManager.getDistictId())
+                    .trackCreatingEntity((entityType == JandiConstants.TYPE_CHANNEL));
+        } catch (JSONException e) {
+            log.error("CAN NOT MEET", e);
+        }
+        moveToMessageActivityAfterCreation(entityId, entityName, entityType);
     }
 
     @UiThread
-    public void createChannelFailed(int errStringResId) {
+    public void createEntityFailed(int errStringResId) {
         ColoredToast.showError(mContext, getString(errStringResId));
     }
 
@@ -337,6 +329,9 @@ public class MainEntityListFragment extends BaseFragment {
     }
 
     private void joinChannelSucceed(final FormattedEntity channel) {
+        AnalyticsClient
+                .getInstance(mContext, mEntityManager.getDistictId())
+                .trackJoinChannel();
         joinChannelDone(channel, null);
     }
 

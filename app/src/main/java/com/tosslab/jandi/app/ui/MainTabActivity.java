@@ -297,7 +297,7 @@ public class MainTabActivity extends BaseActivity {
 
     private void postShowChannelListEvent() {
         EventBus.getDefault().post(
-                new RetrieveChannelList(mEntityManager.getFormattedChannels())
+                new RetrieveChannelList(mEntityManager)
         );
     }
 
@@ -307,7 +307,7 @@ public class MainTabActivity extends BaseActivity {
 
     private void postShowPrivateGroupListEvent() {
         EventBus.getDefault().post(
-                new RetrievePrivateGroupList(mEntityManager.getFormattedPrivateGroups())
+                new RetrievePrivateGroupList(mEntityManager)
         );
     }
 

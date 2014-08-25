@@ -933,6 +933,7 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     public void leaveEntitySucceed() {
+        trackLeavingEntity(mEntityManager, entityType);
         finish();
     }
 
@@ -986,6 +987,7 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     void modifyEntitySucceed(String changedEntityName) {
+        trackChangingEntityName(mEntityManager, entityType);
         entityName = changedEntityName;
         getActionBar().setTitle(changedEntityName);
     }
@@ -1018,6 +1020,7 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     public void deleteEntitySucceed() {
+        trackDeletingEntity(mEntityManager, entityType);
         finish();
     }
 
@@ -1059,7 +1062,7 @@ public class MessageListActivity extends BaseActivity {
                 for (int item : selectedCdp) {
                     log.debug("CDP ID, " + item + " is Selected");
                 }
-                inviteInBackground(entityType, entityId, selectedCdp);
+                inviteInBackground(selectedCdp);
             }
         });
         dialog.show();
@@ -1067,15 +1070,15 @@ public class MessageListActivity extends BaseActivity {
     }
 
     @Background
-    public void inviteInBackground(int cdpType, int cdpId, List<Integer> invitedUsers) {
+    public void inviteInBackground(List<Integer> invitedUsers) {
         ResCommon res = null;
         try {
             tossRestClient.setHeader("Authorization", mMyToken);
             ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
-            if (cdpType == JandiConstants.TYPE_CHANNEL) {
-                res = tossRestClient.inviteChannel(cdpId, reqInviteUsers);
-            } else if (cdpType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                res = tossRestClient.inviteGroup(cdpId, reqInviteUsers);
+            if (entityType == JandiConstants.TYPE_CHANNEL) {
+                res = tossRestClient.inviteChannel(entityId, reqInviteUsers);
+            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+                res = tossRestClient.inviteGroup(entityId, reqInviteUsers);
             }
             inviteSucceed(invitedUsers.size() + "명의 사용자를 초대했습니다.");
         } catch (RestClientException e) {
@@ -1089,6 +1092,7 @@ public class MessageListActivity extends BaseActivity {
 
     @UiThread
     public void inviteSucceed(String message) {
+        trackInvitingToEntity(mEntityManager, entityType);
         ColoredToast.show(mContext, message);
     }
 

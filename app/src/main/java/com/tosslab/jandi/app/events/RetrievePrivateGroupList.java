@@ -1,16 +1,14 @@
 package com.tosslab.jandi.app.events;
 
-import com.tosslab.jandi.app.lists.FormattedEntity;
-
-import java.util.List;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class RetrievePrivateGroupList {
-    public List<FormattedEntity> privateGroups;
+    public EntityManager entityManager;
 
-    public RetrievePrivateGroupList(List<FormattedEntity> channels) {
-        this.privateGroups = channels;
+    public RetrievePrivateGroupList(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 }
