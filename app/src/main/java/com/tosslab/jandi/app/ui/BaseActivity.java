@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.AnalyticsClient;
@@ -80,6 +81,18 @@ public class BaseActivity extends Activity {
             mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
                 mAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_CHANNEL);
+            } catch (JSONException e) {
+                log.error("CANNOT MEET", e);
+            }
+        }
+    }
+
+    protected void trackUploadingFile(EntityManager entityManager,
+                                      int entityType, JsonObject fileInfo) {
+        if (entityManager != null) {
+            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            try {
+                mAnalyticsClient.trackUploadingFile(entityType, fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }

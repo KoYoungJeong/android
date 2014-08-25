@@ -860,6 +860,7 @@ public class MessageListActivity extends BaseActivity {
     void uploadFileDone(Exception exception, JsonObject result) {
         if (exception == null) {
             log.debug(result);
+            trackUploadingFile(mEntityManager, entityType, result);
             ColoredToast.show(mContext, getString(R.string.upload_file_succeed));
         } else {
             log.error("uploadFileDone: FAILED", exception);
