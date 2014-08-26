@@ -7,13 +7,12 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
 import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.entities.UserEntityItemListAdapter;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -35,7 +34,7 @@ public class MainUserEntityListFragment extends BaseFragment {
     @ViewById(R.id.main_list_users)
     ListView mListViewUsers;
     @Bean
-    UserEntityItemListAdapter mUserListAdapter;
+    EntityItemListAdapter mUserListAdapter;
 
     private Context mContext;
 

@@ -3,15 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/jandi_entities_bg"
     tools:context=".MainUserListFragment" >
     <ListView
         android:id="@+id/main_list_users"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
+        android:background="@color/white"
+        android:divider="@color/jandi_entities_divider"
+        android:dividerHeight="1dp"
         android:scrollbars="none"
         />
 </LinearLayout>

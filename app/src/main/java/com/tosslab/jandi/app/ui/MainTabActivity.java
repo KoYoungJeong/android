@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -74,6 +75,7 @@ public class MainTabActivity extends BaseActivity {
     @ViewById(R.id.drawer_user_name)
     TextView textViewUserName;
 
+    private int mCurrentTabIndex = 0;
     private String mMyToken;
     private ProgressWheel mProgressWheel;
     private Context mContext;
@@ -107,6 +109,9 @@ public class MainTabActivity extends BaseActivity {
         final ActionBar actionBar = getActionBar();
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -116,10 +121,12 @@ public class MainTabActivity extends BaseActivity {
                 R.string.drawer_close) {
 
             public void onDrawerClosed(View view) {
+                setActionBarForDrawerClose();
                 super.onDrawerClosed(view);
             }
 
             public void onDrawerOpened(View drawerView) {
+                setActionBarForDrawerOpen();
                 super.onDrawerOpened(drawerView);
             }
         };
@@ -141,6 +148,7 @@ public class MainTabActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                mCurrentTabIndex = position;
                 switch (position) {
                     case 3:
                         setActionBarForFileList();
@@ -161,6 +169,33 @@ public class MainTabActivity extends BaseActivity {
     public void setActionBar() {
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowCustomEnabled(false);
+        actionBar.setTitle("TossLab");
+    }
+
+    public void setActionBarForDrawerOpen() {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setCustomView(R.layout.actionbar_drawer);
+    }
+
+    public void setActionBarForDrawerClose() {
+        switch (mCurrentTabIndex) {
+            case 3:
+                setActionBarForFileList();
+                break;
+            default:
+                setActionBar();
+                break;
+        }
+    }
+
+    private void setActionBarForFileList() {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setCustomView(R.layout.actionbar_file_list_tab);
+        actionBar.setDisplayShowCustomEnabled(true);
+
+        setSpinnerAsCategorizingAccodingByFileType();
+        setSpinnerAsCategorizingAccodingByUser();
     }
 
     @Override
@@ -326,21 +361,12 @@ public class MainTabActivity extends BaseActivity {
     private AlertDialog mFileTypeSelectDialog;
     private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
 
-    private void setActionBarForFileList() {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setCustomView(R.layout.actionbar_file_list_tab);
-        actionBar.setDisplayShowCustomEnabled(true);
-
-        setSpinnerAsCategorizingAccodingByFileType();
-        setSpinnerAsCategorizingAccodingByUser();
-    }
-
     private void setSpinnerAsCategorizingAccodingByFileType() {
         LinearLayout categoryFileType = (LinearLayout) findViewById(R.id.actionbar_file_list_type);
         final TextView textViewFileType = (TextView) findViewById(R.id.actionbar_file_list_type_text);
         textViewFileType.setText(
                 (mCurrentFileTypeCategorizingAccodingBy == null)
-                        ? "All"
+                        ? "모든 파일"
                         : mCurrentFileTypeCategorizingAccodingBy
         );
         categoryFileType.setOnClickListener(new View.OnClickListener() {
@@ -356,7 +382,7 @@ public class MainTabActivity extends BaseActivity {
         final TextView textViewUser = (TextView) findViewById(R.id.actionbar_file_list_user_text);
         textViewUser.setText(
                 (mCurrentUserNameCategorizingAccodingBy == null)
-                        ? "Everyone"
+                        ? "모든 팀원"
                         : mCurrentUserNameCategorizingAccodingBy
         );
         categoryUser.setOnClickListener(new View.OnClickListener() {

@@ -4,11 +4,14 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.CircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -23,10 +26,8 @@ public class EntityItemView extends LinearLayout {
 
     @ViewById(R.id.main_list_entitiy_title_layout)
     LinearLayout linearLayoutChannelTitle;
-    @ViewById(R.id.main_list_entity_title_second_layout)
-    LinearLayout linearLayoutChannelSecondTitle;
     @ViewById(R.id.main_list_entities_real_layout)
-    LinearLayout linearLayoutReal;
+    RelativeLayout linearLayoutReal;
 
     @ViewById(R.id.main_list_entities_icon)
     ImageView imageViewEntityIcon;
@@ -43,8 +44,11 @@ public class EntityItemView extends LinearLayout {
     @ViewById(R.id.main_list_entities_badge)
     TextView textViewBadge;
 
+    private Context mContext;
+
     public EntityItemView(Context context) {
         super(context);
+        mContext = context;
     }
 
     public void bind(FormattedEntity formattedEntity) {
@@ -65,6 +69,20 @@ public class EntityItemView extends LinearLayout {
                     viewBlindForUnjoined.setVisibility(VISIBLE);
                 }
                 return;
+            case FormattedEntity.TYPE_REAL_USER:
+                linearLayoutReal.setVisibility(VISIBLE);
+                Picasso.with(mContext)
+                        .load(formattedEntity.getUserProfileUrl())
+                        .placeholder(R.drawable.jandi_profile)
+                        .transform(new CircleTransform())
+                        .into(imageViewEntityIcon);
+                textViewChannelName.setText(formattedEntity.getUserName());
+                textViewCntJoinedUsers.setText(formattedEntity.getUserEmail());
+                if (formattedEntity.alarmCount > 0) {
+                    textViewBadge.setVisibility(VISIBLE);
+                    textViewBadge.setText(formattedEntity.alarmCount + "");
+                }
+                return;
             case FormattedEntity.TYPE_REAL_PRIVATE_GROUP:
                 ResLeftSideMenu.PrivateGroup privateGroup = formattedEntity.getPrivateGroup();
                 if (privateGroup == null) return;
@@ -79,12 +97,11 @@ public class EntityItemView extends LinearLayout {
                 return;
             case FormattedEntity.TYPE_TITLE_JOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
-                textViewChannelTypeTitle.setText("가입된 채널");
+                textViewChannelTypeTitle.setText("참여한 채널");
                 return;
             case FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
-                linearLayoutChannelSecondTitle.setVisibility(VISIBLE);
-                textViewChannelTypeTitle.setText("미가입 채널");
+                textViewChannelTypeTitle.setText("참여하지 않은 채널");
                 return;
         }
     }
@@ -92,7 +109,6 @@ public class EntityItemView extends LinearLayout {
     private void goneAllLayout() {
         linearLayoutReal.setVisibility(GONE);
         linearLayoutChannelTitle.setVisibility(GONE);
-        linearLayoutChannelSecondTitle.setVisibility(GONE);
         viewBlindForUnjoined.setVisibility(GONE);
         textViewBadge.setVisibility(GONE);
     }

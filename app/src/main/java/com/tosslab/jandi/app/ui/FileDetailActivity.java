@@ -421,7 +421,7 @@ public class FileDetailActivity extends BaseActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.jandi_title_cdp_to_be_unshared);
         dialog.setView(view);
-        final AlertDialog cdpSelectDialog = dialog.show();
+        final AlertDialog entitySelectDialog = dialog.show();
 
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         // 현재 이 파일을 share 하지 않는 CDP를 추출
@@ -432,8 +432,8 @@ public class FileDetailActivity extends BaseActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (cdpSelectDialog != null)
-                    cdpSelectDialog.dismiss();
+                if (entitySelectDialog != null)
+                    entitySelectDialog.dismiss();
                 unshareMessageInBackground(sharedEntities.get(i).getEntity().id);
             }
         });
