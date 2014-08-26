@@ -33,8 +33,8 @@ public class JandiConstants {
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_GROUP  = 0x02;
 
-    public static final int TYPE_UPLOAD_GALLERY     = 0x00;
-    public static final int TYPE_UPLOAD_EXPLORER    = 0x01;
+    public static final int TYPE_UPLOAD_GALLERY         = 0x00;
+    public static final int TYPE_UPLOAD_EXPLORER        = 0x01;
     public static final int TYPE_FILE_DETAIL_REFRESH    = 0x02;
 
     public static final int NOTIFICATION_ID = 100;

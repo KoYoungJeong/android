@@ -109,6 +109,7 @@ public class ResMessages {
         public String type;
         public String serverUrl;
         public String fileUrl;
+        public String ext;
         public int size;
         public ExtraInfo extraInfo;
     }

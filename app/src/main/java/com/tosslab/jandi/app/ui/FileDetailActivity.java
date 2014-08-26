@@ -278,7 +278,6 @@ public class FileDetailActivity extends BaseActivity {
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
                 getActionBar().setTitle(fileMessage.content.name);
-
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
 
@@ -366,7 +365,7 @@ public class FileDetailActivity extends BaseActivity {
         final AlertDialog cdpSelectDialog = dialog.show();
 
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-        // 현재 이 파일을 share 하지 않는 CDP를 추출
+        // 현재 이 파일을 share 하지 않는 entity를 추출
         List<Integer> shareEntities = mResFileDetail.shareEntities;
         final List<FormattedEntity> unSharedEntities = mEntityManager.retrieveExceptGivenEntities(shareEntities);
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, unSharedEntities);
@@ -382,28 +381,32 @@ public class FileDetailActivity extends BaseActivity {
     }
 
     @Background
-    public void shareMessageInBackground(int cdpIdToBeShared) {
+    public void shareMessageInBackground(int entityIdToBeShared) {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, myToken);
         try {
-            messageManipulator.shareMessage(fileId, cdpIdToBeShared);
+            messageManipulator.shareMessage(fileId, entityIdToBeShared);
             log.debug("success to share message");
-            shareMessageDone(true);
+            shareMessageSucceed(entityIdToBeShared);
         } catch (RestClientException e) {
             log.error("fail to send message", e);
-            shareMessageDone(false);
+            shareMessageFailed();
         }
     }
 
     @UiThread
-    public void shareMessageDone(boolean isOk) {
-        if (isOk) {
-            ColoredToast.show(this, "Message has Shared !!");
-            fileDetailCommentListAdapter.clear();
-            getFileDetail();
-        } else {
-            ColoredToast.showError(this, "FAIL Message Sharing !!");
-        }
+    public void shareMessageSucceed(int entityIdToBeShared) {
+        ColoredToast.show(this, "공유되었습니다.");
+        trackSharingFile(mEntityManager,
+                mEntityManager.getEntityById(entityIdToBeShared).type,
+                mResFileDetail);
+        fileDetailCommentListAdapter.clear();
+        getFileDetail();
+    }
+
+    @UiThread
+    public void shareMessageFailed() {
+        ColoredToast.showError(this, "FAIL Message Sharing !!");
     }
 
     /************************************************************
@@ -437,28 +440,32 @@ public class FileDetailActivity extends BaseActivity {
     }
 
     @Background
-    public void unshareMessageInBackground(int cdpIdToBeShared) {
+    public void unshareMessageInBackground(int entityIdToBeUnshared) {
         MessageManipulator messageManipulator = new MessageManipulator(
                 tossRestClient, myToken);
         try {
-            messageManipulator.unshareMessage(fileId, cdpIdToBeShared);
+            messageManipulator.unshareMessage(fileId, entityIdToBeUnshared);
             log.debug("success to unshare message");
-            unshareMessageDone(true);
+            unshareMessageSucceed(entityIdToBeUnshared);
         } catch (RestClientException e) {
             log.error("fail to send message", e);
-            unshareMessageDone(false);
+            unshareMessageFailed();
         }
     }
 
     @UiThread
-    public void unshareMessageDone(boolean isOk) {
-        if (isOk) {
-            ColoredToast.show(this, "공유가 해제되었습니다");
-            fileDetailCommentListAdapter.clear();
-            getFileDetail();
-        } else {
-            ColoredToast.showError(this, "FAIL Message Sharing !!");
-        }
+    public void unshareMessageSucceed(int entityIdToBeUnshared) {
+        ColoredToast.show(this, "공유가 해제되었습니다");
+        trackUnsharingFile(mEntityManager,
+                mEntityManager.getEntityById(entityIdToBeUnshared).type,
+                mResFileDetail);
+        fileDetailCommentListAdapter.clear();
+        getFileDetail();
+    }
+
+    @UiThread
+    public void unshareMessageFailed() {
+        ColoredToast.showError(this, "공유해제 실패");
     }
 
     /************************************************************
@@ -565,6 +572,7 @@ public class FileDetailActivity extends BaseActivity {
     @UiThread
     public void downloadDone(Exception exception, File file, String fileType) {
         if (exception == null) {
+            trackDownloadingFile(mEntityManager, mResFileDetail);
             // Success
             Intent i = new Intent();
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

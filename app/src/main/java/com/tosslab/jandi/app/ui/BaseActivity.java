@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.AnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
@@ -93,6 +94,41 @@ public class BaseActivity extends Activity {
             mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
                 mAnalyticsClient.trackUploadingFile(entityType, fileInfo);
+            } catch (JSONException e) {
+                log.error("CANNOT MEET", e);
+            }
+        }
+    }
+
+    protected void trackDownloadingFile(EntityManager entityManager, ResMessages.FileMessage fileInfo) {
+        if (entityManager != null) {
+            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            try {
+                mAnalyticsClient.trackDownloadFile(fileInfo);
+            } catch (JSONException e) {
+                log.error("CANNOT MEET", e);
+            }
+        }
+    }
+
+    protected void trackSharingFile(EntityManager entityManager,
+                                    int entityType, ResMessages.FileMessage fileInfo) {
+        if (entityManager != null) {
+            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            try {
+                mAnalyticsClient.trackSharingFile(entityType, fileInfo);
+            } catch (JSONException e) {
+                log.error("CANNOT MEET", e);
+            }
+        }
+    }
+
+    protected void trackUnsharingFile(EntityManager entityManager,
+                                    int entityType, ResMessages.FileMessage fileInfo) {
+        if (entityManager != null) {
+            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            try {
+                mAnalyticsClient.trackUnsharingFile(entityType, fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }

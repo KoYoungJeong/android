@@ -10,9 +10,9 @@ import java.util.List;
  */
 public class FormattedEntity {
     // 채널 일 경우
-    public static final int TYPE_REAL_CHANNEL           = 0;
-    public static final int TYPE_REAL_USER              = 1;
-    public static final int TYPE_REAL_PRIVATE_GROUP     = 2;
+    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_CHANNEL;
+    public static final int TYPE_REAL_USER              = JandiConstants.TYPE_DIRECT_MESSAGE;
+    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_PRIVATE_GROUP;
 
     public static final int TYPE_TITLE_JOINED_CHANNEL   = 4;
     public static final int TYPE_TITLE_UNJOINED_CHANNEL = 5;

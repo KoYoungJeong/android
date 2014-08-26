@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -95,6 +96,47 @@ public class AnalyticsClient {
         props.put("mime type", mimeType);
         props.put("size", fileSize);
         mMixpanel.track(PROP_UPLOAD_FILE, props);
+    }
+
+    public void trackDownloadFile(ResMessages.FileMessage downloadFileInfo)
+            throws JSONException {
+        String mimeType = downloadFileInfo.content.type;
+        String extension = downloadFileInfo.content.ext;
+
+        JSONObject props = new JSONObject();
+        props.put("category", getMimeTypeCategory(mimeType));
+        props.put("extension", extension);
+        props.put("mime type", mimeType);
+        props.put("size", downloadFileInfo.content.size);
+        mMixpanel.track(PROP_DOWNLOAD_FILE, props);
+    }
+
+    public void trackSharingFile(int entityType, ResMessages.FileMessage fileInfo)
+            throws JSONException {
+        String mimeType = fileInfo.content.type;
+        String extension = fileInfo.content.ext;
+
+        JSONObject props = new JSONObject();
+        props.put("entity type", convertEntityTypeToString(entityType));
+        props.put("category", getMimeTypeCategory(mimeType));
+        props.put("extension", extension);
+        props.put("mime type", mimeType);
+        props.put("size", fileInfo.content.size);
+        mMixpanel.track(PROP_SHARE_FILE, props);
+    }
+
+    public void trackUnsharingFile(int entityType, ResMessages.FileMessage fileInfo)
+            throws JSONException {
+        String mimeType = fileInfo.content.type;
+        String extension = fileInfo.content.ext;
+
+        JSONObject props = new JSONObject();
+        props.put("entity type", convertEntityTypeToString(entityType));
+        props.put("category", getMimeTypeCategory(mimeType));
+        props.put("extension", extension);
+        props.put("mime type", mimeType);
+        props.put("size", fileInfo.content.size);
+        mMixpanel.track(PROP_UNSHARE_FILE, props);
     }
 
     private String getMimeTypeCategory(String mimeType) {
