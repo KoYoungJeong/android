@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.WindowManager;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
@@ -37,7 +36,7 @@ public class FileUploadTypeDialogFragment extends DialogFragment {
                         dismiss();
                     }
                 })
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(R.string.jandi_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Do Nothing

@@ -5,17 +5,13 @@ import com.tosslab.jandi.app.R;
 /**
  * Created by justinygchoi on 2014. 8. 15..
  */
-public class CategorizingAsFileType {
-    public static final int TYPE_ALL    = 0;
-    public static final int TYPE_IMAGES = 1;
-    public static final int TYPE_PDFS   = 2;
-
-    public static final String[] stringTitleList = {
-            "All",
-            "Images",
-            "PDFs"
+public class CategorizedMenuOfFileType {
+    public static final int[] stringTitleResourceList = {
+            R.string.jandi_file_category_all,
+            R.string.jandi_file_category_image,
+            R.string.jandi_file_category_pdf
     };
-    public static final int[] resourceList = {      // 위에랑 hash map으로 합칠까...
+    public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
             R.drawable.jandi_fl_icon_etc,
             R.drawable.jandi_fl_icon_img,
             R.drawable.jandi_fl_icon_pdf
@@ -30,7 +26,7 @@ public class CategorizingAsFileType {
 
     public int type;
 
-    public CategorizingAsFileType(int type) {
+    public CategorizedMenuOfFileType(int type) {
         this.type = type;
     }
 

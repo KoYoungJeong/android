@@ -7,12 +7,12 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.events.CategorizingAsFileType;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -88,7 +88,7 @@ public class FileListFragment extends BaseFragment {
         super.onPause();
     }
 
-    public void onEvent(CategorizingAsFileType event) {
+    public void onEvent(CategorizedMenuOfFileType event) {
         mSearchMode = event.getServerQuery();
         doSearch();
     }

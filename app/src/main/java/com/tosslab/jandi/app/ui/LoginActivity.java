@@ -210,13 +210,13 @@ public class LoginActivity extends Activity {
                 }
             } catch (IOException ex) {
                 log.error("Error :" + ex.getMessage());
-                registerGcmDone(false, null, "Push 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+                registerGcmDone(false, null, getString(R.string.err_push_registration));
                 return;
             }
         } else {
             log.warn("No valid Google Play Services APK found.");
             // TODO : Push 안 됨
-            registerGcmDone(false, null, "Push 서비스를 사용할 수 없는 단말입니다");
+            registerGcmDone(false, null, getString(R.string.err_push_invalid_device));
         }
     }
 
@@ -291,7 +291,7 @@ public class LoginActivity extends Activity {
         } catch (JandiException e) {
             if (e.errCode == 2000) {
                 // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
-                sendRegistrationIdDone(false, "만료된 토큰입니다.");
+                sendRegistrationIdDone(false, getString(R.string.err_expired_token));
             } else if (e.errCode == 4001) {
                 // 4001 은 duplicate token 이기 때문에 무시한다.
                 log.warn("duplicated notification token");

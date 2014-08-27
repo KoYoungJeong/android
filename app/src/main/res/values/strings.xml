@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Jandi</string>
+    <string name="app_name">JANDI</string>
     <string name="action_settings">Settings</string>
-    <string name="confirm">확인</string>
-    <string name="cancel">취소</string>
-    <string name="upload">업로드</string>
-    <string name="share">공유</string>
+    <string name="jandi_confirm">확인</string>
+    <string name="jandi_cancel">취소</string>
+    <string name="jandi_upload">업로드</string>
+    <string name="jandi_share">공유</string>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
     <!-- Login -->
-    <string name="action_login">Log In</string>
-    <string name="user_id">E-mail Address</string>
-    <string name="password">Password</string>
+    <string name="jandi_action_login">로그인</string>
+    <string name="jandi_user_id">이메일 주소</string>
+    <string name="jandi_user_password">비밀번호</string>
     <string name="err_login">로그인이 실패하였습니다</string>
     <string name="err_login_unregistered_id">아직 가입되지 않은 이메일입니다</string>
     <string name="err_login_invalid_id">이메일 주소가 정확하지 않습니다</string>
     <string name="err_login_invalid_passwd">정확한 비밀번호를 입력해주세요</string>
-    <string name="err_login_invalid_info">ID, 비밀번호가 일치하지 않습니다.</string>
+    <string name="err_login_invalid_info">ID, 비밀번호가 일치하지 않습니다</string>
+    <string name="err_expired_token">만료된 토큰입니다</string>
+    <string name="err_expired_session">세션이 만료되었습니다. 다시 로그인 해주세요</string>
+    <!-- Push -->
+    <string name="err_push_registration">Push 등록 중 오류가 발생했습니다. 다시 시도해주세요</string>
+    <string name="err_push_invalid_device">Push 서비스를 사용할 수 없는 단말입니다</string>
+
+    <!-- Manipulate Entity -->
+    <string name="jandi_message_create_entity"> 을 생성하였습니다</string>
+    <string name="jandi_message_join_entity"> 에 참여합니다</string>
+    <string name="jandi_create_channel">채널 생성</string>
+    <string name="jandi_create_privategroup">비밀그룹 생성</string>
+    <string name="jandi_modify_channel">채널 수정</string>
+    <string name="jandi_modify_private_group">비밀그룹 수정</string>
+    <string name="err_entity_create">생성에 실패하였습니다</string>
+    <string name="err_entity_join">해당 채널 참여에 실패하였습니다</string>
+    <string name="err_entity_duplicated_name">동일한 이름이 존재합니다</string>
+
 
     <!-- Main Panel -->
     <string name="message">Message</string>
@@ -35,19 +51,6 @@
     <string name="err_delete_messages_failed">메시지 삭제에 실패했습니다</string>
     <string name="upload_file_succeed">파일 업로드 성공</string>
     <string name="err_upload_file_failed">파일 업로드에 실패했습니다</string>
-
-    <!-- Navigation Drawer -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="create_channel">Channel 생성</string>
-    <string name="create_private_group">Private Group 생성</string>
-    <string name="create_direct_message">Direct Message 생성</string>
-    <string name="modify_channel">Channel 수정</string>
-    <string name="modify_private_group">Private Group 수정</string>
-    <string name="modify_direct_message">Direct Message 수정</string>
-    <string name="jandi_cdp_title_channel">CHANNEL</string>
-    <string name="jandi_cdp_title_direct_message">DIRECT MESSAGE</string>
-    <string name="jandi_cdp_title_private_group">PRIVATE GROUP</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_cdp_edit">이름 수정</string>
@@ -94,12 +97,15 @@
     <string name="title_cdp_invite">초대할 사용자를 선택하세요</string>
 
     <!-- Search -->
+    <string name="jandi_file_category_all">모든 파일</string>
+    <string name="jandi_file_category_image">Images</string>
+    <string name="jandi_file_category_pdf">PDFs</string>
+    <string name="jandi_file_category_everyone">모든 팀원</string>
+    <string name="jandi_file_search_type">검색할 파일 타입을 선택하세요</string>
+    <string name="jandi_file_search_user">검색할 사용자를 선택하세요</string>
+
     <string name="title_activity_search">SearchActivity</string>
-    <string name="title_section_everyone">Everyone</string>
-    <string name="title_section_me">Just me</string>
-    <string name="title_search_user_select">검색할 사용자를 선택하세요</string>
 
     <!-- ERRORS -->
-    <string name="err_common_create">생성에 실패하였습니다.</string>
-    <string name="err_duplicated_name_of_cdp">동일한 이름이 존재합니다.</string>
+
 </resources>

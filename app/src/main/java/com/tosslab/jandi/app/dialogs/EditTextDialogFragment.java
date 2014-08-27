@@ -34,19 +34,27 @@ public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_MODIFY_CDP       = 1;
     public final static int ACTION_MODIFY_MESSAGE   = 2;
 
+    private final static String ARG_ACTION_TYPE    = "actionType";
+    private final static String ARG_ENTITY_TYPE    = "entityType";
+    private final static String ARG_ENTITY_ID      = "entityId";
+    private final static String ARG_CURRENT_MGS    = "currentMessage";
+    private final static String ARG_FEEDBACK_ID    = "feedbackId";
+    private final static String ARG_MESSAGE_TYPE   = "messageType";
+
     /**
      * CDP 생성에 사용되는 Dialog.
      * @param actionType
-     * @param cdpType
-     * @param cdpId
+     * @param entityType
+     * @param entityId
      * @return
      */
-    public static EditTextDialogFragment newInstance(int actionType, int cdpType, int cdpId) {
+    public static EditTextDialogFragment newInstance(int actionType, int entityType,
+                                                     int entityId) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("actionType", actionType);
-        args.putInt("cdpType", cdpType);
-        args.putInt("id", cdpId);
+        args.putInt(ARG_ACTION_TYPE, actionType);
+        args.putInt(ARG_ENTITY_TYPE, entityType);
+        args.putInt(ARG_ENTITY_ID, entityId);
         frag.setArguments(args);
         return frag;
     }
@@ -54,19 +62,19 @@ public class EditTextDialogFragment extends DialogFragment {
     /**
      * CDP 수정에 사용되는 Dialog.
      * @param actionType
-     * @param cdpType
-     * @param cdpId
+     * @param entityType
+     * @param entityId
      * @param currentCdpName
      * @return
      */
-    public static EditTextDialogFragment newInstance(int actionType, int cdpType
-            , int cdpId, String currentCdpName) {
+    public static EditTextDialogFragment newInstance(int actionType, int entityType,
+                                                     int entityId, String currentCdpName) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("actionType", actionType);
-        args.putInt("cdpType", cdpType);
-        args.putInt("id", cdpId);
-        args.putString("currentMessage", currentCdpName);
+        args.putInt(ARG_ACTION_TYPE, actionType);
+        args.putInt(ARG_ENTITY_TYPE, entityType);
+        args.putInt(ARG_ENTITY_ID, entityId);
+        args.putString(ARG_CURRENT_MGS, currentCdpName);
         frag.setArguments(args);
         return frag;
     }
@@ -77,14 +85,15 @@ public class EditTextDialogFragment extends DialogFragment {
      * @param currentMessage
      * @return
      */
-    public static EditTextDialogFragment newInstance(int messageType, int messageId, String currentMessage, int feedbackId) {
+    public static EditTextDialogFragment newInstance(int messageType, int messageId,
+                                                     String currentMessage, int feedbackId) {
         EditTextDialogFragment frag = new EditTextDialogFragment();
         Bundle args = new Bundle();
-        args.putInt("actionType", ACTION_MODIFY_MESSAGE);
-        args.putInt("id", messageId);
-        args.putInt("feedbackId", feedbackId);
-        args.putString("currentMessage", currentMessage);
-        args.putInt("messageType", messageType);
+        args.putInt(ARG_ACTION_TYPE, ACTION_MODIFY_MESSAGE);
+        args.putInt(ARG_ENTITY_ID, messageId);
+        args.putInt(ARG_FEEDBACK_ID, feedbackId);
+        args.putString(ARG_CURRENT_MGS, currentMessage);
+        args.putInt(ARG_MESSAGE_TYPE, messageType);
         frag.setArguments(args);
         return frag;
     }
@@ -97,27 +106,29 @@ public class EditTextDialogFragment extends DialogFragment {
         Dialog me = getDialog();
         me.setCanceledOnTouchOutside(true);
         // 키보드 자동 올리기
-        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final int actionType = getArguments().getInt("actionType");
-        final int cdpType = getArguments().getInt("cdpType");
-        final int id = getArguments().getInt("id");
-        final String currentMessage = getArguments().getString("currentMessage");
-        final int feedbackId = getArguments().getInt("feedbackId", -1);
-        final int messageType = getArguments().getInt("messageType");
+        final int actionType = getArguments().getInt(ARG_ACTION_TYPE);
+        final int entityType = getArguments().getInt(ARG_ENTITY_TYPE);
+        final int entityId = getArguments().getInt(ARG_ENTITY_ID);
+        final String currentMessage = getArguments().getString(ARG_CURRENT_MGS);
+        final int feedbackId = getArguments().getInt(ARG_FEEDBACK_ID, -1);
+        final int messageType = getArguments().getInt(ARG_MESSAGE_TYPE);
 
-        int titleStringId = obtainTitleByPurpose(actionType, cdpType);
+        int titleStringId = obtainTitleByPurpose(actionType, entityType);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_input_text, null);
 
         final EditText inputName = (EditText)mainView.findViewById(R.id.et_dialog_input);
-        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager mgr
+                = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.showSoftInput(inputName, InputMethodManager.SHOW_FORCED);
         // 수정 대화상자의 경우 현재 메시지를 보여준다.
         if (actionType != ACTION_CREATE_CDP) {
@@ -127,28 +138,37 @@ public class EditTextDialogFragment extends DialogFragment {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(titleStringId)
-                .setPositiveButton(R.string.confirm,
+                .setPositiveButton(R.string.jandi_confirm,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 switch (actionType) {
                                     case ACTION_CREATE_CDP:
                                         // CDP 생성의 경우 MainLeftFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(new ConfirmCreateEntityEvent(cdpType
-                                                , inputName.getText().toString()));
+                                        EventBus.getDefault().post(
+                                                new ConfirmCreateEntityEvent(
+                                                        entityType,
+                                                        inputName.getText().toString())
+                                        );
                                         break;
                                     case ACTION_MODIFY_CDP:
                                         // CDP 수정의 경우 MainLeftFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(new ConfirmModifyCdpEvent(cdpType
-                                                , id
-                                                , inputName.getText().toString()));
+                                        EventBus.getDefault().post(
+                                                new ConfirmModifyCdpEvent(
+                                                        entityType,
+                                                        entityId,
+                                                        inputName.getText().toString())
+                                        );
                                         break;
                                     case ACTION_MODIFY_MESSAGE:
                                     default:
                                         // 메시지 수정의 경우 MainMessageListFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(new ConfirmModifyMessageEvent(messageType
-                                                , id
-                                                , inputName.getText().toString()
-                                                , feedbackId));
+                                        EventBus.getDefault().post(
+                                                new ConfirmModifyMessageEvent(
+                                                        messageType,
+                                                        entityId,
+                                                        inputName.getText().toString(),
+                                                        feedbackId)
+                                        );
                                         break;
 
                                 }
@@ -156,7 +176,7 @@ public class EditTextDialogFragment extends DialogFragment {
                             }
                         }
                 )
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(R.string.jandi_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Do Nothing
@@ -170,44 +190,38 @@ public class EditTextDialogFragment extends DialogFragment {
     /**
      * 본 대화상자를 호출한 목적에 따라 대화 상자의 title 을 달리 함.
      * @param actionType
-     * @param cdpType
+     * @param entityType
      * @return
      */
-    int obtainTitleByPurpose(int actionType, int cdpType) {
+    int obtainTitleByPurpose(int actionType, int entityType) {
         switch (actionType) {
             case ACTION_CREATE_CDP:
-                return obtainTitileForCreateCdp(cdpType);
+                return obtainTitileForCreateCdp(entityType);
             case ACTION_MODIFY_CDP:
-                return obtainTitileForModifyCdp(cdpType);
+                return obtainTitileForModifyCdp(entityType);
             case ACTION_MODIFY_MESSAGE:
             default:
                 return R.string.modify_message;
         }
     }
 
-    int obtainTitileForCreateCdp(int cdpType) {
-        switch (cdpType) {
+    int obtainTitileForCreateCdp(int entityType) {
+        switch (entityType) {
             case JandiConstants.TYPE_CHANNEL:
-                return R.string.create_channel;
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                // TODO : Direct Message 에 생성이 필요할까?
-                return R.string.create_direct_message;
+                return R.string.jandi_create_channel;
             case JandiConstants.TYPE_PRIVATE_GROUP:
             default:
-                return R.string.create_private_group;
+                return R.string.jandi_create_privategroup;
         }
     }
 
-    int obtainTitileForModifyCdp(int cdpType) {
-        switch (cdpType) {
+    int obtainTitileForModifyCdp(int entityType) {
+        switch (entityType) {
             case JandiConstants.TYPE_CHANNEL:
-                return R.string.modify_channel;
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                // TODO : Direct Message 에 수정이 필요할까?
-                return R.string.modify_private_group;
+                return R.string.jandi_modify_channel;
             case JandiConstants.TYPE_PRIVATE_GROUP:
             default:
-                return R.string.modify_direct_message;
+                return R.string.jandi_modify_private_group;
         }
 
     }

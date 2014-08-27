@@ -9,26 +9,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.CategorizingAsFileType;
+import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 
 /**
  * Created by justinygchoi on 2014. 8. 15..
  */
 public class FileTypeSimpleListAdapter extends BaseAdapter {
     private LayoutInflater mLayoutInflater;
+    private Context mContext;
 
     public FileTypeSimpleListAdapter(Context context) {
         this.mLayoutInflater = LayoutInflater.from(context);
+        this.mContext = context;
     }
 
     @Override
     public int getCount() {
-        return CategorizingAsFileType.stringTitleList.length;
+        return CategorizedMenuOfFileType.stringTitleResourceList.length;
     }
 
     @Override
     public String getItem(int i) {
-        return CategorizingAsFileType.stringTitleList[i];
+        return mContext.getString(CategorizedMenuOfFileType.stringTitleResourceList[i]);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class FileTypeSimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.imageView.setImageResource(CategorizingAsFileType.resourceList[i]);
+        holder.imageView.setImageResource(CategorizedMenuOfFileType.drawableResourceList[i]);
         holder.textView.setText(getItem(i));
 
         return convertView;

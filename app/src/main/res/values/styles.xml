@@ -14,7 +14,8 @@
     </style>
 
     <style name="PagerSlidingTabStrip">
-        <!--<item name="pstsTabBackground">@color/jandi_tab_background</item>-->
+        <item name="android:background">@color/jandi_tab_background</item>
+        <item name="android:textColor">@color/jandi_tab_text</item>
         <item name="pstsIndicatorColor">@color/jandi_tab_indicator</item>
         <item name="pstsUnderlineColor">@color/jandi_tab_underline</item>
         <item name="pstsIndicatorHeight">5dp</item>

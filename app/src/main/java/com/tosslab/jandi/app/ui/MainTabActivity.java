@@ -13,7 +13,6 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,7 +25,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.CategorizingAsFileType;
+import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
@@ -141,6 +140,7 @@ public class MainTabActivity extends BaseActivity {
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
         tabs.setViewPager(mViewPager);
+
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -169,7 +169,6 @@ public class MainTabActivity extends BaseActivity {
     public void setActionBar() {
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayShowCustomEnabled(false);
-        actionBar.setTitle("TossLab");
     }
 
     public void setActionBarForDrawerOpen() {
@@ -304,8 +303,8 @@ public class MainTabActivity extends BaseActivity {
             ResLeftSideMenu resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
             getEntitiesDone(true, resLeftSideMenu, null);
         } catch (Exception e) {
-            Log.e("HI", "Get Fail", e);
-            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+            log.error("get entity failed", e);
+            getEntitiesDone(false, null, getString(R.string.err_expired_session));
         }
     }
 
@@ -317,6 +316,7 @@ public class MainTabActivity extends BaseActivity {
             trackSigningIn(mEntityManager);
             isReadyToRetrieveEntityList = true;
             showDrawerUserProfile();
+            getActionBar().setTitle(mEntityManager.getTeamName());
             postAllEvents();
         } else {
             ColoredToast.showError(mContext, errMessage);
@@ -366,7 +366,7 @@ public class MainTabActivity extends BaseActivity {
         final TextView textViewFileType = (TextView) findViewById(R.id.actionbar_file_list_type_text);
         textViewFileType.setText(
                 (mCurrentFileTypeCategorizingAccodingBy == null)
-                        ? "모든 파일"
+                        ? getString(R.string.jandi_file_category_all)
                         : mCurrentFileTypeCategorizingAccodingBy
         );
         categoryFileType.setOnClickListener(new View.OnClickListener() {
@@ -382,7 +382,7 @@ public class MainTabActivity extends BaseActivity {
         final TextView textViewUser = (TextView) findViewById(R.id.actionbar_file_list_user_text);
         textViewUser.setText(
                 (mCurrentUserNameCategorizingAccodingBy == null)
-                        ? "모든 팀원"
+                        ? getString(R.string.jandi_file_category_everyone)
                         : mCurrentUserNameCategorizingAccodingBy
         );
         categoryUser.setOnClickListener(new View.OnClickListener() {
@@ -410,12 +410,12 @@ public class MainTabActivity extends BaseActivity {
                     mFileTypeSelectDialog.dismiss();
                 mCurrentFileTypeCategorizingAccodingBy = adapter.getItem(i);
                 textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
-                EventBus.getDefault().post(new CategorizingAsFileType(i));
+                EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
             }
         });
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("검색할 파일 타입을 선택하세요");
+        dialog.setTitle(R.string.jandi_file_search_type);
         dialog.setView(view);
         mFileTypeSelectDialog = dialog.show();
         mFileTypeSelectDialog.setCanceledOnTouchOutside(true);
@@ -445,7 +445,7 @@ public class MainTabActivity extends BaseActivity {
                 // NOTE : index 0 이 Everyone 으로 올라가면서
                 // teamMember[0]은 Adapter[1]과 같다. Adapter[0]은 모든 유저.
                 if (i == 0) {
-                    mCurrentUserNameCategorizingAccodingBy = "Everyone";
+                    mCurrentUserNameCategorizingAccodingBy = getString(R.string.jandi_file_category_everyone);
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else {
@@ -461,7 +461,7 @@ public class MainTabActivity extends BaseActivity {
         lv.setAdapter(adapter);
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.title_search_user_select);
+        dialog.setTitle(R.string.jandi_file_search_user);
         dialog.setView(view);
         mUserSelectDialog = dialog.show();
         mUserSelectDialog.setCanceledOnTouchOutside(true);
@@ -470,7 +470,7 @@ public class MainTabActivity extends BaseActivity {
     private View getHeaderViewAsAllUser() {
         View headerView = getLayoutInflater().inflate(R.layout.item_select_cdp, null, false);
         TextView textView = (TextView) headerView.findViewById(R.id.txt_select_cdp_name);
-        textView.setText("Everyone");
+        textView.setText(R.string.jandi_file_category_everyone);
         ImageView imageView = (ImageView) headerView.findViewById(R.id.img_select_cdp_icon);
         imageView.setImageResource(R.drawable.jandi_profile);
         return headerView;

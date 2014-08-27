@@ -242,7 +242,8 @@ public class MainEntityListFragment extends BaseFragment {
      */
     public void onEvent(ConfirmCreateEntityEvent event) {
         if (event.cdpType == entityType) {
-            ColoredToast.show(mContext, event.inputName + " 을 생성합니다");
+            ColoredToast.show(mContext,
+                    event.inputName + getString(R.string.jandi_message_create_entity));
             createEntityInBackground(event.cdpType, event.inputName);
         }
     }
@@ -273,16 +274,16 @@ public class MainEntityListFragment extends BaseFragment {
             // TODO RestClient 에서 JandiException으로 유도하는 랩퍼 클래스 만들기
             log.error("Create Fail", e);
             if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
-                createEntityFailed(R.string.err_duplicated_name_of_cdp);
+                createEntityFailed(R.string.err_entity_duplicated_name);
             } else {
-                createEntityFailed(R.string.err_common_create);
+                createEntityFailed(R.string.err_entity_create);
             }
         } catch (RestClientException e) {
             log.error("Create Fail", e);
-            createEntityFailed(R.string.err_common_create);
+            createEntityFailed(R.string.err_entity_create);
         } catch (Exception e) {
             log.error("Create Fail", e);
-            createEntityFailed(R.string.err_common_create);
+            createEntityFailed(R.string.err_entity_create);
         }
     }
 
@@ -309,7 +310,8 @@ public class MainEntityListFragment extends BaseFragment {
      ************************************************************/
     @UiThread
     public void joinChannel(final FormattedEntity channel) {
-        ColoredToast.show(mContext, channel.getChannel().name + "에 가입합니다");
+        ColoredToast.show(mContext,
+                channel.getChannel().name + getString(R.string.jandi_message_join_entity));
         joinChannelInBackground(channel);
     }
 
@@ -317,7 +319,7 @@ public class MainEntityListFragment extends BaseFragment {
     public void joinChannelInBackground(final FormattedEntity channel) {
         try {
             mTossRestClient.setHeader("Authorization", mMyToken);
-            ResCommon res = mTossRestClient.joinChannel(channel.getChannel().id);
+            mTossRestClient.joinChannel(channel.getChannel().id);
             joinChannelSucceed(channel);
         } catch (RestClientException e) {
             log.error("fail to join channel", e);
@@ -336,7 +338,7 @@ public class MainEntityListFragment extends BaseFragment {
     }
 
     private void joinChannelFailed() {
-        joinChannelDone(null, "해당 채널 가입에 실패하였습니다.");
+        joinChannelDone(null, getString(R.string.err_entity_join));
     }
 
     @UiThread

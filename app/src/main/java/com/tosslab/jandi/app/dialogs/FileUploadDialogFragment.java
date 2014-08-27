@@ -97,7 +97,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(R.string.title_file_upload)
-                .setPositiveButton(R.string.upload,
+                .setPositiveButton(R.string.jandi_upload,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 EventBus.getDefault().post(
@@ -109,7 +109,7 @@ public class FileUploadDialogFragment extends DialogFragment {
                             }
                         }
                 )
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(R.string.jandi_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Do Nothing
