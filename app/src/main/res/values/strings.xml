@@ -36,8 +36,7 @@
     <string name="err_entity_join">해당 채널 참여에 실패하였습니다</string>
     <string name="err_entity_duplicated_name">동일한 이름이 존재합니다</string>
 
-
-    <!-- Main Panel -->
+    <!-- Message List -->
     <string name="message">Message</string>
     <string name="send_message">send</string>
     <string name="warn_empty_messages">등록된 메시지가 없습니다</string>

@@ -9,12 +9,10 @@ import android.content.SharedPreferences;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.AnalyticsClient;
-import com.tosslab.jandi.app.network.JandiNetworkClient;
+import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -26,7 +24,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
@@ -44,7 +41,8 @@ public class LoginActivity extends Activity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 
     @RestService
-    TossRestClient tossRestClient;
+    TossRestClient mTossRestClient;
+    private JandiAuthClient mJandiAuthClient;
 
     private Context mContext;
     private ProgressWheel mProgressWheel;
@@ -61,6 +59,8 @@ public class LoginActivity extends Activity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
+        // Network Client 설정
+        mJandiAuthClient = new JandiAuthClient(mTossRestClient);
         // 자동 로그인 과정.
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
         // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
@@ -135,15 +135,14 @@ public class LoginActivity extends Activity {
             return;
         }
         try {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
             // 나의 팀 ID 획득
-            ResMyTeam resMyTeam = jandiNetworkClient.getMyTeamId(id);
+            ResMyTeam resMyTeam = mJandiAuthClient.getMyTeamId(id);
             if (resMyTeam.teamList.size() <= 0) {
                 doneLogin(false, null, R.string.err_login_unregistered_id);
                 return;
             }
             // 진짜 로그인
-            ResAuthToken resAuthToken = jandiNetworkClient.login(resMyTeam.teamList.get(0).teamId, id, passwd);
+            ResAuthToken resAuthToken = mJandiAuthClient.login(resMyTeam.teamList.get(0).teamId, id, passwd);
             JandiPreference.setMyId(mContext, id);
             doneLogin(true, resAuthToken, -1);
         } catch (JandiException e) {
@@ -281,10 +280,9 @@ public class LoginActivity extends Activity {
      */
     @Background
     public void sendRegistrationIdInBackground(String regId) {
-        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
-        jandiNetworkClient.setAuthToken(myToken);
+        mJandiAuthClient.setAuthToken(myToken);
         try {
-            jandiNetworkClient.registerNotificationToken(regId);
+            mJandiAuthClient.registerNotificationToken(regId);
             mRegId = regId;
             log.debug("New device token registered, registration ID=" + regId);
             sendRegistrationIdDone(true, null);
@@ -317,10 +315,9 @@ public class LoginActivity extends Activity {
 
     @Background
     public void sendSubscriptionInBackground() {
-        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
-        jandiNetworkClient.setAuthToken(myToken);
+        mJandiAuthClient.setAuthToken(myToken);
         try {
-            jandiNetworkClient.subscribeNotification(mRegId, true);
+            mJandiAuthClient.subscribeNotification(mRegId, true);
             sendSubscriptionDone(true, null);
         } catch (JandiException e) {
             log.error("Register Fail", e);

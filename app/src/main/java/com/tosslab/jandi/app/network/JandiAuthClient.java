@@ -16,10 +16,10 @@ import org.springframework.web.client.HttpStatusCodeException;
  * Created by justinygchoi on 2014. 7. 16..
  * TODO MessageManipulator 와 합쳐지겠지...
  */
-public class JandiNetworkClient {
+public class JandiAuthClient {
     TossRestClient mRestClient;
 
-    public JandiNetworkClient(TossRestClient tossRestClient) {
+    public JandiAuthClient(TossRestClient tossRestClient) {
         mRestClient = tossRestClient;
         mRestClient.setHeader("Accept", "application/vnd.tosslab.jandi-v1+json");
     }

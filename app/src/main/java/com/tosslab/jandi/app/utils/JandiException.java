@@ -11,6 +11,9 @@ import java.util.Map;
  * Created by justinygchoi on 2014. 7. 16..
  */
 public class JandiException extends Exception {
+    // ERROR
+    public static final int BAD_REQUEST     = 400;
+
     private static final String ERR_CODE    = "code";
     private static final String ERR_MSG     = "msg";
 

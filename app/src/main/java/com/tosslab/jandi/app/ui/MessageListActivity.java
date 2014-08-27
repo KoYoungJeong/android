@@ -51,15 +51,14 @@ import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
-import com.tosslab.jandi.app.network.models.ReqCreateCdp;
-import com.tosslab.jandi.app.network.models.ReqInviteUsers;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -92,11 +91,13 @@ public class MessageListActivity extends BaseActivity {
     private final String DIALOG_TAG = "dialog";
 
     @Extra
-    boolean isMyEntity;
-    @Extra
     int entityType;
     @Extra
     int entityId;
+
+    // Except from push
+    @Extra
+    boolean isMyEntity;
     @Extra
     String entityName;
 
@@ -106,6 +107,8 @@ public class MessageListActivity extends BaseActivity {
 
     @RestService
     TossRestClient tossRestClient;
+    private JandiEntityClient mJandiEntityClient;
+    private MessageManipulator mJandiMessageClient;
 
     @ViewById(R.id.list_messages)
     PullToRefreshListView pullToRefreshListViewMessages;
@@ -145,6 +148,8 @@ public class MessageListActivity extends BaseActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
+        mJandiEntityClient = new JandiEntityClient(tossRestClient, mMyToken);
+        mJandiMessageClient = new MessageManipulator(tossRestClient, mMyToken, entityType, entityId);
         mMessageItemConverter = new MessageItemConverter();
 
         //
@@ -152,7 +157,9 @@ public class MessageListActivity extends BaseActivity {
         pullToRefreshListViewMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
             @Override
             public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
-                String label = DateUtils.formatDateTime(mContext, System.currentTimeMillis(),
+                String label = DateUtils.formatDateTime(
+                        mContext,
+                        System.currentTimeMillis(),
                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 
                 // Update the LastUpdatedLabel
@@ -363,8 +370,7 @@ public class MessageListActivity extends BaseActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            tossRestClient.setHeader("Authorization", mMyToken);
-            ResLeftSideMenu resLeftSideMenu = tossRestClient.getInfosForSideMenu();
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesDone(true, resLeftSideMenu, null);
         } catch (Exception e) {
             // TODO 에러 상황 나누기
@@ -401,10 +407,8 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     public void getMessagesInBackground(int type, int id) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mMyToken, type, id);
         try {
-            ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
+            ResMessages restResMessages = mJandiMessageClient.getMessages(mFirstItemId);
 
             if (mFirstItemId == -1) {
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
@@ -475,10 +479,8 @@ public class MessageListActivity extends BaseActivity {
 
         @Override
         protected String doInBackground(Void... voids) {
-            MessageManipulator messageManipulator = new MessageManipulator(
-                    tossRestClient, mMyToken, entityType, entityId);
             try {
-                ResMessages restResMessages = messageManipulator.getMessages(mFirstItemId);
+                ResMessages restResMessages = mJandiMessageClient.getMessages(mFirstItemId);
                 mMessageItemConverter.insertMessageItem(restResMessages);
                 messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
                 // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
@@ -538,11 +540,9 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     public void getUpdateMessagesInBackground(int type, int id, boolean doWithResumingUpdateTimer) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mMyToken, type, id);
         try {
             if (mLastUpdateLinkId >= 0) {
-                ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(mLastUpdateLinkId);
+                ResUpdateMessages resUpdateMessages = mJandiMessageClient.updateMessages(mLastUpdateLinkId);
                 int nMessages = resUpdateMessages.updateInfo.messageCount;
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
@@ -595,10 +595,8 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     public void sendMessageInBackground(String message) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mMyToken, entityType, entityId);
         try {
-            messageManipulator.sendMessage(message);
+            mJandiMessageClient.sendMessage(message);
             log.debug("sendMessageInBackground : succeed");
             sendMessageDone(true, null);
         } catch (RestClientException e) {
@@ -672,17 +670,13 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
-
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mMyToken, entityType, entityId);
-
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 log.debug("modifyMessageInBackground : Try for message");
-                messageManipulator.modifyMessage(messageId, inputMessage);
+                mJandiMessageClient.modifyMessage(messageId, inputMessage);
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 log.debug("modifyMessageInBackground : Try for comment");
-                messageManipulator.modifyMessageComment(messageId, inputMessage, feedbackId);
+                mJandiMessageClient.modifyMessageComment(messageId, inputMessage, feedbackId);
             }
             modifyMessageDone(true, getString(R.string.modify_messages_succeed));
         } catch (RestClientException e) {
@@ -718,14 +712,12 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     void deleteMessageInBackground(int messageType, int messageId, int feedbackId) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, mMyToken, entityType, entityId);
         try {
             if (messageType == MessageItem.TYPE_STRING) {
-                messageManipulator.deleteMessage(messageId);
+                mJandiMessageClient.deleteMessage(messageId);
                 log.debug("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
-                messageManipulator.deleteMessageComment(messageId, feedbackId);
+                mJandiMessageClient.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
         } catch (RestClientException e) {
@@ -916,17 +908,13 @@ public class MessageListActivity extends BaseActivity {
     @Background
     public void leaveEntityInBackground() {
         try {
-            tossRestClient.setHeader("Authorization", mMyToken);
             if (entityType == JandiConstants.TYPE_CHANNEL) {
-                tossRestClient.leaveChannel(entityId);
+                mJandiEntityClient.leaveChannel(entityId);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                tossRestClient.leaveGroup(entityId);
+                mJandiEntityClient.leavePrivateGroup(entityId);
             }
             leaveEntitySucceed();
-        } catch (RestClientException e) {
-            log.error("fail to leave cdp");
-            leaveEntityFailed("탈퇴에 실패했습니다.");
-        } catch (Exception e) {
+        } catch (JandiException e) {
             log.error("fail to leave cdp");
             leaveEntityFailed("탈퇴에 실패했습니다.");
         }
@@ -969,18 +957,14 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     void modifyEntityInBackground(ConfirmModifyCdpEvent event) {
-        ReqCreateCdp channel = new ReqCreateCdp();
-        channel.name = event.inputName;
-
         try {
-            tossRestClient.setHeader("Authorization", mMyToken);
             if (entityType == JandiConstants.TYPE_CHANNEL) {
-                tossRestClient.modifyChannel(channel, entityId);
+                mJandiEntityClient.modifyChannelName(entityId, event.inputName);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                tossRestClient.modifyGroup(channel, entityId);
+                mJandiEntityClient.modifyPrivateGroupName(entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
-        } catch (RestClientException e) {
+        } catch (JandiException e) {
             log.error("modify failed", e);
             modifyEntityFailed("수정 실패");
         }
@@ -1005,28 +989,27 @@ public class MessageListActivity extends BaseActivity {
     @Background
     void deleteEntityInBackground() {
         try {
-            tossRestClient.setHeader("Authorization", mMyToken);
             if (entityType == JandiConstants.TYPE_CHANNEL) {
-                tossRestClient.deleteChannel(entityId);
+                mJandiEntityClient.deleteChannel(entityId);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                tossRestClient.deleteGroup(entityId);
+                mJandiEntityClient.deletePrivateGroup(entityId);
             }
-            log.debug("delete success");
             deleteEntitySucceed();
-        } catch (RestClientException e) {
-            log.error("delete failed");
+        } catch (JandiException e) {
             deleteEntityFailed("삭제에 실패했습니다.");
         }
     }
 
     @UiThread
     public void deleteEntitySucceed() {
+        log.debug("delete success");
         trackDeletingEntity(mEntityManager, entityType);
         finish();
     }
 
     @UiThread
     public void deleteEntityFailed(String errMessage) {
+        log.error("delete failed");
         ColoredToast.showError(mContext, errMessage);
     }
 
@@ -1072,20 +1055,14 @@ public class MessageListActivity extends BaseActivity {
 
     @Background
     public void inviteInBackground(List<Integer> invitedUsers) {
-        ResCommon res = null;
         try {
-            tossRestClient.setHeader("Authorization", mMyToken);
-            ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
             if (entityType == JandiConstants.TYPE_CHANNEL) {
-                res = tossRestClient.inviteChannel(entityId, reqInviteUsers);
+                mJandiEntityClient.inviteChannel(entityId, invitedUsers);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                res = tossRestClient.inviteGroup(entityId, reqInviteUsers);
+                mJandiEntityClient.invitePrivateGroup(entityId, invitedUsers);
             }
             inviteSucceed(invitedUsers.size() + "명의 사용자를 초대했습니다.");
-        } catch (RestClientException e) {
-            log.error("fail to invite cdp");
-            inviteFailed("초대에 실패했습니다.");
-        } catch (Exception e) {
+        } catch (JandiException e) {
             log.error("fail to invite cdp");
             inviteFailed("초대에 실패했습니다.");
         }
@@ -1109,9 +1086,7 @@ public class MessageListActivity extends BaseActivity {
     public void setMarker() {
         try {
             if (mLastUpdateLinkId > 0) {
-                MessageManipulator messageManipulator = new MessageManipulator(
-                        tossRestClient, mMyToken, entityType, entityId);
-                messageManipulator.setMarker(mLastUpdateLinkId);
+                mJandiMessageClient.setMarker(mLastUpdateLinkId);
             }
         } catch (RestClientException e) {
             log.error("set marker failed", e);

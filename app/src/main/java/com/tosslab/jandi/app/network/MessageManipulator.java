@@ -23,10 +23,11 @@ public class MessageManipulator {
     int mEntityType;
     int mEntityId;
 
-    public MessageManipulator(TossRestClient tossRestClient, String token, int cdpType, int cdpId) {
+    public MessageManipulator(TossRestClient tossRestClient, String token,
+                              int entityType, int entityId) {
         mRestClient = tossRestClient;
-        mEntityId = cdpId;
-        mEntityType = cdpType;
+        mEntityId = entityId;
+        mEntityType = entityType;
         mRestClient.setHeader("Authorization", token);
     }
 

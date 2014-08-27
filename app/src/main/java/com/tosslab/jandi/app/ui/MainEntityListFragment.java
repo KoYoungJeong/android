@@ -14,8 +14,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
 import com.tosslab.jandi.app.network.AnalyticsClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.TossRestClient;
-import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -42,8 +43,6 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
 
@@ -62,6 +61,7 @@ public class MainEntityListFragment extends BaseFragment {
     EntityItemListAdapter mEntityListAdapter;
     @RestService
     TossRestClient mTossRestClient;
+    private JandiEntityClient mJandiEntityClient;
 
     private ProgressWheel mProgressWheel;
     private String mMyToken;
@@ -75,6 +75,7 @@ public class MainEntityListFragment extends BaseFragment {
 
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
+        mJandiEntityClient = new JandiEntityClient(mTossRestClient, mMyToken);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(mContext);
@@ -257,33 +258,25 @@ public class MainEntityListFragment extends BaseFragment {
         if (entityName.length() <= 0) {
             return;
         }
-        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = entityName;
 
-        ResCommon restResId = null;
         try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
+            ResCommon restResId = null;
             if (entityType == JandiConstants.TYPE_CHANNEL) {
-                restResId = mTossRestClient.createChannel(reqCreateCdp);
+                restResId = mJandiEntityClient.createChannel(entityName);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                restResId = mTossRestClient.createPrivateGroup(reqCreateCdp);
+                restResId = mJandiEntityClient.createPrivateGroup(entityName);
+            } else {
+                return;
             }
 
             createEntitySucceed(restResId.id, entityName, entityType);
-        } catch (HttpClientErrorException e) {
-            // TODO RestClient 에서 JandiException으로 유도하는 랩퍼 클래스 만들기
+        } catch (JandiException e) {
             log.error("Create Fail", e);
-            if (e.getStatusCode().value() == JandiConstants.BAD_REQUEST) {
+            if (e.httpStatusCode == JandiException.BAD_REQUEST) {
                 createEntityFailed(R.string.err_entity_duplicated_name);
             } else {
                 createEntityFailed(R.string.err_entity_create);
             }
-        } catch (RestClientException e) {
-            log.error("Create Fail", e);
-            createEntityFailed(R.string.err_entity_create);
-        } catch (Exception e) {
-            log.error("Create Fail", e);
-            createEntityFailed(R.string.err_entity_create);
         }
     }
 
@@ -318,13 +311,9 @@ public class MainEntityListFragment extends BaseFragment {
     @Background
     public void joinChannelInBackground(final FormattedEntity channel) {
         try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
-            mTossRestClient.joinChannel(channel.getChannel().id);
+            mJandiEntityClient.joinChannel(channel.getChannel());
             joinChannelSucceed(channel);
-        } catch (RestClientException e) {
-            log.error("fail to join channel", e);
-            joinChannelFailed();
-        } catch (Exception e) {
+        } catch (JandiException e) {
             log.error("fail to join channel", e);
             joinChannelFailed();
         }

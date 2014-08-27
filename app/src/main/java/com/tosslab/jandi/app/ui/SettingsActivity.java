@@ -9,7 +9,7 @@ import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.JandiNetworkClient;
+import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiException;
@@ -74,10 +74,10 @@ public class SettingsActivity extends PreferenceActivity {
         String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
 
         if (!regId.isEmpty()) {
-            JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
-            jandiNetworkClient.setAuthToken(myToken);
+            JandiAuthClient jandiAuthClient = new JandiAuthClient(tossRestClient);
+            jandiAuthClient.setAuthToken(myToken);
             try {
-                jandiNetworkClient.deleteNotificationToken(regId);
+                jandiAuthClient.deleteNotificationToken(regId);
                 log.debug("notification token has been deleted.");
             } catch (JandiException e) {
                 log.error("delete notification token failed");
@@ -102,10 +102,10 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {
-        JandiNetworkClient jandiNetworkClient = new JandiNetworkClient(tossRestClient);
-        jandiNetworkClient.setAuthToken(myToken);
+        JandiAuthClient jandiAuthClient = new JandiAuthClient(tossRestClient);
+        jandiAuthClient.setAuthToken(myToken);
         try {
-            jandiNetworkClient.setNotificationTarget(notificationTarget);
+            jandiAuthClient.setNotificationTarget(notificationTarget);
             log.debug("notification target has been changed : " + notificationTarget);
         } catch (JandiException e) {
             log.error("change notification target failed");

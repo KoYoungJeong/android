@@ -37,10 +37,12 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -80,6 +82,7 @@ public class MainTabActivity extends BaseActivity {
     private Context mContext;
 
     private EntityManager mEntityManager;
+    private JandiEntityClient mJandiEntityClient;
 
     private DrawerLayout mDrawerLayout;
     private LinearLayout mDrawer;
@@ -99,6 +102,8 @@ public class MainTabActivity extends BaseActivity {
 
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
+        // Network Client 설정
+        mJandiEntityClient = new JandiEntityClient(mTossRestClient, mMyToken);
 
         // Drawer
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
@@ -299,10 +304,9 @@ public class MainTabActivity extends BaseActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            mTossRestClient.setHeader("Authorization", mMyToken);
-            ResLeftSideMenu resLeftSideMenu = mTossRestClient.getInfosForSideMenu();
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesDone(true, resLeftSideMenu, null);
-        } catch (Exception e) {
+        } catch (JandiException e) {
             log.error("get entity failed", e);
             getEntitiesDone(false, null, getString(R.string.err_expired_session));
         }
