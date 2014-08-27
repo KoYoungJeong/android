@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -33,6 +35,7 @@ import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveChannelList;
 import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
+import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
@@ -286,7 +289,31 @@ public class MainTabActivity extends BaseActivity {
     @Click(R.id.drawer_action_setting)
     public void closeDrawerAndMoveToSettingActivity() {
         mDrawerLayout.closeDrawer(mDrawer);
-        SettingsActivity_.intent(this).flags(Intent.FLAG_ACTIVITY_CLEAR_TOP).start();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SettingsActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
+        }, 250);
+
+    }
+
+    @Click(R.id.drawer_action_profile)
+    public void closeDrawerAndMoveToProfileActivity() {
+        mDrawerLayout.closeDrawer(mDrawer);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ProfileActivity_.intent(mContext)
+                        .myEntityId(mEntityManager.getMe().getUser().id)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
+        }, 250);
     }
 
     /************************************************************

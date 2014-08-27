@@ -8,6 +8,7 @@
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_main</color>
+
     <!-- Main Tab -->
     <color name="jandi_tab_background">@color/white</color>
     <color name="jandi_tab_text">#1a9b6a</color>
@@ -15,6 +16,7 @@
     <color name="jandi_tab_underline">#e5e5e5</color>
     <color name="jandi_entities_divider">#E5E5E5</color>
     <color name="jandi_entities_bg">#f0f0f0</color>
+
     <!-- Message List -->
     <color name="jandi_messages_date_divider">@color/jandi_main</color>
     <color name="jandi_messages_name">@color/jandi_text</color>
@@ -40,6 +42,9 @@
     <color name="jandi_pannel_normal_text">#FFFFFF</color>
     <color name="jandi_pannel_header_text">#999999</color>
     <color name="jandi_pannel_rm_text">@color/jandi_main</color>
+
+    <!-- profile -->
+    <color name="jandi_profile_bg">#f0f0f0</color>
 
     <!-- File detail -->
     <color name="jandi_file_detail_bg">#FFFFFF</color>
