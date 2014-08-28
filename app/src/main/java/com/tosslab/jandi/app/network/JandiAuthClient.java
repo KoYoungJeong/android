@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ReqLogin;
@@ -44,7 +45,7 @@ public class JandiAuthClient {
     }
 
     public void setAuthToken(String token) {
-        mRestClient.setHeader("Authorization", token);
+        mRestClient.setHeader(JandiConstants.AUTH_HEADER, token);
     }
 
     public ResCommon registerNotificationToken(String regId) throws JandiException {

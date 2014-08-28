@@ -126,10 +126,20 @@ public class FormattedEntity {
         return me.u_email;
     }
 
-    public String getUserProfileUrl() {
+    public String getUserSmallProfileUrl() {
         String userPhofileUrl;
         if (getUser().u_photoThumbnailUrl != null) {
-            userPhofileUrl = getUser().u_photoThumbnailUrl.mediumThumbnailUrl;
+            userPhofileUrl = getUser().u_photoThumbnailUrl.smallThumbnailUrl;
+        } else {
+            userPhofileUrl = getUser().u_photoUrl;
+        }
+        return JandiConstants.SERVICE_ROOT_URL + userPhofileUrl;
+    }
+
+    public String getUserLargeProfileUrl() {
+        String userPhofileUrl;
+        if (getUser().u_photoThumbnailUrl != null) {
+            userPhofileUrl = getUser().u_photoThumbnailUrl.largeThumbnailUrl;
         } else {
             userPhofileUrl = getUser().u_photoUrl;
         }

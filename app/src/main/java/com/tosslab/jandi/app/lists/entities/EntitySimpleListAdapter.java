@@ -68,7 +68,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         } else if (entity.isUser()) {
             // 프로필 사진
             Picasso.with(this.mContext)
-                    .load(entity.getUserProfileUrl())
+                    .load(entity.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_icon_directmsg)
                     .transform(new CircleTransform())
                     .into(holder.imageView);

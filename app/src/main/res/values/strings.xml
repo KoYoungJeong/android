@@ -38,13 +38,14 @@
     <string name="err_entity_duplicated_name">동일한 이름이 존재합니다</string>
 
     <!-- 프로필 -->
+    <string name="jandi_profile_actionb">프로필</string>
     <string name="jandi_profile_nickname">닉네임</string>
     <string name="jandi_profile_email">이메일</string>
     <string name="jandi_profile_phone_number">전화번호</string>
     <string name="jandi_profile_division">부서</string>
     <string name="jandi_profile_position">직책</string>
     <string name="jandi_profile_optional">(선택 사항)</string>
-    <string name="jandi_profile_update">수정</string>
+    <string name="jandi_profile_update">완료</string>
 
     <!-- Message List -->
     <string name="message">Message</string>
@@ -60,6 +61,9 @@
     <string name="err_delete_messages_failed">메시지 삭제에 실패했습니다</string>
     <string name="upload_file_succeed">파일 업로드 성공</string>
     <string name="err_upload_file_failed">파일 업로드에 실패했습니다</string>
+
+    <!--설정-->
+    <string name="jandi_setting_actionb">설정</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_cdp_edit">이름 수정</string>
@@ -95,7 +99,7 @@
     <string name="menu_take_video">Take Video</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_a_file">Upload a File</string>
-    <string name="title_activity_file_explorer">FileExplorer</string>
+    <string name="jandi_title_activity_file_explorer">파일 탐색기</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_file_detail">File Detail</string>
     <string name="comment">Comment</string>

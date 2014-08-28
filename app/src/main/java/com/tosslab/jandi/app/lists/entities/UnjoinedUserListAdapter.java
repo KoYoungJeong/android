@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.CircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,13 +70,16 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FormattedEntity item = getItem(i);
-        ResLeftSideMenu.User user = item.getUser();
-        if (user != null) {
+        FormattedEntity entity = getItem(i);
+        if (entity.isUser()) {
             // 프로필 사진
-            Picasso.with(this.context).load(item.getUserProfileUrl()).fit().into(holder.imageView);
-            holder.textView.setText(user.name);
-            holder.checkBox.setTag(item);
+            Picasso.with(this.context)
+                    .load(entity.getUserSmallProfileUrl())
+                    .placeholder(R.drawable.jandi_profile)
+                    .transform(new CircleTransform())
+                    .into(holder.imageView);
+            holder.textView.setText(entity.getUserName());
+            holder.checkBox.setTag(entity);
         }
 
         return convertView;

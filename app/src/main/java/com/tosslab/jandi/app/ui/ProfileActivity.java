@@ -20,12 +20,10 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.builder.Builders;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.JandiAuthClient;
@@ -191,7 +189,7 @@ public class ProfileActivity extends Activity {
         FormattedEntity user = new FormattedEntity(me);
         // 프로필 사진
         Picasso.with(this)
-                .load(user.getUserProfileUrl())
+                .load(user.getUserLargeProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .skipMemoryCache()              // 메모리 캐시를 쓰지 않는다.

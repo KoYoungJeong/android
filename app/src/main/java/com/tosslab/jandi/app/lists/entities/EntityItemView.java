@@ -72,7 +72,7 @@ public class EntityItemView extends LinearLayout {
             case FormattedEntity.TYPE_REAL_USER:
                 linearLayoutReal.setVisibility(VISIBLE);
                 Picasso.with(mContext)
-                        .load(formattedEntity.getUserProfileUrl())
+                        .load(formattedEntity.getUserSmallProfileUrl())
                         .placeholder(R.drawable.jandi_profile)
                         .transform(new CircleTransform())
                         .into(imageViewEntityIcon);

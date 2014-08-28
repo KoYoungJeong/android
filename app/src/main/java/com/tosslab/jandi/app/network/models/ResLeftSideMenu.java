@@ -62,7 +62,7 @@ public class ResLeftSideMenu {
         public String u_lastName;
         public String u_nickname;
         public ExtraData u_extraData;
-        public ResMessages.ExtraInfo u_photoThumbnailUrl;
+        public ResMessages.ThumbnailUrls u_photoThumbnailUrl;
         public List<MessageMarker> u_messageMarkers;
     }
 

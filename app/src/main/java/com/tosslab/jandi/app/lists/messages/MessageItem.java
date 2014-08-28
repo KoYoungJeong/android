@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -29,12 +30,13 @@ public class MessageItem {
 
     private ResMessages.Link mLink;
     private ResMessages.OriginalMessage mMessage;
-    private ResLeftSideMenu.User mWriter;
+//    private ResLeftSideMenu.User mWriter;
+    private FormattedEntity mWriter;
 
     public MessageItem(ResMessages.Link message) {
         mLink = message;
         mMessage = mLink.message;
-        mWriter = mMessage.writer;
+        mWriter = new FormattedEntity(mMessage.writer);
         mCurrentDate = null;
         isDateDivider = false;
         isNested = false;
@@ -78,16 +80,16 @@ public class MessageItem {
     }
 
 
-    public String getUserNickName() {
-        return mWriter.u_lastName + " " + mWriter.u_firstName;
+    public String getUserName() {
+        return mWriter.getUserName();
     }
 
     public int getUserId() {
-        return mWriter.id;
+        return mWriter.getUser().id;
     }
 
     public String getUserProfileUrl() {
-        return JandiConstants.SERVICE_ROOT_URL + mWriter.u_photoUrl;
+        return mWriter.getUserSmallProfileUrl();
     }
 
     public int getContentType() {

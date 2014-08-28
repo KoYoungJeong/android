@@ -278,7 +278,7 @@ public class MainTabActivity extends BaseActivity {
         textViewUserEmail.setText(me.getUserEmail());
         textViewUserName.setText(me.getUserName());
         Picasso.with(mContext)
-                .load(me.getUserProfileUrl())
+                .load(me.getUserSmallProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .into(imageViewUserProfile);

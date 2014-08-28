@@ -270,7 +270,7 @@ public class FileDetailActivity extends BaseActivity {
                 mResFileDetail = fileMessage;
                 // 사용자
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
-                String profileUrl = writer.getUserProfileUrl();
+                String profileUrl = writer.getUserSmallProfileUrl();
                 Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
                 String userName = writer.getUserName();
                 textViewUserName.setText(userName);

@@ -1037,14 +1037,13 @@ public class MessageListActivity extends BaseActivity {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.title_cdp_invite);
-        dialog.setIcon(android.R.drawable.ic_menu_agenda);
         dialog.setView(view);
         dialog.setPositiveButton(R.string.menu_cdp_invite, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 List<Integer> selectedCdp = adapter.getSelectedUserIds();
                 for (int item : selectedCdp) {
-                    log.debug("CDP ID, " + item + " is Selected");
+                    log.debug("Entity ID, " + item + " is Selected");
                 }
                 inviteInBackground(selectedCdp);
             }

@@ -110,7 +110,7 @@ public class MessageItemView extends LinearLayout {
     }
 
     private void showUserNickName(MessageItem item) {
-        mUserName.setText(item.getUserNickName());
+        mUserName.setText(item.getUserName());
     }
 
     private void showMessageDate(MessageItem item) {
@@ -143,7 +143,7 @@ public class MessageItemView extends LinearLayout {
         mUserProfileImage.setVisibility(INVISIBLE);
         // 메시지 타입이 댓글이고 아래에 위치한 경우
         mLayoutMessageNestedComment.setVisibility(VISIBLE);
-        mTextMessageNestedCommentUserName.setText(item.getUserNickName());
+        mTextMessageNestedCommentUserName.setText(item.getUserName());
         String createTime = DateTransformator.getTimeStringForSimple(item.getLinkTime());
         mTextMessageNestedCommentCreateDate.setText(createTime);
         mTextMessageNestedCommentContent.setText(item.getContentString());

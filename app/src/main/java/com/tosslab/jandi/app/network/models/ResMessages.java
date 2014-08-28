@@ -96,12 +96,12 @@ public class ResMessages {
         public String fileUrl;
         public String ext;
         public int size;
-        public ExtraInfo extraInfo;
+        public ThumbnailUrls extraInfo;
     }
 
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ExtraInfo {
+    public static class ThumbnailUrls {
         public String smallThumbnailUrl;
         public String mediumThumbnailUrl;
         public String largeThumbnailUrl;
