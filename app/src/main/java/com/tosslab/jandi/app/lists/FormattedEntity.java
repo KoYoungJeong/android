@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.lists;
 
+import android.graphics.Color;
+
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -171,6 +173,20 @@ public class FormattedEntity {
         } else {
             return "";
         }
+    }
+
+    public int getMyColor() {
+        final int color[] = {
+                Color.parseColor("#ff7997"),
+                Color.parseColor("#ea80fc"),
+                Color.parseColor("#8c9eff"),
+                Color.parseColor("#80d8ff"),
+                Color.parseColor("#a7ffeb"),
+                Color.parseColor("#a2f78d"),
+                Color.parseColor("#ffff8d"),
+        };
+
+        return color[this.entity.id % color.length];
     }
 
     public boolean hasGivenId(int entityId) {

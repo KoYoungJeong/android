@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,13 +60,18 @@ public class EntityItemView extends LinearLayout {
                 ResLeftSideMenu.Channel channel = formattedEntity.getChannel();
                 if (channel == null) return;
                 linearLayoutReal.setVisibility(VISIBLE);
+
                 textViewChannelName.setText(channel.name);
                 textViewCntJoinedUsers.setText(channel.ch_members.size() + " Users");
                 if (formattedEntity.alarmCount > 0) {
                     textViewBadge.setVisibility(VISIBLE);
                     textViewBadge.setText(formattedEntity.alarmCount + "");
                 }
-                if (!formattedEntity.isJoined) {
+                if (formattedEntity.isJoined) {
+                    imageViewEntityIcon.setColorFilter(formattedEntity.getMyColor(),
+                            android.graphics.PorterDuff.Mode.MULTIPLY);
+                } else {
+                    imageViewEntityIcon.clearColorFilter();
                     viewBlindForUnjoined.setVisibility(VISIBLE);
                 }
                 return;
