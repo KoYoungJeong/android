@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.FormatConverter;
 
@@ -28,7 +29,7 @@ public class MessageItem {
 
     private ResMessages.Link mLink;
     private ResMessages.OriginalMessage mMessage;
-    private ResMessages.Writer mWriter;
+    private ResLeftSideMenu.User mWriter;
 
     public MessageItem(ResMessages.Link message) {
         mLink = message;

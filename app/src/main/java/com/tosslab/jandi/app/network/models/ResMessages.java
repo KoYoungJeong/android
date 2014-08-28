@@ -28,7 +28,6 @@ public class ResMessages {
         public int id;
         public int teamId;
         public ResLeftSideMenu.Entity fromEntity;
-//        public int fromEntity;
         public Date time;
         public int messageId;
         public String status;
@@ -36,20 +35,6 @@ public class ResMessages {
         public Info info;
         public OriginalMessage feedback;
         public OriginalMessage message;
-    }
-
-    /**
-     * ResLeftSideMenu.User 와 합칠것.
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-    public static class Writer {
-        public int id;
-        public String type;
-        public String name;
-        public String u_photoUrl;
-        public String u_firstName;
-        public String u_lastName;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -73,7 +58,7 @@ public class ResMessages {
     public static class OriginalMessage {
         public int id;
         public int teamId;
-        public Writer writer;
+        public ResLeftSideMenu.User writer;
         public int writerId;
         public Date createTime;
         public Date updateTime;

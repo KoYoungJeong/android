@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -269,11 +270,12 @@ public class FileDetailActivity extends BaseActivity {
                 final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
                 mResFileDetail = fileMessage;
                 // 사용자
-                ResMessages.Writer writer = fileMessage.writer;
-                String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+                FormattedEntity writer = new FormattedEntity(fileMessage.writer);
+                String profileUrl = writer.getUserProfileUrl();
                 Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
-                String userName = writer.u_firstName + " " + writer.u_lastName;
+                String userName = writer.getUserName();
                 textViewUserName.setText(userName);
+
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);

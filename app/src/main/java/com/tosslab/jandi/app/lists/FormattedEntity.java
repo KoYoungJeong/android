@@ -122,7 +122,13 @@ public class FormattedEntity {
     }
 
     public String getUserProfileUrl() {
-        return JandiConstants.SERVICE_ROOT_URL + getUser().u_photoUrl;
+        String userPhofileUrl;
+        if (getUser().u_photoThumbnailUrl != null) {
+            userPhofileUrl = getUser().u_photoThumbnailUrl.mediumThumbnailUrl;
+        } else {
+            userPhofileUrl = getUser().u_photoUrl;
+        }
+        return JandiConstants.SERVICE_ROOT_URL + userPhofileUrl;
     }
 
     public boolean hasGivenId(int entityId) {
