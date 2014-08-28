@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -31,6 +31,15 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -41,7 +50,7 @@ public class LoginActivity extends Activity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 
     @RestService
-    TossRestClient mTossRestClient;
+    JandiRestClient mJandiRestClient;
     private JandiAuthClient mJandiAuthClient;
 
     private Context mContext;
@@ -53,6 +62,7 @@ public class LoginActivity extends Activity {
 
     @AfterViews
     void initView() {
+        trustEveryone();
         mContext = getApplicationContext();
 
         // Progress Wheel 설정
@@ -60,7 +70,7 @@ public class LoginActivity extends Activity {
         mProgressWheel.init();
 
         // Network Client 설정
-        mJandiAuthClient = new JandiAuthClient(mTossRestClient);
+        mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
         // 자동 로그인 과정.
         // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
         // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
@@ -344,5 +354,31 @@ public class LoginActivity extends Activity {
         editor.putString(JandiConstants.PREF_REG_ID, regId);
 
         editor.commit();
+    }
+
+    /************************************************************
+     * SSL 인증서 우회
+     * TODO : remove this
+     ************************************************************/
+    private void trustEveryone() {
+        try {
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, new X509TrustManager[]{new X509TrustManager(){
+                public void checkClientTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public void checkServerTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }}}, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+        } catch (Exception e) { // should never happen
+            e.printStackTrace();
+        }
     }
 }

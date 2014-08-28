@@ -16,16 +16,16 @@ import java.util.List;
  */
 public class JandiEntityClient {
     private final String AUTH_HEADER = JandiConstants.AUTH_HEADER;
-    private TossRestClient mTossRestClient;
+    private JandiRestClient mJandiRestClient;
 
-    public JandiEntityClient(TossRestClient tossRestClient, String token) {
-        mTossRestClient = tossRestClient;
-        mTossRestClient.setHeader(AUTH_HEADER, token);
+    public JandiEntityClient(JandiRestClient jandiRestClient, String token) {
+        mJandiRestClient = jandiRestClient;
+        mJandiRestClient.setHeader(AUTH_HEADER, token);
     }
 
     public ResLeftSideMenu getTotalEntitiesInfo() throws JandiException {
         try {
-            return mTossRestClient.getInfosForSideMenu();
+            return mJandiRestClient.getInfosForSideMenu();
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -35,7 +35,7 @@ public class JandiEntityClient {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = entityName;
         try {
-            return mTossRestClient.createChannel(reqCreateCdp);
+            return mJandiRestClient.createChannel(reqCreateCdp);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -45,7 +45,7 @@ public class JandiEntityClient {
         ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
         reqCreateCdp.name = entityName;
         try {
-            return mTossRestClient.createPrivateGroup(reqCreateCdp);
+            return mJandiRestClient.createPrivateGroup(reqCreateCdp);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -53,7 +53,7 @@ public class JandiEntityClient {
 
     public ResCommon joinChannel(ResLeftSideMenu.Channel channel) throws JandiException {
         try {
-            return mTossRestClient.joinChannel(channel.id);
+            return mJandiRestClient.joinChannel(channel.id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -61,7 +61,7 @@ public class JandiEntityClient {
 
     public ResCommon leaveChannel(int id) throws JandiException {
         try {
-            return mTossRestClient.leaveChannel(id);
+            return mJandiRestClient.leaveChannel(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -69,7 +69,7 @@ public class JandiEntityClient {
 
     public ResCommon leavePrivateGroup(int id) throws JandiException {
         try {
-            return mTossRestClient.leaveGroup(id);
+            return mJandiRestClient.leaveGroup(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -79,7 +79,7 @@ public class JandiEntityClient {
         ReqCreateCdp entityInfo = new ReqCreateCdp();
         entityInfo.name = name;
         try {
-            return mTossRestClient.modifyChannel(entityInfo, id);
+            return mJandiRestClient.modifyChannel(entityInfo, id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -89,7 +89,7 @@ public class JandiEntityClient {
         ReqCreateCdp entityInfo = new ReqCreateCdp();
         entityInfo.name = name;
         try {
-            return mTossRestClient.modifyGroup(entityInfo, id);
+            return mJandiRestClient.modifyGroup(entityInfo, id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -97,7 +97,7 @@ public class JandiEntityClient {
 
     public ResCommon deleteChannel(int id) throws JandiException {
         try {
-            return mTossRestClient.deleteChannel(id);
+            return mJandiRestClient.deleteChannel(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -105,7 +105,7 @@ public class JandiEntityClient {
 
     public ResCommon deletePrivateGroup(int id) throws JandiException {
         try {
-            return mTossRestClient.deleteGroup(id);
+            return mJandiRestClient.deleteGroup(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -114,7 +114,7 @@ public class JandiEntityClient {
     public ResCommon inviteChannel(int id, List<Integer> invitedUsers) throws JandiException {
         ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
         try {
-            return mTossRestClient.inviteChannel(id, reqInviteUsers);
+            return mJandiRestClient.inviteChannel(id, reqInviteUsers);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }
@@ -123,7 +123,7 @@ public class JandiEntityClient {
     public ResCommon invitePrivateGroup(int id, List<Integer> invitedUsers) throws JandiException {
         ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
         try {
-            return mTossRestClient.inviteGroup(id, reqInviteUsers);
+            return mJandiRestClient.inviteGroup(id, reqInviteUsers);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }

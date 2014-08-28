@@ -61,6 +61,7 @@ public class ResLeftSideMenu {
         public String u_firstName;
         public String u_lastName;
         public String u_nickname;
+        public ExtraData u_extraData;
         public ResMessages.ExtraInfo u_photoThumbnailUrl;
         public List<MessageMarker> u_messageMarkers;
     }
@@ -76,5 +77,13 @@ public class ResLeftSideMenu {
         public int entityId;
         public int lastLinkId;
         public int alarmCount;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    static public class ExtraData {
+        public String phoneNumber;
+        public String department;
+        public String position;
     }
 }

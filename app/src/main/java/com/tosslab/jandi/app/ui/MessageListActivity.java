@@ -40,7 +40,7 @@ import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
+import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
@@ -52,8 +52,8 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.MessageManipulator;
-import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -106,7 +106,7 @@ public class MessageListActivity extends BaseActivity {
     boolean willBeFinishedFromPush = false;
 
     @RestService
-    TossRestClient tossRestClient;
+    JandiRestClient jandiRestClient;
     private JandiEntityClient mJandiEntityClient;
     private MessageManipulator mJandiMessageClient;
 
@@ -148,8 +148,8 @@ public class MessageListActivity extends BaseActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiEntityClient = new JandiEntityClient(tossRestClient, mMyToken);
-        mJandiMessageClient = new MessageManipulator(tossRestClient, mMyToken, entityType, entityId);
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
+        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken, entityType, entityId);
         mMessageItemConverter = new MessageItemConverter();
 
         //
@@ -946,17 +946,17 @@ public class MessageListActivity extends BaseActivity {
     /**
      * 수정 이벤트 획득 from EditTextDialogFragment
      */
-    public void onEvent(ConfirmModifyCdpEvent event) {
+    public void onEvent(ConfirmModifyEntityEvent event) {
         modifyEntity(event);
     }
 
     @UiThread
-    void modifyEntity(ConfirmModifyCdpEvent event) {
+    void modifyEntity(ConfirmModifyEntityEvent event) {
         modifyEntityInBackground(event);
     }
 
     @Background
-    void modifyEntityInBackground(ConfirmModifyCdpEvent event) {
+    void modifyEntityInBackground(ConfirmModifyEntityEvent event) {
         try {
             if (entityType == JandiConstants.TYPE_CHANNEL) {
                 mJandiEntityClient.modifyChannelName(entityId, event.inputName);

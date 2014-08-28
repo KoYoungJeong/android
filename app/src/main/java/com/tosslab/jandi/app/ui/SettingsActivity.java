@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -28,7 +28,7 @@ public class SettingsActivity extends PreferenceActivity {
     private final Logger log = Logger.getLogger(SettingsActivity.class);
 
     @RestService
-    TossRestClient tossRestClient;
+    JandiRestClient jandiRestClient;
 
     private String myToken;
 
@@ -74,7 +74,7 @@ public class SettingsActivity extends PreferenceActivity {
         String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
 
         if (!regId.isEmpty()) {
-            JandiAuthClient jandiAuthClient = new JandiAuthClient(tossRestClient);
+            JandiAuthClient jandiAuthClient = new JandiAuthClient(jandiRestClient);
             jandiAuthClient.setAuthToken(myToken);
             try {
                 jandiAuthClient.deleteNotificationToken(regId);
@@ -102,7 +102,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {
-        JandiAuthClient jandiAuthClient = new JandiAuthClient(tossRestClient);
+        JandiAuthClient jandiAuthClient = new JandiAuthClient(jandiRestClient);
         jandiAuthClient.setAuthToken(myToken);
         try {
             jandiAuthClient.setNotificationTarget(notificationTarget);

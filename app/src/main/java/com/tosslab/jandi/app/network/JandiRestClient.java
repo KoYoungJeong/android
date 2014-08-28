@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
+import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -51,7 +52,7 @@ import org.springframework.util.MultiValueMap;
 )
 //@Accept(MediaType.APPLICATION_JSON)
 @Accept("application/vnd.tosslab.jandi-v1+json")
-public interface TossRestClient {
+public interface JandiRestClient {
     void setHeader(String name, String value);
 
     // 내 팀 정보 획득
@@ -71,6 +72,15 @@ public interface TossRestClient {
     @Post("/entities/{entityId}/marker")
     @RequiresHeader("Authorization")
     ResCommon setMarker(int entityId, ReqSetMarker reqSetMarker);
+
+    // 프로필
+    @Get("/users/{userEntityId}")
+    @RequiresHeader("Authorization")
+    ResLeftSideMenu.User getUserProfile(int userEntityId);
+
+    @Put("/settings/profile")
+    @RequiresHeader("Authorization")
+    ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
 
     /************************************************************
      * 채널 관련

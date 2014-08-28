@@ -19,20 +19,20 @@ import org.springframework.web.client.RestClientException;
  */
 public class MessageManipulator {
     private static final int NUMBER_OF_MESSAGES = 20;
-    TossRestClient mRestClient;
+    JandiRestClient mRestClient;
     int mEntityType;
     int mEntityId;
 
-    public MessageManipulator(TossRestClient tossRestClient, String token,
+    public MessageManipulator(JandiRestClient jandiRestClient, String token,
                               int entityType, int entityId) {
-        mRestClient = tossRestClient;
+        mRestClient = jandiRestClient;
         mEntityId = entityId;
         mEntityType = entityType;
         mRestClient.setHeader("Authorization", token);
     }
 
-    public MessageManipulator(TossRestClient tossRestClient, String token) {
-        mRestClient = tossRestClient;
+    public MessageManipulator(JandiRestClient jandiRestClient, String token) {
+        mRestClient = jandiRestClient;
         mRestClient.setHeader("Authorization", token);
     }
 

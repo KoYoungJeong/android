@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -7,6 +8,7 @@ import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.JandiException;
 
@@ -17,10 +19,10 @@ import org.springframework.web.client.HttpStatusCodeException;
  * TODO MessageManipulator 와 합쳐지겠지...
  */
 public class JandiAuthClient {
-    TossRestClient mRestClient;
+    JandiRestClient mRestClient;
 
-    public JandiAuthClient(TossRestClient tossRestClient) {
-        mRestClient = tossRestClient;
+    public JandiAuthClient(JandiRestClient jandiRestClient) {
+        mRestClient = jandiRestClient;
         mRestClient.setHeader("Accept", "application/vnd.tosslab.jandi-v1+json");
     }
 
@@ -85,6 +87,22 @@ public class JandiAuthClient {
         ReqNotificationTarget req = new ReqNotificationTarget(target);
         try {
             return mRestClient.setNotificationTarget(req);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+    public ResLeftSideMenu.User getUserProfile(int entityId) throws JandiException {
+        try {
+            return mRestClient.getUserProfile(entityId);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+    public ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile) throws JandiException {
+        try {
+            return mRestClient.updateUserProfile(reqUpdateProfile);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }

@@ -27,10 +27,9 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.MessageManipulator;
-import com.tosslab.jandi.app.network.TossRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -70,7 +69,7 @@ public class FileDetailActivity extends BaseActivity {
     public int fileId;
 
     @RestService
-    TossRestClient tossRestClient;
+    JandiRestClient jandiRestClient;
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
     @ViewById(R.id.list_file_detail_comments)
@@ -124,7 +123,7 @@ public class FileDetailActivity extends BaseActivity {
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
 
         myToken = JandiPreference.getMyToken(this);
-        tossRestClient.setHeader("Authorization", myToken);
+        jandiRestClient.setHeader("Authorization", myToken);
         getFileDetail();
     }
 
@@ -221,7 +220,7 @@ public class FileDetailActivity extends BaseActivity {
     void getFileDetailInBackend() {
         log.debug("try to get file detail having ID, " + fileId);
         try {
-            ResFileDetail resFileDetail = tossRestClient.getFileDetail(fileId);
+            ResFileDetail resFileDetail = jandiRestClient.getFileDetail(fileId);
             drawFileDetail(resFileDetail);
             fileDetailCommentListAdapter.updateFileComments(resFileDetail);
             getFileDetailDone(true, null);
@@ -385,7 +384,7 @@ public class FileDetailActivity extends BaseActivity {
     @Background
     public void shareMessageInBackground(int entityIdToBeShared) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, myToken);
+                jandiRestClient, myToken);
         try {
             messageManipulator.shareMessage(fileId, entityIdToBeShared);
             log.debug("success to share message");
@@ -444,7 +443,7 @@ public class FileDetailActivity extends BaseActivity {
     @Background
     public void unshareMessageInBackground(int entityIdToBeUnshared) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, myToken);
+                jandiRestClient, myToken);
         try {
             messageManipulator.unshareMessage(fileId, entityIdToBeUnshared);
             log.debug("success to unshare message");
@@ -477,7 +476,7 @@ public class FileDetailActivity extends BaseActivity {
     @Background
     public void deleteFileInBackground() {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, myToken);
+                jandiRestClient, myToken);
         try {
             messageManipulator.deleteFile(fileId);
             log.debug("success to delete file");
@@ -522,7 +521,7 @@ public class FileDetailActivity extends BaseActivity {
     @Background
     public void sendCommentInBackground(String message) {
         MessageManipulator messageManipulator = new MessageManipulator(
-                tossRestClient, myToken);
+                jandiRestClient, myToken);
         try {
             messageManipulator.sendMessageComment(fileId, message);
             log.debug("success to send message");

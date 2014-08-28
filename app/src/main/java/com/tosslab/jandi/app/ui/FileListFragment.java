@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -46,7 +46,7 @@ public class FileListFragment extends BaseFragment {
     @Bean
     SearchedFileItemListAdapter mAdapter;
     @RestService
-    TossRestClient tossRestClient;
+    JandiRestClient jandiRestClient;
 
     private String mSearchMode  = "all";                // 서치 모드.   ALL || Images || PDFs
     private String mSearchUser  = "all";    // 사용자.     ALL || Mine || UserID
@@ -109,7 +109,7 @@ public class FileListFragment extends BaseFragment {
 
     @Background
     void doSearchInBackground() {
-        tossRestClient.setHeader("Authorization", mMyToken);
+        jandiRestClient.setHeader("Authorization", mMyToken);
 
         try {
             ReqSearchFile reqSearchFile = new ReqSearchFile();
@@ -117,7 +117,7 @@ public class FileListFragment extends BaseFragment {
             reqSearchFile.fileType = mSearchMode;
             reqSearchFile.userId = mSearchUser;
 
-            ResSearchFile resSearchFile = tossRestClient.searchFile(reqSearchFile);
+            ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
             log.error("fail to get searched files.", e);

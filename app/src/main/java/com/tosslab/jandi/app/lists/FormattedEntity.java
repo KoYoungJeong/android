@@ -116,6 +116,11 @@ public class FormattedEntity {
         return me.u_lastName + " " + me.u_firstName;
     }
 
+    public String getUserNickName() {
+        ResLeftSideMenu.User me = getUser();
+        return (me.u_nickname != null) ? me.u_nickname : me.name;
+    }
+
     public String getUserEmail() {
         ResLeftSideMenu.User me = getUser();
         return me.u_email;
@@ -129,6 +134,33 @@ public class FormattedEntity {
             userPhofileUrl = getUser().u_photoUrl;
         }
         return JandiConstants.SERVICE_ROOT_URL + userPhofileUrl;
+    }
+
+    public String getUserPhoneNumber() {
+        ResLeftSideMenu.User me = getUser();
+        if (me.u_extraData != null && me.u_extraData.phoneNumber != null) {
+            return me.u_extraData.phoneNumber;
+        } else {
+            return "";
+        }
+    }
+
+    public String getUserDivision() {
+        ResLeftSideMenu.User me = getUser();
+        if (me.u_extraData != null && me.u_extraData.department != null) {
+            return me.u_extraData.department;
+        } else {
+            return "";
+        }
+    }
+
+    public String getUserPosition() {
+        ResLeftSideMenu.User me = getUser();
+        if (me.u_extraData != null && me.u_extraData.position != null) {
+            return me.u_extraData.position;
+        } else {
+            return "";
+        }
     }
 
     public boolean hasGivenId(int entityId) {

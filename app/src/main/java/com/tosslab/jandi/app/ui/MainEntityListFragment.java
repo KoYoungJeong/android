@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
 import com.tosslab.jandi.app.network.AnalyticsClient;
 import com.tosslab.jandi.app.network.JandiEntityClient;
-import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
@@ -60,7 +60,7 @@ public class MainEntityListFragment extends BaseFragment {
     @Bean
     EntityItemListAdapter mEntityListAdapter;
     @RestService
-    TossRestClient mTossRestClient;
+    JandiRestClient mJandiRestClient;
     private JandiEntityClient mJandiEntityClient;
 
     private ProgressWheel mProgressWheel;
@@ -75,7 +75,7 @@ public class MainEntityListFragment extends BaseFragment {
 
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiEntityClient = new JandiEntityClient(mTossRestClient, mMyToken);
+        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, mMyToken);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(mContext);

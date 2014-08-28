@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,8 +16,9 @@ import android.widget.EditText;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyCdpEvent;
+import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
+import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 
 import org.androidannotations.annotations.EFragment;
 
@@ -33,6 +35,12 @@ public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_CREATE_CDP       = 0;
     public final static int ACTION_MODIFY_CDP       = 1;
     public final static int ACTION_MODIFY_MESSAGE   = 2;
+
+    public final static int ACTION_MODIFY_PROFILE_NICKNAME  = 3;
+    public final static int ACTION_MODIFY_PROFILE_PHONE     = 4;
+    public final static int ACTION_MODIFY_PROFILE_DIVISION  = 5;
+    public final static int ACTION_MODIFY_PROFILE_POSITION  = 6;
+
 
     private final static String ARG_ACTION_TYPE    = "actionType";
     private final static String ARG_ENTITY_TYPE    = "entityType";
@@ -98,6 +106,21 @@ public class EditTextDialogFragment extends DialogFragment {
         return frag;
     }
 
+    /**
+     * 프로필 수정 각 항목에 사용되는 Dialog
+     * @param actionType
+     * @param currentMessage
+     * @return
+     */
+    public static EditTextDialogFragment newInstance(int actionType, String currentMessage) {
+        EditTextDialogFragment frag = new EditTextDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_ACTION_TYPE, actionType);
+        args.putString(ARG_CURRENT_MGS, currentMessage);
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
@@ -127,6 +150,11 @@ public class EditTextDialogFragment extends DialogFragment {
         View mainView = inflater.inflate(R.layout.dialog_input_text, null);
 
         final EditText inputName = (EditText)mainView.findViewById(R.id.et_dialog_input);
+        if (actionType == ACTION_MODIFY_PROFILE_PHONE) {
+            inputName.setInputType(InputType.TYPE_CLASS_PHONE);
+        } else {
+            inputName.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
         InputMethodManager mgr
                 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.showSoftInput(inputName, InputMethodManager.SHOW_FORCED);
@@ -153,14 +181,13 @@ public class EditTextDialogFragment extends DialogFragment {
                                     case ACTION_MODIFY_CDP:
                                         // CDP 수정의 경우 MainLeftFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(
-                                                new ConfirmModifyCdpEvent(
+                                                new ConfirmModifyEntityEvent(
                                                         entityType,
                                                         entityId,
                                                         inputName.getText().toString())
                                         );
                                         break;
                                     case ACTION_MODIFY_MESSAGE:
-                                    default:
                                         // 메시지 수정의 경우 MainMessageListFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(
                                                 new ConfirmModifyMessageEvent(
@@ -170,7 +197,19 @@ public class EditTextDialogFragment extends DialogFragment {
                                                         feedbackId)
                                         );
                                         break;
-
+                                    case ACTION_MODIFY_PROFILE_NICKNAME:
+                                    case ACTION_MODIFY_PROFILE_PHONE:
+                                    case ACTION_MODIFY_PROFILE_DIVISION:
+                                    case ACTION_MODIFY_PROFILE_POSITION:
+                                        EventBus.getDefault().post(
+                                                new ConfirmModifyProfileEvent(
+                                                        actionType,
+                                                        inputName.getText().toString())
+                                        );
+                                        break;
+                                    default:
+                                        // DO NOTHING
+                                        break;
                                 }
 
                             }
@@ -200,8 +239,19 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_MODIFY_CDP:
                 return obtainTitileForModifyCdp(entityType);
             case ACTION_MODIFY_MESSAGE:
-            default:
                 return R.string.modify_message;
+            case ACTION_MODIFY_PROFILE_NICKNAME:
+                return R.string.jandi_profile_nickname;
+            case ACTION_MODIFY_PROFILE_PHONE:
+                return R.string.jandi_profile_phone_number;
+            case ACTION_MODIFY_PROFILE_DIVISION:
+                return R.string.jandi_profile_division;
+            case ACTION_MODIFY_PROFILE_POSITION:
+                return R.string.jandi_profile_position;
+            default:
+                return R.string.jandi_empty;
+
+
         }
     }
 

@@ -45,6 +45,7 @@
 
     <!-- profile -->
     <color name="jandi_profile_bg">#f0f0f0</color>
+    <color name="jandi_profile_edited_text">#f3a71e</color>
 
     <!-- File detail -->
     <color name="jandi_file_detail_bg">#FFFFFF</color>

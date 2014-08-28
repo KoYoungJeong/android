@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,13 +34,12 @@ import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveChannelList;
 import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
-import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
-import com.tosslab.jandi.app.network.TossRestClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -70,7 +68,7 @@ public class MainTabActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(MainTabActivity.class);
 
     @RestService
-    TossRestClient mTossRestClient;
+    JandiRestClient mJandiRestClient;
 
     @ViewById(R.id.drawer_user_profile)
     ImageView imageViewUserProfile;
@@ -106,7 +104,7 @@ public class MainTabActivity extends BaseActivity {
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
         // Network Client 설정
-        mJandiEntityClient = new JandiEntityClient(mTossRestClient, mMyToken);
+        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, mMyToken);
 
         // Drawer
         mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
