@@ -2,7 +2,7 @@
 <resources>
     <!-- Base application theme. -->
     <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="android:windowContentOverlay">@null</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
         <item name="android:splitMotionEvents">false</item>
     </style>
@@ -15,15 +15,20 @@
     <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <!--<item name="android:actionBarTabStyle">@style/JandiActionBarTab</item>-->
         <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
         <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
     </style>
 
 
     <!-- Actionbar -->
     <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/jandi_main</item>
+        <item name="android:backgroundStacked">@color/jandi_main</item>
+        <item name="android:backgroundSplit">@color/jandi_main</item>
     </style>
 
     <!-- Spinner in Actionbar -->
@@ -36,17 +41,4 @@
         <item name="android:textColor">@color/jandi_dropdown_menu_text</item>
         <item name="android:background">@color/jandi_file_detail_comments_bg</item>
     </style>
-
-    <!--<style name="JandiDialogStyle">-->
-        <!--&lt;!&ndash; anything can be left out: &ndash;&gt;-->
-        <!--<item name="titleTextColor">@color/dialog_title_text</item>-->
-        <!--<item name="titleSeparatorColor">@color/dialog_title_separator</item>-->
-        <!--<item name="messageTextColor">@color/dialog_message_text</item>-->
-        <!--<item name="buttonTextColor">@color/dialog_button_text</item>-->
-        <!--<item name="buttonSeparatorColor">@color/dialog_button_separator</item>-->
-        <!--<item name="buttonBackgroundColorNormal">@color/dialog_button_normal</item>-->
-        <!--<item name="buttonBackgroundColorPressed">@color/dialog_button_pressed</item>-->
-        <!--<item name="buttonBackgroundColorFocused">@color/dialog_button_focused</item>-->
-        <!--&lt;!&ndash;<item name="dialogBackground">@drawable/dialog_background</item>&ndash;&gt;-->
-    <!--</style>-->
 </resources>

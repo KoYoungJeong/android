@@ -1,56 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">JANDI</string>
+    <string name="action_settings">설정</string>
+    <string name="jandi_confirm">확인</string>
+    <string name="jandi_cancel">취소</string>
+    <string name="jandi_upload">업로드</string>
+    <string name="jandi_action_share">공유</string>
+    <string name="jandi_empty"></string>
 
-    <string name="app_name">Jandi</string>
-    <string name="action_settings">Settings</string>
-    <string name="confirm">확인</string>
-    <string name="cancel">취소</string>
-    <string name="upload">업로드</string>
-    <string name="share">공유</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 
     <!-- Login -->
-    <string name="action_login">Log In</string>
-    <string name="user_id">E-mail Address</string>
-    <string name="password">Password</string>
+    <string name="jandi_action_login">로그인</string>
+    <string name="jandi_user_id">이메일 주소</string>
+    <string name="jandi_user_password">비밀번호</string>
     <string name="err_login">로그인이 실패하였습니다</string>
     <string name="err_login_unregistered_id">아직 가입되지 않은 이메일입니다</string>
     <string name="err_login_invalid_id">이메일 주소가 정확하지 않습니다</string>
     <string name="err_login_invalid_passwd">정확한 비밀번호를 입력해주세요</string>
-    <string name="err_login_invalid_info">ID, 비밀번호가 일치하지 않습니다.</string>
+    <string name="err_login_invalid_info">ID, 비밀번호가 일치하지 않습니다</string>
+    <string name="err_expired_token">만료된 토큰입니다</string>
+    <string name="err_expired_session">세션이 만료되었습니다. 다시 로그인 해주세요</string>
+    <string name="err_service_connection">서비스에 접속할 수 없습니다.</string>
+    <!-- Push -->
+    <string name="err_push_registration">Push 등록 중 오류가 발생했습니다. 다시 시도해주세요</string>
+    <string name="err_push_invalid_device">Push 서비스를 사용할 수 없는 단말입니다</string>
 
-    <!-- Main Panel -->
-    <string name="message">Message</string>
-    <string name="send_message">send</string>
-    <string name="warn_empty_messages">등록된 메시지가 없습니다</string>
+    <string name="jandi_tab_channel">채널</string>
+    <string name="jandi_tab_private_group">비밀그룹</string>
+    <string name="jandi_tab_direct_message">1:1</string>
+    <string name="jandi_tab_file">파일</string>
+
+    <!-- Manipulate Entity -->
+    <string name="jandi_message_create_entity"> 을 생성하였습니다</string>
+    <string name="jandi_message_join_entity"> 에 참여합니다</string>
+    <string name="jandi_message_invite_entity"> 명의 사용자를 초대했습니다</string>
+    <string name="jandi_create_channel">채널 생성</string>
+    <string name="jandi_create_privategroup">비밀그룹 생성</string>
+    <string name="jandi_modify_channel">채널 수정</string>
+    <string name="jandi_modify_private_group">비밀그룹 수정</string>
+    <string name="warn_all_users_are_already_invited">이미 모든 사용자가 가입되어 있습니다</string>
+    <string name="err_entity_create">생성에 실패하였습니다</string>
+    <string name="err_entity_join">해당 채널 참여에 실패하였습니다</string>
+    <string name="err_entity_duplicated_name">동일한 이름이 존재합니다</string>
+    <string name="err_entity_invite">초대에 실패했습니다</string>
+    <string name="err_entity_leave">탈퇴에 실패했습니다</string>
+    <string name="err_entity_modify">수정에 실패했습니다</string>
+    <string name="err_entity_delete">삭제에 실패했습니다</string>
+
+    <!-- 프로필 -->
+    <string name="jandi_profile_actionb">프로필</string>
+    <string name="jandi_profile_nickname">닉네임</string>
+    <string name="jandi_profile_email">이메일</string>
+    <string name="jandi_profile_phone_number">전화번호</string>
+    <string name="jandi_profile_division">부서</string>
+    <string name="jandi_profile_position">직책</string>
+    <string name="jandi_profile_optional">(선택 사항)</string>
+    <string name="jandi_profile_update">완료</string>
+    <string name="err_profile_get_info">프로필 획득에 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="err_profile_empty_info">내용을 입력해주세요</string>
+    <string name="err_profile_unmodified">수정된 내역이 없습니다</string>
+    <string name="jandi_profile_update_succeed">프로필이 수정되었습니다</string>
+    <string name="err_profile_update">프로필이 수정이 실패하였습니다</string>
+    <string name="jandi_profile_photo_upload_succeed">사진이 수정되었습니다</string>
+    <string name="err_profile_photo_upload">사진 업로드가 실패하였습니다</string>
+
+    <!-- Message List -->
+    <string name="jandi_message_hint">메시지</string>
+    <string name="jandi_message_send">전송</string>
+    <string name="jandi_messages_modify_succeed">수정 성공</string>
+    <string name="jandi_file_uploading">업로드...</string>
+    <string name="jandi_file_upload_succeed">파일 업로드 성공</string>
+    <string name="warn_messages_empty">등록된 메시지가 없습니다</string>
     <string name="warn_no_more_messages">더 이상 메시지가 없습니다</string>
     <string name="warn_no_permission">권한이 없습니다</string>
-    <string name="modify_messages_succeed">수정 성공</string>
-    <string name="file_uploading">업로드...</string>
-    <string name="err_get_messages_failed">메시지 획득에 실패했습니다</string>
-    <string name="err_send_messages_failed">메시지 전송에 실패했습니다</string>
-    <string name="err_modify_messages_failed">메시지 수정에 실패했습니다</string>
-    <string name="err_delete_messages_failed">메시지 삭제에 실패했습니다</string>
-    <string name="upload_file_succeed">파일 업로드 성공</string>
-    <string name="err_upload_file_failed">파일 업로드에 실패했습니다</string>
+    <string name="err_messages_invaild_entity">유효하지 않은 방입니다</string>
+    <string name="err_messages_get">메시지 획득에 실패했습니다</string>
+    <string name="err_messages_send">메시지 전송에 실패했습니다</string>
+    <string name="err_messages_modify">메시지 수정에 실패했습니다</string>
+    <string name="err_messages_delete">메시지 삭제에 실패했습니다</string>
+    <string name="err_file_upload_failed">파일 업로드에 실패했습니다</string>
 
-    <!-- Navigation Drawer -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="create_channel">Channel 생성</string>
-    <string name="create_private_group">Private Group 생성</string>
-    <string name="create_direct_message">Direct Message 생성</string>
-    <string name="modify_channel">Channel 수정</string>
-    <string name="modify_private_group">Private Group 수정</string>
-    <string name="modify_direct_message">Direct Message 수정</string>
-    <string name="jandi_cdp_title_channel">CHANNEL</string>
-    <string name="jandi_cdp_title_direct_message">DIRECT MESSAGE</string>
-    <string name="jandi_cdp_title_private_group">PRIVATE GROUP</string>
+    <string name="jandi_setting_actionb">설정</string>
 
     <!-- Manipulate CDP -->
-    <string name="menu_cdp_edit">이름 수정</string>
-    <string name="menu_cdp_delete">삭제</string>
-    <string name="menu_cdp_invite">초대</string>
-    <string name="menu_cdp_leave">탈퇴</string>
+    <string name="menu_entity_edit">이름 수정</string>
+    <string name="menu_entity_delete">삭제</string>
+    <string name="menu_entity_invite">초대</string>
+    <string name="menu_entity_leave">탈퇴</string>
 
     <!-- Message -->
     <string name="modify_message">Message 수정</string>
@@ -58,32 +96,26 @@
 
     <!-- File Detail Activity -->
     <string name="jandi_action_download">다운로드</string>
-    <string name="jandi_action_share">공유</string>
     <string name="jandi_action_unshare">공유 해제</string>
     <string name="jandi_action_delete">삭제</string>
-
-    <!--  -->
-    <string name="type_files">Files</string>
-    <string name="type_files_yours">Your Files</string>
-    <string name="type_files_all">All Files</string>
-    <string name="type_posts">Posts</string>
-    <string name="type_images">Images</string>
-    <string name="type_pdf">PDF Files</string>
-    <string name="type_team">Team</string>
-    <string name="type_starred">Starred Items</string>
-    <string name="action_switch_teams">Switch Teams</string>
+    <string name="jandi_share_succeed">공유되었습니다</string>
+    <string name="jandi_unshare_succeed">공유가 해제되었습니다</string>
+    <string name="jandi_delete_succeed">파일이 삭제되었습니다</string>
+    <string name="err_unsupported_file_type"> 을 확인할 수 있는 앱이 설치되지 않았습니다</string>
+    <string name="err_file_detail">파일 정보 획득에 실패했습니다</string>
+    <string name="err_download">파일 다운로드에 실패했습니다</string>
+    <string name="err_share">공유에 실패했습니다</string>
+    <string name="err_unshare">공유 해제에 실패했습니다</string>
+    <string name="err_delete_file">파일 삭제에 실패했습니다</string>
 
     <!-- File Upload -->
-    <string name="title_file_upload">File Upload</string>
-    <string name="file_upload_comment">Comment (optional)</string>
-    <string name="menu_take_photo">Take Photo</string>
-    <string name="menu_take_video">Take Video</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_a_file">Upload a File</string>
-    <string name="title_activity_file_explorer">FileExplorer</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_file_detail">File Detail</string>
-    <string name="comment">Comment</string>
+    <string name="title_file_upload">파일 업로드</string>
+    <string name="file_upload_comment">댓글 (선택 사항)</string>
+    <string name="menu_gallery">사진첩에서 올리기</string>
+    <string name="menu_a_file">파일 탐색기에서 올리기</string>
+    <string name="jandi_title_activity_file_explorer">파일 탐색기</string>
+    <string name="title_file_detail">파일 상세 정보</string>
+    <string name="comment">댓글</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">공유할 곳을 선택하세요</string>
@@ -91,12 +123,12 @@
     <string name="title_cdp_invite">초대할 사용자를 선택하세요</string>
 
     <!-- Search -->
-    <string name="title_activity_search">SearchActivity</string>
-    <string name="title_section_everyone">Everyone</string>
-    <string name="title_section_me">Just me</string>
-    <string name="title_search_user_select">검색할 사용자를 선택하세요</string>
+    <string name="jandi_file_category_all">모든 파일</string>
+    <string name="jandi_file_category_image">Images</string>
+    <string name="jandi_file_category_pdf">PDFs</string>
+    <string name="jandi_file_category_everyone">모든 팀원</string>
+    <string name="jandi_file_search_type">검색할 파일 타입을 선택하세요</string>
+    <string name="jandi_file_search_user">검색할 사용자를 선택하세요</string>
+    <string name="err_file_search">파일 검색에 실패했습니다</string>
 
-    <!-- ERRORS -->
-    <string name="err_common_create">생성에 실패하였습니다.</string>
-    <string name="err_duplicated_name_of_cdp">동일한 이름이 존재합니다.</string>
 </resources>

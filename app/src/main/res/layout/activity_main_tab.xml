@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.astuetz.PagerSlidingTabStrip
+            style="@style/PagerSlidingTabStrip"
+            android:id="@+id/sliding_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="47dp" />
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="4dp"-->
+            <!--android:background="@drawable/actionbar_shadow_down"/>-->
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager_main_tab"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/drawer_action_profile"
+            android:layout_width="match_parent"
+            android:layout_height="135dp"
+            android:padding="16dp"
+            android:background="@drawable/left_profile_bg_240_135"
+            android:clickable="true">
+            <ImageView
+                android:id="@+id/drawer_user_profile"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/jandi_profile"/>
+            <TextView
+                android:id="@+id/drawer_user_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_alignParentBottom="true"
+                android:textSize="14sp"
+                android:textColor="@color/jandi_text_white"
+                android:text="justin@tosslab.com"/>
+            <TextView
+                android:id="@+id/drawer_user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/drawer_user_id"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/jandi_text_white"
+                android:text="Justin"/>
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/drawer_action_setting"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/jandi_icon_rm_setting"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:text="설정"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clickable="true">
+
+        </LinearLayout>
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:background="@color/jandi_border" />-->
+    </LinearLayout>
+
+</android.support.v4.widget.DrawerLayout>

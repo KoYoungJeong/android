@@ -13,7 +13,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:hint="@string/user_id"
+        android:hint="@string/jandi_user_id"
         android:inputType="textEmailAddress"
         android:maxLines="1"
         android:singleLine="true"
@@ -24,7 +24,7 @@
         android:id="@+id/et_login_password"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:hint="@string/password"
+        android:hint="@string/jandi_user_password"
         android:layout_margin="20dp"
         android:imeActionId="@+id/login"
         android:imeActionLabel="Sign In"
@@ -43,6 +43,6 @@
         android:paddingLeft="32dp"
         android:paddingRight="32dp"
         android:background="@drawable/temp_button"
-        android:text="@string/action_login"
+        android:text="@string/jandi_action_login"
         android:textColor="@color/button_text"/>
 </LinearLayout>

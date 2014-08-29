@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <!-- 기본 표시 레이어 -->
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/ly_message_default"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,6 +56,7 @@
                     android:id="@+id/txt_message_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:maxWidth="240dp"
                     android:layout_marginTop="4dp"
                     android:textStyle="bold"
                     android:textColor="@color/jandi_messages_name"
@@ -66,14 +67,13 @@
                     android:id="@+id/txt_message_create_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/txt_message_user_name"
-                    android:layout_alignBaseline="@id/txt_message_user_name"
+                    android:layout_marginTop="4dp"
                     android:layout_marginLeft="6dp"
                     android:textColor="@color/jandi_messages_date"
                     android:textSize="@dimen/jandi_messages_date"
                     android:text="AM ??:??"
                     />
-            </RelativeLayout>
+            </LinearLayout>
             <!-- 댓글일 경우 표시 레이어 -->
             <RelativeLayout
                 android:id="@+id/ly_message_commented"

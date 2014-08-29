@@ -11,6 +11,9 @@ import java.util.Map;
  * Created by justinygchoi on 2014. 7. 16..
  */
 public class JandiException extends Exception {
+    // ERROR
+    public static final int BAD_REQUEST     = 400;
+
     private static final String ERR_CODE    = "code";
     private static final String ERR_MSG     = "msg";
 
@@ -25,7 +28,10 @@ public class JandiException extends Exception {
 
         ObjectMapper om = new ObjectMapper();
         try {
-            Map<String, Object> m = om.readValue(e.getResponseBodyAsString(), new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> m = om.readValue(
+                    e.getResponseBodyAsString(),
+                    new TypeReference<Map<String, Object>>(){}
+            );
             this.errCode = (Integer)m.get(ERR_CODE);
             this.errReason = (String)m.get(ERR_MSG);
         } catch (IOException e1) {

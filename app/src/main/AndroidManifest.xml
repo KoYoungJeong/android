@@ -12,7 +12,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <activity
-            android:name=".IntroActivity_"
+            android:name=".ui.LoginActivity_"
             android:logo="@drawable/jandi_actionb_logo"
             android:theme="@style/JandiTheme.NoActionBar"
             android:screenOrientation="portrait">
@@ -23,32 +23,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity_"
+            android:name=".ui.MainTabActivity_"
             android:label="@string/app_name"
-            android:logo="@drawable/jandi_actionb_logo"
+            android:theme="@style/JandiSearchTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.MessageListActivity_"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-            android:name=".FileDetailActivity_"
+            android:name=".ui.FileDetailActivity_"
             android:label="@string/title_file_detail"
-            android:logo="@drawable/jandi_actionb_logo"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".FileExplorerActivity"
-            android:label="@string/title_activity_file_explorer"
-            android:logo="@drawable/jandi_actionb_logo"
+            android:name=".ui.FileExplorerActivity"
+            android:label="@string/jandi_title_activity_file_explorer"
             android:screenOrientation="portrait" >
         </activity>
-        <activity
-            android:name=".SearchMessageActivity_"
-            android:label="@string/title_activity_search"
-            android:logo="@drawable/jandi_actionb_logo"
-            android:theme="@style/JandiSearchTheme"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity android:name=".SettingsActivity_"
-            android:logo="@drawable/jandi_actionb_logo"
+        <activity android:name=".ui.SettingsActivity_"
+            android:label="@string/jandi_setting_actionb"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ui.ProfileActivity_"
+            android:label="@string/jandi_profile_actionb"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.hideybarphotoviewscreen.HideyBarPhotoViewScreen"
@@ -57,7 +55,7 @@
             android:theme="@style/AppTheme_ActionBarOverlay">
         </activity>
         <receiver
-            android:name=".JandiGCMBroadcastReceiver"
+            android:name=".ui.JandiGCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -65,13 +63,14 @@
                 <category android:name="com.tosslab.jandi.app" />
             </intent-filter>
         </receiver>
-        <service android:name=".JandiGCMIntentService" />
+        <service android:name=".ui.JandiGCMIntentService" />
     </application>
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 

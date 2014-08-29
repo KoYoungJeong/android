@@ -15,39 +15,34 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ResMessages {
+    public int lastLinkId;
     public int numOfPage;
-    public int firstIdOfReceviedList;
+    public int firstIdOfReceivedList;
     public boolean isFirst;
     public int messageCount;
     public List<Link> messages;
-    public Date responseTime;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
         public int id;
+        public int teamId;
         public ResLeftSideMenu.Entity fromEntity;
         public Date time;
         public int messageId;
         public String status;
         public int feedbackId;
-        public int teamId;
+        public Info info;
         public OriginalMessage feedback;
         public OriginalMessage message;
     }
 
-    /**
-     * ResLeftSideMenu.User 와 합칠것.
-     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-    public static class Writer {
-        public int id;
-        public String type;
-        public String name;
-        public String u_photoUrl;
-        public String u_firstName;
-        public String u_lastName;
+    public static class Info {
+        public int invitorId;
+        public List<Integer> inviteUsers;
+        public String eventType;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -63,7 +58,7 @@ public class ResMessages {
     public static class OriginalMessage {
         public int id;
         public int teamId;
-        public Writer writer;
+        public ResLeftSideMenu.User writer;
         public int writerId;
         public Date createTime;
         public Date updateTime;
@@ -99,13 +94,14 @@ public class ResMessages {
         public String type;
         public String serverUrl;
         public String fileUrl;
+        public String ext;
         public int size;
-        public ExtraInfo extraInfo;
+        public ThumbnailUrls extraInfo;
     }
 
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class ExtraInfo {
+    public static class ThumbnailUrls {
         public String smallThumbnailUrl;
         public String mediumThumbnailUrl;
         public String largeThumbnailUrl;

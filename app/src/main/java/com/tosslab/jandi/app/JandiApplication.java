@@ -8,6 +8,7 @@ import com.koushikdutta.async.http.AsyncSSLEngineConfigurator;
 import com.koushikdutta.async.http.socketio.ErrorCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;
@@ -31,16 +32,5 @@ public class JandiApplication extends Application {
         } catch (Exception e) {
             Log.e("android-log4j", e.getMessage());
         }
-
-        // for SSLv3 negotiation bug
-//        Ion.getDefault(getApplicationContext())
-//                .getHttpClient()
-//                .getSSLSocketMiddleware()
-//                .addEngineConfigurator(new AsyncSSLEngineConfigurator() {
-//                    @Override
-//                    public void configureEngine(SSLEngine engine, String host, int port) {
-//                        engine.setEnabledProtocols(new String[] { "SSLv3" });
-//                    }
-//                });
     }
 }

@@ -12,11 +12,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.tosslab.jandi.app.MainActivity;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.lists.CdpArrayAdapter;
-import com.tosslab.jandi.app.lists.CdpItem;
+import com.tosslab.jandi.app.ui.MessageListActivity;
+import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 
 import org.apache.log4j.Logger;
 
@@ -29,16 +29,16 @@ import de.greenrobot.event.EventBus;
  */
 public class FileUploadDialogFragment extends DialogFragment {
     private final Logger log = Logger.getLogger(FileUploadDialogFragment.class);
-    private CdpArrayAdapter cdpArrayAdapter;
+    private EntityArrayAdapter mEntityArrayAdapter;
 
-    static private int selectedCdpIdToBeShared;    // Share 할 CDP
+    static private int selectedEntityIdToBeShared;    // Share 할 CDP
 
-    public static FileUploadDialogFragment newInstance(String realFilePath, int currentCdpId) {
-        selectedCdpIdToBeShared = currentCdpId;
+    public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
+        selectedEntityIdToBeShared = currentEntityId;
         FileUploadDialogFragment frag = new FileUploadDialogFragment();
         Bundle args = new Bundle();
         args.putString("realFilePath", realFilePath);
-        args.putInt("currentCdpId", currentCdpId);
+        args.putInt("currentEntityId", currentEntityId);
         frag.setArguments(args);
         return frag;
     }
@@ -57,7 +57,7 @@ public class FileUploadDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final String realFilePath = getArguments().getString("realFilePath", "");
-        final int currentCdpId = getArguments().getInt("currentCdpId");
+        final int currentEntityId = getArguments().getInt("currentEntityId");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_upload_file, null);
@@ -73,16 +73,17 @@ public class FileUploadDialogFragment extends DialogFragment {
 
         // CDP
         final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_cdps);
-        spinner.setPrompt("공유");
-        cdpArrayAdapter = new CdpArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
-                ((MainActivity)getActivity()).cdpItemManager.retrieveWithoutTitle());
-        spinner.setAdapter(cdpArrayAdapter);
-        spinner.setSelection(cdpArrayAdapter.getPosition(currentCdpId));
+        spinner.setPrompt(getString(R.string.jandi_action_share));
+        mEntityArrayAdapter = new EntityArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
+                ((MessageListActivity)getActivity()).mEntityManager.retrieveAccessableEntities());
+        spinner.setAdapter(mEntityArrayAdapter);
+        spinner.setSelection(mEntityArrayAdapter.getPosition(currentEntityId));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedCdpIdToBeShared = ((CdpItem)adapterView.getItemAtPosition(i)).id;
-                log.debug("Change to cdp ID to be shared : " + selectedCdpIdToBeShared);
+                selectedEntityIdToBeShared
+                        = ((FormattedEntity)adapterView.getItemAtPosition(i)).getEntity().id;
+                log.debug("Change to cdp ID to be shared : " + selectedEntityIdToBeShared);
             }
 
             @Override
@@ -96,19 +97,19 @@ public class FileUploadDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(R.string.title_file_upload)
-                .setPositiveButton(R.string.upload,
+                .setPositiveButton(R.string.jandi_upload,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 EventBus.getDefault().post(
                                         new ConfirmFileUploadEvent(
-                                                selectedCdpIdToBeShared,
+                                                selectedEntityIdToBeShared,
                                                 realFilePath,
                                                 editTextFileComment.getText().toString()));
                                 dismiss();
                             }
                         }
                 )
-                .setNegativeButton(R.string.cancel,
+                .setNegativeButton(R.string.jandi_cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 // Do Nothing

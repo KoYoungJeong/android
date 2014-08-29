@@ -6,27 +6,32 @@ configurations {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':libraries:SlidingMenu:library')
     apt 'org.androidannotations:androidannotations:3.0.1'
-    // You must install or update the Google Repository through the SDK manager to use this dependency.
-    // for HttpBasicAuthenticatorInterceptor
+    // Google
     compile 'com.android.support:appcompat-v7:19.+'
     compile 'com.google.android.gms:play-services:3.1.+'
+    compile 'com.android.support:support-v13:19.+'
+    // UI
     compile 'com.navercorp.pulltorefresh:library:3.2.0@aar'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.github.jfragosoperez:hideybarphotoviewscreen:1.+'
+    compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
+    //    compile 'eu.inmite.android.lib:android-styled-dialogs:1.2.+'
+    // Boilerplate
     compile 'de.greenrobot:eventbus:2.2.+'
-//    compile 'eu.inmite.android.lib:android-styled-dialogs:1.2.+'
     compile 'org.androidannotations:androidannotations-api:3.0.1'
+    // Network
     compile 'org.springframework.android:spring-android-core:1.0.+'
     compile 'org.springframework.android:spring-android-rest-template:1.0.+'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
+    // Cache
     compile 'com.squareup.picasso:picasso:2.2.+'
     compile 'com.koushikdutta.ion:ion:1.+'
-    compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
+    // Etc
     compile 'log4j:log4j:1.2.+'
     compile 'de.mindpipe.android:android-logging-log4j:1.0.+'
-    compile 'com.android.support:support-v13:19.+'
+    compile 'com.mixpanel.android:mixpanel-android:4.3.0@aar'
+    compile 'com.parse.bolts:bolts-android:1.1.2'
 }
 
 android {
@@ -37,8 +42,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 6
-        versionName '0.1.5'
+        versionCode 10
+        versionName '0.3.2'
     }
     buildTypes {
         release {
@@ -68,7 +73,6 @@ android {
     signingConfigs {
         release {
             storeFile file("tossandroid.keystore")
-            storePassword ''
             keyAlias "tossandroid"
             keyPassword ''
         }

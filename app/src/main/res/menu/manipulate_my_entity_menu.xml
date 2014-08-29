@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_manipulate_my_entity"
+        android:icon="@drawable/jandi_icon_moremenu"
+        android:showAsAction="always"
+        android:title="">
+        <menu>
+            <item android:id="@+id/action_my_entity_invite"
+                android:title="초대"
+                />
+            <item android:id="@+id/action_my_entity_leave"
+                android:title="탈퇴"
+                />
+            <item android:id="@+id/action_my_entity_rename"
+                android:title="이름 수정"
+                />
+            <item android:id="@+id/action_my_entity_delete"
+                android:title="삭제"
+                />
+        </menu>
+    </item>
+</menu>
