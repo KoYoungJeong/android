@@ -109,7 +109,7 @@ public class FileListFragment extends BaseFragment {
 
     @Background
     void doSearchInBackground() {
-        jandiRestClient.setHeader("Authorization", mMyToken);
+        jandiRestClient.setHeader(JandiConstants.AUTH_HEADER, mMyToken);
 
         try {
             ReqSearchFile reqSearchFile = new ReqSearchFile();
@@ -121,7 +121,7 @@ public class FileListFragment extends BaseFragment {
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
             log.error("fail to get searched files.", e);
-            searchFailed("파일 검색에 실패했습니다");
+            searchFailed(getString(R.string.err_file_search));
         }
     }
 

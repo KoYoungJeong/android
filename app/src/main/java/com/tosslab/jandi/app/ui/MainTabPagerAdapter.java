@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -11,16 +12,17 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter {
-    private final String[] TITLES = { "공개채널", "비밀그룹", "1:1", "파일" };
-//    private final int[] ICONS = {
-//            R.drawable.tmp_icon_channel,
-//            R.drawable.tmp_icon_dm,
-//            R.drawable.tmp_icon_private_group,
-//            R.drawable.tmp_icon_setting
-//    };
+    private final int[] mTitleRes = {
+            R.string.jandi_tab_channel,
+            R.string.jandi_tab_private_group,
+            R.string.jandi_tab_direct_message,
+            R.string.jandi_tab_file
+    };
 
-    public MainTabPagerAdapter(FragmentManager fm) {
+    private Context mContext;
+    public MainTabPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
+        mContext = context;
     }
 
     @Override
@@ -49,15 +51,11 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return TITLES[position];
+        return mContext.getString(mTitleRes[position]);
     }
-
-//    public int getIcon(int position) {
-//        return ICONS[position];
-//    }
 
     @Override
     public int getCount() {
-        return TITLES.length;
+        return mTitleRes.length;
     }
 }

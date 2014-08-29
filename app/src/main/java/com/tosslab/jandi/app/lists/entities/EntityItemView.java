@@ -67,6 +67,7 @@ public class EntityItemView extends LinearLayout {
                     textViewBadge.setVisibility(VISIBLE);
                     textViewBadge.setText(formattedEntity.alarmCount + "");
                 }
+                // 채널 아이콘의 색상이 자신의 ID에 따라 자동으로 변하도록...
                 if (formattedEntity.isJoined) {
                     imageViewEntityIcon.setColorFilter(formattedEntity.getMyColor(),
                             android.graphics.PorterDuff.Mode.MULTIPLY);

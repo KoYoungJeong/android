@@ -260,7 +260,7 @@ public class MainEntityListFragment extends BaseFragment {
         }
 
         try {
-            ResCommon restResId = null;
+            ResCommon restResId;
             if (entityType == JandiConstants.TYPE_CHANNEL) {
                 restResId = mJandiEntityClient.createChannel(entityName);
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {

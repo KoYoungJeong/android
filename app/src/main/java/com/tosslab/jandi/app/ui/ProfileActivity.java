@@ -98,7 +98,6 @@ public class ProfileActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("Profile");
 
         mContext = getApplicationContext();
 
@@ -168,6 +167,9 @@ public class ProfileActivity extends Activity {
         } catch (JandiException e) {
             log.error("get profile failed", e);
             getProfileFailed();
+        } catch (Exception e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
         }
     }
 
@@ -182,7 +184,8 @@ public class ProfileActivity extends Activity {
     @UiThread
     void getProfileFailed() {
         mProgressWheel.dismiss();
-        ColoredToast.showError(this, "프로필 획득에 실패하였습니다");
+        ColoredToast.showError(this, getString(R.string.err_profile_get_info));
+        finish();
     }
 
     void displayProfile(ResLeftSideMenu.User me) {
@@ -302,7 +305,7 @@ public class ProfileActivity extends Activity {
     @UiThread
     void setTextAndChangeColor(TextView textView, String textToBeChanged) {
         if (textToBeChanged.length() <= 0) {
-            ColoredToast.showError(this, "내용을 입력해주세요");
+            ColoredToast.showError(this, getString(R.string.err_profile_empty_info));
             return;
         }
         textView.setText(textToBeChanged);
@@ -317,7 +320,7 @@ public class ProfileActivity extends Activity {
         } else if (attemptToUpdate) {
             updateProfile();
         } else {
-            ColoredToast.showWarning(this, "수정된 내역이 없습니다");
+            ColoredToast.showWarning(this, getString(R.string.err_profile_unmodified));
             return;
         }
     }
@@ -353,13 +356,13 @@ public class ProfileActivity extends Activity {
 
     @UiThread
     void updateProfileSucceed(ResLeftSideMenu.User me) {
-        ColoredToast.show(this, "프로필이 수정되었습니다");
+        ColoredToast.show(this, getString(R.string.jandi_profile_update_succeed));
         getProfileSuccess(me);
     }
 
     @UiThread
     void updateProfileFailed() {
-        ColoredToast.showError(this, "프로필 수정에 실패하였습니다");
+        ColoredToast.showError(this, getString(R.string.err_profile_update));
     }
 
 
@@ -439,7 +442,7 @@ public class ProfileActivity extends Activity {
     public void uploadProfilePhoto() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(getString(R.string.file_uploading));
+        progressDialog.setMessage(getString(R.string.jandi_file_uploading));
         progressDialog.show();
 
         String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
@@ -452,7 +455,7 @@ public class ProfileActivity extends Activity {
                         progressDialog.setProgress((int)(downloaded/total));
                     }
                 })
-                .setHeader("Authorization", mMyToken)
+                .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
                 .setHeader("Accept", "application/vnd.tosslab.jandi-v1+json")
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(mTempPhotoFile.getName()), mTempPhotoFile)
                 .asJsonObject()
@@ -473,12 +476,12 @@ public class ProfileActivity extends Activity {
             if (attemptToUpdate) {
                 updateProfile();
             } else {
-                ColoredToast.show(mContext, "사진이 수정되었습니다");
+                ColoredToast.show(mContext, getString(R.string.jandi_profile_photo_upload_succeed));
             }
 
         } else {
             log.error("uploadFileDone: FAILED", exception);
-            ColoredToast.showError(mContext, "사진 업로드 실패");
+            ColoredToast.showError(mContext, getString(R.string.err_profile_photo_upload));
         }
     }
 }

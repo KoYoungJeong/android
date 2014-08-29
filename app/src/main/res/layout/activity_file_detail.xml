@@ -42,7 +42,7 @@
             android:layout_width="55dp"
             android:layout_height="40dp"
             android:layout_marginLeft="6dp"
-            android:text="@string/send_message"
+            android:text="@string/jandi_message_send"
             android:textSize="14sp"
             android:textColor="@color/jandi_messages_button_text"
             android:background="@drawable/btn_send_selector"/>

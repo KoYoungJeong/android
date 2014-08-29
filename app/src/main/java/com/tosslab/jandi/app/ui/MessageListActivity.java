@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -371,39 +370,40 @@ public class MessageListActivity extends BaseActivity {
     public void getEntitiesInBackground() {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
-            getEntitiesDone(true, resLeftSideMenu, null);
+            getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기
-            Log.e("HI", "Get Fail", e);
-            getEntitiesDone(false, null, "세션이 만료되었습니다. 다시 로그인 해주세요.");
+            // TODO 네트웍 에러와 세션 만료.
+            log.error("Get entities failed", e);
+            getEntitiesFailed(getString(R.string.err_expired_session));
         }
     }
 
     @UiThread
-    public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
-        if (isOk) {
-            mEntityManager = new EntityManager(resLeftSideMenu);
-            FormattedEntity entity = mEntityManager.getEntityById(entityId);
-            if (entity == null) {
-                // TODO 현재 Entity 획득 실패. 이런 Activity로 돌아간다.
-                ColoredToast.showError(mContext, "유효하지 않은 방입니다");
-                returnToLoginActivity();
-                return;
-            }
-            entityType = entity.type;
-            entityName = (entity.isUser()) ? entity.getUserName() : entity.toString();
-            log.debug("entity name from push : " + entityName);
-            isMyEntity = mEntityManager.isMyEntity(entityId);
-
-            getActionBar().setTitle(entityName);
-            trackSigningInFromPush(mEntityManager);
-
-            getMessages();
-        } else {
-            ColoredToast.showError(mContext, errMessage);
-            returnToLoginActivity();
+    public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
+        mEntityManager = new EntityManager(resLeftSideMenu);
+        FormattedEntity entity = mEntityManager.getEntityById(entityId);
+        if (entity == null) {
+            getEntitiesFailed(getString(R.string.err_messages_invaild_entity));
+            return;
         }
+        entityType = entity.type;
+        entityName = (entity.isUser()) ? entity.getUserName() : entity.toString();
+        log.debug("entity name from push : " + entityName);
+        isMyEntity = mEntityManager.isMyEntity(entityId);
+
+        getActionBar().setTitle(entityName);
+        trackSigningInFromPush(mEntityManager);
+
+        getMessages();
     }
+
+    @UiThread
+    public void getEntitiesFailed(String errMessage) {
+        ColoredToast.showError(mContext, errMessage);
+        returnToLoginActivity();
+    }
+
 
     @Background
     public void getMessagesInBackground(int type, int id) {
@@ -428,7 +428,7 @@ public class MessageListActivity extends BaseActivity {
             getMessagesSucceed(restResMessages);
         } catch (RestClientException e) {
             log.error("getMessagesInBackground : FAILED", e);
-            getMessagesFailed(getString(R.string.err_get_messages_failed));
+            getMessagesFailed(getString(R.string.err_messages_get));
         }
     }
 
@@ -436,7 +436,7 @@ public class MessageListActivity extends BaseActivity {
     public void showWarningEmpty() {
         mProgressWheel.dismiss();
         mLastUpdateLinkId = 0;
-        ColoredToast.showWarning(mContext, getString(R.string.warn_empty_messages));
+        ColoredToast.showWarning(mContext, getString(R.string.warn_messages_empty));
         resumeUpdateTimer();
     }
 
@@ -493,7 +493,7 @@ public class MessageListActivity extends BaseActivity {
                 return null;
             } catch (RestClientException e) {
                 log.error("GetFutherMessagesTask : FAILED", e);
-                return getString(R.string.err_get_messages_failed);
+                return getString(R.string.err_messages_get);
             }
         }
 
@@ -601,7 +601,7 @@ public class MessageListActivity extends BaseActivity {
             sendMessageDone(true, null);
         } catch (RestClientException e) {
             log.error("sendMessageInBackground : FAILED", e);
-            sendMessageDone(false, getString(R.string.err_send_messages_failed));
+            sendMessageDone(false, getString(R.string.err_messages_send));
         }
     }
 
@@ -678,10 +678,10 @@ public class MessageListActivity extends BaseActivity {
                 log.debug("modifyMessageInBackground : Try for comment");
                 mJandiMessageClient.modifyMessageComment(messageId, inputMessage, feedbackId);
             }
-            modifyMessageDone(true, getString(R.string.modify_messages_succeed));
+            modifyMessageDone(true, getString(R.string.jandi_messages_modify_succeed));
         } catch (RestClientException e) {
             log.error("modifyMessageInBackground : FAILED");
-            modifyMessageDone(false, getString(R.string.err_modify_messages_failed));
+            modifyMessageDone(false, getString(R.string.err_messages_modify));
         }
     }
 
@@ -722,7 +722,7 @@ public class MessageListActivity extends BaseActivity {
             deleteMessageDone(true, null);
         } catch (RestClientException e) {
             log.error("deleteMessageInBackground : FAILED", e);
-            deleteMessageDone(false, getString(R.string.err_delete_messages_failed));
+            deleteMessageDone(false, getString(R.string.err_messages_delete));
         }
     }
 
@@ -812,7 +812,7 @@ public class MessageListActivity extends BaseActivity {
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(getString(R.string.file_uploading)+ " " + event.realFilePath);
+        progressDialog.setMessage(getString(R.string.jandi_file_uploading)+ " " + event.realFilePath);
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
@@ -828,7 +828,7 @@ public class MessageListActivity extends BaseActivity {
                         progressDialog.setProgress((int)(downloaded/total));
                     }
                 })
-                .setHeader("Authorization", mMyToken)
+                .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
                 .setHeader("Accept", "application/vnd.tosslab.jandi-v1+json")
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.cdpId)
@@ -853,10 +853,10 @@ public class MessageListActivity extends BaseActivity {
         if (exception == null) {
             log.debug(result);
             trackUploadingFile(mEntityManager, entityType, result);
-            ColoredToast.show(mContext, getString(R.string.upload_file_succeed));
+            ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
         } else {
             log.error("uploadFileDone: FAILED", exception);
-            ColoredToast.showError(mContext, getString(R.string.err_upload_file_failed));
+            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
         }
         getUpdateMessagesAndResumeUpdateTimer();
     }
@@ -916,7 +916,7 @@ public class MessageListActivity extends BaseActivity {
             leaveEntitySucceed();
         } catch (JandiException e) {
             log.error("fail to leave cdp");
-            leaveEntityFailed("탈퇴에 실패했습니다.");
+            leaveEntityFailed(getString(R.string.err_entity_leave));
         }
     }
 
@@ -966,7 +966,7 @@ public class MessageListActivity extends BaseActivity {
             modifyEntitySucceed(event.inputName);
         } catch (JandiException e) {
             log.error("modify failed", e);
-            modifyEntityFailed("수정 실패");
+            modifyEntityFailed(getString(R.string.err_entity_modify));
         }
     }
 
@@ -996,7 +996,7 @@ public class MessageListActivity extends BaseActivity {
             }
             deleteEntitySucceed();
         } catch (JandiException e) {
-            deleteEntityFailed("삭제에 실패했습니다.");
+            deleteEntityFailed(getString(R.string.err_entity_delete));
         }
     }
 
@@ -1028,7 +1028,7 @@ public class MessageListActivity extends BaseActivity {
                 = mEntityManager.getUnjoinedMembersOfEntity(entityId, entityType);
 
         if (unjoinedMembers.size() <= 0) {
-            ColoredToast.showWarning(mContext, "이미 모든 사용자가 가입되어 있습니다.");
+            ColoredToast.showWarning(mContext, getString(R.string.warn_all_users_are_already_invited));
             return;
         }
 
@@ -1038,7 +1038,7 @@ public class MessageListActivity extends BaseActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle(R.string.title_cdp_invite);
         dialog.setView(view);
-        dialog.setPositiveButton(R.string.menu_cdp_invite, new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.menu_entity_invite, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 List<Integer> selectedCdp = adapter.getSelectedUserIds();
@@ -1060,10 +1060,10 @@ public class MessageListActivity extends BaseActivity {
             } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
                 mJandiEntityClient.invitePrivateGroup(entityId, invitedUsers);
             }
-            inviteSucceed(invitedUsers.size() + "명의 사용자를 초대했습니다.");
+            inviteSucceed(invitedUsers.size() + getString(R.string.jandi_message_invite_entity));
         } catch (JandiException e) {
-            log.error("fail to invite cdp");
-            inviteFailed("초대에 실패했습니다.");
+            log.error("fail to invite entity");
+            inviteFailed(getString(R.string.err_entity_invite));
         }
     }
 

@@ -6,13 +6,14 @@ package com.tosslab.jandi.app;
 public class JandiConstants {
     // For Network
 //    public static final String SERVICE_ROOT_URL = "https://192.168.0.19:2323/";
-//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
-    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
+    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
+//    public static final String SERVICE_ROOT_URL = "https://jandi.com/";
     public static final String AUTH_HEADER      = "Authorization";
 
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
-    public static final String MIXPANEL_TOKEN   = "081e1e9730e547f43bdbf59be36a4e31";
+//    public static final String MIXPANEL_TOKEN   = "081e1e9730e547f43bdbf59be36a4e31";
+    public static final String MIXPANEL_TOKEN   = "f72e67d5099ab4e0ba4a83da4a9cafe3";
 
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_ENTITY_TYPE    = "entityType";

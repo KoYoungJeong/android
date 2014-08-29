@@ -27,7 +27,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
-    public boolean onPreferenceTreeClick (PreferenceScreen preferenceScreen, Preference preference) {
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.getKey().equals("setting_push_auto_alarm")) {
             log.debug("setting_push_auto_alarm clicked");
             CheckBoxPreference pref = (CheckBoxPreference)preference;
@@ -40,7 +40,7 @@ public class SettingsFragment extends PreferenceFragment {
             }
         } else if (preference.getKey().equals("setting_logout")) {
             log.debug("setting_logout clicked");
-            ColoredToast.show(getActivity(), "로그아웃 되었습니다");
+            ColoredToast.show(getActivity(), "");
 
             // Notification Token을 삭제
             ((SettingsActivity)getActivity()).deleteNotificationTokenInBackground();

@@ -9,7 +9,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="@string/menu_cdp_edit"
+        android:text="@string/menu_entity_edit"
         android:textSize="20sp"/>
     <View
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="@string/menu_cdp_delete"
+        android:text="@string/menu_entity_delete"
         android:textSize="20sp" />
     <View
         android:layout_width="match_parent"
@@ -33,7 +33,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="@string/menu_cdp_invite"
+        android:text="@string/menu_entity_invite"
         android:textSize="20sp" />
     <View
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="@string/menu_cdp_leave"
+        android:text="@string/menu_entity_leave"
         android:textSize="20sp" />
 
 </LinearLayout>

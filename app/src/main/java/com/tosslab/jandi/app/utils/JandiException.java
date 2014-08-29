@@ -28,7 +28,10 @@ public class JandiException extends Exception {
 
         ObjectMapper om = new ObjectMapper();
         try {
-            Map<String, Object> m = om.readValue(e.getResponseBodyAsString(), new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> m = om.readValue(
+                    e.getResponseBodyAsString(),
+                    new TypeReference<Map<String, Object>>(){}
+            );
             this.errCode = (Integer)m.get(ERR_CODE);
             this.errReason = (String)m.get(ERR_MSG);
         } catch (IOException e1) {

@@ -177,13 +177,18 @@ public class FormattedEntity {
 
     public int getMyColor() {
         final int color[] = {
-                Color.parseColor("#ff7997"),
-                Color.parseColor("#ea80fc"),
-                Color.parseColor("#8c9eff"),
-                Color.parseColor("#80d8ff"),
-                Color.parseColor("#a7ffeb"),
-                Color.parseColor("#a2f78d"),
-                Color.parseColor("#ffff8d"),
+                Color.parseColor("#e91e63"),
+                Color.parseColor("#9c27b0"),
+                Color.parseColor("#3f51b5"),
+                Color.parseColor("#03a9f4"),
+                Color.parseColor("#00bcd4"),
+                Color.parseColor("#009688"),
+                Color.parseColor("#795548"),
+                Color.parseColor("#259b24"),
+                Color.parseColor("#8bc34a"),
+                Color.parseColor("#cddc39"),
+                Color.parseColor("#ffc107"),
+                Color.parseColor("#795548"),
         };
 
         return color[this.entity.id % color.length];

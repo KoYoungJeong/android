@@ -190,7 +190,7 @@ public class FileDetailActivity extends BaseActivity {
      * @param event
      */
     public void onEvent(StickyEntityManager event) {
-        log.debug("cdpItemManager is set");
+        log.debug("StickyEntityManager is set");
         mEntityManager = event.entityManager;
         drawFileSharedEntities();
     }
@@ -223,23 +223,23 @@ public class FileDetailActivity extends BaseActivity {
             ResFileDetail resFileDetail = jandiRestClient.getFileDetail(fileId);
             drawFileDetail(resFileDetail);
             fileDetailCommentListAdapter.updateFileComments(resFileDetail);
-            getFileDetailDone(true, null);
+            getFileDetailSucceed();
         } catch (RestClientException e) {
             log.error("fail to get file detail.", e);
-            getFileDetailDone(false, "File detail failed");
+            getFileDetailFailed(getString(R.string.err_file_detail));
         }
     }
 
     @UiThread
-    void getFileDetailDone(boolean isOk, String message) {
+    void getFileDetailSucceed() {
         mProgressWheel.dismiss();
-        if (isOk) {
-            log.debug("reload");
-            fileDetailCommentListAdapter.notifyDataSetChanged();
-        } else {
-            ColoredToast.showError(this, message);
-        }
+        fileDetailCommentListAdapter.notifyDataSetChanged();
+    }
 
+    @UiThread
+    void getFileDetailFailed(String errMessage) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(this, errMessage);
     }
 
     @UiThread
@@ -397,7 +397,7 @@ public class FileDetailActivity extends BaseActivity {
 
     @UiThread
     public void shareMessageSucceed(int entityIdToBeShared) {
-        ColoredToast.show(this, "공유되었습니다.");
+        ColoredToast.show(this, getString(R.string.jandi_share_succeed));
         trackSharingFile(mEntityManager,
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
@@ -407,7 +407,7 @@ public class FileDetailActivity extends BaseActivity {
 
     @UiThread
     public void shareMessageFailed() {
-        ColoredToast.showError(this, "FAIL Message Sharing !!");
+        ColoredToast.showError(this, getString(R.string.err_share));
     }
 
     /************************************************************
@@ -456,7 +456,7 @@ public class FileDetailActivity extends BaseActivity {
 
     @UiThread
     public void unshareMessageSucceed(int entityIdToBeUnshared) {
-        ColoredToast.show(this, "공유가 해제되었습니다");
+        ColoredToast.show(this, getString(R.string.jandi_unshare_succeed));
         trackUnsharingFile(mEntityManager,
                 mEntityManager.getEntityById(entityIdToBeUnshared).type,
                 mResFileDetail);
@@ -466,7 +466,7 @@ public class FileDetailActivity extends BaseActivity {
 
     @UiThread
     public void unshareMessageFailed() {
-        ColoredToast.showError(this, "공유해제 실패");
+        ColoredToast.showError(this, getString(R.string.err_unshare));
     }
 
     /************************************************************
@@ -490,10 +490,10 @@ public class FileDetailActivity extends BaseActivity {
     @UiThread
     public void deleteFileDone(boolean isOk) {
         if (isOk) {
-            ColoredToast.show(this, "파일이 삭제되었습니다");
+            ColoredToast.show(this, getString(R.string.jandi_delete_succeed));
             finish();
         } else {
-            ColoredToast.showError(this, "파일 삭제가 실패하였습니다");
+            ColoredToast.showError(this, getString(R.string.err_delete_file));
         }
     }
 
@@ -584,11 +584,11 @@ public class FileDetailActivity extends BaseActivity {
             try {
                 startActivity(i);
             } catch (ActivityNotFoundException e) {
-                ColoredToast.showError(mContext, file + "을 확인할 수 있는 앱이 설치되지 않았습니다.");
+                ColoredToast.showError(mContext, file + getString(R.string.err_unsupported_file_type));
             }
         } else {
             log.error("Download failed", exception);
-            ColoredToast.showError(mContext, "파일 다운로드에 실패하였습니다");
+            ColoredToast.showError(mContext, getString(R.string.err_download));
         }
 
     }

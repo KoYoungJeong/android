@@ -73,7 +73,7 @@ public class FileUploadDialogFragment extends DialogFragment {
 
         // CDP
         final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_cdps);
-        spinner.setPrompt("공유");
+        spinner.setPrompt(getString(R.string.jandi_action_share));
         mEntityArrayAdapter = new EntityArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
                 ((MessageListActivity)getActivity()).mEntityManager.retrieveAccessableEntities());
         spinner.setAdapter(mEntityArrayAdapter);

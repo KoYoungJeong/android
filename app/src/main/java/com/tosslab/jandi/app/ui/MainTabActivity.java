@@ -55,7 +55,9 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.springframework.web.client.ResourceAccessException;
 
+import java.net.ConnectException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -139,7 +141,7 @@ public class MainTabActivity extends BaseActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         // ViewPager
-        mMainTabPagerAdapter = new MainTabPagerAdapter(getFragmentManager());
+        mMainTabPagerAdapter = new MainTabPagerAdapter(mContext, getFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setAdapter(mMainTabPagerAdapter);
 
@@ -334,6 +336,9 @@ public class MainTabActivity extends BaseActivity {
         } catch (JandiException e) {
             log.error("get entity failed", e);
             getEntitiesDone(false, null, getString(R.string.err_expired_session));
+        } catch (ResourceAccessException e) {
+            log.error("connect failed", e);
+            getEntitiesDone(false, null, getString(R.string.err_service_connection));
         }
     }
 
