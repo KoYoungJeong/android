@@ -56,7 +56,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(ProfileActivity.class);
 
     private static final int REQ_CODE_PICK_IMAGE = 0;
@@ -64,6 +64,9 @@ public class ProfileActivity extends Activity {
 
     @Extra
     int myEntityId;
+    @Extra
+    int myTeamId;
+
     @ViewById(R.id.profile_photo)
     ImageView imageViewProfilePhoto;
     @ViewById(R.id.profile_user_realname)
@@ -357,6 +360,7 @@ public class ProfileActivity extends Activity {
     @UiThread
     void updateProfileSucceed(ResLeftSideMenu.User me) {
         ColoredToast.show(this, getString(R.string.jandi_profile_update_succeed));
+        trackUpdateProfile(myEntityId + "@" + myTeamId, me);
         getProfileSuccess(me);
     }
 

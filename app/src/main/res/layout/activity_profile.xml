@@ -29,7 +29,7 @@
             android:layout_gravity="center_horizontal|bottom"
             android:layout_marginBottom="6dp"
             android:textColor="@color/jandi_text_white"
-            android:text="편집"/>
+            android:text="@string/jandi_profile_edit"/>
     </FrameLayout>
     <TextView
         android:id="@+id/profile_user_realname"
@@ -46,7 +46,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="12dp"
         android:textSize="14sp"
-        android:text="기본 정보"/>
+        android:text="@string/jandi_profile_basic_info"/>
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="12dp"
         android:textSize="14sp"
-        android:text="추가 정보"/>
+        android:text="@string/jandi_profile_additional_info"/>
     <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

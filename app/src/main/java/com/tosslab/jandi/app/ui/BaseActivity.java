@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.AnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -129,6 +130,22 @@ public class BaseActivity extends Activity {
             mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
                 mAnalyticsClient.trackUnsharingFile(entityType, fileInfo);
+            } catch (JSONException e) {
+                log.error("CANNOT MEET", e);
+            }
+        }
+    }
+
+    /**
+     * ProfileActivity에서는 entityManager가 없기 때문에 distictId를 그대로 가져온다.
+     * @param distictId
+     * @param updatedMyProfile
+     */
+    protected void trackUpdateProfile(String distictId, ResLeftSideMenu.User updatedMyProfile) {
+        if (distictId != null) {
+            mAnalyticsClient = AnalyticsClient.getInstance(this, distictId);
+            try {
+                mAnalyticsClient.trackProfile(updatedMyProfile);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }

@@ -310,6 +310,7 @@ public class MainTabActivity extends BaseActivity {
             public void run() {
                 ProfileActivity_.intent(mContext)
                         .myEntityId(mEntityManager.getMe().getUser().id)
+                        .myTeamId(mEntityManager.getTeamId())
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }

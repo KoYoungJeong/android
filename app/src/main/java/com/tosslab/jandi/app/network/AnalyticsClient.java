@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.apache.log4j.Logger;
@@ -29,6 +30,7 @@ public class AnalyticsClient {
     private final String PROP_SHARE_FILE            = "File Share";
     private final String PROP_UNSHARE_FILE          = "File Unshare";
     private final String PROP_DOWNLOAD_FILE         = "File Download";
+    private final String PROP_PROFILE               = "Set Profile";
 
     private final String KEY_CHANNEL        = "channel";
     private final String KEY_PRIVATE_GROUP  = "private";
@@ -137,6 +139,29 @@ public class AnalyticsClient {
         props.put("mime type", mimeType);
         props.put("size", fileInfo.content.size);
         mMixpanel.track(PROP_UNSHARE_FILE, props);
+    }
+
+    public void trackProfile(ResLeftSideMenu.User updatedMyProfile)
+            throws JSONException {
+        String mobile = "";
+        String division = "";
+        String position = "";
+        ResLeftSideMenu.ExtraData extraData = updatedMyProfile.u_extraData;
+        if (extraData != null) {
+            mobile = (extraData.phoneNumber != null) ? extraData.phoneNumber : "";
+            division = (extraData.department != null) ? extraData.department : "";
+            position = (extraData.position != null) ? extraData.position : "";
+        }
+        JSONObject props = new JSONObject();
+        mMixpanel.track(PROP_PROFILE, props);
+
+        JSONObject profile = new JSONObject();
+        profile.put("nickname", updatedMyProfile.u_nickname);
+        profile.put("mobile", mobile);
+        profile.put("division", division);
+        profile.put("position", position);
+        mMixpanel.getPeople().set(profile);
+
     }
 
     private String getMimeTypeCategory(String mimeType) {

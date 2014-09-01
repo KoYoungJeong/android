@@ -33,7 +33,7 @@ public class MessageItemView extends LinearLayout {
 
     // 메시지에선 항상 보이는 컨텐츠들...
     @ViewById(R.id.ly_message_default)
-    RelativeLayout mLayoutMessageDefault;
+    LinearLayout mLayoutMessageDefault;
     @ViewById(R.id.img_message_user_profile)
     ImageView mUserProfileImage;
     @ViewById(R.id.txt_message_user_name)

@@ -104,11 +104,11 @@ public class EntityItemView extends LinearLayout {
                 return;
             case FormattedEntity.TYPE_TITLE_JOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
-                textViewChannelTypeTitle.setText("참여한 채널");
+                textViewChannelTypeTitle.setText(R.string.jandi_entity_joined_channel);
                 return;
             case FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL:
                 linearLayoutChannelTitle.setVisibility(VISIBLE);
-                textViewChannelTypeTitle.setText("참여하지 않은 채널");
+                textViewChannelTypeTitle.setText(R.string.jandi_entity_unjoined_channel);
                 return;
         }
     }
