@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.CircleTransform;
@@ -42,11 +43,11 @@ public class FileDetailCommentView extends LinearLayout {
 
     public void bind(ResMessages.CommentMessage commentMessage) {
         // 프로필
-        ResLeftSideMenu.User writer = commentMessage.writer;
-        String profileUrl = JandiConstants.SERVICE_ROOT_URL + writer.u_photoUrl;
+        FormattedEntity writer = new FormattedEntity(commentMessage.writer);
+        String profileUrl = writer.getUserSmallProfileUrl();
         Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile_comment).transform(new CircleTransform()).into(imageViewCommentUserProfile);
         // 이름
-        String userName = writer.u_firstName + " " + writer.u_lastName;
+        String userName = writer.getUserName();
         textViewCommentUserName.setText(userName);
         // 날짜
         String createTime = DateTransformator.getTimeDifference(commentMessage.updateTime);

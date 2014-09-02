@@ -304,7 +304,9 @@ public class MainEntityListFragment extends BaseFragment {
     @UiThread
     public void joinChannel(final FormattedEntity channel) {
         ColoredToast.show(mContext,
-                channel.getChannel().name + getString(R.string.jandi_message_join_entity));
+                getString(R.string.jandi_message_join_entity_pre)
+                        + channel.getChannel().name
+                        + getString(R.string.jandi_message_join_entity_post));
         joinChannelInBackground(channel);
     }
 

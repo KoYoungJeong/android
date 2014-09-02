@@ -94,6 +94,7 @@ public class MainTabActivity extends BaseActivity {
     private ViewPager mViewPager;
 
     private boolean isReadyToRetrieveEntityList = false;
+    private boolean isFirst = true;    // TODO poor implementation
 
     @AfterViews
     void initView() {
@@ -156,7 +157,9 @@ public class MainTabActivity extends BaseActivity {
 
             @Override
             public void onPageSelected(int position) {
+                log.debug("onPageSelected at " + position);
                 mCurrentTabIndex = position;
+                trackGaTab(mEntityManager, position);
                 switch (position) {
                     case 3:
                         setActionBarForFileList();
@@ -294,6 +297,8 @@ public class MainTabActivity extends BaseActivity {
             @Override
             public void run() {
                 SettingsActivity_.intent(mContext)
+                        .myEntityId(mEntityManager.getMe().getUser().id)
+                        .myTeamId(mEntityManager.getTeamId())
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
@@ -310,6 +315,7 @@ public class MainTabActivity extends BaseActivity {
             public void run() {
                 ProfileActivity_.intent(mContext)
                         .myEntityId(mEntityManager.getMe().getUser().id)
+                        .myTeamId(mEntityManager.getTeamId())
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
@@ -359,6 +365,12 @@ public class MainTabActivity extends BaseActivity {
     }
 
     private void postAllEvents() {
+        if (isFirst) {
+            // 처음 TabActivity를 시도하면 0번째 탭이 자동 선택됨으로 이를 tracking
+            trackGaTab(mEntityManager, 0);
+            isFirst = false;
+        }
+
         postShowChannelListEvent();
         postShowUserListEvent();
         postShowPrivateGroupListEvent();
@@ -483,11 +495,11 @@ public class MainTabActivity extends BaseActivity {
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else {
-                    ResLeftSideMenu.User owner = teamMember.get(i - 1).getUser();
-                    log.debug(owner.id + " is selected");
-                    mCurrentUserNameCategorizingAccodingBy = owner.name;
+                    FormattedEntity owner = teamMember.get(i - 1);
+                    log.debug(owner.getId() + " is selected");
+                    mCurrentUserNameCategorizingAccodingBy = owner.getUserName();
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(owner.id));
+                    EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
                 }
             }
         });

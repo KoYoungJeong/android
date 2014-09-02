@@ -8,10 +8,10 @@
         android:title="">
         <menu>
             <item android:id="@+id/action_entity_invite"
-                android:title="초대"
+                android:title="@string/jandi_action_invite"
                 />
             <item android:id="@+id/action_entity_leave"
-                android:title="탈퇴"
+                android:title="@string/jandi_action_leave"
                 />
         </menu>
     </item>

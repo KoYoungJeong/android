@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
@@ -32,8 +33,12 @@ public class SettingsActivity extends PreferenceActivity {
     JandiRestClient jandiRestClient;
 
     private String myToken;
-
     private Context mContext;
+
+    @Extra
+    int myEntityId;
+    @Extra
+    int myTeamId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

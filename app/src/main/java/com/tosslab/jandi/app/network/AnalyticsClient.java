@@ -2,10 +2,11 @@ package com.tosslab.jandi.app.network;
 
 import android.content.Context;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.apache.log4j.Logger;
@@ -29,6 +30,7 @@ public class AnalyticsClient {
     private final String PROP_SHARE_FILE            = "File Share";
     private final String PROP_UNSHARE_FILE          = "File Unshare";
     private final String PROP_DOWNLOAD_FILE         = "File Download";
+    private final String PROP_PROFILE               = "Set Profile";
 
     private final String KEY_CHANNEL        = "channel";
     private final String KEY_PRIVATE_GROUP  = "private";
@@ -42,7 +44,8 @@ public class AnalyticsClient {
 
     public AnalyticsClient(Context context, String distictId) {
         log.debug("Create instance of AnalyticsClient");
-        mMixpanel = MixpanelAPI.getInstance(context, JandiConstants.MIXPANEL_TOKEN);
+        String mixpanelId = context.getString(R.string.jandi_mixpanel_track_id);
+        mMixpanel = MixpanelAPI.getInstance(context, mixpanelId);
         mDistictId = distictId;
         mMixpanel.identify(mDistictId);
     }
@@ -137,6 +140,31 @@ public class AnalyticsClient {
         props.put("mime type", mimeType);
         props.put("size", fileInfo.content.size);
         mMixpanel.track(PROP_UNSHARE_FILE, props);
+    }
+
+    public void trackProfile(ResLeftSideMenu.User updatedMyProfile)
+            throws JSONException {
+        String mobile = "";
+        String division = "";
+        String position = "";
+        ResLeftSideMenu.ExtraData extraData = updatedMyProfile.u_extraData;
+        if (extraData != null) {
+            mobile = (extraData.phoneNumber != null) ? extraData.phoneNumber : "";
+            division = (extraData.department != null) ? extraData.department : "";
+            position = (extraData.position != null) ? extraData.position : "";
+        }
+
+        mMixpanel.getPeople().identify(mDistictId);
+        JSONObject profile = new JSONObject();
+        profile.put("nickname", updatedMyProfile.u_nickname);
+        profile.put("mobile", mobile);
+        profile.put("division", division);
+        profile.put("position", position);
+        mMixpanel.getPeople().set(profile);
+
+        JSONObject props = new JSONObject();
+        mMixpanel.track(PROP_PROFILE, props);
+
     }
 
     private String getMimeTypeCategory(String mimeType) {

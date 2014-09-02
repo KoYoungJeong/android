@@ -363,6 +363,7 @@ public class MessageListActivity extends BaseActivity {
         messageItemListAdapter.clearAdapter();
 
         mProgressWheel.show();
+        trackGaMessageList(mEntityManager, entityType);
         getMessagesInBackground(entityType, entityId);
     }
 

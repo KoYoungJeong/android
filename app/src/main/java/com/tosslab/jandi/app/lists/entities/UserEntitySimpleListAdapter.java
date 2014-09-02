@@ -59,16 +59,16 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        ResLeftSideMenu.User user = getItem(i).getUser();
+        FormattedEntity user = getItem(i);
 
         // 프로필 사진
         Picasso.with(this.mContext)
-                .load(JandiConstants.SERVICE_ROOT_URL + user.u_photoUrl)
+                .load(user.getUserSmallProfileUrl())
                 .placeholder(R.drawable.jandi_icon_directmsg)
                 .transform(new CircleTransform())
                 .into(holder.imageView);
 
-        holder.textView.setText(user.name);
+        holder.textView.setText(user.getUserName());
 
         return convertView;
     }

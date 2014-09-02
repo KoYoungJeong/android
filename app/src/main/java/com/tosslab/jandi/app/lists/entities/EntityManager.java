@@ -132,11 +132,15 @@ public class EntityManager {
     }
 
     public String getDistictId() {
-        return mMyTeam.t_domain + "@" + mMe.u_email;
+        return  mMe.id+ "@" + mMyTeam.id;
     }
 
     public String getTeamName() {
         return mMyTeam.name;
+    }
+
+    public int getTeamId() {
+        return mMyTeam.id;
     }
     //
 //    public List<CdpItem> retrieveAllEntities() {

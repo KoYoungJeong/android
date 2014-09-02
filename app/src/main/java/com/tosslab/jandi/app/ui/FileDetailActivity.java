@@ -192,7 +192,9 @@ public class FileDetailActivity extends BaseActivity {
     public void onEvent(StickyEntityManager event) {
         log.debug("StickyEntityManager is set");
         mEntityManager = event.entityManager;
+        trackGaFileDetail(mEntityManager);
         drawFileSharedEntities();
+
     }
 
 //    @ItemLongClick
@@ -584,7 +586,10 @@ public class FileDetailActivity extends BaseActivity {
             try {
                 startActivity(i);
             } catch (ActivityNotFoundException e) {
-                ColoredToast.showError(mContext, file + getString(R.string.err_unsupported_file_type));
+                ColoredToast.showError(mContext,
+                        getString(R.string.err_unsupported_file_type_pre)
+                                + file
+                                + getString(R.string.err_unsupported_file_type_post));
             }
         } else {
             log.error("Download failed", exception);
