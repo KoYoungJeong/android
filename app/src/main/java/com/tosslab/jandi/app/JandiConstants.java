@@ -11,9 +11,6 @@ public class JandiConstants {
 
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
-    public static final String MIXPANEL_TOKEN   = "081e1e9730e547f43bdbf59be36a4e31";
-//    public static final String MIXPANEL_TOKEN   = "f72e67d5099ab4e0ba4a83da4a9cafe3";   // REAL
-
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_ENTITY_TYPE    = "entityType";
     public static final String EXTRA_ENTITY_ID      = "entityId";

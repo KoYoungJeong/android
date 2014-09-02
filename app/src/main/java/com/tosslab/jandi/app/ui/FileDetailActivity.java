@@ -192,7 +192,9 @@ public class FileDetailActivity extends BaseActivity {
     public void onEvent(StickyEntityManager event) {
         log.debug("StickyEntityManager is set");
         mEntityManager = event.entityManager;
+        trackGaFileDetail(mEntityManager);
         drawFileSharedEntities();
+
     }
 
 //    @ItemLongClick

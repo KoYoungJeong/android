@@ -2,10 +2,10 @@ package com.tosslab.jandi.app.network;
 
 import android.content.Context;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -44,7 +44,8 @@ public class AnalyticsClient {
 
     public AnalyticsClient(Context context, String distictId) {
         log.debug("Create instance of AnalyticsClient");
-        mMixpanel = MixpanelAPI.getInstance(context, JandiConstants.MIXPANEL_TOKEN);
+        String mixpanelId = context.getString(R.string.jandi_mixpanel_track_id);
+        mMixpanel = MixpanelAPI.getInstance(context, mixpanelId);
         mDistictId = distictId;
         mMixpanel.identify(mDistictId);
     }
@@ -152,15 +153,17 @@ public class AnalyticsClient {
             division = (extraData.department != null) ? extraData.department : "";
             position = (extraData.position != null) ? extraData.position : "";
         }
-        JSONObject props = new JSONObject();
-        mMixpanel.track(PROP_PROFILE, props);
 
+        mMixpanel.getPeople().identify(mDistictId);
         JSONObject profile = new JSONObject();
         profile.put("nickname", updatedMyProfile.u_nickname);
         profile.put("mobile", mobile);
         profile.put("division", division);
         profile.put("position", position);
         mMixpanel.getPeople().set(profile);
+
+        JSONObject props = new JSONObject();
+        mMixpanel.track(PROP_PROFILE, props);
 
     }
 

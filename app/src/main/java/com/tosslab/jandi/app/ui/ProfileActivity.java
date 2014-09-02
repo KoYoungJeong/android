@@ -138,6 +138,7 @@ public class ProfileActivity extends BaseActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        trackGaProfile(getDistictId());
     }
 
     @Override
@@ -360,7 +361,7 @@ public class ProfileActivity extends BaseActivity {
     @UiThread
     void updateProfileSucceed(ResLeftSideMenu.User me) {
         ColoredToast.show(this, getString(R.string.jandi_profile_update_succeed));
-        trackUpdateProfile(myEntityId + "@" + myTeamId, me);
+        trackUpdateProfile(getDistictId(), me);
         getProfileSuccess(me);
     }
 
@@ -487,5 +488,9 @@ public class ProfileActivity extends BaseActivity {
             log.error("uploadFileDone: FAILED", exception);
             ColoredToast.showError(mContext, getString(R.string.err_profile_photo_upload));
         }
+    }
+
+    private String getDistictId() {
+        return (myEntityId + "@" + myTeamId);
     }
 }

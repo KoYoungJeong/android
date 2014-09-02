@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ga_trackingId">@string/jandi_ga_track_id</string>
+    <string name="ga_appName">JANDI</string>
+    <string name="ga_appVersion">?android:attr/versionName</string>
+    <bool name="ga_autoActivityTracking">true</bool>
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+    <integer name="ga_sessionTimeout">60</integer>
+</resources>

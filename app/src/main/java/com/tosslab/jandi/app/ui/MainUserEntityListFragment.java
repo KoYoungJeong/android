@@ -80,8 +80,8 @@ public class MainUserEntityListFragment extends BaseFragment {
 
                     MessageListActivity_.intent(mContext)
                             .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                            .entityId(user.getEntity().id)
-                            .entityName(user.getEntity().name)
+                            .entityId(user.getId())
+                            .entityName(user.getUserName())
                             .isMyEntity(false)
                             .start();
 

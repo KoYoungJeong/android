@@ -85,6 +85,9 @@ public class FormattedEntity {
         return entity;
     }
 
+    public int getId() {
+        return getEntity().id;
+    }
     public ResLeftSideMenu.Channel getChannel() {
         return (entity instanceof ResLeftSideMenu.Channel)
                 ? (ResLeftSideMenu.Channel) entity
