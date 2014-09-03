@@ -19,6 +19,8 @@ import java.nio.charset.Charset;
  * MappingJacksonHttpMessageConverter 을 참조하였음.
  */
 public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+    public static final String APPLICATION_VERSION_NAME = "vnd.tosslab.jandi-v1+json";
+    public static final String APPLICATION_VERSION_FULL_NAME = "application/vnd.tosslab.jandi-v1+json";
 
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
@@ -34,7 +36,7 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     public JandiV1HttpMessageConverter() {
         super(
                 new org.springframework.http.MediaType("application", "json", DEFAULT_CHARSET)
-                , new org.springframework.http.MediaType("application", "vnd.tosslab.jandi-v1+json")
+                , new org.springframework.http.MediaType("application", APPLICATION_VERSION_NAME)
         );
     }
 

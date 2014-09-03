@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ga_trackingId">@string/jandi_ga_track_id</string>
-    <string name="ga_appName">JANDI</string>
-    <string name="ga_appVersion">?android:attr/versionName</string>
-    <bool name="ga_autoActivityTracking">true</bool>
-    <bool name="ga_reportUncaughtExceptions">true</bool>
     <integer name="ga_sessionTimeout">60</integer>
+
+    <!-- Enable automatic Activity measurement -->
+    <bool name="ga_autoActivityTracking">false</bool>
+
+    <bool name="ga_reportUncaughtExceptions">true</bool>
+    <!--<integer name="ga_dispatchPeriod">1</integer>-->
+
+    <string name="ga_appName">@string/app_name</string>
+    <string name="ga_appVersion">?android:attr/versionName</string>
+    <string name="ga_trackingId">@string/jandi_ga_track_id</string>
 </resources>

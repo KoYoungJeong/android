@@ -52,6 +52,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.JandiV1HttpMessageConverter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -746,7 +747,7 @@ public class MessageListActivity extends BaseActivity {
     }
 
     public void onEvent(RequestFileUploadEvent event) {
-        Intent intent = null;
+        Intent intent;
         switch (event.type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
                 log.info("RequestFileUploadEvent : from gallery");
@@ -772,7 +773,7 @@ public class MessageListActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
 
-        String realFilePath = null;
+        String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
                 if (resultCode == Activity.RESULT_OK) {
@@ -830,10 +831,10 @@ public class MessageListActivity extends BaseActivity {
                     }
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
-                .setHeader("Accept", "application/vnd.tosslab.jandi-v1+json")
+                .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.cdpId)
-                .setMultipartParameter("permission", "755");
+                .setMultipartParameter("permission", "740");
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", event.comment);
