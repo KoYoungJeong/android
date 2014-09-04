@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -37,12 +40,15 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -121,6 +127,7 @@ public class MessageListActivity extends BaseActivity {
     private Context mContext;
     private String mMyToken;
     private ProgressWheel mProgressWheel;
+    private Menu mMenu = null;
 
     // Update 관련
     private Timer mTimer;
@@ -268,10 +275,12 @@ public class MessageListActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mMenu = menu;
         if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
             // DON'T SHOW OPTION MENU
             return true;
         }
+
         if (isMyEntity) {
             getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
         } else {
@@ -880,7 +889,6 @@ public class MessageListActivity extends BaseActivity {
         if (!item.isDateDivider) {
             switch (item.getContentType()) {
                 case MessageItem.TYPE_STRING:
-                    // DO NOTHING
                     break;
                 case MessageItem.TYPE_COMMENT:
                     moveToFileDetailActivity(item.getFeedbackId());
@@ -1094,5 +1102,70 @@ public class MessageListActivity extends BaseActivity {
         } catch (Exception e) {
             log.error("set marker failed", e);
         }
+    }
+
+    /************************************************************
+     * 사용자 프로필 보기
+     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
+     ************************************************************/
+    public void onEvent(RequestUserInfoEvent event) {
+        int userEntityId = event.userId;
+        getProfileInBackground(userEntityId);
+    }
+
+    @Background
+    void getProfileInBackground(int userEntityId) {
+        try {
+            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
+            getProfileSuccess(user);
+        } catch (JandiException e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        } catch (Exception e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        }
+    }
+
+    @UiThread
+    void getProfileSuccess(ResLeftSideMenu.User user) {
+        showUserInfoDialog(new FormattedEntity(user));
+    }
+
+    @UiThread
+    void getProfileFailed() {
+        ColoredToast.showError(this, getString(R.string.err_profile_get_info));
+        finish();
+    }
+
+    private void showUserInfoDialog(FormattedEntity user) {
+        boolean isMe = mEntityManager.isMe(user.getId());
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        UserInfoFragmentDialog dialog = UserInfoFragmentDialog.newInstance(user, isMe);
+        dialog.show(ft, "dialog");
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        changeMessageList(event.userId, event.userName);
+    }
+
+    private void changeMessageList(int userId, String userName) {
+        setMarker();
+
+        this.entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+        this.entityId = userId;
+        this.entityName = userName;
+        this.isMyEntity = false;
+
+        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken, entityType, entityId);
+        getActionBar().setTitle(entityName);
+        mMenu.clear();
+        getMessages();
     }
 }

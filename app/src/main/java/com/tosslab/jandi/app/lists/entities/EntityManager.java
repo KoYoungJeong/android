@@ -255,6 +255,10 @@ public class EntityManager {
         return false;
     }
 
+    public boolean isMe(int userId) {
+        return (getMe().getId() == userId);
+    }
+
     private FormattedEntity searchChannelById(int channelId) {
         for (FormattedEntity target : mJoinedChannels) {
             if (target.getChannel().id == channelId) {

@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -8,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,10 +30,15 @@ import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -39,6 +48,7 @@ import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.JandiException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -94,6 +104,8 @@ public class FileDetailActivity extends BaseActivity {
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
+    private JandiEntityClient mJandiEntityClient;
+
     private EntityManager mEntityManager;
 
     @AfterViews
@@ -124,6 +136,7 @@ public class FileDetailActivity extends BaseActivity {
 
         myToken = JandiPreference.getMyToken(this);
         jandiRestClient.setHeader("Authorization", myToken);
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, myToken);
         getFileDetail();
     }
 
@@ -597,4 +610,69 @@ public class FileDetailActivity extends BaseActivity {
         }
 
     }
+
+    /************************************************************
+     * 사용자 프로필 보기
+     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
+     ************************************************************/
+    public void onEvent(RequestUserInfoEvent event) {
+        int userEntityId = event.userId;
+        getProfileInBackground(userEntityId);
+    }
+
+    @Background
+    void getProfileInBackground(int userEntityId) {
+        try {
+            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
+            getProfileSuccess(user);
+        } catch (JandiException e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        } catch (Exception e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        }
+    }
+
+    @UiThread
+    void getProfileSuccess(ResLeftSideMenu.User user) {
+        showUserInfoDialog(new FormattedEntity(user));
+    }
+
+    @UiThread
+    void getProfileFailed() {
+        ColoredToast.showError(this, getString(R.string.err_profile_get_info));
+        finish();
+    }
+
+    private void showUserInfoDialog(FormattedEntity user) {
+        boolean isMe = mEntityManager.isMe(user.getId());
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        UserInfoFragmentDialog dialog = UserInfoFragmentDialog.newInstance(user, isMe);
+        dialog.show(ft, "dialog");
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageListActivity_.intent(mContext)
+                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                        .entityId(event.userId)
+                        .entityName(event.userName)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .isMyEntity(false)
+                        .start();
+                EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
+            }
+        }, 250);
+    }
+
 }

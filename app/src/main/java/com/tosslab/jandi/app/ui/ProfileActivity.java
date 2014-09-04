@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.JandiAuthClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -84,7 +85,7 @@ public class ProfileActivity extends BaseActivity {
 
     @RestService
     JandiRestClient jandiRestClient;
-    private JandiAuthClient mJandiAuthClient;
+    private JandiEntityClient mJandiEntityClient;
 
     private Context mContext;
     private String mMyToken;
@@ -109,8 +110,7 @@ public class ProfileActivity extends BaseActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiAuthClient = new JandiAuthClient(jandiRestClient);
-        mJandiAuthClient.setAuthToken(mMyToken);
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
         getProfile();
     }
 
@@ -156,6 +156,7 @@ public class ProfileActivity extends BaseActivity {
 
     /************************************************************
      * 프로필 가져오기
+     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
      ************************************************************/
     @UiThread
     void getProfile() {
@@ -166,7 +167,7 @@ public class ProfileActivity extends BaseActivity {
     @Background
     void getProfileInBackground() {
         try {
-            ResLeftSideMenu.User me = mJandiAuthClient.getUserProfile(myEntityId);
+            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(myEntityId);
             getProfileSuccess(me);
         } catch (JandiException e) {
             log.error("get profile failed", e);
@@ -350,7 +351,7 @@ public class ProfileActivity extends BaseActivity {
     @Background
     void updateProfileInBackground(ReqUpdateProfile reqUpdateProfile) {
         try {
-            ResLeftSideMenu.User me = mJandiAuthClient.updateUserProfile(reqUpdateProfile);
+            ResLeftSideMenu.User me = mJandiEntityClient.updateUserProfile(reqUpdateProfile);
             updateProfileSucceed(me);
         } catch (JandiException e) {
             log.error("get profile failed", e);

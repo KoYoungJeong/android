@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
+import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiException;
@@ -124,6 +125,23 @@ public class JandiEntityClient {
         ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
         try {
             return mJandiRestClient.inviteGroup(id, reqInviteUsers);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+
+    public ResLeftSideMenu.User getUserProfile(int entityId) throws JandiException {
+        try {
+            return mJandiRestClient.getUserProfile(entityId);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiException(e);
+        }
+    }
+
+    public ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile) throws JandiException {
+        try {
+            return mJandiRestClient.updateUserProfile(reqUpdateProfile);
         } catch (HttpStatusCodeException e) {
             throw new JandiException(e);
         }

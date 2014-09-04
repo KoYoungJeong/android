@@ -92,20 +92,4 @@ public class JandiAuthClient {
             throw new JandiException(e);
         }
     }
-
-    public ResLeftSideMenu.User getUserProfile(int entityId) throws JandiException {
-        try {
-            return mRestClient.getUserProfile(entityId);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile) throws JandiException {
-        try {
-            return mRestClient.updateUserProfile(reqUpdateProfile);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
 }
