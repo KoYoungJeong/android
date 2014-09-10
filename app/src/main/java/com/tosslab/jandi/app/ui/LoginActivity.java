@@ -1,17 +1,20 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
@@ -46,7 +49,7 @@ import javax.net.ssl.X509TrustManager;
  */
 @Fullscreen
 @EActivity(R.layout.activity_intro)
-public class LoginActivity extends Activity {
+public class LoginActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 
     @RestService
@@ -71,16 +74,8 @@ public class LoginActivity extends Activity {
 
         // Network Client 설정
         mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
-        // 자동 로그인 과정.
-        // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
-        // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
-        // 다시 본 activity를 실행한다.
-        myToken = JandiPreference.getMyToken(this);
-        if (myToken.length() > 0) {
-            registerGcm();
-        } else {
-            showLoginFragment();
-        }
+
+        checkVersionInBackground();
     }
 
     @Override
@@ -106,6 +101,63 @@ public class LoginActivity extends Activity {
         MainTabActivity_.intent(this).start();
 
         finish();
+    }
+
+    /************************************************************
+     * 최신 버전 체크
+     ************************************************************/
+    @Background
+    public void checkVersionInBackground() {
+        // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
+        if (isLatestVersion()) {
+            // 자동 로그인 과정.
+            // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
+            // 푸쉬 등록 과정에서 해당 토큰을 사용한 통신이 실패하면 토큰이 만료되었다고 판단하여
+            // 다시 본 activity를 실행한다.
+            myToken = JandiPreference.getMyToken(this);
+            if (myToken.length() > 0) {
+                registerGcm();
+            } else {
+                showLoginFragment();
+            }
+
+        } else {
+            showUpdateDialog();
+        }
+    }
+
+    @UiThread
+    public void showUpdateDialog() {
+//        FragmentTransaction ft = getFragmentManager().beginTransaction();
+//        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+//        if (prev != null) {
+//            ft.remove(prev);
+//        }
+//        ft.addToBackStack(null);
+//
+//        DialogFragment dialog = new VersionUpdateDialogFragment();
+//        dialog.show(ft, "dialog");
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.jandi_update_title)
+                .setMessage(R.string.jandi_update_message)
+                .setPositiveButton(R.string.jandi_confirm,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                final String appPackageName = getPackageName();
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("market://details?id=" + appPackageName)));
+                                } catch (android.content.ActivityNotFoundException anfe) {
+                                    startActivity(new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                                }
+                                finish();
+                            }
+                        }
+                )
+                .create()
+                .show();
     }
 
     /************************************************************

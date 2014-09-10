@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -73,7 +72,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 7. 19..
  */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseActivity {
+public class FileDetailActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(FileDetailActivity.class);
     @Extra
     public int fileId;

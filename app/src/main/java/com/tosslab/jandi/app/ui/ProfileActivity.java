@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,7 +25,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -57,7 +55,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(ProfileActivity.class);
 
     private static final int REQ_CODE_PICK_IMAGE = 0;

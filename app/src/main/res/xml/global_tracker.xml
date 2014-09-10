@@ -3,12 +3,13 @@
     <integer name="ga_sessionTimeout">60</integer>
 
     <!-- Enable automatic Activity measurement -->
-    <bool name="ga_autoActivityTracking">false</bool>
+    <bool name="ga_autoActivityTracking">true</bool>
 
     <bool name="ga_reportUncaughtExceptions">true</bool>
-    <!--<integer name="ga_dispatchPeriod">1</integer>-->
+    <integer name="ga_dispatchPeriod">120</integer>
 
     <string name="ga_appName">@string/app_name</string>
-    <string name="ga_appVersion">?android:attr/versionName</string>
+    <!--<string name="ga_appVersion">?android:attr/versionName</string>-->
+    <string name="ga_appVersion">@string/jandi_version</string>
     <string name="ga_trackingId">@string/jandi_ga_track_id</string>
 </resources>

@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -92,7 +91,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 12..
  */
 @EActivity(R.layout.fragment_main)
-public class MessageListActivity extends BaseActivity {
+public class MessageListActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MessageListActivity.class);
     private final String DIALOG_TAG = "dialog";
 

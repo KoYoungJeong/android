@@ -57,7 +57,6 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.net.ConnectException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -66,7 +65,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EActivity(R.layout.activity_main_tab)
-public class MainTabActivity extends BaseActivity {
+public class MainTabActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MainTabActivity.class);
 
     @RestService

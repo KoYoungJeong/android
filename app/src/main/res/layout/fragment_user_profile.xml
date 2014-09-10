@@ -24,8 +24,7 @@
             android:layout_toRightOf="@+id/img_user_info_photo"
             android:layout_alignTop="@+id/img_user_info_photo"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:text="이름"/>
+            android:textSize="16sp"/>
         <TextView
             android:id="@+id/txt_user_info_nickname"
             android:layout_width="wrap_content"
@@ -33,8 +32,7 @@
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/img_user_info_photo"
             android:layout_below="@+id/txt_user_info_name"
-            android:textSize="14sp"
-            android:text="별명"/>
+            android:textSize="14sp"/>
         <TextView
             android:id="@+id/txt_user_info_division"
             android:layout_width="wrap_content"
@@ -43,8 +41,7 @@
             android:layout_toRightOf="@+id/img_user_info_photo"
             android:layout_below="@+id/txt_user_info_nickname"
             android:textSize="13sp"
-            android:textColor="@color/jandi_text_light"
-            android:text="부서"/>
+            android:textColor="@color/jandi_text_light"/>
         <TextView
             android:id="@+id/txt_user_info_position"
             android:layout_width="wrap_content"
@@ -53,8 +50,7 @@
             android:layout_toRightOf="@+id/img_user_info_photo"
             android:layout_below="@+id/txt_user_info_division"
             android:textSize="13sp"
-            android:textColor="@color/jandi_text_light"
-            android:text="직책"/>
+            android:textColor="@color/jandi_text_light"/>
     </RelativeLayout>
     <View
         android:layout_width="260dp"
@@ -85,8 +81,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
-            android:textSize="14sp"
-            android:text="mail@tosslab.com"/>
+            android:textSize="14sp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ly_user_info_phone"
@@ -111,8 +106,7 @@
             android:layout_marginLeft="4dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="4dp"
-            android:textSize="14sp"
-            android:text="01011223344"/>
+            android:textSize="14sp"/>
     </LinearLayout>
     <View
         android:id="@+id/border_user_info_direct_message"
@@ -129,7 +123,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:text="1:1 Talk"/>
+            android:text="@string/jandi_action_direct_message"/>
     </LinearLayout>
 
 </LinearLayout>

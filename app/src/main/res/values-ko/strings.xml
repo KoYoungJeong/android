@@ -14,6 +14,11 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <!-- Update -->
+    <string name="jandi_update_title">새로운 버전</string>
+    <string name="jandi_action_update">업데이트</string>
+    <string name="jandi_update_message">JANDI의 새로운 버전이 업데이트되었습니다. 현재 버전에서는 최신의 기능을 사용하실 수 없습니다.</string>
+
     <!-- Login -->
     <string name="jandi_action_login">로그인</string>
     <string name="jandi_user_id">이메일 주소</string>
@@ -34,6 +39,7 @@
     <string name="jandi_tab_private_group">비밀그룹</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">파일</string>
+    <string name="jandi_action_direct_message">1:1 대화</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_channel">참여한 채널</string>

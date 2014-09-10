@@ -9,7 +9,11 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -58,6 +62,12 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        trackGa(getDistictId(), "Setting");
+    }
+
+    @Override
     public void finish() {
         super.finish();
     }
@@ -73,6 +83,17 @@ public class SettingsActivity extends PreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void trackGa(final String distictId, final String gaPath) {
+        Tracker screenViewTracker = ((JandiApplication) getApplication())
+                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
+        screenViewTracker.set("&uid", distictId);
+        screenViewTracker.setScreenName(gaPath);
+        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
+    }
+
+    private String getDistictId() {
+        return (myEntityId + "@" + myTeamId);
+    }
     /************************************************************
      * Push 설정
      ************************************************************/
