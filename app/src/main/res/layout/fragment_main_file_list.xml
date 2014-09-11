@@ -19,6 +19,8 @@
             android:layout_height="30dp"
             android:layout_weight="1"
             android:textSize="14sp"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
             android:background="@drawable/edtxt_messages_input"
             android:hint="@string/jandi_file_search_keyword"/>
         <Button
@@ -34,19 +36,19 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/jandi_border"/>
-    <ListView
+        android:background="@color/jandi_file_search_item_divider"/>
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/list_searched_messages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:choiceMode="singleChoice"
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
-        android:transcriptMode="normal"
-        />
-    <!--android:fillViewport="true"-->
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0.5dp"-->
-        <!--android:background="@color/jandi_border"/>-->
+        android:smoothScrollbar="true"
+        android:fillViewport="true"
+        ptr:ptrPullLabel="당겨서 이전 파일"
+        ptr:ptrRefreshLabel="놓아서 이전 파일"
+        ptr:ptrReleaseLabel="완료" />
 </LinearLayout>

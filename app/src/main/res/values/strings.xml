@@ -155,6 +155,7 @@
     <string name="jandi_file_search_type">Please select the file type for search</string>
     <string name="jandi_file_search_user">Please select the writers for search</string>
     <string name="jandi_file_search_entity">Please select the channels for search</string>
+    <string name="warn_no_more_files">There is no more searched files</string>
     <string name="err_file_search">File search has been failed</string>
 
     <string name="jandi_setting_push">Push</string>

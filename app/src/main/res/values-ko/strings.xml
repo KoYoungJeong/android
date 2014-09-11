@@ -149,6 +149,7 @@
     <string name="jandi_file_search_type">어떤 타입의 파일을 검색할까요?</string>
     <string name="jandi_file_search_user">누가 올린 파일을 검색할까요?</string>
     <string name="jandi_file_search_entity">어디에 공유된 파일을 검색할까요?</string>
+    <string name="warn_no_more_files">더 이상 검색된 파일이 없습니다</string>
     <string name="err_file_search">파일 검색에 실패했습니다</string>
 
     <!-- 설정 -->

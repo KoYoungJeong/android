@@ -292,7 +292,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
-                getActionBar().setTitle(fileMessage.content.name);
+                getActionBar().setTitle(fileMessage.content.title);
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
 
