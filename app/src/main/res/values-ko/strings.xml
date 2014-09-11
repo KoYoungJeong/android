@@ -139,6 +139,8 @@
     <string name="title_cdp_invite">초대할 사용자를 선택하세요</string>
 
     <!-- Search -->
+    <string name="jandi_action_search">검색</string>
+    <string name="jandi_file_search_keyword">검색어</string>
     <string name="jandi_file_category_all">모든 파일</string>
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>

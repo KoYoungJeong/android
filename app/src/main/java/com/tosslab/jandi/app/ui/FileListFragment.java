@@ -3,6 +3,9 @@ package com.tosslab.jandi.app.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -25,6 +28,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
@@ -45,6 +49,8 @@ public class FileListFragment extends BaseFragment {
 
     @ViewById(R.id.list_searched_messages)
     ListView listSearchedMessages;
+    @ViewById(R.id.et_file_list_search_text)
+    EditText editTextSearchKeyword;
     @Bean
     SearchedFileItemListAdapter mAdapter;
     @RestService
@@ -52,11 +58,14 @@ public class FileListFragment extends BaseFragment {
 
     private String mSearchFileType  = "all";    // 서치 모드.   ALL || Images || PDFs
     private String mSearchUser      = "all";    // 사용자.     ALL || Mine || UserID
+    private String mKeyword         = "";
     private int mSearchEntity       = ReqSearchFile.ALL_ENTITIES;
 
     private ProgressWheel mProgressWheel;
     private String mMyToken;
     private Context mContext;
+    private View mFooter;       // for infinite scroll
+    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     @AfterViews
     void bindAdapter() {
@@ -71,10 +80,21 @@ public class FileListFragment extends BaseFragment {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
+        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
         // Empty View를 가진 ListView 설정
         View emptyView = getActivity().getLayoutInflater().inflate(R.layout.view_search_list_empty, null);
         listSearchedMessages.setEmptyView(emptyView);
         listSearchedMessages.setAdapter(mAdapter);
+
+        // Footer 설정
+        mFooter = getActivity().getLayoutInflater().inflate(R.layout.fragment_main_file_list_footer, null, false);
+        mFooter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         // 서치 시작
         doSearch();
@@ -109,8 +129,16 @@ public class FileListFragment extends BaseFragment {
     /************************************************************
      * 검색
      ************************************************************/
+    @Click(R.id.btn_file_list_search)
+    void doKeywordSearch() {
+        mKeyword = editTextSearchKeyword.getEditableText().toString();
+        imm.hideSoftInputFromWindow(editTextSearchKeyword.getWindowToken(),0);
+        doSearch();
+    }
+
     @UiThread
     void doSearch() {
+        listSearchedMessages.removeFooterView(mFooter);
         mAdapter.clearAdapter();
         doSearchInBackground();
     }
@@ -126,9 +154,9 @@ public class FileListFragment extends BaseFragment {
             reqSearchFile.writerId = mSearchUser;
             reqSearchFile.sharedEntityId = mSearchEntity;
 
-            reqSearchFile.listCount = 30;
+            reqSearchFile.listCount = ReqSearchFile.MAX;
             reqSearchFile.startMessageId = -1;
-            reqSearchFile.keyword = "";
+            reqSearchFile.keyword = mKeyword;
 
             ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
             searchSucceed(resSearchFile);
@@ -147,8 +175,14 @@ public class FileListFragment extends BaseFragment {
             mAdapter.insert(resSearchFile);
         }
 
+        if (resSearchFile.fileCount >= ReqSearchFile.MAX) {
+            listSearchedMessages.addFooterView(mFooter);
+        }
+
         log.debug("success to find " + resSearchFile.fileCount + " files.");
         mAdapter.notifyDataSetChanged();
+
+        listSearchedMessages.setSelectionFromTop(1, 0);
     }
 
     @UiThread

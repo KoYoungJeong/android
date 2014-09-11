@@ -6,6 +6,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/jandi_messages_bottom_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <EditText
+            android:id="@+id/et_file_list_search_text"
+            android:layout_width="0px"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:background="@drawable/edtxt_messages_input"
+            android:hint="@string/jandi_file_search_keyword"/>
+        <Button
+            android:id="@+id/btn_file_list_search"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:text="@string/jandi_action_search"
+            android:textSize="14sp"
+            android:textColor="@color/jandi_messages_button_text"
+            android:background="@drawable/btn_send_selector"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/jandi_border"/>
     <ListView
         android:id="@+id/list_searched_messages"
         android:layout_width="match_parent"

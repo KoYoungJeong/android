@@ -145,6 +145,8 @@
     <string name="title_cdp_invite">Please select members to invite</string>
 
     <!-- Search -->
+    <string name="jandi_action_search">Search</string>
+    <string name="jandi_file_search_keyword">Keyword</string>
     <string name="jandi_file_category_all">All files</string>
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>
