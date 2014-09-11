@@ -11,7 +11,13 @@ public class ReqSearchFile {
     public static final String FILE_TYPE_IMAGE  = "image";
     public static final String FILE_TYPE_PDF    = "pdf";
 
+    public static final int ALL_ENTITIES    = -1;
+
     public String searchType;
-    public String userId;
+    public String writerId;
     public String fileType;
+    public int sharedEntityId;
+    public int startMessageId;
+    public int listCount;
+    public String keyword;
 }

@@ -127,6 +127,13 @@ public class EntityManager {
         return  usersWithoutMe;
     }
 
+    public List<FormattedEntity> getCategorizableEntities() {
+        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
+        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_EVERYWHERE));
+        formattedEntities.addAll(retrieveAccessableEntities());
+        return formattedEntities;
+    }
+
     public FormattedEntity getMe() {
         return new FormattedEntity(mMe);
     }
@@ -142,17 +149,7 @@ public class EntityManager {
     public int getTeamId() {
         return mMyTeam.id;
     }
-    //
-//    public List<CdpItem> retrieveAllEntities() {
-//        ArrayList<CdpItem> cdpItems = new ArrayList<CdpItem>();
-//
-//        cdpItems.addAll(mJoinedChannels);
-//        cdpItems.addAll(getUsersWithoutMe());
-//        cdpItems.addAll(mPrivateGroups);
-//
-//        return cdpItems;
-//    }
-//
+
     /**
      * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
      * @param givenEntityIds

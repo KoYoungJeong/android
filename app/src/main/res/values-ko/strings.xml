@@ -143,8 +143,10 @@
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>
     <string name="jandi_file_category_everyone">모든 팀원</string>
-    <string name="jandi_file_search_type">검색할 파일 타입을 선택하세요</string>
-    <string name="jandi_file_search_user">검색할 사용자를 선택하세요</string>
+    <string name="jandi_file_category_everywhere">모든 장소</string>
+    <string name="jandi_file_search_type">어떤 타입의 파일을 검색할까요?</string>
+    <string name="jandi_file_search_user">누가 올린 파일을 검색할까요?</string>
+    <string name="jandi_file_search_entity">어디에 공유된 파일을 검색할까요?</string>
     <string name="err_file_search">파일 검색에 실패했습니다</string>
 
     <!-- 설정 -->

@@ -5,4 +5,6 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ResAuthToken {
     public String token;
+    public int teamId;
+    public int userId;
 }

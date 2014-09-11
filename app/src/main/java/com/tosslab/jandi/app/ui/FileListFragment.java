@@ -8,14 +8,15 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
+import com.tosslab.jandi.app.events.CategorizingAsEntity;
+import com.tosslab.jandi.app.events.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.events.CategorizingAsOwner;
-import com.tosslab.jandi.app.events.StickyEntityManager;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -30,6 +31,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
@@ -48,8 +50,9 @@ public class FileListFragment extends BaseFragment {
     @RestService
     JandiRestClient jandiRestClient;
 
-    private String mSearchMode  = "all";                // 서치 모드.   ALL || Images || PDFs
-    private String mSearchUser  = "all";    // 사용자.     ALL || Mine || UserID
+    private String mSearchFileType  = "all";    // 서치 모드.   ALL || Images || PDFs
+    private String mSearchUser      = "all";    // 사용자.     ALL || Mine || UserID
+    private int mSearchEntity       = ReqSearchFile.ALL_ENTITIES;
 
     private ProgressWheel mProgressWheel;
     private String mMyToken;
@@ -89,12 +92,17 @@ public class FileListFragment extends BaseFragment {
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
-        mSearchMode = event.getServerQuery();
+        mSearchFileType = event.getServerQuery();
         doSearch();
     }
 
     public void onEvent(CategorizingAsOwner event) {
         mSearchUser = event.userId + "";
+        doSearch();
+    }
+
+    public void onEvent(CategorizingAsEntity event) {
+        mSearchEntity = event.sharedEntityId;
         doSearch();
     }
 
@@ -114,12 +122,20 @@ public class FileListFragment extends BaseFragment {
         try {
             ReqSearchFile reqSearchFile = new ReqSearchFile();
             reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-            reqSearchFile.fileType = mSearchMode;
-            reqSearchFile.userId = mSearchUser;
+            reqSearchFile.fileType = mSearchFileType;
+            reqSearchFile.writerId = mSearchUser;
+            reqSearchFile.sharedEntityId = mSearchEntity;
+
+            reqSearchFile.listCount = 30;
+            reqSearchFile.startMessageId = -1;
+            reqSearchFile.keyword = "";
 
             ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
+            log.error("fail to get searched files.", e);
+            searchFailed(getString(R.string.err_file_search));
+        } catch (HttpMessageNotReadableException e) {
             log.error("fail to get searched files.", e);
             searchFailed(getString(R.string.err_file_search));
         }

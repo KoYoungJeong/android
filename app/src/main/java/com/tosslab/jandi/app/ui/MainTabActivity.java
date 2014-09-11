@@ -27,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
+import com.tosslab.jandi.app.events.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
@@ -36,6 +37,7 @@ import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.RetrieveUserList;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
@@ -205,6 +207,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         setSpinnerAsCategorizingAccodingByFileType();
         setSpinnerAsCategorizingAccodingByUser();
+        setSpinnerAsCategorizingAccodingByEntity();
     }
 
     @Override
@@ -401,10 +404,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
      ************************************************************/
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
-
+    private String mCurrentEntityCategorizingAccodingBy = null;
 
     private AlertDialog mFileTypeSelectDialog;
     private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
+    private AlertDialog mEntitySelectDialog;
 
     private void setSpinnerAsCategorizingAccodingByFileType() {
         LinearLayout categoryFileType = (LinearLayout) findViewById(R.id.actionbar_file_list_type);
@@ -434,6 +438,22 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void onClick(View view) {
                 showUsersDialog(textViewUser);
+            }
+        });
+    }
+
+    private void setSpinnerAsCategorizingAccodingByEntity() {
+        LinearLayout categoryEntity = (LinearLayout) findViewById(R.id.actionbar_file_list_entity);
+        final TextView textViewEntity = (TextView) findViewById(R.id.actionbar_file_list_entity_text);
+        textViewEntity.setText(
+                (mCurrentEntityCategorizingAccodingBy == null)
+                        ? getString(R.string.jandi_file_category_everywhere)
+                        : mCurrentEntityCategorizingAccodingBy
+        );
+        categoryEntity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEntityDialog(textViewEntity);
             }
         });
     }
@@ -519,6 +539,44 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         ImageView imageView = (ImageView) headerView.findViewById(R.id.img_select_cdp_icon);
         imageView.setImageResource(R.drawable.jandi_profile);
         return headerView;
+    }
+
+    /**
+     * 모든 Entity 리스트 Dialog 를 보여준 뒤, 선택된 장소에 share 된 파일만 검색하라는 이벤트를
+     * FileListFragment에 전달
+     * @param textVew
+     */
+    private void showEntityDialog(final TextView textVew) {
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, mEntityManager.getCategorizableEntities());
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mEntitySelectDialog != null)
+                    mEntitySelectDialog.dismiss();
+
+                int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+
+                if (i <= 0) {
+                    // 첫번째는 "Everywhere"인 더미 entity
+                    mCurrentEntityCategorizingAccodingBy = getString(R.string.jandi_file_category_everywhere);
+                } else {
+                    FormattedEntity sharedEntity = adapter.getItem(i);
+                    sharedEntityId = sharedEntity.getId();
+                    mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
+                }
+                textVew.setText(mCurrentEntityCategorizingAccodingBy);
+                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+            }
+        });
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.jandi_file_search_entity);
+        dialog.setView(view);
+        mEntitySelectDialog = dialog.show();
+        mEntitySelectDialog.setCanceledOnTouchOutside(true);
     }
 
     /**

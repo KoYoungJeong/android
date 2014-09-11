@@ -128,15 +128,6 @@ public class LoginActivity extends BaseActivity {
 
     @UiThread
     public void showUpdateDialog() {
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-//        if (prev != null) {
-//            ft.remove(prev);
-//        }
-//        ft.addToBackStack(null);
-//
-//        DialogFragment dialog = new VersionUpdateDialogFragment();
-//        dialog.show(ft, "dialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.jandi_update_title)
                 .setMessage(R.string.jandi_update_message)

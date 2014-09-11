@@ -8,4 +8,5 @@ import java.util.List;
 public class ResSearchFile {
     public int fileCount;
     public List<ResMessages.OriginalMessage> files;
+    public int firstIdOfReceivedList;
 }
