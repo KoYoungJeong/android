@@ -123,14 +123,19 @@ public class FileListFragment extends BaseFragment {
                 list_searched_messagesItemClicked(mAdapter.getItem(i - 1));
             }
         });
-
-        // 서치 시작
-        doSearch();
     }
 
     @AfterInject
     void calledAfterInjection() {
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mStartMessageId = -1;
+        // 서치 시작
+        doSearch();
     }
 
     @Override

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
     <integer name="ga_sessionTimeout">60</integer>
 
     <!-- Enable automatic Activity measurement -->
@@ -8,8 +8,11 @@
     <bool name="ga_reportUncaughtExceptions">true</bool>
     <integer name="ga_dispatchPeriod">120</integer>
 
-    <string name="ga_appName">@string/app_name</string>
-    <!--<string name="ga_appVersion">?android:attr/versionName</string>-->
-    <string name="ga_appVersion">@string/jandi_version</string>
-    <string name="ga_trackingId">@string/jandi_ga_track_id</string>
+    <string name="ga_appName">JANDI</string>
+    <string name="ga_appVersion">0.3.5</string>
+
+    <!-- TEST -->
+    <string name="ga_trackingId">UA-54051037-2</string>
+    <!-- REAL -->
+    <!--<string name="ga_trackingId">UA-53634725-3</string>-->
 </resources>
