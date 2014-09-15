@@ -64,11 +64,7 @@ public class FileListFragment extends BaseFragment {
     @RestService
     JandiRestClient jandiRestClient;
 
-    private String mSearchFileType  = "all";    // 서치 모드.   ALL || Images || PDFs
-    private String mSearchUser      = "all";    // 사용자.     ALL || Mine || UserID
-    private String mKeyword         = "";
-    private int mSearchEntity       = ReqSearchFile.ALL_ENTITIES;
-    private int mStartMessageId     = -1;
+    private SearchQuery mSearchQuery;
 
     private ProgressWheel mProgressWheel;
     private String mMyToken;
@@ -88,14 +84,15 @@ public class FileListFragment extends BaseFragment {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
+        mSearchQuery = new SearchQuery();
+
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         editTextSearchKeyword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 switch (i) {
                     case EditorInfo.IME_ACTION_SEARCH:
-                        mKeyword = editTextSearchKeyword.getEditableText().toString();
-                        doSearch();
+                        doKeywordSearch();
                         break;
                     default:
                         return false;
@@ -133,7 +130,7 @@ public class FileListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mStartMessageId = -1;
+        mSearchQuery.setToFirst();
         // 서치 시작
         doSearch();
     }
@@ -145,20 +142,17 @@ public class FileListFragment extends BaseFragment {
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
-        mSearchFileType = event.getServerQuery();
-        mStartMessageId = -1;
+        mSearchQuery.setFileType(event.getServerQuery());
         doSearch();
     }
 
     public void onEvent(CategorizingAsOwner event) {
-        mSearchUser = event.userId + "";
-        mStartMessageId = -1;
+        mSearchQuery.setWriter(event.userId);
         doSearch();
     }
 
     public void onEvent(CategorizingAsEntity event) {
-        mSearchEntity = event.sharedEntityId;
-        mStartMessageId = -1;
+        mSearchQuery.setSharedEntity(event.sharedEntityId);
         doSearch();
     }
 
@@ -167,7 +161,7 @@ public class FileListFragment extends BaseFragment {
      ************************************************************/
     @Click(R.id.btn_file_list_search)
     void doKeywordSearch() {
-        mKeyword = editTextSearchKeyword.getEditableText().toString();
+        mSearchQuery.setKeyword(editTextSearchKeyword.getEditableText().toString());
         imm.hideSoftInputFromWindow(editTextSearchKeyword.getWindowToken(),0);
         doSearch();
     }
@@ -183,16 +177,7 @@ public class FileListFragment extends BaseFragment {
         jandiRestClient.setHeader(JandiConstants.AUTH_HEADER, mMyToken);
 
         try {
-            ReqSearchFile reqSearchFile = new ReqSearchFile();
-            reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-            reqSearchFile.fileType = mSearchFileType;
-            reqSearchFile.writerId = mSearchUser;
-            reqSearchFile.sharedEntityId = mSearchEntity;
-
-            reqSearchFile.listCount = ReqSearchFile.MAX;
-            reqSearchFile.startMessageId = mStartMessageId;
-            reqSearchFile.keyword = mKeyword;
-
+            ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
@@ -208,7 +193,7 @@ public class FileListFragment extends BaseFragment {
     void searchSucceed(ResSearchFile resSearchFile) {
         if (resSearchFile.fileCount > 0) {
             mAdapter.insert(resSearchFile);
-            mStartMessageId = resSearchFile.firstIdOfReceivedList;
+            mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
         }
 
         if (resSearchFile.fileCount < ReqSearchFile.MAX) {
@@ -240,22 +225,13 @@ public class FileListFragment extends BaseFragment {
         @Override
         protected String doInBackground(Void... voids) {
             try {
-                ReqSearchFile reqSearchFile = new ReqSearchFile();
-                reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-                reqSearchFile.fileType = mSearchFileType;
-                reqSearchFile.writerId = mSearchUser;
-                reqSearchFile.sharedEntityId = mSearchEntity;
-
-                reqSearchFile.listCount = ReqSearchFile.MAX;
-                reqSearchFile.startMessageId = mStartMessageId;
-                reqSearchFile.keyword = mKeyword;
-
+                ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
                 ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
 
                 justGetFilesSize = resSearchFile.fileCount;
                 if (justGetFilesSize > 0) {
                     mAdapter.insert(resSearchFile);
-                    mStartMessageId = resSearchFile.firstIdOfReceivedList;
+                    mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
                 }
                 return null;
             } catch (RestClientException e) {
@@ -302,6 +278,69 @@ public class FileListFragment extends BaseFragment {
             EntityManager entityManager = ((MainTabActivity_) activity).getEntityManager();
             EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
         }
+    }
 
+    /**
+     * 파일 검색을 담당하는 쿼리.
+     */
+    private class SearchQuery {
+        private final String CATEGORY_ALL   = "all";
+        private final int LATEST_MESSAGE    = -1;
+
+        private String mSearchFileType;
+        private String mSearchUser;
+        private String mKeyword;
+        private int mSearchEntity;
+        private int mStartMessageId;
+
+        public SearchQuery() {
+            mSearchEntity = ReqSearchFile.ALL_ENTITIES;
+            mStartMessageId = LATEST_MESSAGE;
+            mKeyword = "";
+            mSearchFileType = CATEGORY_ALL;    // 서치 모드.   ALL || Images || PDFs
+            mSearchUser = CATEGORY_ALL;        // 사용자.     ALL || Mine || UserID
+        }
+
+        public void setToFirst() {
+            mStartMessageId = LATEST_MESSAGE;
+        }
+
+        public void setKeyword(String keyword) {
+            setToFirst();
+            mKeyword = keyword;
+        }
+
+        public void setFileType(String fileType) {
+            setToFirst();
+            mSearchFileType = fileType;
+        }
+
+        public void setWriter(String userEntityId) {
+            setToFirst();
+            mSearchUser = userEntityId;
+        }
+
+        public void setSharedEntity(int entityId) {
+            setToFirst();
+            mSearchEntity = entityId;
+        }
+
+        public void setNext(int startMessageId) {
+            mStartMessageId = startMessageId;
+        }
+
+        public ReqSearchFile getRequestQuery() {
+            ReqSearchFile reqSearchFile = new ReqSearchFile();
+            reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
+            reqSearchFile.listCount = ReqSearchFile.MAX;
+
+            reqSearchFile.fileType = mSearchFileType;
+            reqSearchFile.writerId = mSearchUser;
+            reqSearchFile.sharedEntityId = mSearchEntity;
+
+            reqSearchFile.startMessageId = mStartMessageId;
+            reqSearchFile.keyword = mKeyword;
+            return reqSearchFile;
+        }
     }
 }
