@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 
@@ -32,7 +33,21 @@ public class FileUploadTypeDialogFragment extends DialogFragment {
         builder.setTitle(R.string.title_file_upload)
                 .setItems(R.array.types_file_upload, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        EventBus.getDefault().post(new RequestFileUploadEvent(which));
+                        int eventType;
+                        switch (which) {
+                            case 0:     // from gallery
+                                eventType = JandiConstants.TYPE_UPLOAD_GALLERY;
+                                break;
+                            case 1:     // from camera
+                                eventType = JandiConstants.TYPE_UPLOAD_TAKE_PHOTO;
+                                break;
+                            case 2:     // from Explorer
+                            default:
+                                eventType = JandiConstants.TYPE_UPLOAD_EXPLORER;
+                                break;
+
+                        }
+                        EventBus.getDefault().post(new RequestFileUploadEvent(eventType));
                         dismiss();
                     }
                 })

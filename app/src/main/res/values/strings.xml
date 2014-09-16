@@ -133,6 +133,7 @@
     <string name="title_file_upload">File upload</string>
     <string name="file_upload_comment">Comments (optional)</string>
     <string name="menu_gallery">Upload from Gallery</string>
+    <string name="menu_camera">Upload from Camera</string>
     <string name="menu_a_file">Upload from file directories</string>
     <string name="jandi_title_activity_file_explorer">File Explore </string>
     <string name="title_file_detail">File description</string>

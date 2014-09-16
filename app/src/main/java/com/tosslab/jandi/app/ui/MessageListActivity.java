@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -80,6 +81,7 @@ import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Timer;
@@ -770,6 +772,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                getPictureFromCamera();
+                break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
                 log.info("RequestFileUploadEvent : from explorer");
                 intent = new Intent(mContext, FileExplorerActivity.class);
@@ -790,7 +795,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     Uri targetUri = data.getData();
                     realFilePath = getRealPathFromUri(targetUri);
                     log.debug("onActivityResult : Photo URI : " + targetUri.toString()
@@ -799,11 +804,25 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     String path = data.getStringExtra("GetPath");
                     realFilePath = path + File.separator + data.getStringExtra("GetFileName");
                     log.debug("onActivityResult : from Explorer : " + realFilePath);
                     showFileUploadDialog(realFilePath);
+                }
+                break;
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                if (resultCode == RESULT_OK) {
+                    Uri imageUri = (mImageUriFromCamera != null)
+                            ? mImageUriFromCamera
+                            : data.getData();
+                    // 비트맵으로 리턴이 되는 경우
+                    if (imageUri == null) {
+                        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                        imageUri = FileUtils.createCacheFile(this);
+                        FileUtils.bitmapSaveToFileCache(imageUri, bitmap, 100);
+                    }
+                    showFileUploadDialog(imageUri.getPath());
                 }
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
@@ -879,12 +898,57 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = mContext.getContentResolver().query(contentUri, filePathColumn, null, null, null);
+        Cursor cursor = mContext.getContentResolver().query(
+                contentUri,
+                filePathColumn,   // Which columns to return
+                null,   // WHERE clause; which rows to return (all rows)
+                null,   // WHERE clause selection arguments (none)
+                null);  // Order-by clause (ascending by name)
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
         cursor.close();
         return picturePath;
+    }
+
+    /************************************************************
+     * 사진 직접 찍어 올리기
+     ************************************************************/
+
+    private Uri mImageUriFromCamera = null;
+
+    // 카메라에서 가져오기
+    public void getPictureFromCamera() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mImageUriFromCamera = FileUtils.createCacheFile(this);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriFromCamera);
+        startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+    }
+
+    private static class FileUtils {
+        public static Uri createCacheFile(Context context) {
+            String url = "tmp_" + String.valueOf(System.currentTimeMillis() + ".jpg");
+            return Uri.fromFile(new File(context.getExternalCacheDir(), url));
+        }
+
+        public static File bitmapSaveToFileCache(Uri uri, Bitmap bitmap, int quality) {
+            FileOutputStream fos = null;
+            File file = null;
+            try {
+                file = new File(uri.getPath());
+                fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fos.close();
+                } catch (Exception e) {
+                    // DO NOTHING
+                }
+            }
+            return file;
+        }
     }
 
     /************************************************************

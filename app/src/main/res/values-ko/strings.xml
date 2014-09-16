@@ -128,6 +128,7 @@
     <string name="title_file_upload">파일 업로드</string>
     <string name="file_upload_comment">댓글 (선택 사항)</string>
     <string name="menu_gallery">사진첩에서 올리기</string>
+    <string name="menu_camera">카메라에서 올리기</string>
     <string name="menu_a_file">파일 탐색기에서 올리기</string>
     <string name="jandi_title_activity_file_explorer">파일 탐색기</string>
     <string name="title_file_detail">파일 상세 정보</string>
