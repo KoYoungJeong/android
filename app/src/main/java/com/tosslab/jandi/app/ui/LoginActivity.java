@@ -16,12 +16,13 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.LoginFragmentDialog;
 import com.tosslab.jandi.app.network.JandiAuthClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -55,6 +56,7 @@ public class LoginActivity extends BaseActivity {
     @RestService
     JandiRestClient mJandiRestClient;
     private JandiAuthClient mJandiAuthClient;
+    private JandiEntityClient mJandiEntityClient;
 
     private Context mContext;
     private ProgressWheel mProgressWheel;
@@ -72,7 +74,7 @@ public class LoginActivity extends BaseActivity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        // Network Client 설정
+        // 로그인 관련 Network Client 설정
         mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
 
         checkVersionInBackground();
@@ -198,7 +200,7 @@ public class LoginActivity extends BaseActivity {
             ResAuthToken resAuthToken = mJandiAuthClient.login(resMyTeam.teamList.get(0).teamId, id, passwd);
             JandiPreference.setMyId(mContext, id);
             doneLogin(true, resAuthToken, -1);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             if (e.errCode == 1818) {
                 doneLogin(false, null, R.string.err_login_invalid_info);
             } else {
@@ -333,13 +335,13 @@ public class LoginActivity extends BaseActivity {
      */
     @Background
     public void sendRegistrationIdInBackground(String regId) {
-        mJandiAuthClient.setAuthToken(myToken);
+        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, myToken);
         try {
-            mJandiAuthClient.registerNotificationToken(regId);
+            mJandiEntityClient.registerNotificationToken(regId);
             mRegId = regId;
             log.debug("New device token registered, registration ID=" + regId);
             sendRegistrationIdDone(true, null);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             if (e.errCode == 2000) {
                 // 만료된 토큰이므로 다시 로그인하라는 안내 표시.
                 sendRegistrationIdDone(false, getString(R.string.err_expired_token));
@@ -368,11 +370,11 @@ public class LoginActivity extends BaseActivity {
 
     @Background
     public void sendSubscriptionInBackground() {
-        mJandiAuthClient.setAuthToken(myToken);
+        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, myToken);
         try {
-            mJandiAuthClient.subscribeNotification(mRegId, true);
+            mJandiEntityClient.subscribeNotification(mRegId, true);
             sendSubscriptionDone(true, null);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("Register Fail", e);
             sendSubscriptionDone(false, e.errCode + ":" + e.errReason);
         }

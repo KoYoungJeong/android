@@ -1,95 +1,37 @@
 package com.tosslab.jandi.app.network;
 
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ReqLogin;
-import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
-import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
-import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
-import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
-import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.springframework.web.client.HttpStatusCodeException;
 
 /**
  * Created by justinygchoi on 2014. 7. 16..
- * TODO MessageManipulator 와 합쳐지겠지...
  */
 public class JandiAuthClient {
     JandiRestClient mRestClient;
 
     public JandiAuthClient(JandiRestClient jandiRestClient) {
         mRestClient = jandiRestClient;
-        mRestClient.setHeader("Accept", "application/vnd.tosslab.jandi-v1+json");
+        mRestClient.setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
     }
 
-    public ResMyTeam getMyTeamId(String id) throws JandiException {
+    public ResMyTeam getMyTeamId(String id) throws JandiNetworkException {
         try {
             return mRestClient.getTeamId(id);
         } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
+            throw new JandiNetworkException(e);
         }
     }
 
-    public ResAuthToken login(int teamId, String id, String passwd) throws JandiException {
+    public ResAuthToken login(int teamId, String id, String passwd) throws JandiNetworkException {
         ReqLogin reqLogin = new ReqLogin(teamId, id, passwd);
         try {
             return mRestClient.loginAndReturnToken(reqLogin);
         } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public void setAuthToken(String token) {
-        mRestClient.setHeader(JandiConstants.AUTH_HEADER, token);
-    }
-
-    public ResCommon registerNotificationToken(String regId) throws JandiException {
-        ReqNotificationRegister req = new ReqNotificationRegister("android", regId);
-        try {
-            return mRestClient.registerNotificationToken(req);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public ResCommon updateNotificateionToken(String oldRegId, String newRegId) throws JandiException {
-        ReqNotificationUpdate req = new ReqNotificationUpdate(newRegId);
-        try {
-            return mRestClient.updateNotificationToken(oldRegId, req);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public ResCommon deleteNotificationToken(String regId) throws JandiException {
-        try {
-            return mRestClient.deleteNotificationToken(regId);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public ResCommon subscribeNotification(String regId, boolean isSubscribe) throws JandiException {
-        ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
-
-        try {
-            return mRestClient.subscribeNotification(regId, req);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
-        }
-    }
-
-    public ResCommon setNotificationTarget(String target) throws JandiException {
-        ReqNotificationTarget req = new ReqNotificationTarget(target);
-        try {
-            return mRestClient.setNotificationTarget(req);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiException(e);
+            throw new JandiNetworkException(e);
         }
     }
 }

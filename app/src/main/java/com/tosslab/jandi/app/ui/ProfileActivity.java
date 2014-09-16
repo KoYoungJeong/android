@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -167,7 +167,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(myEntityId);
             getProfileSuccess(me);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {
@@ -351,7 +351,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = mJandiEntityClient.updateUserProfile(reqUpdateProfile);
             updateProfileSucceed(me);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
             updateProfileFailed();
         }

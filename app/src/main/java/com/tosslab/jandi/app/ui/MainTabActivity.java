@@ -45,7 +45,7 @@ import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -341,7 +341,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesDone(true, resLeftSideMenu, null);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get entity failed", e);
             getEntitiesDone(false, null, getString(R.string.err_expired_session));
         } catch (ResourceAccessException e) {

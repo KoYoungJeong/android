@@ -63,7 +63,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -686,12 +686,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiMessageClient.modifyMessage(messageId, inputMessage);
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 log.debug("modifyMessageInBackground : Try for comment");
-                mJandiMessageClient.modifyMessageComment(messageId, inputMessage, feedbackId);
+                mJandiEntityClient.modifyMessageComment(messageId, inputMessage, feedbackId);
             }
             modifyMessageDone(true, getString(R.string.jandi_messages_modify_succeed));
         } catch (RestClientException e) {
             log.error("modifyMessageInBackground : FAILED");
             modifyMessageDone(false, getString(R.string.err_messages_modify));
+        } catch (JandiNetworkException e) {
+            log.error("deleteMessageInBackground : FAILED", e);
+            deleteMessageDone(false, getString(R.string.err_messages_delete));
         }
     }
 
@@ -727,10 +730,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiMessageClient.deleteMessage(messageId);
                 log.debug("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
-                mJandiMessageClient.deleteMessageComment(messageId, feedbackId);
+                mJandiEntityClient.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
         } catch (RestClientException e) {
+            log.error("deleteMessageInBackground : FAILED", e);
+            deleteMessageDone(false, getString(R.string.err_messages_delete));
+        } catch (JandiNetworkException e) {
             log.error("deleteMessageInBackground : FAILED", e);
             deleteMessageDone(false, getString(R.string.err_messages_delete));
         }
@@ -923,7 +929,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.leavePrivateGroup(entityId);
             }
             leaveEntitySucceed();
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to leave cdp");
             leaveEntityFailed(getString(R.string.err_entity_leave));
         }
@@ -973,7 +979,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.modifyPrivateGroupName(entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("modify failed", e);
             modifyEntityFailed(getString(R.string.err_entity_modify));
         }
@@ -1004,7 +1010,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.deletePrivateGroup(entityId);
             }
             deleteEntitySucceed();
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             deleteEntityFailed(getString(R.string.err_entity_delete));
         }
     }
@@ -1070,7 +1076,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.invitePrivateGroup(entityId, invitedUsers);
             }
             inviteSucceed(invitedUsers.size() + getString(R.string.jandi_message_invite_entity));
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to invite entity");
             inviteFailed(getString(R.string.err_entity_invite));
         }
@@ -1117,7 +1123,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
             getProfileSuccess(user);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {

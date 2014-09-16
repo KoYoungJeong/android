@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.AnalyticsClient;
+import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -36,7 +36,7 @@ public class BaseAnalyticsActivity extends Activity {
     private final Logger log = Logger.getLogger(BaseAnalyticsActivity.class);
 
     private boolean mDoneAnalizeTrackingSignIn = false;      // 로그인 상황을 MIXPANEL
-    private AnalyticsClient mAnalyticsClient;
+    private MixpanelAnalyticsClient mMixpanelAnalyticsClient;
 
     protected void returnToLoginActivity() {
         JandiPreference.clearMyToken(this);
@@ -47,24 +47,24 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackSigningIn(EntityManager entityManager) {
         if (entityManager != null && !mDoneAnalizeTrackingSignIn) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
-            mAnalyticsClient.trackSingingIn();
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient.trackSingingIn();
             mDoneAnalizeTrackingSignIn = true;
         }
     }
 
     protected void trackSigningInFromPush(EntityManager entityManager) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
-            mAnalyticsClient.trackSingingIn();
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient.trackSingingIn();
         }
     }
 
     protected void trackInvitingToEntity(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackInvitingToEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackInvitingToEntity(entityType == JandiConstants.TYPE_CHANNEL);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -73,9 +73,9 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackDeletingEntity(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackDeletingEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackDeletingEntity(entityType == JandiConstants.TYPE_CHANNEL);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -84,9 +84,9 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackChangingEntityName(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackChangingEntityName(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackChangingEntityName(entityType == JandiConstants.TYPE_CHANNEL);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -95,9 +95,9 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackLeavingEntity(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_CHANNEL);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -107,9 +107,9 @@ public class BaseAnalyticsActivity extends Activity {
     protected void trackUploadingFile(EntityManager entityManager,
                                       int entityType, JsonObject fileInfo) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackUploadingFile(entityType, fileInfo);
+                mMixpanelAnalyticsClient.trackUploadingFile(entityType, fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -118,9 +118,9 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackDownloadingFile(EntityManager entityManager, ResMessages.FileMessage fileInfo) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackDownloadFile(fileInfo);
+                mMixpanelAnalyticsClient.trackDownloadFile(fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -130,9 +130,9 @@ public class BaseAnalyticsActivity extends Activity {
     protected void trackSharingFile(EntityManager entityManager,
                                     int entityType, ResMessages.FileMessage fileInfo) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackSharingFile(entityType, fileInfo);
+                mMixpanelAnalyticsClient.trackSharingFile(entityType, fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -142,9 +142,9 @@ public class BaseAnalyticsActivity extends Activity {
     protected void trackUnsharingFile(EntityManager entityManager,
                                     int entityType, ResMessages.FileMessage fileInfo) {
         if (entityManager != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, entityManager.getDistictId());
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mAnalyticsClient.trackUnsharingFile(entityType, fileInfo);
+                mMixpanelAnalyticsClient.trackUnsharingFile(entityType, fileInfo);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -158,9 +158,9 @@ public class BaseAnalyticsActivity extends Activity {
      */
     protected void trackUpdateProfile(String distictId, ResLeftSideMenu.User updatedMyProfile) {
         if (distictId != null) {
-            mAnalyticsClient = AnalyticsClient.getInstance(this, distictId);
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, distictId);
             try {
-                mAnalyticsClient.trackProfile(updatedMyProfile);
+                mMixpanelAnalyticsClient.trackProfile(updatedMyProfile);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -169,8 +169,8 @@ public class BaseAnalyticsActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        if (mAnalyticsClient != null)
-            mAnalyticsClient.flush();
+        if (mMixpanelAnalyticsClient != null)
+            mMixpanelAnalyticsClient.flush();
         super.onDestroy();
     }
 

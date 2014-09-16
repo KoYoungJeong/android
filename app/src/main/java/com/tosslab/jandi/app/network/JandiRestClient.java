@@ -51,7 +51,7 @@ import org.springframework.util.MultiValueMap;
         interceptors = { LoggerInterceptor.class }
 )
 //@Accept(MediaType.APPLICATION_JSON)
-@Accept("application/vnd.tosslab.jandi-v1+json")
+@Accept(JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
     void setHeader(String name, String value);
 

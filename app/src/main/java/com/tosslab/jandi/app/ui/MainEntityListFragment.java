@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
-import com.tosslab.jandi.app.network.AnalyticsClient;
+import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -27,7 +27,7 @@ import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -270,9 +270,9 @@ public class MainEntityListFragment extends BaseFragment {
             }
 
             createEntitySucceed(restResId.id, entityName, entityType);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("Create Fail", e);
-            if (e.httpStatusCode == JandiException.BAD_REQUEST) {
+            if (e.httpStatusCode == JandiNetworkException.BAD_REQUEST) {
                 createEntityFailed(R.string.err_entity_duplicated_name);
             } else {
                 createEntityFailed(R.string.err_entity_create);
@@ -283,7 +283,7 @@ public class MainEntityListFragment extends BaseFragment {
     @UiThread
     public void createEntitySucceed(int entityId, String entityName, int entityType) {
         try {
-            AnalyticsClient
+            MixpanelAnalyticsClient
                     .getInstance(mContext, mEntityManager.getDistictId())
                     .trackCreatingEntity((entityType == JandiConstants.TYPE_CHANNEL));
         } catch (JSONException e) {
@@ -315,14 +315,14 @@ public class MainEntityListFragment extends BaseFragment {
         try {
             mJandiEntityClient.joinChannel(channel.getChannel());
             joinChannelSucceed(channel);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to join channel", e);
             joinChannelFailed();
         }
     }
 
     private void joinChannelSucceed(final FormattedEntity channel) {
-        AnalyticsClient
+        MixpanelAnalyticsClient
                 .getInstance(mContext, mEntityManager.getDistictId())
                 .trackJoinChannel();
         joinChannelDone(channel, null);
