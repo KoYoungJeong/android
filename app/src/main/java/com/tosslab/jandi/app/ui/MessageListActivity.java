@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -92,7 +91,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 2014. 8. 12..
  */
-@EActivity(R.layout.fragment_main)
+@EActivity(R.layout.activity_message_list)
 public class MessageListActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MessageListActivity.class);
     private final String DIALOG_TAG = "dialog";
@@ -867,7 +866,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.cdpId)
-                .setMultipartParameter("permission", "740");
+                .setMultipartParameter("permission", "744");
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", event.comment);
