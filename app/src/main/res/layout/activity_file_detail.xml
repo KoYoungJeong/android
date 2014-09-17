@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:lines="3"
+            android:lines="4"
             android:minLines="1"
             android:scrollbars="none"
             android:inputType="textMultiLine|textCapSentences"
