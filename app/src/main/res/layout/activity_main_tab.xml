@@ -64,6 +64,24 @@
                 android:text="Justin"/>
         </RelativeLayout>
         <LinearLayout
+            android:id="@+id/drawer_action_invitation"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/jandi_icon_rm_setting"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:text="@string/jandi_invitation"/>
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/drawer_action_setting"
             android:layout_width="match_parent"
             android:layout_height="56dp"

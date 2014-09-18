@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- Address Input Layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/jandi_messages_bottom_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <EditText
+            android:id="@+id/et_invitation_email"
+            android:layout_width="0px"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:singleLine="true"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edtxt_messages_input"
+            android:hint="E-mail address"/>
+        <Button
+            android:id="@+id/btn_invitation_confirm"
+            android:layout_width="55dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="6dp"
+            android:text="Invite"
+            android:textSize="14sp"
+            android:textColor="@color/jandi_messages_button_text"
+            android:background="@drawable/btn_send_selector"/>
+    </LinearLayout>
+</LinearLayout>

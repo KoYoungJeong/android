@@ -81,6 +81,9 @@
     <string name="jandi_profile_photo_upload_succeed">사진이 수정되었습니다</string>
     <string name="err_profile_photo_upload">사진 업로드가 실패하였습니다</string>
 
+    <!-- 회원 초대 -->
+    <string name="jandi_invitation">팀으로 초대</string>
+
     <!-- Message List -->
     <string name="jandi_message_hint">메시지</string>
     <string name="jandi_message_send">전송</string>

@@ -86,6 +86,9 @@
     <string name="jandi_profile_photo_upload_succeed">Profile photo has been modified.</string>
     <string name="err_profile_photo_upload">Failed to upload the profile photo</string>
 
+    <!-- 회원 초대 -->
+    <string name="jandi_invitation">Invitation</string>
+
     <!-- Message List -->
     <string name="jandi_message_hint">message</string>
     <string name="jandi_message_send">send</string>

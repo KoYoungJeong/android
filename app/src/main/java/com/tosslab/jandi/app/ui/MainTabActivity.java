@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveChannelList;
 import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
+import com.tosslab.jandi.app.events.RetrieveTeamInformation;
 import com.tosslab.jandi.app.events.RetrieveUserList;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -305,7 +306,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         .start();
             }
         }, 250);
-
     }
 
     @Click(R.id.drawer_action_profile)
@@ -322,6 +322,22 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         .start();
             }
         }, 250);
+    }
+
+    @Click(R.id.drawer_action_invitation)
+    public void closeDrawerAndMoveToInvitationActivity() {
+        mDrawerLayout.closeDrawer(mDrawer);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TeamInfoActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
+        }, 250);
+        EventBus.getDefault()
+                .postSticky(new RetrieveTeamInformation(mEntityManager.getUsers()));
     }
 
     /************************************************************

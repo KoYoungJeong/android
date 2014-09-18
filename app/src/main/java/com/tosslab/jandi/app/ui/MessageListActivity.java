@@ -796,10 +796,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
                 if (resultCode == RESULT_OK) {
                     Uri targetUri = data.getData();
-                    realFilePath = getRealPathFromUri(targetUri);
-                    log.debug("onActivityResult : Photo URI : " + targetUri.toString()
-                            + ", FilePath : " + realFilePath);
-                    showFileUploadDialog(realFilePath);
+                    if (targetUri != null) {
+                        realFilePath = getRealPathFromUri(targetUri);
+                        log.debug("onActivityResult : Photo URI : " + targetUri.toString()
+                                + ", FilePath : " + realFilePath);
+                        showFileUploadDialog(realFilePath);
+                    }
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
