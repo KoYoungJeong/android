@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResInvitation;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -81,6 +83,11 @@ public interface JandiRestClient {
     @Put("/settings/profile")
     @RequiresHeader("Authorization")
     ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
+
+    // 팀 멤버 초대
+    @Post("/invitation/team")
+    @RequiresHeader("Authorization")
+    ResInvitation inviteTeamMember(ReqInvitation invitation);
 
     /************************************************************
      * 채널 관련

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResInvitation;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -35,6 +37,17 @@ public class JandiEntityClient {
         mJandiRestClient.setHeader(AUTH_HEADER, token);
         mJandiRestClient.setHeader(ACCEPT_HEADER,
                 JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+    }
+
+    /************************************************************
+     * 팀 관리
+     ************************************************************/
+    public ResInvitation inviteTeamMember(String email) throws JandiNetworkException {
+        try {
+            return mJandiRestClient.inviteTeamMember(new ReqInvitation(email));
+        } catch (HttpStatusCodeException e) {
+            throw new JandiNetworkException(e);
+        }
     }
 
     /************************************************************

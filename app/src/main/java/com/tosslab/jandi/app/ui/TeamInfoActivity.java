@@ -18,17 +18,21 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.models.ResInvitation;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -39,6 +43,8 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_team_info)
 public class TeamInfoActivity extends Activity {
+    private final Logger log = Logger.getLogger(TeamInfoActivity.class);
+
     @ViewById(R.id.list_team_users)
     ListView listViewInvitation;
     @Bean
@@ -103,6 +109,7 @@ public class TeamInfoActivity extends Activity {
                     return;
                 } else {
                     mEditTextEmailAddress.setText("");
+                    inviteTeamMember(email);
                 }
             }
         });
@@ -155,5 +162,43 @@ public class TeamInfoActivity extends Activity {
 
     void retrieveTeamUserList(List<FormattedEntity> users) {
         teamUserListAdapter.retrieveList(users);
+    }
+
+    /************************************************************
+     * 팀원으로 초대
+     ************************************************************/
+    @UiThread
+    public void inviteTeamMember(String email) {
+        mProgressWheel.show();
+        inviteTeamMemberInBackground(email);
+    }
+
+    @Background
+    public void inviteTeamMemberInBackground(String email) {
+        try {
+            ResInvitation resInvitation = mJandiEntityClient.inviteTeamMember(email);
+            inviteTeamMemberSucceed(resInvitation);
+        } catch (JandiNetworkException e) {
+            log.error("Invitation failed", e);
+            inviteTeamMemberFailed("Invitation failed");
+        } catch (Exception e) {
+            log.error("Invitation failed", e);
+            inviteTeamMemberFailed("Invitation failed");
+        }
+
+    }
+
+    @UiThread
+    public void inviteTeamMemberSucceed(ResInvitation resInvitation) {
+        mProgressWheel.dismiss();
+        if (resInvitation.sendMailFailCount == 0) {
+            ColoredToast.show(this, "Invitation is succeed");
+        }
+    }
+
+    @UiThread
+    public void inviteTeamMemberFailed(String message) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(this, message);
     }
 }
