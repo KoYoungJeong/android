@@ -428,12 +428,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                     showWarningEmpty();
                     return;
                 }
+                setMarker();
             }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
             mIsFirstMessage = restResMessages.isFirst;
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
             mFirstItemId = restResMessages.firstIdOfReceivedList;
-
             log.debug("getMessagesInBackground : " + restResMessages.messageCount
                     + " messages from " + mFirstItemId);
             getMessagesSucceed(restResMessages);
@@ -566,6 +566,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                     // Update 된 메시지만 부분 삽입한다.
                     mMessageItemConverter.updatedMessageItem(resUpdateMessages);
                     messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
+                    setMarker();
                 }
                 getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
             } else {
@@ -867,8 +868,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
                 .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
-                .setMultipartParameter("share", "" + event.cdpId)
-                .setMultipartParameter("permission", "744");
+                .setMultipartParameter("share", "" + event.cdpId);
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", event.comment);

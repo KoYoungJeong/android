@@ -190,15 +190,6 @@ public class JandiEntityClient {
         }
     }
 
-    public ResCommon updateNotificateionToken(String oldRegId, String newRegId) throws JandiNetworkException {
-        ReqNotificationUpdate req = new ReqNotificationUpdate(newRegId);
-        try {
-            return mJandiRestClient.updateNotificationToken(oldRegId, req);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        }
-    }
-
     public ResCommon deleteNotificationToken(String regId) throws JandiNetworkException {
         try {
             return mJandiRestClient.deleteNotificationToken(regId);

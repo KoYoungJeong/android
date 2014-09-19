@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -8,8 +8,7 @@
     <ListView
         android:id="@+id/list_team_users"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:choiceMode="none"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
@@ -17,4 +16,18 @@
         android:fillViewport="true"
         android:background="@color/jandi_text_white">
     </ListView>
-</LinearLayout>
+    <TextView
+        android:id="@+id/btn_invitation_tooltipBase"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginBottom="35dp"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        />
+    <com.nhaarman.supertooltips.ToolTipRelativeLayout
+        android:id="@+id/activity_main_tooltipRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>

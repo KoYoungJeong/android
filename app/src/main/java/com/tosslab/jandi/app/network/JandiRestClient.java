@@ -295,11 +295,6 @@ public interface JandiRestClient {
     @RequiresHeader("Authorization")
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
-    // Notification Token 갱신
-    @Put("/settings/notifications/{deviceToken}")
-    @RequiresHeader("Authorization")
-    ResCommon updateNotificationToken(String deviceToken, ReqNotificationUpdate reqNotificationUpdate);
-
     // Notification Token 삭제
     @Delete("/settings/notifications/{deviceToken}")
     @RequiresHeader("Authorization")

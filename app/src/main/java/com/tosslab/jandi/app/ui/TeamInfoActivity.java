@@ -3,15 +3,20 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RetrieveTeamInformation;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -60,11 +65,14 @@ public class TeamInfoActivity extends Activity {
     private String mMyToken;
 
     private EditText mEditTextEmailAddress;
+    private ToolTipRelativeLayout mToolTipRelativeLayout;
+    private ToolTipView mToolTipView;
+
 
     @AfterViews
     public void initForm() {
         mContext = getApplicationContext();
-
+        setUpToolTip();
         setUpActionBar();
         initProgressWheel();
         initNetworkClientForInvitation();
@@ -81,6 +89,12 @@ public class TeamInfoActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+    }
+
+    private void setUpToolTip() {
+        mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
+
+
     }
 
     private void initProgressWheel() {
@@ -115,6 +129,22 @@ public class TeamInfoActivity extends Activity {
         });
         listViewInvitation.addFooterView(footer);
         listViewInvitation.setAdapter(teamUserListAdapter);
+        // 스크롤의 맨 아래로 내려가면 안내 tooltip 보이기
+        listViewInvitation.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) { }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                if ((visibleItemCount == (totalItemCount - firstVisibleItem))) {
+                    showToolTip();
+                } else {
+                    hideToolTip();
+                }
+            }
+        });
     }
 
     @Override
@@ -162,6 +192,26 @@ public class TeamInfoActivity extends Activity {
 
     void retrieveTeamUserList(List<FormattedEntity> users) {
         teamUserListAdapter.retrieveList(users);
+    }
+
+    private void showToolTip() {
+        // Button에 툴팁 넣기
+        if (mToolTipView == null) {
+            ToolTip toolTip = new ToolTip()
+                    .withText("A beautiful View")
+                    .withTextColor(getResources().getColor(R.color.jandi_text_white))
+                    .withColor(getResources().getColor(R.color.jandi_main))
+                    .withAnimationType(ToolTip.AnimationType.NONE);
+
+            mToolTipView = mToolTipRelativeLayout.showToolTipForViewResId(this, toolTip, R.id.btn_invitation_tooltipBase);
+        }
+    }
+
+    private void hideToolTip() {
+        if (mToolTipView != null) {
+            mToolTipView.remove();
+            mToolTipView = null;
+        }
     }
 
     /************************************************************
