@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +20,9 @@ import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RetrieveTeamInformation;
+import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
+import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResInvitation;
@@ -53,7 +55,7 @@ public class TeamInfoActivity extends Activity {
     @ViewById(R.id.list_team_users)
     ListView listViewInvitation;
     @Bean
-    EntityItemListAdapter teamUserListAdapter;
+    TeamMemberListAdapter teamUserListAdapter;
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -65,9 +67,9 @@ public class TeamInfoActivity extends Activity {
     private String mMyToken;
 
     private EditText mEditTextEmailAddress;
+    private Button mButtonInvitation;
     private ToolTipRelativeLayout mToolTipRelativeLayout;
     private ToolTipView mToolTipView;
-
 
     @AfterViews
     public void initForm() {
@@ -79,7 +81,6 @@ public class TeamInfoActivity extends Activity {
         addInvitationViewAsListviewFooter();
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
-
     }
 
     private void setUpActionBar() {
@@ -93,8 +94,6 @@ public class TeamInfoActivity extends Activity {
 
     private void setUpToolTip() {
         mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
-
-
     }
 
     private void initProgressWheel() {
@@ -111,8 +110,27 @@ public class TeamInfoActivity extends Activity {
     private void addInvitationViewAsListviewFooter() {
         View footer = getLayoutInflater().inflate(R.layout.footer_invite_user, null, false);
         mEditTextEmailAddress = (EditText) footer.findViewById(R.id.et_invitation_email);
-        Button buttonInvitation = (Button) footer.findViewById(R.id.btn_invitation_confirm);
-        buttonInvitation.setOnClickListener(new View.OnClickListener() {
+        mButtonInvitation = (Button) footer.findViewById(R.id.btn_invitation_confirm);
+
+        // 텍스트에 글이 있으면 버튼 색상 변경
+        mEditTextEmailAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.toString().trim().length() > 0) {
+                    mButtonInvitation.setBackgroundResource(R.drawable.btn_send_selector);
+                } else {
+                    mButtonInvitation.setBackgroundResource(R.color.jandi_team_member_invite_font);
+                }
+            }
+        });
+
+        mButtonInvitation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(),0);
@@ -129,9 +147,9 @@ public class TeamInfoActivity extends Activity {
         });
         listViewInvitation.addFooterView(footer);
         listViewInvitation.setAdapter(teamUserListAdapter);
+
         // 스크롤의 맨 아래로 내려가면 안내 tooltip 보이기
         listViewInvitation.setOnScrollListener(new AbsListView.OnScrollListener() {
-
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) { }
 
@@ -168,7 +186,7 @@ public class TeamInfoActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.update_profile_menu, menu);
+        getMenuInflater().inflate(R.menu.team_info_menu, menu);
         return true;
     }
 
@@ -178,8 +196,9 @@ public class TeamInfoActivity extends Activity {
             case android.R.id.home:
                 finish();
                 return true;
-            case R.id.action_update_profile:
+            case R.id.action_invitation:
                 listViewInvitation.setSelection(teamUserListAdapter.getCount());
+                showToolTip();
                 return true;
         }
 
@@ -198,12 +217,13 @@ public class TeamInfoActivity extends Activity {
         // Button에 툴팁 넣기
         if (mToolTipView == null) {
             ToolTip toolTip = new ToolTip()
-                    .withText("A beautiful View")
+                    .withText(getString(R.string.jandi_invitation_help))
                     .withTextColor(getResources().getColor(R.color.jandi_text_white))
                     .withColor(getResources().getColor(R.color.jandi_main))
                     .withAnimationType(ToolTip.AnimationType.NONE);
 
             mToolTipView = mToolTipRelativeLayout.showToolTipForViewResId(this, toolTip, R.id.btn_invitation_tooltipBase);
+
         }
     }
 
@@ -227,22 +247,22 @@ public class TeamInfoActivity extends Activity {
     public void inviteTeamMemberInBackground(String email) {
         try {
             ResInvitation resInvitation = mJandiEntityClient.inviteTeamMember(email);
-            inviteTeamMemberSucceed(resInvitation);
+            inviteTeamMemberSucceed(resInvitation, email);
         } catch (JandiNetworkException e) {
             log.error("Invitation failed", e);
-            inviteTeamMemberFailed("Invitation failed");
+            inviteTeamMemberFailed(getString(R.string.err_invitation_failed));
         } catch (Exception e) {
             log.error("Invitation failed", e);
-            inviteTeamMemberFailed("Invitation failed");
+            inviteTeamMemberFailed(getString(R.string.err_invitation_failed));
         }
-
     }
 
     @UiThread
-    public void inviteTeamMemberSucceed(ResInvitation resInvitation) {
+    public void inviteTeamMemberSucceed(ResInvitation resInvitation, String succeedEmail) {
         mProgressWheel.dismiss();
         if (resInvitation.sendMailFailCount == 0) {
-            ColoredToast.show(this, "Invitation is succeed");
+            ColoredToast.show(this, getString(R.string.jandi_invitation_succeed));
+            teamUserListAdapter.addMember(new FormattedDummyEntity(succeedEmail));
         }
     }
 

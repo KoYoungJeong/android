@@ -66,6 +66,10 @@ public class FormattedEntity {
         this.type = type;
     }
 
+    public FormattedEntity() {
+
+    }
+
     private void patchMessageMarker(ResLeftSideMenu.Entity entity, List<ResLeftSideMenu.MessageMarker> markers) {
         for (ResLeftSideMenu.MessageMarker marker : markers) {
             if (entity.id == marker.entityId) {

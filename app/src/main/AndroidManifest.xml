@@ -50,7 +50,7 @@
             android:label="@string/jandi_profile_actionb"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.TeamInfoActivity_"
-            android:label="@string/jandi_invitation"
+            android:label="@string/jandi_team_info"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.hideybarphotoviewscreen.HideyBarPhotoViewScreen"

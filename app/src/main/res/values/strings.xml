@@ -87,7 +87,11 @@
     <string name="err_profile_photo_upload">Failed to upload the profile photo</string>
 
     <!-- 회원 초대 -->
+    <string name="jandi_team_info">Team</string>
     <string name="jandi_invitation">Invitation</string>
+    <string name="jandi_invitation_help">You can invite team member.</string>
+    <string name="jandi_invitation_succeed">Invitation succeed.</string>
+    <string name="err_invitation_failed">Invitation failed.</string>
 
     <!-- Message List -->
     <string name="jandi_message_hint">message</string>
