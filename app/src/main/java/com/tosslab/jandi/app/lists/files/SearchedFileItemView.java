@@ -39,7 +39,7 @@ public class SearchedFileItemView extends RelativeLayout {
     }
 
     public void bind(ResMessages.FileMessage searchedFile) {
-        String searchedFileName = searchedFile.content.name;
+        String searchedFileName = searchedFile.content.title;
         textViewSearchedFileName.setText(searchedFileName);
 
         String searchedFileOwnerName = searchedFile.writer.name;

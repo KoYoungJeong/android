@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <!--<string name="jandi_ga_track_id">UA-52594224-2</string>-->
-    <string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>
-    <!--<string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>-->
-    <string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
+    <string name="jandi_ga_track_id">UA-54051037-2</string>
+    <!--<string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>-->
+    <string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>
+    <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
 
     <string name="app_name">JANDI</string>
     <string name="action_settings">Settings</string>
@@ -18,6 +18,11 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <!-- Update -->
+    <string name="jandi_update_title">Old version</string>
+    <string name="jandi_action_update">Update</string>
+    <string name="jandi_update_message">There is a more recent version of JANDI available for download.</string>
 
     <!-- Login -->
     <string name="jandi_action_login">Sign in</string>
@@ -39,6 +44,7 @@
     <string name="jandi_tab_private_group">Private Group</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">File</string>
+    <string name="jandi_action_direct_message">1:1 Talk</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_channel">Joined channels</string>
@@ -79,6 +85,13 @@
     <string name="err_profile_update">Failed to update the profile</string>
     <string name="jandi_profile_photo_upload_succeed">Profile photo has been modified.</string>
     <string name="err_profile_photo_upload">Failed to upload the profile photo</string>
+
+    <!-- 회원 초대 -->
+    <string name="jandi_team_info">Team</string>
+    <string name="jandi_invitation">Invitation</string>
+    <string name="jandi_invitation_help">You can invite team member.</string>
+    <string name="jandi_invitation_succeed">Invitation succeed.</string>
+    <string name="err_invitation_failed">Invitation failed.</string>
 
     <!-- Message List -->
     <string name="jandi_message_hint">message</string>
@@ -127,6 +140,7 @@
     <string name="title_file_upload">File upload</string>
     <string name="file_upload_comment">Comments (optional)</string>
     <string name="menu_gallery">Upload from Gallery</string>
+    <string name="menu_camera">Upload from Camera</string>
     <string name="menu_a_file">Upload from file directories</string>
     <string name="jandi_title_activity_file_explorer">File Explore </string>
     <string name="title_file_detail">File description</string>
@@ -138,12 +152,17 @@
     <string name="title_cdp_invite">Please select members to invite</string>
 
     <!-- Search -->
+    <string name="jandi_action_search">Search</string>
+    <string name="jandi_file_search_keyword">Keyword</string>
     <string name="jandi_file_category_all">All files</string>
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>
     <string name="jandi_file_category_everyone">Everyone</string>
+    <string name="jandi_file_category_everywhere">Everywhere</string>
     <string name="jandi_file_search_type">Please select the file type for search</string>
-    <string name="jandi_file_search_user">Please select the members for search</string>
+    <string name="jandi_file_search_user">Please select the writers for search</string>
+    <string name="jandi_file_search_entity">Please select the channels for search</string>
+    <string name="warn_no_more_files">There is no more searched files</string>
     <string name="err_file_search">File search has been failed</string>
 
     <string name="jandi_setting_push">Push</string>

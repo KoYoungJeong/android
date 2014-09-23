@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,13 +25,13 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.JandiAuthClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -56,7 +55,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(ProfileActivity.class);
 
     private static final int REQ_CODE_PICK_IMAGE = 0;
@@ -84,7 +83,7 @@ public class ProfileActivity extends BaseActivity {
 
     @RestService
     JandiRestClient jandiRestClient;
-    private JandiAuthClient mJandiAuthClient;
+    private JandiEntityClient mJandiEntityClient;
 
     private Context mContext;
     private String mMyToken;
@@ -109,8 +108,7 @@ public class ProfileActivity extends BaseActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiAuthClient = new JandiAuthClient(jandiRestClient);
-        mJandiAuthClient.setAuthToken(mMyToken);
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
         getProfile();
     }
 
@@ -156,6 +154,7 @@ public class ProfileActivity extends BaseActivity {
 
     /************************************************************
      * 프로필 가져오기
+     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
      ************************************************************/
     @UiThread
     void getProfile() {
@@ -166,9 +165,9 @@ public class ProfileActivity extends BaseActivity {
     @Background
     void getProfileInBackground() {
         try {
-            ResLeftSideMenu.User me = mJandiAuthClient.getUserProfile(myEntityId);
+            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(myEntityId);
             getProfileSuccess(me);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {
@@ -350,9 +349,9 @@ public class ProfileActivity extends BaseActivity {
     @Background
     void updateProfileInBackground(ReqUpdateProfile reqUpdateProfile) {
         try {
-            ResLeftSideMenu.User me = mJandiAuthClient.updateUserProfile(reqUpdateProfile);
+            ResLeftSideMenu.User me = mJandiEntityClient.updateUserProfile(reqUpdateProfile);
             updateProfileSucceed(me);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
             updateProfileFailed();
         }

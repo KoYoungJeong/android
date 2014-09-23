@@ -49,7 +49,7 @@ public class JandiApplication extends Application {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t = (trackerId == TrackerName.APP_TRACKER)
-                    ? analytics.newTracker(R.xml.global_tracker)
+                    ? analytics.newTracker(getString(R.string.jandi_ga_track_id))
                     : null;
             mTrackers.put(trackerId, t);
 

@@ -35,7 +35,7 @@ public class EntitySimpleListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public FormattedEntity getItem(int i) {
         return mFormattedEntities.get(i);
     }
 
@@ -57,22 +57,29 @@ public class EntitySimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FormattedEntity entity = (FormattedEntity)getItem(i);
+        FormattedEntity entity = getItem(i);
 
-        if (entity.isChannel()) {
-            holder.textView.setText(entity.getChannel().name);
-            holder.imageView.setImageResource(R.drawable.jandi_icon_channel);
-        } else if (entity.isPrivateGroup()) {
-            holder.textView.setText(entity.getPrivateGroup().name);
-            holder.imageView.setImageResource(R.drawable.jandi_icon_privategroup);
-        } else if (entity.isUser()) {
+        // dummy entity는 이름이 없다. 지정된 string resource id 만 가져옴.
+        if (entity.isDummy()) {
+            holder.textView.setText(entity.getDummyNameRes());
+        } else {
+            holder.textView.setText(entity.getName());
+        }
+
+        // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
+        if (entity.isUser()) {
             // 프로필 사진
             Picasso.with(this.mContext)
                     .load(entity.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_icon_directmsg)
                     .transform(new CircleTransform())
                     .into(holder.imageView);
-            holder.textView.setText(entity.getUserName());
+        } else {
+            holder.imageView.setImageResource(entity.getIconImageResId());
+            if (entity.isChannel()) {
+                holder.imageView.setColorFilter(entity.getMyColor(),
+                        android.graphics.PorterDuff.Mode.MULTIPLY);
+            }
         }
 
         return convertView;

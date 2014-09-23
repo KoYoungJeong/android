@@ -27,15 +27,18 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
+import com.tosslab.jandi.app.events.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
 import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
 import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
 import com.tosslab.jandi.app.events.RetrieveChannelList;
 import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
+import com.tosslab.jandi.app.events.RetrieveTeamInformation;
 import com.tosslab.jandi.app.events.RetrieveUserList;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
@@ -43,7 +46,7 @@ import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -57,7 +60,6 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.net.ConnectException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -66,7 +68,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EActivity(R.layout.activity_main_tab)
-public class MainTabActivity extends BaseActivity {
+public class MainTabActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MainTabActivity.class);
 
     @RestService
@@ -206,6 +208,7 @@ public class MainTabActivity extends BaseActivity {
 
         setSpinnerAsCategorizingAccodingByFileType();
         setSpinnerAsCategorizingAccodingByUser();
+        setSpinnerAsCategorizingAccodingByEntity();
     }
 
     @Override
@@ -303,7 +306,6 @@ public class MainTabActivity extends BaseActivity {
                         .start();
             }
         }, 250);
-
     }
 
     @Click(R.id.drawer_action_profile)
@@ -320,6 +322,22 @@ public class MainTabActivity extends BaseActivity {
                         .start();
             }
         }, 250);
+    }
+
+    @Click(R.id.drawer_action_invitation)
+    public void closeDrawerAndMoveToInvitationActivity() {
+        mDrawerLayout.closeDrawer(mDrawer);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                TeamInfoActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .start();
+            }
+        }, 250);
+        EventBus.getDefault()
+                .postSticky(new RetrieveTeamInformation(mEntityManager.getUsers()));
     }
 
     /************************************************************
@@ -339,7 +357,7 @@ public class MainTabActivity extends BaseActivity {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesDone(true, resLeftSideMenu, null);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("get entity failed", e);
             getEntitiesDone(false, null, getString(R.string.err_expired_session));
         } catch (ResourceAccessException e) {
@@ -402,10 +420,11 @@ public class MainTabActivity extends BaseActivity {
      ************************************************************/
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
-
+    private String mCurrentEntityCategorizingAccodingBy = null;
 
     private AlertDialog mFileTypeSelectDialog;
     private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
+    private AlertDialog mEntitySelectDialog;
 
     private void setSpinnerAsCategorizingAccodingByFileType() {
         LinearLayout categoryFileType = (LinearLayout) findViewById(R.id.actionbar_file_list_type);
@@ -435,6 +454,22 @@ public class MainTabActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 showUsersDialog(textViewUser);
+            }
+        });
+    }
+
+    private void setSpinnerAsCategorizingAccodingByEntity() {
+        LinearLayout categoryEntity = (LinearLayout) findViewById(R.id.actionbar_file_list_entity);
+        final TextView textViewEntity = (TextView) findViewById(R.id.actionbar_file_list_entity_text);
+        textViewEntity.setText(
+                (mCurrentEntityCategorizingAccodingBy == null)
+                        ? getString(R.string.jandi_file_category_everywhere)
+                        : mCurrentEntityCategorizingAccodingBy
+        );
+        categoryEntity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showEntityDialog(textViewEntity);
             }
         });
     }
@@ -520,6 +555,44 @@ public class MainTabActivity extends BaseActivity {
         ImageView imageView = (ImageView) headerView.findViewById(R.id.img_select_cdp_icon);
         imageView.setImageResource(R.drawable.jandi_profile);
         return headerView;
+    }
+
+    /**
+     * 모든 Entity 리스트 Dialog 를 보여준 뒤, 선택된 장소에 share 된 파일만 검색하라는 이벤트를
+     * FileListFragment에 전달
+     * @param textVew
+     */
+    private void showEntityDialog(final TextView textVew) {
+        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
+        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
+        final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, mEntityManager.getCategorizableEntities());
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (mEntitySelectDialog != null)
+                    mEntitySelectDialog.dismiss();
+
+                int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
+
+                if (i <= 0) {
+                    // 첫번째는 "Everywhere"인 더미 entity
+                    mCurrentEntityCategorizingAccodingBy = getString(R.string.jandi_file_category_everywhere);
+                } else {
+                    FormattedEntity sharedEntity = adapter.getItem(i);
+                    sharedEntityId = sharedEntity.getId();
+                    mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
+                }
+                textVew.setText(mCurrentEntityCategorizingAccodingBy);
+                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+            }
+        });
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle(R.string.jandi_file_search_entity);
+        dialog.setView(view);
+        mEntitySelectDialog = dialog.show();
+        mEntitySelectDialog.setCanceledOnTouchOutside(true);
     }
 
     /**

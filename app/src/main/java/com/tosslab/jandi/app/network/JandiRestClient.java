@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
@@ -19,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResInvitation;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -51,7 +53,7 @@ import org.springframework.util.MultiValueMap;
         interceptors = { LoggerInterceptor.class }
 )
 //@Accept(MediaType.APPLICATION_JSON)
-@Accept("application/vnd.tosslab.jandi-v1+json")
+@Accept(JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
     void setHeader(String name, String value);
 
@@ -81,6 +83,11 @@ public interface JandiRestClient {
     @Put("/settings/profile")
     @RequiresHeader("Authorization")
     ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
+
+    // 팀 멤버 초대
+    @Post("/invitation/team")
+    @RequiresHeader("Authorization")
+    ResInvitation inviteTeamMember(ReqInvitation invitation);
 
     /************************************************************
      * 채널 관련
@@ -287,11 +294,6 @@ public interface JandiRestClient {
     @Post("/settings/notification")
     @RequiresHeader("Authorization")
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
-
-    // Notification Token 갱신
-    @Put("/settings/notifications/{deviceToken}")
-    @RequiresHeader("Authorization")
-    ResCommon updateNotificationToken(String deviceToken, ReqNotificationUpdate reqNotificationUpdate);
 
     // Notification Token 삭제
     @Delete("/settings/notifications/{deviceToken}")

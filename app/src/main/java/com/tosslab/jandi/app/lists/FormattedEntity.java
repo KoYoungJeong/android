@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.lists;
 import android.graphics.Color;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.util.List;
@@ -16,8 +17,11 @@ public class FormattedEntity {
     public static final int TYPE_REAL_USER              = JandiConstants.TYPE_DIRECT_MESSAGE;
     public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_PRIVATE_GROUP;
 
+    // Dummy Entity
+    // TODO 통합
     public static final int TYPE_TITLE_JOINED_CHANNEL   = 4;
     public static final int TYPE_TITLE_UNJOINED_CHANNEL = 5;
+    public static final int TYPE_EVERYWHERE             = 6;
 
     public static final boolean JOINED      = true;
     public static final boolean UNJOINED    = false;
@@ -62,6 +66,10 @@ public class FormattedEntity {
         this.type = type;
     }
 
+    public FormattedEntity() {
+
+    }
+
     private void patchMessageMarker(ResLeftSideMenu.Entity entity, List<ResLeftSideMenu.MessageMarker> markers) {
         for (ResLeftSideMenu.MessageMarker marker : markers) {
             if (entity.id == marker.entityId) {
@@ -80,7 +88,13 @@ public class FormattedEntity {
     public boolean isUser() {
         return (type == FormattedEntity.TYPE_REAL_USER);
     }
+    public boolean isDummy() {
+        return (!isChannel() && !isPrivateGroup() && !isUser());
+    }
 
+    /************************************************************
+     * 공통 Getter
+     ************************************************************/
     public ResLeftSideMenu.Entity getEntity() {
         return entity;
     }
@@ -88,6 +102,36 @@ public class FormattedEntity {
     public int getId() {
         return getEntity().id;
     }
+
+    public String getName() {
+        // Dummy entity일 경우 이름이 없다.
+        if (isDummy()) {
+            return null;
+        }
+
+        if (isUser()) {
+            return getUserName();
+        } else {
+            return getEntity().name;
+        }
+    }
+
+    public int getIconImageResId() {
+        if (isChannel()) {
+            return R.drawable.jandi_icon_channel;
+        } else if (isPrivateGroup()) {
+            return R.drawable.jandi_icon_privategroup;
+        } else if (isDummy()) {
+            return getDummyImageRes();
+        } else {
+            // User
+            return -1;
+        }
+    }
+
+    /************************************************************
+     * 개별 Getter
+     ************************************************************/
     public ResLeftSideMenu.Channel getChannel() {
         return (entity instanceof ResLeftSideMenu.Channel)
                 ? (ResLeftSideMenu.Channel) entity
@@ -176,6 +220,18 @@ public class FormattedEntity {
         } else {
             return "";
         }
+    }
+
+    public int getDummyNameRes() {
+        if (this.type == TYPE_EVERYWHERE) {
+            return R.string.jandi_file_category_everywhere;
+        } else {
+            return 0;
+        }
+    }
+
+    private int getDummyImageRes() {
+        return R.drawable.jandi_icon_channel;
     }
 
     public int getMyColor() {

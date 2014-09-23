@@ -25,7 +25,7 @@
         android:background="@color/jandi_message_input_border" />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:background="@color/jandi_messages_bottom_bg"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
@@ -33,8 +33,15 @@
         <EditText
             android:id="@+id/et_file_detail_comment"
             android:layout_width="0px"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
             android:layout_weight="1"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:lines="4"
+            android:minLines="1"
+            android:scrollbars="none"
+            android:inputType="textMultiLine|textCapSentences"
             android:background="@drawable/edtxt_messages_input"
             android:hint="@string/comment"/>
         <Button

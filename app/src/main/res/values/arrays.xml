@@ -2,6 +2,7 @@
 <resources>
     <string-array name="types_file_upload">
         <item>@string/menu_gallery</item>
+        <item>@string/menu_camera</item>
         <item>@string/menu_a_file</item>
     </string-array>
 </resources>

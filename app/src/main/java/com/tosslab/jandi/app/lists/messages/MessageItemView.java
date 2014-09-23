@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.messages;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -8,12 +9,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -119,10 +123,20 @@ public class MessageItemView extends LinearLayout {
         mCreateTime.setText(createTime);
     }
 
-    private void showProfilePhoto(MessageItem item) {
+    private void showProfilePhoto(final MessageItem item) {
         // 프로필 사진
         mUserProfileImage.setVisibility(VISIBLE);
-        Picasso.with(mContext).load(item.getUserProfileUrl()).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(mUserProfileImage);
+        Picasso.with(mContext)
+                .load(item.getUserProfileUrl())
+                .placeholder(R.drawable.jandi_profile)
+                .transform(new CircleTransform())
+                .into(mUserProfileImage);
+        mUserProfileImage.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new RequestUserInfoEvent(item.getUserId()));
+            }
+        });
     }
 
     private void showStringMessage(MessageItem item) {

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by justinygchoi on 2014. 7. 16..
  */
-public class JandiException extends Exception {
+public class JandiNetworkException extends Exception {
     // ERROR
     public static final int BAD_REQUEST     = 400;
 
@@ -22,7 +22,7 @@ public class JandiException extends Exception {
     public int httpStatusCode;
     public String httpStatusMessage;
 
-    public JandiException(HttpStatusCodeException e) {
+    public JandiNetworkException(HttpStatusCodeException e) {
         this.httpStatusCode = e.getStatusCode().value();
         this.httpStatusMessage = e.getStatusText();
 

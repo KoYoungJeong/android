@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.CircleTransform;
@@ -54,6 +55,11 @@ public class EntityItemView extends LinearLayout {
 
     public void bind(FormattedEntity formattedEntity) {
         goneAllLayout();
+
+        if (formattedEntity instanceof FormattedDummyEntity) {
+            drawInvitedUserDummyLayout(((FormattedDummyEntity) formattedEntity).getEmailForInvitation());
+            return;
+        }
 
         switch (formattedEntity.type) {
             case FormattedEntity.TYPE_REAL_CHANNEL:
@@ -111,6 +117,12 @@ public class EntityItemView extends LinearLayout {
                 textViewChannelTypeTitle.setText(R.string.jandi_entity_unjoined_channel);
                 return;
         }
+    }
+
+    private void drawInvitedUserDummyLayout(String email) {
+        linearLayoutReal.setVisibility(VISIBLE);
+        textViewChannelName.setText("초대 대기 중인 사용자");
+        textViewCntJoinedUsers.setText(email);
     }
 
     private void goneAllLayout() {

@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -8,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,19 +30,24 @@ import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.MessageManipulator;
-import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.network.JandiEntityClient;
+import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -63,7 +72,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 7. 19..
  */
 @EActivity(R.layout.activity_file_detail)
-public class FileDetailActivity extends BaseActivity {
+public class FileDetailActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(FileDetailActivity.class);
     @Extra
     public int fileId;
@@ -95,21 +104,39 @@ public class FileDetailActivity extends BaseActivity {
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     private EntityManager mEntityManager;
+    private JandiEntityClient mJandiEntityClient;
 
     @AfterViews
     public void initForm() {
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayUseLogoEnabled(false);
-        getActionBar().setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
         mContext = getApplicationContext();
 
+        setUpActionBar();
+        initProgressWheel();
+        addFileDetailViewAsListviewHeader();
+        initNetworkClientForFileDetail();
+
+        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+
+        getFileDetail();
+    }
+
+    private void setUpActionBar() {
+        // Set up the action bar.
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+    }
+
+    private void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
-        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+    }
 
+    private void addFileDetailViewAsListviewHeader() {
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
         imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile);
@@ -121,10 +148,11 @@ public class FileDetailActivity extends BaseActivity {
         iconFileType = (ImageView)header.findViewById(R.id.icon_file_detail_content_type);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
+    }
 
+    private void initNetworkClientForFileDetail() {
         myToken = JandiPreference.getMyToken(this);
-        jandiRestClient.setHeader("Authorization", myToken);
-        getFileDetail();
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, myToken);
     }
 
     @Override
@@ -280,7 +308,7 @@ public class FileDetailActivity extends BaseActivity {
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
-                getActionBar().setTitle(fileMessage.content.name);
+                getActionBar().setTitle(fileMessage.content.title);
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
 
@@ -385,13 +413,11 @@ public class FileDetailActivity extends BaseActivity {
 
     @Background
     public void shareMessageInBackground(int entityIdToBeShared) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                jandiRestClient, myToken);
         try {
-            messageManipulator.shareMessage(fileId, entityIdToBeShared);
+            mJandiEntityClient.shareMessage(fileId, entityIdToBeShared);
             log.debug("success to share message");
             shareMessageSucceed(entityIdToBeShared);
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             shareMessageFailed();
         }
@@ -444,13 +470,11 @@ public class FileDetailActivity extends BaseActivity {
 
     @Background
     public void unshareMessageInBackground(int entityIdToBeUnshared) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                jandiRestClient, myToken);
         try {
-            messageManipulator.unshareMessage(fileId, entityIdToBeUnshared);
+            mJandiEntityClient.unshareMessage(fileId, entityIdToBeUnshared);
             log.debug("success to unshare message");
             unshareMessageSucceed(entityIdToBeUnshared);
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
         }
@@ -477,13 +501,11 @@ public class FileDetailActivity extends BaseActivity {
 
     @Background
     public void deleteFileInBackground() {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                jandiRestClient, myToken);
         try {
-            messageManipulator.deleteFile(fileId);
+            mJandiEntityClient.deleteFile(fileId);
             log.debug("success to delete file");
             deleteFileDone(true);
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("delete file failed", e);
             deleteFileDone(false);
         }
@@ -522,12 +544,10 @@ public class FileDetailActivity extends BaseActivity {
 
     @Background
     public void sendCommentInBackground(String message) {
-        MessageManipulator messageManipulator = new MessageManipulator(
-                jandiRestClient, myToken);
         try {
-            messageManipulator.sendMessageComment(fileId, message);
+            mJandiEntityClient.sendMessageComment(fileId, message);
             log.debug("success to send message");
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
         }
 
@@ -597,4 +617,69 @@ public class FileDetailActivity extends BaseActivity {
         }
 
     }
+
+    /************************************************************
+     * 사용자 프로필 보기
+     * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
+     ************************************************************/
+    public void onEvent(RequestUserInfoEvent event) {
+        int userEntityId = event.userId;
+        getProfileInBackground(userEntityId);
+    }
+
+    @Background
+    void getProfileInBackground(int userEntityId) {
+        try {
+            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
+            getProfileSuccess(user);
+        } catch (JandiNetworkException e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        } catch (Exception e) {
+            log.error("get profile failed", e);
+            getProfileFailed();
+        }
+    }
+
+    @UiThread
+    void getProfileSuccess(ResLeftSideMenu.User user) {
+        showUserInfoDialog(new FormattedEntity(user));
+    }
+
+    @UiThread
+    void getProfileFailed() {
+        ColoredToast.showError(this, getString(R.string.err_profile_get_info));
+        finish();
+    }
+
+    private void showUserInfoDialog(FormattedEntity user) {
+        boolean isMe = mEntityManager.isMe(user.getId());
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        UserInfoFragmentDialog dialog = UserInfoFragmentDialog.newInstance(user, isMe);
+        dialog.show(ft, "dialog");
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageListActivity_.intent(mContext)
+                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                        .entityId(event.userId)
+                        .entityName(event.userName)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .isMyEntity(false)
+                        .start();
+                EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
+            }
+        }, 250);
+    }
+
 }

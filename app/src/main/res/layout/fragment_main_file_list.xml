@@ -6,18 +6,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
-    <ListView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/jandi_messages_bottom_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <EditText
+            android:id="@+id/et_file_list_search_text"
+            android:layout_width="0px"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:background="@drawable/edtxt_messages_input"
+            android:hint="@string/jandi_file_search_keyword"/>
+        <Button
+            android:id="@+id/btn_file_list_search"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="8dp"
+            android:text="@string/jandi_action_search"
+            android:textSize="14sp"
+            android:textColor="@color/jandi_messages_button_text"
+            android:background="@drawable/btn_send_selector"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/jandi_file_search_item_divider"/>
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/list_searched_messages"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
         android:choiceMode="singleChoice"
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
-        android:transcriptMode="normal"
-        />
-    <!--android:fillViewport="true"-->
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0.5dp"-->
-        <!--android:background="@color/jandi_border"/>-->
+        android:smoothScrollbar="true"
+        android:fillViewport="true"
+        ptr:ptrPullLabel="당겨서 이전 파일"
+        ptr:ptrRefreshLabel="놓아서 이전 파일"
+        ptr:ptrReleaseLabel="완료" />
 </LinearLayout>

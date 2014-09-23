@@ -16,8 +16,8 @@ import org.json.JSONObject;
 /**
  * Created by justinygchoi on 2014. 8. 22..
  */
-public class AnalyticsClient {
-    private final Logger log = Logger.getLogger(AnalyticsClient.class);
+public class MixpanelAnalyticsClient {
+    private final Logger log = Logger.getLogger(MixpanelAnalyticsClient.class);
 
     private final String PROP_SIGN_IN           = "Sign In";
     private final String PROP_CREATE_ENTITY     = "Entity Create";
@@ -38,21 +38,21 @@ public class AnalyticsClient {
 
     private MixpanelAPI mMixpanel;
     private String mDistictId;
-    private static AnalyticsClient __instance__;
+    private static MixpanelAnalyticsClient __instance__;
 
     public Context context;
 
-    public AnalyticsClient(Context context, String distictId) {
-        log.debug("Create instance of AnalyticsClient");
+    public MixpanelAnalyticsClient(Context context, String distictId) {
+        log.debug("Create instance of MixpanelAnalyticsClient");
         String mixpanelId = context.getString(R.string.jandi_mixpanel_track_id);
         mMixpanel = MixpanelAPI.getInstance(context, mixpanelId);
         mDistictId = distictId;
         mMixpanel.identify(mDistictId);
     }
 
-    public static AnalyticsClient getInstance(Context context, String distictId) {
+    public static MixpanelAnalyticsClient getInstance(Context context, String distictId) {
         if (__instance__ == null || __instance__.context != context) {
-            __instance__ = new AnalyticsClient(context, distictId);
+            __instance__ = new MixpanelAnalyticsClient(context, distictId);
         }
         return __instance__;
     }

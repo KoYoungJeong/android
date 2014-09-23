@@ -79,6 +79,9 @@ public class MessageItem {
         return null;
     }
 
+    public FormattedEntity getUser() {
+        return mWriter;
+    }
 
     public String getUserName() {
         return mWriter.getUserName();

@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.JandiAuthClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiException;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
@@ -29,20 +32,32 @@ import org.apache.log4j.Logger;
 public class SettingsActivity extends PreferenceActivity {
     private final Logger log = Logger.getLogger(SettingsActivity.class);
 
-    @RestService
-    JandiRestClient jandiRestClient;
-
-    private String myToken;
-    private Context mContext;
-
     @Extra
     int myEntityId;
     @Extra
     int myTeamId;
 
+    @RestService
+    JandiRestClient jandiRestClient;
+    private JandiEntityClient mJandiEntityClient;
+
+    private String myToken;
+    private Context mContext;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setUpActionBar();
+
+        mContext = getApplicationContext();
+        myToken = JandiPreference.getMyToken(mContext);
+        mJandiEntityClient = new JandiEntityClient(jandiRestClient, myToken);
+
+        getFragmentManager().beginTransaction().replace(android.R.id.content,
+                new SettingsFragment()).commit();
+    }
+
+    private void setUpActionBar() {
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -50,11 +65,12 @@ public class SettingsActivity extends PreferenceActivity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        mContext = getApplicationContext();
-        myToken = JandiPreference.getMyToken(mContext);
+    }
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
-                new SettingsFragment()).commit();
+    @Override
+    public void onResume() {
+        super.onResume();
+        trackGa(getDistictId(), "Setting");
     }
 
     @Override
@@ -73,6 +89,17 @@ public class SettingsActivity extends PreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void trackGa(final String distictId, final String gaPath) {
+        Tracker screenViewTracker = ((JandiApplication) getApplication())
+                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
+        screenViewTracker.set("&uid", distictId);
+        screenViewTracker.setScreenName(gaPath);
+        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
+    }
+
+    private String getDistictId() {
+        return (myEntityId + "@" + myTeamId);
+    }
     /************************************************************
      * Push 설정
      ************************************************************/
@@ -82,12 +109,10 @@ public class SettingsActivity extends PreferenceActivity {
         String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
 
         if (!regId.isEmpty()) {
-            JandiAuthClient jandiAuthClient = new JandiAuthClient(jandiRestClient);
-            jandiAuthClient.setAuthToken(myToken);
             try {
-                jandiAuthClient.deleteNotificationToken(regId);
+                mJandiEntityClient.deleteNotificationToken(regId);
                 log.debug("notification token has been deleted.");
-            } catch (JandiException e) {
+            } catch (JandiNetworkException e) {
                 log.error("delete notification token failed");
             }
         }
@@ -110,12 +135,10 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {
-        JandiAuthClient jandiAuthClient = new JandiAuthClient(jandiRestClient);
-        jandiAuthClient.setAuthToken(myToken);
         try {
-            jandiAuthClient.setNotificationTarget(notificationTarget);
+            mJandiEntityClient.setNotificationTarget(notificationTarget);
             log.debug("notification target has been changed : " + notificationTarget);
-        } catch (JandiException e) {
+        } catch (JandiNetworkException e) {
             log.error("change notification target failed");
             ColoredToast.showError(this, "변환에 실패했습니다");
         }

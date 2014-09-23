@@ -14,6 +14,11 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
+    <!-- Update -->
+    <string name="jandi_update_title">새로운 버전</string>
+    <string name="jandi_action_update">업데이트</string>
+    <string name="jandi_update_message">JANDI의 새로운 버전이 업데이트되었습니다. 현재 버전에서는 최신의 기능을 사용하실 수 없습니다.</string>
+
     <!-- Login -->
     <string name="jandi_action_login">로그인</string>
     <string name="jandi_user_id">이메일 주소</string>
@@ -34,6 +39,7 @@
     <string name="jandi_tab_private_group">비밀그룹</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">파일</string>
+    <string name="jandi_action_direct_message">1:1 대화</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_channel">참여한 채널</string>
@@ -74,6 +80,13 @@
     <string name="err_profile_update">프로필이 수정이 실패하였습니다</string>
     <string name="jandi_profile_photo_upload_succeed">사진이 수정되었습니다</string>
     <string name="err_profile_photo_upload">사진 업로드가 실패하였습니다</string>
+
+    <!-- 회원 초대 -->
+    <string name="jandi_team_info">팀 정보</string>
+    <string name="jandi_invitation">팀으로 초대</string>
+    <string name="jandi_invitation_help">또 다른 팀원을 초대할 수 있습니다.</string>
+    <string name="jandi_invitation_succeed">팀원으로 초대하였습니다.</string>
+    <string name="err_invitation_failed">팀원 초대에 실패하였습니다.</string>
 
     <!-- Message List -->
     <string name="jandi_message_hint">메시지</string>
@@ -122,6 +135,7 @@
     <string name="title_file_upload">파일 업로드</string>
     <string name="file_upload_comment">댓글 (선택 사항)</string>
     <string name="menu_gallery">사진첩에서 올리기</string>
+    <string name="menu_camera">카메라에서 올리기</string>
     <string name="menu_a_file">파일 탐색기에서 올리기</string>
     <string name="jandi_title_activity_file_explorer">파일 탐색기</string>
     <string name="title_file_detail">파일 상세 정보</string>
@@ -133,12 +147,17 @@
     <string name="title_cdp_invite">초대할 사용자를 선택하세요</string>
 
     <!-- Search -->
+    <string name="jandi_action_search">검색</string>
+    <string name="jandi_file_search_keyword">검색어</string>
     <string name="jandi_file_category_all">모든 파일</string>
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>
     <string name="jandi_file_category_everyone">모든 팀원</string>
-    <string name="jandi_file_search_type">검색할 파일 타입을 선택하세요</string>
-    <string name="jandi_file_search_user">검색할 사용자를 선택하세요</string>
+    <string name="jandi_file_category_everywhere">모든 장소</string>
+    <string name="jandi_file_search_type">어떤 타입의 파일을 검색할까요?</string>
+    <string name="jandi_file_search_user">누가 올린 파일을 검색할까요?</string>
+    <string name="jandi_file_search_entity">어디에 공유된 파일을 검색할까요?</string>
+    <string name="warn_no_more_files">더 이상 검색된 파일이 없습니다</string>
     <string name="err_file_search">파일 검색에 실패했습니다</string>
 
     <!-- 설정 -->
