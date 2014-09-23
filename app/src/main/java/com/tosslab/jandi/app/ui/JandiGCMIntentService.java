@@ -6,15 +6,25 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Set;
 
 /**
  * Created by justinygchoi on 2014. 7. 9..
@@ -43,41 +53,102 @@ public class JandiGCMIntentService extends IntentService {
              * recognize.
              */
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString(), -1, -1);
+                sendNotification("ERROR", "Send error: " + extras.toString(), -1, -1, null);
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " + extras.toString(), -1, -1);
+                sendNotification("ERROR", "Deleted messages on server: " + extras.toString(), -1, -1, null);
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                String lastMessage = extras.getString("lastMessage");
+                log.info("Received: " + extras.toString());
+                try {
+                    // 총 메시지
+//                    int messageCount = extras.getInt("messageCount", 0);
 
-                int cdpType = convertCdpTypeFromString(extras.getString("toEntityType", ""));
-                String strCdpId = (cdpType == JandiConstants.TYPE_DIRECT_MESSAGE)
-                        ? extras.getString("fromEntityId")
-                        : extras.getString("toEntityId");
-                int cdpId = Integer.parseInt(strCdpId);
+                    String messages = extras.getString("messages");
+                    ObjectMapper mapper = new ObjectMapper();
+
+                    JsonNode messagesObj = mapper.readTree(messages);
+                    int entityType = retrieveEntityType(messagesObj);
+                    int entityId = retrieveEntityId(messagesObj);
+                    String lastTitle = retrieveLastTitle(messagesObj);
+                    String lastMessage = retrieveLastMessage(messagesObj);
+                    String profileUrl = retrieveProfileUrl(messagesObj);
+
+                    JandiPreference.setEntityId(getApplicationContext(), entityId);
+                    // Post notification of received message.
+                    sendNotification(lastTitle, lastMessage, entityType, entityId, profileUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
                 // Update count of badge
                 updateBadge(1);
-
-                JandiPreference.setEntityId(getApplicationContext(), cdpId);
-                // Post notification of received message.
-                sendNotification(lastMessage, cdpType, cdpId);
-                log.info("Received: " + extras.toString());
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         JandiGCMBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    private int convertCdpTypeFromString(String cdpType) {
-        if (cdpType.equals("channel")) {
+    private String retrieveLastMessage(JsonNode messagesNode) {
+        // Message text
+        JsonNode messageObj = messagesNode.get("message");
+        JsonNode contentObj = messageObj.get("content");
+        String contentType = messageObj.get("contentType").asText();
+        if (contentType.equals("text")) {
+            return contentObj.get("body").asText();
+        } else if (contentType.equals("file")) {
+            return contentObj.get("title").asText();
+        } else if (contentType.equals("comment")) {
+            return contentObj.get("body").asText();
+        } else {
+            return "";
+        }
+    }
+
+    private int retrieveEntityType(JsonNode messagesNode) {
+        JsonNode toEntity = messagesNode.get("toEntity");
+        String entityType = toEntity.get("type").asText();
+        if (entityType.equals("channel")) {
             return JandiConstants.TYPE_CHANNEL;
-        } else if (cdpType.equals("privateGroup")) {
+        } else if (entityType.equals("privateGroup")) {
             return JandiConstants.TYPE_PRIVATE_GROUP;
-        } else if (cdpType.equals("user")) {
+        } else if (entityType.equals("user")) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {
             return -1;
         }
+    }
+
+    private int retrieveEntityId(JsonNode messagesNode) {
+        int entityType = retrieveEntityType(messagesNode);
+        if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            JsonNode toEntity = messagesNode.get("fromEntity");
+            return toEntity.get("id").asInt();
+        } else {
+            JsonNode toEntity = messagesNode.get("toEntity");
+            return toEntity.get("id").asInt();
+        }
+    }
+
+    private String retrieveLastTitle(JsonNode messagesNode) {
+        int entityType = retrieveEntityType(messagesNode);
+        if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            JsonNode toEntity = messagesNode.get("fromEntity");
+            return toEntity.get("u_nickname").asText();
+        } else {
+            JsonNode toEntity = messagesNode.get("toEntity");
+            return toEntity.get("name").asText();
+        }
+    }
+
+    private String retrieveProfileUrl(JsonNode messagesNode) {
+        JsonNode messageObj = messagesNode.get("message");
+        JsonNode writerObj = messageObj.get("writer");
+        JsonNode profileObj = writerObj.get("u_photoThumbnailUrl");
+        if (profileObj != null) {
+            return (profileObj.get("mediumThumbnailUrl") != null)
+                    ? JandiConstants.SERVICE_ROOT_URL + profileObj.get("mediumThumbnailUrl").asText()
+                    : null;
+        }
+        return null;
     }
 
     private void updateBadge(int badgeCount) {
@@ -95,7 +166,7 @@ public class JandiGCMIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg, int entityType, int entityId) {
+    private void sendNotification(String title, String body, int entityType, int entityId, String overLayUrl) {
         NotificationManager nm =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -111,11 +182,6 @@ public class JandiGCMIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext()
                 , 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-
-        // msg 에서 제목으로 쓸 부분 [ ] 을 추출하여 나눈다.
-        String title = msg.substring(msg.indexOf("[") + 1, msg.indexOf("]"));
-        String body = msg.substring(msg.indexOf("]") + 2);
-
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
         bigTextStyle.bigText(body);
@@ -126,6 +192,19 @@ public class JandiGCMIntentService extends IntentService {
         mBuilder.setStyle(bigTextStyle);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
+        try {
+            if (overLayUrl != null) {
+                Bitmap bitmap = Picasso.with(getApplicationContext()).load(overLayUrl).get();
+                if (bitmap != null) {
+                    log.debug("setLargeIcon");
+                    mBuilder.setLargeIcon(bitmap);
+                }
+            }
+        } catch (IOException e) {
+
+        }
+
+
 //        mBuilder.setNumber(3);
 
         // 텍스트 또는 이미지가 첨부되어있는 푸시일 경우 아래 코드를 써주면 Notification이 펼쳐진 상태로 나오게 됩니다.
