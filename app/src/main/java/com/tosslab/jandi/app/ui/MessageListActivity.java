@@ -868,7 +868,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
                 .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
-                .setMultipartParameter("share", "" + event.cdpId);
+                .setMultipartParameter("share", "" + event.cdpId)
+                .setMultipartParameter("permission", "744");
+
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", event.comment);
@@ -886,13 +888,16 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void uploadFileDone(Exception exception, JsonObject result) {
-        if (exception == null) {
+        if (exception != null) {
+            log.error("uploadFileDone: FAILED", exception);
+            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+        } else if (result.get("code") != null) {
+            log.error("uploadFileDone: " + result.get("code").toString());
+            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+        } else {
             log.debug(result);
             trackUploadingFile(mEntityManager, entityType, result);
             ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
-        } else {
-            log.error("uploadFileDone: FAILED", exception);
-            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
         }
         getUpdateMessagesAndResumeUpdateTimer();
     }

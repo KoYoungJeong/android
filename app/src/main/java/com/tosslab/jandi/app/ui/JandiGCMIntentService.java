@@ -95,7 +95,7 @@ public class JandiGCMIntentService extends IntentService {
         if (contentType.equals("text")) {
             return contentObj.get("body").asText();
         } else if (contentType.equals("file")) {
-            return contentObj.get("title").asText();
+            return contentObj.get("title").asText() + " is uploaded.";
         } else if (contentType.equals("comment")) {
             return contentObj.get("body").asText();
         } else {
@@ -192,6 +192,7 @@ public class JandiGCMIntentService extends IntentService {
         mBuilder.setStyle(bigTextStyle);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
+
         try {
             if (overLayUrl != null) {
                 Bitmap bitmap = Picasso.with(getApplicationContext()).load(overLayUrl).get();

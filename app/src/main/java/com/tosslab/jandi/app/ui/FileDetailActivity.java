@@ -326,8 +326,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         if (fileMessage.content.extraInfo != null) {
                             thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
                         }
-                        final String photoUrl = serverUrl + thumbnailUrl;
-                        Picasso.with(mContext).load(photoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
+                        final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
+                        final String photoUrl = serverUrl + fileMessage.content.fileUrl;
+                        Picasso.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override

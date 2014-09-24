@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -170,8 +171,14 @@ public class MessageItemView extends LinearLayout {
         mTextImageFileName.setText(item.getContentFileName());
         mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
         if (item.getContentSmallThumbnailUrl() != null) {
-            String imageUrl = item.getContentSmallThumbnailUrl().replaceAll(" ", "%20");
-            Picasso.with(mContext).load(imageUrl).placeholder(R.drawable.jandi_sicon_thumbnail).centerCrop().fit().into(mImagePhoto);
+            String imageUrl = item.getContentSmallThumbnailUrl();
+            log.debug("load image thumnail : " + imageUrl);
+//            Picasso.with(mContext).setLoggingEnabled(true);
+            Picasso.with(mContext)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.jandi_sicon_thumbnail)
+                    .fit()
+                    .into(mImagePhoto);
         }
     }
 

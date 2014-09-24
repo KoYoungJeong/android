@@ -26,7 +26,7 @@ dependencies {
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile 'org.jsoup:jsoup:1.7.3'
     // Cache
-    compile 'com.squareup.picasso:picasso:2.2.+'
+    compile 'com.squareup.picasso:picasso:2.3.+'
     compile 'com.koushikdutta.ion:ion:1.+'
     // Etc
     compile 'log4j:log4j:1.2.+'
@@ -43,8 +43,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 15
-        versionName '0.3.7'
+        versionCode 16
+        versionName '0.3.8'
     }
     buildTypes {
         release {

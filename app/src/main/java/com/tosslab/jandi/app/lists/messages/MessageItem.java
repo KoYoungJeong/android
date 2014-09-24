@@ -142,7 +142,8 @@ public class MessageItem {
                 return null;
             }
             if (message.content.serverUrl.equals("root")) {
-                return JandiConstants.SERVICE_ROOT_URL + message.content.extraInfo.mediumThumbnailUrl;
+                return JandiConstants.SERVICE_ROOT_URL
+                        + message.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
             }
         }
         return null;
