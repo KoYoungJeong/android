@@ -11,6 +11,8 @@
     <string name="jandi_action_rename">이름수정</string>
     <string name="jandi_empty"></string>
 
+    <string name="err_network">네트워크 오류가 발생했습니다</string>
+
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
@@ -20,6 +22,7 @@
     <string name="jandi_update_message">JANDI의 새로운 버전이 업데이트되었습니다. 현재 버전에서는 최신의 기능을 사용하실 수 없습니다.</string>
 
     <!-- Login -->
+    <string name="jandi_action_start">시작하기</string>
     <string name="jandi_action_login">로그인</string>
     <string name="jandi_user_id">이메일 주소</string>
     <string name="jandi_user_password">비밀번호</string>

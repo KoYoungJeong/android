@@ -125,7 +125,7 @@ public class TeamInfoActivity extends Activity {
                 if (editable.toString().trim().length() > 0) {
                     mButtonInvitation.setBackgroundResource(R.drawable.btn_send_selector);
                 } else {
-                    mButtonInvitation.setBackgroundResource(R.color.jandi_team_member_invite_font);
+                    mButtonInvitation.setBackgroundResource(R.color.jandi_inactive_button);
                 }
             }
         });

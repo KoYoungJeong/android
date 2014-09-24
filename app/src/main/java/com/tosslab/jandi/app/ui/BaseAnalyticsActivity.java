@@ -38,9 +38,9 @@ public class BaseAnalyticsActivity extends Activity {
     private boolean mDoneAnalizeTrackingSignIn = false;      // 로그인 상황을 MIXPANEL
     private MixpanelAnalyticsClient mMixpanelAnalyticsClient;
 
-    protected void returnToLoginActivity() {
+    protected void returnToIntroStartActivity() {
         JandiPreference.clearMyToken(this);
-        Intent intent = new Intent(this, LoginActivity_.class);
+        Intent intent = new Intent(this, IntroStartActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

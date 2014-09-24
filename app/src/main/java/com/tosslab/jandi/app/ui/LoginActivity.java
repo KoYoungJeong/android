@@ -35,21 +35,12 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
 @Fullscreen
-@EActivity(R.layout.activity_intro)
+@EActivity(R.layout.activity_intro_final)
 public class LoginActivity extends BaseActivity {
     private final Logger log = Logger.getLogger(LoginActivity.class);
 

@@ -378,7 +378,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             postAllEvents();
         } else {
             ColoredToast.showError(mContext, errMessage);
-            returnToLoginActivity();
+            returnToIntroStartActivity();
         }
     }
 

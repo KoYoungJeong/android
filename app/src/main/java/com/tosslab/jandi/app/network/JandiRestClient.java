@@ -58,7 +58,7 @@ public interface JandiRestClient {
     void setHeader(String name, String value);
 
     // 내 팀 정보 획득
-    @Get("/{userEmail}/teamlist")
+    @Get("/info/teamlist/email/{userEmail}")
     ResMyTeam getTeamId(String userEmail);
 
     // 로그인

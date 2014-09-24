@@ -412,7 +412,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesFailed(String errMessage) {
         ColoredToast.showError(mContext, errMessage);
-        returnToLoginActivity();
+        returnToIntroStartActivity();
     }
 
 
@@ -862,7 +862,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .progress(new ProgressCallback() {
                     @Override
                     public void onProgress(long downloaded, long total) {
-                        progressDialog.setProgress((int)(downloaded/total));
+                        progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
