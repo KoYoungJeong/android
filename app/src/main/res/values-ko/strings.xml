@@ -170,5 +170,6 @@
     <string name="jandi_setting_push_subscription_cancel">푸쉬 알림을 받지 않습니다.</string>
     <string name="jandi_setting_general">일반</string>
     <string name="jandi_setting_sign_out">로그아웃</string>
+    <string name="jandi_message_logout">로그아웃 되셨습니다</string>
 
 </resources>

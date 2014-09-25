@@ -77,7 +77,7 @@ public class UserInfoFragmentDialog extends DialogFragment {
         final boolean isMe = bundle.getBoolean(ARG_USER_IS_ME, false);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mainView = inflater.inflate(R.layout.fragment_user_profile, null);
+        View mainView = inflater.inflate(R.layout.dialog_user_profile, null);
 
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
         final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);

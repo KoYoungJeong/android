@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/jandi_dialog_background">
+    android:background="@drawable/jandi_dialog_user_profile">
     <EditText
         android:id="@+id/et_login_email"
         android:layout_width="240dp"

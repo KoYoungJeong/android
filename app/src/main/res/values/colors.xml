@@ -11,6 +11,8 @@
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_main</color>
 
+    <!--Log in-->
+    <color name="jandi_login_message_bg">#ddf0e9</color>
     <!-- Main Tab -->
     <color name="jandi_tab_background">@color/white</color>
     <color name="jandi_tab_text">#1a9b6a</color>

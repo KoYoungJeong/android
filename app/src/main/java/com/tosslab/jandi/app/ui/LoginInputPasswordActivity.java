@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,6 +46,8 @@ public class LoginInputPasswordActivity extends Activity {
     String myId;
     @Extra
     String jsonExtraTeam;
+    @ViewById(R.id.txt_login_displayed_team_name)
+    TextView textViewDisplayedTeamName;
     @ViewById(R.id.txt_login_displayed_id)
     TextView textViewDisplayedId;
     @ViewById(R.id.et_login_final_password)
@@ -64,10 +65,12 @@ public class LoginInputPasswordActivity extends Activity {
     @AfterViews
     void initView() {
         setUpActionBar();
+        getActionBar().setTitle(myId);
+        String teamName = "";
         try {
             ResMyTeam.Team myTeam = convertJsonToPojo();
             mSelectedTeamId = myTeam.teamId;
-            getActionBar().setTitle(myTeam.name);
+            teamName = myTeam.name;
         } catch (IOException e) {
             ColoredToast.showError(this, "Parsing Error");
             finish();
@@ -80,9 +83,8 @@ public class LoginInputPasswordActivity extends Activity {
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
         // 로그인 관련 Network Client 설정
         mJandiAuthClient = new JandiAuthClient(jandiRestClient);
-        // E-mail 주소 출력
-        textViewDisplayedId.setText(myId);
 
+        setView(teamName);
         setActivationColorForButton();
     }
 
@@ -115,6 +117,13 @@ public class LoginInputPasswordActivity extends Activity {
     private ResMyTeam.Team convertJsonToPojo() throws IOException {
         log.debug("JSON Extra : " + jsonExtraTeam);
         return new ObjectMapper().readValue(jsonExtraTeam, ResMyTeam.Team.class);
+    }
+
+    private void setView(String teamName) {
+        // Team Name
+        textViewDisplayedTeamName.setText(teamName);
+        // E-mail 주소 출력
+        textViewDisplayedId.setText(myId);
     }
 
     private void setActivationColorForButton() {

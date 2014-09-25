@@ -5,17 +5,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="30dp"
-    android:background="@drawable/jandi_dialog_background">
+    android:padding="15dp"
+    android:background="@drawable/jandi_dialog_team_select">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:textSize="20dp"
+        android:textColor="@color/jandi_text_white"
         android:text="팀을 선택하세요"/>
     <ListView
         android:id="@+id/lv_team_list"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:dividerHeight="1dp" />
+        android:layout_marginTop="5dp"
+        android:divider="@android:color/transparent"
+        />
 </LinearLayout>
