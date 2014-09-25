@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -64,7 +65,9 @@ public class IntroFinalActivity extends Activity {
         // Preference 저장 - Token
         JandiPreference.setMyToken(this, myToken);
         // MainActivity 이동
-        MainTabActivity_.intent(this).start();
+        MainTabActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .start();
 
         finish();
     }

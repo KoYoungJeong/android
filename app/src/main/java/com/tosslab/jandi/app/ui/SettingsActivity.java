@@ -128,7 +128,7 @@ public class SettingsActivity extends PreferenceActivity {
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);
 
-        Intent intent = new Intent(mContext, LoginActivity_.class);
+        Intent intent = new Intent(mContext, LoginInputIdActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

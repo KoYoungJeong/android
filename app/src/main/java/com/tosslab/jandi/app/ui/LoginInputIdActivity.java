@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.SelectTeamDialog;
+import com.tosslab.jandi.app.events.SelectMyTeam;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -31,6 +34,8 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import java.io.IOException;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by justinygchoi on 2014. 9. 24..
  */
@@ -49,6 +54,7 @@ public class LoginInputIdActivity extends Activity {
     private ProgressWheel mProgressWheel;
     private JandiAuthClient mJandiAuthClient;
     private InputMethodManager imm;
+    private String mMyEmailId;
 
     @AfterViews
     void initView() {
@@ -93,27 +99,39 @@ public class LoginInputIdActivity extends Activity {
         imm.hideSoftInputFromWindow(editTextLoginId.getWindowToken(),0);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
     /************************************************************
      * Team List 획득
      ************************************************************/
-    public void pressButton(String myId) {
+    public void pressButton(String myEmailId) {
         // ID 입력의 포멧 체크
-        if (FormatConverter.isInvalidEmailString(myId)) {
+        if (FormatConverter.isInvalidEmailString(myEmailId)) {
             ColoredToast.showError(this, getString(R.string.err_login_invalid_id));
             return;
         }
         mProgressWheel.show();
-        getTeamListInBackground(myId);
+        getTeamListInBackground(myEmailId);
     }
 
     @Background
-    void getTeamListInBackground(String myId) {
-        assert myId != null : "myId cannot be null";
+    void getTeamListInBackground(String myEmailId) {
+        assert myEmailId != null : "myId cannot be null";
         try {
             // 나의 팀 ID 획득
-            ResMyTeam resMyTeam = mJandiAuthClient.getMyTeamId(myId);
+            ResMyTeam resMyTeam = mJandiAuthClient.getMyTeamId(myEmailId);
             if (resMyTeam.teamList.size() > 0) {
-                getTeamListSucceed(myId, resMyTeam);
+                getTeamListSucceed(myEmailId, resMyTeam);
                 return;
             } else {
                 getTeamListFailed(R.string.err_login_unregistered_id);
@@ -129,23 +147,15 @@ public class LoginInputIdActivity extends Activity {
     }
 
     @UiThread
-    void getTeamListSucceed(String myId, ResMyTeam resMyTeam) {
+    void getTeamListSucceed(String myEmailId, ResMyTeam resMyTeam) {
         mProgressWheel.dismiss();
         try {
-            if (resMyTeam.teamList.size() == 1) {
-                // 팀이 한개 밖에 없기에 바로 패스워드 입력으로 간다.
-                log.debug("Move to password");
-                String jsonExtraTeam = convertPojoToJson(resMyTeam.teamList.get(0));
-                moveToLoginInputPasswordActivity(myId, jsonExtraTeam);
-            } else {
-                // 팀이 두개 이상이므로 팀 선택 activity로 이동한다.
-                log.debug("Move to team selection");
-                moveToLoginSelectTeamActivity();
-            }
+            mMyEmailId = myEmailId;
+            String jsonExtraTeamList = convertPojoToJson(resMyTeam);
+            showTeamSelectFragment(jsonExtraTeamList);
         } catch (IOException e) {
             ColoredToast.showError(this, "");
         }
-
     }
 
     @UiThread
@@ -154,20 +164,35 @@ public class LoginInputIdActivity extends Activity {
         ColoredToast.showError(this, getString(errMessageResId));
     }
 
+    private void showTeamSelectFragment(String jsonTeamList) {
+        DialogFragment newFragment = SelectTeamDialog.newInstance(jsonTeamList);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(SelectMyTeam myTeam) {
+        try {
+            String jsonExtraTeam = convertPojoToJson(myTeam.myTeam);
+            moveToLoginInputPasswordActivity(mMyEmailId, jsonExtraTeam);
+        } catch (IOException e) {
+            ColoredToast.showError(this, "");
+        }
+    }
+
+    private String convertPojoToJson(ResMyTeam.Team myTeam) throws IOException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return ow.writeValueAsString(myTeam);
+    }
+
+    private String convertPojoToJson(ResMyTeam myTeamList) throws IOException {
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        return ow.writeValueAsString(myTeamList);
+    }
+
     private void moveToLoginInputPasswordActivity(String myId, String jsonExtraTeam) {
         LoginInputPasswordActivity_.intent(this)
                 .myId(myId)
                 .jsonExtraTeam(jsonExtraTeam)
                 .start();
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-    }
-
-    private void moveToLoginSelectTeamActivity() {
-        finish();
-    }
-
-    private String convertPojoToJson(ResMyTeam.Team myTeam) throws IOException {
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        return ow.writeValueAsString(myTeam);
     }
 }
