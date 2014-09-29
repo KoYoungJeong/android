@@ -11,6 +11,7 @@ import com.koushikdutta.async.http.socketio.ErrorCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;
@@ -23,6 +24,9 @@ import javax.net.ssl.SSLEngine;
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends Application {
+    // Application의 모든 Activities 가 사용하는 전역 변수
+    // Static 등으로 사용하면 LMK에 의해 삭제될 위험이 있음
+    private EntityManager mEntityManager = null;
 
     public enum TrackerName {
         APP_TRACKER,
@@ -55,5 +59,16 @@ public class JandiApplication extends Application {
 
         }
         return mTrackers.get(trackerId);
+    }
+
+    /************************************************************
+     * Accessors for global
+     ************************************************************/
+    public EntityManager getEntityManager() {
+        return mEntityManager;
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        mEntityManager = entityManager;
     }
 }

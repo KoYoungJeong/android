@@ -98,7 +98,7 @@ public class UserInfoFragmentDialog extends DialogFragment {
             lyUserDirectMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EventBus.getDefault().post(new RequestMoveDirectMessageEvent(userId, userName));
+                    EventBus.getDefault().post(new RequestMoveDirectMessageEvent(userId));
                     dismiss();
                 }
             });

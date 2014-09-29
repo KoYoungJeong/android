@@ -1,15 +1,14 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Handler;
 import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
-import com.tosslab.jandi.app.events.RetrieveUserList;
-import com.tosslab.jandi.app.events.StickyEntityManager;
+import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityItemListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -28,7 +27,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 11..
  */
 @EFragment(R.layout.fragment_main_user_list)
-public class MainUserEntityListFragment extends BaseFragment {
+public class MainUserEntityListFragment extends Fragment {
     private final Logger log = Logger.getLogger(MainEntityListFragment.class);
 
     @ViewById(R.id.main_list_users)
@@ -42,7 +41,7 @@ public class MainUserEntityListFragment extends BaseFragment {
     void bindAdapter() {
         mContext = getActivity();
         mListViewUsers.setAdapter(mUserListAdapter);
-        EventBus.getDefault().post(new ReadyToRetrieveUserList());
+        retrieveUserList();
     }
 
     @AfterInject
@@ -53,15 +52,22 @@ public class MainUserEntityListFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
-        super.onPause();
+        super.onDestroy();
     }
 
     /**
      * Event from MainTabActivity
      * @param event
      */
-    public void onEvent(RetrieveUserList event) {
-        mUserListAdapter.retrieveList(event.users);
+    public void onEvent(RetrieveChattingListEvent event) {
+        retrieveUserList();
+    }
+
+    private void retrieveUserList() {
+        EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
+        if (entityManager != null) {
+            mUserListAdapter.retrieveList(entityManager.getUsersWithoutMe());
+        }
     }
 
     @ItemClick
@@ -74,19 +80,10 @@ public class MainUserEntityListFragment extends BaseFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Activity activity = getActivity();
-                if (activity instanceof MainTabActivity_) {
-                    EntityManager entityManager = ((MainTabActivity_)activity).getEntityManager();
-
-                    MessageListActivity_.intent(mContext)
-                            .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                            .entityId(user.getId())
-                            .entityName(user.getUserName())
-                            .isMyEntity(false)
-                            .start();
-
-                    EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
-                }
+                MessageListActivity_.intent(mContext)
+                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                        .entityId(user.getId())
+                        .start();
             }
         }, 250);
     }

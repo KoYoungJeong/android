@@ -5,9 +5,8 @@ package com.tosslab.jandi.app.events;
  */
 public class RequestMoveDirectMessageEvent {
     public int userId;
-    public String userName;
-    public RequestMoveDirectMessageEvent(int userId, String userName) {
+
+    public RequestMoveDirectMessageEvent(int userId) {
         this.userId = userId;
-        this.userName = userName;
     }
 }

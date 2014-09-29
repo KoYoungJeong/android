@@ -13,6 +13,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -32,10 +33,10 @@ import org.apache.log4j.Logger;
 public class SettingsActivity extends PreferenceActivity {
     private final Logger log = Logger.getLogger(SettingsActivity.class);
 
-    @Extra
-    int myEntityId;
-    @Extra
-    int myTeamId;
+//    @Extra
+//    int myEntityId;
+//    @Extra
+//    int myTeamId;
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -98,8 +99,10 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private String getDistictId() {
-        return (myEntityId + "@" + myTeamId);
+        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+        return entityManager.getDistictId();
     }
+
     /************************************************************
      * Push 설정
      ************************************************************/

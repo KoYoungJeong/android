@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.KeyEvent;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +19,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
-import com.tosslab.jandi.app.events.StickyEntityManager;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -37,7 +34,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -51,7 +47,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 14..
  */
 @EFragment(R.layout.fragment_main_file_list)
-public class FileListFragment extends BaseFragment {
+public class FileListFragment extends Fragment {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
     @ViewById(R.id.list_searched_messages)
@@ -273,11 +269,6 @@ public class FileListFragment extends BaseFragment {
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        Activity activity = getActivity();
-        if (activity instanceof MainTabActivity_) {
-            EntityManager entityManager = ((MainTabActivity_) activity).getEntityManager();
-            EventBus.getDefault().postSticky(new StickyEntityManager(entityManager));
-        }
     }
 
     /**

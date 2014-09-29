@@ -20,11 +20,13 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.squareup.picasso.Picasso;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -60,11 +62,6 @@ public class ProfileActivity extends BaseAnalyticsActivity {
 
     private static final int REQ_CODE_PICK_IMAGE = 0;
     private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
-
-    @Extra
-    int myEntityId;
-    @Extra
-    int myTeamId;
 
     @ViewById(R.id.profile_photo)
     ImageView imageViewProfilePhoto;
@@ -165,7 +162,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @Background
     void getProfileInBackground() {
         try {
-            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(myEntityId);
+            EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
             getProfileSuccess(me);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -490,6 +488,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     private String getDistictId() {
-        return (myEntityId + "@" + myTeamId);
+        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+        return entityManager.getDistictId();
     }
 }

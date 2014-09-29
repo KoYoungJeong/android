@@ -26,7 +26,6 @@
         <item name="android:splitMotionEvents">false</item>
     </style>
 
-
     <!-- Actionbar -->
     <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/jandi_main</item>

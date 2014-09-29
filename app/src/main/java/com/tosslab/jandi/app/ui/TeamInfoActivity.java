@@ -18,10 +18,11 @@ import android.widget.ListView;
 import com.nhaarman.supertooltips.ToolTip;
 import com.nhaarman.supertooltips.ToolTipRelativeLayout;
 import com.nhaarman.supertooltips.ToolTipView;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RetrieveTeamInformation;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
@@ -42,8 +43,6 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 9. 18..
@@ -81,6 +80,9 @@ public class TeamInfoActivity extends Activity {
         addInvitationViewAsListviewFooter();
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+        retrieveTeamUserList(entityManager.getUsers());
     }
 
     private void setUpActionBar() {
@@ -166,18 +168,6 @@ public class TeamInfoActivity extends Activity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().registerSticky(this);
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         if (mProgressWheel != null)
             mProgressWheel.dismiss();
@@ -203,10 +193,6 @@ public class TeamInfoActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void onEvent(RetrieveTeamInformation event) {
-        retrieveTeamUserList(event.users);
     }
 
     void retrieveTeamUserList(List<FormattedEntity> users) {

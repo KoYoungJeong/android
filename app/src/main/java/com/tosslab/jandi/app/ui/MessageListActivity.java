@@ -33,6 +33,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -48,7 +49,6 @@ import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
@@ -67,6 +67,7 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -100,16 +101,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     int entityType;
     @Extra
     int entityId;
-
-    // Except from push
-    @Extra
-    boolean isMyEntity;
-    @Extra
-    String entityName;
-
     @Extra
     boolean isFromPush = false;
-    boolean willBeFinishedFromPush = false;
+
+    private ChattingInfomations mChattingInformations;
+
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -139,24 +135,24 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     public EntityManager mEntityManager;
 
+    @AfterInject
+    void initInformations() {
+        mContext = getApplicationContext();
+        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush);
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+    }
+
     @AfterViews
     void bindAdapter() {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(entityName);
 
-        mContext = getApplicationContext();
-
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
+        setUpActionBar();
+        initProgressWheel();
+        clearPushNotification();
 
         mMyToken = JandiPreference.getMyToken(mContext);
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
-        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken, entityType, entityId);
+        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
+                mChattingInformations.entityType, mChattingInformations.entityId);
         mMessageItemConverter = new MessageItemConverter();
 
         //
@@ -215,16 +211,37 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
         });
 
+        getMessages();
+    }
+
+    private void setUpActionBar() {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        showActionBarTitle();
+    }
+
+    private void showActionBarTitle() {
+        if (mChattingInformations != null && mChattingInformations.entityName != null) {
+            getActionBar().setTitle(mChattingInformations.entityName);
+        }
+    }
+
+    private void initProgressWheel() {
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(this);
+        mProgressWheel.init();
+    }
+
+    private void clearPushNotification() {
         // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        int entityId = JandiPreference.getEntityId(this);
-        if (entityId == this.entityId) {
+        if (mChattingInformations.entityId == JandiPreference.getEntityId(this)) {
             NotificationManager notificationManager;
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
         }
-
-        willBeFinishedFromPush = isFromPush;
-        getMessages();
     }
 
     /**
@@ -260,7 +277,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
-        if (willBeFinishedFromPush) {
+        if (mChattingInformations.willBeFinishedFromPush) {
             // Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
             MainTabActivity_.intent(this)
                     .flags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -276,12 +293,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         mMenu = menu;
-        if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+        if (mChattingInformations.isDirectMessage()) {
             // DON'T SHOW OPTION MENU
             return true;
         }
 
-        if (isMyEntity) {
+        if (mChattingInformations.isMyEntity) {
             getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
@@ -315,11 +332,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onEvent(StickyEntityManager event) {
-        log.debug("onEvent : StickyEntityManager");
-        mEntityManager = event.entityManager;
-    }
-
     /************************************************************
      * Timer Task
      * 주기적으로 message update 내역을 polling
@@ -349,34 +361,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
-
     /************************************************************
-     * Message List 획득
-     * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
+     * EntityManager 획득
+     * Push 에서 바로 현재 Activity로 이동했다면 EntityManager를 호출한다.
      ************************************************************/
-
-    @UiThread
-    public void getMessages() {
-        pauseUpdateTimer();
-
-        // 만약 push로부터 실행되었다면 Entity List를 우선 받는다.
-        if (isFromPush) {
-            isFromPush = false;
-            getEntitiesInBackground();
-            return;
-        }
-        mIsFirstMessage = false;
-        pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
-
-        mFirstItemId = -1;
-        mMessageItemConverter.clear();
-        messageItemListAdapter.clearAdapter();
-
-        mProgressWheel.show();
-        trackGaMessageList(mEntityManager, entityType);
-        getMessagesInBackground(entityType, entityId);
-    }
-
     @Background
     public void getEntitiesInBackground() {
         try {
@@ -393,17 +381,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mEntityManager = new EntityManager(resLeftSideMenu);
-        FormattedEntity entity = mEntityManager.getEntityById(entityId);
+        ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
+        FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
         if (entity == null) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));
             return;
         }
-        entityType = entity.type;
-        entityName = (entity.isUser()) ? entity.getUserName() : entity.toString();
-        log.debug("entity name from push : " + entityName);
-        isMyEntity = mEntityManager.isMyEntity(entityId);
+        mChattingInformations.loadExtraInfo();
+        log.debug("entity name from push : " + mChattingInformations.entityName);
 
-        getActionBar().setTitle(entityName);
         trackSigningInFromPush(mEntityManager);
 
         getMessages();
@@ -415,9 +401,35 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         returnToIntroStartActivity();
     }
 
+    /************************************************************
+     * Message List 획득
+     * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
+     ************************************************************/
+
+    @UiThread
+    public void getMessages() {
+        pauseUpdateTimer();
+
+        // 만약 push로부터 실행되었다면 Entity List를 우선 받는다.
+        if (mEntityManager == null) {
+            getEntitiesInBackground();
+            return;
+        }
+
+        mIsFirstMessage = false;
+        pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
+
+        mFirstItemId = -1;
+        mMessageItemConverter.clear();
+        messageItemListAdapter.clearAdapter();
+
+        mProgressWheel.show();
+        trackGaMessageList(mEntityManager, mChattingInformations.entityType);
+        getMessagesInBackground();
+    }
 
     @Background
-    public void getMessagesInBackground(int type, int id) {
+    public void getMessagesInBackground() {
         try {
             ResMessages restResMessages = mJandiMessageClient.getMessages(mFirstItemId);
 
@@ -538,19 +550,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * Message 리스트의 업데이트 획득 (from 서버)
      ************************************************************/
     void getUpdateMessagesAndResumeUpdateTimer() {
-        getUpdateMessages(true);
+        getUpdateMessagesInBackground(true);
     }
 
     void getUpdateMessagesWithoutResumingUpdateTimer() {
-        getUpdateMessages(false);
-    }
-
-    void getUpdateMessages(boolean doWithResumingUpdateTimer) {
-        getUpdateMessagesInBackground(entityType, entityId, doWithResumingUpdateTimer);
+        getUpdateMessagesInBackground(false);
     }
 
     @Background
-    public void getUpdateMessagesInBackground(int type, int id, boolean doWithResumingUpdateTimer) {
+    public void getUpdateMessagesInBackground(boolean doWithResumingUpdateTimer) {
         try {
             if (mLastUpdateLinkId >= 0) {
                 ResUpdateMessages resUpdateMessages = mJandiMessageClient.updateMessages(mLastUpdateLinkId);
@@ -839,7 +847,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     // File Upload 대화상자 보여주기
     void showFileUploadDialog(String realFilePath) {
-        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
+        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath,
+                mChattingInformations.entityId);
         newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
 
@@ -896,7 +905,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
         } else {
             log.debug(result);
-            trackUploadingFile(mEntityManager, entityType, result);
+            trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
             ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
         }
         getUpdateMessagesAndResumeUpdateTimer();
@@ -983,7 +992,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
     }
 
     /************************************************************
@@ -993,10 +1001,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void leaveEntityInBackground() {
         try {
-            if (entityType == JandiConstants.TYPE_CHANNEL) {
-                mJandiEntityClient.leaveChannel(entityId);
-            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                mJandiEntityClient.leavePrivateGroup(entityId);
+            if (mChattingInformations.isChannel()) {
+                mJandiEntityClient.leaveChannel(mChattingInformations.entityId);
+            } else if (mChattingInformations.isPrivateGroup()) {
+                mJandiEntityClient.leavePrivateGroup(mChattingInformations.entityId);
             }
             leaveEntitySucceed();
         } catch (JandiNetworkException e) {
@@ -1007,7 +1015,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void leaveEntitySucceed() {
-        trackLeavingEntity(mEntityManager, entityType);
+        trackLeavingEntity(mEntityManager, mChattingInformations.entityType);
         finish();
     }
 
@@ -1022,9 +1030,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private void modifyEntity() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_CDP
-                , entityType
-                , entityId
-                , entityName);
+                , mChattingInformations.entityType
+                , mChattingInformations.entityId
+                , mChattingInformations.entityName);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
@@ -1043,10 +1051,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void modifyEntityInBackground(ConfirmModifyEntityEvent event) {
         try {
-            if (entityType == JandiConstants.TYPE_CHANNEL) {
-                mJandiEntityClient.modifyChannelName(entityId, event.inputName);
-            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                mJandiEntityClient.modifyPrivateGroupName(entityId, event.inputName);
+            if (mChattingInformations.isChannel()) {
+                mJandiEntityClient.modifyChannelName(mChattingInformations.entityId, event.inputName);
+            } else if (mChattingInformations.isPrivateGroup()) {
+                mJandiEntityClient.modifyPrivateGroupName(mChattingInformations.entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
         } catch (JandiNetworkException e) {
@@ -1057,8 +1065,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void modifyEntitySucceed(String changedEntityName) {
-        trackChangingEntityName(mEntityManager, entityType);
-        entityName = changedEntityName;
+        trackChangingEntityName(mEntityManager, mChattingInformations.entityType);
+        mChattingInformations.entityName = changedEntityName;
         getActionBar().setTitle(changedEntityName);
     }
 
@@ -1074,10 +1082,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void deleteEntityInBackground() {
         try {
-            if (entityType == JandiConstants.TYPE_CHANNEL) {
-                mJandiEntityClient.deleteChannel(entityId);
-            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                mJandiEntityClient.deletePrivateGroup(entityId);
+            if (mChattingInformations.isChannel()) {
+                mJandiEntityClient.deleteChannel(mChattingInformations.entityId);
+            } else if (mChattingInformations.isPrivateGroup()) {
+                mJandiEntityClient.deletePrivateGroup(mChattingInformations.entityId);
             }
             deleteEntitySucceed();
         } catch (JandiNetworkException e) {
@@ -1088,7 +1096,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void deleteEntitySucceed() {
         log.debug("delete success");
-        trackDeletingEntity(mEntityManager, entityType);
+        trackDeletingEntity(mEntityManager, mChattingInformations.entityType);
         finish();
     }
 
@@ -1109,8 +1117,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<FormattedEntity> unjoinedMembers
-                = mEntityManager.getUnjoinedMembersOfEntity(entityId, entityType);
+        List<FormattedEntity> unjoinedMembers = mEntityManager.getUnjoinedMembersOfEntity(
+                mChattingInformations.entityId,
+                mChattingInformations.entityType);
 
         if (unjoinedMembers.size() <= 0) {
             ColoredToast.showWarning(mContext, getString(R.string.warn_all_users_are_already_invited));
@@ -1140,10 +1149,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void inviteInBackground(List<Integer> invitedUsers) {
         try {
-            if (entityType == JandiConstants.TYPE_CHANNEL) {
-                mJandiEntityClient.inviteChannel(entityId, invitedUsers);
-            } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
-                mJandiEntityClient.invitePrivateGroup(entityId, invitedUsers);
+            if (mChattingInformations.isChannel()) {
+                mJandiEntityClient.inviteChannel(
+                        mChattingInformations.entityId, invitedUsers);
+            } else if (mChattingInformations.isPrivateGroup()) {
+                mJandiEntityClient.invitePrivateGroup(
+                        mChattingInformations.entityId, invitedUsers);
             }
             inviteSucceed(invitedUsers.size() + getString(R.string.jandi_message_invite_entity));
         } catch (JandiNetworkException e) {
@@ -1154,7 +1165,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void inviteSucceed(String message) {
-        trackInvitingToEntity(mEntityManager, entityType);
+        trackInvitingToEntity(mEntityManager, mChattingInformations.entityType);
         ColoredToast.show(mContext, message);
     }
 
@@ -1227,20 +1238,54 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
-        changeMessageList(event.userId, event.userName);
+        changeForDirectMessage(event.userId);
     }
 
-    private void changeMessageList(int userId, String userName) {
-        setMarker();
-
-        this.entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-        this.entityId = userId;
-        this.entityName = userName;
-        this.isMyEntity = false;
-
-        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken, entityType, entityId);
-        getActionBar().setTitle(entityName);
-        mMenu.clear();
+    private void changeForDirectMessage(final int userId) {
+        mChattingInformations.changeForDirectMessage(userId);
+        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
+                JandiConstants.TYPE_DIRECT_MESSAGE, userId);
         getMessages();
+    }
+
+    private class ChattingInfomations {
+        public int entityType;
+        public int entityId;
+        public boolean isMyEntity;
+        public String entityName;
+        boolean willBeFinishedFromPush;
+
+        public ChattingInfomations(int entityId, int entityType, boolean isFromPush) {
+            this.entityId = entityId;
+            this.entityType = entityType;
+            this.willBeFinishedFromPush = isFromPush;
+            loadExtraInfo();
+        }
+
+        public void changeForDirectMessage(int entityId) {
+            this.entityId = entityId;
+            this.entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+            loadExtraInfo();
+        }
+
+        public void loadExtraInfo() {
+            EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+            if (entityManager != null) {
+                this.isMyEntity = entityManager.isMyEntity(entityId);
+                this.entityName = entityManager.getEntityNameById(entityId);
+            }
+        }
+
+        public boolean isChannel() {
+            return (entityType == JandiConstants.TYPE_CHANNEL) ? true : false;
+        }
+
+        public boolean isPrivateGroup() {
+            return (entityType == JandiConstants.TYPE_PRIVATE_GROUP) ? true : false;
+        }
+
+        public boolean isDirectMessage() {
+            return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
+        }
     }
 }

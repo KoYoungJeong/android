@@ -28,12 +28,12 @@ import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-import com.tosslab.jandi.app.events.StickyEntityManager;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
@@ -102,7 +102,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-
     private EntityManager mEntityManager;
     private JandiEntityClient mJandiEntityClient;
 
@@ -117,6 +116,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
 
         getFileDetail();
     }
@@ -187,7 +187,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().registerSticky(this);
+        EventBus.getDefault().register(this);
+        trackGaFileDetail(mEntityManager);
     }
 
     @Override
@@ -208,21 +209,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
-    }
-
-
-    /**
-     * Sticky Event from SearchListFragment or MainMessageListFragment
-     * 파일 공유를 위한 다른 CDP 리스트 정보를 가져오기 위해
-     * SearchListFragment 나 MainMessageListFragment 에서 리스트 메시지 타입이 파일일 경우 던져줌
-     * @param event
-     */
-    public void onEvent(StickyEntityManager event) {
-        log.debug("StickyEntityManager is set");
-        mEntityManager = event.entityManager;
-        trackGaFileDetail(mEntityManager);
-        drawFileSharedEntities();
-
     }
 
 //    @ItemLongClick
@@ -251,9 +237,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = jandiRestClient.getFileDetail(fileId);
-            drawFileDetail(resFileDetail);
-            fileDetailCommentListAdapter.updateFileComments(resFileDetail);
-            getFileDetailSucceed();
+            getFileDetailSucceed(resFileDetail);
         } catch (RestClientException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
@@ -261,8 +245,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getFileDetailSucceed() {
+    void getFileDetailSucceed(ResFileDetail resFileDetail) {
         mProgressWheel.dismiss();
+        drawFileDetail(resFileDetail);
+        fileDetailCommentListAdapter.updateFileComments(resFileDetail);
         fileDetailCommentListAdapter.notifyDataSetChanged();
     }
 
@@ -674,11 +660,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 MessageListActivity_.intent(mContext)
                         .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                         .entityId(event.userId)
-                        .entityName(event.userName)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .isMyEntity(false)
                         .start();
-                EventBus.getDefault().postSticky(new StickyEntityManager(mEntityManager));
             }
         }, 250);
     }

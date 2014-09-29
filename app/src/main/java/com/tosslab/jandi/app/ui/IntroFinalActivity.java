@@ -34,7 +34,7 @@ import java.io.IOException;
 @Fullscreen
 @EActivity(R.layout.activity_intro_final)
 public class IntroFinalActivity extends Activity {
-    private final Logger log = Logger.getLogger(LoginActivity.class);
+    private final Logger log = Logger.getLogger(IntroFinalActivity.class);
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @RestService

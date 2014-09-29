@@ -24,18 +24,13 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.picasso.Picasso;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.CategorizingAsOwner;
-import com.tosslab.jandi.app.events.ReadyToRetrieveChannelList;
-import com.tosslab.jandi.app.events.ReadyToRetrievePrivateGroupList;
-import com.tosslab.jandi.app.events.ReadyToRetrieveUserList;
-import com.tosslab.jandi.app.events.RetrieveChannelList;
-import com.tosslab.jandi.app.events.RetrievePrivateGroupList;
-import com.tosslab.jandi.app.events.RetrieveTeamInformation;
-import com.tosslab.jandi.app.events.RetrieveUserList;
+import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
@@ -101,6 +96,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
         mContext = getApplicationContext();
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -214,7 +210,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         // Push가 MainTabActivity를 보고 있을 때
         // 발생한다면 알람 카운트 갱신을 위한 BR 등록
         IntentFilter intentFilter = new IntentFilter();
@@ -226,30 +221,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Override
     public void onPause() {
-        EventBus.getDefault().unregister(this);
         unregisterReceiver(mRefreshEntities);
         super.onPause();
-    }
-
-    public void onEvent(ReadyToRetrieveChannelList event) {
-        log.debug("onEvent : ReadyToRetrieveChannelList");
-        if (isReadyToRetrieveEntityList) {
-            postShowChannelListEvent();
-        }
-    }
-
-    public void onEvent(ReadyToRetrieveUserList event) {
-        log.debug("onEvent : ReadyToRetrieveUserList");
-        if (isReadyToRetrieveEntityList) {
-            postShowUserListEvent();
-        }
-    }
-
-    public void onEvent(ReadyToRetrievePrivateGroupList event) {
-        log.debug("onEvent : ReadyToRetrievePrivateGroupList");
-        if (isReadyToRetrieveEntityList) {
-            postShowPrivateGroupListEvent();
-        }
     }
 
     @Override
@@ -300,8 +273,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void run() {
                 SettingsActivity_.intent(mContext)
-                        .myEntityId(mEntityManager.getMe().getUser().id)
-                        .myTeamId(mEntityManager.getTeamId())
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
@@ -316,8 +287,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             @Override
             public void run() {
                 ProfileActivity_.intent(mContext)
-                        .myEntityId(mEntityManager.getMe().getUser().id)
-                        .myTeamId(mEntityManager.getTeamId())
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
@@ -336,8 +305,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         .start();
             }
         }, 250);
-        EventBus.getDefault()
-                .postSticky(new RetrieveTeamInformation(mEntityManager.getUsers()));
     }
 
     /************************************************************
@@ -371,6 +338,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         log.debug("getEntitiesDone");
         if (isOk) {
             mEntityManager = new EntityManager(resLeftSideMenu);
+            ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
             trackSigningIn(mEntityManager);
             isReadyToRetrieveEntityList = true;
             showDrawerUserProfile();
@@ -389,25 +357,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             isFirst = false;
         }
 
-        postShowChannelListEvent();
-        postShowUserListEvent();
-        postShowPrivateGroupListEvent();
+        postShowChattingListEvent();
     }
 
-    private void postShowChannelListEvent() {
-        EventBus.getDefault().post(
-                new RetrieveChannelList(mEntityManager)
-        );
-    }
-
-    private void postShowUserListEvent() {
-        EventBus.getDefault().post(new RetrieveUserList(mEntityManager.getUsersWithoutMe()));
-    }
-
-    private void postShowPrivateGroupListEvent() {
-        EventBus.getDefault().post(
-                new RetrievePrivateGroupList(mEntityManager)
-        );
+    private void postShowChattingListEvent() {
+        EventBus.getDefault().post(new RetrieveChattingListEvent());
     }
 
     public EntityManager getEntityManager() {
