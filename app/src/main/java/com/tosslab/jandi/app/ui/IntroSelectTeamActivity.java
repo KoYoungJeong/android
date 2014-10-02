@@ -41,8 +41,8 @@ import de.greenrobot.event.EventBus;
  */
 @Fullscreen
 @EActivity(R.layout.activity_login_intro)
-public class LoginInputIdActivity extends Activity {
-    private final Logger log = Logger.getLogger(LoginInputIdActivity.class);
+public class IntroSelectTeamActivity extends Activity {
+    private final Logger log = Logger.getLogger(IntroSelectTeamActivity.class);
 
     @ViewById(R.id.et_login_id)
     EditText editTextLoginId;
@@ -189,7 +189,7 @@ public class LoginInputIdActivity extends Activity {
     }
 
     private void moveToLoginInputPasswordActivity(String myId, String jsonExtraTeam) {
-        LoginInputPasswordActivity_.intent(this)
+        IntroLoginActivity_.intent(this)
                 .myId(myId)
                 .jsonExtraTeam(jsonExtraTeam)
                 .start();

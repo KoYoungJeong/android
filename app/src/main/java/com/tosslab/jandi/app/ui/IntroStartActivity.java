@@ -122,7 +122,7 @@ public class IntroStartActivity extends Activity {
     @UiThread
     public void moveToLoginInputIdActivity() {
         log.debug("moveToLoginInputIdActivity");
-        LoginInputIdActivity_.intent(this).start();
+        IntroSelectTeamActivity_.intent(this).start();
         finish();
     }
 }

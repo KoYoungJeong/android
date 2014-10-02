@@ -82,7 +82,7 @@ public class TeamInfoActivity extends Activity {
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
-        retrieveTeamUserList(entityManager.getUsers());
+        retrieveTeamUserList(entityManager.getFormattedUsers());
     }
 
     private void setUpActionBar() {

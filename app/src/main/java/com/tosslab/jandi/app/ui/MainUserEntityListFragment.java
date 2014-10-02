@@ -66,7 +66,7 @@ public class MainUserEntityListFragment extends Fragment {
     private void retrieveUserList() {
         EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
-            mUserListAdapter.retrieveList(entityManager.getUsersWithoutMe());
+            mUserListAdapter.retrieveList(entityManager.getFormattedUsersWithoutMe());
         }
     }
 

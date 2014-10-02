@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
@@ -32,11 +31,6 @@ import org.apache.log4j.Logger;
 @EActivity
 public class SettingsActivity extends PreferenceActivity {
     private final Logger log = Logger.getLogger(SettingsActivity.class);
-
-//    @Extra
-//    int myEntityId;
-//    @Extra
-//    int myTeamId;
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -131,7 +125,7 @@ public class SettingsActivity extends PreferenceActivity {
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);
 
-        Intent intent = new Intent(mContext, LoginInputIdActivity_.class);
+        Intent intent = new Intent(mContext, IntroSelectTeamActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

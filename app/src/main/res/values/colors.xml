@@ -73,6 +73,14 @@
     <color name="jandi_team_member_invite_bg">#F2F2F2</color>
     <color name="jandi_team_member_invite_font">#B4B4B4</color>
 
+    <!-- CUSTOMISING PagerSlidingTabStrip -->
+    <color name="background_tab_pressed">#6633B5E5</color>
+    <color name="activate_text_color">#FF666666</color>
+    <color name="deactivate_text_color">#FFCCCCCC</color>
+    <color name="transparent">#00000000</color>
+
+
+
 
 
     <color name="bg_message_input_panel">#EEEEEE</color>

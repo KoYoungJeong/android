@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.astuetz.PagerSlidingTabStrip;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -43,6 +42,7 @@ import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -469,8 +469,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // TODO : Everyone 용으로 0번째 item을 추가할 수 있음. 그럼 아래 note 로 적힌 인덱스가 밀리는 현상 해결됨.
         // TODO : 뭐가 더 나은지는 모르겠네잉
 
-        final List<FormattedEntity> teamMember = mEntityManager.getUsers();
-        final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(this, mEntityManager.getUsers());
+        final List<FormattedEntity> teamMember = mEntityManager.getFormattedUsers();
+        final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(this, mEntityManager.getFormattedUsers());
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

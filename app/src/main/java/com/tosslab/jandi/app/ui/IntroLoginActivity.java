@@ -40,8 +40,8 @@ import java.io.IOException;
  * Created by justinygchoi on 2014. 9. 25..
  */
 @EActivity(R.layout.activity_login_final)
-public class LoginInputPasswordActivity extends Activity {
-    private final Logger log = Logger.getLogger(LoginInputPasswordActivity.class);
+public class IntroLoginActivity extends Activity {
+    private final Logger log = Logger.getLogger(IntroLoginActivity.class);
     @Extra
     String myId;
     @Extra

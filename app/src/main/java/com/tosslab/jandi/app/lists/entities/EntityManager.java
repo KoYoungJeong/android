@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -102,9 +103,9 @@ public class EntityManager {
 
     public List<FormattedEntity> getFormattedChannels() {
         List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
-        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_JOINED_CHANNEL));
+        formattedEntities.add(new FormattedDummyEntity(FormattedDummyEntity.TITLE_JOINED_CHANNEL));
         formattedEntities.addAll(mJoinedChannels);
-        formattedEntities.add(new FormattedEntity(FormattedEntity.TYPE_TITLE_UNJOINED_CHANNEL));
+        formattedEntities.add(new FormattedDummyEntity(FormattedDummyEntity.TITLE_UNJOINED_CHANNEL));
         formattedEntities.addAll(mUnJoinedChannels);
         return formattedEntities;
     }
@@ -113,11 +114,11 @@ public class EntityManager {
         return mPrivateGroups;
     }
 
-    public List<FormattedEntity> getUsers() {
+    public List<FormattedEntity> getFormattedUsers() {
         return mUsers;
     }
 
-    public List<FormattedEntity> getUsersWithoutMe() {
+    public List<FormattedEntity> getFormattedUsersWithoutMe() {
         ArrayList<FormattedEntity> usersWithoutMe = new ArrayList<FormattedEntity>();
         for (FormattedEntity user : mUsers) {
             if (user.getUser().id != mMe.id) {

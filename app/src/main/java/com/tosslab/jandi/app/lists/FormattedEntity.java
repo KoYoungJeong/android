@@ -116,6 +116,18 @@ public class FormattedEntity {
         }
     }
 
+    public int getMemberCount() {
+        if (isChannel()) {
+            return getChannel().ch_members.size();
+        }
+
+        if (isPrivateGroup()) {
+            return getPrivateGroup().pg_members.size();
+        }
+
+        return 0;
+    }
+
     public int getIconImageResId() {
         if (isChannel()) {
             return R.drawable.jandi_icon_channel;
