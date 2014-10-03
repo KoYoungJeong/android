@@ -110,6 +110,14 @@ public class EntityManager {
         return formattedEntities;
     }
 
+    public List<FormattedEntity> getJoinedChannels() {
+        return mJoinedChannels;
+    }
+
+    public List<FormattedEntity> getUnjoinedChannels() {
+        return mUnJoinedChannels;
+    }
+
     public List<FormattedEntity> getFormattedPrivateGroups() {
         return mPrivateGroups;
     }

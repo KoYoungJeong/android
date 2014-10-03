@@ -7,6 +7,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.main.MainPublicListFragment_;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -29,9 +30,8 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return MainEntityListFragment_
+                return MainPublicListFragment_
                         .builder()
-                        .entityType(JandiConstants.TYPE_CHANNEL)
                         .build();
             case 1:
                 return MainEntityListFragment_
