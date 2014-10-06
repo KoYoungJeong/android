@@ -162,6 +162,8 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
+            viewHolder.viewMaskUnjoined
+                    = convertView.findViewById(R.id.view_entity_unjoined);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (FormattedViewHolder) convertView.getTag();
@@ -187,9 +189,11 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
+        public View viewMaskUnjoined;
 
         private void init() {
             textViewBadgeCount.setVisibility(View.INVISIBLE);
+            viewMaskUnjoined.setVisibility(View.INVISIBLE);
         }
 
         public void draw(FormattedEntity formattedEntity) {
@@ -213,7 +217,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                             android.graphics.PorterDuff.Mode.MULTIPLY);
                 } else {
                     imageViewIcon.clearColorFilter();
-//                viewBlindForUnjoined.setVisibility(VISIBLE);
+                    viewMaskUnjoined.setVisibility(View.VISIBLE);
                 }
             }
             if (formattedEntity.isPrivateGroup()) {

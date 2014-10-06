@@ -288,7 +288,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
                 String profileUrl = writer.getUserSmallProfileUrl();
                 Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
-                String userName = writer.getUserName();
+                String userName = writer.getName();
                 textViewUserName.setText(userName);
 
                 // 파일

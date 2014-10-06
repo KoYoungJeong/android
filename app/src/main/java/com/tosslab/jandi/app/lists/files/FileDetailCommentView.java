@@ -62,7 +62,7 @@ public class FileDetailCommentView extends LinearLayout {
             }
         });
         // 이름
-        String userName = writer.getUserName();
+        String userName = writer.getName();
         textViewCommentUserName.setText(userName);
         // 날짜
         String createTime = DateTransformator.getTimeDifference(commentMessage.updateTime);

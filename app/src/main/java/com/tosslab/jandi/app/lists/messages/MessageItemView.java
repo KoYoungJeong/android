@@ -7,7 +7,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -149,7 +148,7 @@ public class MessageItemView extends LinearLayout {
     private void showComment(MessageItem item) {
         // 메시지 타입이 댓글 표시일 경우
         mLayoutMessageComment.setVisibility(VISIBLE);
-        mTextMessageCommentOwner.setText(item.getFeedbackWriterNickName());
+        mTextMessageCommentOwner.setText(item.getFeedbackWriterName());
         mTextMessageCommentFileName.setText(item.getFeedbackFileName());
         mTextMessageCommentContent.setText(item.getContentString());
     }

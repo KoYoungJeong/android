@@ -156,7 +156,7 @@ public class MixpanelAnalyticsClient {
 
         mMixpanel.getPeople().identify(mDistictId);
         JSONObject profile = new JSONObject();
-        profile.put("nickname", updatedMyProfile.u_nickname);
+//        profile.put("statusMessage", updatedMyProfile.u_nickname);
         profile.put("mobile", mobile);
         profile.put("division", division);
         profile.put("position", position);

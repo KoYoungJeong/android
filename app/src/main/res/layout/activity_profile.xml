@@ -59,13 +59,15 @@
             android:layout_width="80dp"
             android:textSize="16sp"
             android:layout_columnSpan="1"
-            android:text="@string/jandi_profile_nickname"/>
+            android:text="@string/jandi_profile_status_message"/>
         <TextView
-            android:id="@+id/profile_user_nickname"
-            android:textColor="@color/jandi_text"
+            android:id="@+id/profile_user_status_message"
+            android:layout_width="0dp"
+            android:layout_gravity="fill_horizontal"
+            android:textColor="@color/jandi_text_light"
             android:textSize="16sp"
             android:layout_columnSpan="3"
-            android:text="nickname"/>
+            android:text="@string/jandi_profile_optional"/>
         <View
             android:layout_height="0.5dp"
             android:layout_columnSpan="4"

@@ -31,7 +31,7 @@ public class UserInfoFragmentDialog extends DialogFragment {
 
     private final static String ARG_USER_ID         = "userId";
     private final static String ARG_USER_NAME       = "userName";
-    private final static String ARG_USER_NICKNAME   = "userNickname";
+    private final static String ARG_USER_STATUS_MSG   = "userStatusMessage";
     private final static String ARG_USER_DIVISION   = "userDivision";
     private final static String ARG_USER_POSITION   = "userPosition";
     private final static String ARG_USER_PHONE_NUMBER   = "userPhoneNumber";
@@ -43,8 +43,8 @@ public class UserInfoFragmentDialog extends DialogFragment {
         UserInfoFragmentDialog frag = new UserInfoFragmentDialog();
         Bundle args = new Bundle();
         args.putInt(ARG_USER_ID, user.getId());
-        args.putString(ARG_USER_NAME, user.getUserName());
-        args.putString(ARG_USER_NICKNAME, user.getUserNickName());
+        args.putString(ARG_USER_NAME, user.getName());
+        args.putString(ARG_USER_STATUS_MSG, user.getUserStatusMessage());
         args.putString(ARG_USER_DIVISION, user.getUserDivision());
         args.putString(ARG_USER_POSITION, user.getUserPosition());
         args.putString(ARG_USER_PHONE_NUMBER, user.getUserPhoneNumber());
@@ -68,7 +68,7 @@ public class UserInfoFragmentDialog extends DialogFragment {
         Bundle bundle = getArguments();
         final int userId = bundle.getInt(ARG_USER_ID, -1);
         final String userName = bundle.getString(ARG_USER_NAME);
-        final String userNickname = bundle.getString(ARG_USER_NICKNAME);
+        final String userNickname = bundle.getString(ARG_USER_STATUS_MSG);
         final String userDivision = bundle.getString(ARG_USER_DIVISION);
         final String userPosition = bundle.getString(ARG_USER_POSITION);
         final String userPhoneNumber = bundle.getString(ARG_USER_PHONE_NUMBER);

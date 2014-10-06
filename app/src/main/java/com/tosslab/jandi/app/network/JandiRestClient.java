@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqCreateEntity;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqLogin;
@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
-import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -106,12 +105,12 @@ public interface JandiRestClient {
     // 채널 생성
     @Post("/channel")
     @RequiresHeader("Authorization")
-    ResCommon createChannel(ReqCreateCdp channel);
+    ResCommon createChannel(ReqCreateEntity channel);
 
     // 채널 수정
     @Put("/channels/{channelId}")
     @RequiresHeader("Authorization")
-    ResCommon modifyChannel(ReqCreateCdp channel, int channelId);
+    ResCommon modifyChannel(ReqCreateEntity channel, int channelId);
 
     // 채널 삭제
     @Delete("/channels/{channelId}")
@@ -198,12 +197,12 @@ public interface JandiRestClient {
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresHeader("Authorization")
-    ResCommon createPrivateGroup(ReqCreateCdp group);
+    ResCommon createPrivateGroup(ReqCreateEntity group);
 
     // Private Group 수정
     @Put("/privateGroups/{groupId}")
     @RequiresHeader("Authorization")
-    ResCommon modifyGroup(ReqCreateCdp channel, int groupId);
+    ResCommon modifyGroup(ReqCreateEntity channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")

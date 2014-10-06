@@ -89,7 +89,7 @@ public class EntityItemView extends LinearLayout {
                         .placeholder(R.drawable.jandi_profile)
                         .transform(new CircleTransform())
                         .into(imageViewEntityIcon);
-                textViewChannelName.setText(formattedEntity.getUserName());
+                textViewChannelName.setText(formattedEntity.getName());
                 textViewCntJoinedUsers.setText(formattedEntity.getUserEmail());
                 if (formattedEntity.alarmCount > 0) {
                     textViewBadge.setVisibility(VISIBLE);

@@ -109,11 +109,7 @@ public class FormattedEntity {
             return null;
         }
 
-        if (isUser()) {
-            return getUserName();
-        } else {
-            return getEntity().name;
-        }
+        return getEntity().name;
     }
 
     public int getMemberCount() {
@@ -172,15 +168,14 @@ public class FormattedEntity {
         }
     }
 
-    public String getUserName() {
+    public String getUserStatusMessage() {
         ResLeftSideMenu.User me = getUser();
-        return me.u_lastName + " " + me.u_firstName;
+        return me.u_statusMessage;
     }
-
-    public String getUserNickName() {
-        ResLeftSideMenu.User me = getUser();
-        return (me.u_nickname != null) ? me.u_nickname : me.name;
-    }
+//    public String getUserNickName() {
+//        ResLeftSideMenu.User me = getUser();
+//        return (me.u_nickname != null) ? me.u_nickname : me.name;
+//    }
 
     public String getUserEmail() {
         ResLeftSideMenu.User me = getUser();

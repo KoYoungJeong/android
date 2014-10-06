@@ -68,7 +68,7 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
                 .transform(new CircleTransform())
                 .into(holder.imageView);
 
-        holder.textView.setText(user.getUserName());
+        holder.textView.setText(user.getName());
 
         return convertView;
     }

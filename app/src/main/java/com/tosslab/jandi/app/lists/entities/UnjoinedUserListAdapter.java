@@ -78,7 +78,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
                     .placeholder(R.drawable.jandi_profile)
                     .transform(new CircleTransform())
                     .into(holder.imageView);
-            holder.textView.setText(entity.getUserName());
+            holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);
         }
 

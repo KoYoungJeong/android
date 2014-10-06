@@ -15,7 +15,8 @@ import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
+import com.tosslab.jandi.app.events.ConfirmCreateGroupEvent;
+import com.tosslab.jandi.app.events.ConfirmCreateTopicEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -32,11 +33,11 @@ import de.greenrobot.event.EventBus;
 @EFragment
 public class EditTextDialogFragment extends DialogFragment {
 
-    public final static int ACTION_CREATE_CDP       = 0;
+    public final static int ACTION_CREATE_CHAT = 0;
     public final static int ACTION_MODIFY_CDP       = 1;
     public final static int ACTION_MODIFY_MESSAGE   = 2;
 
-    public final static int ACTION_MODIFY_PROFILE_NICKNAME  = 3;
+    public final static int ACTION_MODIFY_PROFILE_STATUS_MSG = 3;
     public final static int ACTION_MODIFY_PROFILE_PHONE     = 4;
     public final static int ACTION_MODIFY_PROFILE_DIVISION  = 5;
     public final static int ACTION_MODIFY_PROFILE_POSITION  = 6;
@@ -159,7 +160,7 @@ public class EditTextDialogFragment extends DialogFragment {
                 = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.showSoftInput(inputName, InputMethodManager.SHOW_FORCED);
         // 수정 대화상자의 경우 현재 메시지를 보여준다.
-        if (actionType != ACTION_CREATE_CDP) {
+        if (actionType != ACTION_CREATE_CHAT) {
             inputName.setText(currentMessage);
         }
 
@@ -170,13 +171,17 @@ public class EditTextDialogFragment extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 switch (actionType) {
-                                    case ACTION_CREATE_CDP:
-                                        // CDP 생성의 경우 MainLeftFragment 로 해당 이벤트 전달
-                                        EventBus.getDefault().post(
-                                                new ConfirmCreateEntityEvent(
-                                                        entityType,
-                                                        inputName.getText().toString())
-                                        );
+                                    case ACTION_CREATE_CHAT:
+                                        // Topic 혹은 Group 생성일 경우 해당 이벤트 전달
+                                        if (entityType == JandiConstants.TYPE_CHANNEL) {
+                                            EventBus.getDefault().post(
+                                                    new ConfirmCreateTopicEvent(
+                                                            inputName.getText().toString()));
+                                        } else {
+                                            EventBus.getDefault().post(
+                                                    new ConfirmCreateGroupEvent(
+                                                            inputName.getText().toString()));
+                                        }
                                         break;
                                     case ACTION_MODIFY_CDP:
                                         // CDP 수정의 경우 MainLeftFragment 로 해당 이벤트 전달
@@ -197,7 +202,7 @@ public class EditTextDialogFragment extends DialogFragment {
                                                         feedbackId)
                                         );
                                         break;
-                                    case ACTION_MODIFY_PROFILE_NICKNAME:
+                                    case ACTION_MODIFY_PROFILE_STATUS_MSG:
                                     case ACTION_MODIFY_PROFILE_PHONE:
                                     case ACTION_MODIFY_PROFILE_DIVISION:
                                     case ACTION_MODIFY_PROFILE_POSITION:
@@ -234,14 +239,14 @@ public class EditTextDialogFragment extends DialogFragment {
      */
     int obtainTitleByPurpose(int actionType, int entityType) {
         switch (actionType) {
-            case ACTION_CREATE_CDP:
+            case ACTION_CREATE_CHAT:
                 return obtainTitileForCreateCdp(entityType);
             case ACTION_MODIFY_CDP:
                 return obtainTitileForModifyCdp(entityType);
             case ACTION_MODIFY_MESSAGE:
                 return R.string.modify_message;
-            case ACTION_MODIFY_PROFILE_NICKNAME:
-                return R.string.jandi_profile_nickname;
+            case ACTION_MODIFY_PROFILE_STATUS_MSG:
+                return R.string.jandi_profile_status_message;
             case ACTION_MODIFY_PROFILE_PHONE:
                 return R.string.jandi_profile_phone_number;
             case ACTION_MODIFY_PROFILE_DIVISION:

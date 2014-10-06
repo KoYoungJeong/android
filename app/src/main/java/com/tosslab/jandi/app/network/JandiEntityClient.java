@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ReqCreateCdp;
+import com.tosslab.jandi.app.network.models.ReqCreateEntity;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
-import com.tosslab.jandi.app.network.models.ReqNotificationUpdate;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
@@ -62,20 +61,20 @@ public class JandiEntityClient {
     }
 
     public ResCommon createChannel(String entityName) throws JandiNetworkException {
-        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = entityName;
+        ReqCreateEntity reqCreateEntity = new ReqCreateEntity();
+        reqCreateEntity.name = entityName;
         try {
-            return mJandiRestClient.createChannel(reqCreateCdp);
+            return mJandiRestClient.createChannel(reqCreateEntity);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
     }
 
     public ResCommon createPrivateGroup(String entityName) throws JandiNetworkException {
-        ReqCreateCdp reqCreateCdp = new ReqCreateCdp();
-        reqCreateCdp.name = entityName;
+        ReqCreateEntity reqCreateEntity = new ReqCreateEntity();
+        reqCreateEntity.name = entityName;
         try {
-            return mJandiRestClient.createPrivateGroup(reqCreateCdp);
+            return mJandiRestClient.createPrivateGroup(reqCreateEntity);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -106,7 +105,7 @@ public class JandiEntityClient {
     }
 
     public ResCommon modifyChannelName(int id, String name) throws JandiNetworkException {
-        ReqCreateCdp entityInfo = new ReqCreateCdp();
+        ReqCreateEntity entityInfo = new ReqCreateEntity();
         entityInfo.name = name;
         try {
             return mJandiRestClient.modifyChannel(entityInfo, id);
@@ -116,7 +115,7 @@ public class JandiEntityClient {
     }
 
     public ResCommon modifyPrivateGroupName(int id, String name) throws JandiNetworkException {
-        ReqCreateCdp entityInfo = new ReqCreateCdp();
+        ReqCreateEntity entityInfo = new ReqCreateEntity();
         entityInfo.name = name;
         try {
             return mJandiRestClient.modifyGroup(entityInfo, id);

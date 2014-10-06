@@ -67,7 +67,7 @@ public class TeamMemberView extends LinearLayout {
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .into(imageViewTeamMemberIcon);
-        textViewTeamMemberName.setText(teamMember.getUserName());
+        textViewTeamMemberName.setText(teamMember.getName());
         textViewTeamMemberEmail.setText(teamMember.getUserEmail());
         drawBackgroundAsActive();
     }

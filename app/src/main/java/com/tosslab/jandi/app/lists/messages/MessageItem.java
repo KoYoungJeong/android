@@ -66,9 +66,10 @@ public class MessageItem {
     public int getFeedbackId() {
         return mLink.feedbackId;
     }
-    public String getFeedbackWriterNickName() {
+
+    public String getFeedbackWriterName() {
         if (mLink.feedback != null) {
-            return mLink.feedback.writer.u_firstName + " " + mLink.feedback.writer.u_lastName;
+            return mLink.feedback.writer.name;
         }
         return null;
     }
@@ -84,7 +85,7 @@ public class MessageItem {
     }
 
     public String getUserName() {
-        return mWriter.getUserName();
+        return mWriter.getName();
     }
 
     public int getUserId() {

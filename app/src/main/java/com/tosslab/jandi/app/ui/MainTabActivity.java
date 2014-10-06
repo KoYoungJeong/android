@@ -159,7 +159,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 mCurrentTabIndex = position;
                 trackGaTab(mEntityManager, position);
                 switch (position) {
-                    case 3:
+                    case 2:
                         setActionBarForFileList();
                         break;
                     default:
@@ -188,7 +188,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     public void setActionBarForDrawerClose() {
         switch (mCurrentTabIndex) {
-            case 3:
+            case 2:
                 setActionBarForFileList();
                 break;
             default:
@@ -257,7 +257,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private void showDrawerUserProfile() {
         FormattedEntity me = mEntityManager.getMe();
         textViewUserEmail.setText(me.getUserEmail());
-        textViewUserName.setText(me.getUserName());
+        textViewUserName.setText(me.getName());
         Picasso.with(mContext)
                 .load(me.getUserSmallProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
@@ -486,7 +486,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 } else {
                     FormattedEntity owner = teamMember.get(i - 1);
                     log.debug(owner.getId() + " is selected");
-                    mCurrentUserNameCategorizingAccodingBy = owner.getUserName();
+                    mCurrentUserNameCategorizingAccodingBy = owner.getName();
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                     EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
                 }

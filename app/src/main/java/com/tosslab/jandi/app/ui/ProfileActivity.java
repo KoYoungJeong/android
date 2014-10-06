@@ -41,7 +41,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -67,8 +66,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     ImageView imageViewProfilePhoto;
     @ViewById(R.id.profile_user_realname)
     TextView textViewProfileRealName;
-    @ViewById(R.id.profile_user_nickname)
-    TextView textViewProfileNickName;
+    @ViewById(R.id.profile_user_status_message)
+    TextView textViewProfileStatusMessage;
     @ViewById(R.id.profile_user_email)
     TextView textViewProfileUserEmail;
     @ViewById(R.id.profile_user_phone_number)
@@ -199,10 +198,17 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                 .skipMemoryCache()              // 메모리 캐시를 쓰지 않는다.
                 .into(imageViewProfilePhoto);
         // 프로필 이름
-        textViewProfileRealName.setText(user.getUserName());
-        // 닉네임
-        textViewProfileNickName.setText(user.getUserNickName());
-        textViewProfileNickName.setTextColor(getResources().getColor(R.color.jandi_text));
+        textViewProfileRealName.setText(user.getName());
+        // 상태 메시지
+        String strStatus = (user.getUserStatusMessage());
+        if (strStatus.length() > 0) {
+            textViewProfileStatusMessage.setText(strStatus);
+            textViewProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text));
+        } else {
+            textViewProfileStatusMessage.setText(R.string.jandi_profile_optional);
+            textViewProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text_light));
+        }
+
         // 이메일
         textViewProfileUserEmail.setText(user.getUserEmail());
         // 폰넘버
@@ -237,19 +243,19 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     /************************************************************
      * 프로필 수정
      ************************************************************/
-    @Click(R.id.profile_user_nickname)
-    void editNickName() {
+    @Click(R.id.profile_user_status_message)
+    void editStatusMessage() {
         // 닉네임
-        runchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_NICKNAME,
-                textViewProfileNickName
+        launchEditDialog(
+                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS_MSG,
+                textViewProfileStatusMessage
         );
     }
 
     @Click(R.id.profile_user_phone_number)
     void editPhoneNumber() {
         // 핸드폰 번호
-        runchEditDialog(
+        launchEditDialog(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
                 textViewProfileUserPhone
         );
@@ -258,7 +264,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_user_division)
     void editDivision() {
         // 부서
-        runchEditDialog(
+        launchEditDialog(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
                 textViewProfileUserDivision
         );
@@ -267,13 +273,13 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_user_position)
     void editPosition() {
         // 직책
-        runchEditDialog(
+        launchEditDialog(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
                 textViewProfileUserPosition
         );
     }
 
-    private void runchEditDialog(int dialogActionType, TextView textView) {
+    private void launchEditDialog(int dialogActionType, TextView textView) {
         String currentText = textView.getText().toString();
         // 현재 Text가 미지정 된 경우 빈칸으로 바꿔서 입력 받는다.
         if (currentText.equals(getString(R.string.jandi_profile_optional))) {
@@ -286,8 +292,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
 
     public void onEvent(ConfirmModifyProfileEvent event) {
         switch (event.actionType) {
-            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_NICKNAME:
-                setTextAndChangeColor(textViewProfileNickName, event.inputMessage);
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS_MSG:
+                setTextAndChangeColor(textViewProfileStatusMessage, event.inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
                 setTextAndChangeColor(textViewProfileUserPhone, event.inputMessage);
@@ -329,7 +335,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @UiThread
     void updateProfile() {
         ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
-        reqUpdateProfile.nickname = textViewProfileNickName.getText().toString();
+        reqUpdateProfile.statusMessage = textViewProfileStatusMessage.getText().toString();
         reqUpdateProfile.phoneNumber = getOptionalString(textViewProfileUserPhone);
         reqUpdateProfile.department = getOptionalString(textViewProfileUserDivision);
         reqUpdateProfile.position = getOptionalString(textViewProfileUserPosition);

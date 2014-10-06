@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmCreateEntityEvent;
+import com.tosslab.jandi.app.events.ConfirmCreateTopicEvent;
 import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
@@ -123,7 +123,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
         EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
             mEntityManager = entityManager;
-            mEntityListAdapter.retrievePublicList(entityManager.getJoinedChannels(), entityManager.getUnjoinedChannels());
+            mEntityListAdapter.retrievePublicList(
+                    entityManager.getJoinedChannels(),
+                    entityManager.getUnjoinedChannels());
         }
     }
     /************************************************************
@@ -140,15 +142,12 @@ public class MainPublicListFragment extends BaseChatListFragment {
         mEntityListAdapter.notifyDataSetChanged();
 
         if (formattedEntity.isJoined) {
-            ResLeftSideMenu.Channel channel = formattedEntity.getChannel();
-            if (channel == null) {
-                return;     // ERROR
-            }
-            moveToChannelMessageActivity(channel.id);
-        } else {
-            // 채널 가입 API 호출 (후 해당 채널로 이동)
-            joinChannel(formattedEntity);
+            moveToMessageActivity(formattedEntity);
+            return;
         }
+
+        // 채널 가입 API 호출 (후 해당 채널로 이동)
+        joinChannel(formattedEntity);
 
         return;
     }
@@ -161,10 +160,10 @@ public class MainPublicListFragment extends BaseChatListFragment {
      * Alert Dialog 관련
      */
     void showDialogToCreateChannel() {
-        DialogFragment newFragment
-                = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_CREATE_CDP
-                , JandiConstants.TYPE_CHANNEL
-                , 0);
+        DialogFragment newFragment = EditTextDialogFragment.newInstance(
+                EditTextDialogFragment.ACTION_CREATE_CHAT,
+                JandiConstants.TYPE_CHANNEL,
+                0);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
@@ -172,17 +171,17 @@ public class MainPublicListFragment extends BaseChatListFragment {
      * Channel, PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
      * @param event
      */
-    public void onEvent(ConfirmCreateEntityEvent event) {
+    public void onEvent(ConfirmCreateTopicEvent event) {
         ColoredToast.show(mContext,
-                    event.inputName + getString(R.string.jandi_message_create_entity));
-        createEntityInBackground(event.cdpType, event.inputName);
+                    event.topicName + getString(R.string.jandi_message_create_entity));
+        createTopicInBackground(event.topicName);
     }
 
     /**
-     * Channel, privateGroup 생성
+     * Channel 생성
      */
     @Background
-    void createEntityInBackground(int entityType, String entityName) {
+    void createTopicInBackground(String entityName) {
         // TODO : Error 처리
         if (entityName.length() <= 0) {
             return;
@@ -190,23 +189,23 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
         try {
             ResCommon restResId = mJandiEntityClient.createChannel(entityName);
-            createEntitySucceed(restResId.id, entityName, entityType);
+            createTopicSucceed(restResId.id, entityName);
         } catch (JandiNetworkException e) {
             log.error("Create Fail", e);
             if (e.httpStatusCode == JandiNetworkException.BAD_REQUEST) {
-                createEntityFailed(R.string.err_entity_duplicated_name);
+                createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
-                createEntityFailed(R.string.err_entity_create);
+                createTopicFailed(R.string.err_entity_create);
             }
         }
     }
 
     @UiThread
-    public void createEntitySucceed(int entityId, String entityName, int entityType) {
+    public void createTopicSucceed(int entityId, String entityName) {
         try {
             MixpanelAnalyticsClient
                     .getInstance(mContext, mEntityManager.getDistictId())
-                    .trackCreatingEntity((entityType == JandiConstants.TYPE_CHANNEL));
+                    .trackCreatingEntity(true);
         } catch (JSONException e) {
             log.error("CAN NOT MEET", e);
         }
@@ -214,7 +213,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     }
 
     @UiThread
-    public void createEntityFailed(int errStringResId) {
+    public void createTopicFailed(int errStringResId) {
         ColoredToast.showError(mContext, getString(errStringResId));
     }
 
@@ -247,8 +246,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
         MixpanelAnalyticsClient
                 .getInstance(mContext, mEntityManager.getDistictId())
                 .trackJoinChannel();
-        moveToChannelMessageActivity(channel.getChannel().id);
-
+        moveToMessageActivity(channel);
     }
 
     @UiThread

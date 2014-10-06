@@ -69,7 +69,7 @@
     <string name="jandi_profile_edit">편집</string>
     <string name="jandi_profile_basic_info">기본 정보</string>
     <string name="jandi_profile_additional_info">추가 정보</string>
-    <string name="jandi_profile_nickname">닉네임</string>
+    <string name="jandi_profile_status_message">상태</string>
     <string name="jandi_profile_email">이메일</string>
     <string name="jandi_profile_phone_number">전화번호</string>
     <string name="jandi_profile_division">부서</string>

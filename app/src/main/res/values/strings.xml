@@ -74,7 +74,7 @@
     <string name="jandi_profile_edit">Edit</string>
     <string name="jandi_profile_basic_info">Basic</string>
     <string name="jandi_profile_additional_info">Additional</string>
-    <string name="jandi_profile_nickname">Nickname</string>
+    <string name="jandi_profile_status_message">Status</string>
     <string name="jandi_profile_email">E-mail</string>
     <string name="jandi_profile_phone_number">Phone-No.</string>
     <string name="jandi_profile_division">Division</string>

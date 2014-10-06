@@ -210,7 +210,7 @@ public class MainEntityListFragment extends Fragment {
      */
     void showDialogToCreateChannel() {
         DialogFragment newFragment
-                = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_CREATE_CDP
+                = EditTextDialogFragment.newInstance(EditTextDialogFragment.ACTION_CREATE_CHAT
                 , entityType
                 , 0);
         newFragment.show(getFragmentManager(), "dialog");
