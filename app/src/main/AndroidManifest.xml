@@ -30,7 +30,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.IntroLoginActivity_"
-            android:label="@string/app_name"
+            android:label="@string/jandi_action_login"
             android:theme="@style/JandiSearchTheme"
             android:screenOrientation="portrait" />
         <activity

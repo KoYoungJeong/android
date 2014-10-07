@@ -172,7 +172,6 @@ public class MessageItemView extends LinearLayout {
         if (item.getContentSmallThumbnailUrl() != null) {
             String imageUrl = item.getContentSmallThumbnailUrl();
             log.debug("load image thumnail : " + imageUrl);
-//            Picasso.with(mContext).setLoggingEnabled(true);
             Picasso.with(mContext)
                     .load(imageUrl)
                     .placeholder(R.drawable.jandi_sicon_thumbnail)

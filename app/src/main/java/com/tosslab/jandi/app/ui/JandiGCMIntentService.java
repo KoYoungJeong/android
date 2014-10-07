@@ -131,8 +131,8 @@ public class JandiGCMIntentService extends IntentService {
     private String retrieveLastTitle(JsonNode messagesNode) {
         int entityType = retrieveEntityType(messagesNode);
         if (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) {
-            JsonNode toEntity = messagesNode.get("fromEntity");
-            return toEntity.get("u_nickname").asText();
+            JsonNode fromEntity = messagesNode.get("fromEntity");
+            return fromEntity.get("name").asText();
         } else {
             JsonNode toEntity = messagesNode.get("toEntity");
             return toEntity.get("name").asText();

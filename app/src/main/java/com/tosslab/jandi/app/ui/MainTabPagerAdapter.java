@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.main.MainPrivateListFragment_;
 import com.tosslab.jandi.app.ui.main.MainPublicListFragment_;
@@ -15,8 +14,8 @@ import com.tosslab.jandi.app.ui.main.MainPublicListFragment_;
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter {
     private final int[] mTitleRes = {
-            R.string.jandi_tab_channel,
-            R.string.jandi_tab_private_group,
+            R.string.jandi_tab_topic,
+            R.string.jandi_tab_chat,
             R.string.jandi_tab_file
     };
 
@@ -42,7 +41,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter {
                         .builder()
                         .build();
             default:
-                return MainUserEntityListFragment_.builder().build();
+                return MainPublicListFragment_.builder().build();
         }
     }
 

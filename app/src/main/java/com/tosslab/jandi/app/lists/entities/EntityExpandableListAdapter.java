@@ -38,8 +38,8 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 
         mEntityTitles = new ArrayList<Integer>();
         if (type == TYPE_PUBLIC_ENTITY_LIST) {
-            mEntityTitles.add(R.string.jandi_entity_joined_channel);
-            mEntityTitles.add(R.string.jandi_entity_unjoined_channel);
+            mEntityTitles.add(R.string.jandi_entity_joined_topic);
+            mEntityTitles.add(R.string.jandi_entity_unjoined_topic);
         } else {
             mEntityTitles.add(R.string.jandi_tab_private_group);
             mEntityTitles.add(R.string.jandi_tab_direct_message);

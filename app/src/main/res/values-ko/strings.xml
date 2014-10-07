@@ -38,15 +38,16 @@
     <string name="err_push_registration">Push 등록 중 오류가 발생했습니다. 다시 시도해주세요</string>
     <string name="err_push_invalid_device">Push 서비스를 사용할 수 없는 단말입니다</string>
 
-    <string name="jandi_tab_channel">채널</string>
+    <string name="jandi_tab_topic">토픽</string>
+    <string name="jandi_tab_chat">채팅</string>
     <string name="jandi_tab_private_group">비밀그룹</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">파일</string>
     <string name="jandi_action_direct_message">1:1 대화</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_channel">참여한 채널</string>
-    <string name="jandi_entity_unjoined_channel">참여하지 않은 채널</string>
+    <string name="jandi_entity_joined_topic">참여한 토픽</string>
+    <string name="jandi_entity_unjoined_topic">참여하지 않은 토픽</string>
     <string name="jandi_message_create_entity"> 을 생성하였습니다</string>
     <string name="jandi_message_join_entity_pre"></string>
     <string name="jandi_message_join_entity_post"> 에 참여합니다</string>

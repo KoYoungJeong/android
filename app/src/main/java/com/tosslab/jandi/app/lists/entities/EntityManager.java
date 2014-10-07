@@ -197,11 +197,6 @@ public class EntityManager {
         return entities;
     }
 
-//    // TODO 현재는 default channel이 그냥 첫번째 채널
-//    public ResLeftSideMenu.Channel getDefaultChannel() {
-//        return mJoinedChannels.get(0);
-//    }
-
     public FormattedEntity getEntityById(int entityId) {
         for (FormattedEntity target : mJoinedChannels) {
             if (target.getChannel().id == entityId) {
@@ -215,6 +210,11 @@ public class EntityManager {
         }
         for (FormattedEntity target : mPrivateGroups) {
             if (target.getPrivateGroup().id == entityId) {
+                return target;
+            }
+        }
+        for (FormattedEntity target : mUnJoinedChannels) {
+            if (target.getChannel().id == entityId) {
                 return target;
             }
         }

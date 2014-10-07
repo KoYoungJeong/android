@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
-    <string name="jandi_ga_track_id">UA-54051037-2</string>
-    <!--<string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>-->
-    <string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>
-    <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
+    <!--<string name="jandi_ga_track_id">UA-54051037-2</string>-->
+    <string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>
+    <!--<string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>-->
+    <string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>
 
     <string name="app_name">JANDI</string>
     <string name="action_settings">Settings</string>
@@ -43,15 +43,16 @@
     <string name="err_push_registration">There is an error with push server, please try it again</string>
     <string name="err_push_invalid_device">Push service cannot be supported with this device</string>
 
-    <string name="jandi_tab_channel">Channel</string>
-    <string name="jandi_tab_private_group">Private Group</string>
+    <string name="jandi_tab_topic">Topic</string>
+    <string name="jandi_tab_chat">Chat</string>
+    <string name="jandi_tab_private_group">Group</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">File</string>
     <string name="jandi_action_direct_message">1:1 Talk</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_channel">Joined channels</string>
-    <string name="jandi_entity_unjoined_channel">Unjoined channels</string>
+    <string name="jandi_entity_joined_topic">Joined topics</string>
+    <string name="jandi_entity_unjoined_topic">Unjoined topics</string>
     <string name="jandi_message_create_entity">&#xa0;has been created.</string>
     <string name="jandi_message_join_entity_pre">Joining&#xa0;</string>
     <string name="jandi_message_join_entity_post"></string>

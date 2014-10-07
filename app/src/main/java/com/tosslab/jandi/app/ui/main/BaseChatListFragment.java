@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.MessageListActivity_;
@@ -52,10 +53,12 @@ public class BaseChatListFragment extends Fragment {
     }
 
     protected void moveToChannelMessageActivity(int channelId) {
+        ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
         moveToMessageActivity(channelId, JandiConstants.TYPE_CHANNEL);
     }
 
     protected void moveToPrivateGroupMessageActivity(int privateGroupId) {
+        ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
         moveToMessageActivity(privateGroupId, JandiConstants.TYPE_PRIVATE_GROUP);
     }
 

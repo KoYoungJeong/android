@@ -15,5 +15,5 @@
         android:textStyle="bold"
         android:textSize="@dimen/jandi_entity_title_font"
         android:textColor="#999999"
-        android:text="@string/jandi_entity_joined_channel"/>
+        android:text="@string/jandi_entity_joined_topic"/>
 </LinearLayout>

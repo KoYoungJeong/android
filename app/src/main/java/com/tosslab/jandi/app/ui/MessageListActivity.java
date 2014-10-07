@@ -106,7 +106,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private ChattingInfomations mChattingInformations;
 
-
     @RestService
     JandiRestClient jandiRestClient;
     private JandiEntityClient mJandiEntityClient;
@@ -389,7 +388,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
         mChattingInformations.loadExtraInfo();
         log.debug("entity name from push : " + mChattingInformations.entityName);
-
+        showActionBarTitle();
         trackSigningInFromPush(mEntityManager);
 
         getMessages();

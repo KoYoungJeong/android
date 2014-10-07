@@ -65,7 +65,6 @@ public class IntroLoginActivity extends Activity {
     @AfterViews
     void initView() {
         setUpActionBar();
-        getActionBar().setTitle(myId);
         String teamName = "";
         try {
             ResMyTeam.Team myTeam = convertJsonToPojo();
