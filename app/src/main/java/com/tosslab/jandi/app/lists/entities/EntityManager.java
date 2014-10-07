@@ -100,16 +100,6 @@ public class EntityManager {
     /************************************************************
      * Getter
      ************************************************************/
-
-    public List<FormattedEntity> getFormattedChannels() {
-        List<FormattedEntity> formattedEntities = new ArrayList<FormattedEntity>();
-        formattedEntities.add(new FormattedDummyEntity(FormattedDummyEntity.TITLE_JOINED_CHANNEL));
-        formattedEntities.addAll(mJoinedChannels);
-        formattedEntities.add(new FormattedDummyEntity(FormattedDummyEntity.TITLE_UNJOINED_CHANNEL));
-        formattedEntities.addAll(mUnJoinedChannels);
-        return formattedEntities;
-    }
-
     public List<FormattedEntity> getJoinedChannels() {
         return mJoinedChannels;
     }

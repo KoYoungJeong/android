@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
-    <!--<string name="jandi_ga_track_id">UA-54051037-2</string>-->
-    <string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>
-    <!--<string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>-->
-    <string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>
+    <string name="jandi_ga_track_id">UA-54051037-2</string>
+    <!--<string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>-->
+    <string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>
+    <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
 
     <string name="app_name">JANDI</string>
     <string name="action_settings">Settings</string>

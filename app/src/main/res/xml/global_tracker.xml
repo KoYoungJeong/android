@@ -9,6 +9,6 @@
     <integer name="ga_dispatchPeriod">120</integer>
 
     <string name="ga_appName">JANDI</string>
-    <string name="ga_appVersion">0.3.9</string>
+    <string name="ga_appVersion">0.3.10</string>
 
 </resources>
