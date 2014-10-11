@@ -48,6 +48,7 @@
     <string name="jandi_tab_private_group">Group</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">File</string>
+    <string name="jandi_tab_more">More</string>
     <string name="jandi_action_direct_message">1:1 Talk</string>
 
     <!-- Manipulate Entity -->

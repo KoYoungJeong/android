@@ -47,8 +47,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 14..
  */
 @EFragment(R.layout.fragment_main_file_list)
-public class FileListFragment extends Fragment {
-    private final Logger log = Logger.getLogger(FileListFragment.class);
+public class MainFileListFragment extends Fragment {
+    private final Logger log = Logger.getLogger(MainFileListFragment.class);
 
     @ViewById(R.id.list_searched_messages)
     PullToRefreshListView pullToRefreshListViewSearchedFiles;

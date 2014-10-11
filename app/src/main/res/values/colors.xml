@@ -20,6 +20,7 @@
     <color name="jandi_tab_underline">#e5e5e5</color>
     <color name="jandi_entities_divider">#E5E5E5</color>
     <color name="jandi_entities_bg">#f0f0f0</color>
+    <color name="jandi_more_bg">#f2f2f2</color>
 
     <!-- Message List -->
     <color name="jandi_messages_date_divider">@color/jandi_main</color>

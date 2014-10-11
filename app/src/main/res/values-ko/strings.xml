@@ -43,6 +43,7 @@
     <string name="jandi_tab_private_group">비밀그룹</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">파일</string>
+    <string name="jandi_tab_more">더보기</string>
     <string name="jandi_action_direct_message">1:1 대화</string>
 
     <!-- Manipulate Entity -->

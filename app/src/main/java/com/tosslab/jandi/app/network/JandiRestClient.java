@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitation;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -51,10 +52,14 @@ import org.springframework.util.MultiValueMap;
                 StringHttpMessageConverter.class },
         interceptors = { LoggerInterceptor.class }
 )
-//@Accept(MediaType.APPLICATION_JSON)
+
 @Accept(JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
     void setHeader(String name, String value);
+
+    // 클라이언트 Policy(+version) 정보
+    @Get("/config")
+    ResConfig getConfig();
 
     // 내 팀 정보 획득
     @Get("/info/teamlist/email/{userEmail}")

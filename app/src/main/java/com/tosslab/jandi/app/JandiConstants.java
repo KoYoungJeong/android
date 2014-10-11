@@ -5,8 +5,8 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
     // For Network
-//    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
-    public static final String SERVICE_ROOT_URL = "https://jandi.com/";     // REAL
+    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
+//    public static final String SERVICE_ROOT_URL = "https://jandi.com/";     // REAL
     public static final String AUTH_HEADER      = "Authorization";
 
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
@@ -36,7 +36,6 @@ public class JandiConstants {
     public static final int TYPE_UPLOAD_TAKE_PHOTO      = 0x01;
     public static final int TYPE_UPLOAD_EXPLORER        = 0x02;
     public static final int TYPE_FILE_DETAIL_REFRESH    = 0x03;
-
 
     public static final int NOTIFICATION_ID = 100;
 }

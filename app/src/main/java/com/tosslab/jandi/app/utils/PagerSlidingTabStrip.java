@@ -285,9 +285,21 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
                         tab.setText(tab.getText().toString().toUpperCase(locale));
                     }
                 }
+            } else if (v instanceof ImageButton) {
+                ImageButton tab = (ImageButton) v;
+                tab.setSelected(i == 0 ? true : false);
             }
         }
+    }
 
+    private void updateActivateTab(final int position) {
+        for (int i = 0; i < tabCount; i++) {
+            View v = tabsContainer.getChildAt(i);
+
+            if (v instanceof ImageButton) {
+                v.setSelected(position == i ? true : false);
+            }
+        }
     }
 
     private void scrollToChild(int position, int offset) {
@@ -385,6 +397,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
         @Override
         public void onPageSelected(int position) {
+            updateActivateTab(position);
             if (delegatePageListener != null) {
                 delegatePageListener.onPageSelected(position);
             }

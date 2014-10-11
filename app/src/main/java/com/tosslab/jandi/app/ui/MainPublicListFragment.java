@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.main;
+package com.tosslab.jandi.app.ui;
 
 import android.app.DialogFragment;
 import android.view.Menu;
@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
