@@ -55,4 +55,10 @@ public class FileListActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
 }

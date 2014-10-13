@@ -346,6 +346,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                         .entityId(entityId)
                         .entityName(mChattingInformations.entityName)
                         .start();
+                overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
             }
         }, 250);
     }

@@ -45,27 +45,32 @@ public class IntroStartActivity extends Activity {
      ************************************************************/
     @Background
     public void checkVersionInBackground() {
-        // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
+
+        boolean isLatestVersion = false;
         try {
-            if (isLatestVersion()) {
-                // 자동 로그인 과정.
-                // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
-                String myToken = JandiPreference.getMyToken(this);
-                if (myToken != null && myToken.length() > 0) {
-                    // LoginFinalActivity로 이동
-                    moveToIntroFinalActivity(myToken);
-                } else {
-                    // LoginStartActivity로 이동
-                    moveToLoginInputIdActivity();
-                }
-            } else {
-                showUpdateDialog();
-            }
+            isLatestVersion = isLatestVersion();
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
         } catch (JandiNetworkException e) {
-            e.printStackTrace();
+            // TODO 지금은 네트워크 통신 에러 등이면 일단 최신버전으로 취급하자.
+            isLatestVersion = true;
         }
+
+        // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
+        if (isLatestVersion) {
+            // 자동 로그인 과정.
+            // 토큰이 저장되어 있으면 로그인 과정을 건너뛴다.
+            String myToken = JandiPreference.getMyToken(this);
+            if (myToken != null && myToken.length() > 0) {
+                // LoginFinalActivity로 이동
+                moveToIntroFinalActivity(myToken);
+            } else {
+                // LoginStartActivity로 이동
+                moveToLoginInputIdActivity();
+            }
+        } else {
+            showUpdateDialog();
+        }
+
     }
 
     @UiThread

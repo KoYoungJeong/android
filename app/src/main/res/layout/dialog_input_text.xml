@@ -11,7 +11,7 @@
         android:layout_margin="10dp"
         android:imeOptions="actionDone"
         android:focusableInTouchMode="true"
-        android:hint="생성할 이름" >
+        android:hint="@string/jandi_entity_create_entity_name" >
         <requestFocus />
     </EditText>
 </LinearLayout>

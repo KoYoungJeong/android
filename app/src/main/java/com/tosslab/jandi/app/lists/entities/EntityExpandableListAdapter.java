@@ -203,13 +203,6 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 
             init();
             // 아이콘
-            if (formattedEntity.isUser()) {
-                Picasso.with(mContext)
-                        .load(formattedEntity.getUserSmallProfileUrl())
-                        .placeholder(R.drawable.jandi_profile)
-                        .transform(new CircleTransform())
-                        .into(imageViewIcon);
-            }
             if (formattedEntity.isChannel()) {
                 // 채널 아이콘의 색상이 자신의 ID에 따라 자동으로 변하도록...
                 if (formattedEntity.isJoined) {
@@ -219,10 +212,16 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 //                    imageViewIcon.clearColorFilter();
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
                 }
-            }
-            if (formattedEntity.isPrivateGroup()) {
+            } else if (formattedEntity.isPrivateGroup()) {
                 imageViewIcon.setImageResource(R.drawable.jandi_icon_chat);
+            } else if (formattedEntity.isUser()) {
+                Picasso.with(mContext)
+                        .load(formattedEntity.getUserSmallProfileUrl())
+                        .placeholder(R.drawable.jandi_profile)
+                        .transform(new CircleTransform())
+                        .into(imageViewIcon);
             }
+
             // 이름
             textViewName.setText(formattedEntity.getName());
             // 추가 정보
