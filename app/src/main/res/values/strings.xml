@@ -26,11 +26,20 @@
     <string name="jandi_action_update">Update</string>
     <string name="jandi_update_message">There is a more recent version of JANDI available for download.</string>
 
+    <!-- Team Creation -->
+    <string name="jandi_action_create_team">Create</string>
+    <string name="jandi_create_team_message">Please enter your email. We will send you an email with instructions to create a new team.</string>
+    <string name="jandi_team_creation_succeed">Succeed. Please check your email.</string>
+    <string name="err_team_creation_failed">Failed to send an email.</string>
+    <string name="jandi_question_team_create">Is your team on JANDI yet?</string>
+
     <!-- Login -->
     <string name="jandi_action_start">Start</string>
     <string name="jandi_action_login">Sign in</string>
+    <string name="jandi_select_team">Select your team</string>
     <string name="jandi_user_id">E-mail</string>
     <string name="jandi_user_password">Password</string>
+    <string name="jandi_welcome_message">Hello\nWelcome to JANDI</string>
     <string name="err_login">Failed to sign in</string>
     <string name="err_login_unregistered_id">This is unregistered email.</string>
     <string name="err_login_invalid_id">Email address is not accurate.</string>

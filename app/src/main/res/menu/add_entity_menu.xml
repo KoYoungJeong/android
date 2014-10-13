@@ -3,7 +3,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/action_add_channel"
         android:title="생성"
-        android:icon="@drawable/jandi_icon_add"
+        android:icon="@drawable/jandi_actionb_add"
         android:orderInCategory="100"
         android:showAsAction="always" />
 </menu>

@@ -212,7 +212,7 @@ public class EntityManager {
 
     public String getEntityNameById(int cdpId) {
         FormattedEntity entity = getEntityById(cdpId);
-        return (entity != null) ? entity.toString() : "";
+        return (entity != null) ? entity.getName() : "";
     }
 
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {

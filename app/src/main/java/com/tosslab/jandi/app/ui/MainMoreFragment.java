@@ -3,8 +3,10 @@ package com.tosslab.jandi.app.ui;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
@@ -27,6 +29,8 @@ public class MainMoreFragment extends Fragment {
 
     @ViewById(R.id.img_more_user_profile)
     ImageView imageViewUserProfile;
+    @ViewById(R.id.txt_more_jandi_version)
+    TextView textViewJandiVersion;
 
     protected Context mContext;
     private EntityManager mEntityManager;
@@ -40,6 +44,7 @@ public class MainMoreFragment extends Fragment {
     @AfterViews
     void initView() {
         showUserProfile();
+        showJandiVersion();
     }
 
     private void showUserProfile() {
@@ -49,6 +54,17 @@ public class MainMoreFragment extends Fragment {
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new CircleTransform())
                 .into(imageViewUserProfile);
+    }
+
+    private void showJandiVersion() {
+
+        try {
+            String packageName = getActivity().getPackageName();
+            String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
+            textViewJandiVersion.setText("v." + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     @Click(R.id.ly_more_profile)

@@ -3,17 +3,22 @@ package com.tosslab.jandi.app.ui;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Paint;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.CreateTeamDialog;
 import com.tosslab.jandi.app.dialogs.SelectTeamDialog;
+import com.tosslab.jandi.app.events.RequestTeamCreationEvent;
 import com.tosslab.jandi.app.events.SelectMyTeam;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -48,6 +53,8 @@ public class IntroSelectTeamActivity extends Activity {
     EditText editTextLoginId;
     @ViewById(R.id.btn_login_start)
     Button buttonLoginStart;
+    @ViewById(R.id.txt_team_creation)
+    TextView textViewTeamCreation;
     @RestService
     JandiRestClient jandiRestClient;
 
@@ -70,6 +77,7 @@ public class IntroSelectTeamActivity extends Activity {
     }
 
     private void setActivationColorForButton() {
+        textViewTeamCreation.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         // 텍스트에 글이 있으면 버튼 색상 변경
         editTextLoginId.addTextChangedListener(new TextWatcher() {
             @Override
@@ -95,6 +103,11 @@ public class IntroSelectTeamActivity extends Activity {
         pressButton(editTextLoginId.getEditableText().toString());
     }
 
+    @Click(R.id.txt_team_creation)
+    void createTeam() {
+        showTeamTeamCreationFragment();
+    }
+
     private void hideSoftKeyboard() {
         imm.hideSoftInputFromWindow(editTextLoginId.getWindowToken(),0);
     }
@@ -112,16 +125,71 @@ public class IntroSelectTeamActivity extends Activity {
     }
 
     /************************************************************
+     * Team 생성
+     ************************************************************/
+
+    private void showTeamTeamCreationFragment() {
+        String email = editTextLoginId.getText().toString();
+        DialogFragment newFragment = CreateTeamDialog.newInstance(email);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(RequestTeamCreationEvent event) {
+        String mail = event.email;
+        if (isValidEmailFormat(mail) == false) {
+            return;
+        }
+        mProgressWheel.show();
+        createTeamInBackground(mail);
+    }
+
+    @Background
+    void createTeamInBackground(String myEmailId) {
+        try {
+            // 나의 팀 ID 획득
+            ResCommon res = mJandiAuthClient.createTeam(myEmailId);
+            createTeamSucceed();
+        } catch (JandiNetworkException e) {
+            log.error("getTeamListInBackground", e);
+            createTeamFailed(R.string.err_team_creation_failed);
+
+        } catch (Exception e) {
+            log.error("getTeamListInBackground", e);
+            createTeamFailed(R.string.err_network);
+        }
+    }
+
+    @UiThread
+    void createTeamSucceed() {
+        mProgressWheel.dismiss();
+        ColoredToast.showLong(this, getString(R.string.jandi_team_creation_succeed));
+        finish();
+    }
+
+    @UiThread
+    void createTeamFailed(int errMessageResId) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(this, getString(errMessageResId));
+    }
+
+    /************************************************************
      * Team List 획득
      ************************************************************/
     public void pressButton(String myEmailId) {
-        // ID 입력의 포멧 체크
-        if (FormatConverter.isInvalidEmailString(myEmailId)) {
-            ColoredToast.showError(this, getString(R.string.err_login_invalid_id));
+        if (isValidEmailFormat(myEmailId) == false) {
             return;
         }
         mProgressWheel.show();
         getTeamListInBackground(myEmailId);
+    }
+
+    private boolean isValidEmailFormat(String email) {
+        // ID 입력의 포멧 체크
+        if (FormatConverter.isInvalidEmailString(email)) {
+            ColoredToast.showError(this, getString(R.string.err_login_invalid_id));
+            return false;
+        }
+        return true;
     }
 
     @Background

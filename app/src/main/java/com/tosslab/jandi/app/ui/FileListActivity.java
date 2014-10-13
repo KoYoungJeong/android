@@ -6,13 +6,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.CategorizingAsEntity;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 10. 13..
@@ -21,15 +18,23 @@ import de.greenrobot.event.EventBus;
 public class FileListActivity extends Activity {
     @Extra
     int entityId;
+    @Extra
+    String entityName;
 
     @AfterViews
     void attatchFragment() {
         setUpActionBar();
 
-        getFragmentManager().beginTransaction()
-                .add(R.id.container_file_list, FileListFragment_.builder().build())
+        getFragmentManager()
+                .beginTransaction()
+                .add(
+                        R.id.container_file_list,
+                        FileListFragment_
+                                .builder()
+                                .entityIdForCategorizing(entityId)
+                                .mCurrentEntityCategorizingAccodingBy(entityName)
+                                .build())
                 .commit();
-        EventBus.getDefault().post(new CategorizingAsEntity(entityId));
     }
 
     private void setUpActionBar() {

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqCreateEntity;
+import com.tosslab.jandi.app.network.models.ReqCreateTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqLogin;
@@ -60,6 +61,10 @@ public interface JandiRestClient {
     // 클라이언트 Policy(+version) 정보
     @Get("/config")
     ResConfig getConfig();
+
+    // 팀 생성 요청 이메일 전송
+    @Post("/teams/new")
+    ResCommon createTeam(ReqCreateTeam req);
 
     // 내 팀 정보 획득
     @Get("/info/teamlist/email/{userEmail}")

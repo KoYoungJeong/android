@@ -143,11 +143,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
+        android:orientation="vertical"
         android:gravity="center">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/jandi_text_medium"
+            android:text="JANDI"/>
+        <TextView
+            android:id="@+id/txt_more_jandi_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_medium"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_light"
             android:text="TOSS LAB, INC."/>
     </LinearLayout>
 </LinearLayout>

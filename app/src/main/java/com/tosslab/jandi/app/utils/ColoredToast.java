@@ -17,6 +17,16 @@ public class ColoredToast {
         superToast.setTextColor(Color.WHITE);
         superToast.show();
     }
+
+    public static void showLong(Context context, String message) {
+        SuperToast superToast = new SuperToast(context);
+        superToast.setText(message);
+        superToast.setDuration(SuperToast.Duration.LONG);
+        superToast.setBackground(SuperToast.Background.BLUE);
+        superToast.setTextColor(Color.WHITE);
+        superToast.show();
+    }
+
     public static void showWarning(Context context, String message) {
         SuperToast superToast = new SuperToast(context);
         superToast.setText(message);

@@ -344,6 +344,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 FileListActivity_.intent(mContext)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .entityId(entityId)
+                        .entityName(mChattingInformations.entityName)
                         .start();
             }
         }, 250);

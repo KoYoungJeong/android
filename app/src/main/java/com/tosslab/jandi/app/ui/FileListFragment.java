@@ -43,6 +43,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -52,8 +53,6 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Created by justinygchoi on 2014. 10. 13..
  */
@@ -62,14 +61,14 @@ public class FileListFragment extends Fragment {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
     // 카테코리 탭
-    @ViewById(R.id.ly_file_list_whom)
-    LinearLayout linearLayoutFileListWhom;
-    @ViewById(R.id.txt_file_list_whom)
-    TextView textViewFileListWhom;
     @ViewById(R.id.ly_file_list_where)
     LinearLayout linearLayoutFileListWhere;
     @ViewById(R.id.txt_file_list_where)
     TextView textViewFileListWhere;
+    @ViewById(R.id.ly_file_list_whom)
+    LinearLayout linearLayoutFileListWhom;
+    @ViewById(R.id.txt_file_list_whom)
+    TextView textViewFileListWhom;
     @ViewById(R.id.ly_file_list_type)
     LinearLayout linearLayoutFileListType;
     @ViewById(R.id.txt_file_list_type)
@@ -82,6 +81,8 @@ public class FileListFragment extends Fragment {
     SearchedFileItemListAdapter mAdapter;
     @RestService
     JandiRestClient jandiRestClient;
+    @FragmentArg
+    int entityIdForCategorizing = -1;
 
     private MenuItem mSearch;   // ActionBar의 검색뷰
     private SearchQuery mSearchQuery;
@@ -95,6 +96,10 @@ public class FileListFragment extends Fragment {
     @AfterInject
     void init() {
         mContext = getActivity();
+        mSearchQuery = new SearchQuery();
+        if (entityIdForCategorizing >= 0) {
+            mSearchQuery.setSharedEntity(entityIdForCategorizing);
+        }
     }
 
     @AfterViews
@@ -107,7 +112,6 @@ public class FileListFragment extends Fragment {
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        mSearchQuery = new SearchQuery();
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         retrieveEntityManager();
@@ -137,11 +141,6 @@ public class FileListFragment extends Fragment {
         });
     }
 
-    @AfterInject
-    void calledAfterInjection() {
-        EventBus.getDefault().register(this);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -151,15 +150,10 @@ public class FileListFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_list_actionbar_menu, menu);
+
         mSearch = menu.findItem(R.id.action_file_list_search);
         final SearchView sv = (SearchView) mSearch.getActionView();
 
@@ -209,17 +203,20 @@ public class FileListFragment extends Fragment {
         doSearch();
     }
 
-    public void onEvent(CategorizedMenuOfFileType event) {
+    @UiThread
+    public void onInnerEvent(CategorizedMenuOfFileType event) {
         mSearchQuery.setFileType(event.getServerQuery());
         doSearch();
     }
 
-    public void onEvent(CategorizingAsOwner event) {
+    @UiThread
+    public void onInnerEvent(CategorizingAsOwner event) {
         mSearchQuery.setWriter(event.userId);
         doSearch();
     }
 
-    public void onEvent(CategorizingAsEntity event) {
+    @UiThread
+    public void onInnerEvent(CategorizingAsEntity event) {
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         doSearch();
     }
@@ -324,7 +321,8 @@ public class FileListFragment extends Fragment {
      ************************************************************/
     private String mCurrentUserNameCategorizingAccodingBy = null;
     private String mCurrentFileTypeCategorizingAccodingBy = null;
-    private String mCurrentEntityCategorizingAccodingBy = null;
+    @FragmentArg
+    String mCurrentEntityCategorizingAccodingBy = null;
 
     private AlertDialog mFileTypeSelectDialog;
     private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
@@ -389,7 +387,8 @@ public class FileListFragment extends Fragment {
                     mFileTypeSelectDialog.dismiss();
                 mCurrentFileTypeCategorizingAccodingBy = adapter.getItem(i);
                 textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
-                EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
+                onInnerEvent(new CategorizedMenuOfFileType(i));
+//                EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
             }
         });
 
@@ -426,13 +425,15 @@ public class FileListFragment extends Fragment {
                 if (i == 0) {
                     mCurrentUserNameCategorizingAccodingBy = getString(R.string.jandi_file_category_everyone);
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
+//                    EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
+                    onInnerEvent(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else {
                     FormattedEntity owner = teamMember.get(i - 1);
                     log.debug(owner.getId() + " is selected");
                     mCurrentUserNameCategorizingAccodingBy = owner.getName();
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-                    EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
+//                    EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
+                    onInnerEvent(new CategorizingAsOwner(owner.getId()));
                 }
             }
         });
@@ -482,7 +483,8 @@ public class FileListFragment extends Fragment {
                     mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
                 }
                 textVew.setText(mCurrentEntityCategorizingAccodingBy);
-                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+//                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
+                onInnerEvent(new CategorizingAsEntity(sharedEntityId));
             }
         });
 

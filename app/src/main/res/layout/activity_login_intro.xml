@@ -7,12 +7,14 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp"
         android:src="@drawable/jandi_blur_bg"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="140dp"
+        android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,4 +42,26 @@
                 android:background="@drawable/btn_inactive"/>
         </RelativeLayout>
     </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="40dp"
+        android:layout_alignParentBottom="true">
+        <TextView
+            android:id="@+id/txt_team_creation_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/jandi_text_white"
+            android:text="@string/jandi_question_team_create"/>
+        <TextView
+            android:id="@+id/txt_team_creation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/txt_team_creation_message"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="18sp"
+            android:text="@string/jandi_action_create_team"/>
+    </RelativeLayout>
 </RelativeLayout>

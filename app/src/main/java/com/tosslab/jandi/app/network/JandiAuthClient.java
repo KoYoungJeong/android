@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.network.models.ReqCreateTeam;
 import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -22,6 +24,16 @@ public class JandiAuthClient {
     public ResConfig getConfig() throws JandiNetworkException {
         try {
             return mRestClient.getConfig();
+        } catch (HttpStatusCodeException e) {
+            throw new JandiNetworkException(e);
+        }
+    }
+
+    public ResCommon createTeam(String email) throws JandiNetworkException {
+        try {
+            ReqCreateTeam req = new ReqCreateTeam();
+            req.email = email;
+            return mRestClient.createTeam(req);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }

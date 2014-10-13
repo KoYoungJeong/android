@@ -7,10 +7,15 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:background="@color/jandi_main">
+    <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:src="@drawable/jandi_blur_bg"/>-->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="100dp"
         android:src="@drawable/jandi_blur_bg"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +44,7 @@
                 android:layout_marginRight="33dp"
                 android:textSize="16dp"
                 android:textColor="@color/jandi_text_white"
-                android:text="안녕하세요?\n잔디에 오신 것을 환영합니다"/>
+                android:text="@string/jandi_welcome_message"/>
         </LinearLayout>
         <TextView
             android:id="@+id/txt_login_displayed_id"
