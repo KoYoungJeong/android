@@ -173,11 +173,11 @@ public class MixpanelAnalyticsClient {
 
     private String convertEntityTypeToString(int entityType) {
         switch (entityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return KEY_CHANNEL;
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return KEY_DIRECT_MESSAGE;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
             default:
                 return KEY_PRIVATE_GROUP;
         }

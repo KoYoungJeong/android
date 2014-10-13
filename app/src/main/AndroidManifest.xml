@@ -49,6 +49,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
+            android:name=".ui.FileListActivity_"
+            android:label="@string/jandi_tab_file"
+            android:theme="@style/JandiSearchTheme"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.FileDetailActivity_"
             android:label="@string/title_file_detail"
             android:screenOrientation="portrait"

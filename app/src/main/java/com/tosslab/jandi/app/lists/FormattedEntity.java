@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class FormattedEntity {
     // 채널 일 경우
-    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_CHANNEL;
+    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_TOPIC;
     public static final int TYPE_REAL_USER              = JandiConstants.TYPE_DIRECT_MESSAGE;
-    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_PRIVATE_GROUP;
+    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_GROUP;
 
     // Dummy Entity
     // TODO 통합
@@ -126,9 +126,9 @@ public class FormattedEntity {
 
     public int getIconImageResId() {
         if (isChannel()) {
-            return R.drawable.jandi_icon_channel;
+            return R.drawable.jandi_icon_topic;
         } else if (isPrivateGroup()) {
-            return R.drawable.jandi_icon_privategroup;
+            return R.drawable.jandi_icon_chat;
         } else if (isDummy()) {
             return getDummyImageRes();
         } else {

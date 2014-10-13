@@ -15,9 +15,10 @@
     </style>
 
     <!-- Application theme for SearchActivity -->
-    <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="JandiSearchTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
+        <item name="android:actionBarWidgetTheme">@style/JandiActionBarWidget</item>
         <!--<item name="android:actionBarTabStyle">@style/JandiActionBarTab</item>-->
         <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
         <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
@@ -31,6 +32,20 @@
         <item name="android:background">@color/jandi_main</item>
         <item name="android:backgroundStacked">@color/jandi_main</item>
         <item name="android:backgroundSplit">@color/jandi_main</item>
+    </style>
+
+    <style name="JandiActionBarWidget" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- SearchView customization-->
+        <item name="searchViewSearchIcon">@drawable/jandi_actionb_search</item>
+        <!--<item name="searchViewCloseIcon">@drawable/jandi_re</item>-->
+        <item name="searchViewTextField">@drawable/jandi_actionbar_search_bracket</item>
+        <item name="searchViewAutoCompleteTextView">@style/AutoCompleteTextView</item>
+    </style>
+
+    <style name="AutoCompleteTextView" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:textColor">@color/jandi_text_white</item>
+        <item name="android:textCursorDrawable">@color/jandi_text_white</item>
+        <!--<item name="android:textColorHighlight">@color/search_view_selected_text</item>-->
     </style>
 
     <!-- Spinner in Actionbar -->

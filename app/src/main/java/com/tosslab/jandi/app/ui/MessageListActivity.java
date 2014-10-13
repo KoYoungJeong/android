@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -326,9 +327,26 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             case R.id.action_my_entity_leave:
                 leaveEntityInBackground();
                 return true;
+            case R.id.action_entity_move_file_list:
+            case R.id.action_my_entity_move_file_list:
+                moveToFileListActivity();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveToFileListActivity() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                FileListActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .entityId(entityId)
+                        .start();
+            }
+        }, 250);
     }
 
     /************************************************************
@@ -862,7 +880,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
-
+        String permissionCode = (mChattingInformations.isTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
                 .with(mContext, requestURL)
@@ -876,8 +894,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
                 .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
-                .setMultipartParameter("share", "" + event.cdpId)
-                .setMultipartParameter("permission", "744");
+                .setMultipartParameter("share", "" + event.entityId)
+                .setMultipartParameter("permission", permissionCode);
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
@@ -1000,9 +1018,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void leaveEntityInBackground() {
         try {
-            if (mChattingInformations.isChannel()) {
+            if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.leaveChannel(mChattingInformations.entityId);
-            } else if (mChattingInformations.isPrivateGroup()) {
+            } else if (mChattingInformations.isGroup()) {
                 mJandiEntityClient.leavePrivateGroup(mChattingInformations.entityId);
             }
             leaveEntitySucceed();
@@ -1050,9 +1068,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void modifyEntityInBackground(ConfirmModifyEntityEvent event) {
         try {
-            if (mChattingInformations.isChannel()) {
+            if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.modifyChannelName(mChattingInformations.entityId, event.inputName);
-            } else if (mChattingInformations.isPrivateGroup()) {
+            } else if (mChattingInformations.isGroup()) {
                 mJandiEntityClient.modifyPrivateGroupName(mChattingInformations.entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
@@ -1081,9 +1099,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void deleteEntityInBackground() {
         try {
-            if (mChattingInformations.isChannel()) {
+            if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.deleteChannel(mChattingInformations.entityId);
-            } else if (mChattingInformations.isPrivateGroup()) {
+            } else if (mChattingInformations.isGroup()) {
                 mJandiEntityClient.deletePrivateGroup(mChattingInformations.entityId);
             }
             deleteEntitySucceed();
@@ -1148,10 +1166,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void inviteInBackground(List<Integer> invitedUsers) {
         try {
-            if (mChattingInformations.isChannel()) {
+            if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.inviteChannel(
                         mChattingInformations.entityId, invitedUsers);
-            } else if (mChattingInformations.isPrivateGroup()) {
+            } else if (mChattingInformations.isGroup()) {
                 mJandiEntityClient.invitePrivateGroup(
                         mChattingInformations.entityId, invitedUsers);
             }
@@ -1275,12 +1293,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
         }
 
-        public boolean isChannel() {
-            return (entityType == JandiConstants.TYPE_CHANNEL) ? true : false;
+        public boolean isTopic() {
+            return (entityType == JandiConstants.TYPE_TOPIC) ? true : false;
         }
 
-        public boolean isPrivateGroup() {
-            return (entityType == JandiConstants.TYPE_PRIVATE_GROUP) ? true : false;
+        public boolean isGroup() {
+            return (entityType == JandiConstants.TYPE_GROUP) ? true : false;
         }
 
         public boolean isDirectMessage() {

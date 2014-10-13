@@ -68,6 +68,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.add_entity_menu, menu);
     }
 
@@ -161,7 +162,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_CHAT,
-                JandiConstants.TYPE_CHANNEL,
+                JandiConstants.TYPE_TOPIC,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
     }

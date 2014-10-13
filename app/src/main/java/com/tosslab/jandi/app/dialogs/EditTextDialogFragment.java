@@ -173,7 +173,7 @@ public class EditTextDialogFragment extends DialogFragment {
                                 switch (actionType) {
                                     case ACTION_CREATE_CHAT:
                                         // Topic 혹은 Group 생성일 경우 해당 이벤트 전달
-                                        if (entityType == JandiConstants.TYPE_CHANNEL) {
+                                        if (entityType == JandiConstants.TYPE_TOPIC) {
                                             EventBus.getDefault().post(
                                                     new ConfirmCreateTopicEvent(
                                                             inputName.getText().toString()));
@@ -262,9 +262,9 @@ public class EditTextDialogFragment extends DialogFragment {
 
     int obtainTitileForCreateCdp(int entityType) {
         switch (entityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return R.string.jandi_create_channel;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
             default:
                 return R.string.jandi_create_privategroup;
         }
@@ -272,9 +272,9 @@ public class EditTextDialogFragment extends DialogFragment {
 
     int obtainTitileForModifyCdp(int entityType) {
         switch (entityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return R.string.jandi_modify_channel;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
             default:
                 return R.string.jandi_modify_private_group;
         }

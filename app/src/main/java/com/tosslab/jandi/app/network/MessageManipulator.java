@@ -2,13 +2,9 @@ package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
-import com.tosslab.jandi.app.network.models.ReqShareMessage;
-import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
@@ -33,11 +29,11 @@ public class MessageManipulator {
 
     public ResMessages getMessages(int firstItemId) throws RestClientException {
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return mRestClient.getChannelMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.getDirectMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
                 return mRestClient.getGroupMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
             default:
                 return null;
@@ -47,11 +43,11 @@ public class MessageManipulator {
 
     public ResUpdateMessages updateMessages(int fromCurrentId) throws RestClientException {
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return mRestClient.getChannelMessagesUpdated(mEntityId, fromCurrentId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.getDirectMessagesUpdated(mEntityId, fromCurrentId);
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
                 return mRestClient.getGroupMessagesUpdated(mEntityId, fromCurrentId);
             default:
                 return null;
@@ -61,13 +57,13 @@ public class MessageManipulator {
     public ResCommon setMarker(int lastLinkId) throws RestClientException {
         String entityType;
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 entityType = ReqSetMarker.CHANNEL;
                 break;
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 entityType = ReqSetMarker.USER;
                 break;
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
             default:
                 entityType = ReqSetMarker.PRIVATEGROUP;
                 break;
@@ -82,11 +78,11 @@ public class MessageManipulator {
         sendingMessage.content = message;
 
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return mRestClient.sendChannelMessage(sendingMessage, mEntityId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.sendDirectMessage(sendingMessage, mEntityId);
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
                 return mRestClient.sendGroupMessage(sendingMessage, mEntityId);
             default:
                 return null;
@@ -98,11 +94,11 @@ public class MessageManipulator {
         reqModifyMessage.content = message;
 
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return mRestClient.modifyChannelMessage(reqModifyMessage, mEntityId, messageId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.modifyDirectMessage(reqModifyMessage, mEntityId, messageId);
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
                 return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mEntityId, messageId);
             default:
                 return null;
@@ -111,11 +107,11 @@ public class MessageManipulator {
 
     public ResCommon deleteMessage(int messageId) throws RestClientException {
         switch (mEntityType) {
-            case JandiConstants.TYPE_CHANNEL:
+            case JandiConstants.TYPE_TOPIC:
                 return mRestClient.deleteChannelMessage(mEntityId, messageId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return mRestClient.deleteDirectMessage(mEntityId, messageId);
-            case JandiConstants.TYPE_PRIVATE_GROUP:
+            case JandiConstants.TYPE_GROUP:
                 return mRestClient.deletePrivateGroupMessage(mEntityId, messageId);
             default:
                 return null;

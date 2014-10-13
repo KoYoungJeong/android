@@ -5,10 +5,10 @@ package com.tosslab.jandi.app.events;
  */
 public class ConfirmFileUploadEvent {
     public String realFilePath;
-    public int cdpId;
+    public int entityId;
     public String comment;
-    public ConfirmFileUploadEvent(int cdpId, String realFilePath, String comment) {
-        this.cdpId = cdpId;
+    public ConfirmFileUploadEvent(int entityId, String realFilePath, String comment) {
+        this.entityId = entityId;
         this.realFilePath = realFilePath;
         this.comment = comment;
     }

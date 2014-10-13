@@ -271,9 +271,9 @@ public class MainFileListFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    /**
-     * 파일 검색을 담당하는 쿼리.
-     */
+    /************************************************************
+     * 파일 검색을 담당하는 쿼리 클래스
+     ************************************************************/
     private class SearchQuery {
         private final String CATEGORY_ALL   = "all";
         private final int LATEST_MESSAGE    = -1;

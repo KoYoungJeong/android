@@ -14,17 +14,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Created by justinygchoi on 2014. 7. 9..
@@ -107,9 +103,9 @@ public class JandiGCMIntentService extends IntentService {
         JsonNode toEntity = messagesNode.get("toEntity");
         String entityType = toEntity.get("type").asText();
         if (entityType.equals("channel")) {
-            return JandiConstants.TYPE_CHANNEL;
+            return JandiConstants.TYPE_TOPIC;
         } else if (entityType.equals("privateGroup")) {
-            return JandiConstants.TYPE_PRIVATE_GROUP;
+            return JandiConstants.TYPE_GROUP;
         } else if (entityType.equals("user")) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {

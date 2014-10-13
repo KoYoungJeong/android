@@ -150,7 +150,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_CHAT,
-                JandiConstants.TYPE_PRIVATE_GROUP,
+                JandiConstants.TYPE_GROUP,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
     }

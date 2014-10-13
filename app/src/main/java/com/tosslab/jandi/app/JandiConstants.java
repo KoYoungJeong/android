@@ -28,9 +28,9 @@ public class JandiConstants {
     public static final String PREF_REG_ID      = "registrationId";
     public static final String PREF_APP_VERSION = "JandiVersion";
 
-    public static final int TYPE_CHANNEL        = 0x00;
+    public static final int TYPE_TOPIC          = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
-    public static final int TYPE_PRIVATE_GROUP  = 0x02;
+    public static final int TYPE_GROUP          = 0x02;
 
     public static final int TYPE_UPLOAD_GALLERY         = 0x00;
     public static final int TYPE_UPLOAD_TAKE_PHOTO      = 0x01;

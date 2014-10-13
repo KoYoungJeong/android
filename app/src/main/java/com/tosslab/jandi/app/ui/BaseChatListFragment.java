@@ -53,19 +53,19 @@ public class BaseChatListFragment extends Fragment {
 
     protected void moveToChannelMessageActivity(int channelId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(channelId, JandiConstants.TYPE_CHANNEL);
+        moveToMessageActivity(channelId, JandiConstants.TYPE_TOPIC);
     }
 
     protected void moveToPrivateGroupMessageActivity(int privateGroupId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_PRIVATE_GROUP);
+        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_GROUP);
     }
 
     protected void moveToMessageActivity(FormattedEntity entity) {
         int type = (entity.isChannel())
-                ? JandiConstants.TYPE_CHANNEL
+                ? JandiConstants.TYPE_TOPIC
                 : (entity.isPrivateGroup())
-                    ? JandiConstants.TYPE_PRIVATE_GROUP
+                    ? JandiConstants.TYPE_GROUP
                     : JandiConstants.TYPE_DIRECT_MESSAGE;
         moveToMessageActivity(entity.getId(), type);
     }

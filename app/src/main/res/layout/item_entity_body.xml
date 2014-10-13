@@ -14,7 +14,7 @@
             android:layout_height="@dimen/jandi_entity_item_icon"
             android:layout_marginLeft="@dimen/jandi_entity_item_icon_margin_left"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_icon_channel"/>
+            android:src="@drawable/jandi_icon_topic"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -213,15 +213,15 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             if (formattedEntity.isChannel()) {
                 // 채널 아이콘의 색상이 자신의 ID에 따라 자동으로 변하도록...
                 if (formattedEntity.isJoined) {
-                    imageViewIcon.setColorFilter(formattedEntity.getMyColor(),
-                            android.graphics.PorterDuff.Mode.MULTIPLY);
+//                    imageViewIcon.setColorFilter(formattedEntity.getMyColor(),
+//                            android.graphics.PorterDuff.Mode.MULTIPLY);
                 } else {
-                    imageViewIcon.clearColorFilter();
+//                    imageViewIcon.clearColorFilter();
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
                 }
             }
             if (formattedEntity.isPrivateGroup()) {
-                imageViewIcon.setImageResource(R.drawable.jandi_icon_privategroup);
+                imageViewIcon.setImageResource(R.drawable.jandi_icon_chat);
             }
             // 이름
             textViewName.setText(formattedEntity.getName());

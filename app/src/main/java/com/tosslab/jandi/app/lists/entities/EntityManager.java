@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -218,9 +217,9 @@ public class EntityManager {
 
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
         FormattedEntity entity;
-        if (entityType == JandiConstants.TYPE_CHANNEL) {
+        if (entityType == JandiConstants.TYPE_TOPIC) {
             entity = searchChannelById(entityId);
-        } else if (entityType == JandiConstants.TYPE_PRIVATE_GROUP) {
+        } else if (entityType == JandiConstants.TYPE_GROUP) {
             entity = searchPrivateGroupById(entityId);
         } else {
             return null;

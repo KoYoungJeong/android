@@ -14,12 +14,14 @@
         android:background="@color/jandi_more_bg">
         <!-- 프로필 -->
         <LinearLayout
+            android:id="@+id/ly_more_profile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center">
             <ImageView
+                android:id="@+id/img_more_user_profile"
                 android:layout_width="33dp"
                 android:layout_height="33dp"
                 android:src="@drawable/jandi_profile"/>
@@ -32,6 +34,7 @@
         </LinearLayout>
         <!-- 팀 -->
         <LinearLayout
+            android:id="@+id/ly_more_team"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -50,6 +53,7 @@
         </LinearLayout>
         <!-- 설정 -->
         <LinearLayout
+            android:id="@+id/ly_more_setting"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -67,74 +71,74 @@
                 android:text="@string/jandi_setting_actionb"/>
         </LinearLayout>
     </LinearLayout>
-    <!-- 둘 째 줄 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/jandi_more_bg">
-        <!-- About -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginBottom="1dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:src="@drawable/jandi_icon_more_about"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_profile_actionb"/>
-        </LinearLayout>
-        <!-- 도움말 -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
-            android:layout_marginBottom="1dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_help"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_team_info"/>
-        </LinearLayout>
-        <!-- 로그아웃 -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginBottom="1dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_logout"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_setting_sign_out"/>
-        </LinearLayout>
-    </LinearLayout>
+    <!--&lt;!&ndash; 둘 째 줄 &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:background="@color/jandi_more_bg">-->
+        <!--&lt;!&ndash; About &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center">-->
+            <!--<ImageView-->
+                <!--android:layout_width="33dp"-->
+                <!--android:layout_height="33dp"-->
+                <!--android:src="@drawable/jandi_icon_more_about"/>-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:textColor="@color/jandi_text_medium"-->
+                <!--android:text="@string/jandi_profile_actionb"/>-->
+        <!--</LinearLayout>-->
+        <!--&lt;!&ndash; 도움말 &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginLeft="1dp"-->
+            <!--android:layout_marginRight="1dp"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/jandi_icon_more_help"/>-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:textColor="@color/jandi_text_medium"-->
+                <!--android:text="@string/jandi_team_info"/>-->
+        <!--</LinearLayout>-->
+        <!--&lt;!&ndash; 로그아웃 &ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_marginBottom="1dp"-->
+            <!--android:background="@color/white"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:src="@drawable/jandi_icon_more_logout"/>-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:textColor="@color/jandi_text_medium"-->
+                <!--android:text="@string/jandi_setting_sign_out"/>-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

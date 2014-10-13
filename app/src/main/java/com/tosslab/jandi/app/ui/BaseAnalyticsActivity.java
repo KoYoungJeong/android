@@ -64,7 +64,7 @@ public class BaseAnalyticsActivity extends Activity {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mMixpanelAnalyticsClient.trackInvitingToEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackInvitingToEntity(entityType == JandiConstants.TYPE_TOPIC);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -75,7 +75,7 @@ public class BaseAnalyticsActivity extends Activity {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mMixpanelAnalyticsClient.trackDeletingEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackDeletingEntity(entityType == JandiConstants.TYPE_TOPIC);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -86,7 +86,7 @@ public class BaseAnalyticsActivity extends Activity {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mMixpanelAnalyticsClient.trackChangingEntityName(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackChangingEntityName(entityType == JandiConstants.TYPE_TOPIC);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -97,7 +97,7 @@ public class BaseAnalyticsActivity extends Activity {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
-                mMixpanelAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_CHANNEL);
+                mMixpanelAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_TOPIC);
             } catch (JSONException e) {
                 log.error("CANNOT MEET", e);
             }
@@ -189,7 +189,7 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void trackGaMessageList(EntityManager entityManager, int entityType) {
         if (entityManager == null) return;
-        String gaPath = (entityType == JandiConstants.TYPE_CHANNEL) ? GA_PATH_CHANNEL
+        String gaPath = (entityType == JandiConstants.TYPE_TOPIC) ? GA_PATH_CHANNEL
                 : (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? GA_PATH_DIRECT_MESSAGE
                 : GA_PATH_PRIVATE_GROUP;
         trackGa(entityManager.getDistictId(), gaPath);
