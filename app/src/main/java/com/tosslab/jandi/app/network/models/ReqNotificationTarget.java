@@ -8,8 +8,8 @@ public class ReqNotificationTarget {
     public static final String TARGET_DM_ONLY   = "dmOnly";
     public static final String TARGET_NONE      = "none";
 
-    public String subscrptionTarget;
-    public ReqNotificationTarget(String subscrptionTarget) {
-        this.subscrptionTarget = subscrptionTarget;
+    public String subscriptionTarget;
+    public ReqNotificationTarget(String subscriptionTarget) {
+        this.subscriptionTarget = subscriptionTarget;
     }
 }

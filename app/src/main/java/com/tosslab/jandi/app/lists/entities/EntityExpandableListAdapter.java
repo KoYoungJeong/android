@@ -194,6 +194,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
         private void init() {
             textViewBadgeCount.setVisibility(View.INVISIBLE);
             viewMaskUnjoined.setVisibility(View.INVISIBLE);
+            imageViewIcon.setImageResource(R.drawable.jandi_icon_topic);
         }
 
         public void draw(FormattedEntity formattedEntity) {
@@ -205,11 +206,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             // 아이콘
             if (formattedEntity.isChannel()) {
                 // 채널 아이콘의 색상이 자신의 ID에 따라 자동으로 변하도록...
-                if (formattedEntity.isJoined) {
-//                    imageViewIcon.setColorFilter(formattedEntity.getMyColor(),
-//                            android.graphics.PorterDuff.Mode.MULTIPLY);
-                } else {
-//                    imageViewIcon.clearColorFilter();
+                if (formattedEntity.isJoined == false) {
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
                 }
             } else if (formattedEntity.isPrivateGroup()) {

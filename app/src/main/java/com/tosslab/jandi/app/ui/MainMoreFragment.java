@@ -48,12 +48,14 @@ public class MainMoreFragment extends Fragment {
     }
 
     private void showUserProfile() {
-        FormattedEntity me = mEntityManager.getMe();
-        Picasso.with(mContext)
-                .load(me.getUserSmallProfileUrl())
-                .placeholder(R.drawable.jandi_profile)
-                .transform(new CircleTransform())
-                .into(imageViewUserProfile);
+        if (mEntityManager != null) {
+            FormattedEntity me = mEntityManager.getMe();
+            Picasso.with(mContext)
+                    .load(me.getUserSmallProfileUrl())
+                    .placeholder(R.drawable.jandi_profile)
+                    .transform(new CircleTransform())
+                    .into(imageViewUserProfile);
+        }
     }
 
     private void showJandiVersion() {

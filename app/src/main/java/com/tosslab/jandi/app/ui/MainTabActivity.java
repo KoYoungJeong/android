@@ -169,6 +169,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
+        mProgressWheel.dismiss();
         mEntityManager = new EntityManager(resLeftSideMenu);
         ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
         trackSigningIn(mEntityManager);

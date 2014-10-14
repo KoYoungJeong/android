@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -200,7 +199,7 @@ public class FileListFragment extends Fragment {
                 = (AutoCompleteTextView) searchView.findViewById(searchSrcTextId);
         searchEditText.setTextColor(Color.WHITE);
         searchEditText.setHintTextColor(Color.WHITE);
-        
+
         // 닫기 버튼
         int closeButtonId
                 = getResources().getIdentifier("android:id/search_close_btn", null, null);
@@ -416,7 +415,6 @@ public class FileListFragment extends Fragment {
                 mCurrentFileTypeCategorizingAccodingBy = adapter.getItem(i);
                 textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
                 onInnerEvent(new CategorizedMenuOfFileType(i));
-//                EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
             }
         });
 
@@ -453,14 +451,12 @@ public class FileListFragment extends Fragment {
                 if (i == 0) {
                     mCurrentUserNameCategorizingAccodingBy = getString(R.string.jandi_file_category_everyone);
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-//                    EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                     onInnerEvent(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
                 } else {
                     FormattedEntity owner = teamMember.get(i - 1);
                     log.debug(owner.getId() + " is selected");
                     mCurrentUserNameCategorizingAccodingBy = owner.getName();
                     textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
-//                    EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
                     onInnerEvent(new CategorizingAsOwner(owner.getId()));
                 }
             }
@@ -511,7 +507,6 @@ public class FileListFragment extends Fragment {
                     mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
                 }
                 textVew.setText(mCurrentEntityCategorizingAccodingBy);
-//                EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
                 onInnerEvent(new CategorizingAsEntity(sharedEntityId));
             }
         });
