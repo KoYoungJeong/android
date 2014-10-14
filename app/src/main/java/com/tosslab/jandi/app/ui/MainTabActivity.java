@@ -91,7 +91,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         // ViewPager
-        mMainTabPagerAdapter = new MainTabPagerAdapter(mContext, getFragmentManager());
+        View[] tabViews = new View[4];
+        tabViews[0] = getLayoutInflater().inflate(R.layout.tab_topic, null);
+        tabViews[1] = getLayoutInflater().inflate(R.layout.tab_chat, null);
+        tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
+        tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
+        mMainTabPagerAdapter = new MainTabPagerAdapter(getFragmentManager(), tabViews);
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setAdapter(mMainTabPagerAdapter);
 
@@ -125,6 +130,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(JandiConstants.PUSH_REFRESH_ACTION);
         registerReceiver(mRefreshEntities, intentFilter);
+
         // Entity의 리스트를 획득하여 저장한다.
         getEntities();
     }
@@ -151,28 +157,42 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void getEntitiesInBackground() {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
-            getEntitiesDone(true, resLeftSideMenu, null);
+            getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
             log.error("get entity failed", e);
-            getEntitiesDone(false, null, getString(R.string.err_expired_session));
+            getEntitiesFailed(getString(R.string.err_expired_session));
         } catch (ResourceAccessException e) {
             log.error("connect failed", e);
-            getEntitiesDone(false, null, getString(R.string.err_service_connection));
+            getEntitiesFailed(getString(R.string.err_service_connection));
         }
     }
 
     @UiThread
-    public void getEntitiesDone(boolean isOk, ResLeftSideMenu resLeftSideMenu, String errMessage) {
-        log.debug("getEntitiesDone");
-        if (isOk) {
-            mEntityManager = new EntityManager(resLeftSideMenu);
-            ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
-            trackSigningIn(mEntityManager);
-            getActionBar().setTitle(mEntityManager.getTeamName());
-            postAllEvents();
+    public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
+        mEntityManager = new EntityManager(resLeftSideMenu);
+        ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
+        trackSigningIn(mEntityManager);
+        getActionBar().setTitle(mEntityManager.getTeamName());
+        checkNewTabBadges(mEntityManager);
+        postAllEvents();
+    }
+
+    @UiThread
+    public void getEntitiesFailed(String errMessage) {
+        ColoredToast.showError(mContext, errMessage);
+        returnToIntroStartActivity();
+    }
+
+    private void checkNewTabBadges(EntityManager entityManager) {
+        if (entityManager.hasNewTopicMessage()) {
+            mMainTabPagerAdapter.showNewTopicBadge();
         } else {
-            ColoredToast.showError(mContext, errMessage);
-            returnToIntroStartActivity();
+            mMainTabPagerAdapter.hideNewTopicBadge();
+        }
+        if (entityManager.hasNewChatMessage()) {
+            mMainTabPagerAdapter.showNewChatBadge();
+        } else {
+            mMainTabPagerAdapter.hideNewChatBadge();
         }
     }
 

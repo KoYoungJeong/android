@@ -288,6 +288,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             } else if (v instanceof ImageButton) {
                 ImageButton tab = (ImageButton) v;
                 tab.setSelected(i == 0 ? true : false);
+            } else {
+                // TODO else if custom view
+                v.setSelected(i == 0 ? true : false);
             }
         }
     }
@@ -297,6 +300,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
             View v = tabsContainer.getChildAt(i);
 
             if (v instanceof ImageButton) {
+                v.setSelected(position == i ? true : false);
+            } else {
+                // TODO else if custom view
                 v.setSelected(position == i ? true : false);
             }
         }

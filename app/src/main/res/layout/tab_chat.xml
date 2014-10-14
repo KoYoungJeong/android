@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/tab_icon_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/jandi_tab_selector_chat"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tab_icon_chat"
+            android:layout_marginTop="2dp"
+            android:layout_centerHorizontal="true"
+            android:text="@string/jandi_tab_chat"
+            android:textSize="10sp"
+            android:textColor="@drawable/jandi_tab_selector_font"/>
+        <ImageView
+            android:id="@+id/tab_badge_chat_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_toRightOf="@+id/tab_icon_chat"
+            android:layout_alignTop="@+id/tab_icon_chat"
+            android:src="@drawable/jandi_icon_tab_new"/>
+    </RelativeLayout>
+</LinearLayout>

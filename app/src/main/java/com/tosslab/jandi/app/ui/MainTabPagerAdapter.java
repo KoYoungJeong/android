@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
@@ -11,44 +12,19 @@ import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class MainTabPagerAdapter
-        extends FragmentPagerAdapter
-        implements PagerSlidingTabStrip.IconTabProvider {
+public class MainTabPagerAdapter extends FragmentPagerAdapter
+        implements PagerSlidingTabStrip.ViewTabProvider {
     private static final int TAB_TOPIC  = 0;
     private static final int TAB_CHAT   = 1;
     private static final int TAB_FILE   = 2;
     private static final int TAB_MORE   = 3;
 
-    private final int[] mIconRes = {
-            R.drawable.jandi_tab_selector_topic,
-            R.drawable.jandi_tab_selector_chat,
-            R.drawable.jandi_tab_selector_file,
-            R.drawable.jandi_tab_selector_more
-    };
+    View[] mTabs;
 
-    private final int[] mTitleRes = {
-            R.string.jandi_tab_topic,
-            R.string.jandi_tab_chat,
-            R.string.jandi_tab_file,
-            R.string.jandi_tab_more
-
-    };
-
-    private Context mContext;
-    public MainTabPagerAdapter(Context context, FragmentManager fm) {
+    public MainTabPagerAdapter(FragmentManager fm, View[] tabs) {
         super(fm);
-        mContext = context;
+        mTabs = tabs;
     }
-
-//    public MainTabPagerAdapter(FragmentManager fm, View[] tabs) {
-//        super(fm);
-
-//        View[] Tabs = new View[2];
-//        Tabs[0] = getLayoutInflater().inflate(R.layout.someLayout, null);
-//        Tabs[1] = getLayoutInflater().inflate(R.layout.someOtherLayout, null);
-//
-//        mTabs = tabs;
-//    }
 
     @Override
     public Fragment getItem(int position) {
@@ -75,26 +51,54 @@ public class MainTabPagerAdapter
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        return mContext.getString(mTitleRes[position]);
-    }
-
-    @Override
     public int getCount() {
-        return mTitleRes.length;
+        return mTabs.length;
     }
 
-//    @Override
-//    public View getPageView(int position) {
-//        return mTabs[position];
-//    }
-//
-//    public void setTabs(View[] tabs) {
-//        mTabs = tabs;
-//    }
-
     @Override
-    public int getPageIconResId(int position) {
-        return mIconRes[position];
+    public View getPageView(int position) {
+        return mTabs[position];
+    }
+
+    public void setTabs(View[] tabs) {
+        mTabs = tabs;
+    }
+
+    public void showNewTopicBadge() {
+        showBadge(TAB_TOPIC);
+    }
+    public void showNewChatBadge() {
+        showBadge(TAB_CHAT);
+    }
+
+    private void showBadge(int position) {
+        View badge = getBadgeView(position);
+        if (badge != null) {
+            badge.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void hideNewTopicBadge() {
+        hideBadge(TAB_TOPIC);
+    }
+    public void hideNewChatBadge() {
+        hideBadge(TAB_CHAT);
+    }
+
+    private void hideBadge(int position) {
+        View badge = getBadgeView(position);
+        if (badge != null) {
+            badge.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private View getBadgeView(int position) {
+        View tabView = getPageView(position);
+        if (position == TAB_TOPIC) {
+            return tabView.findViewById(R.id.tab_badge_topic_new);
+        } else if (position == TAB_CHAT) {
+            return tabView.findViewById(R.id.tab_badge_chat_new);
+        }
+        return null;
     }
 }

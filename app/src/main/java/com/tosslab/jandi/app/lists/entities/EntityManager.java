@@ -148,6 +148,23 @@ public class EntityManager {
         return mMyTeam.id;
     }
 
+    public boolean hasNewTopicMessage() {
+        return hasNewMessage(mJoinedChannels);
+    }
+
+    public boolean hasNewChatMessage() {
+        return hasNewMessage(mPrivateGroups) || hasNewMessage(getFormattedUsersWithoutMe());
+    }
+
+    private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
+        for (FormattedEntity entity : formattedEntities) {
+            if (entity.alarmCount > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
      * @param givenEntityIds
