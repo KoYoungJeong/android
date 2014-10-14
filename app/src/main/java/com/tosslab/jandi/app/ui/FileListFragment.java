@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -184,6 +187,31 @@ public class FileListFragment extends Fragment {
                 return false;
             }
         });
+
+        setSearchViewStyle(sv);
+    }
+
+    private void setSearchViewStyle(SearchView searchView) {
+        // Style 에서 설정이 안되서 코드에서 수정토록...
+        // 글씨 색
+        int searchSrcTextId
+                = getResources().getIdentifier("android:id/search_src_text", null, null);
+        AutoCompleteTextView searchEditText
+                = (AutoCompleteTextView) searchView.findViewById(searchSrcTextId);
+        searchEditText.setTextColor(Color.WHITE);
+        searchEditText.setHintTextColor(Color.WHITE);
+        
+        // 닫기 버튼
+        int closeButtonId
+                = getResources().getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeButtonImage = (ImageView) searchView.findViewById(closeButtonId);
+        closeButtonImage.setImageResource(R.drawable.jandi_actionb_remove);
+
+        // 검색 Editbox 라인
+        int searchEditId
+                = getResources().getIdentifier("android:id/search_plate", null, null);
+        View searchEditView = searchView.findViewById(searchEditId);
+        searchEditView.setBackgroundResource(R.drawable.jandi_textfield_activated_holo_dark);
     }
 
     private void retrieveEntityManager() {

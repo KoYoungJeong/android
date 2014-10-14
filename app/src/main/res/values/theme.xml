@@ -18,12 +18,13 @@
     <style name="JandiSearchTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:actionBarStyle">@style/JandiActionBar</item>
-        <item name="android:actionBarWidgetTheme">@style/JandiActionBarWidget</item>
+        <!--<item name="android:actionBarWidgetTheme">@style/JandiActionBarWidget</item>-->
         <item name="android:spinnerStyle">@style/JandiSpinnerStyle</item>
         <item name="android:spinnerItemStyle">@style/JandiSpinnerItem</item>
         <item name="android:spinnerDropDownItemStyle">@style/JandiSpinnerItemStyle</item>
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
+
     </style>
 
     <!-- Actionbar -->
@@ -33,13 +34,13 @@
         <item name="android:backgroundSplit">@color/jandi_main</item>
     </style>
 
-    <style name="JandiActionBarWidget" parent="android:Theme.Holo.Light.DarkActionBar">
-        <!-- SearchView customization-->
-        <item name="searchViewSearchIcon">@drawable/jandi_actionb_search</item>
-        <item name="searchViewCloseIcon">@drawable/jandi_actionb_remove</item>
-        <item name="searchViewTextField">@drawable/jandi_actionbar_search_bracket</item>
-        <item name="searchViewAutoCompleteTextView">@style/AutoCompleteTextView</item>
-    </style>
+    <!--<style name="JandiActionBarWidget" parent="android:Theme.Holo.Light.DarkActionBar">-->
+        <!--&lt;!&ndash; SearchView customization&ndash;&gt;-->
+        <!--<item name="searchViewSearchIcon">@drawable/jandi_actionb_search</item>-->
+        <!--<item name="searchViewCloseIcon">@drawable/jandi_actionb_remove</item>-->
+        <!--<item name="searchViewTextField">@drawable/jandi_actionb_search_bracket</item>-->
+        <!--<item name="searchViewAutoCompleteTextView">@style/AutoCompleteTextView</item>-->
+    <!--</style>-->
 
     <style name="AutoCompleteTextView" parent="android:Widget.Holo.Light.AutoCompleteTextView">
         <item name="android:textColor">@color/jandi_text_white</item>
