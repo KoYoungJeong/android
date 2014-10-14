@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
+import com.newrelic.agent.android.NewRelic;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
@@ -36,6 +37,8 @@ public class IntroStartActivity extends Activity {
 
     @AfterInject
     void checkHasToken() {
+        NewRelic.withApplicationToken("AAa432b3c57008e42b2a3fa8bc9a7542fa13aace93")
+                .start(this.getApplication());
         mJandiAuthClient = new JandiAuthClient(jandiRestClient);
         checkVersionInBackground();
     }

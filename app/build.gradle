@@ -1,5 +1,6 @@
 apply plugin: 'android'
 apply plugin: 'android-apt'
+apply plugin: 'newrelic'
 
 configurations {
     apt
@@ -30,6 +31,8 @@ dependencies {
     // Etc
     compile 'log4j:log4j:1.2.+'
     compile 'de.mindpipe.android:android-logging-log4j:1.0.+'
+    // Analytics & report
+    compile 'com.newrelic.agent.android:android-agent:4.+'
     compile 'com.mixpanel.android:mixpanel-android:4.3.0@aar'
     compile 'com.parse.bolts:bolts-android:1.1.2'
 }
