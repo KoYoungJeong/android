@@ -26,4 +26,18 @@
         <item name="pstsActivateTextColor">@color/jandi_tab_text</item>
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
+
+    <style name="JandiText">
+
+    </style>
+    <style name="JandiFileListCategoryTabText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/jandi_text_light</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

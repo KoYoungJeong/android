@@ -16,9 +16,17 @@ import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;
 
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by justinygchoi on 2014. 6. 19..
@@ -46,6 +54,8 @@ public class JandiApplication extends Application {
         } catch (Exception e) {
             Log.e("android-log4j", e.getMessage());
         }
+
+//        trustEveryone();
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {
@@ -70,5 +80,31 @@ public class JandiApplication extends Application {
 
     public void setEntityManager(EntityManager entityManager) {
         mEntityManager = entityManager;
+    }
+
+    /************************************************************
+     * SSL 인증서 우회
+     * TODO : remove this
+     ************************************************************/
+    private void trustEveryone() {
+        try {
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+            SSLContext context = SSLContext.getInstance("TLS");
+            context.init(null, new X509TrustManager[]{new X509TrustManager(){
+                public void checkClientTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public void checkServerTrusted(X509Certificate[] chain,
+                                               String authType) throws CertificateException {}
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }}}, new SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+        } catch (Exception e) { // should never happen
+            e.printStackTrace();
+        }
     }
 }

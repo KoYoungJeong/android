@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="TypographyDashes">
-    <!--<string name="jandi_ga_track_id">UA-54051037-2</string>-->
-    <string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>
-    <!--<string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>-->
-    <string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>
+    <string name="jandi_ga_track_id">UA-54051037-2</string>
+    <!--<string name="jandi_ga_track_id" translatable="false">UA-53634725-3</string>-->
+    <string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>
+    <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
 
     <string name="app_name">JANDI</string>
     <string name="action_settings">Settings</string>
@@ -16,8 +16,6 @@
     <string name="jandi_action_rename">Rename</string>
     <string name="jandi_empty"></string>
 
-    <string name="err_network">Network error</string>
-
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
@@ -26,20 +24,10 @@
     <string name="jandi_action_update">Update</string>
     <string name="jandi_update_message">There is a more recent version of JANDI available for download.</string>
 
-    <!-- Team Creation -->
-    <string name="jandi_action_create_team">Create</string>
-    <string name="jandi_create_team_message">Please enter your email. We will send you an email with instructions to create a new team.</string>
-    <string name="jandi_team_creation_succeed">Succeed. Please check your email.</string>
-    <string name="err_team_creation_failed">Failed to send an email.</string>
-    <string name="jandi_question_team_create">Is your team on JANDI yet?</string>
-
     <!-- Login -->
-    <string name="jandi_action_start">Start</string>
     <string name="jandi_action_login">Sign in</string>
-    <string name="jandi_select_team">Select your team</string>
     <string name="jandi_user_id">E-mail</string>
     <string name="jandi_user_password">Password</string>
-    <string name="jandi_welcome_message">Hello\nWelcome to JANDI</string>
     <string name="err_login">Failed to sign in</string>
     <string name="err_login_unregistered_id">This is unregistered email.</string>
     <string name="err_login_invalid_id">Email address is not accurate.</string>
@@ -52,29 +40,26 @@
     <string name="err_push_registration">There is an error with push server, please try it again</string>
     <string name="err_push_invalid_device">Push service cannot be supported with this device</string>
 
-    <string name="jandi_tab_topic">Topic</string>
-    <string name="jandi_tab_chat">Chat</string>
-    <string name="jandi_tab_private_group">Groups</string>
+    <string name="jandi_tab_channel">Channel</string>
+    <string name="jandi_tab_private_group">Private Group</string>
     <string name="jandi_tab_direct_message">1:1</string>
     <string name="jandi_tab_file">File</string>
-    <string name="jandi_tab_more">More</string>
     <string name="jandi_action_direct_message">1:1 Talk</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_topic">Joined topics</string>
-    <string name="jandi_entity_unjoined_topic">Unjoined topics</string>
-    <string name="jandi_entity_create_entity_name">Name</string>
+    <string name="jandi_entity_joined_channel">Joined channels</string>
+    <string name="jandi_entity_unjoined_channel">Unjoined channels</string>
     <string name="jandi_message_create_entity">&#xa0;has been created.</string>
     <string name="jandi_message_join_entity_pre">Joining&#xa0;</string>
     <string name="jandi_message_join_entity_post"></string>
     <string name="jandi_message_invite_entity">&#xa0;user(s) have been added.</string>
-    <string name="jandi_create_channel">Create topic</string>
-    <string name="jandi_create_privategroup">Ceate group</string>
-    <string name="jandi_modify_channel">Modify topic</string>
-    <string name="jandi_modify_private_group">Modify group</string>
+    <string name="jandi_create_channel">Create channel</string>
+    <string name="jandi_create_privategroup">Ceate private group</string>
+    <string name="jandi_modify_channel">Modify channel</string>
+    <string name="jandi_modify_private_group">Modify privite group</string>
     <string name="warn_all_users_are_already_invited">All users are already invited</string>
     <string name="err_entity_create">Failed to create</string>
-    <string name="err_entity_join">Failed to join the topic</string>
+    <string name="err_entity_join">Failed to join the channel</string>
     <string name="err_entity_duplicated_name">The name exists, please try it with other name</string>
     <string name="err_entity_invite">Failed to invited</string>
     <string name="err_entity_leave">Failed to leave</string>
@@ -86,7 +71,7 @@
     <string name="jandi_profile_edit">Edit</string>
     <string name="jandi_profile_basic_info">Basic</string>
     <string name="jandi_profile_additional_info">Additional</string>
-    <string name="jandi_profile_status_message">Status</string>
+    <string name="jandi_profile_nickname">Nickname</string>
     <string name="jandi_profile_email">E-mail</string>
     <string name="jandi_profile_phone_number">Phone-No.</string>
     <string name="jandi_profile_division">Division</string>
@@ -102,11 +87,7 @@
     <string name="err_profile_photo_upload">Failed to upload the profile photo</string>
 
     <!-- 회원 초대 -->
-    <string name="jandi_team_info">Team</string>
     <string name="jandi_invitation">Invitation</string>
-    <string name="jandi_invitation_help">You can invite team member.</string>
-    <string name="jandi_invitation_succeed">Invitation succeed.</string>
-    <string name="err_invitation_failed">Invitation failed.</string>
 
     <!-- Message List -->
     <string name="jandi_message_hint">message</string>
@@ -117,7 +98,7 @@
     <string name="warn_messages_empty">There is no messages</string>
     <string name="warn_no_more_messages">There is no more new messages</string>
     <string name="warn_no_permission">Access is not granted</string>
-    <string name="err_messages_invaild_entity">Invalid topic</string>
+    <string name="err_messages_invaild_entity">Invalid channel</string>
     <string name="err_messages_get">Failed to receive the message</string>
     <string name="err_messages_send">Failed to send the message</string>
     <string name="err_messages_modify">Failed to edit the message</string>
@@ -169,14 +150,14 @@
     <!-- Search -->
     <string name="jandi_action_search">Search</string>
     <string name="jandi_file_search_keyword">Keyword</string>
-    <string name="jandi_file_category_all">All type</string>
+    <string name="jandi_file_category_all">All files</string>
     <string name="jandi_file_category_image">Images</string>
     <string name="jandi_file_category_pdf">PDFs</string>
     <string name="jandi_file_category_everyone">Everyone</string>
     <string name="jandi_file_category_everywhere">Everywhere</string>
     <string name="jandi_file_search_type">Please select the file type for search</string>
     <string name="jandi_file_search_user">Please select the writers for search</string>
-    <string name="jandi_file_search_entity">Please select the topics for search</string>
+    <string name="jandi_file_search_entity">Please select the channels for search</string>
     <string name="warn_no_more_files">There is no more searched files</string>
     <string name="err_file_search">File search has been failed</string>
 
@@ -186,5 +167,4 @@
     <string name="jandi_setting_push_subscription_cancel">Turn off notifications</string>
     <string name="jandi_setting_general">General</string>
     <string name="jandi_setting_sign_out">Sign out</string>
-    <string name="jandi_message_logout">Signed out</string>
 </resources>

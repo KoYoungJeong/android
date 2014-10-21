@@ -9,22 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:orientation="horizontal"
-        android:background="@color/jandi_more_bg">
+        android:background="@color/jandi_more_bg"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
         <LinearLayout
             android:id="@+id/ly_file_list_where"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center_vertical|end">
+            android:gravity="center_vertical">
             <TextView
                 android:id="@+id/txt_file_list_where"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="13sp"
-                android:ellipsize="end"/>
+                style="@style/JandiFileListCategoryTabText"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -37,15 +34,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center_vertical|end">
+            android:gravity="center_vertical">
             <TextView
                 android:id="@+id/txt_file_list_whom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="13sp"
-                android:ellipsize="end"/>
+                style="@style/JandiFileListCategoryTabText"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -58,16 +50,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center_vertical|end"
-            android:layout_marginRight="16dp" >
+            android:gravity="center_vertical" >
             <TextView
                 android:id="@+id/txt_file_list_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:textColor="@color/jandi_text_light"
-                android:textSize="13sp"
-                android:ellipsize="end"/>
+                style="@style/JandiFileListCategoryTabText"/>
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

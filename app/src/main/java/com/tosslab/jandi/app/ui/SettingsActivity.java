@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
@@ -137,7 +138,13 @@ public class SettingsActivity extends PreferenceActivity {
             log.debug("notification target has been changed : " + notificationTarget);
         } catch (JandiNetworkException e) {
             log.error("change notification target failed");
-            ColoredToast.showError(this, "변환에 실패했습니다");
+            // TODO
+            changeNotificationTagerFailed("변환에 실패했습니다");
         }
+    }
+
+    @UiThread
+    public void changeNotificationTagerFailed(String errMessage) {
+        ColoredToast.showError(this, errMessage);
     }
 }

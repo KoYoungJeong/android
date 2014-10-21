@@ -6,7 +6,9 @@ package com.tosslab.jandi.app;
 public class JandiConstants {
     // For Network
 //    public static final String SERVICE_ROOT_URL = "https://dev.jandi.com:2323/";
+//    public static final String SERVICE_ROOT_URL = "https://192.168.0.201/";
     public static final String SERVICE_ROOT_URL = "https://jandi.com/";     // REAL
+
     public static final String AUTH_HEADER      = "Authorization";
 
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";

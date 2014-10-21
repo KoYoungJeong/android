@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JANDI</string>
+    <string name="action_settings">設定</string>
+    <string name="jandi_confirm">確定</string>
+    <string name="jandi_cancel">取消</string>
+    <string name="jandi_upload">上傳</string>
+    <string name="jandi_action_share">分享</string>
+    <string name="jandi_action_invite">邀請</string>
+    <string name="jandi_action_leave">離開</string>
+    <string name="jandi_action_rename">重新命名</string>
+<string name="jandi_empty">
+</string>
+    <string name="err_network">網絡錯誤</string>
+    <string name="drawer_open">打開瀏覽選項</string>
+    <string name="drawer_close">關閉瀏覽選項</string>
+
+    <!-- Update -->
+    <string name="jandi_update_title">舊版</string>
+    <string name="jandi_action_update">更新</string>
+    <string name="jandi_update_message">現有新版的JANDI可用。</string>
+
+    <!-- Team Creation -->
+    <string name="jandi_action_create_team">建立</string>
+    <string name="jandi_create_team_message">請輸入您的電子郵件。我們將提供您指示如何建立新的團隊</string>
+    <string name="jandi_team_creation_succeed">成功。請查您的電子郵件</string>
+    <string name="err_team_creation_failed">電子郵件無法送出</string>
+    <string name="jandi_question_team_create">您的團隊是否已經在使用JANDI？</string>
+
+    <!-- Login -->
+    <string name="jandi_action_start">開始</string>
+    <string name="jandi_action_login">登入</string>
+    <string name="jandi_select_team">選擇您的團隊</string>
+    <string name="jandi_user_id">電子郵件</string>
+    <string name="jandi_user_password">密碼</string>
+    <string name="jandi_welcome_message">您好！歡迎使用JANDI</string>
+    <string name="err_login">登入不成功</string>
+    <string name="err_login_unregistered_id">這電子郵件在JANDI上尚未註冊</string>
+    <string name="err_login_invalid_id">電子郵件地址無效</string>
+    <string name="err_login_invalid_passwd">密碼不正確</string>
+    <string name="err_login_invalid_info">電子郵件或密碼無效</string>
+    <string name="err_expired_token">憑證已經過期</string>
+    <string name="err_expired_session">太久未使用。請重新登入</string>
+    <string name="err_service_connection">連線中斷。請再試一次</string>
+
+    <!-- Push -->
+    <string name="err_push_registration">推播侍服器出現錯誤。請再試一次</string>
+    <string name="err_push_invalid_device">這終端載具不支援推播服務</string>
+    <string name="jandi_tab_topic">標題</string>
+    <string name="jandi_tab_chat">對話</string>
+    <string name="jandi_tab_private_group">私人群組</string>
+    <string name="jandi_tab_direct_message">一對一</string>
+    <string name="jandi_tab_file">檔案</string>
+    <string name="jandi_tab_more">更多</string>
+    <string name="jandi_action_direct_message">1:1 對話</string>
+
+    <!-- Manipulate Entity -->
+    <string name="jandi_entity_joined_topic">加入的議題群組</string>
+    <string name="jandi_entity_unjoined_topic">離開議題群組</string>
+    <string name="jandi_entity_create_entity_name">名字</string>
+    <string name="jandi_message_create_entity">已建立</string>
+    <string name="jandi_message_join_entity_pre">加入</string>
+<string name="jandi_message_join_entity_post">
+</string>
+    <string name="jandi_message_invite_entity">使用者已被加入</string>
+    <string name="jandi_create_channel">建立議題群組</string>
+    <string name="jandi_create_privategroup">建立私人群組</string>
+    <string name="jandi_modify_channel">編輯議題群組</string>
+    <string name="jandi_modify_private_group">編輯私人群組</string>
+    <string name="warn_all_users_are_already_invited">全部使用者已被邀請</string>
+    <string name="err_entity_create">建立不成功</string>
+    <string name="err_entity_join">加入不成功</string>
+    <string name="err_entity_duplicated_name">這名字已被使用。請再試一次</string>
+    <string name="err_entity_invite">邀請不成功</string>
+    <string name="err_entity_leave">離開不成功</string>
+    <string name="err_entity_modify">編輯不成功</string>
+    <string name="err_entity_delete">刪除不成功</string>
+
+    <!-- 프로필 -->
+    <string name="jandi_profile_actionb">簡介</string>
+    <string name="jandi_profile_edit">編輯</string>
+    <string name="jandi_profile_basic_info">基本資料</string>
+    <string name="jandi_profile_additional_info">其它資料</string>
+    <string name="jandi_profile_status_message">狀態</string>
+    <string name="jandi_profile_email">電子郵件</string>
+    <string name="jandi_profile_phone_number">手機號碼</string>
+    <string name="jandi_profile_division">部門</string>
+    <string name="jandi_profile_position">職位</string>
+    <string name="jandi_profile_optional">非必要</string>
+    <string name="jandi_profile_update">完成</string>
+    <string name="err_profile_get_info">查無此簡介。請再試一次</string>
+    <string name="err_profile_empty_info">請填寫</string>
+    <string name="err_profile_unmodified">未施加變更</string>
+    <string name="jandi_profile_update_succeed">簡介已更新</string>
+    <string name="err_profile_update">簡介無法更新</string>
+    <string name="jandi_profile_photo_upload_succeed">簡介照片已更新</string>
+    <string name="err_profile_photo_upload">簡介照片無法更新</string>
+
+    <!-- 회원 초대 -->
+    <string name="jandi_team_info">團隊</string>
+    <string name="jandi_invitation">邀請</string>
+    <string name="jandi_invitation_help">邀請其他團隊成員加入JANDI</string>
+    <string name="jandi_invitation_succeed">邀請成功</string>
+    <string name="err_invitation_failed">邀請無法送出</string>
+
+    <!-- Message List -->
+    <string name="jandi_message_hint">訊息</string>
+    <string name="jandi_message_send">送出</string>
+    <string name="jandi_messages_modify_succeed">編輯成功</string>
+    <string name="jandi_file_uploading">上傳</string>
+    <string name="jandi_file_upload_succeed">檔案上傳成功</string>
+    <string name="warn_messages_empty">現在沒有訊息</string>
+    <string name="warn_no_more_messages">現在沒有新訊息</string>
+    <string name="warn_no_permission">無使用權限</string>
+    <string name="err_messages_invaild_entity">議題無效</string>
+    <string name="err_messages_get">訊息無法取得</string>
+    <string name="err_messages_send">訊息無法送出</string>
+    <string name="err_messages_modify">訊息無法編輯</string>
+    <string name="err_messages_delete">訊息無法刪除</string>
+    <string name="err_file_upload_failed">檔案無法上傳</string>
+<string name="jandi_setting_actionb">
+</string>
+
+    <!-- Manipulate CDP -->
+    <string name="menu_entity_edit">更改名字</string>
+    <string name="menu_entity_delete">刪除</string>
+    <string name="menu_entity_invite">邀請</string>
+    <string name="menu_entity_leave">離開</string>
+
+    <!-- Message -->
+    <string name="modify_message">編輯訊息</string>
+    <string name="today">今天</string>
+
+    <!-- File Detail Activity -->
+    <string name="jandi_action_download">下載</string>
+    <string name="jandi_action_unshare">取消分享</string>
+    <string name="jandi_action_delete">刪除</string>
+    <string name="jandi_share_succeed">已被分享</string>
+    <string name="jandi_unshare_succeed">已被取消分享</string>
+    <string name="jandi_delete_succeed">檔案已刪除</string>
+    <string name="err_unsupported_file_type_pre">沒有安裝支援的app</string>
+    <string name="err_unsupported_file_type_post"></string>
+    <string name="err_file_detail">檔案無法找到</string>
+    <string name="err_download">檔案無法下載</string>
+    <string name="err_share">檔案無法分享</string>
+    <string name="err_unshare">檔案無法取消分享</string>
+    <string name="err_delete_file">檔案無法刪除</string>
+
+    <!-- File Upload -->
+    <string name="title_file_upload">上傳檔案</string>
+    <string name="file_upload_comment">留言（非必要）</string>
+    <string name="menu_gallery">從照片集上傳</string>
+    <string name="menu_camera">從相機上傳</string>
+    <string name="menu_a_file">從檔案目錄上傳</string>
+    <string name="jandi_title_activity_file_explorer">檔案探索</string>
+    <string name="title_file_detail">敘述</string>
+    <string name="comment">留言</string>
+
+    <!-- Share & invite -->
+    <string name="jandi_title_cdp_to_be_shared">請選擇在哪裏分享</string>
+    <string name="jandi_title_cdp_to_be_unshared">請選擇在哪裏取消分享</string>
+    <string name="title_cdp_invite">請選擇欲邀請的成員</string>
+
+    <!-- Search -->
+    <string name="jandi_action_search">搜尋</string>
+    <string name="jandi_file_search_keyword">關鍵字</string>
+    <string name="jandi_file_category_all">所有類型</string>
+    <string name="jandi_file_category_image">圖像</string>
+    <string name="jandi_file_category_pdf">PDF</string>
+    <string name="jandi_file_category_everyone">人人</string>
+    <string name="jandi_file_category_everywhere">處處</string>
+    <string name="jandi_file_search_type">請選擇檔案類型搜尋</string>
+    <string name="jandi_file_search_user">請選擇成員搜尋</string>
+    <string name="jandi_file_search_entity">請選擇議題搜尋</string>
+    <string name="warn_no_more_files">沒有找到其它檔案</string>
+    <string name="err_file_search">檔案搜尋不成功</string>
+    <string name="jandi_setting_push">推播</string>
+    <string name="jandi_setting_push_subscription">推播通知</string>
+    <string name="jandi_setting_push_subscription_ok">開啓通知功能</string>
+    <string name="jandi_setting_push_subscription_cancel">關閉通知功能</string>
+    <string name="jandi_setting_general">一般</string>
+    <string name="jandi_setting_sign_out">登出</string>
+    <string name="jandi_message_logout">已登出</string>
+</resources>
