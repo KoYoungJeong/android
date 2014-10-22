@@ -6,15 +6,17 @@
 #
 # <string ...>hello world</string>  =>  <string ...>"hello world"</string>
 # <string ...>&#xa0;hello world</string>  =>  <string ...>" hello world"</string>
-# <string ...>hello\nworld</string>  =>  <string ...>hello
-# world</string>
-for dir in `ls -d ./values*`
+
+for file in `ls ./values*/strings.xml`
 do
-    file="$dir/strings.xml"
     if [ -f $file ]
     then
-        tmpfile="$dir/strings_out.xml"
-        echo "$file ==> $tmpfile"
-        sed -e 's/>" />&#xa0;/g' $file | sed -e 's/>"/>/g' | sed -e 's/ "</&#xa0;</g' | sed -e 's/"</</g' > $tmpfile
+        tmpfile="strings_tmp.xml"
+        echo "$file has been changed"
+        # <string></string>에 있는 " 제거.
+        sed -e 's/>"/>/g' $file | sed -e 's/"</</g' > $tmpfile
+        # <string> 바로 뒤, </string> 바로 앞 공백을 &#xa0;로 변경.
+        sed 's/"> /\">\&#xa0;/g' $tmpfile | sed 's/ <\//\&#xa0;<\//g' > $file
+        rm $tmpfile
     fi
 done

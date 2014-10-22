@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">JANDI</string>
     <string name="action_settings">設定</string>
     <string name="jandi_confirm">確定</string>
@@ -9,8 +10,7 @@
     <string name="jandi_action_invite">邀請</string>
     <string name="jandi_action_leave">離開</string>
     <string name="jandi_action_rename">重新命名</string>
-<string name="jandi_empty">
-</string>
+    <string name="jandi_empty"></string>
     <string name="err_network">網絡錯誤</string>
     <string name="drawer_open">打開瀏覽選項</string>
     <string name="drawer_close">關閉瀏覽選項</string>
@@ -60,8 +60,7 @@
     <string name="jandi_entity_create_entity_name">名字</string>
     <string name="jandi_message_create_entity">已建立</string>
     <string name="jandi_message_join_entity_pre">加入</string>
-<string name="jandi_message_join_entity_post">
-</string>
+    <string name="jandi_message_join_entity_post"></string>
     <string name="jandi_message_invite_entity">使用者已被加入</string>
     <string name="jandi_create_channel">建立議題群組</string>
     <string name="jandi_create_privategroup">建立私人群組</string>
@@ -118,8 +117,7 @@
     <string name="err_messages_modify">訊息無法編輯</string>
     <string name="err_messages_delete">訊息無法刪除</string>
     <string name="err_file_upload_failed">檔案無法上傳</string>
-<string name="jandi_setting_actionb">
-</string>
+    <string name="jandi_setting_actionb"></string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">更改名字</string>
