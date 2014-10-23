@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- NORMAL -->
+    <item android:state_selected="false">
+        <shape android:shape="oval">
+            <solid
+                android:color="#bcdfd2" />
+            <size
+                android:width="8dp"
+                android:height="8dp"/>
+        </shape>
+    </item>
+    <!-- Focus -->
+    <item android:state_selected="true">
+        <shape android:shape="oval">
+            <solid
+                android:color="#31c08a" />
+            <size
+                android:width="8dp"
+                android:height="8dp"/>
+        </shape>
+    </item>
+</selector>

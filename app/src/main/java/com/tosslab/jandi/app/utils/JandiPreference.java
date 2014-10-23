@@ -58,4 +58,15 @@ public class JandiPreference {
         editor.putString(JandiConstants.PREF_LOGIN_ID, "");
         editor.commit();
     }
+
+    public static boolean getFlagForTutorial(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getBoolean(JandiConstants.PREF_HAS_READ_TUTORIAL, false);
+    }
+    public static void setFlagForTutorial(Context context, boolean hasRead) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean(JandiConstants.PREF_HAS_READ_TUTORIAL, hasRead);
+        editor.commit();
+    }
 }

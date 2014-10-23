@@ -67,8 +67,13 @@ public class IntroStartActivity extends Activity {
                 // LoginFinalActivity로 이동
                 moveToIntroFinalActivity(myToken);
             } else {
-                // LoginStartActivity로 이동
-                moveToLoginInputIdActivity();
+                if (JandiPreference.getFlagForTutorial(this)) {
+                    // LoginStartActivity로 이동
+                    moveToLoginInputIdActivity();
+                } else {
+                    moveToIntroTutorialActivity();
+                }
+
             }
         } else {
             showUpdateDialog();
@@ -114,15 +119,19 @@ public class IntroStartActivity extends Activity {
      ************************************************************/
     @UiThread
     public void moveToIntroFinalActivity(String myToken) {
-        log.debug("moveToIntroFinalActivity");
         IntroFinalActivity_.intent(this).myToken(myToken).start();
         finish();
     }
 
     @UiThread
     public void moveToLoginInputIdActivity() {
-        log.debug("moveToLoginInputIdActivity");
         IntroSelectTeamActivity_.intent(this).start();
+        finish();
+    }
+
+    @UiThread
+    public void moveToIntroTutorialActivity() {
+        IntroTutorialActivity_.intent(this).start();
         finish();
     }
 }

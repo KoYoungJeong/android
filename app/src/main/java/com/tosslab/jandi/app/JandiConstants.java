@@ -23,6 +23,7 @@ public class JandiConstants {
     public static final String PREF_TOKEN       = "token";
     public static final String PREF_LOGIN_ID    = "loginId";
     public static final String PREF_PUSH_ENTITY = "pushEntity";
+    public static final String PREF_HAS_READ_TUTORIAL   = "hasReadTutorial";
 
     // GCM
     public static final String PREF_NAME_GCM    = "JandiGcm";

@@ -27,9 +27,6 @@
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
-    <style name="JandiText">
-
-    </style>
     <style name="JandiFileListCategoryTabText">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
@@ -39,5 +36,37 @@
         <item name="android:textSize">13sp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">center</item>
+    </style>
+
+    <style name="JandiTutorial"></style>
+    <style name="JandiTutorial.Button" parent="JandiTutorial">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:background">@drawable/btn_send_selector</item>
+    </style>
+    <!-- 튜토리얼 페이지의 아래에 위치한 버튼 스타일 -->
+    <style name="JandiToturial.Indicator" parent="JandiTutorial">
+        <item name="android:layout_width">6dp</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">@drawable/jandi_tutorial_bottom_button</item>
+    </style>
+    <style name="JandiTutorial.TitleText" parent="JandiTutorial">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/jandi_main</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="JandiTutorial.Text" parent="JandiTutorial">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/jandi_text</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">3dip</item>
     </style>
 </resources>

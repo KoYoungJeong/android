@@ -5,7 +5,7 @@
     <item android:state_focused="false" android:state_pressed="false">
         <shape>
             <solid android:color="@color/jandi_messages_button_bg_active" />
-            <stroke android:color="#999999" android:width="1dp" />
+            <!--<stroke android:color="#999999" android:width="1dp" />-->
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
                 android:right="0dp" android:top="0dp" />
@@ -16,7 +16,7 @@
     <item android:state_focused="false" android:state_pressed="true">
         <shape>
             <solid android:color="@color/jandi_messages_button_bg_normal" />
-            <stroke android:color="#999999" android:width="1dp" />
+            <!--<stroke android:color="#999999" android:width="1dp" />-->
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
                 android:right="0dp" android:top="0dp" />

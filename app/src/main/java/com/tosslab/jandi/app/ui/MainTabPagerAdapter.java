@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.view.View;
 
@@ -58,10 +57,6 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     @Override
     public View getPageView(int position) {
         return mTabs[position];
-    }
-
-    public void setTabs(View[] tabs) {
-        mTabs = tabs;
     }
 
     public void showNewTopicBadge() {
