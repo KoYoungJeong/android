@@ -203,11 +203,17 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             }
 
             init();
+
+            // 뱃지 카운트
+            if (formattedEntity.alarmCount > 0) {
+                textViewBadgeCount.setVisibility(View.VISIBLE);
+                textViewBadgeCount.setText(formattedEntity.alarmCount + "");
+            }
             // 아이콘
             if (formattedEntity.isChannel()) {
-                // 채널 아이콘의 색상이 자신의 ID에 따라 자동으로 변하도록...
                 if (formattedEntity.isJoined == false) {
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
+                    textViewBadgeCount.setVisibility(View.INVISIBLE);
                 }
             } else if (formattedEntity.isPrivateGroup()) {
                 imageViewIcon.setImageResource(R.drawable.jandi_icon_chat);
@@ -218,7 +224,6 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                         .transform(new CircleTransform())
                         .into(imageViewIcon);
             }
-
             // 이름
             textViewName.setText(formattedEntity.getName());
             // 추가 정보
@@ -226,11 +231,6 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                 textViewAdditional.setText(formattedEntity.getUserEmail());
             } else {
                 textViewAdditional.setText(formattedEntity.getMemberCount() + " Users");
-            }
-            // 뱃지 카운트
-            if (formattedEntity.alarmCount > 0) {
-                textViewBadgeCount.setVisibility(View.VISIBLE);
-                textViewBadgeCount.setText(formattedEntity.alarmCount + "");
             }
         }
     }

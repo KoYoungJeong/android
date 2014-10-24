@@ -27,15 +27,34 @@
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
-    <style name="JandiFileListCategoryTabText">
+    <!-- 파일 리스트의 상단 카테고리 탭 -->
+    <style name="JandiFileListCategoryTab"></style>
+    <!-- 각 탭의 레이아웃 -->
+    <style name="JandiFileListCategoryTab.Layout" parent="JandiFileListCategoryTab">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+    </style>
+    <!-- 타이틀 텍스트 -->
+    <style name="JandiFileListCategoryTab.Text" parent="JandiFileListCategoryTab">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@color/jandi_text_light</item>
         <item name="android:textSize">13sp</item>
         <item name="android:ellipsize">end</item>
         <item name="android:gravity">center</item>
+    </style>
+    <!-- 탭과 탭 사이의 경계선 -->
+    <style name="JandiFileListCategoryTab.Border" parent="JandiFileListCategoryTab">
+        <item name="android:layout_width">0.5dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@color/jandi_border</item>
     </style>
 
     <style name="JandiTutorial"></style>
