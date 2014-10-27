@@ -99,6 +99,17 @@ public interface JandiRestClient {
     ResInvitation inviteTeamMember(ReqInvitation invitation);
 
     /************************************************************
+     * 즐겨찾기
+     ************************************************************/
+    @Post("/settings/starred/entities/{entityId}")
+    @RequiresHeader("Authorization")
+    ResCommon enableFavorite(int entityId);
+
+    @Delete("/settings/starred/entities/{entityId}")
+    @RequiresHeader("Authorization")
+    ResCommon disableFavorite(int entityId);
+
+    /************************************************************
      * 채널 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
      ************************************************************/

@@ -120,7 +120,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
         if (entityManager != null) {
             mEntityManager = entityManager;
             mEntityListAdapter.retrievePublicList(
-                    entityManager.getFormattedPrivateGroups(),
+                    entityManager.getGroups(),
                     entityManager.getFormattedUsersWithoutMe());
         }
     }

@@ -7,6 +7,10 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,112 +21,180 @@ public class EntityManager {
 
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
-    private List<FormattedEntity> mJoinedChannels;
-    private List<FormattedEntity> mUnJoinedChannels;
-    private List<FormattedEntity> mUsers;
-    private List<FormattedEntity> mPrivateGroups;
+    private HashMap<Integer, FormattedEntity> mJoinedTopics;
+    private HashMap<Integer, FormattedEntity> mUnjoinedTopics;
+    private HashMap<Integer, FormattedEntity> mUsers;
+    private HashMap<Integer, FormattedEntity> mGroups;
+
+    private HashMap<Integer, FormattedEntity> mStarredJoinedTopics;
+    private HashMap<Integer, FormattedEntity> mStarredUsers;
+    private HashMap<Integer, FormattedEntity> mStarredGroups;
+
+    private HashMap<Integer, ResLeftSideMenu.MessageMarker> mMarkers;
+
+    // Collection 의 Sort 는 연산 시간이 오래 걸리기 때문에 한번만 하기 위해 저장하자.
+    private List<FormattedEntity> mSortedJoinedTopics = null;
+    private List<FormattedEntity> mSortedUnjoinedTopics = null;
+    private List<FormattedEntity> mSortedUsers = null;
+    private List<FormattedEntity> mSortedUsersWithoutMe = null;
+    private List<FormattedEntity> mSortedGroups = null;
 
     public EntityManager(ResLeftSideMenu resLeftSideMenu) {
-        mJoinedChannels = new ArrayList<FormattedEntity>();
-        mUnJoinedChannels = new ArrayList<FormattedEntity>();
-        mUsers = new ArrayList<FormattedEntity>();
-        mPrivateGroups = new ArrayList<FormattedEntity>();
+        mJoinedTopics = new HashMap<Integer, FormattedEntity>();
+        mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
+        mGroups = new HashMap<Integer, FormattedEntity>();
+        mUsers = new HashMap<Integer, FormattedEntity>();
+
+        mStarredJoinedTopics = new HashMap<Integer, FormattedEntity>();
+        mStarredGroups = new HashMap<Integer, FormattedEntity>();
+        mStarredUsers = new HashMap<Integer, FormattedEntity>();
+
+        mMarkers = new HashMap<Integer, ResLeftSideMenu.MessageMarker>();
 
         this.mMyTeam = resLeftSideMenu.team;
         this.mMe = resLeftSideMenu.user;
+        for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
+            mMarkers.put(marker.entityId, marker);
+        }
         arrangeEntities(resLeftSideMenu);
     }
 
+    /**
+     * 현재 entity에 해당하는 Marker가 존재하는지 확인하여 있으면 정보를 추가한다
+     * @param entity
+     * @return
+     */
+    private FormattedEntity patchMarkerToFormattedEntity(FormattedEntity entity) {
+        // 현재 entity가 Marker에 존재하는지 확인하여 있으면 추가한다.
+        if (mMarkers.containsKey(entity.getId())) {
+            ResLeftSideMenu.MessageMarker marker = mMarkers.get(entity.getId());
+            entity.lastLinkId = marker.lastLinkId;
+            entity.alarmCount = marker.alarmCount;
+        }
+        return entity;
+    }
+
     private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
+        // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
+        List<Integer> starredEntities = (resLeftSideMenu.user.u_starredEntities != null)
+                ? resLeftSideMenu.user.u_starredEntities
+                : new ArrayList<Integer>();
+
+        // Unjoined topic 혹은 User 리스트 정리
+        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
+            if (entity instanceof ResLeftSideMenu.Channel) {
+                FormattedEntity unjoinedTopic
+                        = new FormattedEntity((ResLeftSideMenu.Channel) entity, FormattedEntity.UNJOINED);
+                unjoinedTopic = patchMarkerToFormattedEntity(unjoinedTopic);
+                mUnjoinedTopics.put(entity.id, unjoinedTopic);
+
+            } else if (entity instanceof ResLeftSideMenu.User) {
+                FormattedEntity user = new FormattedEntity((ResLeftSideMenu.User) entity);
+                user = patchMarkerToFormattedEntity(user);
+                if (starredEntities.contains(entity.id)) {
+                    user.isStarred = true;
+                    mStarredUsers.put(entity.id, user);
+                } else {
+                    mUsers.put(entity.id, user);
+                }
+            } else {
+                // DO NOTHING
+            }
+        }
+
         // Joined Channel 혹은 PrivateGroup 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.joinEntities) {
             if (entity instanceof ResLeftSideMenu.Channel) {
-                ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
-                log.debug("Joined channel : " + channel.name
-                        + ", owned by " + channel.ch_creatorId
-                        + ", id : " + channel.id);
+                // 만일 unjoined topic 에 해당 topic 이 있다면 뺀다.
+                mUnjoinedTopics.remove(entity.id);
+                FormattedEntity joinedTopic
+                        = new FormattedEntity((ResLeftSideMenu.Channel) entity, FormattedEntity.JOINED);
+                joinedTopic = patchMarkerToFormattedEntity(joinedTopic);
+                if (starredEntities.contains(entity.id)) {
+                    joinedTopic.isStarred = true;
+                    mStarredJoinedTopics.put(entity.id, joinedTopic);
+                } else {
+                    mJoinedTopics.put(entity.id, joinedTopic);
+                }
 
-                addInJoinedChannels(channel);
             } else if (entity instanceof ResLeftSideMenu.PrivateGroup) {
                 ResLeftSideMenu.PrivateGroup privateGroup = (ResLeftSideMenu.PrivateGroup) entity;
-                mPrivateGroups.add(new FormattedEntity(privateGroup, mMe.u_messageMarkers));
+                FormattedEntity group = new FormattedEntity(privateGroup);
+                group = patchMarkerToFormattedEntity(group);
+                if (starredEntities.contains(entity.id)) {
+                    group.isStarred = true;
+                    mStarredGroups.put(entity.id, group);
+                } else {
+                    mGroups.put(entity.id, group);
+                }
             } else {
-                // TODO : Error 처리
+                // DO NOTHING
             }
         }
 
-        // Unjoined channel 혹은 User 리스트 정리
-        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
-            if (entity instanceof ResLeftSideMenu.Channel) {
-                addInUnjoinedChannels((ResLeftSideMenu.Channel) entity);
-            } else if (entity instanceof ResLeftSideMenu.User) {
-                mUsers.add(new FormattedEntity((ResLeftSideMenu.User) entity, mMe.u_messageMarkers));
-            } else {
-                // TODO : Error 처리
-            }
-        }
+        // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
+        zeroizeSortedEntityList();
     }
 
-    private int searchDuplicatedChannelPosition(List<FormattedEntity> targets, int channelId) {
-        int ret = 0;
-        for (FormattedEntity target : targets) {
-            if (target.getChannel().id == channelId) {
-                return ret;
-            }
-            ret++;
-        }
-        return -1;
+    private void zeroizeSortedEntityList() {
+        mSortedJoinedTopics = null;
+        mSortedUnjoinedTopics = null;
+        mSortedUsers = null;
+        mSortedUsersWithoutMe = null;
+        mSortedGroups = null;
     }
-
-    private void removeDuplicatedEntityInUnjoinedChannels(ResLeftSideMenu.Channel channel) {
-        int position = searchDuplicatedChannelPosition(mUnJoinedChannels, channel.id);
-        if (position > -1) {
-            mUnJoinedChannels.remove(position);
-        }
-    }
-
-    private void addInJoinedChannels(ResLeftSideMenu.Channel channel) {
-        // 만약 Unjoined 채널 부분에 이 항목이 존재한다면 그 항목을 삭제한다.
-        removeDuplicatedEntityInUnjoinedChannels(channel);
-        mJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.JOINED, mMe.u_messageMarkers));
-    }
-
-    private void addInUnjoinedChannels(ResLeftSideMenu.Channel channel) {
-        // 만약 Join 된 채널에 이 항목이 존재한다면 추가하지 않는다.
-        int position = searchDuplicatedChannelPosition(mJoinedChannels, channel.id);
-        if (position == -1) {
-            mUnJoinedChannels.add(new FormattedEntity(channel, FormattedEntity.UNJOINED, mMe.u_messageMarkers));
-        }
-    }
-
 
     /************************************************************
      * Getter
      ************************************************************/
     public List<FormattedEntity> getJoinedChannels() {
-        return mJoinedChannels;
+        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        if (mSortedJoinedTopics == null) {
+            mSortedJoinedTopics = sortFormattedEntityList(mJoinedTopics.values());
+        }
+        ret.addAll(mStarredJoinedTopics.values());
+        ret.addAll(mSortedJoinedTopics);
+        return ret;
     }
 
     public List<FormattedEntity> getUnjoinedChannels() {
-        return mUnJoinedChannels;
+        if (mSortedUnjoinedTopics == null) {
+            mSortedUnjoinedTopics = sortFormattedEntityList(mUnjoinedTopics.values());
+        }
+        return mSortedUnjoinedTopics;
     }
 
-    public List<FormattedEntity> getFormattedPrivateGroups() {
-        return mPrivateGroups;
+    public List<FormattedEntity> getGroups() {
+        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        if (mSortedGroups == null) {
+            mSortedGroups = sortFormattedEntityList(mGroups.values());
+        }
+        ret.addAll(mStarredGroups.values());
+        ret.addAll(mSortedGroups);
+        return ret;
     }
 
     public List<FormattedEntity> getFormattedUsers() {
-        return mUsers;
+        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        if (mSortedUsers == null) {
+            mSortedUsers = sortFormattedEntityList(mUsers.values());
+        }
+        ret.addAll(mStarredUsers.values());
+        ret.addAll(mSortedUsers);
+        return ret;
     }
 
     public List<FormattedEntity> getFormattedUsersWithoutMe() {
-        ArrayList<FormattedEntity> usersWithoutMe = new ArrayList<FormattedEntity>();
-        for (FormattedEntity user : mUsers) {
-            if (user.getUser().id != mMe.id) {
-                usersWithoutMe.add(user);
-            }
+        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+        if (mSortedUsersWithoutMe == null) {
+            HashMap<Integer, FormattedEntity> usersWithoutMe
+                    = (HashMap<Integer, FormattedEntity>)mUsers.clone();
+            usersWithoutMe.remove(mMe.id);
+            mSortedUsersWithoutMe = sortFormattedEntityList(usersWithoutMe.values());
         }
-        return  usersWithoutMe;
+        ret.addAll(mStarredUsers.values());
+        ret.addAll(mSortedUsersWithoutMe);
+        return ret;
     }
 
     public List<FormattedEntity> getCategorizableEntities() {
@@ -148,23 +220,6 @@ public class EntityManager {
         return mMyTeam.id;
     }
 
-    public boolean hasNewTopicMessage() {
-        return hasNewMessage(mJoinedChannels);
-    }
-
-    public boolean hasNewChatMessage() {
-        return hasNewMessage(mPrivateGroups) || hasNewMessage(getFormattedUsersWithoutMe());
-    }
-
-    private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
-        for (FormattedEntity entity : formattedEntities) {
-            if (entity.alarmCount > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
      * @param givenEntityIds
@@ -179,7 +234,7 @@ public class EntityManager {
      * @param givenEntityIds
      * @return
      */
-    public List<FormattedEntity> retrieveExceptGivenEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveExclusivedEntities(List<Integer> givenEntityIds) {
         return retrieveByGivenEntities(givenEntityIds, false);
     }
 
@@ -197,33 +252,26 @@ public class EntityManager {
 
     public List<FormattedEntity> retrieveAccessableEntities() {
         List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
-        entities.addAll(mJoinedChannels);
-        entities.addAll(mPrivateGroups);
-        entities.addAll(mUsers);
+        entities.addAll(getJoinedChannels());
+        entities.addAll(getGroups());
+        entities.addAll(getFormattedUsers());
         return entities;
     }
 
     public FormattedEntity getEntityById(int entityId) {
-        for (FormattedEntity target : mJoinedChannels) {
-            if (target.getChannel().id == entityId) {
-                return target;
-            }
+        FormattedEntity topic = searchTopicById(entityId);
+        if (topic != null) {
+            return topic;
         }
-        for (FormattedEntity target : mUsers) {
-            if (target.getUser().id == entityId) {
-                return target;
-            }
+        FormattedEntity user = searchUserById(entityId);
+        if (user != null) {
+            return user;
         }
-        for (FormattedEntity target : mPrivateGroups) {
-            if (target.getPrivateGroup().id == entityId) {
-                return target;
-            }
+        FormattedEntity group = searchGroupById(entityId);
+        if (group != null) {
+            return group;
         }
-        for (FormattedEntity target : mUnJoinedChannels) {
-            if (target.getChannel().id == entityId) {
-                return target;
-            }
-        }
+
         return null;
     }
 
@@ -235,31 +283,56 @@ public class EntityManager {
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
         FormattedEntity entity;
         if (entityType == JandiConstants.TYPE_TOPIC) {
-            entity = searchChannelById(entityId);
+            entity = searchTopicById(entityId);
         } else if (entityType == JandiConstants.TYPE_GROUP) {
-            entity = searchPrivateGroupById(entityId);
+            entity = searchGroupById(entityId);
         } else {
             return null;
         }
-        return getUnjoinedMembersOfEntity(entity.getMembers());
+        return extractExclusivedUser(entity.getMembers());
     }
 
-    private List<FormattedEntity> getUnjoinedMembersOfEntity(List<Integer> joinedMembers) {
-        ArrayList<FormattedEntity> unjoinedMemebers = new ArrayList<FormattedEntity>(mUsers);
+    private List<FormattedEntity> extractExclusivedUser(List<Integer> joinedMembers) {
+        ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+
+        HashMap<Integer, FormattedEntity> starredUsers
+                = (HashMap<Integer, FormattedEntity>)mStarredUsers.clone();
+        HashMap<Integer, FormattedEntity> users
+                = (HashMap<Integer, FormattedEntity>)mUsers.clone();
+
         for (int id : joinedMembers) {
-            for (int i = 0; i < unjoinedMemebers.size(); i++) {
-                FormattedEntity user = unjoinedMemebers.get(i);
-                if (user.getUser().id == id) {
-                    unjoinedMemebers.remove(i);
-                    break;
-                }
+            starredUsers.remove(id);
+            users.remove(id);
+        }
+        ret.addAll(starredUsers.values());
+        ret.addAll(users.values());
+        return ret;
+    }
+
+    /************************************************************
+     * 각 채팅 종류별로 새로운 메시지가 있는지 확인
+     * 뱃지 카운트의 존재 여부를 검사하여...
+     ************************************************************/
+    public boolean hasNewTopicMessage() {
+        return hasNewMessage(getJoinedChannels());
+    }
+
+    public boolean hasNewChatMessage() {
+        return hasNewMessage(getGroups())
+                || hasNewMessage(getFormattedUsersWithoutMe());
+    }
+
+    private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
+        for (FormattedEntity entity : formattedEntities) {
+            if (entity.alarmCount > 0) {
+                return true;
             }
         }
-        return unjoinedMemebers;
+        return false;
     }
 
     public boolean isMyEntity(int entityId) {
-        FormattedEntity searchedEntity = searchChannelById(entityId);
+        FormattedEntity searchedEntity = searchTopicById(entityId);
         if (searchedEntity != null) {
             return searchedEntity.isMine(mMe.id);
         }
@@ -271,26 +344,54 @@ public class EntityManager {
         return (getMe().getId() == userId);
     }
 
-    private FormattedEntity searchChannelById(int channelId) {
-        for (FormattedEntity target : mJoinedChannels) {
-            if (target.getChannel().id == channelId) {
-                return target;
-            }
+    private FormattedEntity searchTopicById(int topicId) {
+        if (mStarredJoinedTopics.containsKey(topicId)) {
+            return mStarredJoinedTopics.get(topicId);
         }
-        for (FormattedEntity target : mUnJoinedChannels) {
-            if (target.getChannel().id == channelId) {
-                return target;
-            }
+        if (mJoinedTopics.containsKey(topicId)) {
+            return mJoinedTopics.get(topicId);
+        }
+        if (mUnjoinedTopics.containsKey(topicId)) {
+            return mUnjoinedTopics.get(topicId);
         }
         return null;
     }
 
-    private FormattedEntity searchPrivateGroupById(int privateGroupId) {
-        for (FormattedEntity target : mPrivateGroups) {
-            if (target.getPrivateGroup().id == privateGroupId) {
-                return target;
-            }
+    private FormattedEntity searchGroupById(int groupId) {
+        if (mStarredGroups.containsKey(groupId)) {
+            return mStarredGroups.get(groupId);
+        }
+        if (mGroups.containsKey(groupId)) {
+            return mGroups.get(groupId);
         }
         return null;
+    }
+
+    private FormattedEntity searchUserById(int userId) {
+        if (mStarredUsers.containsKey(userId)) {
+            return mStarredUsers.get(userId);
+        }
+        if (mUsers.containsKey(userId)) {
+            return mUsers.get(userId);
+        }
+        return null;
+    }
+
+    /**
+     * 오름 차순 정렬
+     */
+    private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
+        List<FormattedEntity> sortedEntities = new ArrayList<FormattedEntity>(naiveEntities);
+        Collections.sort(sortedEntities, new NameAscCompare());
+
+        return sortedEntities;
+    }
+
+    static class NameAscCompare implements Comparator<FormattedEntity> {
+
+        @Override
+        public int compare(FormattedEntity formattedEntity, FormattedEntity formattedEntity2) {
+            return formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName());
+        }
     }
 }

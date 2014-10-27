@@ -58,13 +58,11 @@ public class ResLeftSideMenu {
         public String u_email;
         public String u_authority;
         public String u_photoUrl;
-//        public String u_firstName;
-//        public String u_lastName;
-//        public String u_nickname;
         public String u_statusMessage;
         public ExtraData u_extraData;
         public ResMessages.ThumbnailUrls u_photoThumbnailUrl;
         public List<MessageMarker> u_messageMarkers;
+        public List<Integer> u_starredEntities;
     }
 
     static public class PrivateGroup extends Entity {

@@ -57,6 +57,7 @@
     <string name="jandi_tab_file">File</string>
     <string name="jandi_tab_more">More</string>
     <string name="jandi_action_direct_message">1:1 Chat</string>
+    <string name="jandi_action_starred">Favorite</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">Welcome to JANDI</string>

@@ -159,6 +159,25 @@ public class JandiEntityClient {
     }
 
     /************************************************************
+     * Entity 즐겨찾기 등록 / 해제
+     ************************************************************/
+    public ResCommon enableFavorite(int entityId) throws JandiNetworkException {
+        try {
+            return mJandiRestClient.enableFavorite(entityId);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiNetworkException(e);
+        }
+    }
+
+    public ResCommon disableFavorite(int entityId) throws JandiNetworkException {
+        try {
+            return mJandiRestClient.disableFavorite(entityId);
+        } catch (HttpStatusCodeException e) {
+            throw new JandiNetworkException(e);
+        }
+    }
+
+    /************************************************************
      * 사용자 프로필
      ************************************************************/
     public ResLeftSideMenu.User getUserProfile(int entityId) throws JandiNetworkException {

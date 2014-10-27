@@ -123,7 +123,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private Context mContext;
     private String mMyToken;
     private ProgressWheel mProgressWheel;
-    private Menu mMenu = null;
 
     // Update 관련
     private Timer mTimer;
@@ -134,6 +133,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private MessageItemConverter mMessageItemConverter;
 
     public EntityManager mEntityManager;
+
+    // favorite 채팅인지 검사
+    boolean isFavorite = false;
 
     @AfterInject
     void initInformations() {
@@ -292,7 +294,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        mMenu = menu;
+//        mMenu = menu;
         if (mChattingInformations.isDirectMessage()) {
             // DON'T SHOW OPTION MENU
             return true;
@@ -309,6 +311,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -330,6 +333,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             case R.id.action_entity_move_file_list:
             case R.id.action_my_entity_move_file_list:
                 moveToFileListActivity();
+                return true;
+            case R.id.action_entity_starred:
+            case R.id.action_my_entity_starred:
+                triggerFavorite(item);
                 return true;
         }
 
@@ -1267,6 +1274,50 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         getMessages();
     }
 
+    /************************************************************
+     * 즐겨 찾기 설정
+     ************************************************************/
+    private void triggerFavorite(MenuItem item) {
+        if (isFavorite) {
+            isFavorite = false;
+            disableFavoriteInBackground();
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
+        } else {
+            isFavorite = true;
+            enableFavoriteInBackground();
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
+        }
+    }
+
+    @Background
+    public void enableFavoriteInBackground() {
+        try {
+            if (mChattingInformations.entityId > 0) {
+                mJandiEntityClient.enableFavorite(mChattingInformations.entityId);
+            }
+        } catch (RestClientException e) {
+            log.error("enable favorite failed", e);
+        } catch (Exception e) {
+            log.error("enable favorite failed", e);
+        }
+    }
+
+    @Background
+    public void disableFavoriteInBackground() {
+        try {
+            if (mChattingInformations.entityId > 0) {
+                mJandiEntityClient.disableFavorite(mChattingInformations.entityId);
+            }
+        } catch (RestClientException e) {
+            log.error("enable favorite failed", e);
+        } catch (Exception e) {
+            log.error("enable favorite failed", e);
+        }
+    }
+
+    /************************************************************
+     * 채팅방 정보들.
+     ************************************************************/
     private class ChattingInfomations {
         public int entityType;
         public int entityId;

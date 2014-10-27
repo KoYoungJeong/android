@@ -385,7 +385,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         // 현재 이 파일을 share 하지 않는 entity를 추출
         List<Integer> shareEntities = mResFileDetail.shareEntities;
-        final List<FormattedEntity> unSharedEntities = mEntityManager.retrieveExceptGivenEntities(shareEntities);
+        final List<FormattedEntity> unSharedEntities = mEntityManager.retrieveExclusivedEntities(shareEntities);
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(this, unSharedEntities);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
