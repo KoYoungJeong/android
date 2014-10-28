@@ -10,11 +10,8 @@
     <string name="jandi_action_leave">탈퇴</string>
     <string name="jandi_action_rename">이름수정</string>
     <string name="jandi_empty"></string>
-
     <string name="err_network">네트워크 오류가 발생했습니다</string>
-
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="jandi_help">도움말</string>
 
     <!-- Update -->
     <string name="jandi_update_title">새로운 버전</string>

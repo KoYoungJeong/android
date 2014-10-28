@@ -296,23 +296,22 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         final int FAVORITE_MENU_ITEM   = 0;
-//        mMenu = menu;
-        if (mChattingInformations.isDirectMessage()) {
-            // DON'T SHOW OPTION MENU
-            return true;
-        }
 
-        if (mChattingInformations.isMyEntity) {
-            getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
-        }
-
+        getMenuInflater().inflate(R.menu.message_list_menu_basic, menu);
         MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
         if (mChattingInformations.isFavorite) {
             item.setIcon(R.drawable.jandi_icon_actionbar_fav);
         } else {
             item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
+        }
+
+        // DirectMessage의 경우 확장 메뉴가 없음.
+        if (mChattingInformations.isDirectMessage() == false) {
+            if (mChattingInformations.isMyEntity) {
+                getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
+            } else {
+                getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
+            }
         }
 
         return true;
@@ -324,6 +323,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_entity_starred:
+                triggerFavorite(item);
+                return true;
+            case R.id.action_entity_move_file_list:
+                moveToFileListActivity();
                 return true;
             case R.id.action_entity_invite:
             case R.id.action_my_entity_invite:
@@ -339,14 +344,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             case R.id.action_my_entity_leave:
                 leaveEntityInBackground();
                 return true;
-            case R.id.action_entity_move_file_list:
-            case R.id.action_my_entity_move_file_list:
-                moveToFileListActivity();
-                return true;
-            case R.id.action_entity_starred:
-            case R.id.action_my_entity_starred:
-                triggerFavorite(item);
-                return true;
+
         }
 
         return super.onOptionsItemSelected(item);

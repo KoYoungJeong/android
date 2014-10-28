@@ -3,23 +3,32 @@ package com.tosslab.jandi.app.ui;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.LogoutEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -105,8 +114,21 @@ public class MainMoreFragment extends Fragment {
         });
     }
 
+    @Click(R.id.ly_more_help)
+    public void launchHelpPageOnBrowser() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://support.jandi.com"));
+        startActivity(browserIntent);
+    }
+
     private void runActivityWithDelay(Runnable runnable) {
         Handler handler = new Handler();
         handler.postDelayed(runnable, 250);
+    }
+
+    @Click(R.id.ly_more_logout)
+    public void signOut() {
+        // MainTabActivity 에서 로그아웃 처리.
+        EventBus.getDefault().post(new LogoutEvent());
     }
 }

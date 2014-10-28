@@ -16,8 +16,8 @@
     <string name="jandi_action_rename">Rename</string>
     <string name="jandi_empty"></string>
     <string name="err_network">Network error</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="jandi_help">Help</string>
+    <string name="jandi_about" translatable="false">About</string>
 
     <!-- Update -->
     <string name="jandi_update_title">Old version</string>

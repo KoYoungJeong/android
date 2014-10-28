@@ -1,32 +1,21 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
-import com.tosslab.jandi.app.events.CategorizingAsEntity;
-import com.tosslab.jandi.app.events.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.LogoutEvent;
 import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
-import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -43,8 +32,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.ResourceAccessException;
-
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -84,8 +71,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mJandiEntityClient = new JandiEntityClient(mJandiRestClient, mMyToken);
 
         final ActionBar actionBar = getActionBar();
-//        actionBar.setHomeButtonEnabled(true);
-//        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -125,6 +110,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         // Push가 MainTabActivity를 보고 있을 때
         // 발생한다면 알람 카운트 갱신을 위한 BR 등록
         IntentFilter intentFilter = new IntentFilter();
@@ -138,6 +124,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onPause() {
         unregisterReceiver(mRefreshEntities);
+        EventBus.getDefault().unregister(this);
         super.onPause();
     }
 
@@ -221,4 +208,42 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             getEntities();
         }
     };
+
+    /***************************
+     * TODO Settings 에 있는 것과 동일. 뺄까 ??
+     */
+
+    public void onEvent(LogoutEvent event) {
+        deleteNotificationTokenInBackground();
+    }
+
+    @Background
+    public void deleteNotificationTokenInBackground() {
+        SharedPreferences prefs = getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
+
+        if (!regId.isEmpty()) {
+            try {
+                mJandiEntityClient.deleteNotificationToken(regId);
+                log.debug("notification token has been deleted.");
+            } catch (JandiNetworkException e) {
+                log.error("delete notification token failed");
+            }
+        }
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(JandiConstants.PREF_REG_ID, "");
+        editor.commit();
+
+        returnToLoginActivity();
+    }
+
+    public void returnToLoginActivity() {
+        // Access Token 삭제
+        JandiPreference.clearMyToken(mContext);
+
+        Intent intent = new Intent(mContext, IntroSelectTeamActivity_.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 }
