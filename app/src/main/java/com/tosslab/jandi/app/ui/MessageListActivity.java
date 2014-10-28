@@ -103,6 +103,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Extra
     int entityId;
     @Extra
+    boolean isFavorite = false;
+    @Extra
     boolean isFromPush = false;
 
     private ChattingInfomations mChattingInformations;
@@ -134,13 +136,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     public EntityManager mEntityManager;
 
-    // favorite 채팅인지 검사
-    boolean isFavorite = false;
+
 
     @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
-        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush);
+        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
         mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
     }
 
@@ -294,6 +295,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        final int FAVORITE_MENU_ITEM   = 0;
 //        mMenu = menu;
         if (mChattingInformations.isDirectMessage()) {
             // DON'T SHOW OPTION MENU
@@ -304,6 +306,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             getMenuInflater().inflate(R.menu.manipulate_my_entity_menu, menu);
         } else {
             getMenuInflater().inflate(R.menu.manipulate_entity_menu, menu);
+        }
+
+        MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
+        if (mChattingInformations.isFavorite) {
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
+        } else {
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
         }
 
         return true;
@@ -1278,12 +1287,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * 즐겨 찾기 설정
      ************************************************************/
     private void triggerFavorite(MenuItem item) {
-        if (isFavorite) {
-            isFavorite = false;
+        if (mChattingInformations.isFavorite) {
+            mChattingInformations.isFavorite = false;
             disableFavoriteInBackground();
             item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
         } else {
-            isFavorite = true;
+            mChattingInformations.isFavorite = true;
             enableFavoriteInBackground();
             item.setIcon(R.drawable.jandi_icon_actionbar_fav);
         }
@@ -1322,13 +1331,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         public int entityType;
         public int entityId;
         public boolean isMyEntity;
+        public boolean isFavorite;
         public String entityName;
         boolean willBeFinishedFromPush;
 
-        public ChattingInfomations(int entityId, int entityType, boolean isFromPush) {
+        public ChattingInfomations(int entityId, int entityType, boolean isFromPush, boolean isFavorite) {
             this.entityId = entityId;
             this.entityType = entityType;
             this.willBeFinishedFromPush = isFromPush;
+            this.isFavorite = isFavorite;
             loadExtraInfo();
         }
 

@@ -53,12 +53,12 @@ public class BaseChatListFragment extends Fragment {
 
     protected void moveToChannelMessageActivity(int channelId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(channelId, JandiConstants.TYPE_TOPIC);
+        moveToMessageActivity(channelId, JandiConstants.TYPE_TOPIC, false);
     }
 
     protected void moveToPrivateGroupMessageActivity(int privateGroupId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_GROUP);
+        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_GROUP, false);
     }
 
     protected void moveToMessageActivity(FormattedEntity entity) {
@@ -67,10 +67,10 @@ public class BaseChatListFragment extends Fragment {
                 : (entity.isPrivateGroup())
                     ? JandiConstants.TYPE_GROUP
                     : JandiConstants.TYPE_DIRECT_MESSAGE;
-        moveToMessageActivity(entity.getId(), type);
+        moveToMessageActivity(entity.getId(), type, entity.isStarred);
     }
 
-    private void moveToMessageActivity(final int entityId, final int entityType) {
+    private void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -79,6 +79,7 @@ public class BaseChatListFragment extends Fragment {
                         .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .entityType(entityType)
                         .entityId(entityId)
+                        .isFavorite(isStarred)
                         .start();
             }
         }, 250);
