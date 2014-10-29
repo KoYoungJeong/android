@@ -55,6 +55,14 @@
     <string name="jandi_tab_more">"もっと見る"</string>
     <string name="jandi_action_direct_message">"1対1チャット"</string>
 
+    <!-- 튜토리얼 -->
+    <string name="jandi_tutorial_welcome">JANDIへようこそ</string>
+    <string name="jandi_tutorial_welcome_message">ファイルを共有するときに、クラウドサービス上のファイルのURLをコピーして、プライベート用のメッセージアプリなどに貼り付けて共有していませんか？JANDIを使えば、プライベートのメッセンジャーやアプリを使わずに、メッセージやファイルのやりとりができます</string>
+    <string name="jandi_tutorial_topic">トピックを使って、より柔軟でオープンなコミュニケーションを実現</string>
+    <string name="jandi_tutorial_topic_message">JANDIでは、だれでもトピックを作ったり参加でき、メンバーが互いに自由にコミュニケーションすることができます。結果としてチームのスピード感がより速くなることが実感できるでしょう。またメンバーを限定した会話をしたい場合は、プライベートグループやダイレクトメッセージを使えば、指定したメンバー以外の目に触れることはありません</string>
+    <string name="jandi_tutorial_file">チャットウィンドウから直接ファイルをアップロード</string>
+    <string name="jandi_tutorial_file_message">PPT、XLS、PDFなどどのようなファイル形式でもJANDIにアップロードし共有することができます。アップロードされたファイルはいつでも利用可能で、簡単に検索して探すことができます</string>
+
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"さんが参加しました"</string>
     <string name="jandi_entity_unjoined_topic">"さんが退出しました"</string>
@@ -124,7 +132,6 @@
     <string name="err_messages_modify">"メッセージを変更できませんでした"</string>
     <string name="err_messages_delete">"メッセージを削除できませんでした"</string>
     <string name="err_file_upload_failed">"ファイルをアップロードできませんでした"</string>
-    <string name="jandi_setting_actionb">"設定"</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"変更する"</string>

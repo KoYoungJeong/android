@@ -15,6 +15,13 @@
             android:layout_marginLeft="@dimen/jandi_entity_item_icon_margin_left"
             android:layout_centerVertical="true"
             android:src="@drawable/jandi_icon_topic"/>
+        <ImageView
+            android:id="@+id/img_entity_listitem_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="12dp"
+            android:src="@drawable/jandi_icon_fav"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

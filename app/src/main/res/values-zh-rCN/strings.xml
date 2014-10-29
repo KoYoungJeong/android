@@ -53,6 +53,14 @@
     <string name="jandi_tab_more">"更多"</string>
     <string name="jandi_action_direct_message">"直接传讯"</string>
 
+    <!-- 튜토리얼 -->
+    <string name="jandi_tutorial_welcome">欢迎使用JANDI</string>
+    <string name="jandi_tutorial_welcome_message">人在外面却要分享档案，您是取得云端档案连结，然后通过您与您的朋友和家人使用的讯息发送服务传送给他们吗？ JANDI可让您将工作和个人生活区隔开来，同时直接保存所有的档案在它里面。</string>
+    <string name="jandi_tutorial_topic">透过议题群组有更弹性及开放的沟通</string>
+    <string name="jandi_tutorial_topic_message">有了JANDI，任何人皆可建立或加入议题群组，让您的团队成员自由地互相沟通。这样一来，您将可以察觉您团队的工作方式变得更加迅速和更能应变，同时也透过私人群组及直接传讯提供一定的隐私。</string>
+    <string name="jandi_tutorial_file">直接上传档案到对话视窗</string>
+    <string name="jandi_tutorial_file_message">您可以上传PPT，XLS，PDF或任何类型的档案到JANDI，并分享给您的团队。这些档案将永远保存在那里，让您之后如果需要到它们的时候可以搜寻得到。</string>
+
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"我的议题群组"</string>
     <string name="jandi_entity_unjoined_topic">"可选择的议题群组"</string>
@@ -116,7 +124,6 @@
     <string name="err_messages_modify">"讯息无法编辑"</string>
     <string name="err_messages_delete">"讯息无法删除"</string>
     <string name="err_file_upload_failed">"档案无法上传"</string>
-    <string name="jandi_setting_actionb">""</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"重新命名"</string>

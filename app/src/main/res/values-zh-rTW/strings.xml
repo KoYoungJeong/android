@@ -24,9 +24,9 @@
     <string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
     <string name="jandi_team_creation_succeed">"成功。請查您的電子郵件"</string>
     <string name="err_team_creation_failed">"電子郵件無法送出"</string>
-
-    <!-- change made -->
     <string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
+
+    <!-- Login -->
     <string name="jandi_action_start">"登入"</string>
     <string name="jandi_action_login">"登入"</string>
     <string name="jandi_select_team">"選擇您的團隊"</string>
@@ -61,6 +61,14 @@
     <!-- change made -->
     <string name="jandi_action_direct_message">"直接傳訊"</string>
     <string name="jandi_entity_joined_topic">"我的議題群組"</string>
+
+    <!-- 튜토리얼 -->
+    <string name="jandi_tutorial_welcome">歡迎使用JANDI</string>
+    <string name="jandi_tutorial_welcome_message">人在外面卻要分享檔案，您是取得雲端檔案連結，然後通過您與您的朋友和家人使用的訊息發送服務傳送給他們嗎？JANDI可讓您將工作和個人生活區隔開來，同時直接保存所有的檔案在它裏面。</string>
+    <string name="jandi_tutorial_topic">透過議題群組有更彈性及開放的溝通</string>
+    <string name="jandi_tutorial_topic_message">有了JANDI，任何人皆可建立或加入議題群組，讓您的團隊成員自由地互相溝通。這樣一來，您將可以察覺您團隊的工作方式變得更加迅速和更能應變，同時也透過私人群組及直接傳訊提供一定的隱私。</string>
+    <string name="jandi_tutorial_file">直接上傳檔案到對話視窗</string>
+    <string name="jandi_tutorial_file_message">您可以上傳PPT，XLS，PDF或任何類型的檔案到JANDI，並分享給您的團隊。這些檔案將永遠保存在那裡，讓您之後如果需要到它們的時候可以搜尋得到。</string>
 
     <!-- change made -->
     <string name="jandi_entity_unjoined_topic">"可選擇的議題群組"</string>
@@ -132,7 +140,6 @@
     <string name="err_messages_modify">"訊息無法編輯"</string>
     <string name="err_messages_delete">"訊息無法刪除"</string>
     <string name="err_file_upload_failed">"檔案無法上傳"</string>
-    <string name="jandi_setting_actionb">""</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"重新命名"</string>

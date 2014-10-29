@@ -51,6 +51,15 @@
     <string name="jandi_tab_file">파일</string>
     <string name="jandi_tab_more">더보기</string>
     <string name="jandi_action_direct_message">1:1 대화</string>
+    <string name="jandi_action_starred">즐겨찾기</string>
+
+    <!-- 튜토리얼 -->
+    <string name="jandi_tutorial_welcome">Welcome to JANDI</string>
+    <string name="jandi_tutorial_welcome_message">지금까지 업무 파일을 클라우드에 업로드한 뒤,\n파일 주소를 이메일로 보내고\n확인을 부탁한다는 메시지를 모바일로 보내셨나요?\n잔디는 이 모든 것을 한 번에 해결해주는\n완전히 새로운 업무용 메신저입니다.</string>
+    <string name="jandi_tutorial_topic">토픽을 통한 좀 더 유연하고\n개방적인 커뮤니케이션</string>
+    <string name="jandi_tutorial_topic_message">토픽이란 프로젝트나 주제에 따라\n자유롭게 생성 가능하며 누구나 참여할 수 있는\n새로운 개념의 업무 공간입니다.\n토픽을 이용해 업무의 개방성과 유연성을\n높이면서도 기존 메신저처럼 비공개 그룹 또는\n1:1 메시지를 통해서 독립성 또한 보장됩니다.</string>
+    <string name="jandi_tutorial_file">파일 업로드, 공유, 검색을\n메신저에서 한 번에</string>
+    <string name="jandi_tutorial_file_message">사진과 동영상 뿐 아니라 파워포인트, 엑셀, PDF 등\n다양한 포맷의 업무 파일을 직접 업로드하여\n채널이나 개인과 공유할 수 있습니다.\n또한 업로드한 파일들은 계속 보관되며\n강력한 검색 기능 또한 지원하기 때문에\n굳이 클라우드 서비스를 사용할 필요가 없습니다.</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">참여한 토픽</string>
@@ -115,8 +124,6 @@
     <string name="err_messages_modify">메시지 수정에 실패했습니다</string>
     <string name="err_messages_delete">메시지 삭제에 실패했습니다</string>
     <string name="err_file_upload_failed">파일 업로드에 실패했습니다</string>
-
-    <string name="jandi_setting_actionb">설정</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">이름 수정</string>

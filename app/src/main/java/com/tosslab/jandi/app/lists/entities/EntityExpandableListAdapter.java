@@ -154,10 +154,12 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             viewHolder = new FormattedViewHolder();
             convertView = mInflater.inflate(R.layout.item_entity_body, null);
-            viewHolder.imageViewIcon
-                    = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             viewHolder.textViewName
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
+            viewHolder.imageViewIcon
+                    = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
+            viewHolder.imageViewFavorite
+                    = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount
@@ -186,12 +188,14 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 
     class FormattedViewHolder {
         public ImageView imageViewIcon;
+        public ImageView imageViewFavorite;
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
         public View viewMaskUnjoined;
 
         private void init() {
+            imageViewFavorite.setVisibility(View.INVISIBLE);
             textViewBadgeCount.setVisibility(View.INVISIBLE);
             viewMaskUnjoined.setVisibility(View.INVISIBLE);
             imageViewIcon.setImageResource(R.drawable.jandi_icon_topic);
@@ -203,6 +207,11 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             }
 
             init();
+
+            // 즐겨 찾기
+            if (formattedEntity.isStarred) {
+                imageViewFavorite.setVisibility(View.VISIBLE);
+            }
 
             // 뱃지 카운트
             if (formattedEntity.alarmCount > 0) {
