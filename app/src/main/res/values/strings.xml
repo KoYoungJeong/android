@@ -5,190 +5,190 @@
     <string name="jandi_mixpanel_track_id">081e1e9730e547f43bdbf59be36a4e31</string>
     <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
 
-    <string name="app_name">JANDI</string>
-    <string name="jandi_settings">Settings</string>
-    <string name="jandi_confirm">OK</string>
-    <string name="jandi_cancel">Cancel</string>
-    <string name="jandi_upload">Upload</string>
-    <string name="jandi_action_share">Share</string>
-    <string name="jandi_action_invite">Invite</string>
-    <string name="jandi_action_leave">Leave</string>
-    <string name="jandi_action_rename">Rename</string>
-    <string name="jandi_empty"></string>
-    <string name="err_network">Network error</string>
-    <string name="jandi_help">Help</string>
-    <string name="jandi_about" translatable="false">About</string>
+    <string name="app_name">"JANDI"</string>
+    <string name="jandi_settings">"Settings"</string>
+    <string name="jandi_confirm">"OK"</string>
+    <string name="jandi_cancel">"Cancel"</string>
+    <string name="jandi_upload">"Upload"</string>
+    <string name="jandi_action_share">"Share"</string>
+    <string name="jandi_action_invite">"Invite"</string>
+    <string name="jandi_action_leave">"Leave"</string>
+    <string name="jandi_action_rename">"Rename"</string>
+    <string name="err_network">"Network error"</string>
+    <string name="jandi_help">"Help"</string>
+    <string name="jandi_about" translatable="false">"About"</string>
 
     <!-- Update -->
-    <string name="jandi_update_title">Old version</string>
-    <string name="jandi_action_update">Update</string>
-    <string name="jandi_update_message">A newer version of JANDI is available.</string>
+    <string name="jandi_update_title">"Old version"</string>
+    <string name="jandi_action_update">"Update"</string>
+    <string name="jandi_update_message">"A new version of JANDI is available"</string>
 
     <!-- Team Creation -->
-    <string name="jandi_action_create_team">Create</string>
-    <string name="jandi_create_team_message">Please enter your email. We will send you instructions on how to create a new team</string>
-    <string name="jandi_team_creation_succeed">Success. Please check your email</string>
-    <string name="err_team_creation_failed">Email could not be sent</string>
-    <string name="jandi_question_team_create">Is your team on JANDI yet?</string>
+    <string name="jandi_action_create_team">"Create a Team"</string>
+    <string name="jandi_create_team_message">"Provide your email address below to create a JANDI team for free!"</string>
+    <string name="jandi_team_creation_succeed">"Success! Please check your email."</string>
+    <string name="err_team_creation_failed">"Email could not be sent"</string>
+    <string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 
     <!-- Login -->
-    <string name="jandi_action_start">Start</string>
-    <string name="jandi_action_login">Sign in</string>
-    <string name="jandi_select_team">Select your Team</string>
-    <string name="jandi_user_id">Email</string>
-    <string name="jandi_user_password">Password</string>
-    <string name="jandi_welcome_message">Hello!\nWelcome to JANDI</string>
-    <string name="err_login">Sign in unsuccessful</string>
-    <string name="err_login_unregistered_id">This email is not registered on JANDI</string>
-    <string name="err_login_invalid_id">Email address is not valid</string>
-    <string name="err_login_invalid_passwd">Password is not correct</string>
-    <string name="err_login_invalid_info">Invalid email or password</string>
-    <string name="err_expired_token">Expired Token</string>
-    <string name="err_expired_session">Session has expired. Please sign in again</string>
-    <string name="err_service_connection">Connection was lost. Please try again</string>
+    <string name="jandi_action_start">"Sign in"</string>
+    <string name="jandi_action_login">"Sign in"</string>
+    <string name="jandi_select_team">"Choose Your Team"</string>
+    <string name="jandi_user_id">"Email"</string>
+    <string name="jandi_user_password">"Password"</string>
+    <string name="jandi_welcome_message">"Hello!
+Welcome to JANDI"</string>
+    <string name="err_login">"Sign in unsuccessful"</string>
+    <string name="err_login_unregistered_id">"We could not find your account on JANDI"</string>
+    <string name="err_login_invalid_id">"Email address is not valid"</string>
+    <string name="err_login_invalid_passwd">"Password is not correct"</string>
+    <string name="err_login_invalid_info">"Account and Password do not match"</string>
+    <string name="err_expired_token">"Expired Token"</string>
+    <string name="err_expired_session">"Session has expired. Please sign in again."</string>
+    <string name="err_service_connection">"Connection was lost. Please try again."</string>
 
     <!-- Push -->
-    <string name="err_push_registration">There is an error with the push server. Please try again</string>
-    <string name="err_push_invalid_device">Push notifications are not supported on this device</string>
-    <string name="jandi_tab_topic">Topic</string>
-    <string name="jandi_tab_chat">Chat</string>
-    <string name="jandi_tab_private_group">Private Groups</string>
-    <string name="jandi_tab_direct_message">1:1</string>
-    <string name="jandi_tab_file">File</string>
-    <string name="jandi_tab_more">More</string>
-    <string name="jandi_action_direct_message">1:1 Chat</string>
-    <string name="jandi_action_starred">Favorite</string>
+    <string name="err_push_registration">"There is an error with the push server. Please try again."</string>
+    <string name="err_push_invalid_device">"Push notifications are not supported on this device"</string>
+    <string name="jandi_tab_topic">"Topics"</string>
+    <string name="jandi_tab_chat">"Chats"</string>
+    <string name="jandi_tab_private_group">"Private Groups"</string>
+    <string name="jandi_tab_direct_message">"Direct Messages"</string>
+    <string name="jandi_tab_file">"Files"</string>
+    <string name="jandi_tab_more">"More"</string>
+    <string name="jandi_action_direct_message">"Direct Message"</string>
+    <string name="jandi_action_starred">"Favorite"</string>
 
     <!-- 튜토리얼 -->
-    <string name="jandi_tutorial_welcome">Welcome to JANDI</string>
-    <string name="jandi_tutorial_welcome_message">Everything you love about messaging apps, plus the convenience of cloud storage and search that just works, built for the workplace and available in the palm of your hand. That’s JANDI.</string>
-    <string name="jandi_tutorial_topic">Bring your entire team together</string>
-    <string name="jandi_tutorial_topic_message">Connect with colleagues across the organization on your Topics of choice, whether it’s collaborating on projects or just casual conversation. You don’t need their contact information – simply tap and chat. When you need privacy, invite the members you want to Private Groups or Direct Messages and carry on.</string>
-    <string name="jandi_tutorial_file">Upload files with just a few taps</string>
-    <string name="jandi_tutorial_file_message">Share documents, presentations, videos, and any other files with your team right from your phone or JANDI file drawer. All your content is stored and indexed for you to easily find whenever and wherever you need it.</string>
+    <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
+    <string name="jandi_tutorial_welcome_message">"Everything you love about messaging apps, plus the convenience of cloud storage and search that just works, built for the workplace and available in the palm of your hand. That’s JANDI."</string>
+    <string name="jandi_tutorial_topic">"Bring your entire team together"</string>
+    <string name="jandi_tutorial_topic_message">"Connect with colleagues across the organization on your Topics of choice, whether it’s collaborating on projects or just casual conversation. You don’t need their contact information – simply tap and chat. When you need privacy, invite the members you want to Private Groups or Direct Messages and carry on."</string>
+    <string name="jandi_tutorial_file">"Upload files with just a few taps"</string>
+    <string name="jandi_tutorial_file_message">"Share documents, presentations, videos, and any other files with your team right from your phone or JANDI file drawer. All your content is stored and indexed for you to easily find whenever and wherever you need it."</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_topic">Joined topic</string>
-    <string name="jandi_entity_unjoined_topic">Left topic</string>
-    <string name="jandi_entity_create_entity_name">Name</string>
-    <string name="jandi_message_create_entity">&#xa0;has been created.</string>
-    <string name="jandi_message_join_entity_pre">Joining </string>
+    <string name="jandi_entity_joined_topic">"My Topics"</string>
+    <string name="jandi_entity_unjoined_topic">"Other Topics"</string>
+    <string name="jandi_entity_create_entity_name">"Name"</string>
+    <string name="jandi_message_create_entity">" has been created"</string>
+    <string name="jandi_message_join_entity_pre">"Joining "</string>
     <string name="jandi_message_join_entity_post"></string>
-    <string name="jandi_message_invite_entity">&#xa0;user(s) have been added.</string>
-    <string name="jandi_create_channel">Create topic</string>
-    <string name="jandi_create_privategroup">Create private group</string>
-    <string name="jandi_modify_channel">Edit topic</string>
-    <string name="jandi_modify_private_group">Edit private group</string>
-    <string name="warn_all_users_are_already_invited">All users are already invited</string>
-    <string name="err_entity_create">Create unsuccessful</string>
-    <string name="err_entity_join">Join unsuccessful</string>
-    <string name="err_entity_duplicated_name">That name is already taken. Please try again</string>
-    <string name="err_entity_invite">Invite unsuccessful</string>
-    <string name="err_entity_leave">Leave unsuccessful</string>
-    <string name="err_entity_modify">Edit unsuccessful</string>
-    <string name="err_entity_delete">Delete unsuccessful</string>
+    <string name="jandi_message_invite_entity">" user(s) have been added"</string>
+    <string name="jandi_create_channel">"Create New Topic"</string>
+    <string name="jandi_create_privategroup">"Create New Private Group"</string>
+    <string name="jandi_modify_channel">"Rename Topic"</string>
+    <string name="jandi_modify_private_group">"Rename Private Group"</string>
+    <string name="warn_all_users_are_already_invited">"All users are already invited"</string>
+    <string name="err_entity_create">"Create unsuccessful"</string>
+    <string name="err_entity_join">"Join unsuccessful"</string>
+    <string name="err_entity_duplicated_name">"That name is already taken. Please try again."</string>
+    <string name="err_entity_invite">"Invite unsuccessful"</string>
+    <string name="err_entity_leave">"Leave unsuccessful"</string>
+    <string name="err_entity_modify">"Rename unsuccessful"</string>
+    <string name="err_entity_delete">"Delete unsuccessful"</string>
 
     <!-- 프로필 -->
-    <string name="jandi_profile_actionb">Profile</string>
-    <string name="jandi_profile_edit">Edit</string>
-    <string name="jandi_profile_basic_info">Basic</string>
-    <string name="jandi_profile_additional_info">Additional</string>
-    <string name="jandi_profile_status_message">Status</string>
-    <string name="jandi_profile_email">Email</string>
-    <string name="jandi_profile_phone_number">Mobile #</string>
-    <string name="jandi_profile_division">Division</string>
-    <string name="jandi_profile_position">Position</string>
-    <string name="jandi_profile_optional">(Optional)</string>
-    <string name="jandi_profile_update">Completed</string>
-    <string name="err_profile_get_info">Profile could not be found. Please try again</string>
-    <string name="err_profile_empty_info">Please fill in</string>
-    <string name="err_profile_unmodified">No changes applied</string>
-    <string name="jandi_profile_update_succeed">Profile has been updated</string>
-    <string name="err_profile_update">Profile could not be updated</string>
-    <string name="jandi_profile_photo_upload_succeed">Profile photo has been updated</string>
-    <string name="err_profile_photo_upload">Profile photo could not be updated</string>
+    <string name="jandi_profile_actionb">"Profile"</string>
+    <string name="jandi_profile_edit">"Edit"</string>
+    <string name="jandi_profile_basic_info">"Basic Info"</string>
+    <string name="jandi_profile_additional_info">"Additional Info"</string>
+    <string name="jandi_profile_status_message">"Status"</string>
+    <string name="jandi_profile_email">"Email"</string>
+    <string name="jandi_profile_phone_number">"Mobile #"</string>
+    <string name="jandi_profile_division">"Division"</string>
+    <string name="jandi_profile_position">"Position"</string>
+    <string name="jandi_profile_optional"></string>
+    <string name="jandi_profile_update">"Update"</string>
+    <string name="err_profile_get_info">"Profile could not be found. Please try again."</string>
+    <string name="err_profile_empty_info">"Please fill in"</string>
+    <string name="err_profile_unmodified">"No changes to apply"</string>
+    <string name="jandi_profile_update_succeed">"Profile has been updated"</string>
+    <string name="err_profile_update">"Profile could not be updated"</string>
+    <string name="jandi_profile_photo_upload_succeed">"Profile photo has been updated"</string>
+    <string name="err_profile_photo_upload">"Profile photo could not be updated"</string>
 
     <!-- 회원 초대 -->
-    <string name="jandi_team_info">Team</string>
-    <string name="jandi_invitation">Invitation</string>
-    <string name="jandi_invitation_help">Invite other team members to JANDI!</string>
-    <string name="jandi_invitation_succeed">Invitation successful</string>
-    <string name="err_invitation_failed">Invitation could not be sent</string>
+    <string name="jandi_team_info">"Team"</string>
+    <string name="jandi_invitation">"INVITE"</string>
+    <string name="jandi_invitation_help">"Invite other team members to JANDI!"</string>
+    <string name="jandi_invitation_succeed">"Invitation has been sent"</string>
+    <string name="err_invitation_failed">"Invitation could not be sent"</string>
 
     <!-- Message List -->
-    <string name="jandi_message_hint">message</string>
-    <string name="jandi_message_send">send</string>
-    <string name="jandi_messages_modify_succeed">edit successful</string>
-    <string name="jandi_file_uploading">uploading...</string>
-    <string name="jandi_file_upload_succeed">file upload successful</string>
-    <string name="warn_messages_empty">There are no messages</string>
-    <string name="warn_no_more_messages">There are no more new messages</string>
-    <string name="warn_no_permission">Access denied</string>
-    <string name="err_messages_invaild_entity">Invalid topic</string>
-    <string name="err_messages_get">Message could not be found</string>
-    <string name="err_messages_send">Message could not be sent</string>
-    <string name="err_messages_modify">Message could not be edited</string>
-    <string name="err_messages_delete">Message could not be deleted</string>
-    <string name="err_file_upload_failed">File could not be uploaded</string>
+    <string name="jandi_message_hint">"message"</string>
+    <string name="jandi_message_send">"send"</string>
+    <string name="jandi_messages_modify_succeed">"edit successful"</string>
+    <string name="jandi_file_uploading">"uploading..."</string>
+    <string name="jandi_file_upload_succeed">"file upload successful"</string>
+    <string name="warn_messages_empty">"There are no messages"</string>
+    <string name="warn_no_more_messages">"There are no more new messages"</string>
+    <string name="warn_no_permission">"Access denied"</string>
+    <string name="err_messages_invaild_entity">"Invalid Topic"</string>
+    <string name="err_messages_get">"Message could not be found"</string>
+    <string name="err_messages_send">"Message could not be sent"</string>
+    <string name="err_messages_modify">"Message could not be edited"</string>
+    <string name="err_messages_delete">"Message could not be deleted"</string>
+    <string name="err_file_upload_failed">"File could not be uploaded"</string>
 
     <!-- Manipulate CDP -->
-    <string name="menu_entity_edit">Edit name</string>
-    <string name="menu_entity_delete">Delete</string>
-    <string name="menu_entity_invite">Invite</string>
-    <string name="menu_entity_leave">Leave</string>
+    <string name="menu_entity_edit">"Rename"</string>
+    <string name="menu_entity_delete">"Delete"</string>
+    <string name="menu_entity_invite">"Invite"</string>
+    <string name="menu_entity_leave">"Leave"</string>
 
     <!-- Message -->
-    <string name="modify_message">Edit message</string>
-    <string name="today">Today</string>
+    <string name="modify_message">"Edit message"</string>
+    <string name="today">"Today"</string>
 
     <!-- File Detail Activity -->
-    <string name="jandi_action_download">Download</string>
-    <string name="jandi_action_unshare">Unshare</string>
-    <string name="jandi_action_delete">Delete</string>
-    <string name="jandi_share_succeed">...has been shared</string>
-    <string name="jandi_unshare_succeed">...has been unshared</string>
-    <string name="jandi_delete_succeed">...file was deleted</string>
-    <string name="err_unsupported_file_type_pre">There is no app installed for supporting </string>
+    <string name="jandi_action_download">"Download"</string>
+    <string name="jandi_action_unshare">"Unshare"</string>
+    <string name="jandi_action_delete">"Delete"</string>
+    <string name="jandi_share_succeed">"...has been shared"</string>
+    <string name="jandi_unshare_succeed">"...has been unshared"</string>
+    <string name="jandi_delete_succeed">"...has been deleted"</string>
+    <string name="err_unsupported_file_type_pre">"There is no installed app that supports"</string>
     <string name="err_unsupported_file_type_post"></string>
-    <string name="err_file_detail">File could not be found</string>
-    <string name="err_download">File could not be downloaded</string>
-    <string name="err_share">File could not be shared</string>
-    <string name="err_unshare">File could not be unshared</string>
-    <string name="err_delete_file">File could not be deleted</string>
+    <string name="err_file_detail">"File could not be found"</string>
+    <string name="err_download">"File could not be downloaded"</string>
+    <string name="err_share">"File could not be shared"</string>
+    <string name="err_unshare">"File could not be unshared"</string>
+    <string name="err_delete_file">"File could not be deleted"</string>
 
     <!-- File Upload -->
-    <string name="title_file_upload">File upload</string>
-    <string name="file_upload_comment">Comments (Optional)</string>
-    <string name="menu_gallery">Upload from Gallery</string>
-    <string name="menu_camera">Upload from Camera</string>
-    <string name="menu_a_file">Upload from file directories</string>
-    <string name="jandi_title_activity_file_explorer">File Explore&#xa0;</string>
-    <string name="title_file_detail">Description</string>
-    <string name="comment">Comment</string>
+    <string name="title_file_upload">"Upload File"</string>
+    <string name="file_upload_comment">"Comments (Optional)"</string>
+    <string name="menu_gallery">"Upload from Gallery"</string>
+    <string name="menu_camera">"Upload from Camera"</string>
+    <string name="menu_a_file">"Upload from File Directories"</string>
+    <string name="jandi_title_activity_file_explorer">"File Explore "</string>
+    <string name="title_file_detail">"Description"</string>
+    <string name="comment">"Comment"</string>
 
     <!-- Share & invite -->
-    <string name="jandi_title_cdp_to_be_shared">Please select where to share</string>
-    <string name="jandi_title_cdp_to_be_unshared">Please select where to unshare</string>
-    <string name="title_cdp_invite">Please select members to invite</string>
+    <string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
+    <string name="jandi_title_cdp_to_be_unshared">"Select where to unshare from"</string>
+    <string name="title_cdp_invite">"Choose members to invite"</string>
 
     <!-- Search -->
-    <string name="jandi_action_search">Search</string>
-    <string name="jandi_file_search_keyword">Keyword</string>
-    <string name="jandi_file_category_all">All type</string>
-    <string name="jandi_file_category_image">Images</string>
-    <string name="jandi_file_category_pdf">PDFs</string>
-    <string name="jandi_file_category_everyone">Everyone</string>
-    <string name="jandi_file_category_everywhere">Everywhere</string>
-    <string name="jandi_file_search_type">Please select the file type to search</string>
-    <string name="jandi_file_search_user">Please select the member to search</string>
-    <string name="jandi_file_search_entity">Please select the topic to search</string>
-    <string name="warn_no_more_files">There are no more files found</string>
-    <string name="err_file_search">File search unsuccessful</string>
-    <string name="jandi_setting_push">Push</string>
-    <string name="jandi_setting_push_subscription">Push notifications</string>
-    <string name="jandi_setting_push_subscription_ok">Turn on notifications</string>
-    <string name="jandi_setting_push_subscription_cancel">Turn off notifications</string>
-    <string name="jandi_setting_general">General</string>
-    <string name="jandi_setting_sign_out">Sign out</string>
-    <string name="jandi_message_logout">Signed out</string>
+    <string name="jandi_action_search">"Search"</string>
+    <string name="jandi_file_search_keyword">"Keyword"</string>
+    <string name="jandi_file_category_all">"All Files"</string>
+    <string name="jandi_file_category_image">"Images"</string>
+    <string name="jandi_file_category_pdf">"PDFs"</string>
+    <string name="jandi_file_category_everyone">"All Members"</string>
+    <string name="jandi_file_category_everywhere">"All Rooms"</string>
+    <string name="jandi_file_search_type">"Filter results by file type"</string>
+    <string name="jandi_file_search_user">"Filter results by Member"</string>
+    <string name="jandi_file_search_entity">"Filter results by Room"</string>
+    <string name="warn_no_more_files">"No more files found"</string>
+    <string name="err_file_search">"No files found"</string>
+    <string name="jandi_setting_push">"NOTIFICATION PREFERENCES"</string>
+    <string name="jandi_setting_push_subscription">"Push notifications"</string>
+    <string name="jandi_setting_push_subscription_ok">"Turned on"</string>
+    <string name="jandi_setting_push_subscription_cancel">"Turned off"</string>
+    <string name="jandi_setting_general">"General"</string>
+    <string name="jandi_setting_sign_out">"Sign out"</string>
+    <string name="jandi_message_logout">"Signed out"</string>
 </resources>
