@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">"JANDI"</string>
-    <string name="action_settings">"設定"</string>
+    <string name="jandi_settings">"設定"</string>
     <string name="jandi_confirm">"確認"</string>
     <string name="jandi_cancel">"キャンセル"</string>
     <string name="jandi_upload">"アップロード"</string>

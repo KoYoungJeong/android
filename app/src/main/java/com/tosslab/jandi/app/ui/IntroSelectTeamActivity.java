@@ -195,19 +195,24 @@ public class IntroSelectTeamActivity extends Activity {
     @Background
     void getTeamListInBackground(String myEmailId) {
         assert myEmailId != null : "myId cannot be null";
+        // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
+        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
         try {
             // 나의 팀 ID 획득
             ResMyTeam resMyTeam = mJandiAuthClient.getMyTeamId(myEmailId);
             if (resMyTeam.teamList.size() > 0) {
                 getTeamListSucceed(myEmailId, resMyTeam);
-                return;
             } else {
-                getTeamListFailed(R.string.err_login_unregistered_id);
+                getTeamListFailed(errStringResNotRegisteredId);
             }
+            return;
         } catch (JandiNetworkException e) {
-            log.error("getTeamListInBackground", e);
-            getTeamListFailed(R.string.err_network);
-
+            int errorStringRes = R.string.err_network;
+            if (e.errCode == JandiNetworkException.DATA_NOT_FOUND) {
+                // 팀이 아무것도 없는 사용자일 경우
+                errorStringRes = errStringResNotRegisteredId;
+            }
+            getTeamListFailed(errorStringRes);
         } catch (Exception e) {
             log.error("getTeamListInBackground", e);
             getTeamListFailed(R.string.err_network);

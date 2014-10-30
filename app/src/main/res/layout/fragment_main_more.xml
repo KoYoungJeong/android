@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_setting_actionb"/>
+                android:text="@string/jandi_settings"/>
         </LinearLayout>
     </LinearLayout>
     <!-- 둘 째 줄 -->

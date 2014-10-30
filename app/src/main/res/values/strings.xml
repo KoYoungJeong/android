@@ -6,7 +6,7 @@
     <!--<string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string>-->
 
     <string name="app_name">JANDI</string>
-    <string name="action_settings">Settings</string>
+    <string name="jandi_settings">Settings</string>
     <string name="jandi_confirm">OK</string>
     <string name="jandi_cancel">Cancel</string>
     <string name="jandi_upload">Upload</string>

@@ -66,7 +66,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity android:name=".ui.SettingsActivity_"
-            android:label="@string/jandi_setting_actionb"
+            android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.ProfileActivity_"
             android:label="@string/jandi_profile_actionb"

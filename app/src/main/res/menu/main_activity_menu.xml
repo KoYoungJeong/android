@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.tosslab.jandi.app.MainActivity" >
     <item android:id="@+id/action_main_right_drawer"
-        android:title="@string/action_settings"
+        android:title="@string/jandi_settings"
         android:icon="@drawable/jandi_actionb_menu"
         android:orderInCategory="100"
         android:showAsAction="always" />
