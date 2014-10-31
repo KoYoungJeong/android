@@ -22,6 +22,7 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -453,7 +454,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         progressDialog.setMessage(getString(R.string.jandi_file_uploading));
         progressDialog.show();
 
-        String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
+        String requestURL
+                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
 
         Ion.with(mContext, requestURL)
                 .uploadProgressDialog(progressDialog)

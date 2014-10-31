@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network;
 
-import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqCreateEntity;
 import com.tosslab.jandi.app.network.models.ReqCreateTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
@@ -45,7 +45,7 @@ import org.springframework.util.MultiValueMap;
  * Created by justinygchoi on 2014. 5. 27..
  */
 @Rest(
-        rootUrl = JandiConstants.SERVICE_ROOT_URL + "inner-api",
+        rootUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api",
         converters = {
                 JandiV1HttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,

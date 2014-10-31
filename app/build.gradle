@@ -55,8 +55,12 @@ android {
         }
     }
     productFlavors {
-        defaultFlavor {
-            proguardFile 'proguard-rules.txt'
+        full {     // release version
+//            proguardFile 'proguard-rules.txt'
+        }
+        dev {       // demo version
+            applicationId 'com.tosslab.jandi.app.dev'
+            versionName(defaultConfig.versionName + ".dev")
         }
     }
 
@@ -76,8 +80,11 @@ android {
     signingConfigs {
         release {
             storeFile file("tossandroid.keystore")
-            keyAlias "tossandroid"
-            keyPassword ''
+            keyAlias "tosskeystore"
+            storePassword "Xhtmfoq23@#"
+            keyPassword "Xhtmfoq23@#"
+//            storePassword System.getenv("JANDI_KSTOREPWD")
+//            keyPassword System.getenv("JANDI_KEYPWD")
         }
         debug {
 //            storeFile file("debug.keystore")
@@ -90,6 +97,37 @@ android {
         }
     }
 }
+
+//def getSourceSetName(variant) {
+//    return new File(variant.dirName).getName();
+//}
+//
+//android.applicationVariants.all { variant ->
+//    def aptOutputDir = project.file("build/source/apt")
+//    def aptOutput = new File(aptOutputDir, variant.dirName)
+//    println "****************************"
+//    println "variant: ${variant.name}"
+//    println "manifest:  ${variant.processResources.manifestFile}"
+//    println "aptOutput:  ${aptOutput}"
+//    println "****************************"
+//
+//    android.sourceSets[getSourceSetName(variant)].java.srcDirs += aptOutput.getPath()
+//
+//    variant.javaCompile.options.compilerArgs += [
+//            '-processorpath', configurations.apt.getAsPath(),
+//            '-AandroidManifestFile=' + variant.processResources.manifestFile,
+//            '-AresourcePackageName=MyBasePackageName',
+//            '-s', aptOutput
+//    ]
+//
+//    variant.javaCompile.source = variant.javaCompile.source.filter { p ->
+//        return !p.getPath().startsWith(aptOutputDir.getPath())
+//    }
+//
+//    variant.javaCompile.doFirst {
+//        aptOutput.mkdirs()
+//    }
+//}
 
 apt {
     arguments {

@@ -30,6 +30,7 @@ import com.koushikdutta.ion.Ion;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
@@ -302,7 +303,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 drawFileSharedEntities();
 
                 if (fileMessage.content.type != null) {
-                    String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                    String serverUrl = (fileMessage.content.serverUrl.equals("root"))
+                            ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                            : fileMessage.content.serverUrl;
 
                     if (fileMessage.content.type.startsWith("image")) {
                         // 이미지일 경우
@@ -354,7 +357,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                String serverUrl = (fileMessage.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:fileMessage.content.serverUrl;
+                                String serverUrl = (fileMessage.content.serverUrl.equals("root"))
+                                        ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                                        : fileMessage.content.serverUrl;
                                 String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
                                 downloadInBackground(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type);
                             }
@@ -551,7 +556,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * 파일 연결 관련
      ************************************************************/
     public void download() {
-        String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))?JandiConstants.SERVICE_ROOT_URL:mResFileDetail.content.serverUrl;
+        String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))
+                ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                : mResFileDetail.content.serverUrl;
         String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
         downloadInBackground(serverUrl + fileName, mResFileDetail.content.name, mResFileDetail.content.type);
     }

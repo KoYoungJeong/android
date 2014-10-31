@@ -9,10 +9,7 @@
     <string name="jandi_action_invite">"邀请"</string>
     <string name="jandi_action_leave">"离开"</string>
     <string name="jandi_action_rename">"重新命名"</string>
-    <string name="jandi_empty">""</string>
     <string name="err_network">"网络错误"</string>
-    <string name="drawer_open">"打开浏览选项"</string>
-    <string name="drawer_close">"关闭浏览选项"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"旧版"</string>

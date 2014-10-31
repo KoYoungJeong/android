@@ -9,7 +9,6 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 /**
  * Created by justinygchoi on 2014. 7. 9..

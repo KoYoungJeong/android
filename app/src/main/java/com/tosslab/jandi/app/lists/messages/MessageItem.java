@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.lists.messages;
 
-import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.FormatConverter;
 
@@ -130,7 +129,7 @@ public class MessageItem {
         if (mMessage instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage message = (ResMessages.FileMessage) mMessage;
             if (message.content.serverUrl.equals("root")) {
-                return JandiConstants.SERVICE_ROOT_URL + message.content.fileUrl;
+                return JandiConstantsForFlavors.SERVICE_ROOT_URL + message.content.fileUrl;
             }
         }
         return null;
@@ -143,7 +142,7 @@ public class MessageItem {
                 return null;
             }
             if (message.content.serverUrl.equals("root")) {
-                return JandiConstants.SERVICE_ROOT_URL
+                return JandiConstantsForFlavors.SERVICE_ROOT_URL
                         + message.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
             }
         }

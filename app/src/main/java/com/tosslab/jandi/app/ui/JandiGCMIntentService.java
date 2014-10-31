@@ -13,6 +13,7 @@ import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -141,7 +142,7 @@ public class JandiGCMIntentService extends IntentService {
         JsonNode profileObj = writerObj.get("u_photoThumbnailUrl");
         if (profileObj != null) {
             return (profileObj.get("mediumThumbnailUrl") != null)
-                    ? JandiConstants.SERVICE_ROOT_URL + profileObj.get("mediumThumbnailUrl").asText()
+                    ? JandiConstantsForFlavors.SERVICE_ROOT_URL + profileObj.get("mediumThumbnailUrl").asText()
                     : null;
         }
         return null;

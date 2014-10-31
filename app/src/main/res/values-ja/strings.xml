@@ -9,10 +9,7 @@
     <string name="jandi_action_invite">"招待"</string>
     <string name="jandi_action_leave">"退出"</string>
     <string name="jandi_action_rename">"変更"</string>
-    <string name="jandi_empty"></string>
     <string name="err_network">"ネットワークエラー"</string>
-    <string name="drawer_open">"メニューを開く"</string>
-    <string name="drawer_close">"メニューを閉じる"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"古いバージョン"</string>

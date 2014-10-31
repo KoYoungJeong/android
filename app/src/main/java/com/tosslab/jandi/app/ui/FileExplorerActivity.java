@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.files.FileExplorerItem;
 import com.tosslab.jandi.app.lists.files.FileExplorerItemListAdapter;

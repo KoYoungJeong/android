@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.lists;
 import android.graphics.Color;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -202,7 +203,7 @@ public class FormattedEntity {
         } else {
             userPhofileUrl = getUser().u_photoUrl;
         }
-        return JandiConstants.SERVICE_ROOT_URL + userPhofileUrl;
+        return JandiConstantsForFlavors.SERVICE_ROOT_URL + userPhofileUrl;
     }
 
     public String getUserLargeProfileUrl() {
@@ -212,7 +213,7 @@ public class FormattedEntity {
         } else {
             userPhofileUrl = getUser().u_photoUrl;
         }
-        return JandiConstants.SERVICE_ROOT_URL + userPhofileUrl;
+        return JandiConstantsForFlavors.SERVICE_ROOT_URL + userPhofileUrl;
     }
 
     public String getUserPhoneNumber() {

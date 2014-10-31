@@ -36,6 +36,7 @@ import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
@@ -895,7 +896,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstants.SERVICE_ROOT_URL + "inner-api/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
         String permissionCode = (mChattingInformations.isTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion

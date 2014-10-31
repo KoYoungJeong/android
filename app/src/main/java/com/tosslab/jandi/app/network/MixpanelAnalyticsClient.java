@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -44,7 +45,7 @@ public class MixpanelAnalyticsClient {
 
     public MixpanelAnalyticsClient(Context context, String distictId) {
         log.debug("Create instance of MixpanelAnalyticsClient");
-        String mixpanelId = context.getString(R.string.jandi_mixpanel_track_id);
+        String mixpanelId = JandiConstantsForFlavors.MIXPANEL_TRACK_ID;
         mMixpanel = MixpanelAPI.getInstance(context, mixpanelId);
         mDistictId = distictId;
         mMixpanel.identify(mDistictId);
