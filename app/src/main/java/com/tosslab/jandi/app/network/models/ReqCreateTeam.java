@@ -5,4 +5,9 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqCreateTeam {
     public String email;
+    public String lang;
+    public ReqCreateTeam(String email, String lang) {
+        this.email = email;
+        this.lang = lang;
+    }
 }

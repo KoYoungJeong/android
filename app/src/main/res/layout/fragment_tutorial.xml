@@ -35,7 +35,7 @@
         <Button
             android:id="@+id/btn_tutorial_finish"
             style="@style/JandiTutorial.Button"
-            android:text="시작하기"
+            android:text="@string/jandi_action_start"
             android:background="@drawable/btn_send_selector"/>
     </LinearLayout>
 </LinearLayout>
