@@ -7,6 +7,8 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,12 +45,11 @@ import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
+import com.tosslab.jandi.app.events.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
-import com.tosslab.jandi.app.events.RequestModifyMessageEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -668,7 +669,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     /************************************************************
-     * Message 수정
+     * Message 제어
      ************************************************************/
 
     /**
@@ -683,13 +684,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     void checkPermissionForManipulateMessage(MessageItem item) {
         if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
-            showWarningCheckPermission("파일 수정 기능은 차후에...");
+            // 이미지 삭제 등의 액션은 나중에...
         } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
-            showWarningCheckPermission("파일 수정 기능은 차후에...");
-        } else if (mEntityManager.getMe().getUser().id == item.getUserId()) {
-            showDialog(item);
+            // 파일 삭제 등의 액션은 나중에...
         } else {
-            showWarningCheckPermission(getString(R.string.warn_no_permission));
+            showDialog(item);
         }
     }
 
@@ -699,58 +698,78 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     void showDialog(MessageItem item) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstance(item);
-        newFragment.show(getFragmentManager(), DIALOG_TAG);
-    }
-
-    // TODO : Serialize 객체로 이벤트 전달할 것
-    // Message 수정 이벤트 획득
-    public void onEvent(RequestModifyMessageEvent event) {
-        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
-                , event.currentMessage, event.feedbackId);
-        newFragment.show(getFragmentManager(), DIALOG_TAG);
-    }
-
-    // Message 수정 서버 요청
-    public void onEvent(ConfirmModifyMessageEvent event) {
-        modifyMessage(event.messageType, event.messageId, event.inputMessage, event.feedbackId);
-    }
-
-    @UiThread
-    void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
-        pauseUpdateTimer();
-        modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
-    }
-
-    @Background
-    void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
-        try {
-            if (messageType == MessageItem.TYPE_STRING) {
-                log.debug("modifyMessageInBackground : Try for message");
-                mJandiMessageClient.modifyMessage(messageId, inputMessage);
-            } else if (messageType == MessageItem.TYPE_COMMENT) {
-                log.debug("modifyMessageInBackground : Try for comment");
-                mJandiEntityClient.modifyMessageComment(messageId, inputMessage, feedbackId);
-            }
-            modifyMessageDone(true, getString(R.string.jandi_messages_modify_succeed));
-        } catch (RestClientException e) {
-            log.error("modifyMessageInBackground : FAILED");
-            modifyMessageDone(false, getString(R.string.err_messages_modify));
-        } catch (JandiNetworkException e) {
-            log.error("deleteMessageInBackground : FAILED", e);
-            deleteMessageDone(false, getString(R.string.err_messages_delete));
-        }
-    }
-
-    @UiThread
-    void modifyMessageDone(boolean isOk, String message) {
-        if (isOk) {
-            ColoredToast.show(mContext, message);
-            getUpdateMessagesAndResumeUpdateTimer();
+        DialogFragment newFragment;
+        if (mEntityManager.getMe().getUser().id == item.getUserId()) {
+            // 내가 만든 메시지라면...
+            newFragment = ManipulateMessageDialogFragment.newInstanceForMyMessage(item);
         } else {
-            ColoredToast.showError(mContext, message);
+            newFragment = ManipulateMessageDialogFragment.newInstance(item);
         }
+        newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
+
+    /************************************************************
+     * Message 복사
+     ************************************************************/
+    public void onEvent(ConfirmCopyMessageEvent event) {
+        final ClipboardManager clipboardManager
+                =  (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        final ClipData clipData = ClipData.newPlainText("", event.contentString);
+        clipboardManager.setPrimaryClip(clipData);
+    }
+
+//    /************************************************************
+//     * Message 수정
+//     ************************************************************/
+//
+//    // TODO : Serialize 객체로 이벤트 전달할 것
+//    // Message 수정 이벤트 획득
+//    public void onEvent(RequestModifyMessageEvent event) {
+//        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
+//                , event.currentMessage, event.feedbackId);
+//        newFragment.show(getFragmentManager(), DIALOG_TAG);
+//    }
+//
+//    // Message 수정 서버 요청
+//    public void onEvent(ConfirmModifyMessageEvent event) {
+//        modifyMessage(event.messageType, event.messageId, event.inputMessage, event.feedbackId);
+//    }
+//
+//    @UiThread
+//    void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
+//        pauseUpdateTimer();
+//        modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
+//    }
+//
+//    @Background
+//    void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
+//        try {
+//            if (messageType == MessageItem.TYPE_STRING) {
+//                log.debug("modifyMessageInBackground : Try for message");
+//                mJandiMessageClient.modifyMessage(messageId, inputMessage);
+//            } else if (messageType == MessageItem.TYPE_COMMENT) {
+//                log.debug("modifyMessageInBackground : Try for comment");
+//                mJandiEntityClient.modifyMessageComment(messageId, inputMessage, feedbackId);
+//            }
+//            modifyMessageDone(true, getString(R.string.jandi_messages_modify_succeed));
+//        } catch (RestClientException e) {
+//            log.error("modifyMessageInBackground : FAILED");
+//            modifyMessageDone(false, getString(R.string.err_messages_modify));
+//        } catch (JandiNetworkException e) {
+//            log.error("deleteMessageInBackground : FAILED", e);
+//            deleteMessageDone(false, getString(R.string.err_messages_delete));
+//        }
+//    }
+//
+//    @UiThread
+//    void modifyMessageDone(boolean isOk, String message) {
+//        if (isOk) {
+//            ColoredToast.show(mContext, message);
+//            getUpdateMessagesAndResumeUpdateTimer();
+//        } else {
+//            ColoredToast.showError(mContext, message);
+//        }
+//    }
 
     /************************************************************
      * Message 삭제
@@ -1303,11 +1322,17 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             if (mChattingInformations.entityId > 0) {
                 mJandiEntityClient.enableFavorite(mChattingInformations.entityId);
             }
+            enableFavoriteSucceed();
         } catch (RestClientException e) {
             log.error("enable favorite failed", e);
         } catch (Exception e) {
             log.error("enable favorite failed", e);
         }
+    }
+
+    @UiThread
+    public void enableFavoriteSucceed() {
+        ColoredToast.show(mContext, getString(R.string.jandi_message_starred));
     }
 
     @Background

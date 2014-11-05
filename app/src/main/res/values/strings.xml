@@ -53,7 +53,9 @@ Welcome to JANDI"</string>
     <string name="jandi_tab_file">"Files"</string>
     <string name="jandi_tab_more">"More"</string>
     <string name="jandi_action_direct_message">"Direct Message"</string>
-    <string name="jandi_action_starred" translatable="false">"Favorite"</string>
+    <string name="jandi_action_starred">"Favorite"</string>
+    <string name="jandi_message_starred">"Added to your starred list"</string>
+    <string name="jandi_message_no_starred">"Removed from your starred list"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
@@ -136,6 +138,7 @@ Welcome to JANDI"</string>
     <!-- Message -->
     <string name="modify_message">"Edit message"</string>
     <string name="today">"Today"</string>
+    <string name="jandi_action_menu_message_copy">Copy</string>
 
     <!-- File Detail Activity -->
     <string name="jandi_action_download">"Download"</string>

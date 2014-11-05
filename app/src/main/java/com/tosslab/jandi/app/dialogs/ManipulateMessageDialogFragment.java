@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -22,21 +23,34 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 5. 28..
  */
 public class ManipulateMessageDialogFragment extends DialogFragment {
-    private final Logger log = Logger.getLogger(ManipulateMessageDialogFragment.class);
+    private static final String TITLE       = "title";
+    private static final String MESSAGE_ID  = "messageId";
+    private static final String MESSAGE_TYPE    = "messageType";
+    private static final String FEEDBACK_ID     = "feedbackId";
+    private static final String CURRENT_MESSAGE = "currentMessage";
+    private static final String IS_MINE         = "isMine";
 
     public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
+        return newInstance(item, false);
+    }
 
+    public static ManipulateMessageDialogFragment newInstanceForMyMessage(MessageItem item) {
+        return newInstance(item, true);
+    }
+
+    private static ManipulateMessageDialogFragment newInstance(MessageItem item, boolean isMine) {
         String title = DateTransformator.getTimeString(item.getLinkTime());
 
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
         Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putInt("messageId", item.getMessageId());
-        args.putInt("messageType", item.getContentType());
+        args.putString(TITLE, title);
+        args.putInt(MESSAGE_ID, item.getMessageId());
+        args.putInt(MESSAGE_TYPE, item.getContentType());
+        args.putString(CURRENT_MESSAGE, item.getContentString());
+        args.putBoolean(IS_MINE, isMine);
         if (item.getContentType() == MessageItem.TYPE_COMMENT) {
-            args.putInt("feedbackId", item.getFeedbackId());
+            args.putInt(FEEDBACK_ID, item.getFeedbackId());
         }
-        args.putString("currentMessage", item.getContentString());
         frag.setArguments(args);
         return frag;
     }
@@ -51,27 +65,28 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final String title = getArguments().getString("title", "");
-        final int messageId = getArguments().getInt("messageId");
-        final int feedbackId = getArguments().getInt("feedbackId", -1);
-        final int messageType = getArguments().getInt("messageType");
-        final String currentMessage = getArguments().getString("currentMessage");
+        final String title = getArguments().getString(TITLE, "");
+        final int messageId = getArguments().getInt(MESSAGE_ID);
+        final int messageType = getArguments().getInt(MESSAGE_TYPE);
+
+        final int feedbackId = getArguments().getInt(FEEDBACK_ID, -1);
+        final boolean isMine = getArguments().getBoolean(IS_MINE, false);
+
+        final String currentMessage = getArguments().getString(CURRENT_MESSAGE);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
 
-//        // Edit 메뉴 클릭시.
-//        final TextView actionEdit = (TextView)mainView.findViewById(R.id.txt_action_edit_message);
-//        actionEdit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EventBus.getDefault().post(new ReqModifyMessageEvent(messageType, messageId, currentMessage, feedbackId));
-//                dismiss();
-//            }
-//        });
+        final TextView actionDel = (TextView)mainView.findViewById(R.id.txt_action_del_message);
+        final TextView actionCopy = (TextView)mainView.findViewById(R.id.txt_action_copy_message);
+
+        if (isMine) {   // 본인이 작성한 메시지가 아닌경우 삭제 메뉴가 활성화되지 않는다.
+            actionDel.setVisibility(View.VISIBLE);
+        } else {
+            actionDel.setVisibility(View.GONE);
+        }
 
         // Delete 메뉴 클릭시.
-        final TextView actionDel = (TextView)mainView.findViewById(R.id.txt_action_del_message);
         actionDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,16 +95,25 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             }
         });
 
+        // Copy 클릭시.
+        actionCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new ConfirmCopyMessageEvent(currentMessage));
+                dismiss();
+            }
+        });
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
-                .setTitle(title)
-                .setNegativeButton(R.string.jandi_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do Nothing
-                            }
-                        }
-                );
+                .setTitle(title);
+//                .setNegativeButton(R.string.jandi_cancel,
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                // Do Nothing
+//                            }
+//                        }
+//                );
         return builder.create();
     }
 }

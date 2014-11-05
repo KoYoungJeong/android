@@ -21,7 +21,14 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="Delete Message"
+        android:text="@string/jandi_action_delete"
         android:textSize="20sp" />
-
+    <TextView
+        android:id="@+id/txt_action_copy_message"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
+        android:text="@string/jandi_action_menu_message_copy"
+        android:textSize="20sp" />
 </LinearLayout>
