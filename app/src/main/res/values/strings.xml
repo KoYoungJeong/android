@@ -69,10 +69,9 @@ Welcome to JANDI"</string>
     <string name="jandi_entity_joined_topic">"My Topics"</string>
     <string name="jandi_entity_unjoined_topic">"Other Topics"</string>
     <string name="jandi_entity_create_entity_name">"Name"</string>
-    <string name="jandi_message_create_entity">" has been created"</string>
-    <string name="jandi_message_join_entity_pre">"Joining "</string>
-    <string name="jandi_message_join_entity_post"></string>
-    <string name="jandi_message_invite_entity">" user(s) have been added"</string>
+    <string name="jandi_message_create_entity">"%1$s has been created"</string>
+    <string name="jandi_message_join_entity">"Joining %1$s"</string>
+    <string name="jandi_message_invite_entity">"%1$d user(s) have been added"</string>
     <string name="jandi_create_channel">"Create New Topic"</string>
     <string name="jandi_create_privategroup">"Create New Private Group"</string>
     <string name="jandi_modify_channel">"Rename Topic"</string>
@@ -147,8 +146,7 @@ Welcome to JANDI"</string>
     <string name="jandi_share_succeed">"...has been shared"</string>
     <string name="jandi_unshare_succeed">"...has been unshared"</string>
     <string name="jandi_delete_succeed">"...has been deleted"</string>
-    <string name="err_unsupported_file_type_pre">"There is no installed app that supports"</string>
-    <string name="err_unsupported_file_type_post"></string>
+    <string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
     <string name="err_file_detail">"File could not be found"</string>
     <string name="err_download">"File could not be downloaded"</string>
     <string name="err_share">"File could not be shared"</string>

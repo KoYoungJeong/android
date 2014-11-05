@@ -70,10 +70,9 @@
     <!-- change made -->
     <string name="jandi_entity_unjoined_topic">"可選擇的議題群組"</string>
     <string name="jandi_entity_create_entity_name">"名字"</string>
-    <string name="jandi_message_create_entity">"已建立"</string>
-    <string name="jandi_message_join_entity_pre">"加入"</string>
-    <string name="jandi_message_join_entity_post">""</string>
-    <string name="jandi_message_invite_entity">"使用者已被加入"</string>
+    <string name="jandi_message_create_entity">"已建立 %1$s"</string>
+    <string name="jandi_message_join_entity">"加入 %1$s"</string>
+    <string name="jandi_message_invite_entity">"%1$d 使用者已被加入"</string>
 
     <!-- change made -->
     <string name="jandi_create_channel">"建立新的議題群組"</string>
@@ -157,8 +156,7 @@
 
     <!-- change made -->
     <string name="jandi_delete_succeed">"已被刪除"</string>
-    <string name="err_unsupported_file_type_pre">"沒有安裝支援的app"</string>
-    <string name="err_unsupported_file_type_post">""</string>
+    <string name="err_unsupported_file_type">"%1$s 沒有安裝支援的app"</string>
     <string name="err_file_detail">"檔案無法找到"</string>
     <string name="err_download">"檔案無法下載"</string>
     <string name="err_share">"檔案無法分享"</string>

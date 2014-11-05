@@ -160,8 +160,9 @@ public class MainPrivateListFragment extends BaseChatListFragment {
      * @param event
      */
     public void onEvent(ConfirmCreateGroupEvent event) {
-        ColoredToast.show(mContext,
-                event.groupName + getString(R.string.jandi_message_create_entity));
+        String rawString = getString(R.string.jandi_message_create_entity);
+        String formatString = String.format(rawString, event.groupName);
+        ColoredToast.show(mContext, formatString);
         createGroupInBackground(event.groupName);
     }
 
