@@ -600,10 +600,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             try {
                 startActivity(i);
             } catch (ActivityNotFoundException e) {
-                ColoredToast.showError(mContext,
-                        getString(R.string.err_unsupported_file_type_pre)
-                                + file
-                                + getString(R.string.err_unsupported_file_type_post));
+                String rawString = getString(R.string.err_unsupported_file_type);
+                String formatString = String.format(rawString, file);
+                ColoredToast.showError(mContext, formatString);
             }
         } else {
             log.error("Download failed", exception);

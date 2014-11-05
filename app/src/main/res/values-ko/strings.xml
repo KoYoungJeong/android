@@ -66,10 +66,9 @@
     <string name="jandi_entity_joined_topic">참여한 토픽</string>
     <string name="jandi_entity_unjoined_topic">참여하지 않은 토픽</string>
     <string name="jandi_entity_create_entity_name">생성할 이름</string>
-    <string name="jandi_message_create_entity">&#xa0;을 생성하였습니다</string>
-    <string name="jandi_message_join_entity_pre"></string>
-    <string name="jandi_message_join_entity_post">&#xa0;에 참여합니다</string>
-    <string name="jandi_message_invite_entity">&#xa0;명의 사용자를 초대했습니다</string>
+    <string name="jandi_message_create_entity">%1$s을 생성하였습니다</string>
+    <string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
+    <string name="jandi_message_invite_entity">%1$d 명의 사용자를 초대했습니다</string>
     <string name="jandi_create_channel">토픽 생성</string>
     <string name="jandi_create_privategroup">비공개 그룹 생성</string>
     <string name="jandi_modify_channel">토픽 수정</string>
@@ -144,8 +143,7 @@
     <string name="jandi_share_succeed">공유되었습니다</string>
     <string name="jandi_unshare_succeed">공유가 해제되었습니다</string>
     <string name="jandi_delete_succeed">파일이 삭제되었습니다</string>
-    <string name="err_unsupported_file_type_pre"></string>
-    <string name="err_unsupported_file_type_post">&#xa0;을 확인할 수 있는 앱이 설치되지 않았습니다</string>
+    <string name="err_unsupported_file_type">%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다</string>
     <string name="err_file_detail">파일 정보 획득에 실패했습니다</string>
     <string name="err_download">파일 다운로드에 실패했습니다</string>
     <string name="err_share">공유에 실패했습니다</string>

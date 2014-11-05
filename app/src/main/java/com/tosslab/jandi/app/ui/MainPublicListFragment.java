@@ -172,8 +172,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
      * @param event
      */
     public void onEvent(ConfirmCreateTopicEvent event) {
-        ColoredToast.show(mContext,
-                    event.topicName + getString(R.string.jandi_message_create_entity));
+        String rawString = getString(R.string.jandi_message_create_entity);
+        String formatString = String.format(rawString, event.topicName);
+        ColoredToast.show(mContext, formatString);
         createTopicInBackground(event.topicName);
     }
 
@@ -223,10 +224,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
      ************************************************************/
     @UiThread
     public void joinChannel(final FormattedEntity channel) {
-        ColoredToast.show(mContext,
-                getString(R.string.jandi_message_join_entity_pre)
-                        + channel.getChannel().name
-                        + getString(R.string.jandi_message_join_entity_post));
+        String rawString = getString(R.string.jandi_message_join_entity);
+        String formattedString = String.format(rawString, channel.getChannel().name);
+        ColoredToast.show(mContext, formattedString);
         joinChannelInBackground(channel);
     }
 

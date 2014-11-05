@@ -62,10 +62,9 @@
     <string name="jandi_entity_joined_topic">"我的议题群组"</string>
     <string name="jandi_entity_unjoined_topic">"可选择的议题群组"</string>
     <string name="jandi_entity_create_entity_name">"名字"</string>
-    <string name="jandi_message_create_entity">"已建立"</string>
-    <string name="jandi_message_join_entity_pre">"加入"</string>
-    <string name="jandi_message_join_entity_post">""</string>
-    <string name="jandi_message_invite_entity">"使用者已被加入"</string>
+    <string name="jandi_message_create_entity">"已建立 %1$s"</string>
+    <string name="jandi_message_join_entity">"加入 %1$s"</string>
+    <string name="jandi_message_invite_entity">"%1$d 使用者已被加入"</string>
     <string name="jandi_create_channel">"建立新的议题群组"</string>
     <string name="jandi_create_privategroup">"建立新的私人群组"</string>
     <string name="jandi_modify_channel">"重新命名议题群组"</string>
@@ -139,8 +138,7 @@
     <string name="jandi_share_succeed">"已被分享"</string>
     <string name="jandi_unshare_succeed">"已被取消分享"</string>
     <string name="jandi_delete_succeed">"已被删除"</string>
-    <string name="err_unsupported_file_type_pre">"没有安装支援的app"</string>
-    <string name="err_unsupported_file_type_post">""</string>
+    <string name="err_unsupported_file_type">"%1$s 没有安装支援的app"</string>
     <string name="err_file_detail">"档案无法找到"</string>
     <string name="err_download">"档案无法下载"</string>
     <string name="err_share">"档案无法分享"</string>

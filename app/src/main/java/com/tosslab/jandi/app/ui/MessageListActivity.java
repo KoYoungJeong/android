@@ -1209,7 +1209,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.invitePrivateGroup(
                         mChattingInformations.entityId, invitedUsers);
             }
-            inviteSucceed(invitedUsers.size() + getString(R.string.jandi_message_invite_entity));
+            inviteSucceed(invitedUsers.size());
         } catch (JandiNetworkException e) {
             log.error("fail to invite entity");
             inviteFailed(getString(R.string.err_entity_invite));
@@ -1217,9 +1217,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    public void inviteSucceed(String message) {
+    public void inviteSucceed(int memberSize) {
+        String rawString = getString(R.string.jandi_message_invite_entity);
+        String formatString = String.format(rawString, memberSize);
+
         trackInvitingToEntity(mEntityManager, mChattingInformations.entityType);
-        ColoredToast.show(mContext, message);
+        ColoredToast.show(mContext, formatString);
     }
 
     @UiThread
