@@ -184,7 +184,7 @@ Welcome to JANDI"</string>
 <string name="jandi_setting_general">"General"</string>
 <string name="jandi_setting_sign_out">"Sign out"</string>
 <string name="jandi_message_logout">"Signed out"</string>
-<string name="jandi_empty">" "</string>
+<string name="jandi_empty"></string>
 <string name="jandi_message_starred">"Starred"</string>
 <string name="jandi_message_no_starred">"Unstarred"</string>
 <string name="jandi_action_menu_message_copy">"Copy"</string>

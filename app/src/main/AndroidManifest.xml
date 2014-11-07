@@ -38,11 +38,6 @@
             android:label="@string/jandi_action_login"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.IntroFinalActivity_"
-            android:label="@string/app_name"
-            android:theme="@style/JandiTheme.NoActionBar"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.MainTabActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />

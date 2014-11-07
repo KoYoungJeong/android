@@ -200,7 +200,7 @@
 <string name="jandi_setting_general">"일반"</string>
 <string name="jandi_setting_sign_out">"로그아웃"</string>
 <string name="jandi_message_logout">"로그아웃 되셨습니다"</string>
-<string name="jandi_empty">" "</string>
+<string name="jandi_empty"></string>
 <string name="jandi_message_starred">"즐겨찾기에 등록되었습니다"</string>
 <string name="jandi_message_no_starred">"즐겨찾기에서 해제되었습니다."</string>
 <string name="jandi_action_menu_message_copy">"복사"</string>

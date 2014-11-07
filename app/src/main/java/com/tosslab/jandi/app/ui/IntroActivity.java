@@ -57,6 +57,12 @@ public class IntroActivity extends Activity {
     private GoogleCloudMessaging mGcm;
     private int mThisVersion;
 
+    static class ResultHolder {
+        boolean doneWaiting = false;
+        boolean doneProcessGenToken = false;
+        boolean doneEveryThing = false;
+    }
+
     @AfterInject
     void init() {
         registerNewRelicToken();
@@ -66,16 +72,20 @@ public class IntroActivity extends Activity {
 
     @AfterViews
     void startOn() {
+        ResultHolder resultHolder = new ResultHolder();
+
         if (checkPlayServices()) {
             mGcm = GoogleCloudMessaging.getInstance(this);
             String pushToken = getAlreadyGeneratedPushToken(this);
 
             // 지금 막 업데이트 한 경우에도 푸시 토큰을 갱신한다.
             if (pushToken.isEmpty() || isJustUpdated(this)) {
-                generatePushTokenInBackground();
+                generatePushTokenInBackground(resultHolder);
+            } else {
+                resultHolder.doneProcessGenToken = true;
             }
-
-            checkNewerVersionInBackground();
+            checkNewerVersionInBackground(resultHolder);
+            waitForSplash(resultHolder);
         } else {
             log.error("No valid Google Play Services APK found.");
         }
@@ -107,6 +117,12 @@ public class IntroActivity extends Activity {
         mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
     }
 
+    @Background(delay = 1500)
+    void waitForSplash(ResultHolder resultHolder) {
+        // 로딩 화면을 보여주기 위해 기본적으로 1초 대기
+        joinWork(resultHolder, true, false, false);
+    }
+
     /************************************************************
      * for Push notification token
      ************************************************************/
@@ -128,7 +144,7 @@ public class IntroActivity extends Activity {
     }
 
     @Background
-    public void generatePushTokenInBackground() {
+    public void generatePushTokenInBackground(ResultHolder resultHolder) {
         try {
             if (mGcm == null) {
                 mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
@@ -136,11 +152,13 @@ public class IntroActivity extends Activity {
             String pushToken = mGcm.register(JandiConstants.SENDER_ID);
             JandiPreference.setPushTokenToBeUpdated(this, pushToken);
             log.debug("push token to be updated is generated");
+            joinWork(resultHolder, false, true, false);
         } catch (IOException e) {
             log.error("generating push token failed", e);
             generatePushTokenFailed();
         }
     }
+
 
     @UiThread
     public void generatePushTokenFailed() {
@@ -212,7 +230,7 @@ public class IntroActivity extends Activity {
      * 최신 버전 체크
      ************************************************************/
     @Background
-    public void checkNewerVersionInBackground() {
+    public void checkNewerVersionInBackground(ResultHolder resultHolder) {
         boolean isLatestVersion = true;     // 기본 값 : 업데이트 안내가 뜨지 않는다.
         try {
             int latestVersion = getLatestVersionInBackground();
@@ -222,7 +240,7 @@ public class IntroActivity extends Activity {
             }
         } catch (JandiNetworkException e) {
         } finally {
-            checkWhetherUpdating(isLatestVersion);
+            checkWhetherUpdating(isLatestVersion, resultHolder);
         }
     }
 
@@ -231,13 +249,12 @@ public class IntroActivity extends Activity {
         return resConfig.versions.android;
     }
 
-    @UiThread
-    public void checkWhetherUpdating(boolean isLatestVersion) {
+    private void checkWhetherUpdating(boolean isLatestVersion, ResultHolder resultHolder) {
         // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
         if (!isLatestVersion) {
             showUpdateDialog();
         } else {
-            checkSignInAndRegister();
+            joinWork(resultHolder, false, false, true);
         }
     }
 
@@ -270,6 +287,33 @@ public class IntroActivity extends Activity {
     /************************************************************
      * 자동 로그인 유무
      ************************************************************/
+
+
+    /************************************************************
+     * 이동
+     ************************************************************/
+    @UiThread
+    void joinWork(ResultHolder resultHolder,
+                  boolean doneWaiting,
+                  boolean doneProcessGenToken,
+                  boolean doneEveryThing) {
+        // ATTENTION true 일때만 갱신한다. false 를 갱신하지는 않는다.
+        if (doneWaiting) {
+            resultHolder.doneWaiting = doneWaiting;
+        }
+        if (doneProcessGenToken) {
+            resultHolder.doneProcessGenToken = doneProcessGenToken;
+        }
+        if (doneEveryThing) {
+            resultHolder.doneEveryThing = doneEveryThing;
+        }
+
+        if (resultHolder.doneWaiting && resultHolder.doneEveryThing && resultHolder.doneProcessGenToken) {
+            checkSignInAndRegister();
+        }
+    }
+
+    // 자동 로그인 유무에 따른 분기.
     private void checkSignInAndRegister() {
         String myToken = JandiPreference.getMyToken(this);
         if (myToken != null && myToken.length() > 0) {
@@ -284,9 +328,6 @@ public class IntroActivity extends Activity {
         }
     }
 
-    /************************************************************
-     * 이동
-     ************************************************************/
     @UiThread
     public void moveToMainActivity() {
         // MainActivity 이동
