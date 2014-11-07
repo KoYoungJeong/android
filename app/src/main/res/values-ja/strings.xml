@@ -1,195 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">"JANDI"</string>
-    <string name="jandi_settings">"設定"</string>
-    <string name="jandi_confirm">"確認"</string>
-    <string name="jandi_cancel">"キャンセル"</string>
-    <string name="jandi_upload">"アップロード"</string>
-    <string name="jandi_action_share">"共有"</string>
-    <string name="jandi_action_invite">"招待"</string>
-    <string name="jandi_action_leave">"退出"</string>
-    <string name="jandi_action_rename">"変更"</string>
-    <string name="err_network">"ネットワークエラー"</string>
 
-    <!-- Update -->
-    <string name="jandi_update_title">"古いバージョン"</string>
-    <string name="jandi_action_update">"アップデート"</string>
-    <string name="jandi_update_message">"新しいバージョンのアプリが利用可能です"</string>
+<!-- <string name="jandi_mixpanel_track_id" translatable="false">f72e67d5099ab4e0ba4a83da4a9cafe3</string> -->
+<string name="app_name">"JANDI"</string>
+<string name="jandi_settings">"設定"</string>
+<string name="jandi_confirm">"確認"</string>
+<string name="jandi_cancel">"キャンセル"</string>
+<string name="jandi_upload">"アップロード"</string>
+<string name="jandi_action_share">"共有する"</string>
+<string name="jandi_action_invite">"招待する"</string>
+<string name="jandi_action_leave">"退出する"</string>
+<string name="jandi_action_rename">"変更する"</string>
+<string name="err_network">"ネットワークエラー"</string>
+<string name="jandi_help">"ヘルプ"</string>
+<string name="jandi_about">"JANDIについて"</string>
 
-    <!-- Team Creation -->
-    <string name="jandi_action_create_team">"チームを作成"</string>
-    <string name="jandi_create_team_message">"メールアドレスを入力してください。チームの作成方法をお送りします"</string>
-    <string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
-    <string name="err_team_creation_failed">"メールが送信できませんでした"</string>
-    <string name="jandi_question_team_create">"あなたのチームはもうJANDIに登録されていますか？"</string>
+<!-- Update -->
+<string name="jandi_update_title">"古いバージョン"</string>
+<string name="jandi_action_update">"アップデートする"</string>
+<string name="jandi_update_message">"新しいバージョンのアプリが利用可能です"</string>
 
-    <!-- Login -->
-    <string name="jandi_action_start">"スタート"</string>
-    <string name="jandi_action_login">"ログインする"</string>
-    <string name="jandi_select_team">"チームを選択してください"</string>
-    <string name="jandi_user_id">"メールアドレス"</string>
-    <string name="jandi_user_password">"パスワード"</string>
-    <string name="jandi_welcome_message">"こんにちは！\nJANDIへようこそ"</string>
-    <string name="err_login">"ログインに失敗しました"</string>
-    <string name="err_login_unregistered_id">"このメールアドレスはまだJANDIに登録されていません"</string>
-    <string name="err_login_invalid_id">"メールアドレスが正しくありません"</string>
-    <string name="err_login_invalid_passwd">"パスワードが正しくありません"</string>
-    <string name="err_login_invalid_info">"メールアドレスまたはパスワードが正しくありません"</string>
-    <string name="err_expired_token">"トークンの有効期限が切れました"</string>
-    <string name="err_expired_session">"セッションが切れました。再度ログインしてください"</string>
-    <string name="err_service_connection">"接続が切れました。再度実行してください"</string>
+<!-- Team Creation -->
+<string name="jandi_action_create_team">"チームを作成"</string>
+<string name="jandi_create_team_message">"メールアドレスを入力してください。チームの作成方法をお送りします"</string>
+<string name="jandi_team_creation_succeed">"チームの作成に成功しました。メールを確認してください"</string>
+<string name="err_team_creation_failed">"メールが送信できませんでした"</string>
+<string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 
-    <!-- Push -->
-    <string name="err_push_registration">"通知サーバーでエラーが発生しました。再度実行してください"</string>
-    <string name="err_push_invalid_device">"通知サービスはこのデバイスでは利用できません"</string>
+<!-- Login -->
+<string name="jandi_action_start">"スタート"</string>
+<string name="jandi_action_login">"ログインする"</string>
+<string name="jandi_select_team">"チームを選択してください"</string>
+<string name="jandi_user_id">"メールアドレス"</string>
+<string name="jandi_user_password">"パスワード"</string>
+<string name="jandi_welcome_message">"こんにちは！
+JANDIへようこそ"</string>
+<string name="err_login">"ログインに失敗しました"</string>
+<string name="err_login_unregistered_id">"このメールアドレスはまだJANDIに登録されていません"</string>
+<string name="err_login_invalid_id">"メールアドレスが正しくありません"</string>
+<string name="err_login_invalid_passwd">"パスワードが正しくありません"</string>
+<string name="err_login_invalid_info">"メールアドレスまたはパスワードが正しくありません"</string>
+<string name="err_expired_token">"トークンの有効期限が切れました"</string>
+<string name="err_expired_session">"セッションが切れました。再度ログインしてください"</string>
+<string name="err_service_connection">"接続が切れました。再度実行してください"</string>
 
-    <!-- Not sure -->
-    <string name="jandi_tab_topic">"トピックス"</string>
-    <string name="jandi_tab_chat">"チャット"</string>
-    <string name="jandi_tab_private_group">"グループ"</string>
-    <string name="jandi_tab_direct_message">"1対1"</string>
-    <string name="jandi_tab_file">"ファイル"</string>
-    <string name="jandi_tab_more">"もっと見る"</string>
-    <string name="jandi_action_direct_message">"1対1チャット"</string>
+<!-- Push -->
+<string name="err_push_registration">"通知サーバーでエラーが発生しました。再度実行してください"</string>
+<string name="err_push_invalid_device">"通知サービスはこのデバイスでは利用できません"</string>
+<string name="jandi_tab_topic">"トピックス"</string>
+<string name="jandi_tab_chat">"チャット"</string>
+<string name="jandi_tab_private_group">"プライベートグループ"</string>
+<string name="jandi_tab_direct_message">"ダイレクトメッセージ"</string>
+<string name="jandi_tab_file">"ファイル"</string>
+<string name="jandi_tab_more">"もっと見る"</string>
 
-    <!-- 튜토리얼 -->
-    <string name="jandi_tutorial_welcome">JANDIへようこそ</string>
-    <string name="jandi_tutorial_welcome_message">ファイルを共有するときに、クラウドサービス上のファイルのURLをコピーして、プライベート用のメッセージアプリなどに貼り付けて共有していませんか？JANDIを使えば、プライベートのメッセンジャーやアプリを使わずに、メッセージやファイルのやりとりができます</string>
-    <string name="jandi_tutorial_topic">トピックを使って、より柔軟でオープンなコミュニケーションを実現</string>
-    <string name="jandi_tutorial_topic_message">JANDIでは、だれでもトピックを作ったり参加でき、メンバーが互いに自由にコミュニケーションすることができます。結果としてチームのスピード感がより速くなることが実感できるでしょう。またメンバーを限定した会話をしたい場合は、プライベートグループやダイレクトメッセージを使えば、指定したメンバー以外の目に触れることはありません</string>
-    <string name="jandi_tutorial_file">チャットウィンドウから直接ファイルをアップロード</string>
-    <string name="jandi_tutorial_file_message">PPT、XLS、PDFなどどのようなファイル形式でもJANDIにアップロードし共有することができます。アップロードされたファイルはいつでも利用可能で、簡単に検索して探すことができます</string>
+<!-- Fuzzy -->
+<string name="jandi_action_direct_message">"ダイレクトメッセージ"</string>
+<string name="jandi_action_starred">"お気に入り"</string>
 
-    <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_topic">"さんが参加しました"</string>
-    <string name="jandi_entity_unjoined_topic">"さんが退出しました"</string>
-    <string name="jandi_entity_create_entity_name">"名称"</string>
+<!-- 튜토리얼 -->
+<string name="jandi_tutorial_welcome">"JANDIへようこそ"</string>
+<string name="jandi_tutorial_welcome_message">"ファイルを共有するときに、クラウドサービス上のファイルのURLをコピーして、プライベート用のメッセージアプリなどに貼り付けて共有していませんか？JANDIを使えば、プライベートのメッセンジャーやアプリを使わずに、メッセージやファイルのやりとりができます"</string>
 
-    <!-- Need to check again -->
-    <string name="jandi_message_create_entity">"%1$s が作成されました"</string>
-    <string name="jandi_message_join_entity">"%1$s 参加中"</string>
-    <string name="jandi_message_invite_entity">"%1$d メンバーが追加されました"</string>
-    <string name="jandi_create_channel">"新規トピックを作成する"</string>
-    <string name="jandi_create_privategroup">"新規プライベートグループを作成する"</string>
-    <string name="jandi_modify_channel">"トピックの名称を変更"</string>
-    <string name="jandi_modify_private_group">"グループを編集"</string>
-    <string name="warn_all_users_are_already_invited">"全てのメンバーは既に招待されています"</string>
-    <string name="err_entity_create">"作成できませんでした"</string>
-    <string name="err_entity_join">"参加できませんでした"</string>
-    <string name="err_entity_duplicated_name">"その名前は既に使用されています"</string>
-    <string name="err_entity_invite">"招待できませんでした"</string>
-    <string name="err_entity_leave">"退出しました"</string>
-    <string name="err_entity_modify">"変更できませんでした"</string>
-    <string name="err_entity_delete">"削除できませんでした"</string>
+<!-- Reduced # of words -->
+<string name="jandi_tutorial_topic">"トピックごとに必要なメンバーを招待して情報共有"</string>
+<string name="jandi_tutorial_topic_message">"話したいテーマごとにトピックを作り、必要なメンバーを招待できます。自分から参加することもできます。必要な情報を必要な人が見ることで、コミュニケーションの生産性がアップします。デリケートな話題をしたい場合はプライベートグループを使いましょう"</string>
+<string name="jandi_tutorial_file">"たった数回のタップでファイルを共有"</string>
+<string name="jandi_tutorial_file_message">"PPT、XLS、PDFなどどのようなファイル形式でもJANDIにアップロードし共有することができます。アップロードされたファイルはいつでも利用可能で、簡単に検索して探すことができます"</string>
 
-    <!-- 프로필 -->
-    <string name="jandi_profile_actionb">"プロフィール"</string>
-    <string name="jandi_profile_edit">"編集"</string>
-    <string name="jandi_profile_basic_info">"基本"</string>
-    <string name="jandi_profile_additional_info">"追加"</string>
+<!-- Manipulate Entity -->
+<string name="jandi_entity_joined_topic">"参加中のトピック"</string>
+<string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
+<string name="jandi_entity_create_entity_name">"名称"</string>
+<string name="jandi_message_create_entity">"%1$s が作成されました"</string>
+<string name="jandi_message_invite_entity">"%1$d メンバーが追加されました"</string>
+<string name="jandi_create_channel">"新規トピックを作成する"</string>
+<string name="jandi_create_privategroup">"新規プライベートグループを作成する"</string>
+<string name="jandi_modify_channel">"トピックの名称を変更"</string>
+<string name="jandi_modify_private_group">"グループを編集"</string>
+<string name="warn_all_users_are_already_invited">"全てのメンバーは既に招待されています"</string>
+<string name="err_entity_create">"作成できませんでした"</string>
+<string name="err_entity_join">"参加できませんでした"</string>
+<string name="err_entity_duplicated_name">"その名前は既に使用されています"</string>
+<string name="err_entity_invite">"招待できませんでした"</string>
+<string name="err_entity_leave">"退出しました"</string>
+<string name="err_entity_modify">"変更できませんでした"</string>
+<string name="err_entity_delete">"削除できませんでした"</string>
 
-    <!-- Need to check later -->
-    <string name="jandi_profile_status_message">"今日の気分"</string>
-    <string name="jandi_profile_email">"メールアドレス"</string>
-    <string name="jandi_profile_phone_number">"携帯番号"</string>
-    <string name="jandi_profile_division">"部署"</string>
-    <string name="jandi_profile_position">"役職"</string>
-    <string name="jandi_profile_optional">"(任意)"</string>
-    <string name="jandi_profile_update">"変更完了しました"</string>
-    <string name="err_profile_get_info">"プロフィールが見つかりませんでした。再度実行してください"</string>
-    <string name="err_profile_empty_info">"入力してください"</string>
-    <string name="err_profile_unmodified">"変更箇所はありません"</string>
-    <string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
-    <string name="err_profile_update">"プロフィールは更新されませんでした"</string>
-    <string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
-    <string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
+<!-- 프로필 -->
+<string name="jandi_profile_actionb">"プロフィール"</string>
+<string name="jandi_profile_edit">"編集"</string>
+<string name="jandi_profile_basic_info">"基本"</string>
+<string name="jandi_profile_additional_info">"追加"</string>
+<string name="jandi_profile_status_message">"今日の気分"</string>
+<string name="jandi_profile_email">"メールアドレス"</string>
+<string name="jandi_profile_phone_number">"携帯番号"</string>
+<string name="jandi_profile_division">"部署"</string>
+<string name="jandi_profile_position">"役職"</string>
+<string name="jandi_profile_optional">"(任意)"</string>
+<string name="jandi_profile_update">"変更する"</string>
+<string name="err_profile_get_info">"プロフィールが見つかりませんでした。再度実行してください"</string>
+<string name="err_profile_empty_info">"入力してください"</string>
+<string name="err_profile_unmodified">"変更箇所はありません"</string>
+<string name="jandi_profile_update_succeed">"プロフィールは正常に更新されました"</string>
+<string name="err_profile_update">"プロフィールは更新されませんでした"</string>
+<string name="jandi_profile_photo_upload_succeed">"プロフィール画像は正常に更新されました"</string>
+<string name="err_profile_photo_upload">"プロフィール画像は更新されませんでした"</string>
 
-    <!-- 회원 초대 -->
-    <string name="jandi_team_info">"チーム"</string>
-    <string name="jandi_invitation">"招待"</string>
-    <string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
-    <string name="jandi_invitation_succeed">"招待しました"</string>
-    <string name="err_invitation_failed">"招待メッセージは送信されませんでした"</string>
+<!-- 회원 초대 -->
+<string name="jandi_team_info">"チーム"</string>
+<string name="jandi_invitation">"招待"</string>
+<string name="jandi_invitation_help">"あなたのチームメンバーをJANDIに招待しましょう！"</string>
+<string name="jandi_invitation_succeed">"招待しました"</string>
+<string name="err_invitation_failed">"招待メッセージは送信されませんでした"</string>
 
-    <!-- Message List -->
-    <string name="jandi_message_hint">"メッセージ"</string>
-    <string name="jandi_message_send">"送信"</string>
-    <string name="jandi_messages_modify_succeed">"編集完了"</string>
-    <string name="jandi_file_uploading">"アップロード中..."</string>
-    <string name="jandi_file_upload_succeed">"アップロード完了"</string>
-    <string name="warn_messages_empty">"メッセージはありません"</string>
-    <string name="warn_no_more_messages">"これ以上新しいメッセージはありません"</string>
-    <string name="warn_no_permission">"アクセスが拒否されました"</string>
+<!-- Message List -->
+<string name="jandi_message_hint">"メッセージ"</string>
+<string name="jandi_message_send">"送信"</string>
+<string name="jandi_messages_modify_succeed">"編集完了"</string>
+<string name="jandi_file_uploading">"アップロード中..."</string>
+<string name="jandi_file_upload_succeed">"アップロード完了"</string>
+<string name="warn_messages_empty">"メッセージはありません"</string>
+<string name="warn_no_more_messages">"これ以上新しいメッセージはありません"</string>
+<string name="warn_no_permission">"アクセスが拒否されました"</string>
+<string name="err_messages_invaild_entity">"適切で無いトピック"</string>
+<string name="err_messages_get">"メッセージを取得できませんでした"</string>
+<string name="err_messages_send">"メッセージを送信できませんでした"</string>
+<string name="err_messages_modify">"メッセージを変更できませんでした"</string>
+<string name="err_messages_delete">"メッセージを削除できませんでした"</string>
+<string name="err_file_upload_failed">"ファイルをアップロードできませんでした"</string>
 
-    <!-- Channel? Member? -->
-    <string name="err_messages_invaild_entity"></string>
-    <string name="err_messages_get">"メッセージを取得できませんでした"</string>
-    <string name="err_messages_send">"メッセージを送信できませんでした"</string>
-    <string name="err_messages_modify">"メッセージを変更できませんでした"</string>
-    <string name="err_messages_delete">"メッセージを削除できませんでした"</string>
-    <string name="err_file_upload_failed">"ファイルをアップロードできませんでした"</string>
+<!-- Manipulate CDP -->
+<string name="menu_entity_edit">"変更する"</string>
+<string name="menu_entity_delete">"削除する"</string>
+<string name="menu_entity_invite">"招待する"</string>
+<string name="menu_entity_leave">"退出する"</string>
 
-    <!-- Manipulate CDP -->
-    <string name="menu_entity_edit">"変更する"</string>
-    <string name="menu_entity_delete">"削除する"</string>
-    <string name="menu_entity_invite">"招待する"</string>
-    <string name="menu_entity_leave">"退出する"</string>
+<!-- Message -->
+<string name="modify_message">"メッセージを編集する"</string>
+<string name="today">"今日"</string>
 
-    <!-- Message -->
-    <string name="modify_message">"メッセージを編集する"</string>
-    <string name="today">"今日"</string>
+<!-- File Detail Activity -->
+<string name="jandi_action_download">"ダウンロード"</string>
+<string name="jandi_action_unshare">"非共有"</string>
+<string name="jandi_action_delete">"削除"</string>
+<string name="jandi_share_succeed">"が共有されました"</string>
+<string name="jandi_unshare_succeed">"が非共有にされました"</string>
+<string name="jandi_delete_succeed">"が削除されました"</string>
+<string name="err_file_detail">"ファイルが見つかりません"</string>
+<string name="err_download">"ファイルがダウンロードできませんでした"</string>
+<string name="err_share">"ファイルが共有できませんでした"</string>
+<string name="err_unshare">"ファイルが非共有にできませんでした"</string>
+<string name="err_delete_file">"ファイルが削除できませんでした"</string>
 
-    <!-- File Detail Activity -->
-    <string name="jandi_action_download">"ダウンロード"</string>
-    <string name="jandi_action_unshare">"非共有"</string>
-    <string name="jandi_action_delete">"削除"</string>
-    <string name="jandi_share_succeed">"が共有されました"</string>
-    <string name="jandi_unshare_succeed">"が非共有にされました"</string>
-    <string name="jandi_delete_succeed">"が削除されました"</string>
-    <string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-    <string name="err_file_detail">"ファイルが見つかりません"</string>
-    <string name="err_download">"ファイルがダウンロードできませんでした"</string>
-    <string name="err_share">"ファイルが共有できませんでした"</string>
-    <string name="err_unshare">"ファイルが非共有にできませんでした"</string>
-    <string name="err_delete_file">"ファイルが削除できませんでした"</string>
+<!-- File Upload -->
+<string name="title_file_upload">"ファイルをアップロード"</string>
+<string name="file_upload_comment">"コメント(任意)"</string>
+<string name="menu_gallery">"ギャラリーからアップロード"</string>
+<string name="menu_camera">"カメラからアップロード"</string>
+<string name="menu_a_file">"ファイル・ディレクトリからアップロード"</string>
+<string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
+<string name="title_file_detail">"説明"</string>
+<string name="comment">"コメント"</string>
 
-    <!-- File Upload -->
-    <string name="title_file_upload">"ファイルをアップロード"</string>
-    <string name="file_upload_comment">"コメント(任意)"</string>
-    <string name="menu_gallery">"ギャラリーからアップロード"</string>
-    <string name="menu_camera">"カメラからアップロード"</string>
-    <string name="menu_a_file">"ファイル・ディレクトリからアップロード"</string>
+<!-- Share & invite -->
+<string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
+<string name="jandi_title_cdp_to_be_unshared">"非共有とする範囲を選択"</string>
+<string name="title_cdp_invite">"招待するメンバーを選択してください"</string>
 
-    <!-- Need to check later -->
-    <string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
-    <string name="title_file_detail">"説明"</string>
-    <string name="comment">"コメント"</string>
-
-    <!-- Share & invite -->
-    <string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
-    <string name="jandi_title_cdp_to_be_unshared"></string>
-    <string name="title_cdp_invite">"招待するメンバーを選択してください"</string>
-
-    <!-- Search -->
-    <string name="jandi_action_search">"検索"</string>
-    <string name="jandi_file_search_keyword">"キーワード"</string>
-    <string name="jandi_file_category_all">"全ての種類"</string>
-    <string name="jandi_file_category_image">"画像"</string>
-    <string name="jandi_file_category_pdf">"PDF"</string>
-    <string name="jandi_file_category_everyone">"全員"</string>
-
-    <!-- Need to check later -->
-    <string name="jandi_file_category_everywhere">"全ての範囲"</string>
-    <string name="jandi_file_search_type">"ファイルの種類を選択してください"</string>
-    <string name="jandi_file_search_user">"メンバーを選択してください"</string>
-    <string name="jandi_file_search_entity">"トピックを選択してください"</string>
-    <string name="warn_no_more_files">"これ以上のファイルは見つかりませんでした"</string>
-    <string name="err_file_search">"検索に失敗しました"</string>
-    <string name="jandi_setting_push">"プッシュ"</string>
-    <string name="jandi_setting_push_subscription">"プッシュ通知"</string>
-    <string name="jandi_setting_push_subscription_ok">"通知をオンにする"</string>
-    <string name="jandi_setting_push_subscription_cancel">"通知をオフにする"</string>
-    <string name="jandi_setting_general">"一般"</string>
-    <string name="jandi_setting_sign_out">"ログアウトする"</string>
-    <string name="jandi_message_logout">"ログアウトしました"</string>
+<!-- Search -->
+<string name="jandi_action_search">"検索"</string>
+<string name="jandi_file_search_keyword">"キーワード"</string>
+<string name="jandi_file_category_all">"全ての種類"</string>
+<string name="jandi_file_category_image">"画像"</string>
+<string name="jandi_file_category_pdf">"PDF"</string>
+<string name="jandi_file_category_everyone">"全員"</string>
+<string name="jandi_file_category_everywhere">"全ての範囲"</string>
+<string name="jandi_file_search_type">"ファイルの種類を選択してください"</string>
+<string name="jandi_file_search_user">"メンバーを選択してください"</string>
+<string name="jandi_file_search_entity">"トピックを選択してください"</string>
+<string name="warn_no_more_files">"これ以上のファイルは見つかりませんでした"</string>
+<string name="err_file_search">"検索に失敗しました"</string>
+<string name="jandi_setting_push">"プッシュ"</string>
+<string name="jandi_setting_push_subscription">"プッシュ通知"</string>
+<string name="jandi_setting_push_subscription_ok">"通知をオンにする"</string>
+<string name="jandi_setting_push_subscription_cancel">"通知をオフにする"</string>
+<string name="jandi_setting_general">"一般"</string>
+<string name="jandi_setting_sign_out">"ログアウトする"</string>
+<string name="jandi_message_logout">"ログアウトしました"</string>
+<string name="jandi_empty"></string>
+<string name="jandi_message_starred">"お気に入りに追加しました"</string>
+<string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
+<string name="jandi_action_menu_message_copy">"コピー"</string>
+<string name="jandi_message_join_entity">"%1$s が参加しました"</string>
+<string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
 </resources>
