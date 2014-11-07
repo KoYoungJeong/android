@@ -18,7 +18,7 @@ import org.androidannotations.annotations.ViewById;
 /**
  * Created by justinygchoi on 14. 10. 23..
  */
-@EFragment(R.layout.fragment_tutorial)
+@EFragment(R.layout.fragment_intro_tutorial)
 public class IntroTutorialFragment extends Fragment {
     public static final int NUM_OF_PAGES    = 3;
     public static final int FIRST_PAGE      = 0;

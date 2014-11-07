@@ -5,9 +5,12 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqNotificationRegister {
     public String deviceType;
-    public String deviceToken;
-    public ReqNotificationRegister(String deviceType, String deviceToken) {
+    public String oldDeviceToken;
+    public String newDeviceToken;
+
+    public ReqNotificationRegister(String deviceType, String oldDeviceToken, String newDeviceToken) {
         this.deviceType = deviceType;
-        this.deviceToken = deviceToken;
+        this.oldDeviceToken = oldDeviceToken;
+        this.newDeviceToken = newDeviceToken;
     }
 }

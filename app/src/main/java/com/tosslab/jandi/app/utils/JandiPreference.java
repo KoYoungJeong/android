@@ -21,6 +21,46 @@ public class JandiPreference {
         editor.commit();
     }
 
+    // Push Notification Token
+    public static String getPushToken(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        return pref.getString(JandiConstants.PREF_PUSH_TOKEN, "");
+    }
+
+    public static void setPushToken(Context context, String token) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(JandiConstants.PREF_PUSH_TOKEN, token);
+        editor.commit();
+    }
+
+    public static int getPriorAppVersion(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        return pref.getInt(JandiConstants.PREF_APP_VERSION, Integer.MIN_VALUE);
+    }
+
+    public static void setPriorAppVersion(Context context, int version) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(JandiConstants.PREF_APP_VERSION, version);
+        editor.commit();
+    }
+
+    // Push Notification Token
+    public static String getPushTokenToBeUpdated(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        return pref.getString(JandiConstants.PREF_PUSH_TOKEN_TBU, "");
+    }
+
+    public static void setPushTokenToBeUpdated(Context context, String token) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(JandiConstants.PREF_PUSH_TOKEN_TBU, token);
+        editor.commit();
+    }
+
+
+    // JANDI Access Token
     public static String getMyToken(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         return pref.getString(JandiConstants.PREF_TOKEN, "");
@@ -59,6 +99,7 @@ public class JandiPreference {
         editor.commit();
     }
 
+    // Tutorial
     public static boolean getFlagForTutorial(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         return pref.getBoolean(JandiConstants.PREF_HAS_READ_TUTORIAL, false);

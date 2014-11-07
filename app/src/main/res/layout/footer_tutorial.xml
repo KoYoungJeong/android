@@ -6,19 +6,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent"
-    android:layout_gravity="bottom"
-    android:paddingBottom="8dp"
+    android:layout_gravity="top"
+    android:paddingTop="8dp"
     android:gravity="center">
-    <Button
+    <Button style="@style/JandiToturial.Indicator"
         android:id="@+id/btn_tutorial_first"
-        style="@style/JandiToturial.Indicator"
         />
-    <Button
+    <Button style="@style/JandiToturial.Indicator"
         android:id="@+id/btn_tutorial_second"
-        style="@style/JandiToturial.Indicator"
         />
-    <Button
+    <Button style="@style/JandiToturial.Indicator"
         android:id="@+id/btn_tutorial_last"
-        style="@style/JandiToturial.Indicator"
         />
 </LinearLayout>

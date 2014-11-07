@@ -15,10 +15,10 @@ import org.androidannotations.annotations.ViewById;
  * Created by justinygchoi on 14. 10. 23..
  */
 @Fullscreen
-@EActivity(R.layout.activity_tutorial)
-public class IntroTutorialActivity extends Activity {
+@EActivity(R.layout.activity_intro_tutorial)
+public class IntroMainActivity extends Activity {
     private ViewPager mViewPager;
-    private IntroTutorialPagerAdapter mAdapter;
+    private IntroMainPagerAdapter mAdapter;
     @ViewById(R.id.btn_tutorial_first)
     Button buttonTutorialFirst;
     @ViewById(R.id.btn_tutorial_second)
@@ -34,7 +34,7 @@ public class IntroTutorialActivity extends Activity {
 
     private void setUpView(){
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mAdapter = new IntroTutorialPagerAdapter(getFragmentManager());
+        mAdapter = new IntroMainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(IntroTutorialFragment.FIRST_PAGE);
         buttonTutorialFirst.setSelected(true);

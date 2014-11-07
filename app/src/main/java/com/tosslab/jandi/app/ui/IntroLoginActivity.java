@@ -3,6 +3,9 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.JandiAuthClient;
+import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -55,11 +59,12 @@ public class IntroLoginActivity extends Activity {
     @ViewById(R.id.btn_login_final)
     Button buttonLogin;
     @RestService
-    JandiRestClient jandiRestClient;
+    JandiRestClient mJandiRestClient;
 
     private int mSelectedTeamId;
     private ProgressWheel mProgressWheel;
     private JandiAuthClient mJandiAuthClient;
+    private JandiEntityClient mJandiEntityClient;
     private InputMethodManager imm;
 
     @AfterViews
@@ -81,7 +86,7 @@ public class IntroLoginActivity extends Activity {
         // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
         // 로그인 관련 Network Client 설정
-        mJandiAuthClient = new JandiAuthClient(jandiRestClient);
+        mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
 
         setView(teamName);
         setActivationColorForButton();
@@ -195,8 +200,7 @@ public class IntroLoginActivity extends Activity {
 
     @UiThread
     void doLoginSucceed(ResAuthToken token) {
-        mProgressWheel.dismiss();
-        moveToIntroFinalActivity(token.token);
+        registerPushTokenInBackground(token.token);
     }
 
     @UiThread
@@ -205,11 +209,71 @@ public class IntroLoginActivity extends Activity {
         ColoredToast.showError(this, getString(errMessageResId));
     }
 
-    private void moveToIntroFinalActivity(String myToken) {
-        IntroFinalActivity_.intent(this)
-                .myToken(myToken)
+    /************************************************************
+     * for Push notification token
+     ************************************************************/
+    @Background
+    public void registerPushTokenInBackground(String myAccessToken) {
+        String oldPushToken = JandiPreference.getPushToken(this);
+        String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
+        log.debug("oldPushToken = " + oldPushToken);
+        log.debug("newPushToken = " + newPushToken);
+        try {
+            mJandiEntityClient = new JandiEntityClient(mJandiRestClient, myAccessToken);
+
+            if (newPushToken.isEmpty() == false) {
+                mJandiEntityClient.registerNotificationToken(oldPushToken, newPushToken);
+                log.debug("registering push token succeed, registration ID=" + newPushToken);
+                sendRegistrationIdSucceed(myAccessToken, newPushToken);
+            } else {
+                sendRegistrationIdSucceed(myAccessToken, oldPushToken);
+            }
+        } catch (JandiNetworkException e) {
+            log.error(e.getErrorInfo() + "Register Fail", e);
+            sendRegistrationIdFailed(e.getErrorInfo());
+        }
+    }
+
+    @UiThread
+    public void sendRegistrationIdSucceed(String myAccessToken, String updatedToken) {
+        mProgressWheel.dismiss();
+        JandiPreference.setMyToken(this, myAccessToken);
+
+        // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
+        JandiPreference.setPushToken(this, updatedToken);
+        JandiPreference.setPushTokenToBeUpdated(this, "");
+        // 토큰 갱신이 성공했으므로 현재 버전을 저장
+        JandiPreference.setPriorAppVersion(this, getThisAppVersion());
+        moveToMainActivity();
+    }
+
+    private int getThisAppVersion() {
+        try {
+            PackageInfo packageInfo = getPackageManager()
+                    .getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
+
+    @UiThread
+    public void sendRegistrationIdFailed(String message) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(this, message);
+    }
+
+
+    public void moveToMainActivity() {
+        // MainActivity 이동
+        MainTabActivity_.intent(this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
 
+        finish();
     }
 }
 

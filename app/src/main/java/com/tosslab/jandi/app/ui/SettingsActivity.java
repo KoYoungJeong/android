@@ -104,7 +104,7 @@ public class SettingsActivity extends PreferenceActivity {
     @Background
     public void deleteNotificationTokenInBackground() {
         SharedPreferences prefs = getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
-        String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
+        String regId = prefs.getString(JandiConstants.PREF_PUSH_TOKEN, "");
 
         if (!regId.isEmpty()) {
             try {
@@ -116,7 +116,7 @@ public class SettingsActivity extends PreferenceActivity {
         }
 
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(JandiConstants.PREF_REG_ID, "");
+        editor.putString(JandiConstants.PREF_PUSH_TOKEN, "");
         editor.commit();
 
         returnToLoginActivity();

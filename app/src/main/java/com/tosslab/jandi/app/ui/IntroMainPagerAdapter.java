@@ -7,9 +7,9 @@ import android.support.v13.app.FragmentPagerAdapter;
 /**
  * Created by justinygchoi on 14. 10. 23..
  */
-public class IntroTutorialPagerAdapter extends FragmentPagerAdapter {
+public class IntroMainPagerAdapter extends FragmentPagerAdapter {
 
-    public IntroTutorialPagerAdapter(FragmentManager fm) {
+    public IntroMainPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 

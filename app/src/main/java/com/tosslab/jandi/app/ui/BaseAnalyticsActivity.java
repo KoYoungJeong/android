@@ -40,7 +40,7 @@ public class BaseAnalyticsActivity extends Activity {
 
     protected void returnToIntroStartActivity() {
         JandiPreference.clearMyToken(this);
-        Intent intent = new Intent(this, IntroStartActivity_.class);
+        Intent intent = new Intent(this, IntroActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

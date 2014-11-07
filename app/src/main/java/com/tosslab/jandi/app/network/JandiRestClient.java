@@ -311,7 +311,7 @@ public interface JandiRestClient {
      * Notification
      ************************************************************/
     // Notification Token 등록
-    @Post("/settings/notification")
+    @Put("/settings/notifications")
     @RequiresHeader("Authorization")
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 

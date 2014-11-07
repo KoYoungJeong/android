@@ -200,8 +200,8 @@ public class JandiEntityClient {
     /************************************************************
      * Push Notification Token
      ************************************************************/
-    public ResCommon registerNotificationToken(String regId) throws JandiNetworkException {
-        ReqNotificationRegister req = new ReqNotificationRegister("android", regId);
+    public ResCommon registerNotificationToken(String oldDevToken, String newDevToken) throws JandiNetworkException {
+        ReqNotificationRegister req = new ReqNotificationRegister("android", oldDevToken, newDevToken);
         try {
             return mJandiRestClient.registerNotificationToken(req);
         } catch (HttpStatusCodeException e) {

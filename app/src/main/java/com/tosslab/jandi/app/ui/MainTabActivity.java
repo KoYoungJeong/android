@@ -146,7 +146,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
-            log.error("get entity failed", e);
+            log.error(e.getErrorInfo() + "get entity failed", e);
             getEntitiesFailed(getString(R.string.err_expired_session));
         } catch (ResourceAccessException e) {
             log.error("connect failed", e);
@@ -220,7 +220,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Background
     public void deleteNotificationTokenInBackground() {
         SharedPreferences prefs = getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
-        String regId = prefs.getString(JandiConstants.PREF_REG_ID, "");
+        String regId = prefs.getString(JandiConstants.PREF_PUSH_TOKEN, "");
 
         if (!regId.isEmpty()) {
             try {
@@ -232,7 +232,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
 
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(JandiConstants.PREF_REG_ID, "");
+        editor.putString(JandiConstants.PREF_PUSH_TOKEN, "");
         editor.commit();
 
         returnToLoginActivity();

@@ -41,4 +41,8 @@ public class JandiNetworkException extends Exception {
             this.errReason = null;
         }
     }
+
+    public String getErrorInfo() {
+        return "[" + errCode + ":" + errReason + "]";
+    }
 }

@@ -23,8 +23,9 @@ public class JandiConstants {
     // GCM
     public static final String PREF_NAME_GCM    = "JandiGcm";
     public static final String SENDER_ID        = "558811220581";
-    public static final String PREF_REG_ID      = "registrationId";
-    public static final String PREF_APP_VERSION = "JandiVersion";
+    public static final String PREF_PUSH_TOKEN      = "registrationId";
+    public static final String PREF_PUSH_TOKEN_TBU  = "registrationIdToBeUpdated";
+    public static final String PREF_APP_VERSION = "priorAppVersion";
 
     public static final int TYPE_TOPIC          = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
