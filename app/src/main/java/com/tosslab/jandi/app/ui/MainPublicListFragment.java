@@ -204,9 +204,11 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @UiThread
     public void createTopicSucceed(int entityId, String entityName) {
         try {
-            MixpanelAnalyticsClient
-                    .getInstance(mContext, mEntityManager.getDistictId())
-                    .trackCreatingEntity(true);
+            if (mEntityManager != null) {
+                MixpanelAnalyticsClient
+                        .getInstance(mContext, mEntityManager.getDistictId())
+                        .trackCreatingEntity(true);
+            }
         } catch (JSONException e) {
             log.error("CAN NOT MEET", e);
         }
@@ -243,9 +245,11 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
     @UiThread
     public void joinChannelSucceed(final FormattedEntity channel) {
-        MixpanelAnalyticsClient
-                .getInstance(mContext, mEntityManager.getDistictId())
-                .trackJoinChannel();
+        if (mEntityManager != null) {
+            MixpanelAnalyticsClient
+                    .getInstance(mContext, mEntityManager.getDistictId())
+                    .trackJoinChannel();
+        }
         moveToMessageActivity(channel);
     }
 

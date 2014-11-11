@@ -29,6 +29,8 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
+import org.androidannotations.annotations.SupposeBackground;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -144,7 +146,7 @@ public class IntroActivity extends Activity {
     }
 
     @Background
-    public void generatePushTokenInBackground(ResultHolder resultHolder) {
+    void generatePushTokenInBackground(ResultHolder resultHolder) {
         try {
             if (mGcm == null) {
                 mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
@@ -161,12 +163,12 @@ public class IntroActivity extends Activity {
 
 
     @UiThread
-    public void generatePushTokenFailed() {
+    void generatePushTokenFailed() {
         ColoredToast.showError(this, "Push error. Please try again after a while");
     }
 
     @Background
-    public void registerPushTokenInBackground(String myAccessToken) {
+    void registerPushTokenInBackground(String myAccessToken) {
         String oldPushToken = JandiPreference.getPushToken(this);
         String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
         log.debug("oldPushToken = " + oldPushToken);
@@ -184,7 +186,7 @@ public class IntroActivity extends Activity {
         } catch (JandiNetworkException e) {
             if (e.errCode == 2000) {
                 // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
-                moveToIntroTutorialActivity();
+                needToLoginFirst();
             } else {
                 log.error("Register Fail", e);
                 sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
@@ -193,7 +195,7 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    public void sendRegistrationIdSucceed(String updatedToken) {
+    void sendRegistrationIdSucceed(String updatedToken) {
         // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
         JandiPreference.setPushToken(this, updatedToken);
         JandiPreference.setPushTokenToBeUpdated(this, "");
@@ -203,7 +205,12 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    public void sendRegistrationIdFailed(String message) {
+    void needToLoginFirst() {
+        moveToIntroTutorialActivity();
+    }
+
+    @UiThread
+    void sendRegistrationIdFailed(String message) {
         ColoredToast.showError(this, message);
     }
 
@@ -230,8 +237,9 @@ public class IntroActivity extends Activity {
      * 최신 버전 체크
      ************************************************************/
     @Background
-    public void checkNewerVersionInBackground(ResultHolder resultHolder) {
-        boolean isLatestVersion = true;     // 기본 값 : 업데이트 안내가 뜨지 않는다.
+    void checkNewerVersionInBackground(ResultHolder resultHolder) {
+        // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
+        boolean isLatestVersion = true;
         try {
             int latestVersion = getLatestVersionInBackground();
             if (mThisVersion < latestVersion) {
@@ -239,17 +247,20 @@ public class IntroActivity extends Activity {
                 log.info("A new version of JANDI is available.");
             }
         } catch (JandiNetworkException e) {
+        } catch (Exception e) {
         } finally {
             checkWhetherUpdating(isLatestVersion, resultHolder);
         }
     }
 
-    private int getLatestVersionInBackground() throws JandiNetworkException {
+    @SupposeBackground
+    int getLatestVersionInBackground() throws JandiNetworkException {
         ResConfig resConfig = mJandiAuthClient.getConfig();
         return resConfig.versions.android;
     }
 
-    private void checkWhetherUpdating(boolean isLatestVersion, ResultHolder resultHolder) {
+    @SupposeBackground
+    void checkWhetherUpdating(boolean isLatestVersion, ResultHolder resultHolder) {
         // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
         if (!isLatestVersion) {
             showUpdateDialog();
@@ -259,7 +270,7 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    public void showUpdateDialog() {
+    void showUpdateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.jandi_update_title)
                 .setMessage(R.string.jandi_update_message)
@@ -314,7 +325,8 @@ public class IntroActivity extends Activity {
     }
 
     // 자동 로그인 유무에 따른 분기.
-    private void checkSignInAndRegister() {
+    @SupposeUiThread
+    void checkSignInAndRegister() {
         String myToken = JandiPreference.getMyToken(this);
         if (myToken != null && myToken.length() > 0) {
             registerPushTokenInBackground(myToken);
@@ -328,8 +340,8 @@ public class IntroActivity extends Activity {
         }
     }
 
-    @UiThread
-    public void moveToMainActivity() {
+    @SupposeUiThread
+    void moveToMainActivity() {
         // MainActivity 이동
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -340,14 +352,14 @@ public class IntroActivity extends Activity {
         finish();
     }
 
-    @UiThread
-    public void moveToIntroTutorialActivity() {
+    @SupposeUiThread
+    void moveToIntroTutorialActivity() {
         IntroMainActivity_.intent(this).start();
         finish();
     }
 
-    @UiThread
-    public void moveToLoginInputIdActivity() {
+    @SupposeUiThread
+    void moveToLoginInputIdActivity() {
         IntroSelectTeamActivity_.intent(this).start();
         finish();
     }

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.lists.entities;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
 
@@ -39,6 +40,8 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
 
+    private int mTotalBadgeCount;
+
     public EntityManager(ResLeftSideMenu resLeftSideMenu) {
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
@@ -53,10 +56,17 @@ public class EntityManager {
 
         this.mMyTeam = resLeftSideMenu.team;
         this.mMe = resLeftSideMenu.user;
+
         for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
             mMarkers.put(marker.entityId, marker);
+            mTotalBadgeCount += marker.alarmCount;
         }
+
         arrangeEntities(resLeftSideMenu);
+    }
+
+    public int getTotalBadgeCount() {
+        return mTotalBadgeCount;
     }
 
     /**

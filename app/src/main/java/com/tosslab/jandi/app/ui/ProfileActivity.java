@@ -457,7 +457,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
 
-        Ion.with(mContext, requestURL)
+        Ion.with(mContext)
+                .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress(new ProgressCallback() {
                     @Override

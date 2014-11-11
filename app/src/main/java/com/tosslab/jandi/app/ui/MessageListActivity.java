@@ -65,6 +65,7 @@ import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -77,6 +78,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -153,6 +155,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         setUpActionBar();
         initProgressWheel();
         clearPushNotification();
+        BadgeUtils.clearBadge(getApplicationContext());
 
         mMyToken = JandiPreference.getMyToken(mContext);
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
@@ -426,8 +429,19 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         log.debug("entity name from push : " + mChattingInformations.entityName);
         showActionBarTitle();
         trackSigningInFromPush(mEntityManager);
+        setBadgeCount(mEntityManager);
 
         getMessages();
+    }
+
+    @SupposeUiThread
+    void setBadgeCount(EntityManager entityManager) {
+        int badgeCount = entityManager.getTotalBadgeCount();
+        if (entityManager != null) {
+            log.debug("Reset badge count to " + badgeCount);
+            JandiPreference.setBadgeCount(this, badgeCount);
+            BadgeUtils.setBadge(this, badgeCount);
+        }
     }
 
     @UiThread
@@ -919,7 +933,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         String permissionCode = (mChattingInformations.isTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
-                .with(mContext, requestURL)
+                .with(mContext)
+                .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress(new ProgressCallback() {
                     @Override

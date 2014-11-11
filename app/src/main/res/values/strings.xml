@@ -74,6 +74,7 @@ Welcome to JANDI"</string>
 <string name="jandi_create_privategroup">"Create New Private Group"</string>
 <string name="jandi_modify_channel">"Rename Topic"</string>
 <string name="jandi_modify_private_group">"Rename Private Group"</string>
+<string name="jandi_message_ask_about_deleting" translatable="false">"Are you sure you wish to delete it?"</string>
 <string name="warn_all_users_are_already_invited">"All members are already invited"</string>
 <string name="err_entity_create">"Create unsuccessful"</string>
 <string name="err_entity_join">"Join unsuccessful"</string>

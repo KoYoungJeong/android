@@ -107,13 +107,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(title);
-//                .setNegativeButton(R.string.jandi_cancel,
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int whichButton) {
-//                                // Do Nothing
-//                            }
-//                        }
-//                );
+
         return builder.create();
     }
 }

@@ -87,6 +87,11 @@
         <service android:name=".ui.JandiGCMIntentService" />
     </application>
 
+    // for samsung or sony device to show badge
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />

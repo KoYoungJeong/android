@@ -44,11 +44,13 @@ import org.apache.log4j.Logger;
 
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by justinygchoi on 2014. 9. 18..
  */
 @EActivity(R.layout.activity_team_info)
-public class TeamInfoActivity extends Activity {
+public class TeamInfoActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(TeamInfoActivity.class);
 
     @ViewById(R.id.list_team_users)
@@ -69,6 +71,7 @@ public class TeamInfoActivity extends Activity {
     private Button mButtonInvitation;
     private ToolTipRelativeLayout mToolTipRelativeLayout;
     private ToolTipView mToolTipView;
+    private EntityManager mEntityManager;
 
     @AfterViews
     public void initForm() {
@@ -81,8 +84,8 @@ public class TeamInfoActivity extends Activity {
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
-        retrieveTeamUserList(entityManager.getFormattedUsers());
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        retrieveTeamUserList(mEntityManager.getFormattedUsers());
     }
 
     private void setUpActionBar() {
@@ -165,6 +168,14 @@ public class TeamInfoActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mEntityManager != null) {
+            trackGaProfile(mEntityManager.getDistictId());
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui;
 import android.app.Activity;
 import android.content.Intent;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
@@ -23,14 +24,16 @@ import org.json.JSONException;
 public class BaseAnalyticsActivity extends Activity {
     private static String GA_PATH_FILE_DETAIL     = "File Detail";
     private static String GA_PATH_PROFILE         = "Profile";
+    private static String GA_PATH_TEAM_INFO       = "Team Info";
 
-    private static String GA_PATH_CHANNEL         = "Channel";
+    private static String GA_PATH_CHANNEL         = "Topic";
     private static String GA_PATH_DIRECT_MESSAGE  = "Direct Message";
-    private static String GA_PATH_PRIVATE_GROUP   = "Private Channel";
+    private static String GA_PATH_PRIVATE_GROUP   = "Private Group";
+
 
     private static String GA_PATH_CHANNEL_PANEL         = "Channel Panel";
     private static String GA_PATH_DIRECT_MESSAGE_PANEL  = "Direct Message Panel";
-    private static String GA_PATH_PRIVATE_GROUP_PANEL   = "Private Channel Panel";
+    private static String GA_PATH_PRIVATE_GROUP_PANEL   = "Private Group Panel";
     private static String GA_PATH_FILE_PANEL            = "File Panel";
 
     private final Logger log = Logger.getLogger(BaseAnalyticsActivity.class);
@@ -187,6 +190,10 @@ public class BaseAnalyticsActivity extends Activity {
         trackGa(distictId, GA_PATH_PROFILE);
     }
 
+    protected void trackTeamInfo(final String districtId) {
+        trackGa(districtId, GA_PATH_TEAM_INFO);
+    }
+
     protected void trackGaMessageList(EntityManager entityManager, int entityType) {
         if (entityManager == null) return;
         String gaPath = (entityType == JandiConstants.TYPE_TOPIC) ? GA_PATH_CHANNEL
@@ -223,5 +230,11 @@ public class BaseAnalyticsActivity extends Activity {
         screenViewTracker.set("&uid", distictId);
         screenViewTracker.setScreenName(gaPath);
         screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
+
+        Tracker screenViewGlobalTracker = ((JandiApplication) getApplication())
+                .getTracker(JandiApplication.TrackerName.GLOBAL_TRACKER);
+        screenViewGlobalTracker.set("&uid", distictId);
+        screenViewGlobalTracker.setScreenName(gaPath);
+        screenViewGlobalTracker.send(new HitBuilders.AppViewBuilder().build());
     }
 }
