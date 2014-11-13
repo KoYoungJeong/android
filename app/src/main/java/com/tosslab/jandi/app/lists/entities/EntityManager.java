@@ -59,6 +59,7 @@ public class EntityManager {
 
         for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
             mMarkers.put(marker.entityId, marker);
+
             mTotalBadgeCount += marker.alarmCount;
         }
 
@@ -75,7 +76,6 @@ public class EntityManager {
      * @return
      */
     private FormattedEntity patchMarkerToFormattedEntity(FormattedEntity entity) {
-        // 현재 entity가 Marker에 존재하는지 확인하여 있으면 추가한다.
         if (mMarkers.containsKey(entity.getId())) {
             ResLeftSideMenu.MessageMarker marker = mMarkers.get(entity.getId());
             entity.lastLinkId = marker.lastLinkId;

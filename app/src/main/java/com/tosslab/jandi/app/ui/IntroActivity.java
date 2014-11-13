@@ -81,7 +81,7 @@ public class IntroActivity extends Activity {
             String pushToken = getAlreadyGeneratedPushToken(this);
 
             // 지금 막 업데이트 한 경우에도 푸시 토큰을 갱신한다.
-            if (pushToken.isEmpty() || isJustUpdated(this)) {
+            if (isJustUpdated(this) || pushToken.isEmpty()) {
                 generatePushTokenInBackground(resultHolder);
             } else {
                 resultHolder.doneProcessGenToken = true;
@@ -139,7 +139,9 @@ public class IntroActivity extends Activity {
     private boolean isJustUpdated(Context context) {
         int registeredVersion = JandiPreference.getPriorAppVersion(context);
         if (registeredVersion != mThisVersion) {
-            log.info("Current app is just updated. It needs to regenerate push token.");
+            log.info("Current app, version "
+                    + registeredVersion
+                    + ", is just updated. It needs to regenerate push token.");
             return true;
         }
         return false;
