@@ -13,8 +13,11 @@ import java.util.Map;
 public class JandiNetworkException extends Exception {
     // ERROR
     public static final int BAD_REQUEST     = 400;
+    public static final int UNAUTHORIZED    = 401;
 
     public static final int DATA_NOT_FOUND  = 1839;
+    public static final int INVALID_PASSWD  = 1818;
+    public static final int EXPIRED_SESSION = 2000;
 
     private static final String ERR_CODE    = "code";
     private static final String ERR_MSG     = "msg";

@@ -105,13 +105,6 @@ public class JandiPreference {
         editor.commit();
     }
 
-    public static void clearMyId(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(JandiConstants.PREF_LOGIN_ID, "");
-        editor.commit();
-    }
-
     // Tutorial
     public static boolean getFlagForTutorial(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);

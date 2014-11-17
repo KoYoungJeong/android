@@ -1400,11 +1400,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
 
         public boolean isTopic() {
-            return (entityType == JandiConstants.TYPE_TOPIC) ? true : false;
+            return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
         }
 
         public boolean isGroup() {
-            return (entityType == JandiConstants.TYPE_GROUP) ? true : false;
+            return (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) ? true : false;
         }
 
         public boolean isDirectMessage() {

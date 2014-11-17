@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
@@ -43,8 +42,6 @@ import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.util.List;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 9. 18..
@@ -128,7 +125,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.toString().trim().length() > 0) {
-                    mButtonInvitation.setBackgroundResource(R.drawable.btn_send_selector);
+                    mButtonInvitation.setBackgroundResource(R.drawable.jandi_btn_selector);
                 } else {
                     mButtonInvitation.setBackgroundResource(R.color.jandi_inactive_button);
                 }

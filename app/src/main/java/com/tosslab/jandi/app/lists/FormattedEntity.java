@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class FormattedEntity {
     // 채널 일 경우
-    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_TOPIC;
+    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_PUBLIC_TOPIC;
     public static final int TYPE_REAL_USER              = JandiConstants.TYPE_DIRECT_MESSAGE;
-    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_GROUP;
+    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_PRIVATE_TOPIC;
 
     // Dummy Entity
     // TODO 통합

@@ -20,7 +20,6 @@ import org.androidannotations.annotations.ViewById;
  */
 @EFragment(R.layout.fragment_intro_tutorial)
 public class IntroTutorialFragment extends Fragment {
-    public static final int NUM_OF_PAGES    = 3;
     public static final int FIRST_PAGE      = 0;
     public static final int SECOND_PAGE     = 1;
     public static final int LAST_PAGE       = 2;
@@ -33,8 +32,6 @@ public class IntroTutorialFragment extends Fragment {
     TextView textViewTutorialTitle;
     @ViewById(R.id.txt_tutorial_message)
     TextView textViewTutorialMessage;
-    @ViewById(R.id.btn_tutorial_finish)
-    Button buttonTutorialFinish;
 
     @AfterViews
     void initLayout() {
@@ -46,40 +43,21 @@ public class IntroTutorialFragment extends Fragment {
                 resImageHead = R.drawable.jandi_img_tutorial_01;
                 resTitleText = R.string.jandi_tutorial_welcome;
                 resMessageText = R.string.jandi_tutorial_welcome_message;
-                buttonTutorialFinish.setVisibility(View.GONE);
                 break;
             case SECOND_PAGE:
                 resImageHead = R.drawable.jandi_img_tutorial_02;
                 resTitleText = R.string.jandi_tutorial_topic;
                 resMessageText = R.string.jandi_tutorial_topic_message;
-                buttonTutorialFinish.setVisibility(View.GONE);
                 break;
             case LAST_PAGE:
             default:
                 resImageHead = R.drawable.jandi_img_tutorial_03;
                 resTitleText = R.string.jandi_tutorial_file;
                 resMessageText = R.string.jandi_tutorial_file_message;
-                buttonTutorialFinish.setVisibility(View.VISIBLE);
                 break;
         }
         imageViewTutorialHead.setImageResource(resImageHead);
         textViewTutorialTitle.setText(resTitleText);
         textViewTutorialMessage.setText(resMessageText);
-    }
-
-    @Click(R.id.btn_tutorial_finish)
-    public void finishTutorial() {
-        // 튜토리얼을 다시 로드하지 않기 위해 설정 값으로 저장하고 종료한다.
-        setReadFlagForTutorial();
-        moveToLoginInputIdActivity();
-    }
-
-    private void setReadFlagForTutorial() {
-        JandiPreference.setFlagForTutorial(getActivity(), true);
-    }
-
-    private void moveToLoginInputIdActivity() {
-        IntroSelectTeamActivity_.intent(this).start();
-        getActivity().finish();
     }
 }

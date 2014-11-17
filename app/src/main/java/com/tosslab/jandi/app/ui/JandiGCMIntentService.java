@@ -105,9 +105,9 @@ public class JandiGCMIntentService extends IntentService {
         JsonNode toEntity = messagesNode.get("toEntity");
         String entityType = toEntity.get("type").asText();
         if (entityType.equals("channel")) {
-            return JandiConstants.TYPE_TOPIC;
+            return JandiConstants.TYPE_PUBLIC_TOPIC;
         } else if (entityType.equals("privateGroup")) {
-            return JandiConstants.TYPE_GROUP;
+            return JandiConstants.TYPE_PRIVATE_TOPIC;
         } else if (entityType.equals("user")) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {

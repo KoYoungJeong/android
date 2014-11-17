@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -174,11 +173,11 @@ public class MixpanelAnalyticsClient {
 
     private String convertEntityTypeToString(int entityType) {
         switch (entityType) {
-            case JandiConstants.TYPE_TOPIC:
+            case JandiConstants.TYPE_PUBLIC_TOPIC:
                 return KEY_CHANNEL;
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return KEY_DIRECT_MESSAGE;
-            case JandiConstants.TYPE_GROUP:
+            case JandiConstants.TYPE_PRIVATE_TOPIC:
             default:
                 return KEY_PRIVATE_GROUP;
         }

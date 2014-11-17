@@ -46,7 +46,7 @@ import java.io.IOException;
  * 3. 자동 로그인 여부를 체크하여 이동한다.
  */
 @Fullscreen
-@EActivity(R.layout.activity_intro_final)
+@EActivity(R.layout.activity_intro)
 public class IntroActivity extends Activity {
     private final Logger log = Logger.getLogger(IntroActivity.class);
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -169,6 +169,10 @@ public class IntroActivity extends Activity {
         ColoredToast.showError(this, "Push error. Please try again after a while");
     }
 
+
+    /************************************************************
+     * 자동 로그인에 따른 토큰 등록
+     ************************************************************/
     @Background
     void registerPushTokenInBackground(String myAccessToken) {
         String oldPushToken = JandiPreference.getPushToken(this);
@@ -186,12 +190,19 @@ public class IntroActivity extends Activity {
                 sendRegistrationIdSucceed(oldPushToken);
             }
         } catch (JandiNetworkException e) {
-            if (e.errCode == 2000) {
+            if (e.httpStatusCode == JandiNetworkException.UNAUTHORIZED) {
+                needToLoginFirst();
+            } else if (e.errCode == JandiNetworkException.EXPIRED_SESSION) {
                 // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
                 needToLoginFirst();
             } else {
                 log.error("Register Fail", e);
-                sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
+                if (e.errCode == -1) {
+                    sendRegistrationIdFailed(e.httpStatusCode + ":" + e.httpStatusMessage);
+                } else {
+                    sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
+                }
+
             }
         }
     }
@@ -298,11 +309,6 @@ public class IntroActivity extends Activity {
     }
 
     /************************************************************
-     * 자동 로그인 유무
-     ************************************************************/
-
-
-    /************************************************************
      * 이동
      ************************************************************/
     @UiThread
@@ -333,12 +339,7 @@ public class IntroActivity extends Activity {
         if (myToken != null && myToken.length() > 0) {
             registerPushTokenInBackground(myToken);
         } else {
-            if (JandiPreference.getFlagForTutorial(this)) {
-                moveToLoginInputIdActivity();
-            } else {
-                moveToIntroTutorialActivity();
-            }
-
+            moveToIntroTutorialActivity();
         }
     }
 
@@ -357,12 +358,6 @@ public class IntroActivity extends Activity {
     @SupposeUiThread
     void moveToIntroTutorialActivity() {
         IntroMainActivity_.intent(this).start();
-        finish();
-    }
-
-    @SupposeUiThread
-    void moveToLoginInputIdActivity() {
-        IntroSelectTeamActivity_.intent(this).start();
         finish();
     }
 }

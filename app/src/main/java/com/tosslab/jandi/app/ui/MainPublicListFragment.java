@@ -162,7 +162,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_CHAT,
-                JandiConstants.TYPE_TOPIC,
+                JandiConstants.TYPE_PUBLIC_TOPIC,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -212,7 +212,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
         } catch (JSONException e) {
             log.error("CAN NOT MEET", e);
         }
-        moveToChannelMessageActivity(entityId);
+        moveToPublicTopicMessageActivity(entityId);
     }
 
     @UiThread

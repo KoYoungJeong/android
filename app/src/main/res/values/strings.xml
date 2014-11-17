@@ -28,7 +28,7 @@
 <string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 
 <!-- Login -->
-<string name="jandi_action_start">"Sign in"</string>
+<string name="jandi_action_start">"Getting Started"</string>
 <string name="jandi_action_login">"Sign in"</string>
 <string name="jandi_select_team">"Choose Your Team"</string>
 <string name="jandi_user_id">"Email"</string>
