@@ -19,5 +19,5 @@
         android:ellipsize="end"
         android:textSize="16sp"
         android:textColor="@color/jandi_text"
-        android:text="팀을 선택하세요"/>
+        android:text="@string/jandi_select_team"/>
 </LinearLayout>

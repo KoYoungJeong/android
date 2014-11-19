@@ -39,12 +39,12 @@
             android:id="@+id/txt_tutorial_title"
             style="@style/JandiTutorial.TitleText"
             android:layout_marginBottom="15dp"
-            android:text="@string/jandi_tutorial_file" />
+            android:text="@string/jandi_tutorial_welcome" />
 
         <TextView
             android:id="@+id/txt_tutorial_message"
             style="@style/JandiTutorial.Text"
             android:layout_marginBottom="18dp"
-            android:text="@string/jandi_tutorial_file_message" />
+            android:text="@string/jandi_tutorial_welcome_message" />
     </LinearLayout>
 </LinearLayout>

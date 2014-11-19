@@ -35,6 +35,7 @@
 <string name="jandi_user_password">"Password"</string>
 <string name="jandi_welcome_message">"Hello!
 Welcome to JANDI"</string>
+<string name="jandi_have_an_account_already">"Already have a team?"</string>
 
 <string name="jandi_input_password">"Input your password for selected team"</string>
 <string name="jandi_forgot_password">"Forgot password?"</string>
@@ -43,7 +44,7 @@ Welcome to JANDI"</string>
 <string name="err_login_unregistered_id">"We could not find your account on JANDI"</string>
 <string name="err_login_invalid_id">"Email address is not valid"</string>
 <string name="err_login_invalid_passwd">"Password is not correct"</string>
-<string name="err_login_invalid_info">"Account and Password do not match"</string>
+<string name="err_login_invalid_info">"Password do not match"</string>
 <string name="err_expired_token">"Expired Token"</string>
 <string name="err_expired_session">"Session has expired. Please sign in again."</string>
 <string name="err_service_connection">"Connection was lost. Please try again."</string>
@@ -62,11 +63,11 @@ Welcome to JANDI"</string>
 
 <!-- 튜토리얼 -->
 <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-<string name="jandi_tutorial_welcome_message">"Everything you love about messaging apps, plus the convenience of cloud storage and search that just works, built for the workplace and available in the palm of your hand. That’s JANDI."</string>
-<string name="jandi_tutorial_topic">"Bring your entire team together"</string>
-<string name="jandi_tutorial_topic_message">"Connect with colleagues across the organization on your Topics of choice, whether it’s collaborating on projects or just casual conversation. You don’t need their contact information – simply tap and chat. When you need privacy, invite the members you want to Private Groups or Direct Messages and carry on."</string>
-<string name="jandi_tutorial_file">"Upload files with just a few taps"</string>
-<string name="jandi_tutorial_file_message">"Share documents, presentations, videos, and any other files with your team right from your phone or JANDI file drawer. All your content is stored and indexed for you to easily find whenever and wherever you need it."</string>
+<string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable. We combined everything you love about messaging apps with the convenience of cloud storage and added powerful search functionality, and are putting it all in the palm of your hand."</string>
+<string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
+<string name="jandi_tutorial_topic_message">"Instantly connect with all your colleagues across the organization on your Topics of choice, whether it’s collaborating on a current project or just casual conversation. If you want more privacy, invite specific members to Private Groups or Direct Messages and carry on."</string>
+<string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
+<string name="jandi_tutorial_file_message">"Share documents, presentations, videos, and any other files with your team right from your phone or JANDI file drawer. All of your content is stored and indexed automatically so you can find exactly what you're looking for down the road."</string>
 
 <!-- Manipulate Entity -->
 <string name="jandi_entity_joined_topic">"My Topics"</string>
@@ -78,7 +79,7 @@ Welcome to JANDI"</string>
 <string name="jandi_create_privategroup">"Create New Private Group"</string>
 <string name="jandi_modify_channel">"Rename Topic"</string>
 <string name="jandi_modify_private_group">"Rename Private Group"</string>
-<string name="jandi_message_ask_about_deleting" translatable="false">"Are you sure you wish to delete it?"</string>
+<string name="jandi_message_ask_about_deleting">"Are you sure you wish to delete it?"</string>
 <string name="warn_all_users_are_already_invited">"All members are already invited"</string>
 <string name="err_entity_create">"Create unsuccessful"</string>
 <string name="err_entity_join">"Join unsuccessful"</string>
@@ -98,8 +99,9 @@ Welcome to JANDI"</string>
 <string name="jandi_profile_phone_number">"Mobile #"</string>
 <string name="jandi_profile_phone_number_hint">"Number"</string>
 <string name="jandi_profile_division">"Division"</string>
-<string name="jandi_profile_position">"Position"</string>
 <string name="jandi_profile_division_hint">"Title"</string>
+<string name="jandi_profile_position">"Position"</string>
+<string name="jandi_profile_position_hint">"Title"</string>
 <string name="jandi_profile_optional">"(Optional)"</string>
 <string name="jandi_profile_update">"Update"</string>
 <string name="err_profile_get_info">"Profile could not be found. Please try again."</string>
@@ -123,9 +125,9 @@ Welcome to JANDI"</string>
 <string name="jandi_messages_modify_succeed">"edit successful"</string>
 <string name="jandi_file_uploading">"uploading..."</string>
 <string name="jandi_file_upload_succeed">"file upload successful"</string>
-<string name="jandi_messages_pull">"Pull to get former messages"</string>
-<string name="jandi_messages_refresh">"Release to get former messages"</string>
-<string name="jandi_messages_release">"Done"</string>
+<string name="jandi_messages_pull">"Pull to load older messages"</string>
+<string name="jandi_messages_refresh">"Done"</string>
+<string name="jandi_messages_release">"Pull to load older messages"</string>
 <string name="warn_messages_empty">"There are no messages"</string>
 <string name="warn_no_more_messages">"There are no more new messages"</string>
 <string name="warn_no_permission">"Access denied"</string>
@@ -197,9 +199,9 @@ Welcome to JANDI"</string>
 <string name="jandi_message_no_starred">"Unstarred"</string>
 <string name="jandi_action_menu_message_copy">"Copy"</string>
 <string name="jandi_message_join_entity">"Joining %1$s"</string>
-<string name="jandi_file_list_pull">"Pull to get former list"</string>
-<string name="jandi_file_list_refresh">"Release to get former list"</string>
-<string name="jandi_file_list_release">"Done"</string>
+<string name="jandi_file_list_pull">"Pull to load more files"</string>
+<string name="jandi_file_list_refresh">"Done"</string>
+<string name="jandi_file_list_release">"Release to view more files"</string>
 <string name="warn_no_more_files">"No more files found"</string>
 <string name="err_file_search">"No files found"</string>
 <string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>

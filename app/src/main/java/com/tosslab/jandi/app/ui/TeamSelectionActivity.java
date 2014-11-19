@@ -66,8 +66,6 @@ public class TeamSelectionActivity extends Activity {
 
     @ViewById(R.id.lv_intro_team_list)
     ListView listViewTeamList;
-//    @ViewById(R.id.et_intro_received_email)
-//    EditText editTextViewEmail;
     @ViewById(R.id.et_intro_signin_password)
     EditText editTextPassword;
     @ViewById(R.id.view_intro_inactive_mask)
@@ -93,7 +91,6 @@ public class TeamSelectionActivity extends Activity {
         mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
 
         setActivationColorForButton();
-//        editTextViewEmail.setText(recievedEmail);
         View header = getLayoutInflater().inflate(R.layout.item_team_list_title, null, false);
         listViewTeamList.addHeaderView(header);
         try {
@@ -118,7 +115,7 @@ public class TeamSelectionActivity extends Activity {
                 }
             });
         } catch (IOException e) {
-            ColoredToast.showError(this, "Team List 획득에 실패했습니다. 다시 시도하여 주십시오.");
+            ColoredToast.showError(this, getString(R.string.err_service_connection));
             finish();
         }
     }

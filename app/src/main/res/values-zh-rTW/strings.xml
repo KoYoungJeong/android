@@ -190,4 +190,5 @@
 <string name="jandi_action_menu_message_copy">"複製"</string>
 <string name="jandi_message_join_entity">"加入 %1$s"</string>
 <string name="err_unsupported_file_type">"%1$s 沒有安裝支援的app"</string>
+    <string name="jandi_have_an_account_already">已經有團隊註冊了嗎?</string>
 </resources>

@@ -208,4 +208,12 @@
 <string name="jandi_action_menu_message_copy">"복사"</string>
 <string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
 <string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
+    <string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
+    <string name="jandi_file_list_refresh">완료</string>
+    <string name="jandi_file_list_pull">당겨서 이전 파일</string>
+    <string name="jandi_file_list_release">놓아서 이전 파일</string>
+    <string name="jandi_messages_pull">당겨서 이전 메시지</string>
+    <string name="jandi_messages_release">놓아서 이전 페이지</string>
+    <string name="jandi_messages_refresh">완료</string>
+    <string name="jandi_profile_phone_number_hint">"전화번호"</string>
 </resources>

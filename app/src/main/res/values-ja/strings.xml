@@ -194,4 +194,5 @@ JANDIへようこそ"</string>
 <string name="jandi_action_menu_message_copy">"コピー"</string>
 <string name="jandi_message_join_entity">"%1$s が参加しました"</string>
 <string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
+    <string name="jandi_have_an_account_already">すでにチームがある場合はこちら</string>
 </resources>
