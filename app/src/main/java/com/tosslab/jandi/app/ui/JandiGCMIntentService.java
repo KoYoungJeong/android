@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
@@ -57,7 +58,7 @@ public class JandiGCMIntentService extends IntentService {
                 log.info("Received: " + extras.toString());
                 try {
                     // 총 메시지
-//                    int messageCount = extras.getInt("messageCount", 0);
+                    int messageCount = Integer.parseInt(extras.getString("messageCount"));
 
                     String messages = extras.getString("messages");
                     ObjectMapper mapper = new ObjectMapper();
@@ -72,12 +73,12 @@ public class JandiGCMIntentService extends IntentService {
                     JandiPreference.setEntityId(getApplicationContext(), entityId);
                     // Post notification of received message.
                     sendNotification(lastTitle, lastMessage, entityType, entityId, profileUrl);
+
+                    // Update count of badge
+                    BadgeUtils.setBadge(getApplicationContext(), recalculateBadgeCount(messageCount));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                // Update count of badge
-                updateBadge(1);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -104,9 +105,9 @@ public class JandiGCMIntentService extends IntentService {
         JsonNode toEntity = messagesNode.get("toEntity");
         String entityType = toEntity.get("type").asText();
         if (entityType.equals("channel")) {
-            return JandiConstants.TYPE_TOPIC;
+            return JandiConstants.TYPE_PUBLIC_TOPIC;
         } else if (entityType.equals("privateGroup")) {
-            return JandiConstants.TYPE_GROUP;
+            return JandiConstants.TYPE_PRIVATE_TOPIC;
         } else if (entityType.equals("user")) {
             return JandiConstants.TYPE_DIRECT_MESSAGE;
         } else {
@@ -148,18 +149,6 @@ public class JandiGCMIntentService extends IntentService {
         return null;
     }
 
-    private void updateBadge(int badgeCount) {
-        if (badgeCount >= 0) {
-            Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
-            // 패키지 네임과 클래스 네임 설정
-            intent.putExtra("badge_count_package_name", getApplication().getPackageName());
-            intent.putExtra("badge_count_class_name", "com.tosslab.jandi.app.ui.MainTabActivity");
-            // 업데이트 카운트
-            intent.putExtra("badge_count", badgeCount);
-            sendBroadcast(intent);
-        }
-    }
-
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
@@ -182,11 +171,12 @@ public class JandiGCMIntentService extends IntentService {
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
         bigTextStyle.bigText(body);
+        bigTextStyle.setSummaryText(getString(R.string.app_name));
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(body);
-        mBuilder.setStyle(bigTextStyle);
+//        mBuilder.setStyle(bigTextStyle);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setSmallIcon(R.drawable.jandi_actionb_logo);
 
@@ -209,5 +199,13 @@ public class JandiGCMIntentService extends IntentService {
         mBuilder.setPriority(NotificationCompat.PRIORITY_MAX);
         mBuilder.setContentIntent(contentIntent);
         nm.notify(JandiConstants.NOTIFICATION_ID, mBuilder.build());
+    }
+
+    int recalculateBadgeCount(int receivedCount) {
+        Context context = getApplicationContext();
+        int badgeCount = JandiPreference.getBadgeCount(context);
+        badgeCount += receivedCount;
+        JandiPreference.setBadgeCount(getApplicationContext(), badgeCount);
+        return badgeCount;
     }
 }

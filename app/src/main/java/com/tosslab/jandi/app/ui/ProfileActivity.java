@@ -248,7 +248,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     void editStatusMessage() {
         // 닉네임
         launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS_MSG,
+                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
                 textViewProfileStatusMessage
         );
     }
@@ -293,7 +293,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
 
     public void onEvent(ConfirmModifyProfileEvent event) {
         switch (event.actionType) {
-            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS_MSG:
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS:
                 setTextAndChangeColor(textViewProfileStatusMessage, event.inputMessage);
                 break;
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE:
@@ -457,7 +457,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
 
-        Ion.with(mContext, requestURL)
+        Ion.with(mContext)
+                .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress(new ProgressCallback() {
                     @Override

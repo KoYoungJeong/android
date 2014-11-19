@@ -29,6 +29,8 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
+import org.androidannotations.annotations.SupposeBackground;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -44,7 +46,7 @@ import java.io.IOException;
  * 3. 자동 로그인 여부를 체크하여 이동한다.
  */
 @Fullscreen
-@EActivity(R.layout.activity_intro_final)
+@EActivity(R.layout.activity_intro)
 public class IntroActivity extends Activity {
     private final Logger log = Logger.getLogger(IntroActivity.class);
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -79,7 +81,7 @@ public class IntroActivity extends Activity {
             String pushToken = getAlreadyGeneratedPushToken(this);
 
             // 지금 막 업데이트 한 경우에도 푸시 토큰을 갱신한다.
-            if (pushToken.isEmpty() || isJustUpdated(this)) {
+            if (isJustUpdated(this) || pushToken.isEmpty()) {
                 generatePushTokenInBackground(resultHolder);
             } else {
                 resultHolder.doneProcessGenToken = true;
@@ -137,14 +139,16 @@ public class IntroActivity extends Activity {
     private boolean isJustUpdated(Context context) {
         int registeredVersion = JandiPreference.getPriorAppVersion(context);
         if (registeredVersion != mThisVersion) {
-            log.info("Current app is just updated. It needs to regenerate push token.");
+            log.info("Current app, version "
+                    + registeredVersion
+                    + ", is just updated. It needs to regenerate push token.");
             return true;
         }
         return false;
     }
 
     @Background
-    public void generatePushTokenInBackground(ResultHolder resultHolder) {
+    void generatePushTokenInBackground(ResultHolder resultHolder) {
         try {
             if (mGcm == null) {
                 mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
@@ -161,12 +165,16 @@ public class IntroActivity extends Activity {
 
 
     @UiThread
-    public void generatePushTokenFailed() {
+    void generatePushTokenFailed() {
         ColoredToast.showError(this, "Push error. Please try again after a while");
     }
 
+
+    /************************************************************
+     * 자동 로그인에 따른 토큰 등록
+     ************************************************************/
     @Background
-    public void registerPushTokenInBackground(String myAccessToken) {
+    void registerPushTokenInBackground(String myAccessToken) {
         String oldPushToken = JandiPreference.getPushToken(this);
         String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
         log.debug("oldPushToken = " + oldPushToken);
@@ -182,18 +190,25 @@ public class IntroActivity extends Activity {
                 sendRegistrationIdSucceed(oldPushToken);
             }
         } catch (JandiNetworkException e) {
-            if (e.errCode == 2000) {
+            if (e.httpStatusCode == JandiNetworkException.UNAUTHORIZED) {
+                needToLoginFirst();
+            } else if (e.errCode == JandiNetworkException.EXPIRED_SESSION) {
                 // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
-                moveToIntroTutorialActivity();
+                needToLoginFirst();
             } else {
                 log.error("Register Fail", e);
-                sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
+                if (e.errCode == -1) {
+                    sendRegistrationIdFailed(e.httpStatusCode + ":" + e.httpStatusMessage);
+                } else {
+                    sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
+                }
+
             }
         }
     }
 
     @UiThread
-    public void sendRegistrationIdSucceed(String updatedToken) {
+    void sendRegistrationIdSucceed(String updatedToken) {
         // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
         JandiPreference.setPushToken(this, updatedToken);
         JandiPreference.setPushTokenToBeUpdated(this, "");
@@ -203,7 +218,12 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    public void sendRegistrationIdFailed(String message) {
+    void needToLoginFirst() {
+        moveToIntroTutorialActivity();
+    }
+
+    @UiThread
+    void sendRegistrationIdFailed(String message) {
         ColoredToast.showError(this, message);
     }
 
@@ -230,8 +250,9 @@ public class IntroActivity extends Activity {
      * 최신 버전 체크
      ************************************************************/
     @Background
-    public void checkNewerVersionInBackground(ResultHolder resultHolder) {
-        boolean isLatestVersion = true;     // 기본 값 : 업데이트 안내가 뜨지 않는다.
+    void checkNewerVersionInBackground(ResultHolder resultHolder) {
+        // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
+        boolean isLatestVersion = true;
         try {
             int latestVersion = getLatestVersionInBackground();
             if (mThisVersion < latestVersion) {
@@ -239,17 +260,20 @@ public class IntroActivity extends Activity {
                 log.info("A new version of JANDI is available.");
             }
         } catch (JandiNetworkException e) {
+        } catch (Exception e) {
         } finally {
             checkWhetherUpdating(isLatestVersion, resultHolder);
         }
     }
 
-    private int getLatestVersionInBackground() throws JandiNetworkException {
+    @SupposeBackground
+    int getLatestVersionInBackground() throws JandiNetworkException {
         ResConfig resConfig = mJandiAuthClient.getConfig();
         return resConfig.versions.android;
     }
 
-    private void checkWhetherUpdating(boolean isLatestVersion, ResultHolder resultHolder) {
+    @SupposeBackground
+    void checkWhetherUpdating(boolean isLatestVersion, ResultHolder resultHolder) {
         // 만약 최신 업데이트 앱이 존재한다면 다운로드 안내 창이 뜬다.
         if (!isLatestVersion) {
             showUpdateDialog();
@@ -259,7 +283,7 @@ public class IntroActivity extends Activity {
     }
 
     @UiThread
-    public void showUpdateDialog() {
+    void showUpdateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.jandi_update_title)
                 .setMessage(R.string.jandi_update_message)
@@ -283,11 +307,6 @@ public class IntroActivity extends Activity {
                 .create()
                 .show();
     }
-
-    /************************************************************
-     * 자동 로그인 유무
-     ************************************************************/
-
 
     /************************************************************
      * 이동
@@ -314,22 +333,18 @@ public class IntroActivity extends Activity {
     }
 
     // 자동 로그인 유무에 따른 분기.
-    private void checkSignInAndRegister() {
+    @SupposeUiThread
+    void checkSignInAndRegister() {
         String myToken = JandiPreference.getMyToken(this);
         if (myToken != null && myToken.length() > 0) {
             registerPushTokenInBackground(myToken);
         } else {
-            if (JandiPreference.getFlagForTutorial(this)) {
-                moveToLoginInputIdActivity();
-            } else {
-                moveToIntroTutorialActivity();
-            }
-
+            moveToIntroTutorialActivity();
         }
     }
 
-    @UiThread
-    public void moveToMainActivity() {
+    @SupposeUiThread
+    void moveToMainActivity() {
         // MainActivity 이동
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -340,15 +355,9 @@ public class IntroActivity extends Activity {
         finish();
     }
 
-    @UiThread
-    public void moveToIntroTutorialActivity() {
+    @SupposeUiThread
+    void moveToIntroTutorialActivity() {
         IntroMainActivity_.intent(this).start();
-        finish();
-    }
-
-    @UiThread
-    public void moveToLoginInputIdActivity() {
-        IntroSelectTeamActivity_.intent(this).start();
         finish();
     }
 }

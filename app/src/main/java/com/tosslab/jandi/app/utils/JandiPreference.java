@@ -59,6 +59,19 @@ public class JandiPreference {
         editor.commit();
     }
 
+    // Badge Count
+    public static int getBadgeCount(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(JandiConstants.PREF_BADGE_COUNT, 0);
+    }
+
+    public static void setBadgeCount(Context context, int badgeCount) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(JandiConstants.PREF_BADGE_COUNT, badgeCount);
+        editor.commit();
+    }
+
 
     // JANDI Access Token
     public static String getMyToken(Context context) {
@@ -89,13 +102,6 @@ public class JandiPreference {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString(JandiConstants.PREF_LOGIN_ID, token);
-        editor.commit();
-    }
-
-    public static void clearMyId(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(JandiConstants.PREF_LOGIN_ID, "");
         editor.commit();
     }
 

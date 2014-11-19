@@ -150,7 +150,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_CHAT,
-                JandiConstants.TYPE_GROUP,
+                JandiConstants.TYPE_PRIVATE_TOPIC,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -192,13 +192,15 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     @UiThread
     public void createGroupSucceed(int entityId, String entityName) {
         try {
-            MixpanelAnalyticsClient
-                    .getInstance(mContext, mEntityManager.getDistictId())
-                    .trackCreatingEntity(false);
+            if (mEntityManager != null) {
+                MixpanelAnalyticsClient
+                        .getInstance(mContext, mEntityManager.getDistictId())
+                        .trackCreatingEntity(false);
+            }
         } catch (JSONException e) {
             log.error("CAN NOT MEET", e);
         }
-        moveToPrivateGroupMessageActivity(entityId);
+        moveToPrivateTopicMessageActivity(entityId);
     }
 
     @UiThread

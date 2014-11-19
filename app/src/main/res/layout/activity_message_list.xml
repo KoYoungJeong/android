@@ -15,9 +15,9 @@
         android:transcriptMode="alwaysScroll"
         android:smoothScrollbar="true"
         android:fillViewport="true"
-        ptr:ptrPullLabel="당겨서 이전 메시지"
-        ptr:ptrRefreshLabel="놓아서 이전 메시지"
-        ptr:ptrReleaseLabel="완료" />
+        ptr:ptrPullLabel="@string/jandi_messages_pull"
+        ptr:ptrRefreshLabel="@string/jandi_messages_refresh"
+        ptr:ptrReleaseLabel="@string/jandi_messages_release" />
 
     <!-- Message Input Layout -->
     <View
@@ -57,7 +57,7 @@
             android:text="@string/jandi_message_send"
             android:textSize="14sp"
             android:textColor="@color/jandi_messages_button_text"
-            android:background="@drawable/btn_send_selector"/>
+            android:background="@drawable/jandi_btn_selector"/>
     </LinearLayout>
 
 </LinearLayout>

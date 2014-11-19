@@ -1,71 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ImageView
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
-        android:src="@drawable/jandi_img_intro_head"/>
+        android:background="#e8e8e8"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/jandi_img_tutorial_04" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/jandi_border" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:paddingTop="28dp"
+        android:paddingBottom="36dp"
         android:paddingLeft="36dp"
         android:paddingRight="36dp"
-        android:paddingBottom="36dp">
-        <RelativeLayout
+        android:paddingTop="28dp">
+
+        <Button
+            android:id="@+id/btn_getting_started"
+            style="@style/JandiTutorial.Button"
+            android:text="@string/jandi_action_start" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/jandi_border" />
+
+        <TextView
+            style="@style/JandiTutorial.Text"
+            android:layout_marginBottom="12dp"
+            android:text="이미 가입한 계정이 있으신가요?" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
             <EditText
-                android:id="@+id/et_intro_login_id"
-                android:layout_width="match_parent"
-                android:layout_height="42dp"
-                android:singleLine="true"
-                android:inputType="textEmailAddress"
-                android:background="@drawable/edtxt_messages_input"
-                android:hint="@string/jandi_profile_email"/>
+                android:id="@+id/et_intro_login_email"
+                style="@style/JandiTutorial.EditText"
+                android:layout_width="0dp"
+                android:layout_weight="1" />
+
             <Button
-                android:id="@+id/btn_intro_login_start"
-                android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="3dp"
-                android:layout_centerVertical="true"
-                android:text="@string/jandi_action_start"
-                android:textSize="14sp"
-                android:textColor="@color/jandi_messages_button_text"
-                android:background="@drawable/btn_inactive"/>
-        </RelativeLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_alignParentBottom="true">
-            <TextView
-                android:id="@+id/txt_intro_team_creation_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/jandi_text"
-                android:text="@string/jandi_question_team_create"/>
-            <TextView
-                android:id="@+id/txt_intro_team_creation"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/txt_intro_team_creation_message"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text"
-                android:textSize="18sp"
-                android:text="@string/jandi_action_create_team"/>
-        </RelativeLayout>
+                android:id="@+id/btn_intro_action_signin_start"
+                style="@style/JandiTutorial.Button.Dynamic"
+                android:text="@string/jandi_action_login"
+                android:layout_marginLeft="4dp"/>
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

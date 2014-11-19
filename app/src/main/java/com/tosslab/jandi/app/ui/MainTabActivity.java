@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -162,6 +164,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());
         checkNewTabBadges(mEntityManager);
+        setBadgeCount(mEntityManager);
         postAllEvents();
     }
 
@@ -172,6 +175,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void checkNewTabBadges(EntityManager entityManager) {
+        if (entityManager == null) {
+            return;
+        }
+
         if (entityManager.hasNewTopicMessage()) {
             mMainTabPagerAdapter.showNewTopicBadge();
         } else {
@@ -181,6 +188,16 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             mMainTabPagerAdapter.showNewChatBadge();
         } else {
             mMainTabPagerAdapter.hideNewChatBadge();
+        }
+    }
+
+    @SupposeUiThread
+    void setBadgeCount(EntityManager entityManager) {
+        int badgeCount = entityManager.getTotalBadgeCount();
+        if (entityManager != null) {
+            log.debug("Reset badge count to " + badgeCount);
+            JandiPreference.setBadgeCount(this, badgeCount);
+            BadgeUtils.setBadge(this, badgeCount);
         }
     }
 
@@ -242,7 +259,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);
 
-        Intent intent = new Intent(mContext, IntroSelectTeamActivity_.class);
+        Intent intent = new Intent(mContext, IntroActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

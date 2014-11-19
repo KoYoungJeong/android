@@ -7,6 +7,7 @@
     <color name="jandi_text_white">#FFFFFF</color>
     <color name="jandi_border">#999999</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
+    <color name="jandi_intro_edittext_bg">#e5e5e5</color>
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_main</color>

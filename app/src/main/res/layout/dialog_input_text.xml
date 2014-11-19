@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:inputType="text"
         android:imeOptions="actionDone"
         android:focusableInTouchMode="true"
         android:hint="@string/jandi_entity_create_entity_name" >

@@ -33,6 +33,10 @@
             android:label="@string/app_name"
             android:theme="@style/JandiTheme.NoActionBar"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.TeamSelectionActivity_"
+            android:label="@string/jandi_action_login"
+            android:windowSoftInputMode="adjustUnspecified"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.IntroLoginActivity_"
             android:label="@string/jandi_action_login"
@@ -86,6 +90,11 @@
         </receiver>
         <service android:name=".ui.JandiGCMIntentService" />
     </application>
+
+    // for samsung or sony device to show badge
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

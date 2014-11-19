@@ -51,21 +51,21 @@ public class BaseChatListFragment extends Fragment {
         mProgressWheel.init();
     }
 
-    protected void moveToChannelMessageActivity(int channelId) {
+    protected void moveToPublicTopicMessageActivity(int channelId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(channelId, JandiConstants.TYPE_TOPIC, false);
+        moveToMessageActivity(channelId, JandiConstants.TYPE_PUBLIC_TOPIC, false);
     }
 
-    protected void moveToPrivateGroupMessageActivity(int privateGroupId) {
+    protected void moveToPrivateTopicMessageActivity(int privateGroupId) {
         ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
-        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_GROUP, false);
+        moveToMessageActivity(privateGroupId, JandiConstants.TYPE_PRIVATE_TOPIC, false);
     }
 
     protected void moveToMessageActivity(FormattedEntity entity) {
         int type = (entity.isChannel())
-                ? JandiConstants.TYPE_TOPIC
+                ? JandiConstants.TYPE_PUBLIC_TOPIC
                 : (entity.isPrivateGroup())
-                    ? JandiConstants.TYPE_GROUP
+                    ? JandiConstants.TYPE_PRIVATE_TOPIC
                     : JandiConstants.TYPE_DIRECT_MESSAGE;
         moveToMessageActivity(entity.getId(), type, entity.isStarred);
     }

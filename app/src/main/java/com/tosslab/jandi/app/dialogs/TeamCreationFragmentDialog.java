@@ -20,13 +20,13 @@ import com.tosslab.jandi.app.utils.FormatConverter;
 import de.greenrobot.event.EventBus;
 
 /**
- * Created by justinygchoi on 2014. 10. 13..
+ * Created by justinygchoi on 14. 11. 13..
  */
-public class CreateTeamDialog extends DialogFragment {
+public class TeamCreationFragmentDialog extends DialogFragment {
     private final static String ARG_EMAIL    = "email";
 
-    public static CreateTeamDialog newInstance(String email) {
-        CreateTeamDialog frag = new CreateTeamDialog();
+    public static TeamCreationFragmentDialog newInstance(String email) {
+        TeamCreationFragmentDialog frag = new TeamCreationFragmentDialog();
         Bundle args = new Bundle();
         args.putString(ARG_EMAIL, email);
         frag.setArguments(args);
@@ -46,12 +46,17 @@ public class CreateTeamDialog extends DialogFragment {
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         final String email = getArguments().getString(ARG_EMAIL, "");
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mainView = inflater.inflate(R.layout.dialog_team_creation, null);
 
-        final Button buttonTeamCreate = (Button) mainView.findViewById(R.id.btn_team_creation);
-        final EditText editTextId = (EditText) mainView.findViewById(R.id.et_team_creation_id);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View mainView = inflater.inflate(R.layout.dialog_fragment_team_creation, null);
+
+        final Button buttonTeamCreate
+                = (Button) mainView.findViewById(R.id.btn_action_team_creation);
+        final EditText editTextId = (EditText) mainView.findViewById(R.id.et_team_creation_email);
         if (email.length() > 0) {
+            if (FormatConverter.isInvalidEmailString(email) == false) {
+                buttonTeamCreate.setSelected(true);
+            }
             editTextId.setText(email);
         }
 
@@ -65,27 +70,29 @@ public class CreateTeamDialog extends DialogFragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (FormatConverter.isInvalidEmailString(editable.toString())) {
-                    buttonTeamCreate.setBackgroundResource(R.drawable.jandi_btn_selector);
+                    buttonTeamCreate.setSelected(false);
                 } else {
-                    buttonTeamCreate.setBackgroundResource(R.color.jandi_inactive_button);
+                    buttonTeamCreate.setSelected(true);
                 }
             }
         });
         buttonTeamCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String myEmailId = editTextId.getText().toString();
-                EventBus.getDefault().post(new RequestTeamCreationEvent(myEmailId));
-                dismiss();
+                if (buttonTeamCreate.isSelected()) {
+                    String myEmailId = editTextId.getText().toString();
+                    EventBus.getDefault().post(new RequestTeamCreationEvent(myEmailId));
+                    dismiss();
+                }
             }
         });
 
         // creating the fullscreen dialog
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(mainView);
-        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         return dialog;
     }

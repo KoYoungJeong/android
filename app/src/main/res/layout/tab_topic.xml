@@ -23,7 +23,7 @@
             android:layout_centerHorizontal="true"
             android:text="@string/jandi_tab_topic"
             android:textSize="10sp"
-            android:textColor="@drawable/jandi_tab_selector_font"/>
+            android:textColor="@drawable/jandi_selector_font"/>
         <ImageView
             android:id="@+id/tab_badge_topic_new"
             android:layout_width="wrap_content"

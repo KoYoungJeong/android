@@ -38,6 +38,7 @@ public class JandiApplication extends Application {
 
     public enum TrackerName {
         APP_TRACKER,
+        GLOBAL_TRACKER,
     }
 
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
@@ -54,8 +55,6 @@ public class JandiApplication extends Application {
         } catch (Exception e) {
             Log.e("android-log4j", e.getMessage());
         }
-
-//        trustEveryone();
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {
@@ -64,7 +63,7 @@ public class JandiApplication extends Application {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             Tracker t = (trackerId == TrackerName.APP_TRACKER)
                     ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
-                    : null;
+                    : analytics.newTracker(R.xml.global_tracker);
             mTrackers.put(trackerId, t);
 
         }

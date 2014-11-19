@@ -39,6 +39,8 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
 
+    private int mTotalBadgeCount;
+
     public EntityManager(ResLeftSideMenu resLeftSideMenu) {
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
@@ -53,10 +55,40 @@ public class EntityManager {
 
         this.mMyTeam = resLeftSideMenu.team;
         this.mMe = resLeftSideMenu.user;
+
         for (ResLeftSideMenu.MessageMarker marker : mMe.u_messageMarkers) {
             mMarkers.put(marker.entityId, marker);
         }
         arrangeEntities(resLeftSideMenu);
+        mTotalBadgeCount = retrieveTotalBadgeCount();
+    }
+
+    /************************************************************
+     * for Badge Count
+     ************************************************************/
+    private int retrieveTotalBadgeCount() {
+        int totalBadgeCount = 0;
+
+        totalBadgeCount += retrieveBadgeCount(mStarredJoinedTopics);
+        totalBadgeCount += retrieveBadgeCount(mJoinedTopics);
+        totalBadgeCount += retrieveBadgeCount(mStarredGroups);
+        totalBadgeCount += retrieveBadgeCount(mGroups);
+        totalBadgeCount += retrieveBadgeCount(mStarredUsers);
+        totalBadgeCount += retrieveBadgeCount(mUsers);
+
+        return totalBadgeCount;
+    }
+
+    private int retrieveBadgeCount(HashMap<Integer, FormattedEntity> hashMap) {
+        int badgeCount = 0;
+        for (FormattedEntity formattedEntity : hashMap.values()) {
+            badgeCount += formattedEntity.alarmCount;
+        }
+        return badgeCount;
+    }
+
+    public int getTotalBadgeCount() {
+        return mTotalBadgeCount;
     }
 
     /**
@@ -65,7 +97,6 @@ public class EntityManager {
      * @return
      */
     private FormattedEntity patchMarkerToFormattedEntity(FormattedEntity entity) {
-        // 현재 entity가 Marker에 존재하는지 확인하여 있으면 추가한다.
         if (mMarkers.containsKey(entity.getId())) {
             ResLeftSideMenu.MessageMarker marker = mMarkers.get(entity.getId());
             entity.lastLinkId = marker.lastLinkId;
@@ -282,9 +313,9 @@ public class EntityManager {
 
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
         FormattedEntity entity;
-        if (entityType == JandiConstants.TYPE_TOPIC) {
+        if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entity = searchTopicById(entityId);
-        } else if (entityType == JandiConstants.TYPE_GROUP) {
+        } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entity = searchGroupById(entityId);
         } else {
             return null;

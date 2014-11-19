@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
@@ -37,6 +36,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -48,7 +48,7 @@ import java.util.List;
  * Created by justinygchoi on 2014. 9. 18..
  */
 @EActivity(R.layout.activity_team_info)
-public class TeamInfoActivity extends Activity {
+public class TeamInfoActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(TeamInfoActivity.class);
 
     @ViewById(R.id.list_team_users)
@@ -69,6 +69,7 @@ public class TeamInfoActivity extends Activity {
     private Button mButtonInvitation;
     private ToolTipRelativeLayout mToolTipRelativeLayout;
     private ToolTipView mToolTipView;
+    private EntityManager mEntityManager;
 
     @AfterViews
     public void initForm() {
@@ -81,11 +82,12 @@ public class TeamInfoActivity extends Activity {
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
-        retrieveTeamUserList(entityManager.getFormattedUsers());
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        retrieveTeamUserList(mEntityManager.getFormattedUsers());
     }
 
-    private void setUpActionBar() {
+    @SupposeUiThread
+    void setUpActionBar() {
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -94,11 +96,13 @@ public class TeamInfoActivity extends Activity {
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
     }
 
-    private void setUpToolTip() {
+    @SupposeUiThread
+    void setUpToolTip() {
         mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
     }
 
-    private void initProgressWheel() {
+    @SupposeUiThread
+    void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
@@ -109,7 +113,8 @@ public class TeamInfoActivity extends Activity {
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
     }
 
-    private void addInvitationViewAsListviewFooter() {
+    @SupposeUiThread
+    void addInvitationViewAsListviewFooter() {
         View footer = getLayoutInflater().inflate(R.layout.footer_invite_user, null, false);
         mEditTextEmailAddress = (EditText) footer.findViewById(R.id.et_invitation_email);
         mButtonInvitation = (Button) footer.findViewById(R.id.btn_invitation_confirm);
@@ -124,8 +129,8 @@ public class TeamInfoActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().trim().length() > 0) {
-                    mButtonInvitation.setBackgroundResource(R.drawable.btn_send_selector);
+                if (FormatConverter.isInvalidEmailString(editable.toString())) {
+                    mButtonInvitation.setBackgroundResource(R.drawable.jandi_btn_selector);
                 } else {
                     mButtonInvitation.setBackgroundResource(R.color.jandi_inactive_button);
                 }
@@ -137,14 +142,8 @@ public class TeamInfoActivity extends Activity {
             public void onClick(View view) {
                 imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(),0);
                 String email = mEditTextEmailAddress.getEditableText().toString();
-
-                if (FormatConverter.isInvalidEmailString(email)) {
-                    ColoredToast.showWarning(mContext, "올바른 이메일 주소를 입력하세요");
-                    return;
-                } else {
-                    mEditTextEmailAddress.setText("");
-                    inviteTeamMember(email);
-                }
+                mEditTextEmailAddress.setText("");
+                inviteTeamMember(email);
             }
         });
         listViewInvitation.addFooterView(footer);
@@ -165,6 +164,14 @@ public class TeamInfoActivity extends Activity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mEntityManager != null) {
+            trackGaProfile(mEntityManager.getDistictId());
+        }
     }
 
     @Override

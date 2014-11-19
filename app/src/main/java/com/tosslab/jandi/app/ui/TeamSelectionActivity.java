@@ -10,12 +10,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.team.TeamListAdapter;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
@@ -32,6 +35,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -39,57 +43,84 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
- * Created by justinygchoi on 2014. 9. 25..
+ * Created by justinygchoi on 14. 11. 14..
  */
-@EActivity(R.layout.activity_login_final)
-public class IntroLoginActivity extends Activity {
-    private final Logger log = Logger.getLogger(IntroLoginActivity.class);
+@EActivity(R.layout.activity_team_selection)
+public class TeamSelectionActivity extends Activity {
+    private final Logger log = Logger.getLogger(TeamSelectionActivity.class);
+
     @Extra
-    String myId;
+    String recievedEmail;
     @Extra
-    String jsonExtraTeam;
-    @ViewById(R.id.txt_login_displayed_team_name)
-    TextView textViewDisplayedTeamName;
-    @ViewById(R.id.txt_login_displayed_id)
-    TextView textViewDisplayedId;
-    @ViewById(R.id.et_login_final_password)
-    EditText editTextPassword;
-    @ViewById(R.id.btn_login_final)
-    Button buttonLogin;
+    String jsonExtraTeamList;
+
     @RestService
     JandiRestClient mJandiRestClient;
 
     private int mSelectedTeamId;
-    private ProgressWheel mProgressWheel;
-    private JandiAuthClient mJandiAuthClient;
     private JandiEntityClient mJandiEntityClient;
+    private JandiAuthClient mJandiAuthClient;
+
+    @ViewById(R.id.lv_intro_team_list)
+    ListView listViewTeamList;
+//    @ViewById(R.id.et_intro_received_email)
+//    EditText editTextViewEmail;
+    @ViewById(R.id.et_intro_signin_password)
+    EditText editTextPassword;
+    @ViewById(R.id.view_intro_inactive_mask)
+    View viewInactiveMask;
+    @ViewById(R.id.btn_intro_action_signin)
+    Button buttonSignIn;
+
+    private ProgressWheel mProgressWheel;
     private InputMethodManager imm;
 
     @AfterViews
-    void initView() {
+    void init() {
         setUpActionBar();
-        String teamName = "";
-        try {
-            ResMyTeam.Team myTeam = convertJsonToPojo();
-            mSelectedTeamId = myTeam.teamId;
-            teamName = myTeam.name;
-        } catch (IOException e) {
-            ColoredToast.showError(this, "Parsing Error");
-            finish();
-        }
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
+
         // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
         // 로그인 관련 Network Client 설정
         mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
 
-        setView(teamName);
         setActivationColorForButton();
+//        editTextViewEmail.setText(recievedEmail);
+        View header = getLayoutInflater().inflate(R.layout.item_team_list_title, null, false);
+        listViewTeamList.addHeaderView(header);
+        try {
+            final TeamListAdapter adapter = getTeamListAdapter(jsonExtraTeamList);
+            listViewTeamList.setAdapter(adapter);
+            listViewTeamList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                    if (position == 0) {
+                        // Index of TITLE. DO NOTHING
+                        return;
+                    }
+                    viewInactiveMask.setVisibility(View.GONE);
+                    listViewTeamList.setSelection(position);
+
+                    editTextPassword.setFocusableInTouchMode(true);
+                    editTextPassword.setFocusable(true);
+
+                    ResMyTeam.Team selectedMyTeam = adapter.getItem(position - 1);
+                    mSelectedTeamId = selectedMyTeam.teamId;
+                    log.debug(selectedMyTeam.name + ", id=" + mSelectedTeamId + ", is selected");
+                }
+            });
+        } catch (IOException e) {
+            ColoredToast.showError(this, "Team List 획득에 실패했습니다. 다시 시도하여 주십시오.");
+            finish();
+        }
     }
 
     @Override
@@ -109,6 +140,17 @@ public class IntroLoginActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    private TeamListAdapter getTeamListAdapter(String jsonTeamList) throws IOException {
+        ResMyTeam myTeamList = convertJsonToPojo(jsonTeamList);
+        List<ResMyTeam.Team> myTeams = myTeamList.teamList;
+        return new TeamListAdapter(this, myTeams);
+    }
+
+    private ResMyTeam convertJsonToPojo(String jsonTeamList) throws IOException {
+        log.debug("JSON Extra : " + jsonTeamList);
+        return new ObjectMapper().readValue(jsonTeamList, ResMyTeam.class);
+    }
+
     private void setUpActionBar() {
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -116,18 +158,6 @@ public class IntroLoginActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-    }
-
-    private ResMyTeam.Team convertJsonToPojo() throws IOException {
-        log.debug("JSON Extra : " + jsonExtraTeam);
-        return new ObjectMapper().readValue(jsonExtraTeam, ResMyTeam.Team.class);
-    }
-
-    private void setView(String teamName) {
-        // Team Name
-        textViewDisplayedTeamName.setText(teamName);
-        // E-mail 주소 출력
-        textViewDisplayedId.setText(myId);
     }
 
     private void setActivationColorForButton() {
@@ -141,52 +171,44 @@ public class IntroLoginActivity extends Activity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().trim().length() > 0) {
-                    buttonLogin.setBackgroundResource(R.drawable.btn_send_selector);
+                if (FormatConverter.isInvalidPasswd(editable.toString())) {
+                    buttonSignIn.setSelected(false);
+                    buttonSignIn.setEnabled(false);
                 } else {
-                    buttonLogin.setBackgroundResource(R.color.jandi_inactive_button);
+                    buttonSignIn.setSelected(true);
+                    buttonSignIn.setEnabled(true);
                 }
             }
         });
     }
 
+
     /************************************************************
      * 로그인 수행
      ************************************************************/
-
-    @Click(R.id.btn_login_final)
-    void doLogin() {
+    @Click(R.id.btn_intro_action_signin)
+    void pressLoginButton() {
         hideSoftKeyboard();
-        pressLoginButton(editTextPassword.getEditableText().toString());
+        mProgressWheel.show();
+        doLoginInBackground(editTextPassword.getEditableText().toString());
     }
 
     private void hideSoftKeyboard() {
         imm.hideSoftInputFromWindow(editTextPassword.getWindowToken(),0);
     }
 
-    public void pressLoginButton(String passwd) {
-        // 입력의 포멧 체크
-        if (FormatConverter.isInvalidPasswd(passwd)) {
-            ColoredToast.showError(this, getString(R.string.err_login_invalid_passwd));
-            return;
-        }
-
-        mProgressWheel.show();
-        doLoginInBackground(passwd);
-    }
-
     @Background
     void doLoginInBackground(String passwd) {
         try {
-            ResAuthToken resAuthToken = mJandiAuthClient.login(mSelectedTeamId, myId, passwd);
-            JandiPreference.setMyId(this, myId);
+            ResAuthToken resAuthToken = mJandiAuthClient.login(mSelectedTeamId, recievedEmail, passwd);
+            JandiPreference.setMyId(this, recievedEmail);
             if (resAuthToken != null) {
                 doLoginSucceed(resAuthToken);
             } else {
                 doLoginFailed(R.string.err_login);
             }
         }  catch (JandiNetworkException e) {
-            if (e.errCode == 1818) {
+            if (e.errCode == JandiNetworkException.INVALID_PASSWD) {
                 doLoginFailed(R.string.err_login_invalid_info);
             } else {
                 log.error("Login failed", e);
@@ -200,7 +222,9 @@ public class IntroLoginActivity extends Activity {
 
     @UiThread
     void doLoginSucceed(ResAuthToken token) {
-        registerPushTokenInBackground(token.token);
+        String myAccessToken = token.token;
+        JandiPreference.setMyToken(this, myAccessToken);
+        registerPushTokenInBackground(myAccessToken);
     }
 
     @UiThread
@@ -210,10 +234,10 @@ public class IntroLoginActivity extends Activity {
     }
 
     /************************************************************
-     * for Push notification token
+     * 로그인에 따른 토큰 등록
      ************************************************************/
     @Background
-    public void registerPushTokenInBackground(String myAccessToken) {
+    void registerPushTokenInBackground(String myAccessToken) {
         String oldPushToken = JandiPreference.getPushToken(this);
         String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
         log.debug("oldPushToken = " + oldPushToken);
@@ -224,20 +248,31 @@ public class IntroLoginActivity extends Activity {
             if (newPushToken.isEmpty() == false) {
                 mJandiEntityClient.registerNotificationToken(oldPushToken, newPushToken);
                 log.debug("registering push token succeed, registration ID=" + newPushToken);
-                sendRegistrationIdSucceed(myAccessToken, newPushToken);
+                sendRegistrationIdSucceed(newPushToken);
             } else {
-                sendRegistrationIdSucceed(myAccessToken, oldPushToken);
+                sendRegistrationIdSucceed(oldPushToken);
             }
         } catch (JandiNetworkException e) {
-            log.error(e.getErrorInfo() + "Register Fail", e);
-            sendRegistrationIdFailed(e.getErrorInfo());
+            if (e.httpStatusCode == JandiNetworkException.UNAUTHORIZED) {
+                sendRegistrationIdFailed(getString(R.string.err_expired_session));
+            } else if (e.errCode == JandiNetworkException.EXPIRED_SESSION) {
+                // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
+                sendRegistrationIdFailed(getString(R.string.err_expired_session));
+            } else {
+                log.error("Register Fail", e);
+                if (e.errCode == -1) {
+                    sendRegistrationIdFailed(e.httpStatusCode + ":" + e.httpStatusMessage);
+                } else {
+                    sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
+                }
+
+            }
         }
     }
 
     @UiThread
-    public void sendRegistrationIdSucceed(String myAccessToken, String updatedToken) {
+    void sendRegistrationIdSucceed(String updatedToken) {
         mProgressWheel.dismiss();
-        JandiPreference.setMyToken(this, myAccessToken);
 
         // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
         JandiPreference.setPushToken(this, updatedToken);
@@ -245,6 +280,12 @@ public class IntroLoginActivity extends Activity {
         // 토큰 갱신이 성공했으므로 현재 버전을 저장
         JandiPreference.setPriorAppVersion(this, getThisAppVersion());
         moveToMainActivity();
+    }
+
+    @UiThread
+    void sendRegistrationIdFailed(String message) {
+        mProgressWheel.dismiss();
+        ColoredToast.showError(this, message);
     }
 
     private int getThisAppVersion() {
@@ -258,14 +299,8 @@ public class IntroLoginActivity extends Activity {
         }
     }
 
-    @UiThread
-    public void sendRegistrationIdFailed(String message) {
-        mProgressWheel.dismiss();
-        ColoredToast.showError(this, message);
-    }
-
-
-    public void moveToMainActivity() {
+    @SupposeUiThread
+    void moveToMainActivity() {
         // MainActivity 이동
         MainTabActivity_.intent(this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -276,4 +311,3 @@ public class IntroLoginActivity extends Activity {
         finish();
     }
 }
-

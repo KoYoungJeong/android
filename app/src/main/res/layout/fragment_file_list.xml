@@ -51,7 +51,7 @@
         android:dividerHeight="0.5dp"
         android:smoothScrollbar="true"
         android:fillViewport="true"
-        ptr:ptrPullLabel="당겨서 이전 파일"
-        ptr:ptrRefreshLabel="놓아서 이전 파일"
-        ptr:ptrReleaseLabel="완료" />
+        ptr:ptrPullLabel="@string/jandi_file_list_pull"
+        ptr:ptrRefreshLabel="@string/jandi_file_list_refresh"
+        ptr:ptrReleaseLabel="@string/jandi_file_list_release" />
 </LinearLayout>

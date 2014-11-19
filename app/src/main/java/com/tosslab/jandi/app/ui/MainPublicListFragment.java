@@ -162,7 +162,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_CHAT,
-                JandiConstants.TYPE_TOPIC,
+                JandiConstants.TYPE_PUBLIC_TOPIC,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -204,13 +204,15 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @UiThread
     public void createTopicSucceed(int entityId, String entityName) {
         try {
-            MixpanelAnalyticsClient
-                    .getInstance(mContext, mEntityManager.getDistictId())
-                    .trackCreatingEntity(true);
+            if (mEntityManager != null) {
+                MixpanelAnalyticsClient
+                        .getInstance(mContext, mEntityManager.getDistictId())
+                        .trackCreatingEntity(true);
+            }
         } catch (JSONException e) {
             log.error("CAN NOT MEET", e);
         }
-        moveToChannelMessageActivity(entityId);
+        moveToPublicTopicMessageActivity(entityId);
     }
 
     @UiThread
@@ -243,9 +245,11 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
     @UiThread
     public void joinChannelSucceed(final FormattedEntity channel) {
-        MixpanelAnalyticsClient
-                .getInstance(mContext, mEntityManager.getDistictId())
-                .trackJoinChannel();
+        if (mEntityManager != null) {
+            MixpanelAnalyticsClient
+                    .getInstance(mContext, mEntityManager.getDistictId())
+                    .trackJoinChannel();
+        }
         moveToMessageActivity(channel);
     }
 
