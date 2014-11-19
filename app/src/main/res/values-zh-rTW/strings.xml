@@ -183,7 +183,8 @@
 <string name="jandi_setting_general">"一般"</string>
 <string name="jandi_setting_sign_out">"登出"</string>
 <string name="jandi_message_logout">"已登出"</string>
-<string name="jandi_empty"></string>
+<string name="jandi_empty">"
+"</string>
 <string name="jandi_message_starred">"已經標記"</string>
 <string name="jandi_message_no_starred">"取消標記"</string>
 <string name="jandi_action_menu_message_copy">"複製"</string>
