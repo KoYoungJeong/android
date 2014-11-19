@@ -49,6 +49,7 @@ import com.tosslab.jandi.app.events.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
+import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -1097,11 +1098,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      ************************************************************/
     private void modifyEntity() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                EditTextDialogFragment.ACTION_MODIFY_CHAT
+                EditTextDialogFragment.ACTION_MODIFY_TOPIC
                 , mChattingInformations.entityType
                 , mChattingInformations.entityId
                 , mChattingInformations.entityName);
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(ErrorDialogFragmentEvent event) {
+        ColoredToast.showError(this, getString(event.errorMessageResId));
     }
 
     /**

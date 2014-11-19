@@ -170,7 +170,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     public void onResume() {
         super.onResume();
         if (mEntityManager != null) {
-            trackGaProfile(mEntityManager.getDistictId());
+            trackGaTeamInfo(mEntityManager.getDistictId());
         }
     }
 
@@ -256,6 +256,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         if (resInvitation.sendMailFailCount == 0) {
             ColoredToast.show(this, getString(R.string.jandi_invitation_succeed));
             teamUserListAdapter.addMember(new FormattedDummyEntity(succeedEmail));
+            if (mEntityManager != null)
+                trackInviteUser(mEntityManager.getDistictId());
         }
     }
 

@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
+import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
@@ -308,6 +309,10 @@ public class ProfileActivity extends BaseAnalyticsActivity {
             default:
                 break;
         }
+    }
+
+    public void onEvent(ErrorDialogFragmentEvent event) {
+        ColoredToast.showError(this, getString(event.errorMessageResId));
     }
 
     @UiThread

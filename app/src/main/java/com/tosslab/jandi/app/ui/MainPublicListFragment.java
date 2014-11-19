@@ -11,7 +11,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmCreateTopicEvent;
+import com.tosslab.jandi.app.events.ConfirmCreatePublicTopicEvent;
+import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
@@ -161,7 +162,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
      */
     void showDialogToCreateChannel() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                EditTextDialogFragment.ACTION_CREATE_CHAT,
+                EditTextDialogFragment.ACTION_CREATE_TOPIC,
                 JandiConstants.TYPE_PUBLIC_TOPIC,
                 0);
         newFragment.show(getFragmentManager(), "dialog");
@@ -171,11 +172,15 @@ public class MainPublicListFragment extends BaseChatListFragment {
      * Channel, PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
      * @param event
      */
-    public void onEvent(ConfirmCreateTopicEvent event) {
+    public void onEvent(ConfirmCreatePublicTopicEvent event) {
         String rawString = getString(R.string.jandi_message_create_entity);
         String formatString = String.format(rawString, event.topicName);
         ColoredToast.show(mContext, formatString);
         createTopicInBackground(event.topicName);
+    }
+
+    public void onEvent(ErrorDialogFragmentEvent event) {
+        ColoredToast.showError(mContext, getString(event.errorMessageResId));
     }
 
     /**

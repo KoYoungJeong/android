@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -122,7 +123,10 @@ public class SettingsActivity extends PreferenceActivity {
         returnToLoginActivity();
     }
 
+    @UiThread
     public void returnToLoginActivity() {
+        MixpanelAnalyticsClient.getInstance(this, getDistictId()).trackSignOut();
+
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);
 

@@ -13,7 +13,7 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.LogoutEvent;
+import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
@@ -230,7 +230,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
      * TODO Settings 에 있는 것과 동일. 뺄까 ??
      */
 
-    public void onEvent(LogoutEvent event) {
+    public void onEvent(SignOutEvent event) {
+        if (mEntityManager != null)
+            trackSignOut(mEntityManager.getDistictId());
         deleteNotificationTokenInBackground();
     }
 

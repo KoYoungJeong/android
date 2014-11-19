@@ -240,7 +240,7 @@ public class EntityManager {
     }
 
     public String getDistictId() {
-        return  mMe.id+ "@" + mMyTeam.id;
+        return  mMe.id+ "-" + mMyTeam.id;
     }
 
     public String getTeamName() {

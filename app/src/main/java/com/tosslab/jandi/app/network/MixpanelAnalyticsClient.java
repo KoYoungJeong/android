@@ -20,6 +20,7 @@ public class MixpanelAnalyticsClient {
     private final Logger log = Logger.getLogger(MixpanelAnalyticsClient.class);
 
     private final String PROP_SIGN_IN           = "Sign In";
+    private final String PROP_SIGN_OUT           = "Sign Out";
     private final String PROP_CREATE_ENTITY     = "Entity Create";
     private final String PROP_DELETE_ENTITY     = "Entity Delete";
     private final String PROP_CHANGE_ENTITY_NAME    = "Entity Name Change";
@@ -31,9 +32,10 @@ public class MixpanelAnalyticsClient {
     private final String PROP_UNSHARE_FILE          = "File Unshare";
     private final String PROP_DOWNLOAD_FILE         = "File Download";
     private final String PROP_PROFILE               = "Set Profile";
+    private final String PROP_INVITE_TEAM           = "User Invitation";
 
-    private final String KEY_CHANNEL        = "channel";
-    private final String KEY_PRIVATE_GROUP  = "private";
+    private final String KEY_CHANNEL        = "topic";
+    private final String KEY_PRIVATE_GROUP  = "private group";
     private final String KEY_DIRECT_MESSAGE = "direct message";
 
     private MixpanelAPI mMixpanel;
@@ -83,6 +85,15 @@ public class MixpanelAnalyticsClient {
 
     public void trackJoinChannel() {
         mMixpanel.track(PROP_JOIN_CHANNEL, null);
+    }
+
+    public void trackSignOut() {
+        mMixpanel.track(PROP_SIGN_OUT, null);
+    }
+
+    public void trackTeamInvitation() {
+        mMixpanel.track(PROP_INVITE_TEAM, null);
+        mMixpanel.getPeople().increment("invite", 1);
     }
 
     public void trackUploadingFile(int entityType, JsonObject uploadedFileInfo)

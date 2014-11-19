@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.LogoutEvent;
+import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.CircleTransform;
@@ -124,6 +124,6 @@ public class MainMoreFragment extends Fragment {
     @Click(R.id.ly_more_logout)
     public void signOut() {
         // MainTabActivity 에서 로그아웃 처리.
-        EventBus.getDefault().post(new LogoutEvent());
+        EventBus.getDefault().post(new SignOutEvent());
     }
 }

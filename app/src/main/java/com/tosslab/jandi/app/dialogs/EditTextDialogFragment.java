@@ -15,13 +15,15 @@ import android.widget.EditText;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmCreateGroupEvent;
-import com.tosslab.jandi.app.events.ConfirmCreateTopicEvent;
+import com.tosslab.jandi.app.events.ConfirmCreatePrivateTopicEvent;
+import com.tosslab.jandi.app.events.ConfirmCreatePublicTopicEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
+import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 
 import org.androidannotations.annotations.EFragment;
+import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -32,25 +34,33 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment
 public class EditTextDialogFragment extends DialogFragment {
+    private final Logger log = Logger.getLogger(EditTextDialogFragment.class);
 
-    public final static int ACTION_CREATE_CHAT              = 0;
-    public final static int ACTION_MODIFY_CHAT              = 1;
-    public final static int ACTION_MODIFY_MESSAGE           = 2;
-    public final static int ACTION_MODIFY_PROFILE_STATUS    = 3;
-    public final static int ACTION_MODIFY_PROFILE_PHONE     = 4;
-    public final static int ACTION_MODIFY_PROFILE_DIVISION  = 5;
-    public final static int ACTION_MODIFY_PROFILE_POSITION  = 6;
+    private final static int MAX_LENGTH_OF_TOPIC_NAME = 60;
+    private final static int MAX_LENGTH_OF_PHONE = 20;
+    private final static int MAX_LENGTH_OF_STATUS = 60;
+    private final static int MAX_LENGTH_OF_DIVISION = 60;
+    private final static int MAX_LENGTH_OF_POSITION = 60;
+
+    public final static int ACTION_CREATE_TOPIC = 0;
+    public final static int ACTION_MODIFY_TOPIC = 1;
+    public final static int ACTION_MODIFY_MESSAGE = 2;
+    public final static int ACTION_MODIFY_PROFILE_STATUS = 3;
+    public final static int ACTION_MODIFY_PROFILE_PHONE = 4;
+    public final static int ACTION_MODIFY_PROFILE_DIVISION = 5;
+    public final static int ACTION_MODIFY_PROFILE_POSITION = 6;
 
 
-    private final static String ARG_ACTION_TYPE    = "actionType";
-    private final static String ARG_ENTITY_TYPE    = "entityType";
-    private final static String ARG_ENTITY_ID      = "entityId";
-    private final static String ARG_CURRENT_MGS    = "currentMessage";
-    private final static String ARG_FEEDBACK_ID    = "feedbackId";
-    private final static String ARG_MESSAGE_TYPE   = "messageType";
+    private final static String ARG_ACTION_TYPE = "actionType";
+    private final static String ARG_ENTITY_TYPE = "entityType";
+    private final static String ARG_ENTITY_ID = "entityId";
+    private final static String ARG_CURRENT_MGS = "currentMessage";
+    private final static String ARG_FEEDBACK_ID = "feedbackId";
+    private final static String ARG_MESSAGE_TYPE = "messageType";
 
     /**
      * CDP 생성에 사용되는 Dialog.
+     *
      * @param actionType
      * @param entityType
      * @param entityId
@@ -69,6 +79,7 @@ public class EditTextDialogFragment extends DialogFragment {
 
     /**
      * CDP 수정에 사용되는 Dialog.
+     *
      * @param actionType
      * @param entityType
      * @param entityId
@@ -89,6 +100,7 @@ public class EditTextDialogFragment extends DialogFragment {
 
     /**
      * 메시지 수정에 사용되는 Dialog
+     *
      * @param messageId
      * @param currentMessage
      * @return
@@ -108,6 +120,7 @@ public class EditTextDialogFragment extends DialogFragment {
 
     /**
      * 프로필 수정 각 항목에 사용되는 Dialog
+     *
      * @param actionType
      * @param currentMessage
      * @return
@@ -150,7 +163,7 @@ public class EditTextDialogFragment extends DialogFragment {
         View mainView = inflater.inflate(R.layout.dialog_input_text, null);
 
         // 입력 상자 타입에 따른 설정
-        final EditText inputName = (EditText)mainView.findViewById(R.id.et_dialog_input);
+        final EditText inputName = (EditText) mainView.findViewById(R.id.et_dialog_input);
         switch (actionType) {
             case ACTION_MODIFY_PROFILE_PHONE:
                 inputName.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -177,26 +190,38 @@ public class EditTextDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.jandi_confirm,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                String input = inputName.getText().toString();
+                                log.debug("length of input is " + input.length());
                                 switch (actionType) {
-                                    case ACTION_CREATE_CHAT:
+                                    case ACTION_CREATE_TOPIC:
+                                        if (input.length() > MAX_LENGTH_OF_TOPIC_NAME) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_topic_name)
+                                            );
+                                            return;
+                                        }
+
                                         // Topic 혹은 Group 생성일 경우 해당 이벤트 전달
                                         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
                                             EventBus.getDefault().post(
-                                                    new ConfirmCreateTopicEvent(
-                                                            inputName.getText().toString()));
+                                                    new ConfirmCreatePublicTopicEvent(input)
+                                            );
                                         } else {
                                             EventBus.getDefault().post(
-                                                    new ConfirmCreateGroupEvent(
-                                                            inputName.getText().toString()));
+                                                    new ConfirmCreatePrivateTopicEvent(input)
+                                            );
                                         }
                                         break;
-                                    case ACTION_MODIFY_CHAT:
+                                    case ACTION_MODIFY_TOPIC:
+                                        if (input.length() > MAX_LENGTH_OF_TOPIC_NAME) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_topic_name)
+                                            );
+                                            return;
+                                        }
                                         // CDP 수정의 경우 MainLeftFragment 로 해당 이벤트 전달
                                         EventBus.getDefault().post(
-                                                new ConfirmModifyEntityEvent(
-                                                        entityType,
-                                                        entityId,
-                                                        inputName.getText().toString())
+                                                new ConfirmModifyEntityEvent(entityType, entityId, input)
                                         );
                                         break;
                                     case ACTION_MODIFY_MESSAGE:
@@ -205,19 +230,39 @@ public class EditTextDialogFragment extends DialogFragment {
                                                 new ConfirmModifyMessageEvent(
                                                         messageType,
                                                         entityId,
-                                                        inputName.getText().toString(),
+                                                        input,
                                                         feedbackId)
                                         );
                                         break;
                                     case ACTION_MODIFY_PROFILE_STATUS:
+                                        if (input.length() > MAX_LENGTH_OF_STATUS) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_status_message)
+                                            );
+                                            return;
+                                        }
                                     case ACTION_MODIFY_PROFILE_PHONE:
+                                        if (input.length() > MAX_LENGTH_OF_PHONE) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_phone)
+                                            );
+                                            return;
+                                        }
                                     case ACTION_MODIFY_PROFILE_DIVISION:
+                                        if (input.length() > MAX_LENGTH_OF_DIVISION) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_title)
+                                            );
+                                            return;
+                                        }
                                     case ACTION_MODIFY_PROFILE_POSITION:
-                                        EventBus.getDefault().post(
-                                                new ConfirmModifyProfileEvent(
-                                                        actionType,
-                                                        inputName.getText().toString())
-                                        );
+                                        if (input.length() > MAX_LENGTH_OF_POSITION) {
+                                            EventBus.getDefault().post(
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_title)
+                                            );
+                                            return;
+                                        }
+                                        EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
                                         break;
                                     default:
                                         // DO NOTHING
@@ -240,15 +285,16 @@ public class EditTextDialogFragment extends DialogFragment {
 
     /**
      * 본 대화상자를 호출한 목적에 따라 대화 상자의 title 을 달리 함.
+     *
      * @param actionType
      * @param entityType
      * @return
      */
     int obtainTitleByPurpose(int actionType, int entityType) {
         switch (actionType) {
-            case ACTION_CREATE_CHAT:
+            case ACTION_CREATE_TOPIC:
                 return obtainTitileForCreateCdp(entityType);
-            case ACTION_MODIFY_CHAT:
+            case ACTION_MODIFY_TOPIC:
                 return obtainTitileForModifyCdp(entityType);
             case ACTION_MODIFY_MESSAGE:
                 return R.string.modify_message;

@@ -169,6 +169,20 @@ public class BaseAnalyticsActivity extends Activity {
         }
     }
 
+    protected void trackSignOut(String distictId) {
+        if (distictId != null) {
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, distictId);
+            mMixpanelAnalyticsClient.trackSignOut();
+        }
+    }
+
+    protected void trackInviteUser(String distictId) {
+        if (distictId != null) {
+            mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, distictId);
+            mMixpanelAnalyticsClient.trackTeamInvitation();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         if (mMixpanelAnalyticsClient != null)
@@ -189,7 +203,7 @@ public class BaseAnalyticsActivity extends Activity {
         trackGa(distictId, GA_PATH_PROFILE);
     }
 
-    protected void trackTeamInfo(final String districtId) {
+    protected void trackGaTeamInfo(final String districtId) {
         trackGa(districtId, GA_PATH_TEAM_INFO);
     }
 
