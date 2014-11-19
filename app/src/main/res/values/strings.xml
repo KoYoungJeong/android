@@ -107,7 +107,8 @@ Welcome to JANDI"</string>
 <string name="err_profile_exceed_length_of_topic_name">"Topic name can't be longer than 60 characters"</string>
 <string name="err_profile_exceed_length_of_status_message">"Status message can't be longer than 60 characters"</string>
 <string name="err_profile_exceed_length_of_phone">"Mobile number can't be longer than 20 characters"</string>
-<string name="err_profile_exceed_length_of_title">"Title can't be longer than 60 characters"</string>
+<string name="err_profile_exceed_length_of_division">"Title can't be longer than 60 characters"</string>
+<string name="err_profile_exceed_length_of_position">"Title can't be longer than 60 characters"</string>
 <string name="err_profile_get_info">"Profile could not be found. Please try again."</string>
 <string name="err_profile_empty_info">"Please fill in"</string>
 <string name="err_profile_unmodified">"No changes to apply"</string>

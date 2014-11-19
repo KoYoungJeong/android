@@ -251,14 +251,14 @@ public class EditTextDialogFragment extends DialogFragment {
                                     case ACTION_MODIFY_PROFILE_DIVISION:
                                         if (input.length() > MAX_LENGTH_OF_DIVISION) {
                                             EventBus.getDefault().post(
-                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_title)
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_division)
                                             );
                                             return;
                                         }
                                     case ACTION_MODIFY_PROFILE_POSITION:
                                         if (input.length() > MAX_LENGTH_OF_POSITION) {
                                             EventBus.getDefault().post(
-                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_title)
+                                                    new ErrorDialogFragmentEvent(R.string.err_profile_exceed_length_of_division)
                                             );
                                             return;
                                         }
