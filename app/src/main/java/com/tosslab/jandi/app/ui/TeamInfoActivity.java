@@ -36,6 +36,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -85,7 +86,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         retrieveTeamUserList(mEntityManager.getFormattedUsers());
     }
 
-    private void setUpActionBar() {
+    @SupposeUiThread
+    void setUpActionBar() {
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -94,11 +96,13 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
     }
 
-    private void setUpToolTip() {
+    @SupposeUiThread
+    void setUpToolTip() {
         mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
     }
 
-    private void initProgressWheel() {
+    @SupposeUiThread
+    void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
@@ -109,7 +113,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
     }
 
-    private void addInvitationViewAsListviewFooter() {
+    @SupposeUiThread
+    void addInvitationViewAsListviewFooter() {
         View footer = getLayoutInflater().inflate(R.layout.footer_invite_user, null, false);
         mEditTextEmailAddress = (EditText) footer.findViewById(R.id.et_invitation_email);
         mButtonInvitation = (Button) footer.findViewById(R.id.btn_invitation_confirm);
@@ -124,7 +129,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().trim().length() > 0) {
+                if (FormatConverter.isInvalidEmailString(editable.toString())) {
                     mButtonInvitation.setBackgroundResource(R.drawable.jandi_btn_selector);
                 } else {
                     mButtonInvitation.setBackgroundResource(R.color.jandi_inactive_button);
@@ -137,14 +142,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
             public void onClick(View view) {
                 imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(),0);
                 String email = mEditTextEmailAddress.getEditableText().toString();
-
-                if (FormatConverter.isInvalidEmailString(email)) {
-                    ColoredToast.showWarning(mContext, "올바른 이메일 주소를 입력하세요");
-                    return;
-                } else {
-                    mEditTextEmailAddress.setText("");
-                    inviteTeamMember(email);
-                }
+                mEditTextEmailAddress.setText("");
+                inviteTeamMember(email);
             }
         });
         listViewInvitation.addFooterView(footer);

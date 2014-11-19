@@ -35,6 +35,8 @@
 <string name="jandi_user_password">"비밀번호"</string>
 <string name="jandi_welcome_message">"안녕하세요
 잔디에 오신 것을 환영합니다."</string>
+<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
+<string name="jandi_forgot_password">"비밀번호를 잊으셨나요?"</string>
 <string name="err_login">"로그인이 실패하였습니다"</string>
 <string name="err_login_unregistered_id">"아직 가입되지 않은 이메일입니다"</string>
 <string name="err_login_invalid_id">"이메일 주소가 정확하지 않습니다"</string>

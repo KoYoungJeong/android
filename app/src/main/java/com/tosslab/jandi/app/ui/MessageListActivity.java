@@ -1097,7 +1097,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      ************************************************************/
     private void modifyEntity() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                EditTextDialogFragment.ACTION_MODIFY_CDP
+                EditTextDialogFragment.ACTION_MODIFY_CHAT
                 , mChattingInformations.entityType
                 , mChattingInformations.entityId
                 , mChattingInformations.entityName);
