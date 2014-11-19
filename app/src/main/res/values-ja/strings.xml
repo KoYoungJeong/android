@@ -188,7 +188,7 @@ JANDIへようこそ"</string>
 <string name="jandi_setting_general">"一般"</string>
 <string name="jandi_setting_sign_out">"ログアウトする"</string>
 <string name="jandi_message_logout">"ログアウトしました"</string>
-<string name="jandi_empty"></string>
+<string name="jandi_empty">" "</string>
 <string name="jandi_message_starred">"お気に入りに追加しました"</string>
 <string name="jandi_message_no_starred">"お気に入りから削除しました"</string>
 <string name="jandi_action_menu_message_copy">"コピー"</string>
