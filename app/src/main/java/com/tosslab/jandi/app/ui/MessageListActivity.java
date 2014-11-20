@@ -1131,8 +1131,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
             modifyEntitySucceed(event.inputName);
         } catch (JandiNetworkException e) {
-            log.error("modify failed", e);
-            modifyEntityFailed(getString(R.string.err_entity_modify));
+            log.error("modify failed " + e.getErrorInfo(), e);
+            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+                modifyEntityFailed(getString(R.string.err_entity_duplicated_name));
+            } else {
+                modifyEntityFailed(getString(R.string.err_entity_modify));
+            }
         }
     }
 
@@ -1399,7 +1403,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         public void loadExtraInfo() {
             EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
             if (entityManager != null) {
-                this.isMyEntity = entityManager.isMyEntity(entityId);
+                this.isMyEntity = entityManager.isMyTopic(entityId);
                 this.entityName = entityManager.getEntityNameById(entityId);
             }
         }

@@ -12,6 +12,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/txt_dialog_input_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/jandi_create_team_message"
@@ -20,15 +21,16 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/et_team_creation_email"
+        android:id="@+id/et_dialog_input_text"
         style="@style/JandiTutorial.EditText.Dialog"
         android:layout_width="match_parent"
         android:layout_marginTop="10dp" />
 
     <Button
-        android:id="@+id/btn_action_team_creation"
+        android:id="@+id/btn_dialog_input_confirm"
         style="@style/JandiTutorial.Button.Dynamic"
         android:layout_width="match_parent"
+        android:minWidth="300dp"
         android:layout_marginTop="12dp"
         android:text="@string/jandi_action_create_team" />
 </LinearLayout>

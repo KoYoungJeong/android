@@ -173,9 +173,6 @@ public class MainPublicListFragment extends BaseChatListFragment {
      * @param event
      */
     public void onEvent(ConfirmCreatePublicTopicEvent event) {
-        String rawString = getString(R.string.jandi_message_create_entity);
-        String formatString = String.format(rawString, event.topicName);
-        ColoredToast.show(mContext, formatString);
         createTopicInBackground(event.topicName);
     }
 
@@ -184,21 +181,16 @@ public class MainPublicListFragment extends BaseChatListFragment {
     }
 
     /**
-     * Channel 생성
+     * topic 생성
      */
     @Background
     void createTopicInBackground(String entityName) {
-        // TODO : Error 처리
-        if (entityName.length() <= 0) {
-            return;
-        }
-
         try {
             ResCommon restResId = mJandiEntityClient.createChannel(entityName);
             createTopicSucceed(restResId.id, entityName);
         } catch (JandiNetworkException e) {
-            log.error("Create Fail", e);
-            if (e.httpStatusCode == JandiNetworkException.BAD_REQUEST) {
+            log.error(e.getErrorInfo(), e);
+            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 createTopicFailed(R.string.err_entity_create);
@@ -208,6 +200,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
     @UiThread
     public void createTopicSucceed(int entityId, String entityName) {
+        String rawString = getString(R.string.jandi_message_create_entity);
+        String formatString = String.format(rawString, entityName);
+        ColoredToast.show(mContext, formatString);
         try {
             if (mEntityManager != null) {
                 MixpanelAnalyticsClient

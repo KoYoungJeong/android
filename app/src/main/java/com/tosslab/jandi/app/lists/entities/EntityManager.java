@@ -362,12 +362,15 @@ public class EntityManager {
         return false;
     }
 
-    public boolean isMyEntity(int entityId) {
-        FormattedEntity searchedEntity = searchTopicById(entityId);
-        if (searchedEntity != null) {
-            return searchedEntity.isMine(mMe.id);
+    public boolean isMyTopic(int entityId) {
+        FormattedEntity searchedTopic = searchTopicById(entityId);
+        if (searchedTopic != null) {
+            return searchedTopic.isMine(mMe.id);
         }
-
+        searchedTopic = searchGroupById(entityId);
+        if (searchedTopic != null) {
+            return searchedTopic.isMine(mMe.id);
+        }
         return false;
     }
 

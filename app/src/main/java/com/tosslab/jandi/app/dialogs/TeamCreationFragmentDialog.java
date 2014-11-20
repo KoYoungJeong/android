@@ -37,7 +37,9 @@ public class TeamCreationFragmentDialog extends DialogFragment {
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);
 
+        // 회면 밖 터치시 다이얼로그 종료
         Dialog me = getDialog();
+        me.setCanceledOnTouchOutside(true);
         // 키보드 자동 올리기
         me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
@@ -48,11 +50,11 @@ public class TeamCreationFragmentDialog extends DialogFragment {
         final String email = getArguments().getString(ARG_EMAIL, "");
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mainView = inflater.inflate(R.layout.dialog_fragment_team_creation, null);
+        View mainView = inflater.inflate(R.layout.dialog_fragment_input_text, null);
 
         final Button buttonTeamCreate
-                = (Button) mainView.findViewById(R.id.btn_action_team_creation);
-        final EditText editTextId = (EditText) mainView.findViewById(R.id.et_team_creation_email);
+                = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
+        final EditText editTextId = (EditText) mainView.findViewById(R.id.et_dialog_input_text);
         if (email.length() > 0) {
             if (FormatConverter.isInvalidEmailString(email) == false) {
                 buttonTeamCreate.setSelected(true);

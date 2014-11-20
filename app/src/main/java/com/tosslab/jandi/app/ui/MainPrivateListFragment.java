@@ -176,17 +176,12 @@ public class MainPrivateListFragment extends BaseChatListFragment {
      */
     @Background
     void createGroupInBackground(String entityName) {
-        // TODO : Error 처리
-        if (entityName.length() <= 0) {
-            return;
-        }
-
         try {
             ResCommon restResId = mJandiEntityClient.createPrivateGroup(entityName);
             createGroupSucceed(restResId.id, entityName);
         } catch (JandiNetworkException e) {
             log.error("Create Fail", e);
-            if (e.httpStatusCode == JandiNetworkException.BAD_REQUEST) {
+            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 createGroupFailed(R.string.err_entity_duplicated_name);
             } else {
                 createGroupFailed(R.string.err_entity_create);

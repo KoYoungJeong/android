@@ -18,6 +18,7 @@ public class JandiNetworkException extends Exception {
     public static final int DATA_NOT_FOUND  = 1839;
     public static final int INVALID_PASSWD  = 1818;
     public static final int EXPIRED_SESSION = 2000;
+    public static final int DUPLICATED_NAME = 4000;
 
     private static final String ERR_CODE    = "code";
     private static final String ERR_MSG     = "msg";
