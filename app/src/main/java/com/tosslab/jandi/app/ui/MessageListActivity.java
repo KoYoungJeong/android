@@ -925,6 +925,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     // File Upload 대화상자 보여주기
     void showFileUploadDialog(String realFilePath) {
+        // 업로드 파일 용량 체크
+        final int MAX_FILE_SIZE = 100 * 1024 * 1024;    // 100MB
+        File uploadFile = new File(realFilePath);
+        if (uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE) {
+            exceedMaxFileSizeError();
+            return;
+        }
+
         DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath,
                 mChattingInformations.entityId);
         newFragment.show(getFragmentManager(), DIALOG_TAG);
@@ -963,32 +971,61 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         if (event.comment != null && !event.comment.isEmpty()) {
             ionBuilder.setMultipartParameter("comment", event.comment);
         }
+
         ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+                    public void onCompleted(Exception exception, JsonObject result) {
                         progressDialog.dismiss();
-                        uploadFileDone(e, result);
+                        if (exception != null) {
+                            log.error("uploadFileDone: FAILED", exception);
+                            uploadFileFailed();
+                        } else if (result.get("code") != null) {
+                            log.error("uploadFileDone: " + result.get("code").toString());
+                            uploadFileFailed();
+                        } else {
+                            uploadFileSucceed(result);
+                        }
                     }
                 });
     }
 
     @UiThread
-    void uploadFileDone(Exception exception, JsonObject result) {
-        if (exception != null) {
-            log.error("uploadFileDone: FAILED", exception);
-            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
-        } else if (result.get("code") != null) {
-            log.error("uploadFileDone: " + result.get("code").toString());
-            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
-        } else {
-            log.debug(result);
-            trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
-            ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
-        }
+    void uploadFileSucceed(JsonObject result) {
+        log.debug(result);
+        trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
+        ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
         getUpdateMessagesAndResumeUpdateTimer();
     }
+
+    @UiThread
+    void uploadFileFailed() {
+        ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+        getUpdateMessagesAndResumeUpdateTimer();
+    }
+
+    @UiThread
+    void exceedMaxFileSizeError() {
+        ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+        getUpdateMessagesAndResumeUpdateTimer();
+    }
+
+//    @UiThread
+//    void uploadFileDone(Exception exception, JsonObject result) {
+//        if (exception != null) {
+//            log.error("uploadFileDone: FAILED", exception);
+//            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+//        } else if (result.get("code") != null) {
+//            log.error("uploadFileDone: " + result.get("code").toString());
+//            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+//        } else {
+//            log.debug(result);
+//            trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
+//            ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
+//        }
+//        getUpdateMessagesAndResumeUpdateTimer();
+//    }
 
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
