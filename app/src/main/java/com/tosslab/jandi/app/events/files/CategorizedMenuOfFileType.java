@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.events;
+package com.tosslab.jandi.app.events.files;
 
 import com.tosslab.jandi.app.R;
 

@@ -22,11 +22,11 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 14. 11. 13..
  */
-public class TeamCreationFragmentDialog extends DialogFragment {
+public class TeamCreationDialogFragment extends DialogFragment {
     private final static String ARG_EMAIL    = "email";
 
-    public static TeamCreationFragmentDialog newInstance(String email) {
-        TeamCreationFragmentDialog frag = new TeamCreationFragmentDialog();
+    public static TeamCreationDialogFragment newInstance(String email) {
+        TeamCreationDialogFragment frag = new TeamCreationDialogFragment();
         Bundle args = new Bundle();
         args.putString(ARG_EMAIL, email);
         frag.setArguments(args);

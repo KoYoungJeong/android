@@ -10,10 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.SelectTeamDialog;
-import com.tosslab.jandi.app.dialogs.TeamCreationFragmentDialog;
+import com.tosslab.jandi.app.dialogs.TeamCreationDialogFragment;
 import com.tosslab.jandi.app.events.RequestTeamCreationEvent;
-import com.tosslab.jandi.app.events.SelectMyTeam;
 import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -119,7 +117,7 @@ public class IntroLoginFragment extends Fragment {
     @Click(R.id.btn_getting_started)
     void showTeamTeamCreationFragment() {
         String email = editTextLoginId.getText().toString();
-        DialogFragment newFragment = TeamCreationFragmentDialog.newInstance(email);
+        DialogFragment newFragment = TeamCreationDialogFragment.newInstance(email);
         newFragment.show(getFragmentManager(), "dialog");
     }
 

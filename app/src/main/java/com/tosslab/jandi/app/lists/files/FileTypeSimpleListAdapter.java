@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.CategorizedMenuOfFileType;
+import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 
 /**
  * Created by justinygchoi on 2014. 8. 15..

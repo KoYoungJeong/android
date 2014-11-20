@@ -11,9 +11,9 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.ConfirmCreatePrivateTopicEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
-import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -112,7 +112,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
      * Event from MainTabActivity
      * @param event
      */
-    public void onEvent(RetrieveChattingListEvent event) {
+    public void onEvent(RetrieveTopicListEvent event) {
         retrieveEntityList();
     }
 

@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmCreatePrivateTopicEvent;
-import com.tosslab.jandi.app.events.ConfirmCreatePublicTopicEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyMessageEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmCreatePublicTopicEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmModifyMessageEvent;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 
 import org.androidannotations.annotations.EFragment;
@@ -191,7 +191,7 @@ public class EditTextDialogFragment extends DialogFragment {
                             break;
                         case ACTION_MODIFY_TOPIC:
                             EventBus.getDefault().post(
-                                    new ConfirmModifyEntityEvent(topicType, topicId, input)
+                                    new ConfirmModifyTopicEvent(topicType, topicId, input)
                             );
                             break;
                         case ACTION_MODIFY_MESSAGE:

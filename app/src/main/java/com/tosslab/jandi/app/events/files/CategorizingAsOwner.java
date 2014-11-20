@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.events;
+package com.tosslab.jandi.app.events.files;
 
 /**
  * Created by justinygchoi on 2014. 8. 15..

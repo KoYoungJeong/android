@@ -40,19 +40,23 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
+import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
-import com.tosslab.jandi.app.events.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
-import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyEntityEvent;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
-import com.tosslab.jandi.app.events.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
@@ -344,7 +348,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 modifyEntity();
                 return true;
             case R.id.action_my_entity_delete:
-                deleteEntityInBackground();
+                requestToDeleteTopic();
                 return true;
             case R.id.action_entity_leave:
             case R.id.action_my_entity_leave:
@@ -790,7 +794,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * Message 삭제
      ************************************************************/
 
-    // Message 삭제 이벤트 획득
+    // 정말 삭제할 건지 다시 물어본다.
+    public void onEvent(RequestDeleteMessageEvent event) {
+        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        newFragment.show(getFragmentManager(), DIALOG_TAG);
+    }
+
+    // 삭제 확인
     public void onEvent(ConfirmDeleteMessageEvent event) {
         deleteMessage(event.messageType, event.messageId, event.feedbackId);
     }
@@ -1112,17 +1122,17 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     /**
      * 수정 이벤트 획득 from EditTextDialogFragment
      */
-    public void onEvent(ConfirmModifyEntityEvent event) {
+    public void onEvent(ConfirmModifyTopicEvent event) {
         modifyEntity(event);
     }
 
     @UiThread
-    void modifyEntity(ConfirmModifyEntityEvent event) {
+    void modifyEntity(ConfirmModifyTopicEvent event) {
         modifyEntityInBackground(event);
     }
 
     @Background
-    void modifyEntityInBackground(ConfirmModifyEntityEvent event) {
+    void modifyEntityInBackground(ConfirmModifyTopicEvent event) {
         try {
             if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.modifyChannelName(mChattingInformations.entityId, event.inputName);
@@ -1153,32 +1163,41 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     /************************************************************
-     * Channel, PrivateGroup 삭제
+     * Topic 삭제
      ************************************************************/
+    @SupposeUiThread
+    void requestToDeleteTopic() {
+        DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(ConfirmDeleteTopicEvent event) {
+        deleteTopicInBackground();
+    }
 
     @Background
-    void deleteEntityInBackground() {
+    void deleteTopicInBackground() {
         try {
             if (mChattingInformations.isTopic()) {
                 mJandiEntityClient.deleteChannel(mChattingInformations.entityId);
             } else if (mChattingInformations.isGroup()) {
                 mJandiEntityClient.deletePrivateGroup(mChattingInformations.entityId);
             }
-            deleteEntitySucceed();
+            deleteTopicSucceed();
         } catch (JandiNetworkException e) {
-            deleteEntityFailed(getString(R.string.err_entity_delete));
+            deleteTopicFailed(getString(R.string.err_entity_delete));
         }
     }
 
     @UiThread
-    public void deleteEntitySucceed() {
+    public void deleteTopicSucceed() {
         log.debug("delete success");
         trackDeletingEntity(mEntityManager, mChattingInformations.entityType);
         finish();
     }
 
     @UiThread
-    public void deleteEntityFailed(String errMessage) {
+    public void deleteTopicFailed(String errMessage) {
         log.error("delete failed");
         ColoredToast.showError(mContext, errMessage);
     }
@@ -1313,7 +1332,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
         ft.addToBackStack(null);
 
-        UserInfoFragmentDialog dialog = UserInfoFragmentDialog.newInstance(user, isMe);
+        UserInfoDialogFragment dialog = UserInfoDialogFragment.newInstance(user, isMe);
         dialog.show(ft, "dialog");
     }
 

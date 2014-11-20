@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoFragmentDialog;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -654,7 +654,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         }
         ft.addToBackStack(null);
 
-        UserInfoFragmentDialog dialog = UserInfoFragmentDialog.newInstance(user, isMe);
+        UserInfoDialogFragment dialog = UserInfoDialogFragment.newInstance(user, isMe);
         dialog.show(ft, "dialog");
     }
 

@@ -19,14 +19,12 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.CircleTransform;
 
-import org.apache.log4j.Logger;
-
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 9. 3..
  */
-public class UserInfoFragmentDialog extends DialogFragment {
+public class UserInfoDialogFragment extends DialogFragment {
     private final static String ARG_USER_ID         = "userId";
     private final static String ARG_USER_NAME       = "userName";
     private final static String ARG_USER_STATUS_MSG   = "userStatusMessage";
@@ -37,8 +35,8 @@ public class UserInfoFragmentDialog extends DialogFragment {
     private final static String ARG_USER_PROFILE_URL    = "profileUrl";
     private final static String ARG_USER_IS_ME      = "isMe";
 
-    public static UserInfoFragmentDialog newInstance(FormattedEntity user, boolean isMe) {
-        UserInfoFragmentDialog frag = new UserInfoFragmentDialog();
+    public static UserInfoDialogFragment newInstance(FormattedEntity user, boolean isMe) {
+        UserInfoDialogFragment frag = new UserInfoDialogFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_USER_ID, user.getId());
         args.putString(ARG_USER_NAME, user.getName());

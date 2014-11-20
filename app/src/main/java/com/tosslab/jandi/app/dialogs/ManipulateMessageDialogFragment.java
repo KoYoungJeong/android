@@ -3,19 +3,16 @@ package com.tosslab.jandi.app.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmCopyMessageEvent;
-import com.tosslab.jandi.app.events.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
+import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.utils.DateTransformator;
-
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -90,7 +87,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         actionDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EventBus.getDefault().post(new ConfirmDeleteMessageEvent(messageType, messageId, feedbackId));
+                EventBus.getDefault().post(new RequestDeleteMessageEvent(messageType, messageId, feedbackId));
                 dismiss();
             }
         });

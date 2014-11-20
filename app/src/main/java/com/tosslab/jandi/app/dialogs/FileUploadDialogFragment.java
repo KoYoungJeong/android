@@ -13,7 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.ui.MessageListActivity;
 import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
 import com.tosslab.jandi.app.lists.FormattedEntity;

@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 
 import org.apache.log4j.Logger;
 

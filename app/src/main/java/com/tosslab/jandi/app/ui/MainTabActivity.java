@@ -13,8 +13,8 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.SignOutEvent;
-import com.tosslab.jandi.app.events.RetrieveChattingListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
@@ -212,7 +212,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void postShowChattingListEvent() {
-        EventBus.getDefault().post(new RetrieveChattingListEvent());
+        EventBus.getDefault().post(new RetrieveTopicListEvent());
     }
 
     /**
