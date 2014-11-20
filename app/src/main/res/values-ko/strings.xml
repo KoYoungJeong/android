@@ -35,8 +35,6 @@
 <string name="jandi_user_password">"비밀번호"</string>
 <string name="jandi_welcome_message">"안녕하세요
 잔디에 오신 것을 환영합니다."</string>
-<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
-<string name="jandi_forgot_password">"비밀번호를 잊으셨나요?"</string>
 <string name="err_login">"로그인이 실패하였습니다"</string>
 <string name="err_login_unregistered_id">"아직 가입되지 않은 이메일입니다"</string>
 <string name="err_login_invalid_id">"이메일 주소가 정확하지 않습니다"</string>
@@ -208,12 +206,22 @@
 <string name="jandi_action_menu_message_copy">"복사"</string>
 <string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
 <string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
-    <string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
-    <string name="jandi_file_list_refresh">완료</string>
-    <string name="jandi_file_list_pull">당겨서 이전 파일</string>
-    <string name="jandi_file_list_release">놓아서 이전 파일</string>
-    <string name="jandi_messages_pull">당겨서 이전 메시지</string>
-    <string name="jandi_messages_release">놓아서 이전 페이지</string>
-    <string name="jandi_messages_refresh">완료</string>
-    <string name="jandi_profile_phone_number_hint">"전화번호"</string>
+<string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
+<string name="jandi_forgot_password">"비밀번호를 잊으셨나요?"</string>
+<string name="jandi_message_ask_about_deleting">"정말로 삭제하시겠습니까?"</string>
+<string name="jandi_profile_phone_number_hint">"전화번호"</string>
+<string name="jandi_profile_division_hint">"부서명"</string>
+<string name="jandi_messages_pull">"당겨서 이전 메시지"</string>
+<string name="jandi_messages_refresh">"완료"</string>
+<string name="jandi_messages_release">"놓아서 이전 페이지"</string>
+<string name="jandi_file_list_pull">"당겨서 이전 파일"</string>
+<string name="jandi_file_list_refresh">"완료"</string>
+<string name="jandi_file_list_release">"놓아서 이전 파일"</string>
+<string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
+<string name="jandi_profile_position_hint">"직책명"</string>
+<string name="err_profile_exceed_length_of_topic_name">"토픽의 이름은 60자를 넘을 수 없습니다"</string>
+<string name="err_profile_exceed_length_of_status_message">"상태 메시지는 60자를 넘을 수 없습니다"</string>
+<string name="err_profile_exceed_length_of_phone">"전화번호는 20자를 넘을 수 없습니다"</string>
+<string name="err_profile_exceed_length_of_division">"부서명은 60자를 넘을 수 없습니다"</string>
+<string name="err_profile_exceed_length_of_position">"직책명은 60자를 넘을 수 없습니다"</string>
 </resources>
