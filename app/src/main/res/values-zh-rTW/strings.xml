@@ -23,12 +23,12 @@
 <!-- Team Creation -->
 <string name="jandi_action_create_team">"建立團隊"</string>
 <string name="jandi_create_team_message">"請提供您的電子郵件地址以免費地建立新的JANDI團隊!"</string>
-<string name="jandi_team_creation_succeed">"成功。請查您的電子郵件"</string>
+<string name="jandi_team_creation_succeed">"團隊建立成功！請查看您的電子郵件。"</string>
 <string name="err_team_creation_failed">"電子郵件無法送出"</string>
 <string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 
 <!-- Login -->
-<string name="jandi_action_start">"登入"</string>
+<string name="jandi_action_start">"如何開始"</string>
 <string name="jandi_action_login">"登入"</string>
 <string name="jandi_select_team">"選擇您的團隊"</string>
 <string name="jandi_user_id">"電子郵件"</string>
@@ -38,14 +38,14 @@
 <string name="err_login_unregistered_id">"我們在JANDI找不到您的帳號"</string>
 <string name="err_login_invalid_id">"電子郵件地址無效"</string>
 <string name="err_login_invalid_passwd">"密碼不正確"</string>
-<string name="err_login_invalid_info">"帳號及密碼不符"</string>
+<string name="err_login_invalid_info">"密碼與帳號不符"</string>
 <string name="err_expired_token">"憑證已經過期"</string>
-<string name="err_expired_session">"太久未使用。請重新登入"</string>
-<string name="err_service_connection">"連線中斷。請再試一次"</string>
+<string name="err_expired_session">"太久未使用。請重新登入。"</string>
+<string name="err_service_connection">"連線中斷。請再試一次。"</string>
 
 <!-- Push -->
-<string name="err_push_registration">"推播侍服器出現錯誤。請再試一次"</string>
-<string name="err_push_invalid_device">"這終端載具不支援推播服務"</string>
+<string name="err_push_registration">"推播侍服器出現錯誤。請再試一次。"</string>
+<string name="err_push_invalid_device">"這裝置不支援推播通知服務"</string>
 <string name="jandi_tab_topic">"議題"</string>
 <string name="jandi_tab_chat">"對話"</string>
 <string name="jandi_tab_private_group">"私人群組"</string>
@@ -57,11 +57,11 @@
 
 <!-- 튜토리얼 -->
 <string name="jandi_tutorial_welcome">"歡迎使用JANDI"</string>
-<string name="jandi_tutorial_welcome_message">"人在外面卻要分享檔案，您是取得雲端檔案連結，然後通過您與您的朋友和家人使用的訊息發送服務傳送給他們嗎？JANDI可讓您將工作和個人生活區隔開來，同時直接保存所有的檔案在它裏面。"</string>
-<string name="jandi_tutorial_topic">"透過議題群組有更彈性及開放的溝通"</string>
-<string name="jandi_tutorial_topic_message">"有了JANDI，任何人皆可建立或加入議題群組，讓您的團隊成員自由地互相溝通。這樣一來，您將可以察覺您團隊的工作方式變得更加迅速和更能應變，同時也透過私人群組及直接傳訊提供一定的隱私。"</string>
-<string name="jandi_tutorial_file">"直接上傳檔案到對話視窗"</string>
-<string name="jandi_tutorial_file_message">"您可以上傳PPT，XLS，PDF或任何類型的檔案到JANDI，並分享給您的團隊。這些檔案將永遠保存在那裡，讓您之後如果需要到它們的時候可以搜尋得到。"</string>
+<string name="jandi_tutorial_welcome_message">"我們的使命是讓您的工作日更簡單、更高效、更愉快。我們將所有您對通訊軟體的喜愛與雲端存儲的便利性及增加的強大搜尋功能做了結合，然後都這全部都放置在您的手掌心上。"</string>
+<string name="jandi_tutorial_topic">"將您的整體團隊聚集在一處"</string>
+<string name="jandi_tutorial_topic_message">"在您選擇的議題群組裏跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人群組及直接傳訊裏面繼續對話。"</string>
+<string name="jandi_tutorial_file">"簡單的幾個點擊來上傳檔案"</string>
+<string name="jandi_tutorial_file_message">"您可以從您的手機或JANDI的檔案資料庫分享文件、簡報、視頻及任何其它檔案給您的團隊。我們自動將您所有的内容儲存並排序好讓您之後好找。"</string>
 
 <!-- Manipulate Entity -->
 <string name="jandi_entity_joined_topic">"我的議題群組"</string>
@@ -189,6 +189,23 @@
 <string name="jandi_message_no_starred">"取消標記"</string>
 <string name="jandi_action_menu_message_copy">"複製"</string>
 <string name="jandi_message_join_entity">"加入 %1$s"</string>
-<string name="err_unsupported_file_type">"%1$s 沒有安裝支援的app"</string>
-    <string name="jandi_have_an_account_already">已經有團隊註冊了嗎?</string>
+<string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
+<string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
+<string name="jandi_forgot_password">"忘了密碼？"</string>
+<string name="jandi_message_ask_about_deleting">"您確定您要刪除它？"</string>
+<string name="jandi_profile_phone_number_hint">"電話號碼"</string>
+<string name="jandi_profile_division_hint">"部門"</string>
+<string name="jandi_messages_pull">"下拉以載入較舊的訊息"</string>
+<string name="jandi_messages_refresh">"完成"</string>
+<string name="jandi_messages_release">"放掉以載入較舊的訊息"</string>
+<string name="jandi_file_list_pull">"下拉以載入更多檔案"</string>
+<string name="jandi_file_list_refresh">"完成"</string>
+<string name="jandi_file_list_release">"放掉以檢視更多檔案"</string>
+<string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
+<string name="jandi_profile_position_hint">"職稱"</string>
+<string name="err_profile_exceed_length_of_topic_name">"議題群組名稱不能長於六十個以上字符"</string>
+<string name="err_profile_exceed_length_of_status_message">"狀態訊息不能長於六十個以上字符"</string>
+<string name="err_profile_exceed_length_of_phone">"行動電話號碼不能長於二十個以上字符"</string>
+<string name="err_profile_exceed_length_of_division">"部門名稱不能長於六十個以上字符"</string>
+<string name="err_profile_exceed_length_of_position">"職位名稱不能長於六十個以上字符"</string>
 </resources>
