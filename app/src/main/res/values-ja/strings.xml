@@ -194,22 +194,26 @@ JANDIへようこそ"</string>
 <string name="jandi_action_menu_message_copy">"コピー"</string>
 <string name="jandi_message_join_entity">"%1$s が参加しました"</string>
 <string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
-<string name="jandi_input_password"></string>
-<string name="jandi_forgot_password"></string>
-<string name="jandi_message_ask_about_deleting"></string>
-<string name="jandi_profile_phone_number_hint"></string>
-<string name="jandi_profile_division_hint"></string>
-<string name="jandi_messages_pull"></string>
-<string name="jandi_messages_refresh"></string>
-<string name="jandi_messages_release"></string>
-<string name="jandi_file_list_pull"></string>
-<string name="jandi_file_list_refresh"></string>
-<string name="jandi_file_list_release"></string>
+<string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
+<string name="jandi_forgot_password">"パスワードを忘れた場合"</string>
+<string name="jandi_message_ask_about_deleting">"削除しますか？"</string>
+<string name="jandi_profile_phone_number_hint">"電話番号"</string>
+<string name="jandi_profile_division_hint">"部署"</string>
+<string name="jandi_messages_pull">"引っ張って以前のメッセージを表示"</string>
+
+<!-- Fuzzy -->
+<string name="jandi_messages_refresh">"更新しました"</string>
+<string name="jandi_messages_release">"はなして以前のメッセージを表示"</string>
+
+<!-- Fuzzy -->
+<string name="jandi_file_list_pull">"引っ張ってさらにファイルを表示"</string>
+<string name="jandi_file_list_refresh">"更新しました"</string>
+<string name="jandi_file_list_release">"はなしてされあにファイルを表示"</string>
 <string name="jandi_have_an_account_already">"すでにチームがある場合はこちら"</string>
-<string name="jandi_profile_position_hint"></string>
-<string name="err_profile_exceed_length_of_topic_name"></string>
-<string name="err_profile_exceed_length_of_status_message"></string>
-<string name="err_profile_exceed_length_of_phone"></string>
-<string name="err_profile_exceed_length_of_division"></string>
-<string name="err_profile_exceed_length_of_position"></string>
+<string name="jandi_profile_position_hint">"役職"</string>
+<string name="err_profile_exceed_length_of_topic_name">"トピックの名称は最大60文字です"</string>
+<string name="err_profile_exceed_length_of_status_message">"ステータス文言は最大60文字です"</string>
+<string name="err_profile_exceed_length_of_phone">"携帯番号は最大20文字です"</string>
+<string name="err_profile_exceed_length_of_division">"部署名は最大60文字です"</string>
+<string name="err_profile_exceed_length_of_position">"役職は最大60文字です"</string>
 </resources>
