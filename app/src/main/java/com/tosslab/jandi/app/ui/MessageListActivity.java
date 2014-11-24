@@ -19,6 +19,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -130,6 +133,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     MessageItemListAdapter messageItemListAdapter;
     @ViewById(R.id.et_message)
     EditText etMessage;
+    @ViewById(R.id.btn_send_message)
+    Button buttonSendMessage;
 
     private Context mContext;
     private String mMyToken;
@@ -161,6 +166,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         initProgressWheel();
         clearPushNotification();
         BadgeUtils.clearBadge(getApplicationContext());
+        setEditTextWatcher();
 
         mMyToken = JandiPreference.getMyToken(mContext);
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
@@ -262,6 +268,22 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
     private void goToBottomOfListView() {
         actualListView.setSelection(messageItemListAdapter.getCount() - 1);
+    }
+
+    void setEditTextWatcher() {
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int inputLength = editable.length();
+                buttonSendMessage.setSelected(inputLength > 0);
+            }
+        });
     }
 
     @Override
@@ -657,13 +679,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * Message 전송
      ************************************************************/
 
-    @Click(R.id.btn_send_comment)
+    @Click(R.id.btn_send_message)
     void sendMessage() {
-        pauseUpdateTimer();
-        String message = etMessage.getText().toString();
-        etMessage.setText("");
-        if (message.length() > 0) {
-            sendMessageInBackground(message);
+        if (buttonSendMessage.isSelected()) {
+            pauseUpdateTimer();
+            String message = etMessage.getText().toString();
+            etMessage.setText("");
+            if (message.length() > 0) {
+                sendMessageInBackground(message);
+            }
         }
     }
 

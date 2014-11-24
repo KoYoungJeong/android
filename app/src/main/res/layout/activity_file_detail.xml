@@ -32,26 +32,16 @@
         android:paddingRight="10dp">
         <EditText
             android:id="@+id/et_file_detail_comment"
+            style="@style/JandiChat.EditText"
             android:layout_width="0px"
             android:layout_height="wrap_content"
-            android:minHeight="40dp"
             android:layout_weight="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:lines="4"
-            android:minLines="1"
-            android:scrollbars="none"
-            android:inputType="textMultiLine|textCapSentences"
-            android:background="@drawable/edtxt_messages_input"
             android:hint="@string/comment"/>
         <Button
             android:id="@+id/btn_file_detail_send_comment"
-            android:layout_width="55dp"
-            android:layout_height="40dp"
+            style="@style/JandiChat.Button.Dynamic"
             android:layout_marginLeft="6dp"
             android:text="@string/jandi_message_send"
-            android:textSize="14sp"
-            android:textColor="@color/jandi_messages_button_text"
-            android:background="@drawable/jandi_btn_selector"/>
+            />
     </LinearLayout>
 </LinearLayout>

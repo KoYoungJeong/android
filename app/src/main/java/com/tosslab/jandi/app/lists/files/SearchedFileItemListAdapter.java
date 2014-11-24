@@ -40,7 +40,7 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
     public void insert(ResSearchFile resSearchFile) {
         List<ResMessages.OriginalMessage> sortedFiles = descSortByCreateTime(resSearchFile.files);
         for (ResMessages.OriginalMessage message : sortedFiles) {
-            if (message instanceof ResMessages.FileMessage) {
+            if (message instanceof ResMessages.FileMessage && message.status.equals("created")) {
                 searedFiles.add((ResMessages.FileMessage)message);
             }
         }

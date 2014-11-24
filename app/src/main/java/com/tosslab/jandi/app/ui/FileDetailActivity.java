@@ -12,11 +12,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -85,7 +88,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @ViewById(R.id.list_file_detail_comments)
     ListView listFileDetailComments;
     @ViewById(R.id.et_file_detail_comment)
-    EditText etFileDetailComment;
+    EditText editTextComment;
+    @ViewById(R.id.btn_file_detail_send_comment)
+    Button buttonSendComment;
 
     // in File Detail Header
     ImageView imageViewUserProfile;
@@ -114,6 +119,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         initProgressWheel();
         addFileDetailViewAsListviewHeader();
         initNetworkClientForFileDetail();
+        setEditTextWatcher();
 
         imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -210,6 +216,22 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
+    }
+
+    void setEditTextWatcher() {
+        editTextComment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int inputLength = editable.length();
+                buttonSendComment.setSelected(inputLength > 0);
+            }
+        });
     }
 
 //    @ItemLongClick
@@ -519,7 +541,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
-        String comment = etFileDetailComment.getText().toString();
+        String comment = editTextComment.getText().toString();
         hideSoftKeyboard();
 
         if (comment.length() > 0) {
@@ -529,8 +551,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void hideSoftKeyboard() {
-        imm.hideSoftInputFromWindow(etFileDetailComment.getWindowToken(),0);
-        etFileDetailComment.setText("");
+        imm.hideSoftInputFromWindow(editTextComment.getWindowToken(),0);
+        editTextComment.setText("");
     }
 
 

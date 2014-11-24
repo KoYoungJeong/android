@@ -31,33 +31,24 @@
         android:gravity="center_vertical">
         <ImageButton
             android:id="@+id/btn_upload_file"
-            android:layout_width="@dimen/jandi_messages_upload_botton_width"
-            android:layout_height="@dimen/jandi_messages_upload_botton_height"
-            android:background="@drawable/jandi_textfield_menu"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp"
+            android:background="@drawable/jandi_upload_file"/>
         <EditText
             android:id="@+id/et_message"
+            style="@style/JandiChat.EditText"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:minHeight="40dp"
-            android:lines="4"
-            android:minLines="1"
-            android:scrollbars="none"
-            android:inputType="textMultiLine|textCapSentences"
-            android:background="@drawable/edtxt_messages_input"
             android:hint="@string/jandi_message_hint"/>
         <Button
-            android:id="@+id/btn_send_comment"
-            android:layout_width="55dp"
-            android:layout_height="40dp"
+            android:id="@+id/btn_send_message"
+            style="@style/JandiChat.Button.Dynamic"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="6dp"
-            android:text="@string/jandi_message_send"
-            android:textSize="14sp"
-            android:textColor="@color/jandi_messages_button_text"
-            android:background="@drawable/jandi_btn_selector"/>
+            android:text="@string/jandi_message_send"/>
     </LinearLayout>
 
 </LinearLayout>
