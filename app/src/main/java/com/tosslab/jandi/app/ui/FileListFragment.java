@@ -264,10 +264,10 @@ public class FileListFragment extends Fragment {
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
             log.error("fail to get searched files.", e);
-            searchFailed(getString(R.string.err_file_search));
+            searchFailed(R.string.err_file_search);
         } catch (HttpMessageNotReadableException e) {
             log.error("fail to get searched files.", e);
-            searchFailed(getString(R.string.err_file_search));
+            searchFailed(R.string.err_file_search);
         }
     }
 
@@ -289,8 +289,8 @@ public class FileListFragment extends Fragment {
     }
 
     @UiThread
-    void searchFailed(String errMessage) {
-        ColoredToast.showError(mContext, errMessage);
+    void searchFailed(int errMessageRes) {
+        ColoredToast.showError(mContext, getString(errMessageRes));
     }
 
     /**
