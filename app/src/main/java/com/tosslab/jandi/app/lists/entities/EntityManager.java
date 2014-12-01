@@ -417,9 +417,9 @@ public class EntityManager {
         return null;
     }
 
-    /**********
+    /************************************************************
      * Parse subscription
-     */
+     ************************************************************/
     public void subscribeChannelForParse() {
         SaveCallback callback = new ParseSaveCallback();
 
@@ -447,21 +447,21 @@ public class EntityManager {
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
-            String channel = "e" + publicTopic.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
             if (subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
 
         // Private Topic
         for (FormattedEntity privateTopic : getGroups()) {
-            String channel = "e" + privateTopic.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
             if (subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
 
         FormattedEntity me = getMe();
         for (FormattedEntity member : getFormattedUsers()) {
-            String channel = "e" + member.getId() + "-" + me.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
             if (subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
@@ -475,19 +475,19 @@ public class EntityManager {
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
-            String channel = "e" + publicTopic.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
             subscribedChannelsFromParse.remove(channel);
         }
 
         // Private Topic
         for (FormattedEntity privateTopic : getGroups()) {
-            String channel = "e" + privateTopic.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
             subscribedChannelsFromParse.remove(channel);
         }
 
         FormattedEntity me = getMe();
         for (FormattedEntity member : getFormattedUsers()) {
-            String channel = "e" + member.getId() + "-" + me.getId();
+            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
             subscribedChannelsFromParse.remove(channel);
         }
         return subscribedChannelsFromParse;
@@ -497,14 +497,14 @@ public class EntityManager {
         @Override
         public void done(ParseException e) {
             if (e != null) {
-                Log.e("com.parse.push", "failed to subscribe/unsubscribe for push", e);
+                log.error("failed to subscribe/unsubscribe for push", e);
             }
         }
     }
 
-    /**
-     * 오름 차순 정렬
-     */
+    /************************************************************
+     * 오름차순 정렬
+     ************************************************************/
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
         List<FormattedEntity> sortedEntities = new ArrayList<FormattedEntity>(naiveEntities);
         Collections.sort(sortedEntities, new NameAscCompare());

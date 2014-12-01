@@ -43,7 +43,7 @@ public class SettingsFragment extends PreferenceFragment {
             ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
 
             // Notification Token을 삭제
-            ((SettingsActivity)getActivity()).deleteNotificationTokenInBackground();
+            ((SettingsActivity)getActivity()).returnToLoginActivity();
         }
         return false;
     }

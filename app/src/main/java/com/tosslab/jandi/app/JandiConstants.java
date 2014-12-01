@@ -5,7 +5,7 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
     public static final String AUTH_HEADER      = "Authorization";
-
+    public static final String PUSH_CHANNEL_PREFIX = "c";
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
     // Push로 부터 넘어온 MainActivity의 Extra
@@ -20,13 +20,6 @@ public class JandiConstants {
     public static final String PREF_PUSH_ENTITY = "pushEntity";
     public static final String PREF_HAS_READ_TUTORIAL   = "hasReadTutorial";
     public static final String PREF_BADGE_COUNT  = "badgeCount";
-
-    // GCM
-    public static final String PREF_NAME_GCM        = "JandiGcm";
-    public static final String SENDER_ID            = "558811220581";
-    public static final String PREF_PUSH_TOKEN      = "registrationId";
-    public static final String PREF_PUSH_TOKEN_TBU  = "registrationIdToBeUpdated";
-    public static final String PREF_APP_VERSION     = "priorAppVersion";
 
     public static final int TYPE_PUBLIC_TOPIC   = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;

@@ -234,27 +234,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void onEvent(SignOutEvent event) {
         if (mEntityManager != null)
             trackSignOut(mEntityManager.getDistictId());
-        deleteNotificationTokenInBackground();
-    }
-
-    @Background
-    public void deleteNotificationTokenInBackground() {
-        SharedPreferences prefs = getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
-        String regId = prefs.getString(JandiConstants.PREF_PUSH_TOKEN, "");
-
-        if (!regId.isEmpty()) {
-            try {
-                mJandiEntityClient.deleteNotificationToken(regId);
-                log.debug("notification token has been deleted.");
-            } catch (JandiNetworkException e) {
-                log.error("delete notification token failed");
-            }
-        }
-
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(JandiConstants.PREF_PUSH_TOKEN, "");
-        editor.commit();
-
         returnToLoginActivity();
     }
 

@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -102,28 +103,8 @@ public class SettingsActivity extends PreferenceActivity {
     /************************************************************
      * Push 설정
      ************************************************************/
-    @Background
-    public void deleteNotificationTokenInBackground() {
-        SharedPreferences prefs = getSharedPreferences(JandiConstants.PREF_NAME_GCM, Context.MODE_PRIVATE);
-        String regId = prefs.getString(JandiConstants.PREF_PUSH_TOKEN, "");
 
-        if (!regId.isEmpty()) {
-            try {
-                mJandiEntityClient.deleteNotificationToken(regId);
-                log.debug("notification token has been deleted.");
-            } catch (JandiNetworkException e) {
-                log.error("delete notification token failed");
-            }
-        }
-
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(JandiConstants.PREF_PUSH_TOKEN, "");
-        editor.commit();
-
-        returnToLoginActivity();
-    }
-
-    @UiThread
+    @SupposeUiThread
     public void returnToLoginActivity() {
         MixpanelAnalyticsClient.getInstance(this, getDistictId()).trackSignOut();
 
