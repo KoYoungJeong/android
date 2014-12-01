@@ -2,25 +2,18 @@ package com.tosslab.jandi.app.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.newrelic.agent.android.NewRelic;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -35,8 +28,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
-
 /**
  * Created by justinygchoi on 14. 11. 6..
  * 크게 3가지 체크가 이루어진다.
@@ -49,64 +40,39 @@ import java.io.IOException;
 @EActivity(R.layout.activity_intro)
 public class IntroActivity extends Activity {
     private final Logger log = Logger.getLogger(IntroActivity.class);
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @RestService
     JandiRestClient mJandiRestClient;
 
-    private JandiEntityClient mJandiEntityClient;
     private JandiAuthClient mJandiAuthClient;
-    private GoogleCloudMessaging mGcm;
-    private int mThisVersion;
 
     static class ResultHolder {
         boolean doneWaiting = false;
-        boolean doneProcessGenToken = false;
-        boolean doneEveryThing = false;
+        boolean doneOtherElse = false;
     }
 
     @AfterInject
     void init() {
         registerNewRelicToken();
         initAuthClient();
-        retrieveThisAppVersion();
     }
 
     @AfterViews
     void startOn() {
+        int thisVersion = retrieveThisAppVersion();
         ResultHolder resultHolder = new ResultHolder();
-
-        if (checkPlayServices()) {
-            mGcm = GoogleCloudMessaging.getInstance(this);
-            String pushToken = getAlreadyGeneratedPushToken(this);
-
-            // 지금 막 업데이트 한 경우에도 푸시 토큰을 갱신한다.
-            if (isJustUpdated(this) || pushToken.isEmpty()) {
-                generatePushTokenInBackground(resultHolder);
-            } else {
-                resultHolder.doneProcessGenToken = true;
-            }
-            checkNewerVersionInBackground(resultHolder);
-            waitForSplash(resultHolder);
-        } else {
-            log.error("No valid Google Play Services APK found.");
-        }
+        checkNewerVersionInBackground(thisVersion, resultHolder);
+        waitForSplash(resultHolder);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        checkPlayServices();
-    }
-
-    private void retrieveThisAppVersion() {
+    private int retrieveThisAppVersion() {
         try {
             PackageInfo packageInfo = getPackageManager()
                     .getPackageInfo(getPackageName(), 0);
-            mThisVersion = packageInfo.versionCode;
+            return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
+            return 0;
         }
     }
 
@@ -121,141 +87,21 @@ public class IntroActivity extends Activity {
 
     @Background(delay = 1500)
     void waitForSplash(ResultHolder resultHolder) {
-        // 로딩 화면을 보여주기 위해 기본적으로 1초 대기
-        joinWork(resultHolder, true, false, false);
+        // 로딩 화면을 보여주기 위해 기본적으로 1.5초 대기
+        joinWork(resultHolder, true, false);    // done waiting
     }
 
-    /************************************************************
-     * for Push notification token
-     ************************************************************/
-    private String getAlreadyGeneratedPushToken(Context context) {
-        String registrationId = JandiPreference.getPushToken(context);
-        if (registrationId.isEmpty()) {
-            return "";
-        }
-        return registrationId;
-    }
-
-    private boolean isJustUpdated(Context context) {
-        int registeredVersion = JandiPreference.getPriorAppVersion(context);
-        if (registeredVersion != mThisVersion) {
-            log.info("Current app, version "
-                    + registeredVersion
-                    + ", is just updated. It needs to regenerate push token.");
-            return true;
-        }
-        return false;
-    }
-
-    @Background
-    void generatePushTokenInBackground(ResultHolder resultHolder) {
-        try {
-            if (mGcm == null) {
-                mGcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-            }
-            String pushToken = mGcm.register(JandiConstants.SENDER_ID);
-            JandiPreference.setPushTokenToBeUpdated(this, pushToken);
-            log.debug("push token to be updated is generated");
-            joinWork(resultHolder, false, true, false);
-        } catch (IOException e) {
-            log.error("generating push token failed", e);
-            generatePushTokenFailed();
-        }
-    }
-
-
-    @UiThread
-    void generatePushTokenFailed() {
-        ColoredToast.showError(this, "Push error. Please try again after a while");
-    }
-
-
-    /************************************************************
-     * 자동 로그인에 따른 토큰 등록
-     ************************************************************/
-    @Background
-    void registerPushTokenInBackground(String myAccessToken) {
-        String oldPushToken = JandiPreference.getPushToken(this);
-        String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
-        log.debug("oldPushToken = " + oldPushToken);
-        log.debug("newPushToken = " + newPushToken);
-        try {
-            mJandiEntityClient = new JandiEntityClient(mJandiRestClient, myAccessToken);
-
-            if (newPushToken.isEmpty() == false) {
-                mJandiEntityClient.registerNotificationToken(oldPushToken, newPushToken);
-                log.debug("registering push token succeed, registration ID=" + newPushToken);
-                sendRegistrationIdSucceed(newPushToken);
-            } else {
-                sendRegistrationIdSucceed(oldPushToken);
-            }
-        } catch (JandiNetworkException e) {
-            if (e.httpStatusCode == JandiNetworkException.UNAUTHORIZED) {
-                needToLoginFirst();
-            } else if (e.errCode == JandiNetworkException.EXPIRED_SESSION) {
-                // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
-                needToLoginFirst();
-            } else {
-                log.error("Register Fail", e);
-                if (e.errCode == -1) {
-                    sendRegistrationIdFailed(e.httpStatusCode + ":" + e.httpStatusMessage);
-                } else {
-                    sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
-                }
-
-            }
-        }
-    }
-
-    @UiThread
-    void sendRegistrationIdSucceed(String updatedToken) {
-        // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
-        JandiPreference.setPushToken(this, updatedToken);
-        JandiPreference.setPushTokenToBeUpdated(this, "");
-        // 토큰 갱신이 성공했으므로 현재 버전을 저장
-        JandiPreference.setPriorAppVersion(this, mThisVersion);
-        moveToMainActivity();
-    }
-
-    @UiThread
-    void needToLoginFirst() {
-        moveToIntroTutorialActivity();
-    }
-
-    @UiThread
-    void sendRegistrationIdFailed(String message) {
-        ColoredToast.showError(this, message);
-    }
-
-    /**
-     * Check the device to make sure it has the Google Play Services APK. If
-     * it doesn't, display a dialog that allows users to download the APK from
-     * the Google Play Store or enable it in the device's system settings.
-     */
-    private boolean checkPlayServices() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            } else {
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
 
     /************************************************************
      * 최신 버전 체크
      ************************************************************/
     @Background
-    void checkNewerVersionInBackground(ResultHolder resultHolder) {
+    void checkNewerVersionInBackground(int thisVersion, ResultHolder resultHolder) {
         // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
         boolean isLatestVersion = true;
         try {
             int latestVersion = getLatestVersionInBackground();
-            if (mThisVersion < latestVersion) {
+            if (thisVersion < latestVersion) {
                 isLatestVersion = false;
                 log.info("A new version of JANDI is available.");
             }
@@ -278,7 +124,7 @@ public class IntroActivity extends Activity {
         if (!isLatestVersion) {
             showUpdateDialog();
         } else {
-            joinWork(resultHolder, false, false, true);
+            joinWork(resultHolder, false, true);    // done other else
         }
     }
 
@@ -312,22 +158,17 @@ public class IntroActivity extends Activity {
      * 이동
      ************************************************************/
     @UiThread
-    void joinWork(ResultHolder resultHolder,
-                  boolean doneWaiting,
-                  boolean doneProcessGenToken,
-                  boolean doneEveryThing) {
-        // ATTENTION true 일때만 갱신한다. false 를 갱신하지는 않는다.
+    void joinWork(ResultHolder resultHolder, boolean doneWaiting, boolean doneOtherElse) {
+
         if (doneWaiting) {
             resultHolder.doneWaiting = doneWaiting;
         }
-        if (doneProcessGenToken) {
-            resultHolder.doneProcessGenToken = doneProcessGenToken;
-        }
-        if (doneEveryThing) {
-            resultHolder.doneEveryThing = doneEveryThing;
+        if (doneOtherElse) {
+            resultHolder.doneOtherElse = doneOtherElse;
         }
 
-        if (resultHolder.doneWaiting && resultHolder.doneEveryThing && resultHolder.doneProcessGenToken) {
+        // 두가지의 sing task 모두 완료된 경우 다음으로 넘어간다.
+        if (resultHolder.doneWaiting && resultHolder.doneOtherElse) {
             checkSignInAndRegister();
         }
     }
@@ -337,7 +178,7 @@ public class IntroActivity extends Activity {
     void checkSignInAndRegister() {
         String myToken = JandiPreference.getMyToken(this);
         if (myToken != null && myToken.length() > 0) {
-            registerPushTokenInBackground(myToken);
+            moveToMainActivity();
         } else {
             moveToIntroTutorialActivity();
         }

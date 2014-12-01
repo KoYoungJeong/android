@@ -290,7 +290,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().registerSticky(this);
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
         resumeUpdateTimer();
     }
 
@@ -299,7 +298,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         pauseUpdateTimer();
         setMarker();
         EventBus.getDefault().unregister(this);
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
         super.onPause();
     }
 

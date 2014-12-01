@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tosslab.jandi.app" >
+    package="com.tosslab.jandi.app">
 
     <application
         android:name=".JandiApplication"
         android:allowBackup="true"
         android:icon="@drawable/jandi_ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/JandiTheme" >
+        android:theme="@style/JandiTheme">
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <meta-data android:name="com.google.android.gms.analytics.globalConfigResource"
-            android:resource="@xml/global_tracker"/>
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/global_tracker" />
+
         <activity
             android:name=".ui.IntroActivity_"
             android:logo="@drawable/jandi_actionb_logo"
-            android:theme="@style/JandiTheme.Intro"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.Intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -26,21 +28,13 @@
         <activity
             android:name=".ui.IntroMainActivity_"
             android:label="@string/app_name"
-            android:theme="@style/JandiTheme.NoActionBar"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.NoActionBar" />
         <activity
-            android:name=".ui.IntroSelectTeamActivity_"
-            android:label="@string/app_name"
-            android:theme="@style/JandiTheme.NoActionBar"
-            android:screenOrientation="portrait" />
-        <activity android:name=".ui.TeamSelectionActivity_"
+            android:name=".ui.TeamSelectionActivity_"
             android:label="@string/jandi_action_login"
-            android:windowSoftInputMode="adjustUnspecified"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.IntroLoginActivity_"
-            android:label="@string/jandi_action_login"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified" />
         <activity
             android:name=".ui.MainTabActivity_"
             android:label="@string/app_name"
@@ -62,33 +56,53 @@
         <activity
             android:name=".ui.FileExplorerActivity"
             android:label="@string/jandi_title_activity_file_explorer"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity android:name=".ui.SettingsActivity_"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.SettingsActivity_"
             android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.ProfileActivity_"
+        <activity
+            android:name=".ui.ProfileActivity_"
             android:label="@string/jandi_profile_actionb"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.TeamInfoActivity_"
+        <activity
+            android:name=".ui.TeamInfoActivity_"
             android:label="@string/jandi_team_info"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.hideybarphotoviewscreen.HideyBarPhotoViewScreen"
             android:label="@string/app_name"
             android:logo="@drawable/jandi_actionb_logo"
-            android:theme="@style/AppTheme_ActionBarOverlay">
-        </activity>
+            android:theme="@style/AppTheme_ActionBarOverlay"></activity>
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
         <receiver
-            android:name=".ui.JandiGCMBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:name="com.tosslab.jandi.app.JandiPushBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.parse.push.intent.RECEIVE" />
+                <action android:name="com.parse.push.intent.DELETE" />
+                <action android:name="com.parse.push.intent.OPEN" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="com.tosslab.jandi.app" />
+
+                <category android:name="com.tosslab.jandi.app.dev" />
             </intent-filter>
         </receiver>
-        <service android:name=".ui.JandiGCMIntentService" />
     </application>
 
     // for samsung or sony device to show badge
@@ -104,10 +118,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <permission android:name="com.tosslab.jandi.app.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.tosslab.jandi.app.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
+    <permission
+        android:name="com.tosslab.jandi.app.dev.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.tosslab.jandi.app.dev.permission.C2D_MESSAGE" />
 </manifest>

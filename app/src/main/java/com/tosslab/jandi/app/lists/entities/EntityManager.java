@@ -1,5 +1,11 @@
 package com.tosslab.jandi.app.lists.entities;
 
+import android.util.Log;
+
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.ParsePush;
+import com.parse.SaveCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -409,6 +415,91 @@ public class EntityManager {
             return mUsers.get(userId);
         }
         return null;
+    }
+
+    /**********
+     * Parse subscription
+     */
+    public void subscribeChannelForParse() {
+        SaveCallback callback = new ParseSaveCallback();
+
+        for (String channel : getChannelsToBeSubscribed()) {
+            log.debug("SUBSCRIBE : " + channel);
+            ParsePush.subscribeInBackground(channel, callback);
+        }
+
+        for (String channel : getChannelsToBeUnsubscribed()) {
+            log.debug("UNSUBSCRIBE : " + channel);
+            ParsePush.unsubscribeInBackground(channel, callback);
+        }
+    }
+
+    // Parse 에 등록된 구독 채널 리스트
+    private List<String> getSubscribedChannelsFromParse() {
+        return ParseInstallation.getCurrentInstallation().getList("channels");
+    }
+
+    // Parse 에 추가로 등록해야할 채널 리스트 획득
+    // 현재 가입된 채널 중에서 Parse 에 등록된 구독 채널을 제외
+    private List<String> getChannelsToBeSubscribed() {
+        ArrayList<String> channelsToBeSubscribed = new ArrayList<String>();
+        List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
+
+        // Public Topic
+        for (FormattedEntity publicTopic : getJoinedChannels()) {
+            String channel = "e" + publicTopic.getId();
+            if (subscribedChannelsFromParse.contains(channel) == false)
+                channelsToBeSubscribed.add(channel);
+        }
+
+        // Private Topic
+        for (FormattedEntity privateTopic : getGroups()) {
+            String channel = "e" + privateTopic.getId();
+            if (subscribedChannelsFromParse.contains(channel) == false)
+                channelsToBeSubscribed.add(channel);
+        }
+
+        FormattedEntity me = getMe();
+        for (FormattedEntity member : getFormattedUsers()) {
+            String channel = "e" + member.getId() + "-" + me.getId();
+            if (subscribedChannelsFromParse.contains(channel) == false)
+                channelsToBeSubscribed.add(channel);
+        }
+        return channelsToBeSubscribed;
+    }
+
+    // Parse 에 구독을 해제해야할 채널 리스트 획득
+    // 현재 내가 JANDI 에 Join 한 Topic 이 아니면 삭제해야 한다.
+    private List<String> getChannelsToBeUnsubscribed() {
+        List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
+
+        // Public Topic
+        for (FormattedEntity publicTopic : getJoinedChannels()) {
+            String channel = "e" + publicTopic.getId();
+            subscribedChannelsFromParse.remove(channel);
+        }
+
+        // Private Topic
+        for (FormattedEntity privateTopic : getGroups()) {
+            String channel = "e" + privateTopic.getId();
+            subscribedChannelsFromParse.remove(channel);
+        }
+
+        FormattedEntity me = getMe();
+        for (FormattedEntity member : getFormattedUsers()) {
+            String channel = "e" + member.getId() + "-" + me.getId();
+            subscribedChannelsFromParse.remove(channel);
+        }
+        return subscribedChannelsFromParse;
+    }
+
+    private class ParseSaveCallback extends SaveCallback {
+        @Override
+        public void done(ParseException e) {
+            if (e != null) {
+                Log.e("com.parse.push", "failed to subscribe/unsubscribe for push", e);
+            }
+        }
     }
 
     /**

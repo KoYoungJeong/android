@@ -137,11 +137,11 @@ public class IntroLoginFragment extends Fragment {
             ResCommon res = mJandiAuthClient.createTeam(myEmailId);
             createTeamSucceed();
         } catch (JandiNetworkException e) {
-            log.error("getTeamListInBackground", e);
+            log.error("createTeamInBackground", e);
             createTeamFailed(R.string.err_team_creation_failed);
 
         } catch (Exception e) {
-            log.error("getTeamListInBackground", e);
+            log.error("createTeamInBackground", e);
             createTeamFailed(R.string.err_network);
         }
     }
@@ -202,7 +202,7 @@ public class IntroLoginFragment extends Fragment {
             }
             getTeamListFailed(errorStringRes);
         } catch (Exception e) {
-            log.error("getTeamListInBackground", e);
+            log.error(e.toString(), e);
             getTeamListFailed(R.string.err_network);
         }
     }

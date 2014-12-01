@@ -161,6 +161,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mProgressWheel.dismiss();
         mEntityManager = new EntityManager(resLeftSideMenu);
         ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
+        mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());
         checkNewTabBadges(mEntityManager);

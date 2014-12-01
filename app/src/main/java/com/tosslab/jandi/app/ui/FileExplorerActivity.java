@@ -30,18 +30,6 @@ public class FileExplorerActivity extends ListActivity {
         fill(currentDir);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, false);
-    }
-
-    @Override
-    public void onPause() {
-        JandiGCMBroadcastReceiver.enableCustomReceiver(this, true);
-        super.onPause();
-    }
-
     private void fill(File f)
     {
         File[] dirs = f.listFiles();

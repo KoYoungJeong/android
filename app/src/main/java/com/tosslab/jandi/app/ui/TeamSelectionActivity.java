@@ -61,7 +61,6 @@ public class TeamSelectionActivity extends Activity {
     JandiRestClient mJandiRestClient;
 
     private int mSelectedTeamId;
-    private JandiEntityClient mJandiEntityClient;
     private JandiAuthClient mJandiAuthClient;
 
     @ViewById(R.id.lv_intro_team_list)
@@ -219,81 +218,17 @@ public class TeamSelectionActivity extends Activity {
 
     @UiThread
     void doLoginSucceed(ResAuthToken token) {
+        mProgressWheel.dismiss();
         String myAccessToken = token.token;
         JandiPreference.setMyToken(this, myAccessToken);
-        registerPushTokenInBackground(myAccessToken);
+
+        moveToMainActivity();
     }
 
     @UiThread
     void doLoginFailed(int errMessageResId) {
         mProgressWheel.dismiss();
         ColoredToast.showError(this, getString(errMessageResId));
-    }
-
-    /************************************************************
-     * 로그인에 따른 토큰 등록
-     ************************************************************/
-    @Background
-    void registerPushTokenInBackground(String myAccessToken) {
-        String oldPushToken = JandiPreference.getPushToken(this);
-        String newPushToken = JandiPreference.getPushTokenToBeUpdated(this);
-        log.debug("oldPushToken = " + oldPushToken);
-        log.debug("newPushToken = " + newPushToken);
-        try {
-            mJandiEntityClient = new JandiEntityClient(mJandiRestClient, myAccessToken);
-
-            if (newPushToken.isEmpty() == false) {
-                mJandiEntityClient.registerNotificationToken(oldPushToken, newPushToken);
-                log.debug("registering push token succeed, registration ID=" + newPushToken);
-                sendRegistrationIdSucceed(newPushToken);
-            } else {
-                sendRegistrationIdSucceed(oldPushToken);
-            }
-        } catch (JandiNetworkException e) {
-            if (e.httpStatusCode == JandiNetworkException.UNAUTHORIZED) {
-                sendRegistrationIdFailed(getString(R.string.err_expired_session));
-            } else if (e.errCode == JandiNetworkException.EXPIRED_SESSION) {
-                // 만료된 access 토큰이므로 로그인을 수행한 이후 등록한다.
-                sendRegistrationIdFailed(getString(R.string.err_expired_session));
-            } else {
-                log.error("Register Fail", e);
-                if (e.errCode == -1) {
-                    sendRegistrationIdFailed(e.httpStatusCode + ":" + e.httpStatusMessage);
-                } else {
-                    sendRegistrationIdFailed(e.errCode + ":" + e.errReason);
-                }
-
-            }
-        }
-    }
-
-    @UiThread
-    void sendRegistrationIdSucceed(String updatedToken) {
-        mProgressWheel.dismiss();
-
-        // 토큰 갱신이 성공했기 때문에 새로운 토큰을 push token 으로 저장.
-        JandiPreference.setPushToken(this, updatedToken);
-        JandiPreference.setPushTokenToBeUpdated(this, "");
-        // 토큰 갱신이 성공했으므로 현재 버전을 저장
-        JandiPreference.setPriorAppVersion(this, getThisAppVersion());
-        moveToMainActivity();
-    }
-
-    @UiThread
-    void sendRegistrationIdFailed(String message) {
-        mProgressWheel.dismiss();
-        ColoredToast.showError(this, message);
-    }
-
-    private int getThisAppVersion() {
-        try {
-            PackageInfo packageInfo = getPackageManager()
-                    .getPackageInfo(getPackageName(), 0);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
     }
 
     @SupposeUiThread

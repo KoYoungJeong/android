@@ -34,7 +34,8 @@ dependencies {
     // Analytics & report
     compile 'com.newrelic.agent.android:android-agent:4.+'
     compile 'com.mixpanel.android:mixpanel-android:4.3.0@aar'
-    compile 'com.parse.bolts:bolts-android:1.1.2'
+    compile 'com.parse.bolts:bolts-android:1.1.3'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 android {
@@ -43,7 +44,7 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 14
+        minSdkVersion 16
         targetSdkVersion 19
         versionCode 26
         versionName '0.4.4'
