@@ -37,6 +37,7 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
     private static final String JSON_VALUE_ACTION_UNSUBSCRIBE   = "unsubscribe";
 
     private static final int MAX_LENGTH_SMALL_NOTIFICATION  = 20;
+
     @Override
     protected Notification getNotification(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
@@ -67,6 +68,17 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void onPushReceive(Context context, Intent intent) {
+        sendRefreshEntities(context);
+    }
+
+    private void sendRefreshEntities(Context context) {
+        Intent intent = new Intent();
+        intent.setAction(JandiConstants.PUSH_REFRESH_ACTION);
+        context.sendBroadcast(intent);
     }
 
     private Notification generateNotification(Context context, JsonNode infoObj) {
