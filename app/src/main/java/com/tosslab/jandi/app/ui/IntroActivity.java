@@ -31,10 +31,8 @@ import org.apache.log4j.Logger;
 /**
  * Created by justinygchoi on 14. 11. 6..
  * 크게 3가지 체크가 이루어진다.
- * 1. 이번 실행이 업데이트 이후의 최초 실행인지 체크하여 Push notification token 을 갱신한다.
- *    갱신된 push notification 은 토큰이 있을 경우 업데이트되고 없으면 새로 로그인할 때 업데이트 된다.
- * 2. 업데이트 해야할 최신 버전이 마켓에 업데이트되어 있으면 업데이트 안내가 뜬다.
- * 3. 자동 로그인 여부를 체크하여 이동한다.
+ * 1. 업데이트 해야할 최신 버전이 마켓에 업데이트되어 있으면 업데이트 안내가 뜬다.
+ * 2. 자동 로그인 여부를 체크하여 이동한다.
  */
 @Fullscreen
 @EActivity(R.layout.activity_intro)
@@ -43,7 +41,6 @@ public class IntroActivity extends Activity {
 
     @RestService
     JandiRestClient mJandiRestClient;
-
     private JandiAuthClient mJandiAuthClient;
 
     static class ResultHolder {
@@ -169,13 +166,13 @@ public class IntroActivity extends Activity {
 
         // 두가지의 sing task 모두 완료된 경우 다음으로 넘어간다.
         if (resultHolder.doneWaiting && resultHolder.doneOtherElse) {
-            checkSignInAndRegister();
+            checkAutoSignIn();
         }
     }
 
     // 자동 로그인 유무에 따른 분기.
     @SupposeUiThread
-    void checkSignInAndRegister() {
+    void checkAutoSignIn() {
         String myToken = JandiPreference.getMyToken(this);
         if (myToken != null && myToken.length() > 0) {
             moveToMainActivity();

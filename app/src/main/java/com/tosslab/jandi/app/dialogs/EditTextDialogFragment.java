@@ -45,22 +45,18 @@ public class EditTextDialogFragment extends DialogFragment {
 
     public final static int ACTION_CREATE_TOPIC             = 0;
     public final static int ACTION_MODIFY_TOPIC             = 1;
-    public final static int ACTION_MODIFY_MESSAGE           = 2;
     public final static int ACTION_MODIFY_PROFILE_STATUS    = 3;
     public final static int ACTION_MODIFY_PROFILE_PHONE     = 4;
     public final static int ACTION_MODIFY_PROFILE_DIVISION  = 5;
     public final static int ACTION_MODIFY_PROFILE_POSITION  = 6;
 
-
     private final static String ARG_ACTION_TYPE     = "actionType";
     private final static String ARG_TOPIC_TYPE      = "topicType";
     private final static String ARG_TOPIC_ID        = "topicId";
     private final static String ARG_CURRENT_MGS     = "currentMessage";
-    private final static String ARG_FEEDBACK_ID     = "feedbackId";
-    private final static String ARG_MESSAGE_TYPE    = "messageType";
 
     /**
-     * CDP 생성에 사용되는 Dialog.
+     * topic 생성에 사용되는 Dialog.
      *
      * @param actionType
      * @param topicType
@@ -78,7 +74,7 @@ public class EditTextDialogFragment extends DialogFragment {
     }
 
     /**
-     * CDP 수정에 사용되는 Dialog.
+     * topic 수정에 사용되는 Dialog.
      *
      * @param actionType
      * @param topicType
@@ -94,26 +90,6 @@ public class EditTextDialogFragment extends DialogFragment {
         args.putInt(ARG_TOPIC_TYPE, topicType);
         args.putInt(ARG_TOPIC_ID, topicId);
         args.putString(ARG_CURRENT_MGS, currentCdpName);
-        frag.setArguments(args);
-        return frag;
-    }
-
-    /**
-     * 메시지 수정에 사용되는 Dialog
-     *
-     * @param messageId
-     * @param currentMessage
-     * @return
-     */
-    public static EditTextDialogFragment newInstance(int messageType, int messageId,
-                                                     String currentMessage, int feedbackId) {
-        EditTextDialogFragment frag = new EditTextDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_ACTION_TYPE, ACTION_MODIFY_MESSAGE);
-        args.putInt(ARG_TOPIC_ID, messageId);
-        args.putInt(ARG_FEEDBACK_ID, feedbackId);
-        args.putString(ARG_CURRENT_MGS, currentMessage);
-        args.putInt(ARG_MESSAGE_TYPE, messageType);
         frag.setArguments(args);
         return frag;
     }
@@ -154,8 +130,6 @@ public class EditTextDialogFragment extends DialogFragment {
         final int topicType = getArguments().getInt(ARG_TOPIC_TYPE);
         final int topicId = getArguments().getInt(ARG_TOPIC_ID);
         final String currentMessage = getArguments().getString(ARG_CURRENT_MGS, "");
-        final int feedbackId = getArguments().getInt(ARG_FEEDBACK_ID, -1);
-        final int messageType = getArguments().getInt(ARG_MESSAGE_TYPE);
 
         int titleStringId = obtainTitleByPurpose(actionType, topicType);
 
@@ -192,15 +166,6 @@ public class EditTextDialogFragment extends DialogFragment {
                         case ACTION_MODIFY_TOPIC:
                             EventBus.getDefault().post(
                                     new ConfirmModifyTopicEvent(topicType, topicId, input)
-                            );
-                            break;
-                        case ACTION_MODIFY_MESSAGE:
-                            EventBus.getDefault().post(
-                                    new ConfirmModifyMessageEvent(
-                                            messageType,
-                                            topicId,
-                                            input,
-                                            feedbackId)
                             );
                             break;
                         case ACTION_MODIFY_PROFILE_STATUS:
@@ -270,9 +235,6 @@ public class EditTextDialogFragment extends DialogFragment {
                                         && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
                                         && (!inputText.equals(currentMessage)));
                         break;
-                    case ACTION_MODIFY_MESSAGE:
-                        confirm.setSelected(inputLength > 0);
-                        break;
                     case ACTION_MODIFY_PROFILE_STATUS:
                         confirm.setSelected(inputLength < MAX_LENGTH_OF_STATUS);
                         break;
@@ -307,8 +269,6 @@ public class EditTextDialogFragment extends DialogFragment {
                 return obtainTitileForCreateCdp(entityType);
             case ACTION_MODIFY_TOPIC:
                 return obtainTitileForModifyCdp(entityType);
-            case ACTION_MODIFY_MESSAGE:
-                return R.string.modify_message;
             case ACTION_MODIFY_PROFILE_STATUS:
                 return R.string.jandi_profile_status_message;
             case ACTION_MODIFY_PROFILE_PHONE:

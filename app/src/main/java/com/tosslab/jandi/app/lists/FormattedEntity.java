@@ -93,7 +93,7 @@ public class FormattedEntity {
 //        }
 //    }
 
-    public boolean isChannel() {
+    public boolean isPublicTopic() {
         return (type == FormattedEntity.TYPE_REAL_CHANNEL);
     }
     public boolean isPrivateGroup() {
@@ -103,7 +103,7 @@ public class FormattedEntity {
         return (type == FormattedEntity.TYPE_REAL_USER);
     }
     public boolean isDummy() {
-        return (!isChannel() && !isPrivateGroup() && !isUser());
+        return (!isPublicTopic() && !isPrivateGroup() && !isUser());
     }
 
     /************************************************************
@@ -127,7 +127,7 @@ public class FormattedEntity {
     }
 
     public int getMemberCount() {
-        if (isChannel()) {
+        if (isPublicTopic()) {
             return getChannel().ch_members.size();
         }
 
@@ -139,7 +139,7 @@ public class FormattedEntity {
     }
 
     public int getIconImageResId() {
-        if (isChannel()) {
+        if (isPublicTopic()) {
             return R.drawable.jandi_icon_topic;
         } else if (isPrivateGroup()) {
             return R.drawable.jandi_icon_chat;

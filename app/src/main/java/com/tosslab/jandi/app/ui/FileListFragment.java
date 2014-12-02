@@ -191,7 +191,7 @@ public class FileListFragment extends Fragment {
     }
 
     private void setSearchViewStyle(SearchView searchView) {
-        // Style 에서 설정이 안되서 코드에서 수정토록...
+        // TODO Style 에서 설정이 안되서 코드에서 수정토록...
         // 글씨 색
         int searchSrcTextId
                 = getResources().getIdentifier("android:id/search_src_text", null, null);

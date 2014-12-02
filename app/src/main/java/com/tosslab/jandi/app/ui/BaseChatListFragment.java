@@ -62,7 +62,7 @@ public class BaseChatListFragment extends Fragment {
     }
 
     protected void moveToMessageActivity(FormattedEntity entity) {
-        int type = (entity.isChannel())
+        int type = (entity.isPublicTopic())
                 ? JandiConstants.TYPE_PUBLIC_TOPIC
                 : (entity.isPrivateGroup())
                     ? JandiConstants.TYPE_PRIVATE_TOPIC
