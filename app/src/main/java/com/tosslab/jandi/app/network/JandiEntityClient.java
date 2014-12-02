@@ -61,7 +61,7 @@ public class JandiEntityClient {
         }
     }
 
-    public ResCommon createChannel(String entityName) throws JandiNetworkException {
+    public ResCommon createPublicTopic(String entityName) throws JandiNetworkException {
         ReqCreateEntity reqCreateEntity = new ReqCreateEntity();
         reqCreateEntity.name = entityName;
         try {

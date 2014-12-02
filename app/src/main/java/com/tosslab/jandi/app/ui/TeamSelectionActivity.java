@@ -197,7 +197,7 @@ public class TeamSelectionActivity extends Activity {
     void doLoginInBackground(String passwd) {
         try {
             ResAuthToken resAuthToken = mJandiAuthClient.login(mSelectedTeamId, recievedEmail, passwd);
-            JandiPreference.setMyId(this, recievedEmail);
+
             if (resAuthToken != null) {
                 doLoginSucceed(resAuthToken);
             } else {

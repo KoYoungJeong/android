@@ -124,7 +124,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
         EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
             mEntityManager = entityManager;
-            mEntityListAdapter.retrievePublicList(
+            mEntityListAdapter.retrieveChildList(
                     entityManager.getJoinedChannels(),
                     entityManager.getUnjoinedChannels());
         }
@@ -148,7 +148,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
         }
 
         // 채널 가입 API 호출 (후 해당 채널로 이동)
-        joinChannel(formattedEntity);
+        joinPublicTopic(formattedEntity);
 
         return;
     }
@@ -186,7 +186,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @Background
     void createTopicInBackground(String entityName) {
         try {
-            ResCommon restResId = mJandiEntityClient.createChannel(entityName);
+            ResCommon restResId = mJandiEntityClient.createPublicTopic(entityName);
             createTopicSucceed(restResId.id, entityName);
         } catch (JandiNetworkException e) {
             log.error(e.getErrorInfo(), e);
@@ -222,14 +222,14 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
 
     /************************************************************
-     * Join Channel
+     * Join Public Topic
      ************************************************************/
     @UiThread
-    public void joinChannel(final FormattedEntity channel) {
+    public void joinPublicTopic(final FormattedEntity topic) {
         String rawString = getString(R.string.jandi_message_join_entity);
-        String formattedString = String.format(rawString, channel.getChannel().name);
+        String formattedString = String.format(rawString, topic.getChannel().name);
         ColoredToast.show(mContext, formattedString);
-        joinChannelInBackground(channel);
+        joinChannelInBackground(topic);
     }
 
     @Background

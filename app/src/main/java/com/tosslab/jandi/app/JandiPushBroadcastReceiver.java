@@ -43,7 +43,7 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         Bundle extras = intent.getExtras();
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             String jsonData = extras.getString(JSON_KEY_DATA);
-
+            Log.d("HIHIHIHIHI", jsonData);
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode dataObj = mapper.readTree(jsonData);
@@ -70,16 +70,16 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         return null;
     }
 
-    @Override
-    protected void onPushReceive(Context context, Intent intent) {
-        sendRefreshEntities(context);
-    }
-
-    private void sendRefreshEntities(Context context) {
-        Intent intent = new Intent();
-        intent.setAction(JandiConstants.PUSH_REFRESH_ACTION);
-        context.sendBroadcast(intent);
-    }
+//    @Override
+//    protected void onPushReceive(Context context, Intent intent) {
+//        sendRefreshEntities(context);
+//    }
+//
+//    private void sendRefreshEntities(Context context) {
+//        Intent intent = new Intent();
+//        intent.setAction(JandiConstants.PUSH_REFRESH_ACTION);
+//        context.sendBroadcast(intent);
+//    }
 
     private Notification generateNotification(Context context, JsonNode infoObj) {
         int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
@@ -109,12 +109,13 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         builder.setContentIntent(pendingIntent);
 
         // 사용자 프로필 사진 설정
-        try {
-            Bitmap bitmapProfile = getBitmapWriterProfile(context, writerProfile);
-            builder.setLargeIcon(bitmapProfile);
-        } catch (IOException e) {
-            // DO NOTHING
-        }
+        // TODO in Background Thread
+//        try {
+//            Bitmap bitmapProfile = getBitmapWriterProfile(context, writerProfile);
+//            builder.setLargeIcon(bitmapProfile);
+//        } catch (IOException e) {
+//            // DO NOTHING
+//        }
 
         return builder.build();
     }

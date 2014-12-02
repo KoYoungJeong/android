@@ -77,7 +77,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
         switch (item.getItemId()) {
             case R.id.action_add_channel:
                 // 채널, private group 생성
-                showDialogToCreateChannel();
+                showDialogToCreatePrivateGroup();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -120,7 +120,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
         EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
             mEntityManager = entityManager;
-            mEntityListAdapter.retrievePublicList(
+            mEntityListAdapter.retrieveChildList(
                     entityManager.getGroups(),
                     entityManager.getFormattedUsersWithoutMe());
         }
@@ -148,7 +148,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     /**
      * Alert Dialog 관련
      */
-    void showDialogToCreateChannel() {
+    void showDialogToCreatePrivateGroup() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_CREATE_TOPIC,
                 JandiConstants.TYPE_PRIVATE_TOPIC,
@@ -157,7 +157,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     }
 
     /**
-     * Channel, PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
+     * PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
      * @param event
      */
     public void onEvent(ConfirmCreatePrivateTopicEvent event) {
@@ -172,7 +172,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     }
 
     /**
-     * Channel, privateGroup 생성
+     * privateGroup 생성
      */
     @Background
     void createGroupInBackground(String entityName) {

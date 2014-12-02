@@ -448,21 +448,21 @@ public class EntityManager {
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
-            if (subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
 
         // Private Topic
         for (FormattedEntity privateTopic : getGroups()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
-            if (subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
 
         FormattedEntity me = getMe();
         for (FormattedEntity member : getFormattedUsers()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
-            if (subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
         return channelsToBeSubscribed;

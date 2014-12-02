@@ -52,31 +52,16 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 
     /**
      * Topic을 구분하여 삽입
-     * @param joined
-     * @param unjoined
+     * @param first joined public topic || private topic
+     * @param last  unjoined public topic || DM
      */
-    public void retrievePublicList(List<FormattedEntity> joined,
-                                   List<FormattedEntity> unjoined) {
+    public void retrieveChildList(List<FormattedEntity> first,
+                                  List<FormattedEntity> last) {
         mFormattedEntities.clear();
-        if (joined != null)
-            mFormattedEntities.add(joined);
-        if (unjoined != null)
-            mFormattedEntities.add(unjoined);
-        notifyDataSetChanged();
-    }
-
-    /**
-     * 그룹과 1:1을 삽입
-     * @param group
-     * @param directMessage
-     */
-    public void retrievePrivateList(ArrayList<FormattedEntity> group,
-                                    ArrayList<FormattedEntity> directMessage) {
-        mFormattedEntities.clear();
-        if (group != null)
-            mFormattedEntities.add(group);
-        if (directMessage != null)
-            mFormattedEntities.add(directMessage);
+        if (first != null)
+            mFormattedEntities.add(first);
+        if (last != null)
+            mFormattedEntities.add(last);
         notifyDataSetChanged();
     }
 
@@ -224,7 +209,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                 textViewBadgeCount.setText(formattedEntity.alarmCount + "");
             }
             // 아이콘
-            if (formattedEntity.isChannel()) {
+            if (formattedEntity.isPublicTopic()) {
                 if (formattedEntity.isJoined == false) {
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
                     textViewBadgeCount.setVisibility(View.INVISIBLE);

@@ -180,8 +180,6 @@ public class IntroLoginFragment extends Fragment {
 
     @Background
     void getTeamListInBackground(String myEmailId) {
-        assert myEmailId != null : "myId cannot be null";
-
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
         final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
