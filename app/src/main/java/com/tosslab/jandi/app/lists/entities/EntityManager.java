@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.lists.entities;
 
-import android.util.Log;
-
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
@@ -296,7 +294,7 @@ public class EntityManager {
     }
 
     public FormattedEntity getEntityById(int entityId) {
-        FormattedEntity topic = searchTopicById(entityId);
+        FormattedEntity topic = searchPublicTopicById(entityId);
         if (topic != null) {
             return topic;
         }
@@ -304,7 +302,7 @@ public class EntityManager {
         if (user != null) {
             return user;
         }
-        FormattedEntity group = searchGroupById(entityId);
+        FormattedEntity group = searchPrivateTopicById(entityId);
         if (group != null) {
             return group;
         }
@@ -312,17 +310,17 @@ public class EntityManager {
         return null;
     }
 
-    public String getEntityNameById(int cdpId) {
-        FormattedEntity entity = getEntityById(cdpId);
+    public String getEntityNameById(int entityId) {
+        FormattedEntity entity = getEntityById(entityId);
         return (entity != null) ? entity.getName() : "";
     }
 
     public List<FormattedEntity> getUnjoinedMembersOfEntity(int entityId, int entityType) {
         FormattedEntity entity;
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            entity = searchTopicById(entityId);
+            entity = searchPublicTopicById(entityId);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
-            entity = searchGroupById(entityId);
+            entity = searchPrivateTopicById(entityId);
         } else {
             return null;
         }
@@ -369,11 +367,11 @@ public class EntityManager {
     }
 
     public boolean isMyTopic(int entityId) {
-        FormattedEntity searchedTopic = searchTopicById(entityId);
+        FormattedEntity searchedTopic = searchPublicTopicById(entityId);
         if (searchedTopic != null) {
             return searchedTopic.isMine(mMe.id);
         }
-        searchedTopic = searchGroupById(entityId);
+        searchedTopic = searchPrivateTopicById(entityId);
         if (searchedTopic != null) {
             return searchedTopic.isMine(mMe.id);
         }
@@ -384,7 +382,7 @@ public class EntityManager {
         return (getMe().getId() == userId);
     }
 
-    private FormattedEntity searchTopicById(int topicId) {
+    private FormattedEntity searchPublicTopicById(int topicId) {
         if (mStarredJoinedTopics.containsKey(topicId)) {
             return mStarredJoinedTopics.get(topicId);
         }
@@ -397,7 +395,7 @@ public class EntityManager {
         return null;
     }
 
-    private FormattedEntity searchGroupById(int groupId) {
+    private FormattedEntity searchPrivateTopicById(int groupId) {
         if (mStarredGroups.containsKey(groupId)) {
             return mStarredGroups.get(groupId);
         }

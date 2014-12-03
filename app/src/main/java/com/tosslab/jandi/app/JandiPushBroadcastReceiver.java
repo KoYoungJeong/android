@@ -103,6 +103,7 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
         builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setAutoCancel(true);
 
         // 노티를 터치할 경우 실행 intent 설정
         PendingIntent pendingIntent = genPendingIntent(context, chatId, chatType);
