@@ -41,6 +41,7 @@ dependencies {
 
     // Test : Robolectric, Junit4
     androidTestCompile 'org.robolectric:robolectric:2.3'
+    androidTestCompile 'com.jayway.awaitility:awaitility:1.6.+'
     androidTestCompile 'junit:junit:4.10'
 }
 

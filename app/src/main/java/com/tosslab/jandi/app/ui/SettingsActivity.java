@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -12,11 +11,11 @@ import android.view.MenuItem;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
+import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -96,13 +95,15 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     private String getDistictId() {
-        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+        EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
         return entityManager.getDistictId();
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Push 설정
-     ************************************************************/
+     * **********************************************************
+     */
 
     @SupposeUiThread
     public void returnToLoginActivity() {

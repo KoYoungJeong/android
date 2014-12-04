@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.login.tutorial;
 
 import android.app.Fragment;
 import android.view.View;

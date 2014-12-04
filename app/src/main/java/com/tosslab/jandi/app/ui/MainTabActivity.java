@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -13,12 +12,13 @@ import android.view.View;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.SignOutEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -61,7 +61,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
         mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -160,7 +160,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mProgressWheel.dismiss();
         mEntityManager = new EntityManager(resLeftSideMenu);
-        ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
+        ((JandiApplication) getApplication()).setEntityManager(mEntityManager);
         mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());
@@ -227,7 +227,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
     };
 
-    /***************************
+    /**
+     * ************************
      * TODO Settings 에 있는 것과 동일. 뺄까 ??
      */
 

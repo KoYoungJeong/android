@@ -1,8 +1,12 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.login.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
+
+import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
+import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
+import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment_;
 
 /**
  * Created by justinygchoi on 14. 10. 23..

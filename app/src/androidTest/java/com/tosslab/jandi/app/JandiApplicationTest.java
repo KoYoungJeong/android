@@ -11,7 +11,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 /**
- * Created by jsuch2362 on 14. 12. 1..
+ * Created by Steve SeongUg Jung on 14. 12. 1..
  */
 @Config(manifest = "app/src/main/AndroidManifest.xml",emulateSdk = 18)
 @RunWith(RobolectricGradleTestRunner.class)
