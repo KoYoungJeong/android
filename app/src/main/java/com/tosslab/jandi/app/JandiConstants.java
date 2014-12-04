@@ -20,6 +20,10 @@ public class JandiConstants {
     public static final String PREF_PUSH_ENTITY = "pushEntity";
     public static final String PREF_HAS_READ_TUTORIAL   = "hasReadTutorial";
     public static final String PREF_BADGE_COUNT  = "badgeCount";
+    public static final String PREF_MY_ENTITY_ID   = "myEntityId";
+
+    public static final String PARSE_MY_ENTITY_ID   = "myEntityId";
+    public static final String PARSE_CHANNELS       = "channels";
 
     public static final int TYPE_PUBLIC_TOPIC   = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;

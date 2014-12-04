@@ -13,6 +13,7 @@ import com.koushikdutta.ion.Response;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.SaveCallback;
 import com.tosslab.jandi.app.lists.entities.EntityManager;

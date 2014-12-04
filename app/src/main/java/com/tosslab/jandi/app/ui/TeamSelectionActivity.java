@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.parse.ParseInstallation;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.team.TeamListAdapter;
 import com.tosslab.jandi.app.network.JandiAuthClient;
@@ -221,7 +223,6 @@ public class TeamSelectionActivity extends Activity {
         mProgressWheel.dismiss();
         String myAccessToken = token.token;
         JandiPreference.setMyToken(this, myAccessToken);
-
         moveToMainActivity();
     }
 

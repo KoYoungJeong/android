@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -107,6 +108,11 @@ public class SettingsActivity extends PreferenceActivity {
     @SupposeUiThread
     public void returnToLoginActivity() {
         MixpanelAnalyticsClient.getInstance(this, getDistictId()).trackSignOut();
+
+        // Parse ObjId 삭제
+        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        parseInstallation.saveInBackground();
 
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);

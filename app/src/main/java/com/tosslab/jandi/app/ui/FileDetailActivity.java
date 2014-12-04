@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hideybarphotoviewscreen.HideyBarPhotoViewIntent;
 import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
 import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
@@ -339,7 +340,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        Picasso.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
+                        Glide.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fitCenter().into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override

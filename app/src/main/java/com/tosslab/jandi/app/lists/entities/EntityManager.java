@@ -169,6 +169,8 @@ public class EntityManager {
 
         // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
         zeroizeSortedEntityList();
+        // Parse 에 등록된 채널들과 동기화
+        subscribeChannelForParse();
     }
 
     private void zeroizeSortedEntityList() {
@@ -419,22 +421,19 @@ public class EntityManager {
      * Parse subscription
      ************************************************************/
     public void subscribeChannelForParse() {
-        SaveCallback callback = new ParseSaveCallback();
-
-        for (String channel : getChannelsToBeSubscribed()) {
-            log.debug("SUBSCRIBE : " + channel);
-            ParsePush.subscribeInBackground(channel, callback);
-        }
-
-        for (String channel : getChannelsToBeUnsubscribed()) {
-            log.debug("UNSUBSCRIBE : " + channel);
-            ParsePush.unsubscribeInBackground(channel, callback);
-        }
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(JandiConstants.PARSE_MY_ENTITY_ID, mMe.id);
+        installation.addAllUnique(JandiConstants.PARSE_CHANNELS, getChannelsToBeSubscribed());
+        installation.saveInBackground();
+        installation.removeAll(JandiConstants.PARSE_CHANNELS, getChannelsToBeUnsubscribed());
+        installation.saveInBackground();
     }
 
     // Parse 에 등록된 구독 채널 리스트
     private List<String> getSubscribedChannelsFromParse() {
-        return ParseInstallation.getCurrentInstallation().getList("channels");
+        List<String> parseList = ParseInstallation.getCurrentInstallation().getList(JandiConstants.PARSE_CHANNELS);
+        // Parse 에서 등록한 필드가 없으면 빈 리스트를 넘긴다.
+        return (parseList == null) ? new ArrayList<String>() : parseList;
     }
 
     // Parse 에 추가로 등록해야할 채널 리스트 획득
@@ -443,6 +442,8 @@ public class EntityManager {
         ArrayList<String> channelsToBeSubscribed = new ArrayList<String>();
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
+        log.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
@@ -463,6 +464,9 @@ public class EntityManager {
             if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
                 channelsToBeSubscribed.add(channel);
         }
+
+
+        log.debug(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
         return channelsToBeSubscribed;
     }
 
@@ -471,6 +475,8 @@ public class EntityManager {
     private List<String> getChannelsToBeUnsubscribed() {
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
+        log.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
@@ -488,6 +494,7 @@ public class EntityManager {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
             subscribedChannelsFromParse.remove(channel);
         }
+        log.debug(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
         return subscribedChannelsFromParse;
     }
 
@@ -495,7 +502,7 @@ public class EntityManager {
         @Override
         public void done(ParseException e) {
             if (e != null) {
-                log.error("failed to subscribe/unsubscribe for push", e);
+                log.error(e.getCode() + "::failed to subscribe/unsubscribe for push", e);
             }
         }
     }

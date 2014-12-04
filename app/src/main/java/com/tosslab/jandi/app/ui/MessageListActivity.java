@@ -150,8 +150,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     public EntityManager mEntityManager;
 
-
-
     @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
@@ -256,7 +254,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private void clearPushNotification() {
         // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (mChattingInformations.entityId == JandiPreference.getEntityId(this)) {
+        if (mChattingInformations.entityId == JandiPreference.getChatId(this)) {
             NotificationManager notificationManager;
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);

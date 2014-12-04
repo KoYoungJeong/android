@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -172,10 +173,10 @@ public class MessageItemView extends LinearLayout {
         if (item.getContentSmallThumbnailUrl() != null) {
             String imageUrl = item.getContentSmallThumbnailUrl();
             log.debug("load image thumnail : " + imageUrl);
-            Picasso.with(mContext)
+            Glide.with(mContext)
                     .load(imageUrl)
                     .placeholder(R.drawable.jandi_sicon_thumbnail)
-                    .fit()
+                    .fitCenter()
                     .into(mImagePhoto);
         }
     }

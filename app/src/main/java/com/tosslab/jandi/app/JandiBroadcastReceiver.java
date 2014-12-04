@@ -1,17 +1,24 @@
 package com.tosslab.jandi.app;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.parse.ParsePush;
-import com.parse.ParsePushBroadcastReceiver;
-import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.ui.MessageListActivity_;
+import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -19,44 +26,53 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 
 /**
- * Created by justinygchoi on 14. 11. 27..
+ * Created by justinygchoi on 14. 12. 3..
  */
-public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
+public class JandiBroadcastReceiver extends BroadcastReceiver {
     private static final String JSON_KEY_DATA  = "com.parse.Data";
-    private static final String JSON_KEY_ACTION     = "action";
+    private static final String JSON_KEY_TYPE     = "type";
     private static final String JSON_KEY_INFO       = "info";
-    private static final String JSON_KEY_INFO_MESSAGE       = "alert";
+    private static final String JSON_KEY_INFO_MESSAGE    = "alert";
     private static final String JSON_KEY_INFO_CHAT_ID    = "chatId";
     private static final String JSON_KEY_INFO_CHAT_NAME  = "chatName";
     private static final String JSON_KEY_INFO_CHAT_TYPE  = "chatType";
     private static final String JSON_KEY_INFO_WRITER_ID     = "writerId";
     private static final String JSON_KEY_INFO_WRITER_THUMB  = "writerThumb";
 
-    private static final String JSON_VALUE_ACTION_PUSH          = "push";
-    private static final String JSON_VALUE_ACTION_SUBSCRIBE     = "subscribe";
-    private static final String JSON_VALUE_ACTION_UNSUBSCRIBE   = "unsubscribe";
+    private static final String JSON_VALUE_TYPE_PUSH        = "push";
+    private static final String JSON_VALUE_TYPE_SUBSCRIBE   = "subscribe";
+    private static final String JSON_VALUE_TYPE_UNSUBSCRIBE = "unsubscribe";
 
     private static final int MAX_LENGTH_SMALL_NOTIFICATION  = 20;
 
     @Override
-    protected Notification getNotification(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         Bundle extras = intent.getExtras();
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             String jsonData = extras.getString(JSON_KEY_DATA);
-            Log.d("HIHIHIHIHI", jsonData);
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode dataObj = mapper.readTree(jsonData);
                 if (dataObj == null) {
-                    return null;
+                    return;
                 }
+                String action = getJsonTypeValue(dataObj);
+
                 JsonNode infoObj = dataObj.get(JSON_KEY_INFO);
-                String action = getJsonActionValue(dataObj);
-                if (action.equals(JSON_VALUE_ACTION_PUSH)) {
-                    return generateNotification(context, infoObj);
-                } else if (action.equals(JSON_VALUE_ACTION_SUBSCRIBE)) {
+                // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
+                int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
+                int myEntityId = JandiPreference.getMyEntityId(context);
+                if (writerId == myEntityId) {
+                    return;
+                }
+
+                if (action.equals(JSON_VALUE_TYPE_PUSH)) {
+                    sendNotificationWithProfile(context, infoObj);
+                    // Update count of badge
+                    BadgeUtils.setBadge(context, recalculateBadgeCount(context));
+                } else if (action.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
                     subscribeTopic(infoObj);
-                } else if (action.equals(JSON_VALUE_ACTION_UNSUBSCRIBE)) {
+                } else if (action.equals(JSON_VALUE_TYPE_UNSUBSCRIBE)) {
                     unsubscribeTopic(infoObj);
                 } else {
                     // DO NOTHING
@@ -67,31 +83,46 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
                 Log.e("PUSH", "Push parsing error", e);
             }
         }
-        return null;
+        return;
     }
 
-//    @Override
-//    protected void onPushReceive(Context context, Intent intent) {
-//        sendRefreshEntities(context);
-//    }
-//
-//    private void sendRefreshEntities(Context context) {
-//        Intent intent = new Intent();
-//        intent.setAction(JandiConstants.PUSH_REFRESH_ACTION);
-//        context.sendBroadcast(intent);
-//    }
+    private void sendNotificationWithProfile(final Context context, final JsonNode infoObj) {
+        String writerProfile = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_WRITER_THUMB);
+        Log.d("Profile Url", JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile);
+        if (writerProfile != null) {
+            Glide.with(context)
+                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile)
+                    .into(new SimpleTarget<GlideDrawable>(200, 200) {
+                        @Override
+                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
+                            if (resource != null) {
+                                Log.d("Bitmap", "succeed");
+                                Bitmap bitmap = ((GlideBitmapDrawable)resource).getBitmap();
+                                sendNotification(context, infoObj, bitmap);
+                            } else {
+                                Log.d("Bitmap", "failed");
+                                sendNotification(context, infoObj, null);
+                            }
+                        }
+                    });
+        }
+    }
 
-    private Notification generateNotification(Context context, JsonNode infoObj) {
-        int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
-        // TODO writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
+    private void sendNotification(final Context context, final JsonNode infoObj, Bitmap writerProfile) {
+        NotificationManager nm =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = generateNotification(context, infoObj, writerProfile);
+        if (notification != null) {
+            nm.notify(JandiConstants.NOTIFICATION_ID, notification);
+        }
+    }
 
+    private Notification generateNotification(Context context, JsonNode infoObj, Bitmap writerProfile) {
         String message = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_MESSAGE);
         String chatName = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_CHAT_NAME);
 
         int chatId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
         int chatType = retrieveEntityTypeFromJsonNode(infoObj, JSON_KEY_INFO_CHAT_TYPE);
-
-        String writerProfile = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_WRITER_THUMB);
 
         Notification.Builder builder = new Notification.Builder(context);
         builder.setContentTitle(chatName);
@@ -105,18 +136,16 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         builder.setPriority(Notification.PRIORITY_MAX);
         builder.setAutoCancel(true);
 
-        // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = genPendingIntent(context, chatId, chatType);
-        builder.setContentIntent(pendingIntent);
+        // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때, 해당 채팅 방에 들어갈 때만
+        // 이 노티가 삭제되도록...
+        JandiPreference.setChatId(context, chatId);
 
-        // 사용자 프로필 사진 설정
-        // TODO in Background Thread
-//        try {
-//            Bitmap bitmapProfile = getBitmapWriterProfile(context, writerProfile);
-//            builder.setLargeIcon(bitmapProfile);
-//        } catch (IOException e) {
-//            // DO NOTHING
-//        }
+        // 노티를 터치할 경우 실행 intent 설정
+        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType);
+        builder.setContentIntent(pendingIntent);
+        if (writerProfile != null) {    // 작성자의 프로필 사진
+            builder.setLargeIcon(writerProfile);
+        }
 
         return builder.build();
     }
@@ -127,13 +156,6 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         bigTextStyle.bigText(message);
         bigTextStyle.setSummaryText(summary);
         return bigTextStyle;
-    }
-
-    private Bitmap getBitmapWriterProfile(Context context, String overLayUrl) throws IOException {
-        if (overLayUrl != null) {
-            return Picasso.with(context).load(overLayUrl).get();
-        }
-        return null;
     }
 
     private int retrieveEntityTypeFromJsonNode(JsonNode dataObj, String key) {
@@ -150,7 +172,7 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         }
     }
 
-    private PendingIntent genPendingIntent(Context context, int chatId, int chatType) {
+    private PendingIntent generatePendingIntent(Context context, int chatId, int chatType) {
         Intent intent = new Intent(context, MessageListActivity_.class);
         if (chatType >= 0 && chatId >= 0) {
             intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
@@ -177,8 +199,8 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
         }
     }
 
-    private String getJsonActionValue(JsonNode node) {
-        return getJsonNodeStringValue(node, JSON_KEY_ACTION);
+    private String getJsonTypeValue(JsonNode node) {
+        return getJsonNodeStringValue(node, JSON_KEY_TYPE);
     }
 
     private String getJsonNodeStringValue(JsonNode node, String key) {
@@ -196,5 +218,12 @@ public class JandiPushBroadcastReceiver extends ParsePushBroadcastReceiver {
             return node.get(key);
         }
         return null;
+    }
+
+    int recalculateBadgeCount(Context context) {
+        int badgeCount = JandiPreference.getBadgeCount(context);
+        badgeCount++;
+        JandiPreference.setBadgeCount(context, badgeCount);
+        return badgeCount;
     }
 }

@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -161,9 +162,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mProgressWheel.dismiss();
         mEntityManager = new EntityManager(resLeftSideMenu);
         ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
-        mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());
+        JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
         checkNewTabBadges(mEntityManager);
         setBadgeCount(mEntityManager);
         postAllEvents();
@@ -240,6 +241,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void returnToLoginActivity() {
         // Access Token 삭제
         JandiPreference.clearMyToken(mContext);
+
+        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        parseInstallation.saveInBackground();
 
         Intent intent = new Intent(mContext, IntroActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
