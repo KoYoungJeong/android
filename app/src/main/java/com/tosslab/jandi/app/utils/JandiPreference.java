@@ -10,15 +10,27 @@ import com.tosslab.jandi.app.JandiConstants;
  */
 public class JandiPreference {
     public static final int NOT_SET_YET = -1;
-    public static int getChatId(Context context) {
+    public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(JandiConstants.PREF_PUSH_ENTITY, NOT_SET_YET);
+        return pref.getInt(JandiConstants.PREF_CHAT_ID_FROM_PUSH, NOT_SET_YET);
     }
 
-    public static void setChatId(Context context, int chatId) {
+    public static void setChatIdFromPush(Context context, int chatId) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(JandiConstants.PREF_PUSH_ENTITY, chatId);
+        editor.putInt(JandiConstants.PREF_CHAT_ID_FROM_PUSH, chatId);
+        editor.commit();
+    }
+
+    public static int getActivatedChatId(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(JandiConstants.PREF_CHAT_ID, NOT_SET_YET);
+    }
+
+    public static void setActivatedChatId(Context context, int chatId) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(JandiConstants.PREF_CHAT_ID, chatId);
         editor.commit();
     }
 

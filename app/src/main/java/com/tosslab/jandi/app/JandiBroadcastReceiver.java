@@ -64,9 +64,9 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                 }
                 String action = getJsonTypeValue(dataObj);
                 JsonNode infoObj = dataObj.get(JSON_KEY_INFO);
+
                 // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
                 int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
-
                 if (writerId == myEntityId) {
                     return;
                 }
@@ -92,6 +92,13 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void sendNotificationWithProfile(final Context context, final JsonNode infoObj) {
+        // 현재 JANDI client 가 chatting 중이라면 해당 채팅방에 대한 push 는 무시한다.
+        int activatedChatId = JandiPreference.getActivatedChatId(context);
+        int chatIdFromPush = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
+        if (activatedChatId == chatIdFromPush) {
+            return;
+        }
+
         String writerProfile = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_WRITER_THUMB);
         Log.d("Profile Url", JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile);
         if (writerProfile != null) {
@@ -143,7 +150,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때, 해당 채팅 방에 들어갈 때만
         // 이 노티가 삭제되도록...
-        JandiPreference.setChatId(context, chatId);
+        JandiPreference.setChatIdFromPush(context, chatId);
 
         // 노티를 터치할 경우 실행 intent 설정
         PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType);

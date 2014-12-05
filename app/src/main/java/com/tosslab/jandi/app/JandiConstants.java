@@ -17,7 +17,9 @@ public class JandiConstants {
     public static final String PREF_NAME        = "JandiPref";
     public static final String PREF_TOKEN       = "token";
     public static final String PREF_LOGIN_ID    = "loginId";
-    public static final String PREF_PUSH_ENTITY = "pushEntity";
+
+    public static final String PREF_CHAT_ID         = "chatId";
+    public static final String PREF_CHAT_ID_FROM_PUSH = "pushEntity";
     public static final String PREF_HAS_READ_TUTORIAL   = "hasReadTutorial";
     public static final String PREF_BADGE_COUNT  = "badgeCount";
     public static final String PREF_MY_ENTITY_ID   = "myEntityId";

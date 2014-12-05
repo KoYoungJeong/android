@@ -254,7 +254,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private void clearPushNotification() {
         // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (mChattingInformations.entityId == JandiPreference.getChatId(this)) {
+        if (mChattingInformations.entityId == JandiPreference.getChatIdFromPush(this)) {
             NotificationManager notificationManager;
             notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
@@ -308,6 +308,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
+        // 현재 채팅방을 빠져 나오면 해당 chatId 를 초기화한다.
+        JandiPreference.setActivatedChatId(this, JandiPreference.NOT_SET_YET);
+
         if (mChattingInformations.willBeFinishedFromPush) {
             // Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
             MainTabActivity_.intent(this)
@@ -481,6 +484,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getMessages() {
         pauseUpdateTimer();
+
+        // 현재의 entityId로 오는 푸시 메시지는 무시하기 위하여 entityId를 저장
+        JandiPreference.setActivatedChatId(this, entityId);
 
         // 만약 push로부터 실행되었다면 Entity List를 우선 받는다.
         if (mEntityManager == null) {
