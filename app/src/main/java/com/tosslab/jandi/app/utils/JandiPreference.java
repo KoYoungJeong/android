@@ -9,9 +9,10 @@ import com.tosslab.jandi.app.JandiConstants;
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class JandiPreference {
+    public static final int NOT_SET_YET = -1;
     public static int getChatId(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(JandiConstants.PREF_PUSH_ENTITY, -1);
+        return pref.getInt(JandiConstants.PREF_PUSH_ENTITY, NOT_SET_YET);
     }
 
     public static void setChatId(Context context, int chatId) {
@@ -36,7 +37,7 @@ public class JandiPreference {
 
     public static int getMyEntityId(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(JandiConstants.PREF_MY_ENTITY_ID, -1);
+        return pref.getInt(JandiConstants.PREF_MY_ENTITY_ID, NOT_SET_YET);
     }
 
     public static void setMyEntityId(Context context, int myEntityId) {

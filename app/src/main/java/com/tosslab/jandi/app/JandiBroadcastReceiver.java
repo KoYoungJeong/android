@@ -16,7 +16,6 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.parse.ParsePush;
-import com.tosslab.jandi.app.ui.MessageListActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -47,6 +46,13 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        int myEntityId = JandiPreference.getMyEntityId(context);
+        if (myEntityId == JandiPreference.NOT_SET_YET) {
+            // 이전에 JANDI 를 설치하고 삭제한 경우, 해당 디바이스 ID 가 남아있어 push 가 전송될 수 있다.
+            // 새로 설치하고 아직 sign-in 을 하지 않은 경우 이전 사용자에 대한 push 가 전송됨으로 이를 무시한다.
+            return;
+        }
+
         Bundle extras = intent.getExtras();
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             String jsonData = extras.getString(JSON_KEY_DATA);
@@ -57,11 +63,10 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                     return;
                 }
                 String action = getJsonTypeValue(dataObj);
-
                 JsonNode infoObj = dataObj.get(JSON_KEY_INFO);
                 // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
                 int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
-                int myEntityId = JandiPreference.getMyEntityId(context);
+
                 if (writerId == myEntityId) {
                     return;
                 }
@@ -173,7 +178,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private PendingIntent generatePendingIntent(Context context, int chatId, int chatType) {
-        Intent intent = new Intent(context, MessageListActivity_.class);
+        Intent intent = new Intent(context, com.tosslab.jandi.app.ui.MessageListActivity_.class);
         if (chatType >= 0 && chatId >= 0) {
             intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
             intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, chatType);

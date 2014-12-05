@@ -8,11 +8,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -127,10 +126,11 @@ public class MessageItemView extends LinearLayout {
     private void showProfilePhoto(final MessageItem item) {
         // 프로필 사진
         mUserProfileImage.setVisibility(VISIBLE);
-        Picasso.with(mContext)
+
+        Glide.with(mContext)
                 .load(item.getUserProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new CircleTransform())
+                .transform(new GlideCircleTransform(mContext))
                 .into(mUserProfileImage);
         mUserProfileImage.setOnClickListener(new OnClickListener() {
             @Override

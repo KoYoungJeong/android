@@ -6,13 +6,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -47,10 +47,10 @@ public class FileDetailCommentView extends LinearLayout {
         // 프로필
         final FormattedEntity writer = new FormattedEntity(commentMessage.writer);
         String profileUrl = writer.getUserSmallProfileUrl();
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(profileUrl)
                 .placeholder(R.drawable.jandi_profile_comment)
-                .transform(new CircleTransform())
+                .transform(new GlideCircleTransform(mContext))
                 .into(imageViewCommentUserProfile);
         imageViewCommentUserProfile.setOnClickListener(new OnClickListener() {
             @Override

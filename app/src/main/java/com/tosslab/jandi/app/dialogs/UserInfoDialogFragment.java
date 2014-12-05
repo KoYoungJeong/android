@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -133,10 +133,10 @@ public class UserInfoDialogFragment extends DialogFragment {
         txtUserNickname.setText(userNickname);
         txtUserDivision.setText(userDivision);
         txtUserPosition.setText(userPosition);
-        Picasso.with(getActivity())
+        Glide.with(getActivity())
                 .load(userProfileUrl)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new CircleTransform())
+                .transform(new GlideCircleTransform(getActivity()))
                 .into(imgUserPhoto);
 
         // creating the fullscreen dialog

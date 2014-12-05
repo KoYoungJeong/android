@@ -31,7 +31,6 @@ import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
 import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -48,10 +47,10 @@ import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -311,7 +310,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 // 사용자
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
                 String profileUrl = writer.getUserSmallProfileUrl();
-                Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
+                Glide.with(mContext)
+                        .load(profileUrl)
+                        .placeholder(R.drawable.jandi_profile)
+                        .transform(new GlideCircleTransform(mContext))
+                        .into(imageViewUserProfile);
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 

@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.TeamCreationDialogFragment;
 import com.tosslab.jandi.app.events.RequestTeamCreationEvent;
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.network.JandiAuthClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -65,7 +67,7 @@ public class IntroLoginFragment extends Fragment {
         imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         // 로그인 관련 Network Client 설정
         mJandiAuthClient = new JandiAuthClient(jandiRestClient);
-
+        BadgeUtils.clearBadge(getActivity());
         setActivationColorForButton();
     }
 
