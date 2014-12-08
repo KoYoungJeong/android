@@ -498,15 +498,6 @@ public class EntityManager {
         return subscribedChannelsFromParse;
     }
 
-    private class ParseSaveCallback extends SaveCallback {
-        @Override
-        public void done(ParseException e) {
-            if (e != null) {
-                log.error(e.getCode() + "::failed to subscribe/unsubscribe for push", e);
-            }
-        }
-    }
-
     /************************************************************
      * 오름차순 정렬
      ************************************************************/

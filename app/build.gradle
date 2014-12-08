@@ -1,8 +1,6 @@
 apply plugin: 'android'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
-apply plugin: 'robolectric'     // Android-Test
-apply from: 'test.gradle'       // Android-Test Env Setting
 
 configurations {
     apt
@@ -38,10 +36,6 @@ dependencies {
     compile 'com.mixpanel.android:mixpanel-android:4.3.0@aar'
     compile 'com.parse.bolts:bolts-android:1.1.3'
     compile fileTree(dir: 'libs', include: ['*.jar'])
-
-    // Test : Robolectric, Junit4
-    androidTestCompile 'org.robolectric:robolectric:2.3'
-    androidTestCompile 'junit:junit:4.10'
 }
 
 android {
@@ -50,10 +44,10 @@ android {
 
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
-        minSdkVersion 16
+        minSdkVersion 14
         targetSdkVersion 19
-        versionCode 26
-        versionName '0.4.4'
+        versionCode 27
+        versionName '0.4.5'
     }
     buildTypes {
         release {
@@ -110,15 +104,4 @@ apt {
         resourcePackageName android.defaultConfig.packageName
         androidManifestFile variant.processResources.manifestFile
     }
-}
-
-robolectric {
-    // configure the set of classes for JUnit tests
-    include '**/*Test.class'
-    exclude '**/espresso/**/*.class'
-
-    // configure max heap size of the test JVM
-    maxHeapSize = "2048m"
-
-
 }

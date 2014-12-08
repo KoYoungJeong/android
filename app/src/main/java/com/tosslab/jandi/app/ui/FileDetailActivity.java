@@ -692,7 +692,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 MessageListActivity_.intent(mContext)
                         .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                         .entityId(event.userId)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .start();
             }
         }, 250);

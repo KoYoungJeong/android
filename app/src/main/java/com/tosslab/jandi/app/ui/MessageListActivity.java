@@ -80,6 +80,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -153,25 +154,57 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
-        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
         mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+        initProgressWheel();
     }
 
     @AfterViews
     void bindAdapter() {
-
-        setUpActionBar();
-        initProgressWheel();
-        clearPushNotification();
-        BadgeUtils.clearBadge(getApplicationContext()); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
-        setEditTextWatcher();
-
-        mMyToken = JandiPreference.getMyToken(mContext);
+        clearPushNotification(entityId);
+        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
+        mMessageItemConverter = new MessageItemConverter();
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
+
+        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
         mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
                 mChattingInformations.entityType, mChattingInformations.entityId);
-        mMessageItemConverter = new MessageItemConverter();
 
+        setUpActionBar(mChattingInformations.entityName);
+        setupScrollView();
+
+        getMessages();
+    }
+
+    private void setUpActionBar(String entityName) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        showActionBarTitle(entityName);
+    }
+
+    private void showActionBarTitle(String entityName) {
+            getActionBar().setTitle(entityName);
+    }
+
+    private void initProgressWheel() {
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(this);
+        mProgressWheel.init();
+    }
+
+    private void clearPushNotification(int entityId) {
+        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
+        if (entityId == JandiPreference.getChatIdFromPush(this)) {
+            NotificationManager notificationManager;
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
+    }
+
+    private void setupScrollView() {
         //
         // Set up of PullToRefresh
         pullToRefreshListViewMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
@@ -227,38 +260,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
             }
         });
-
-        getMessages();
-    }
-
-    private void setUpActionBar() {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        showActionBarTitle();
-    }
-
-    private void showActionBarTitle() {
-        if (mChattingInformations != null && mChattingInformations.entityName != null) {
-            getActionBar().setTitle(mChattingInformations.entityName);
-        }
-    }
-
-    private void initProgressWheel() {
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
-    }
-
-    private void clearPushNotification() {
-        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (mChattingInformations.entityId == JandiPreference.getChatIdFromPush(this)) {
-            NotificationManager notificationManager;
-            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
-        }
     }
 
     /**
@@ -268,27 +269,45 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         actualListView.setSelection(messageItemListAdapter.getCount() - 1);
     }
 
-    void setEditTextWatcher() {
-        etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                int inputLength = editable.length();
-                buttonSendMessage.setSelected(inputLength > 0);
-            }
-        });
+    @AfterTextChange(R.id.et_message)
+    void messageTextChanged() {
+        int inputLength = etMessage.getEditableText().length();
+        buttonSendMessage.setSelected(inputLength > 0);
     }
+
+
+//    void setEditTextWatcher() {
+//        etMessage.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                int inputLength = editable.length();
+//                buttonSendMessage.setSelected(inputLength > 0);
+//            }
+//        });
+//    }
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().registerSticky(this);
         resumeUpdateTimer();
+    }
+
+    // MessageListActivity 가 stack의 top 에 있을 때 다시 호출 되는 경우
+    @Override
+    public void onNewIntent(Intent intent) {
+        setIntent(intent);
+        mContext = getApplicationContext();
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+        initProgressWheel();
+        bindAdapter();
     }
 
     @Override
@@ -453,7 +472,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
         mChattingInformations.loadExtraInfo();
         log.debug("entity name from push : " + mChattingInformations.entityName);
-        showActionBarTitle();
+        showActionBarTitle(mChattingInformations.entityName);
         trackSigningInFromPush(mEntityManager);
         setBadgeCount(mEntityManager);
 
@@ -1338,11 +1357,21 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         changeForDirectMessage(event.userId);
     }
 
-    private void changeForDirectMessage(final int userId) {
-        mChattingInformations.changeForDirectMessage(userId);
-        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
-                JandiConstants.TYPE_DIRECT_MESSAGE, userId);
-        getMessages();
+    @SupposeUiThread
+    void changeForDirectMessage(final int userId) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageListActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                        .entityId(userId)
+                        .isFavorite(mEntityManager.getEntityById(userId).isStarred)
+                        .isFromPush(isFromPush)
+                        .start();
+            }
+        }, 250);
     }
 
     /************************************************************
@@ -1408,12 +1437,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             this.entityType = entityType;
             this.willBeFinishedFromPush = isFromPush;
             this.isFavorite = isFavorite;
-            loadExtraInfo();
-        }
-
-        public void changeForDirectMessage(int entityId) {
-            this.entityId = entityId;
-            this.entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
             loadExtraInfo();
         }
 

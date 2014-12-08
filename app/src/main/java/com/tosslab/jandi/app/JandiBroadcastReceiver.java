@@ -7,7 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -108,13 +110,16 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                             if (resource != null) {
-                                Log.d("Bitmap", "succeed");
                                 Bitmap bitmap = ((GlideBitmapDrawable)resource).getBitmap();
                                 sendNotification(context, infoObj, bitmap);
                             } else {
-                                Log.d("Bitmap", "failed");
                                 sendNotification(context, infoObj, null);
                             }
+                        }
+
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            sendNotification(context, infoObj, null);
                         }
                     });
         }
@@ -136,7 +141,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         int chatId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
         int chatType = retrieveEntityTypeFromJsonNode(infoObj, JSON_KEY_INFO_CHAT_TYPE);
 
-        Notification.Builder builder = new Notification.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(chatName);
         builder.setContentText(message);
         // 메시지 길이에 따른 노티 크기 설정
@@ -162,8 +167,8 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         return builder.build();
     }
 
-    private Notification.BigTextStyle getBigTextStyle(String title, String message, String summary) {
-        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+    private NotificationCompat.BigTextStyle getBigTextStyle(String title, String message, String summary) {
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
         bigTextStyle.bigText(message);
         bigTextStyle.setSummaryText(summary);
