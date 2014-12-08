@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.utils.CircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
@@ -42,7 +43,7 @@ public class MainMoreFragment extends Fragment {
     @AfterInject
     void init() {
         mContext = getActivity();
-        mEntityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
+        mEntityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
     }
 
     @AfterViews
