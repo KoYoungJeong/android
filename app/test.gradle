@@ -1,0 +1,47 @@
+task initGradleTest << {
+
+    // Get project.iml File' Absolute Path
+    def imlFile = project.projectDir.absolutePath + '/' + project.name + '.iml'
+
+    def parse = new XmlParser().parse(imlFile)
+
+    def modulePath = parse.@'external.linked.project.path'
+
+    // It's Robolectric Default ouputPath
+    def outputTestPath = "file://$modulePath/build/test-classes"
+    def moduleComponent = parse.component.find { it.@name == 'NewModuleRootManager' }
+    def outputTest = moduleComponent.find {it.name() == 'output-test'}
+
+    if (outputTest != null) {
+        outputTest.@url = outputTestPath
+    } else {
+        moduleComponent.appendNode('output-test', [url : outputTestPath])
+    }
+
+    // jdk orderEntry must be last
+    def orderEntry = moduleComponent.orderEntry
+    def jdkOrderEntry = orderEntry.find { it.@type == 'jdk' }
+    moduleComponent.remove(jdkOrderEntry)
+    moduleComponent.append(jdkOrderEntry)
+
+    // rewrite $project.iml file
+    FileWriter fileWriter = new FileWriter(imlFile)
+    new XmlNodePrinter(new PrintWriter(fileWriter)).print(parse)
+
+
+}
+
+tasks.preBuild.dependsOn initGradleTest
+
+android.applicationVariants.all { variant ->
+
+    if (variant.buildType.name == 'debug') {
+
+        def capitalizedFlavorName = variant.name.capitalize()
+
+        def originCompileTestTask = tasks.getByName("compile${capitalizedFlavorName}TestJava")
+        def robolectricCompileTask = tasks.getByName("compileTest${capitalizedFlavorName}Java")
+
+        originCompileTestTask.dependsOn robolectricCompileTask
+    }
+}
