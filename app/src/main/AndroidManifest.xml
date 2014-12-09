@@ -58,7 +58,7 @@
             android:label="@string/jandi_title_activity_file_explorer"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".ui.SettingsActivity_"
+            android:name=".ui.settings.SettingsActivity_"
             android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />
         <activity
@@ -69,11 +69,12 @@
             android:name=".ui.TeamInfoActivity_"
             android:label="@string/jandi_team_info"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name="com.hideybarphotoviewscreen.HideyBarPhotoViewScreen"
-            android:label="@string/app_name"
+            android:name=".ui.photo.PhotoViewActivity_"
             android:logo="@drawable/jandi_actionb_logo"
-            android:theme="@style/AppTheme_ActionBarOverlay"></activity>
+            android:theme="@style/JandiTheme.ActionBarOverlay"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
 
         <service android:name="com.parse.PushService" />
 
@@ -83,7 +84,8 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver"
+        <receiver
+            android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />

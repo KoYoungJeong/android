@@ -26,9 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.hideybarphotoviewscreen.HideyBarPhotoViewIntent;
-import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
-import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiApplication;
@@ -47,6 +44,7 @@ import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -121,9 +119,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         initNetworkClientForFileDetail();
         setEditTextWatcher();
 
-        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
 
         getFileDetail();
     }
@@ -146,13 +144,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     private void addFileDetailViewAsListviewHeader() {
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
         View header = getLayoutInflater().inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (ImageView)header.findViewById(R.id.img_file_detail_user_profile);
-        textViewUserName = (TextView)header.findViewById(R.id.txt_file_detail_user_name);
-        textViewFileCreateDate = (TextView)header.findViewById(R.id.txt_file_detail_create_date);
-        textViewFileContentInfo = (TextView)header.findViewById(R.id.txt_file_detail_file_info);
-        textViewFileSharedCdp = (TextView)header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (ImageView)header.findViewById(R.id.img_file_detail_photo);
-        iconFileType = (ImageView)header.findViewById(R.id.icon_file_detail_content_type);
+        imageViewUserProfile = (ImageView) header.findViewById(R.id.img_file_detail_user_profile);
+        textViewUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
+        textViewFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
+        textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
+        textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
+        imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
+        iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
     }
@@ -221,10 +219,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     void setEditTextWatcher() {
         editTextComment.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -246,9 +246,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 //        }
 //    }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 상세 출력 관련
-     ************************************************************/
+     * **********************************************************
+     */
     @UiThread
     void getFileDetail() {
         mProgressWheel.show();
@@ -290,7 +292,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         String sharedEntityNames = "";
         if (!mResFileDetail.shareEntities.isEmpty()) {
             int nSharedEntities = mResFileDetail.shareEntities.size();
-            for (int i=0; i<nSharedEntities; i++) {
+            for (int i = 0; i < nSharedEntities; i++) {
                 String sharedEntityName = mEntityManager.getEntityNameById(mResFileDetail.shareEntities.get(i));
                 if (!sharedEntityName.isEmpty()) {
                     sharedEntityNames += sharedEntityName;
@@ -348,14 +350,17 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
-                                        .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
-                                                .setPlaceHolderResId(R.drawable.jandi_down_img)
-                                                .showProgressView(false))
-                                        .timeToStartHideyMode(2000)
-                                        .screenTitle(fileMessage.content.name)
-                                        .create(mContext, HideyBarPhotoViewScreen.class);
-                                startActivity(hideyBarPhotoViewIntent);
+//                                Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
+//                                        .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
+//                                                .setPlaceHolderResId(R.drawable.jandi_down_img)
+//                                                .showProgressView(false))
+//                                        .timeToStartHideyMode(2000)
+//                                        .screenTitle(fileMessage.content.name)
+//                                        .create(mContext, HideyBarPhotoViewScreen.class);
+//                                startActivity(hideyBarPhotoViewIntent);
+
+                                PhotoViewActivity_.intent(FileDetailActivity.this).imageUrl(photoUrl).start();
+
                             }
                         });
                     } else {
@@ -399,9 +404,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 공유
-     ************************************************************/
+     * **********************************************************
+     */
     void clickShareButton() {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
@@ -456,9 +463,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, getString(R.string.err_share));
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 공유 해제
-     ************************************************************/
+     * **********************************************************
+     */
     void clickUnshareButton() {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
@@ -513,9 +522,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, getString(R.string.err_unshare));
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 삭제
-     ************************************************************/
+     * **********************************************************
+     */
 
     @Background
     public void deleteFileInBackground() {
@@ -539,9 +550,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 댓글 작성 관련
-     ************************************************************/
+     * **********************************************************
+     */
 
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
@@ -555,7 +568,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void hideSoftKeyboard() {
-        imm.hideSoftInputFromWindow(editTextComment.getWindowToken(),0);
+        imm.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
         editTextComment.setText("");
     }
 
@@ -578,9 +591,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         getFileDetail();
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 연결 관련
-     ************************************************************/
+     * **********************************************************
+     */
     public void download() {
         String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))
                 ? JandiConstantsForFlavors.SERVICE_ROOT_URL
@@ -637,10 +652,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 사용자 프로필 보기
      * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
-     ************************************************************/
+     * **********************************************************
+     */
     public void onEvent(RequestUserInfoEvent event) {
         int userEntityId = event.userId;
         getProfileInBackground(userEntityId);
