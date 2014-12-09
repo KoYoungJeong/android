@@ -9,10 +9,10 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -217,10 +217,10 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             } else if (formattedEntity.isPrivateGroup()) {
                 imageViewIcon.setImageResource(R.drawable.jandi_icon_chat);
             } else if (formattedEntity.isUser()) {
-                Picasso.with(mContext)
+                Glide.with(mContext)
                         .load(formattedEntity.getUserSmallProfileUrl())
                         .placeholder(R.drawable.jandi_profile)
-                        .transform(new CircleTransform())
+                        .transform(new GlideCircleTransform(mContext))
                         .into(imageViewIcon);
             }
             // 이름

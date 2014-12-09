@@ -25,12 +25,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.hideybarphotoviewscreen.HideyBarPhotoViewIntent;
 import com.hideybarphotoviewscreen.HideyBarPhotoViewScreen;
 import com.hideybarphotoviewscreen.photoloader.PicassoPhotoLoader;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -47,10 +47,10 @@ import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -310,7 +310,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 // 사용자
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
                 String profileUrl = writer.getUserSmallProfileUrl();
-                Picasso.with(mContext).load(profileUrl).placeholder(R.drawable.jandi_profile).transform(new CircleTransform()).into(imageViewUserProfile);
+                Glide.with(mContext)
+                        .load(profileUrl)
+                        .placeholder(R.drawable.jandi_profile)
+                        .transform(new GlideCircleTransform(mContext))
+                        .into(imageViewUserProfile);
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 
@@ -339,7 +343,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        Picasso.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fit().into(imageViewPhotoFile);
+                        Glide.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fitCenter().into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -688,7 +692,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 MessageListActivity_.intent(mContext)
                         .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                         .entityId(event.userId)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .start();
             }
         }, 250);

@@ -120,43 +120,48 @@ public class MessageItemConverter {
         String currentDay = "";
         MessageItem formerMessageItem = null;
 
-        for (MessageItem item : mOriginalMessageList) {
-            String strDay = DATE_FORMATTER.format(item.getLinkTime());
-            String strToday = DATE_FORMATTER.format(new Date());
-            if (!currentDay.equals(strDay)) {
-                // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
-                currentDay = strDay;
-                try {
-                    if (currentDay.equals(strToday))
-                        formattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), true));
-                    else
-                        formattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
-                    formerMessageItem = null;   // 날짜 경계선이 바뀌면 다른 그룹핑은 초기화된다.
-                } catch (ParseException e) {
-                    log.error("Date Parse Error", e);
-                }
-
-            }
-
-            if (formerMessageItem != null && formerMessageItem.isDateDivider == false) {
-                if (item.getContentType() == MessageItem.TYPE_COMMENT) {
-                    if (formerMessageItem.getMessageId() == item.getFeedbackId()) {
-                        // 바로 상위 아이템이 feedback 아이템이면 그 아래에 종속된다.
-                        item.isNested = true;
-                    } else if (formerMessageItem.getFeedbackId() == item.getFeedbackId()) {
-                        // 바로 상위 아이템 또한 동일 feedback의 코멘트이면 그 아래 종속된다.
-                        item.isNested = true;
+        // 동기화 유틸로 Fail-fast Iterator 멀티 쓰레드 무결성 해결
+        List<MessageItem> originalMessageList = Collections.synchronizedList(mOriginalMessageList);
+        synchronized(originalMessageList) {
+            for (MessageItem item : originalMessageList) {
+                String strDay = DATE_FORMATTER.format(item.getLinkTime());
+                String strToday = DATE_FORMATTER.format(new Date());
+                if (!currentDay.equals(strDay)) {
+                    // 바로 이전의 message 날짜와 같지 않으면 날짜 경계선을 먼저 추가한다.
+                    currentDay = strDay;
+                    try {
+                        if (currentDay.equals(strToday))
+                            formattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), true));
+                        else
+                            formattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
+                        formerMessageItem = null;   // 날짜 경계선이 바뀌면 다른 그룹핑은 초기화된다.
+                    } catch (ParseException e) {
+                        log.error("Date Parse Error", e);
                     }
 
-                    if (formerMessageItem.getUserId() == item.getUserId()) {
-                        // 상위 아이템과 내가 같은 작성자이면 이름을 표시하지 않는다.
-                        item.isNestedOfMine = true;
+                }
+
+                if (formerMessageItem != null && formerMessageItem.isDateDivider == false) {
+                    if (item.getContentType() == MessageItem.TYPE_COMMENT) {
+                        if (formerMessageItem.getMessageId() == item.getFeedbackId()) {
+                            // 바로 상위 아이템이 feedback 아이템이면 그 아래에 종속된다.
+                            item.isNested = true;
+                        } else if (formerMessageItem.getFeedbackId() == item.getFeedbackId()) {
+                            // 바로 상위 아이템 또한 동일 feedback의 코멘트이면 그 아래 종속된다.
+                            item.isNested = true;
+                        }
+
+                        if (formerMessageItem.getUserId() == item.getUserId()) {
+                            // 상위 아이템과 내가 같은 작성자이면 이름을 표시하지 않는다.
+                            item.isNestedOfMine = true;
+                        }
                     }
                 }
+                formattedMessages.add(item);
+                formerMessageItem = item;
             }
-            formattedMessages.add(item);
-            formerMessageItem = item;
         }
+
         return formattedMessages;
     }
 

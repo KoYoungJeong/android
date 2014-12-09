@@ -76,7 +76,7 @@ public class BaseChatListFragment extends Fragment {
             @Override
             public void run() {
                 MessageListActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .entityType(entityType)
                         .entityId(entityId)
                         .isFavorite(isStarred)

@@ -15,11 +15,11 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-import com.squareup.picasso.Picasso;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -33,8 +33,8 @@ import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.CircleTransform;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -193,11 +193,11 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     void displayProfile(ResLeftSideMenu.User me) {
         FormattedEntity user = new FormattedEntity(me);
         // 프로필 사진
-        Picasso.with(this)
+        Glide.with(this)
                 .load(user.getUserLargeProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new CircleTransform())
-                .skipMemoryCache()              // 메모리 캐시를 쓰지 않는다.
+                .transform(new GlideCircleTransform(this))
+                .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                 .into(imageViewProfilePhoto);
         // 프로필 이름
         textViewProfileRealName.setText(user.getName());
@@ -440,11 +440,11 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                         log.debug("temp profile img : " + filePath);
                         attemptToUpdatePhoto = true;
                         mTempPhotoFile = new File(filePath);
-                        Picasso.with(this)
+                        Glide.with(this)
                                 .load(mTempPhotoFile)
                                 .placeholder(R.drawable.jandi_profile)
-                                .transform(new CircleTransform())
-                                .skipMemoryCache()              // 메모리 캐시를 쓰지 않는다.
+                                .transform(new GlideCircleTransform(this))
+                                .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                                 .into(imageViewProfilePhoto);
                     }
                 }

@@ -9,14 +9,14 @@ import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
-import com.tosslab.jandi.app.utils.CircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -55,10 +55,10 @@ public class MainMoreFragment extends Fragment {
     private void showUserProfile() {
         if (mEntityManager != null) {
             FormattedEntity me = mEntityManager.getMe();
-            Picasso.with(mContext)
+            Glide.with(mContext)
                     .load(me.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_profile)
-                    .transform(new CircleTransform())
+                    .transform(new GlideCircleTransform(mContext))
                     .into(imageViewUserProfile);
         }
     }

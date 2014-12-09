@@ -9,15 +9,28 @@ import com.tosslab.jandi.app.JandiConstants;
  * Created by justinygchoi on 2014. 7. 8..
  */
 public class JandiPreference {
-    public static int getEntityId(Context context) {
+    public static final int NOT_SET_YET = -1;
+    public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(JandiConstants.PREF_PUSH_ENTITY, -1);
+        return pref.getInt(JandiConstants.PREF_CHAT_ID_FROM_PUSH, NOT_SET_YET);
     }
 
-    public static void setEntityId(Context context, int entityId) {
+    public static void setChatIdFromPush(Context context, int chatId) {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(JandiConstants.PREF_PUSH_ENTITY, entityId);
+        editor.putInt(JandiConstants.PREF_CHAT_ID_FROM_PUSH, chatId);
+        editor.commit();
+    }
+
+    public static int getActivatedChatId(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(JandiConstants.PREF_CHAT_ID, NOT_SET_YET);
+    }
+
+    public static void setActivatedChatId(Context context, int chatId) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(JandiConstants.PREF_CHAT_ID, chatId);
         editor.commit();
     }
 
@@ -31,6 +44,18 @@ public class JandiPreference {
         SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(JandiConstants.PREF_BADGE_COUNT, badgeCount);
+        editor.commit();
+    }
+
+    public static int getMyEntityId(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(JandiConstants.PREF_MY_ENTITY_ID, NOT_SET_YET);
+    }
+
+    public static void setMyEntityId(Context context, int myEntityId) {
+        SharedPreferences pref = context.getSharedPreferences(JandiConstants.PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt(JandiConstants.PREF_MY_ENTITY_ID, myEntityId);
         editor.commit();
     }
 

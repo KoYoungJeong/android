@@ -31,7 +31,7 @@ public class FileUploadDialogFragment extends DialogFragment {
     private final Logger log = Logger.getLogger(FileUploadDialogFragment.class);
     private EntityArrayAdapter mEntityArrayAdapter;
 
-    static private int selectedEntityIdToBeShared;    // Share 할 CDP
+    static private int selectedEntityIdToBeShared;    // Share 할 chat-room
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
         selectedEntityIdToBeShared = currentEntityId;

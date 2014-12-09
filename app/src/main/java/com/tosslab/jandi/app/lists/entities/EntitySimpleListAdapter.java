@@ -8,10 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import java.util.List;
 
@@ -70,14 +70,14 @@ public class EntitySimpleListAdapter extends BaseAdapter {
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         if (entity.isUser()) {
             // 프로필 사진
-            Picasso.with(this.mContext)
+            Glide.with(this.mContext)
                     .load(entity.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_icon_directmsg)
-                    .transform(new CircleTransform())
+                    .transform(new GlideCircleTransform(mContext))
                     .into(holder.imageView);
         } else {
             holder.imageView.setImageResource(entity.getIconImageResId());
-//            if (entity.isTopic()) {
+//            if (entity.isPublicTopic()) {
 //                holder.imageView.setColorFilter(entity.getMyColor(),
 //                        android.graphics.PorterDuff.Mode.MULTIPLY);
 //            }

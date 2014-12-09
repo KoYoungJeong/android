@@ -80,6 +80,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -150,30 +151,60 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     public EntityManager mEntityManager;
 
-
-
     @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
-        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
         mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+        initProgressWheel();
     }
 
     @AfterViews
     void bindAdapter() {
-
-        setUpActionBar();
-        initProgressWheel();
-        clearPushNotification();
-        BadgeUtils.clearBadge(getApplicationContext());
-        setEditTextWatcher();
-
-        mMyToken = JandiPreference.getMyToken(mContext);
+        clearPushNotification(entityId);
+        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
+        mMessageItemConverter = new MessageItemConverter();
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
+
+        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
         mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
                 mChattingInformations.entityType, mChattingInformations.entityId);
-        mMessageItemConverter = new MessageItemConverter();
 
+        setUpActionBar(mChattingInformations.entityName);
+        setupScrollView();
+
+        getMessages();
+    }
+
+    private void setUpActionBar(String entityName) {
+        final ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        showActionBarTitle(entityName);
+    }
+
+    private void showActionBarTitle(String entityName) {
+            getActionBar().setTitle(entityName);
+    }
+
+    private void initProgressWheel() {
+        // Progress Wheel 설정
+        mProgressWheel = new ProgressWheel(this);
+        mProgressWheel.init();
+    }
+
+    private void clearPushNotification(int entityId) {
+        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
+        if (entityId == JandiPreference.getChatIdFromPush(this)) {
+            NotificationManager notificationManager;
+            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
+    }
+
+    private void setupScrollView() {
         //
         // Set up of PullToRefresh
         pullToRefreshListViewMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
@@ -229,38 +260,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
             }
         });
-
-        getMessages();
-    }
-
-    private void setUpActionBar() {
-        final ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        showActionBarTitle();
-    }
-
-    private void showActionBarTitle() {
-        if (mChattingInformations != null && mChattingInformations.entityName != null) {
-            getActionBar().setTitle(mChattingInformations.entityName);
-        }
-    }
-
-    private void initProgressWheel() {
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
-    }
-
-    private void clearPushNotification() {
-        // Notification 선택을 안하고 앱을 선택해서 실행시 Notification 제거
-        if (mChattingInformations.entityId == JandiPreference.getEntityId(this)) {
-            NotificationManager notificationManager;
-            notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
-        }
     }
 
     /**
@@ -270,27 +269,45 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         actualListView.setSelection(messageItemListAdapter.getCount() - 1);
     }
 
-    void setEditTextWatcher() {
-        etMessage.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                int inputLength = editable.length();
-                buttonSendMessage.setSelected(inputLength > 0);
-            }
-        });
+    @AfterTextChange(R.id.et_message)
+    void messageTextChanged() {
+        int inputLength = etMessage.getEditableText().length();
+        buttonSendMessage.setSelected(inputLength > 0);
     }
+
+
+//    void setEditTextWatcher() {
+//        etMessage.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                int inputLength = editable.length();
+//                buttonSendMessage.setSelected(inputLength > 0);
+//            }
+//        });
+//    }
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().registerSticky(this);
         resumeUpdateTimer();
+    }
+
+    // MessageListActivity 가 stack의 top 에 있을 때 다시 호출 되는 경우
+    @Override
+    public void onNewIntent(Intent intent) {
+        setIntent(intent);
+        mContext = getApplicationContext();
+        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+        initProgressWheel();
+        bindAdapter();
     }
 
     @Override
@@ -310,6 +327,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
+        // 현재 채팅방을 빠져 나오면 해당 chatId 를 초기화한다.
+        JandiPreference.setActivatedChatId(this, JandiPreference.NOT_SET_YET);
+
         if (mChattingInformations.willBeFinishedFromPush) {
             // Push로부터 온 Activity는 하위 스택이 없으므로 MainTabActivity로 이동해야함.
             MainTabActivity_.intent(this)
@@ -452,7 +472,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
         mChattingInformations.loadExtraInfo();
         log.debug("entity name from push : " + mChattingInformations.entityName);
-        showActionBarTitle();
+        showActionBarTitle(mChattingInformations.entityName);
         trackSigningInFromPush(mEntityManager);
         setBadgeCount(mEntityManager);
 
@@ -483,6 +503,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getMessages() {
         pauseUpdateTimer();
+
+        // 현재의 entityId로 오는 푸시 메시지는 무시하기 위하여 entityId를 저장
+        JandiPreference.setActivatedChatId(this, entityId);
 
         // 만약 push로부터 실행되었다면 Entity List를 우선 받는다.
         if (mEntityManager == null) {
@@ -694,20 +717,24 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             mJandiMessageClient.sendMessage(message);
             log.debug("sendMessageInBackground : succeed");
-            sendMessageDone(true, null);
+            sendMessageSucceed();
         } catch (RestClientException e) {
             log.error("sendMessageInBackground : FAILED", e);
-            sendMessageDone(false, getString(R.string.err_messages_send));
+            sendMessageFailed(R.string.err_messages_send);
         }
     }
 
     @UiThread
-    public void sendMessageDone(boolean isOk, String message) {
-        if (!isOk) {
-            ColoredToast.showError(mContext, message);
-        }
+    public void sendMessageSucceed() {
         getUpdateMessagesAndResumeUpdateTimer();
     }
+
+    @UiThread
+    public void sendMessageFailed(int errMessageResId) {
+        ColoredToast.showError(mContext, getString(errMessageResId));
+        getUpdateMessagesAndResumeUpdateTimer();
+    }
+
 
     /************************************************************
      * Message 제어
@@ -719,14 +746,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
     void messagesItemLongClicked(MessageItem item) {
         if (!item.isDateDivider) {
-            checkPermissionForManipulateMessage(item);
+            checkPermissionForManipulatingMessage(item);
         }
     }
 
-    void checkPermissionForManipulateMessage(MessageItem item) {
-        if (item.getContentType()  == MessageItem.TYPE_IMAGE) {
+    void checkPermissionForManipulatingMessage(MessageItem item) {
+        if (item.getContentType() == MessageItem.TYPE_IMAGE) {
             // 이미지 삭제 등의 액션은 나중에...
-        } else if (item.getContentType()  == MessageItem.TYPE_FILE) {
+        } else if (item.getContentType() == MessageItem.TYPE_FILE) {
             // 파일 삭제 등의 액션은 나중에...
         } else {
             showDialog(item);
@@ -758,59 +785,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         final ClipData clipData = ClipData.newPlainText("", event.contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
-
-//    /************************************************************
-//     * Message 수정
-//     ************************************************************/
-//
-//    // TODO : Serialize 객체로 이벤트 전달할 것
-//    // Message 수정 이벤트 획득
-//    public void onEvent(RequestModifyMessageEvent event) {
-//        DialogFragment newFragment = EditTextDialogFragment.newInstance(event.messageType, event.messageId
-//                , event.currentMessage, event.feedbackId);
-//        newFragment.show(getFragmentManager(), DIALOG_TAG);
-//    }
-//
-//    // Message 수정 서버 요청
-//    public void onEvent(ConfirmModifyMessageEvent event) {
-//        modifyMessage(event.messageType, event.messageId, event.inputMessage, event.feedbackId);
-//    }
-//
-//    @UiThread
-//    void modifyMessage(int messageType, int messageId, String inputMessage, int feedbackId) {
-//        pauseUpdateTimer();
-//        modifyMessageInBackground(messageType, messageId, inputMessage, feedbackId);
-//    }
-//
-//    @Background
-//    void modifyMessageInBackground(int messageType, int messageId, String inputMessage, int feedbackId) {
-//        try {
-//            if (messageType == MessageItem.TYPE_STRING) {
-//                log.debug("modifyMessageInBackground : Try for message");
-//                mJandiMessageClient.modifyMessage(messageId, inputMessage);
-//            } else if (messageType == MessageItem.TYPE_COMMENT) {
-//                log.debug("modifyMessageInBackground : Try for comment");
-//                mJandiEntityClient.modifyMessageComment(messageId, inputMessage, feedbackId);
-//            }
-//            modifyMessageDone(true, getString(R.string.jandi_messages_modify_succeed));
-//        } catch (RestClientException e) {
-//            log.error("modifyMessageInBackground : FAILED");
-//            modifyMessageDone(false, getString(R.string.err_messages_modify));
-//        } catch (JandiNetworkException e) {
-//            log.error("deleteMessageInBackground : FAILED", e);
-//            deleteMessageDone(false, getString(R.string.err_messages_delete));
-//        }
-//    }
-//
-//    @UiThread
-//    void modifyMessageDone(boolean isOk, String message) {
-//        if (isOk) {
-//            ColoredToast.show(mContext, message);
-//            getUpdateMessagesAndResumeUpdateTimer();
-//        } else {
-//            ColoredToast.showError(mContext, message);
-//        }
-//    }
 
     /************************************************************
      * Message 삭제
@@ -971,7 +945,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
-        String permissionCode = (mChattingInformations.isTopic()) ? "744" : "740";
+        String permissionCode = (mChattingInformations.isPublicTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
                 .with(mContext)
@@ -1032,22 +1006,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
         getUpdateMessagesAndResumeUpdateTimer();
     }
-
-//    @UiThread
-//    void uploadFileDone(Exception exception, JsonObject result) {
-//        if (exception != null) {
-//            log.error("uploadFileDone: FAILED", exception);
-//            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
-//        } else if (result.get("code") != null) {
-//            log.error("uploadFileDone: " + result.get("code").toString());
-//            ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
-//        } else {
-//            log.debug(result);
-//            trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
-//            ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
-//        }
-//        getUpdateMessagesAndResumeUpdateTimer();
-//    }
 
     private String getRealPathFromUri(Uri contentUri) {
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
@@ -1139,9 +1097,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void leaveEntityInBackground() {
         try {
-            if (mChattingInformations.isTopic()) {
+            if (mChattingInformations.isPublicTopic()) {
                 mJandiEntityClient.leaveChannel(mChattingInformations.entityId);
-            } else if (mChattingInformations.isGroup()) {
+            } else if (mChattingInformations.isPrivateTopic()) {
                 mJandiEntityClient.leavePrivateGroup(mChattingInformations.entityId);
             }
             leaveEntitySucceed();
@@ -1163,7 +1121,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     /************************************************************
-     * Channel, PrivateGroup 수정
+     * Public, Private Topic 수정
      ************************************************************/
     private void modifyEntity() {
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
@@ -1182,20 +1140,20 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      * 수정 이벤트 획득 from EditTextDialogFragment
      */
     public void onEvent(ConfirmModifyTopicEvent event) {
-        modifyEntity(event);
-    }
-
-    @UiThread
-    void modifyEntity(ConfirmModifyTopicEvent event) {
         modifyEntityInBackground(event);
     }
+//
+//    @UiThread
+//    void modifyEntity(ConfirmModifyTopicEvent event) {
+//        modifyEntityInBackground(event);
+//    }
 
     @Background
     void modifyEntityInBackground(ConfirmModifyTopicEvent event) {
         try {
-            if (mChattingInformations.isTopic()) {
+            if (mChattingInformations.isPublicTopic()) {
                 mJandiEntityClient.modifyChannelName(mChattingInformations.entityId, event.inputName);
-            } else if (mChattingInformations.isGroup()) {
+            } else if (mChattingInformations.isPrivateTopic()) {
                 mJandiEntityClient.modifyPrivateGroupName(mChattingInformations.entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
@@ -1237,9 +1195,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void deleteTopicInBackground() {
         try {
-            if (mChattingInformations.isTopic()) {
+            if (mChattingInformations.isPublicTopic()) {
                 mJandiEntityClient.deleteChannel(mChattingInformations.entityId);
-            } else if (mChattingInformations.isGroup()) {
+            } else if (mChattingInformations.isPrivateTopic()) {
                 mJandiEntityClient.deletePrivateGroup(mChattingInformations.entityId);
             }
             deleteTopicSucceed();
@@ -1304,10 +1262,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void inviteInBackground(List<Integer> invitedUsers) {
         try {
-            if (mChattingInformations.isTopic()) {
+            if (mChattingInformations.isPublicTopic()) {
                 mJandiEntityClient.inviteChannel(
                         mChattingInformations.entityId, invitedUsers);
-            } else if (mChattingInformations.isGroup()) {
+            } else if (mChattingInformations.isPrivateTopic()) {
                 mJandiEntityClient.invitePrivateGroup(
                         mChattingInformations.entityId, invitedUsers);
             }
@@ -1399,11 +1357,21 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         changeForDirectMessage(event.userId);
     }
 
-    private void changeForDirectMessage(final int userId) {
-        mChattingInformations.changeForDirectMessage(userId);
-        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
-                JandiConstants.TYPE_DIRECT_MESSAGE, userId);
-        getMessages();
+    @SupposeUiThread
+    void changeForDirectMessage(final int userId) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageListActivity_.intent(mContext)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                        .entityId(userId)
+                        .isFavorite(mEntityManager.getEntityById(userId).isStarred)
+                        .isFromPush(isFromPush)
+                        .start();
+            }
+        }, 250);
     }
 
     /************************************************************
@@ -1472,12 +1440,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             loadExtraInfo();
         }
 
-        public void changeForDirectMessage(int entityId) {
-            this.entityId = entityId;
-            this.entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-            loadExtraInfo();
-        }
-
         public void loadExtraInfo() {
             EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
             if (entityManager != null) {
@@ -1486,11 +1448,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
         }
 
-        public boolean isTopic() {
+        public boolean isPublicTopic() {
             return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
         }
 
-        public boolean isGroup() {
+        public boolean isPrivateTopic() {
             return (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) ? true : false;
         }
 

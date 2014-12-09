@@ -10,11 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,10 +72,10 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         FormattedEntity entity = getItem(i);
         if (entity.isUser()) {
             // 프로필 사진
-            Picasso.with(this.context)
+            Glide.with(this.context)
                     .load(entity.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_profile)
-                    .transform(new CircleTransform())
+                    .transform(new GlideCircleTransform(this.context))
                     .into(holder.imageView);
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);

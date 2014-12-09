@@ -10,11 +10,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.CircleTransform;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -62,10 +62,10 @@ public class TeamMemberView extends LinearLayout {
     }
 
     private void drawTeamMemberLayout(FormattedEntity teamMember) {
-        Picasso.with(mContext)
+        Glide.with(mContext)
                 .load(teamMember.getUserSmallProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new CircleTransform())
+                .transform(new GlideCircleTransform(mContext))
                 .into(imageViewTeamMemberIcon);
         textViewTeamMemberName.setText(teamMember.getName());
         textViewTeamMemberEmail.setText(teamMember.getUserEmail());

@@ -89,22 +89,6 @@ public class MessageManipulator {
         }
     }
 
-    public ResCommon modifyMessage(int messageId, String message) throws RestClientException {
-        ReqModifyMessage reqModifyMessage = new ReqModifyMessage();
-        reqModifyMessage.content = message;
-
-        switch (mEntityType) {
-            case JandiConstants.TYPE_PUBLIC_TOPIC:
-                return mRestClient.modifyChannelMessage(reqModifyMessage, mEntityId, messageId);
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return mRestClient.modifyDirectMessage(reqModifyMessage, mEntityId, messageId);
-            case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return mRestClient.modifyPrivateGroupMessage(reqModifyMessage, mEntityId, messageId);
-            default:
-                return null;
-        }
-    }
-
     public ResCommon deleteMessage(int messageId) throws RestClientException {
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
