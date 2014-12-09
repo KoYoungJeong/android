@@ -8,6 +8,10 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -33,10 +37,10 @@ public class SettingsFragment extends PreferenceFragment {
             CheckBoxPreference pref = (CheckBoxPreference)preference;
             if (pref.isChecked()) {
                 log.debug("checked");
-                ((SettingsActivity)getActivity()).changeNotificationTarget(ReqNotificationTarget.TARGET_ALL);
+                onPushNotification();
             } else {
                 log.debug("canceled");
-                ((SettingsActivity)getActivity()).changeNotificationTarget(ReqNotificationTarget.TARGET_NONE);
+                offPushNotification();
             }
         } else if (preference.getKey().equals("setting_logout")) {
             log.debug("setting_logout clicked");
@@ -46,5 +50,27 @@ public class SettingsFragment extends PreferenceFragment {
             ((SettingsActivity)getActivity()).returnToLoginActivity();
         }
         return false;
+    }
+
+    void onPushNotification() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_ON);
+        installation.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_ok));
+            }
+        });
+    }
+
+    void offPushNotification() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_OFF);
+        installation.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_cancel));
+            }
+        });
     }
 }

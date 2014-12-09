@@ -17,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -64,7 +65,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                 if (dataObj == null) {
                     return;
                 }
-                String action = getJsonTypeValue(dataObj);
+                String type = getJsonTypeValue(dataObj);
                 JsonNode infoObj = dataObj.get(JSON_KEY_INFO);
 
                 // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
@@ -73,13 +74,13 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                     return;
                 }
 
-                if (action.equals(JSON_VALUE_TYPE_PUSH)) {
+                if (type.equals(JSON_VALUE_TYPE_PUSH)) {
                     sendNotificationWithProfile(context, infoObj);
                     // Update count of badge
                     BadgeUtils.setBadge(context, recalculateBadgeCount(context));
-                } else if (action.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
+                } else if (type.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
                     subscribeTopic(infoObj);
-                } else if (action.equals(JSON_VALUE_TYPE_UNSUBSCRIBE)) {
+                } else if (type.equals(JSON_VALUE_TYPE_UNSUBSCRIBE)) {
                     unsubscribeTopic(infoObj);
                 } else {
                     // DO NOTHING
@@ -98,6 +99,14 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         int activatedChatId = JandiPreference.getActivatedChatId(context);
         int chatIdFromPush = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
         if (activatedChatId == chatIdFromPush) {
+            return;
+        }
+
+        // 현재 디바이스 설정이 push off 라면 무시
+        if (JandiConstants.PARSE_ACTIVATION_OFF.equals(
+                ParseInstallation
+                        .getCurrentInstallation()
+                        .getString(JandiConstants.PARSE_ACTIVATION))) {
             return;
         }
 
