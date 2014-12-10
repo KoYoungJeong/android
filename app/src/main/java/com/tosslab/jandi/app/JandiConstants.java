@@ -26,6 +26,9 @@ public class JandiConstants {
 
     public static final String PARSE_MY_ENTITY_ID   = "myEntityId";
     public static final String PARSE_CHANNELS       = "channels";
+    public static final String PARSE_ACTIVATION     = "activate";
+    public static final String PARSE_ACTIVATION_ON  = "on";
+    public static final String PARSE_ACTIVATION_OFF = "off";
 
     public static final int TYPE_PUBLIC_TOPIC   = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;

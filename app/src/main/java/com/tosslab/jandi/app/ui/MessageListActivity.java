@@ -151,16 +151,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     public EntityManager mEntityManager;
 
-    @AfterInject
-    void initInformations() {
+    @AfterViews
+    void bindAdapter() {
         mContext = getApplicationContext();
         mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
         mMyToken = JandiPreference.getMyToken(mContext);
         initProgressWheel();
-    }
 
-    @AfterViews
-    void bindAdapter() {
         clearPushNotification(entityId);
         BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         mMessageItemConverter = new MessageItemConverter();
@@ -275,23 +272,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         buttonSendMessage.setSelected(inputLength > 0);
     }
 
-
-//    void setEditTextWatcher() {
-//        etMessage.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {}
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//                int inputLength = editable.length();
-//                buttonSendMessage.setSelected(inputLength > 0);
-//            }
-//        });
-//    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -303,10 +283,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public void onNewIntent(Intent intent) {
         setIntent(intent);
-        mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
-        mMyToken = JandiPreference.getMyToken(mContext);
-        initProgressWheel();
         bindAdapter();
     }
 
