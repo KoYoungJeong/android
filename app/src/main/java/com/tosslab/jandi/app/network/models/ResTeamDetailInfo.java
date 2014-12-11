@@ -11,7 +11,7 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResInvitationConfirm {
+public class ResTeamDetailInfo {
 
     @JsonProperty("team")
     private InviteTeam inviteTeam;
@@ -138,17 +138,17 @@ public class ResInvitationConfirm {
         @JsonProperty("u_statusMessage")
         private String userStatusMessage;
         @JsonProperty("u_messageMarkers")
-        private String userMessageMarkers;
+        private List<String> userMessageMarkers;
         @JsonProperty("u_joinEntities")
-        private String userJoinEntities;
+        private List<String> userJoinEntities;
         @JsonProperty("u_starredMessages")
-        private String userStarredMessages;
+        private List<String> userStarredMessages;
         @JsonProperty("u_starredEntities")
-        private String userstarredEntities;
+        private List<String> userstarredEntities;
         @JsonProperty("u_extraData")
         private ExtraData userExtraData;
         @JsonProperty("u_photoThumbnailUrl")
-        private String userPhotoThumbnailUrl;
+        private ResMessages.ThumbnailUrls userPhotoThumbnailUrl;
         @JsonProperty("u_photoUrl")
         private String userPhotoUrl;
         private String status;
@@ -194,19 +194,19 @@ public class ResInvitationConfirm {
             return userStatusMessage;
         }
 
-        public String getUserMessageMarkers() {
+        public List<String> getUserMessageMarkers() {
             return userMessageMarkers;
         }
 
-        public String getUserJoinEntities() {
+        public List<String> getUserJoinEntities() {
             return userJoinEntities;
         }
 
-        public String getUserStarredMessages() {
+        public List<String> getUserStarredMessages() {
             return userStarredMessages;
         }
 
-        public String getUserstarredEntities() {
+        public List<String> getUserstarredEntities() {
             return userstarredEntities;
         }
 
@@ -214,7 +214,7 @@ public class ResInvitationConfirm {
             return userExtraData;
         }
 
-        public String getUserPhotoThumbnailUrl() {
+        public ResMessages.ThumbnailUrls getUserPhotoThumbnailUrl() {
             return userPhotoThumbnailUrl;
         }
 

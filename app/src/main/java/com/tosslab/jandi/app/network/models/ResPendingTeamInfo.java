@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class ResTeamInfo {
+public class ResPendingTeamInfo {
 
     private String toEmail;
     private int memberId;

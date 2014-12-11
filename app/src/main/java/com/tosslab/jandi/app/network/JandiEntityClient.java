@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ReqCreateEntity;
+import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -66,20 +66,20 @@ public class JandiEntityClient {
     }
 
     public ResCommon createPublicTopic(String entityName) throws JandiNetworkException {
-        ReqCreateEntity reqCreateEntity = new ReqCreateEntity();
-        reqCreateEntity.name = entityName;
+        ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.name = entityName;
         try {
-            return mJandiRestClient.createChannel(reqCreateEntity);
+            return mJandiRestClient.createChannel(reqCreateTopic);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
     }
 
     public ResCommon createPrivateGroup(String entityName) throws JandiNetworkException {
-        ReqCreateEntity reqCreateEntity = new ReqCreateEntity();
-        reqCreateEntity.name = entityName;
+        ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.name = entityName;
         try {
-            return mJandiRestClient.createPrivateGroup(reqCreateEntity);
+            return mJandiRestClient.createPrivateGroup(reqCreateTopic);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -110,17 +110,17 @@ public class JandiEntityClient {
     }
 
     public ResCommon modifyChannelName(int id, String name) throws JandiNetworkException {
-        ReqCreateEntity entityInfo = new ReqCreateEntity();
+        ReqCreateTopic entityInfo = new ReqCreateTopic();
         entityInfo.name = name;
         try {
-            return mJandiRestClient.modifyChannel(entityInfo, id);
+            return mJandiRestClient.modifyChannelName(entityInfo, id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
     }
 
     public ResCommon modifyPrivateGroupName(int id, String name) throws JandiNetworkException {
-        ReqCreateEntity entityInfo = new ReqCreateEntity();
+        ReqCreateTopic entityInfo = new ReqCreateTopic();
         entityInfo.name = name;
         try {
             return mJandiRestClient.modifyGroup(entityInfo, id);

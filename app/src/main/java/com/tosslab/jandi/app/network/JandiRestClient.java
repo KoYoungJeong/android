@@ -3,11 +3,14 @@ package com.tosslab.jandi.app.network;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
-import com.tosslab.jandi.app.network.models.ReqCreateEntity;
+import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqCreateTeam;
+import com.tosslab.jandi.app.network.models.ReqCreateTopic;
+import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
 import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -27,13 +30,13 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitation;
-import com.tosslab.jandi.app.network.models.ResInvitationConfirm;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
+import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.models.ResTeamInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.RestFileUploadResponse;
 
@@ -77,8 +80,13 @@ public interface JandiRestClient {
     ResConfig getConfig();
 
     // 팀 생성 요청 이메일 전송
+    @Deprecated
     @Post("/teams/new")
     ResCommon createTeam(ReqCreateTeam req);
+
+    @Post("/teams")
+    @RequiresAuthentication
+    ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
 
     // 내 팀 정보 획득
     @Get("/info/teamlist/email/{userEmail}")
@@ -95,7 +103,7 @@ public interface JandiRestClient {
 
     @Get("/account/invitations")
     @RequiresAuthentication
-    List<ResTeamInfo> getMyPendingInvitations();
+    List<ResPendingTeamInfo> getMyPendingInvitations();
 
     @Post("/accounts")
     ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);
@@ -125,6 +133,7 @@ public interface JandiRestClient {
     // 팀 멤버 초대
     @Post("/invitation/team")
     @RequiresAuthentication
+    @Deprecated
     ResInvitation inviteTeamMember(ReqInvitation invitation);
 
     /**
@@ -135,18 +144,18 @@ public interface JandiRestClient {
     List<ResInvitationMembers> inviteMembers(ReqInvitationMembers invitation);
 
     /**
-     * 여러명 초대하기.
+     * 초대 수락하기.
      */
     @Put("/invitations")
     @RequiresAuthentication
-    List<ResInvitationConfirm> confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
+    List<ResTeamDetailInfo> confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
 
     /**
-     * 여러명 초대하기.
+     * 초대 거절하기
      */
     @Put("/invitations")
     @RequiresAuthentication
-    List<ResTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
+    List<ResPendingTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
 
     /**
      * *********************************************************
@@ -180,32 +189,56 @@ public interface JandiRestClient {
     // 채널 생성
     @Post("/channel")
     @RequiresAuthentication
-    ResCommon createChannel(ReqCreateEntity channel);
+    ResCommon createChannel(ReqCreateTopic channel);
 
-    // 채널 수정
+    // 채널 이름 수정
     @Put("/channels/{channelId}")
     @RequiresAuthentication
-    ResCommon modifyChannel(ReqCreateEntity channel, int channelId);
+    ResCommon modifyChannelName(ReqCreateTopic channel, int channelId);
 
     // 채널 삭제
     @Delete("/channels/{channelId}")
     @RequiresAuthentication
+    @Deprecated
     ResCommon deleteChannel(int channelId);
+
+    // 채널 삭제
+    @Delete("/channels/{channelId}")
+    @RequiresAuthentication
+    ResCommon deleteTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
 
     // 채널 Join
     @Put("/channels/{channelId}/join")
     @RequiresAuthentication
+    @Deprecated
     ResCommon joinChannel(int channelId);
+
+    // 채널 Join
+    @Put("/channels/{channelId}/join")
+    @RequiresAuthentication
+    ResCommon joinTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
 
     // 채널 leave
     @Put("/channels/{channelId}/leave")
     @RequiresAuthentication
+    @Deprecated
     ResCommon leaveChannel(int channelId);
+
+    // 채널 leave
+    @Put("/channels/{channelId}/leave")
+    @RequiresAuthentication
+    ResCommon leaveTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
 
     // 채널 invite
     @Put("/channels/{channelId}/invite")
     @RequiresAuthentication
+    @Deprecated
     ResCommon inviteChannel(int channelId, ReqInviteUsers inviteUsers);
+
+    // 채널 invite
+    @Put("/channels/{channelId}/invite")
+    @RequiresAuthentication
+    ResCommon inviteTopic(int channelId, ReqInviteTopicUsers reqInviteTopicUsers);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -276,12 +309,12 @@ public interface JandiRestClient {
     // Private Group 생성
     @Post("/privateGroup")
     @RequiresAuthentication
-    ResCommon createPrivateGroup(ReqCreateEntity group);
+    ResCommon createPrivateGroup(ReqCreateTopic group);
 
     // Private Group 수정
     @Put("/privateGroups/{groupId}")
     @RequiresAuthentication
-    ResCommon modifyGroup(ReqCreateEntity channel, int groupId);
+    ResCommon modifyGroup(ReqCreateTopic channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")
