@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 1..
  */
-@Config(manifest = "app/src/main/AndroidManifest.xml",emulateSdk = 18)
+@Config(manifest = "app/src/main/AndroidManifest.xml", emulateSdk = 18)
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiApplicationTest {
 
@@ -22,4 +22,5 @@ public class JandiApplicationTest {
 
         Assert.assertThat(Robolectric.application, is(notNullValue()));
     }
+
 }

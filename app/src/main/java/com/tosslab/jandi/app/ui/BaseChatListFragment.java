@@ -9,6 +9,7 @@ import android.os.Handler;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.ui.message.MessageListActivity_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import de.greenrobot.event.EventBus;

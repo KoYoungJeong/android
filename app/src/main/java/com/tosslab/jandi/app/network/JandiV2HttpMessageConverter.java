@@ -18,7 +18,7 @@ import java.nio.charset.Charset;
  * Created by justinygchoi on 2014. 7. 23..
  * MappingJacksonHttpMessageConverter 을 참조하였음.
  */
-public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Object> {
+public class JandiV2HttpMessageConverter extends AbstractHttpMessageConverter<Object> {
     public static final String APPLICATION_VERSION_NAME = "vnd.tosslab.jandi-v1+json";
     public static final String APPLICATION_VERSION_FULL_NAME = "application/vnd.tosslab.jandi-v1+json";
 
@@ -33,7 +33,7 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     /**
      * Construct a new {@code BindingJacksonHttpMessageConverter}.
      */
-    public JandiV1HttpMessageConverter() {
+    public JandiV2HttpMessageConverter() {
         super(
                 new org.springframework.http.MediaType("application", "json", DEFAULT_CHARSET)
                 , new org.springframework.http.MediaType("application", APPLICATION_VERSION_NAME)
@@ -97,8 +97,7 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
         JavaType javaType = getJavaType(clazz);
         try {
             return this.objectMapper.readValue(inputMessage.getBody(), javaType);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new HttpMessageNotReadableException("Could not read JSON: " + ex.getMessage(), ex);
         }
     }
@@ -115,8 +114,7 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
                 jsonGenerator.writeRaw("{} && ");
             }
             this.objectMapper.writeValue(jsonGenerator, object);
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new HttpMessageNotWritableException("Could not write JSON: " + ex.getMessage(), ex);
         }
     }
@@ -129,13 +127,14 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
      * For instance:
      * <pre class="code">
      * protected JavaType getJavaType(Class&lt;?&gt; clazz) {
-     *   if (List.class.isAssignableFrom(clazz)) {
-     *     return TypeFactory.collectionType(ArrayList.class, MyBean.class);
-     *   } else {
-     *     return super.getJavaType(clazz);
-     *   }
+     * if (List.class.isAssignableFrom(clazz)) {
+     * return TypeFactory.collectionType(ArrayList.class, MyBean.class);
+     * } else {
+     * return super.getJavaType(clazz);
+     * }
      * }
      * </pre>
+     *
      * @param clazz the class to return the java type for
      * @return the java type
      */
@@ -145,6 +144,7 @@ public class JandiV1HttpMessageConverter extends AbstractHttpMessageConverter<Ob
 
     /**
      * Determine the JSON encoding to use for the given content type.
+     *
      * @param contentType the media type as requested by the caller
      * @return the JSON encoding to use (never <code>null</code>)
      */

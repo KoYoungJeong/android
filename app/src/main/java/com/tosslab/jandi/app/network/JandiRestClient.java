@@ -47,14 +47,14 @@ import org.springframework.util.MultiValueMap;
 @Rest(
         rootUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api",
         converters = {
-                JandiV1HttpMessageConverter.class,
+                JandiV2HttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class },
         interceptors = { LoggerInterceptor.class }
 )
 
-@Accept(JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+@Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
     void setHeader(String name, String value);
 

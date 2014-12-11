@@ -63,7 +63,7 @@ public class BaseAnalyticsActivity extends Activity {
         }
     }
 
-    protected void trackInvitingToEntity(EntityManager entityManager, int entityType) {
+    public void trackInvitingToEntity(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
@@ -96,7 +96,7 @@ public class BaseAnalyticsActivity extends Activity {
         }
     }
 
-    protected void trackLeavingEntity(EntityManager entityManager, int entityType) {
+    public void trackLeavingEntity(EntityManager entityManager, int entityType) {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {

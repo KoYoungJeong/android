@@ -1,26 +1,18 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.message;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,17 +27,11 @@ import android.widget.ListView;
 import com.google.gson.JsonObject;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
-import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
@@ -62,17 +48,25 @@ import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiV1HttpMessageConverter;
 import com.tosslab.jandi.app.network.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.MainTabActivity_;
+import com.tosslab.jandi.app.ui.message.model.FileUploadUtil;
+import com.tosslab.jandi.app.ui.message.model.RefreshRequestor;
+import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
+import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
+import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
+import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -95,9 +89,6 @@ import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URLConnection;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -143,29 +134,35 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     // Update 관련
     private Timer mTimer;
-    private int mLastUpdateLinkId = -1;
 
-    private int mFirstItemId = -1;
-    private boolean mIsFirstMessage = false;
     private MessageItemConverter mMessageItemConverter;
 
     public EntityManager mEntityManager;
 
-    @AfterViews
-    void bindAdapter() {
-        mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
-        mMyToken = JandiPreference.getMyToken(mContext);
-        initProgressWheel();
+    private MessageState messageState;
 
-        clearPushNotification(entityId);
-        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
+    @AfterInject
+    void initInformations() {
+        mContext = getApplicationContext();
+        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+
+        messageState = new MessageState();
+
         mMessageItemConverter = new MessageItemConverter();
         mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
 
-        mChattingInformations = new ChattingInfomations(entityId, entityType, isFromPush, isFavorite);
+        mChattingInformations = new ChattingInfomations(mContext, entityId, entityType, isFromPush, isFavorite);
         mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
                 mChattingInformations.entityType, mChattingInformations.entityId);
+
+    }
+
+    @AfterViews
+    void bindAdapter() {
+        clearPushNotification(entityId);
+        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
+        initProgressWheel();
 
         setUpActionBar(mChattingInformations.entityName);
         setupScrollView();
@@ -183,7 +180,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void showActionBarTitle(String entityName) {
-            getActionBar().setTitle(entityName);
+        getActionBar().setTitle(entityName);
     }
 
     private void initProgressWheel() {
@@ -214,7 +211,16 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
                 // Update the LastUpdatedLabel
                 listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-                new GetFutherMessagesTask().execute();
+
+                pauseUpdateTimer();
+
+                new Thread(new RefreshRequestor(mContext, messageItemListAdapter, mJandiMessageClient, messageState, mMessageItemConverter, new RefreshRequestor.Callback() {
+                    @Override
+                    public void onResult(String errorMsg, int lastCount) {
+                        refreshFinish(errorMsg, lastCount);
+                        resumeUpdateTimer();
+                    }
+                })).start();
             }
         });
         actualListView = pullToRefreshListViewMessages.getRefreshableView();
@@ -283,6 +289,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public void onNewIntent(Intent intent) {
         setIntent(intent);
+        mContext = getApplicationContext();
+        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mMyToken = JandiPreference.getMyToken(mContext);
+        initProgressWheel();
         bindAdapter();
     }
 
@@ -321,7 +331,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        final int FAVORITE_MENU_ITEM   = 0;
+        final int FAVORITE_MENU_ITEM = 0;
 
         getMenuInflater().inflate(R.menu.message_list_menu_basic, menu);
         MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
@@ -346,55 +356,26 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_entity_starred:
-                triggerFavorite(item);
-                return true;
-            case R.id.action_entity_move_file_list:
-                moveToFileListActivity();
-                return true;
-            case R.id.action_entity_invite:
-            case R.id.action_my_entity_invite:
-                inviteMembersToEntity();
-                return true;
-            case R.id.action_my_entity_rename:
-                modifyEntity();
-                return true;
-            case R.id.action_my_entity_delete:
-                requestToDeleteTopic();
-                return true;
-            case R.id.action_entity_leave:
-            case R.id.action_my_entity_leave:
-                leaveEntityInBackground();
-                return true;
+        MenuCommand menuCommand = MenuCommandBuilder.init(MessageListActivity.this)
+                .with(mJandiEntityClient)
+                .with(mChattingInformations)
+                .build(item);
 
+        if (menuCommand != null) {
+            menuCommand.execute(item);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void moveToFileListActivity() {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FileListActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .entityId(entityId)
-                        .entityName(mChattingInformations.entityName)
-                        .start();
-                overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-            }
-        }, 250);
-    }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Timer Task
      * 주기적으로 message update 내역을 polling
-     ************************************************************/
+     * **********************************************************
+     */
 
     private void pauseUpdateTimer() {
         log.info("pauseUpdateTimer");
@@ -420,10 +401,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * EntityManager 획득
      * Push 에서 바로 현재 Activity로 이동했다면 EntityManager를 호출한다.
-     ************************************************************/
+     * **********************************************************
+     */
     @Background
     public void getEntitiesInBackground() {
         try {
@@ -440,7 +423,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mEntityManager = new EntityManager(resLeftSideMenu);
-        ((JandiApplication)getApplication()).setEntityManager(mEntityManager);
+        ((JandiApplication) getApplication()).setEntityManager(mEntityManager);
         FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
         if (entity == null) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));
@@ -471,10 +454,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         returnToIntroStartActivity();
     }
 
-    /************************************************************
+    /**
      * Message List 획득
      * 선택한 Channel, Member or PG 에 대한 Message 리스트 획득 (from 서버)
-     ************************************************************/
+     */
 
     @UiThread
     public void getMessages() {
@@ -489,10 +472,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        mIsFirstMessage = false;
+        messageState.setFirstMessage(false);
         pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
 
-        mFirstItemId = -1;
+        messageState.setFirstItemId(-1);
         mMessageItemConverter.clear();
         messageItemListAdapter.clearAdapter();
 
@@ -504,11 +487,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void getMessagesInBackground() {
         try {
-            ResMessages restResMessages = mJandiMessageClient.getMessages(mFirstItemId);
+            ResMessages restResMessages = mJandiMessageClient.getMessages(messageState.getFirstItemId());
 
-            if (mFirstItemId == -1) {
+            if (messageState.getFirstItemId() == -1) {
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
-                mLastUpdateLinkId = restResMessages.lastLinkId;
+                messageState.setLastUpdateLinkId(restResMessages.lastLinkId);
                 if (restResMessages.messageCount <= 0) {
                     showWarningEmpty();
                     return;
@@ -516,11 +499,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 setMarker();
             }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            mIsFirstMessage = restResMessages.isFirst;
+            messageState.setFirstMessage(restResMessages.isFirst);
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            mFirstItemId = restResMessages.firstIdOfReceivedList;
+            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
             log.debug("getMessagesInBackground : " + restResMessages.messageCount
-                    + " messages from " + mFirstItemId);
+                    + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
         } catch (RestClientException e) {
             log.error("getMessagesInBackground : FAILED", e);
@@ -531,7 +514,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void showWarningEmpty() {
         mProgressWheel.dismiss();
-        mLastUpdateLinkId = 0;
+        messageState.setLastUpdateLinkId(0);
         ColoredToast.showWarning(mContext, getString(R.string.warn_messages_empty));
         resumeUpdateTimer();
     }
@@ -539,7 +522,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getMessagesSucceed(ResMessages resMessages) {
         mProgressWheel.dismiss();
-        if (mIsFirstMessage) {
+        if (messageState.isFirstMessage()) {
             // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
             pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
         }
@@ -561,67 +544,34 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         messageItemListAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Full To Refresh 전용
-     */
-    private class GetFutherMessagesTask extends AsyncTask<Void, Void, String> {
-        private int currentMessagesSize;
-
-        @Override
-        protected void onPreExecute() {
-            currentMessagesSize = messageItemListAdapter.getCount();
-            pauseUpdateTimer();
+    @UiThread
+    protected void refreshFinish(String errMessage, int lastMessageSize) {
+        pullToRefreshListViewMessages.onRefreshComplete();
+        if (messageState.isFirstMessage()) {
+            ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_messages));
+            pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
         }
 
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                ResMessages restResMessages = mJandiMessageClient.getMessages(mFirstItemId);
-                mMessageItemConverter.insertMessageItem(restResMessages);
-                messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
-                // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-                mIsFirstMessage = restResMessages.isFirst;
-                // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-                mFirstItemId = restResMessages.firstIdOfReceivedList;
-
-                log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
-                        + " messages from " + mFirstItemId);
-                return null;
-            } catch (RestClientException e) {
-                log.error("GetFutherMessagesTask : FAILED", e);
-                return getString(R.string.err_messages_get);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String errMessage) {
-            pullToRefreshListViewMessages.onRefreshComplete();
-            if (mIsFirstMessage) {
-                ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_messages));
-                pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
-            }
-
-            if (errMessage == null) {
-                // Success
-                refreshListAdapter();
-                // 리스트에 아이템이 추가되더라도 현재 위치를 고수하도록 이동한다.
-                // +1 은 이전 메시지의 0번째 item은 실제 아이템이 아닌 날짜 경계선이기에 그 포지션을 뺀다.
-                // +1 은 인덱스 0 - 사이즈는 1부터...
-                int index = messageItemListAdapter.getCount() - currentMessagesSize + 2;
-                log.debug("GetFutherMessagesTask : REFRESH at " + index);
-                actualListView.setSelectionFromTop(index, 0);
-            } else {
-                ColoredToast.showError(mContext, errMessage);
-            }
-            resumeUpdateTimer();
-            super.onPostExecute(errMessage);
+        if (errMessage == null) {
+            // Success
+            refreshListAdapter();
+            // 리스트에 아이템이 추가되더라도 현재 위치를 고수하도록 이동한다.
+            // +1 은 이전 메시지의 0번째 item은 실제 아이템이 아닌 날짜 경계선이기에 그 포지션을 뺀다.
+            // +1 은 인덱스 0 - 사이즈는 1부터...
+            int index = messageItemListAdapter.getCount() - lastMessageSize + 2;
+            log.debug("GetFutherMessagesTask : REFRESH at " + index);
+            actualListView.setSelectionFromTop(index, 0);
+        } else {
+            ColoredToast.showError(mContext, errMessage);
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Message List 업데이트
      * Message 리스트의 업데이트 획득 (from 서버)
-     ************************************************************/
+     * **********************************************************
+     */
     void getUpdateMessagesAndResumeUpdateTimer() {
         getUpdateMessagesInBackground(true);
     }
@@ -633,15 +583,15 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void getUpdateMessagesInBackground(boolean doWithResumingUpdateTimer) {
         try {
-            if (mLastUpdateLinkId >= 0) {
-                ResUpdateMessages resUpdateMessages = mJandiMessageClient.updateMessages(mLastUpdateLinkId);
+            if (messageState.getLastUpdateLinkId() >= 0) {
+                ResUpdateMessages resUpdateMessages = mJandiMessageClient.updateMessages(messageState.getLastUpdateLinkId());
                 int nMessages = resUpdateMessages.updateInfo.messageCount;
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
-                        + " messages updated at ID, " + mLastUpdateLinkId);
+                        + " messages updated at ID, " + messageState.getLastUpdateLinkId());
 
                 // 가장 최신의 LinkId를 업데이트한다.
-                mLastUpdateLinkId = resUpdateMessages.lastLinkId;
+                messageState.setLastUpdateLinkId(resUpdateMessages.lastLinkId);
                 if (nMessages > 0) {
                     isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
@@ -651,7 +601,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
                 getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
             } else {
-                log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + mLastUpdateLinkId);
+                log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + messageState.getLastUpdateLinkId());
             }
         } catch (RestClientException e) {
             log.error("fail to get updated messages", e);
@@ -672,9 +622,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Message 전송
-     ************************************************************/
+     * **********************************************************
+     */
 
     @Click(R.id.btn_send_message)
     void sendMessage() {
@@ -718,6 +670,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     /**
      * Message Item의 Long Click 시, 수정/삭제 팝업 메뉴 활성화
+     *
      * @param item
      */
     void messagesItemLongClicked(MessageItem item) {
@@ -752,19 +705,23 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         newFragment.show(getFragmentManager(), DIALOG_TAG);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Message 복사
-     ************************************************************/
+     * **********************************************************
+     */
     public void onEvent(ConfirmCopyMessageEvent event) {
         final ClipboardManager clipboardManager
-                =  (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         final ClipData clipData = ClipData.newPlainText("", event.contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Message 삭제
-     ************************************************************/
+     * **********************************************************
+     */
 
     // 정말 삭제할 건지 다시 물어본다.
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -811,9 +768,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 업로드
-     ************************************************************/
+     * **********************************************************
+     */
     @Click(R.id.btn_upload_file)
     void uploadFile() {
         DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
@@ -853,36 +812,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                if (resultCode == RESULT_OK) {
-                    Uri targetUri = data.getData();
-                    if (targetUri != null) {
-                        realFilePath = getRealPathFromUri(targetUri);
-                        log.debug("onActivityResult : Photo URI : " + targetUri.toString()
-                                + ", FilePath : " + realFilePath);
-                        showFileUploadDialog(realFilePath);
-                    }
-                }
-                break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                if (resultCode == RESULT_OK) {
-                    String path = data.getStringExtra("GetPath");
-                    realFilePath = path + File.separator + data.getStringExtra("GetFileName");
-                    log.debug("onActivityResult : from Explorer : " + realFilePath);
-                    showFileUploadDialog(realFilePath);
-                }
-                break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+
                 if (resultCode == RESULT_OK) {
-                    Uri imageUri = (mImageUriFromCamera != null)
-                            ? mImageUriFromCamera
-                            : data.getData();
-                    // 비트맵으로 리턴이 되는 경우
-                    if (imageUri == null) {
-                        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                        imageUri = FileUtils.createCacheFile(this);
-                        FileUtils.bitmapSaveToFileCache(imageUri, bitmap, 100);
-                    }
-                    showFileUploadDialog(imageUri.getPath());
+                    realFilePath = FileUploadUtil.getUploadFilePathFromActivityResult(mContext, requestCode, data, mImageUriFromCamera);
+                    showFileUploadDialog(realFilePath);
                 }
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
@@ -914,53 +849,20 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseUpdateTimer();
 
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(getString(R.string.jandi_file_uploading)+ " " + event.realFilePath);
-        progressDialog.show();
+        FileUploadUtil.uploadStart(event, MessageListActivity.this, mMyToken, mChattingInformations, new FileUploadUtil.UploadCallback() {
 
-        File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
-        String permissionCode = (mChattingInformations.isPublicTopic()) ? "744" : "740";
-        Builders.Any.M ionBuilder
-                = Ion
-                .with(mContext)
-                .load(requestURL)
-                .uploadProgressDialog(progressDialog)
-                .progress(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long downloaded, long total) {
-                        progressDialog.setProgress((int) (downloaded / total));
-                    }
-                })
-                .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
-                .setHeader("Accept", JandiV1HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-                .setMultipartParameter("title", uploadFile.getName())
-                .setMultipartParameter("share", "" + event.entityId)
-                .setMultipartParameter("permission", permissionCode);
+            @Override
+            public void onUploadFail() {
+                uploadFileFailed();
 
-        // Comment가 함께 등록될 경우 추가
-        if (event.comment != null && !event.comment.isEmpty()) {
-            ionBuilder.setMultipartParameter("comment", event.comment);
-        }
+            }
 
-        ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
-                    @Override
-                    public void onCompleted(Exception exception, JsonObject result) {
-                        progressDialog.dismiss();
-                        if (exception != null) {
-                            log.error("uploadFileDone: FAILED", exception);
-                            uploadFileFailed();
-                        } else if (result.get("code") != null) {
-                            log.error("uploadFileDone: " + result.get("code").toString());
-                            uploadFileFailed();
-                        } else {
-                            uploadFileSucceed(result);
-                        }
-                    }
-                });
+            @Override
+            public void onUploadSuccess(JsonObject result) {
+                uploadFileSucceed(result);
+
+            }
+        });
     }
 
     @UiThread
@@ -983,64 +885,27 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         getUpdateMessagesAndResumeUpdateTimer();
     }
 
-    private String getRealPathFromUri(Uri contentUri) {
-        String[] filePathColumn = { MediaStore.Images.Media.DATA };
-        Cursor cursor = mContext.getContentResolver().query(
-                contentUri,
-                filePathColumn,   // Which columns to return
-                null,   // WHERE clause; which rows to return (all rows)
-                null,   // WHERE clause selection arguments (none)
-                null);  // Order-by clause (ascending by name)
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        return picturePath;
-    }
-
-    /************************************************************
+    /**
+     * *********************************************************
      * 사진 직접 찍어 올리기
-     ************************************************************/
+     * **********************************************************
+     */
 
     private Uri mImageUriFromCamera = null;
 
     // 카메라에서 가져오기
     public void getPictureFromCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mImageUriFromCamera = FileUtils.createCacheFile(this);
+        mImageUriFromCamera = FileUploadUtil.createCacheFile(this);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriFromCamera);
         startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
-    private static class FileUtils {
-        public static Uri createCacheFile(Context context) {
-            String url = "tmp_" + String.valueOf(System.currentTimeMillis() + ".jpg");
-            return Uri.fromFile(new File(context.getExternalCacheDir(), url));
-        }
-
-        public static File bitmapSaveToFileCache(Uri uri, Bitmap bitmap, int quality) {
-            FileOutputStream fos = null;
-            File file = null;
-            try {
-                file = new File(uri.getPath());
-                fos = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, quality, fos);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                    // DO NOTHING
-                }
-            }
-            return file;
-        }
-    }
-
-    /************************************************************
+    /**
+     * *********************************************************
      * 파일 상세
-     ************************************************************/
+     * **********************************************************
+     */
     void messagesItemClicked(MessageItem item) {
         if (!item.isDateDivider) {
             switch (item.getContentType()) {
@@ -1066,48 +931,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    /************************************************************
-     * Channel, PrivateGroup Leave
-     ************************************************************/
-
-    @Background
-    public void leaveEntityInBackground() {
-        try {
-            if (mChattingInformations.isPublicTopic()) {
-                mJandiEntityClient.leaveChannel(mChattingInformations.entityId);
-            } else if (mChattingInformations.isPrivateTopic()) {
-                mJandiEntityClient.leavePrivateGroup(mChattingInformations.entityId);
-            }
-            leaveEntitySucceed();
-        } catch (JandiNetworkException e) {
-            log.error("fail to leave cdp");
-            leaveEntityFailed(getString(R.string.err_entity_leave));
-        }
-    }
-
-    @UiThread
-    public void leaveEntitySucceed() {
-        trackLeavingEntity(mEntityManager, mChattingInformations.entityType);
-        finish();
-    }
-
-    @UiThread
-    public void leaveEntityFailed(String errMessage) {
-        ColoredToast.showError(mContext, errMessage);
-    }
-
-    /************************************************************
-     * Public, Private Topic 수정
-     ************************************************************/
-    private void modifyEntity() {
-        DialogFragment newFragment = EditTextDialogFragment.newInstance(
-                EditTextDialogFragment.ACTION_MODIFY_TOPIC
-                , mChattingInformations.entityType
-                , mChattingInformations.entityId
-                , mChattingInformations.entityName);
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
     public void onEvent(ErrorDialogFragmentEvent event) {
         ColoredToast.showError(this, getString(event.errorMessageResId));
     }
@@ -1118,11 +941,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void onEvent(ConfirmModifyTopicEvent event) {
         modifyEntityInBackground(event);
     }
-//
-//    @UiThread
-//    void modifyEntity(ConfirmModifyTopicEvent event) {
-//        modifyEntityInBackground(event);
-//    }
 
     @Background
     void modifyEntityInBackground(ConfirmModifyTopicEvent event) {
@@ -1155,9 +973,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, errMessage);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Topic 삭제
-     ************************************************************/
+     * **********************************************************
+     */
     @SupposeUiThread
     void requestToDeleteTopic() {
         DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
@@ -1195,85 +1015,16 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(mContext, errMessage);
     }
 
-    /************************************************************
-     * Channel, PrivateGroup Invite
-     ************************************************************/
-    public void inviteMembersToEntity() {
-        /**
-         * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
-         */
-        View view = getLayoutInflater().inflate(R.layout.dialog_select_cdp, null);
-        ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-
-        // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<FormattedEntity> unjoinedMembers = mEntityManager.getUnjoinedMembersOfEntity(
-                mChattingInformations.entityId,
-                mChattingInformations.entityType);
-
-        if (unjoinedMembers.size() <= 0) {
-            ColoredToast.showWarning(mContext, getString(R.string.warn_all_users_are_already_invited));
-            return;
-        }
-
-        final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(this, unjoinedMembers);
-        lv.setAdapter(adapter);
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.title_cdp_invite);
-        dialog.setView(view);
-        dialog.setPositiveButton(R.string.menu_entity_invite, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                List<Integer> selectedCdp = adapter.getSelectedUserIds();
-                for (int item : selectedCdp) {
-                    log.debug("Entity ID, " + item + " is Selected");
-                }
-                inviteInBackground(selectedCdp);
-            }
-        });
-        dialog.show();
-
-    }
-
-    @Background
-    public void inviteInBackground(List<Integer> invitedUsers) {
-        try {
-            if (mChattingInformations.isPublicTopic()) {
-                mJandiEntityClient.inviteChannel(
-                        mChattingInformations.entityId, invitedUsers);
-            } else if (mChattingInformations.isPrivateTopic()) {
-                mJandiEntityClient.invitePrivateGroup(
-                        mChattingInformations.entityId, invitedUsers);
-            }
-            inviteSucceed(invitedUsers.size());
-        } catch (JandiNetworkException e) {
-            log.error("fail to invite entity");
-            inviteFailed(getString(R.string.err_entity_invite));
-        }
-    }
-
-    @UiThread
-    public void inviteSucceed(int memberSize) {
-        String rawString = getString(R.string.jandi_message_invite_entity);
-        String formatString = String.format(rawString, memberSize);
-
-        trackInvitingToEntity(mEntityManager, mChattingInformations.entityType);
-        ColoredToast.show(mContext, formatString);
-    }
-
-    @UiThread
-    public void inviteFailed(String errMessage) {
-        ColoredToast.showError(mContext, errMessage);
-    }
-
-    /************************************************************
+    /**
+     * *********************************************************
      * Set Marker
-     ************************************************************/
+     * **********************************************************
+     */
     @Background
     public void setMarker() {
         try {
-            if (mLastUpdateLinkId > 0) {
-                mJandiMessageClient.setMarker(mLastUpdateLinkId);
+            if (messageState.getLastUpdateLinkId() > 0) {
+                mJandiMessageClient.setMarker(messageState.getLastUpdateLinkId());
             }
         } catch (RestClientException e) {
             log.error("set marker failed", e);
@@ -1282,10 +1033,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 사용자 프로필 보기
      * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
-     ************************************************************/
+     * **********************************************************
+     */
     public void onEvent(RequestUserInfoEvent event) {
         int userEntityId = event.userId;
         getProfileInBackground(userEntityId);
@@ -1333,7 +1086,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         changeForDirectMessage(event.userId);
     }
 
-    @SupposeUiThread
     void changeForDirectMessage(final int userId) {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -1348,92 +1100,5 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                         .start();
             }
         }, 250);
-    }
-
-    /************************************************************
-     * 즐겨 찾기 설정
-     ************************************************************/
-    private void triggerFavorite(MenuItem item) {
-        if (mChattingInformations.isFavorite) {
-            mChattingInformations.isFavorite = false;
-            disableFavoriteInBackground();
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
-        } else {
-            mChattingInformations.isFavorite = true;
-            enableFavoriteInBackground();
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
-        }
-    }
-
-    @Background
-    public void enableFavoriteInBackground() {
-        try {
-            if (mChattingInformations.entityId > 0) {
-                mJandiEntityClient.enableFavorite(mChattingInformations.entityId);
-            }
-            enableFavoriteSucceed();
-        } catch (RestClientException e) {
-            log.error("enable favorite failed", e);
-        } catch (Exception e) {
-            log.error("enable favorite failed", e);
-        }
-    }
-
-    @UiThread
-    public void enableFavoriteSucceed() {
-        ColoredToast.show(mContext, getString(R.string.jandi_message_starred));
-    }
-
-    @Background
-    public void disableFavoriteInBackground() {
-        try {
-            if (mChattingInformations.entityId > 0) {
-                mJandiEntityClient.disableFavorite(mChattingInformations.entityId);
-            }
-        } catch (RestClientException e) {
-            log.error("enable favorite failed", e);
-        } catch (Exception e) {
-            log.error("enable favorite failed", e);
-        }
-    }
-
-    /************************************************************
-     * 채팅방 정보들.
-     ************************************************************/
-    private class ChattingInfomations {
-        public int entityType;
-        public int entityId;
-        public boolean isMyEntity;
-        public boolean isFavorite;
-        public String entityName;
-        boolean willBeFinishedFromPush;
-
-        public ChattingInfomations(int entityId, int entityType, boolean isFromPush, boolean isFavorite) {
-            this.entityId = entityId;
-            this.entityType = entityType;
-            this.willBeFinishedFromPush = isFromPush;
-            this.isFavorite = isFavorite;
-            loadExtraInfo();
-        }
-
-        public void loadExtraInfo() {
-            EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
-            if (entityManager != null) {
-                this.isMyEntity = entityManager.isMyTopic(entityId);
-                this.entityName = entityManager.getEntityNameById(entityId);
-            }
-        }
-
-        public boolean isPublicTopic() {
-            return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
-        }
-
-        public boolean isPrivateTopic() {
-            return (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) ? true : false;
-        }
-
-        public boolean isDirectMessage() {
-            return (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? true : false;
-        }
     }
 }

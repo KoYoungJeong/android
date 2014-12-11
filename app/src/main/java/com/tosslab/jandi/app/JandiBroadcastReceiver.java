@@ -19,6 +19,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.tosslab.jandi.app.ui.message.MessageListActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -199,7 +200,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private PendingIntent generatePendingIntent(Context context, int chatId, int chatType) {
-        Intent intent = new Intent(context, com.tosslab.jandi.app.ui.MessageListActivity_.class);
+        Intent intent = new Intent(context, MessageListActivity_.class);
         if (chatType >= 0 && chatId >= 0) {
             intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
             intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, chatType);

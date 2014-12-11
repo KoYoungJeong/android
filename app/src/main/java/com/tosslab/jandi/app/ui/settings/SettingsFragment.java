@@ -8,13 +8,11 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.tosslab.jandi.app.JandiApplication;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
+import com.parse.SaveCallback;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
@@ -27,7 +25,7 @@ public class SettingsFragment extends PreferenceFragment {
     private final Logger log = Logger.getLogger(SettingsFragment.class);
 
     @Bean
-    public SettingFragmentViewModel settingFragmentViewModel;
+    SettingFragmentViewModel settingFragmentViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,46 +35,46 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        trackGa(getDistictId(), "Setting");
-    }
-
-    private void trackGa(final String distictId, final String gaPath) {
-        Tracker screenViewTracker = ((JandiApplication) getActivity().getApplication())
-                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
-        screenViewTracker.set("&uid", distictId);
-        screenViewTracker.setScreenName(gaPath);
-        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
-    }
-
-    private String getDistictId() {
-        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
-        return entityManager.getDistictId();
-    }
-
-
-    @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (preference.getKey().equals("setting_push_auto_alarm")) {
             log.debug("setting_push_auto_alarm clicked");
             CheckBoxPreference pref = (CheckBoxPreference) preference;
             if (pref.isChecked()) {
                 log.debug("checked");
-                settingFragmentViewModel.changeNotificationTarget(ReqNotificationTarget.TARGET_ALL);
+                onPushNotification();
             } else {
                 log.debug("canceled");
-                settingFragmentViewModel.changeNotificationTarget(ReqNotificationTarget.TARGET_NONE);
+                offPushNotification();
             }
         } else if (preference.getKey().equals("setting_logout")) {
             log.debug("setting_logout clicked");
             ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
 
-            MixpanelAnalyticsClient.getInstance(getActivity(), getDistictId()).trackSignOut();
-
             // Notification Token을 삭제
             settingFragmentViewModel.returnToLoginActivity();
         }
         return false;
+    }
+
+    void onPushNotification() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_ON);
+        installation.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_ok));
+            }
+        });
+    }
+
+    void offPushNotification() {
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_OFF);
+        installation.saveEventually(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_cancel));
+            }
+        });
     }
 }
