@@ -38,9 +38,11 @@ public class JandiEntityClient {
                 JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 팀 관리
-     ************************************************************/
+     * **********************************************************
+     */
     public ResInvitation inviteTeamMember(String email) throws JandiNetworkException {
         try {
             return mJandiRestClient.inviteTeamMember(new ReqInvitation(email));
@@ -49,12 +51,15 @@ public class JandiEntityClient {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Entity (Channel, Private Group, Direct Message) 관련
-     ************************************************************/
-    public ResLeftSideMenu getTotalEntitiesInfo() throws JandiNetworkException {
+     * **********************************************************
+     */
+    public ResLeftSideMenu getTotalEntitiesInfo(int teamId) throws JandiNetworkException {
         try {
-            return mJandiRestClient.getInfosForSideMenu();
+
+            return mJandiRestClient.getInfosForSideMenu(teamId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -158,9 +163,11 @@ public class JandiEntityClient {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Entity 즐겨찾기 등록 / 해제
-     ************************************************************/
+     * **********************************************************
+     */
     public ResCommon enableFavorite(int entityId) throws JandiNetworkException {
         try {
             return mJandiRestClient.enableFavorite(entityId);
@@ -177,9 +184,11 @@ public class JandiEntityClient {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 사용자 프로필
-     ************************************************************/
+     * **********************************************************
+     */
     public ResLeftSideMenu.User getUserProfile(int entityId) throws JandiNetworkException {
         try {
             return mJandiRestClient.getUserProfile(entityId);
@@ -196,9 +205,11 @@ public class JandiEntityClient {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Push Notification Token
-     ************************************************************/
+     * **********************************************************
+     */
     public ResCommon registerNotificationToken(String oldDevToken, String newDevToken) throws JandiNetworkException {
         ReqNotificationRegister req = new ReqNotificationRegister("android", oldDevToken, newDevToken);
         try {
@@ -236,9 +247,11 @@ public class JandiEntityClient {
     }
 
 
-    /************************************************************
+    /**
+     * *********************************************************
      * File 관련
-     ************************************************************/
+     * **********************************************************
+     */
     public ResFileDetail getFileDetail(int messageId) throws JandiNetworkException {
         try {
             return mJandiRestClient.getFileDetail(messageId);

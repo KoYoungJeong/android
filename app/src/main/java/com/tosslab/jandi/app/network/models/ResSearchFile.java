@@ -9,4 +9,13 @@ public class ResSearchFile {
     public int fileCount;
     public List<ResMessages.OriginalMessage> files;
     public int firstIdOfReceivedList;
+
+    @Override
+    public String toString() {
+        return "ResSearchFile{" +
+                "fileCount=" + fileCount +
+                ", files=" + files +
+                ", firstIdOfReceivedList=" + firstIdOfReceivedList +
+                '}';
+    }
 }

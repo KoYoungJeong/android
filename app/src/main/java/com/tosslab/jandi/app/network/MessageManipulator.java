@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -68,7 +67,8 @@ public class MessageManipulator {
                 entityType = ReqSetMarker.PRIVATEGROUP;
                 break;
         }
-        ReqSetMarker reqSetMarker = new ReqSetMarker(lastLinkId, entityType);
+        // TODO Temp Team Id
+        ReqSetMarker reqSetMarker = new ReqSetMarker(1, lastLinkId, entityType);
         return mRestClient.setMarker(mEntityId, reqSetMarker);
     }
 

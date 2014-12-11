@@ -15,7 +15,7 @@ import java.util.List;
  * Entity는 각각의 서브 클래스로 나뉘어진다.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResLeftSideMenu {
     public Team team;
     public User user;
@@ -23,6 +23,22 @@ public class ResLeftSideMenu {
     public List<Entity> entities;
     public int joinEntityCount;
     public List<Entity> joinEntities;
+    public int alarmInfoCount;
+    public List<AlarmInfo> alarmInfos;
+
+    @Override
+    public String toString() {
+        return "ResLeftSideMenu{" +
+                "team=" + team +
+                ", user=" + user +
+                ", entityCount=" + entityCount +
+                ", entities=" + entities +
+                ", joinEntityCount=" + joinEntityCount +
+                ", joinEntities=" + joinEntities +
+                ", alarmInfoCount=" + alarmInfoCount +
+                ", alarmInfos=" + alarmInfos +
+                '}';
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static public class Team {
@@ -31,8 +47,9 @@ public class ResLeftSideMenu {
         public String t_domain;
         public int t_defaultChannelId;
     }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
@@ -79,10 +96,18 @@ public class ResLeftSideMenu {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class ExtraData {
         public String phoneNumber;
         public String department;
         public String position;
+    }
+
+    public static class AlarmInfo {
+        public String entityType;
+        public int entityId;
+        public int lastLinkId;
+        public int alarmCount;
+
     }
 }

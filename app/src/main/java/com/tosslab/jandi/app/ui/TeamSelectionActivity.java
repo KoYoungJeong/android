@@ -4,8 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,19 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.team.TeamListAdapter;
 import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.models.ResAuthToken;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -166,10 +157,12 @@ public class TeamSelectionActivity extends Activity {
         // 텍스트에 글이 있으면 버튼 색상 변경
         editTextPassword.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -185,9 +178,11 @@ public class TeamSelectionActivity extends Activity {
     }
 
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 로그인 수행
-     ************************************************************/
+     * **********************************************************
+     */
     @Click(R.id.btn_intro_action_signin)
     void pressLoginButton() {
         hideSoftKeyboard();
@@ -196,20 +191,20 @@ public class TeamSelectionActivity extends Activity {
     }
 
     private void hideSoftKeyboard() {
-        imm.hideSoftInputFromWindow(editTextPassword.getWindowToken(),0);
+        imm.hideSoftInputFromWindow(editTextPassword.getWindowToken(), 0);
     }
 
     @Background
     void doLoginInBackground(String passwd) {
         try {
-            ResAuthToken resAuthToken = mJandiAuthClient.login(mSelectedTeamId, recievedEmail, passwd);
+            ResAccessToken resAuthToken = mJandiAuthClient.login(mSelectedTeamId, recievedEmail, passwd);
 
             if (resAuthToken != null) {
                 doLoginSucceed(resAuthToken);
             } else {
                 doLoginFailed(R.string.err_login);
             }
-        }  catch (JandiNetworkException e) {
+        } catch (JandiNetworkException e) {
             if (e.errCode == JandiNetworkException.INVALID_PASSWD) {
                 doLoginFailed(R.string.err_login_invalid_info);
             } else {
@@ -223,9 +218,9 @@ public class TeamSelectionActivity extends Activity {
     }
 
     @UiThread
-    void doLoginSucceed(ResAuthToken token) {
+    void doLoginSucceed(ResAccessToken token) {
         mProgressWheel.dismiss();
-        String myAccessToken = token.token;
+        String myAccessToken = token.getAccessToken();
         JandiPreference.setMyToken(this, myAccessToken);
         moveToMainActivity();
     }

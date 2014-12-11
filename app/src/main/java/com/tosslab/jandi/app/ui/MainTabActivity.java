@@ -146,7 +146,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            // TODO Temp TeamId
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo(1);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
             log.error(e.getErrorInfo() + "get entity failed", e);
@@ -229,7 +230,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
     };
 
-    /***************************
+    /**
+     * ************************
      * TODO Settings 에 있는 것과 동일. 뺄까 ??
      */
 

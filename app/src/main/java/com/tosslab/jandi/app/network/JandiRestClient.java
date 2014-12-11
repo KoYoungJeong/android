@@ -1,11 +1,14 @@
 package com.tosslab.jandi.app.network;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqCreateEntity;
 import com.tosslab.jandi.app.network.models.ReqCreateTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitation;
+import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
-import com.tosslab.jandi.app.network.models.ReqLogin;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
@@ -15,17 +18,22 @@ import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
+import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResAuthToken;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitation;
+import com.tosslab.jandi.app.network.models.ResInvitationConfirm;
+import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.ResTeamInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.RestFileUploadResponse;
 
@@ -34,12 +42,16 @@ import org.androidannotations.annotations.rest.Delete;
 import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
+import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
+import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.MultiValueMap;
+
+import java.util.List;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -50,13 +62,15 @@ import org.springframework.util.MultiValueMap;
                 JandiV2HttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
-                StringHttpMessageConverter.class },
-        interceptors = { LoggerInterceptor.class }
+                StringHttpMessageConverter.class},
+        interceptors = {LoggerInterceptor.class}
 )
 
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
     void setHeader(String name, String value);
+
+    void setAuthentication(HttpAuthentication auth);
 
     // 클라이언트 Policy(+version) 정보
     @Get("/config")
@@ -72,261 +86,311 @@ public interface JandiRestClient {
 
     // 로그인
     @Post("/token")
-    ResAuthToken loginAndReturnToken(ReqLogin login);
+    @RequiresHeader("Content-Type")
+    ResAccessToken getAccessToken(ReqAccessToken login);
+
+    @Get("/account")
+    @RequiresAuthentication
+    ResAccountInfo getAccountInfo();
+
+    @Get("/account/invitations")
+    @RequiresAuthentication
+    List<ResTeamInfo> getMyPendingInvitations();
+
+    @Post("/accounts")
+    ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);
+
+    @Post("/accounts/activate")
+    ResAccountInfo activateAccount(ReqAccountActivate reqAccountActivate);
 
     // 채널, PG, DM 리스트 획득
-    @Get("/leftSideMenu")
-    @RequiresHeader("Authorization")
-    ResLeftSideMenu getInfosForSideMenu();
+    @Get("/leftSideMenu?teamId={teamId}")
+    @RequiresAuthentication
+    ResLeftSideMenu getInfosForSideMenu(int teamId);
 
     // Entity별 badge 설정
     @Post("/entities/{entityId}/marker")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon setMarker(int entityId, ReqSetMarker reqSetMarker);
 
     // 프로필
     @Get("/users/{userEntityId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResLeftSideMenu.User getUserProfile(int userEntityId);
 
     @Put("/settings/profile")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
 
     // 팀 멤버 초대
     @Post("/invitation/team")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResInvitation inviteTeamMember(ReqInvitation invitation);
 
-    /************************************************************
+    /**
+     * 여러명 초대하기.
+     */
+    @Post("/invitations")
+    @RequiresAuthentication
+    List<ResInvitationMembers> inviteMembers(ReqInvitationMembers invitation);
+
+    /**
+     * 여러명 초대하기.
+     */
+    @Put("/invitations")
+    @RequiresAuthentication
+    List<ResInvitationConfirm> confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
+
+    /**
+     * 여러명 초대하기.
+     */
+    @Put("/invitations")
+    @RequiresAuthentication
+    List<ResTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
+
+    /**
+     * *********************************************************
      * 즐겨찾기
-     ************************************************************/
+     * **********************************************************
+     */
     @Post("/settings/starred/entities/{entityId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon enableFavorite(int entityId);
 
     @Delete("/settings/starred/entities/{entityId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon disableFavorite(int entityId);
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 채널 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     ************************************************************/
+     * **********************************************************
+     */
     // 채널에서 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
 
     // 채널의 업데이트 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/update/{currentLinkId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResUpdateMessages getChannelMessagesUpdated(int channelId, int currentLinkId);
 
     // 채널 생성
     @Post("/channel")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon createChannel(ReqCreateEntity channel);
 
     // 채널 수정
     @Put("/channels/{channelId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyChannel(ReqCreateEntity channel, int channelId);
 
     // 채널 삭제
     @Delete("/channels/{channelId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteChannel(int channelId);
 
     // 채널 Join
     @Put("/channels/{channelId}/join")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon joinChannel(int channelId);
 
     // 채널 leave
     @Put("/channels/{channelId}/leave")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon leaveChannel(int channelId);
 
     // 채널 invite
     @Put("/channels/{channelId}/invite")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon inviteChannel(int channelId, ReqInviteUsers inviteUsers);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon sendChannelMessage(ReqSendMessage message, int channelId);
 
     // 채널에서 Message 수정
     @Put("/channels/{channelId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyChannelMessage(ReqModifyMessage message,
-                                           int channelId, int messageId);
+                                   int channelId, int messageId);
 
     // 채널에서 Message 삭제
     @Delete("/channels/{channelId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteChannelMessage(int channelId, int messageId);
 
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Direct Message 관련
      * 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     ************************************************************/
+     * **********************************************************
+     */
     // Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResMessages getDirectMessages(int userId, int fromId, int numOfPost);
 
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages/update/{timeAfter}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResUpdateMessages getDirectMessagesUpdated(int userId, long timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon sendDirectMessage(ReqSendMessage message, int userId);
 
     // Direct Message 수정
     @Put("/users/{userId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyDirectMessage(ReqModifyMessage message,
-                                          int userId, int messageId);
+                                  int userId, int messageId);
 
     // Direct Message 삭제
     @Delete("/users/{userId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteDirectMessage(int userId, int messageId);
 
 
-    /************************************************************
+    /**
+     * *********************************************************
      * PG 관련
      * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     ************************************************************/
+     * **********************************************************
+     */
     // Private Group의 Message 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
 
     // Updated 된 Private Group의 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResUpdateMessages getGroupMessagesUpdated(int groupId, long timeAfter);
 
     // Private Group 생성
     @Post("/privateGroup")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon createPrivateGroup(ReqCreateEntity group);
 
     // Private Group 수정
     @Put("/privateGroups/{groupId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyGroup(ReqCreateEntity channel, int groupId);
 
     // Private Group 삭제
     @Delete("/privateGroups/{groupId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteGroup(int groupId);
 
     // Private Group Leave
     @Put("/privateGroups/{groupId}/leave")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon leaveGroup(int groupId);
 
     // Private Group invite
     @Put("/privateGroups/{groupId}/invite")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon inviteGroup(int groupId, ReqInviteUsers inviteUsers);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon sendGroupMessage(ReqSendMessage message, int groupId);
 
     // Private Group Message 수정
     @Put("/privateGroups/{groupId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
-                                           int groupId, int messageId);
+                                        int groupId, int messageId);
 
     // Private Group Message 삭제
     @Delete("/privateGroups/{groupId}/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deletePrivateGroupMessage(int groupId, int messageId);
 
-    /************************************************************
+    /**
+     * *********************************************************
      * File
-     ************************************************************/
+     * **********************************************************
+     */
     // File Upload
     @Post("/file")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     RestFileUploadResponse uploadFile(MultiValueMap data);
 
     // Delete file
     @Delete("/files/{fileId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteFile(int fileId);
 
     // Message Detail
     @Get("/messages/{messageId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResFileDetail getFileDetail(int messageId);
 
     // Share Message
     @Put("/messages/{messageId}/share")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon shareMessage(ReqShareMessage share, int messageId);
 
     // Unshare Message
     @Put("/messages/{messageId}/unshare")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon unshareMessage(ReqUnshareMessage share, int messageId);
 
     // Send Comment
     @Post("/messages/{messageId}/comment")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon sendMessageComment(ReqSendComment comment, int messageId);
 
     // Modify comment
     @Put("/messages/{messageId}/comments/{commentId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon modifyMessageComment(ReqSendComment comment, int messageId, int commentId);
 
     // Delete comment
     @Delete("/messages/{messageId}/comments/{commentId}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteMessageComment(int messageId, int commentId);
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Search
-     ************************************************************/
+     * **********************************************************
+     */
     // File search
     @Post("/search")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResSearchFile searchFile(ReqSearchFile reqSearchFile);
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Notification
-     ************************************************************/
+     * **********************************************************
+     */
     // Notification Token 등록
     @Put("/settings/notifications")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
     // Notification Token 삭제
     @Delete("/settings/notifications/{deviceToken}")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon deleteNotificationToken(String deviceToken);
 
     // Notification 켜고 끄기
     @Put("/settings/notifications/{deviceToken}/subscribe")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
 
     // Notification Target 설정
     @Put("/settings/notification/target")
-    @RequiresHeader("Authorization")
+    @RequiresAuthentication
     ResCommon setNotificationTarget(ReqNotificationTarget reqNotificationTarget);
 }

@@ -13,11 +13,29 @@ import java.util.List;
 public class ResMyTeam {
     public List<Team> teamList;
 
+    @Override
+    public String toString() {
+        return "ResMyTeam{" +
+                "teamList=" + teamList +
+                '}';
+    }
+
     public static class Team {
         public int teamId;
         public String type;
         public String name;
         public String status;
         public String t_domain;
+
+        @Override
+        public String toString() {
+            return "Team{" +
+                    "teamId=" + teamId +
+                    ", type='" + type + '\'' +
+                    ", name='" + name + '\'' +
+                    ", status='" + status + '\'' +
+                    ", t_domain='" + t_domain + '\'' +
+                    '}';
+        }
     }
 }

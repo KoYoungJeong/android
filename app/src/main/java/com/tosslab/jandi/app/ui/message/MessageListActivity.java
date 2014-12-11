@@ -410,7 +410,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            // TODO Temp TeamId
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo(1);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기

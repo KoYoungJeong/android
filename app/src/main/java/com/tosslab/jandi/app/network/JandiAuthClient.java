@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqCreateTeam;
-import com.tosslab.jandi.app.network.models.ReqLogin;
-import com.tosslab.jandi.app.network.models.ResAuthToken;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
@@ -73,10 +73,10 @@ public class JandiAuthClient {
         }
     }
 
-    public ResAuthToken login(int teamId, String id, String passwd) throws JandiNetworkException {
-        ReqLogin reqLogin = new ReqLogin(teamId, id, passwd);
+    public ResAccessToken login(int teamId, String id, String passwd) throws JandiNetworkException {
         try {
-            return mRestClient.loginAndReturnToken(reqLogin);
+            mRestClient.setHeader("Content-Type", "application/json");
+            return mRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(id, passwd));
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
