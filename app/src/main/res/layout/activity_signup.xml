@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/jandi_profile_bg">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:text="@string/jandi_profile_basic_info"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white">
+        <EditText
+            android:id="@+id/et_signup_name"
+            style="@style/JandiSignUp.EditText"
+            android:inputType="text"
+            android:textColor="@color/jandi_main"
+            android:hint="@string/jandi_entity_create_entity_name"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/jandi_profile_bg"/>
+        <EditText
+            android:id="@+id/et_signup_email"
+            style="@style/JandiSignUp.EditText"
+            android:inputType="textEmailAddress"
+            android:hint="@string/jandi_profile_email"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/jandi_profile_bg"/>
+        <EditText
+            android:id="@+id/et_signup_password"
+            style="@style/JandiSignUp.EditText"
+            android:inputType="textPassword"
+            android:hint="@string/jandi_user_password"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btn_signup_confirm"
+        style="@style/JandiStyle.Button.Dynamic"
+        android:layout_margin="24dp"
+        android:text="지금 가입하기"/>
+</LinearLayout>

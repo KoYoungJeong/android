@@ -85,7 +85,7 @@ public class PasswordCheckerTest {
     }
 
     @Test
-    public void testTooShortPasswordShouldBeCheckedAsTooShortResult() {
+    public void testTooShortPasswordShouldBeCheckedAsResultTooShort() {
         String tooShortPassword = "aB#$;1";
         assertThat("Too short password has to be returned with TOO_SHORT",
                 PasswordChecker.checkStrength(tooShortPassword),
@@ -94,7 +94,7 @@ public class PasswordCheckerTest {
     }
 
     @Test
-    public void testWeakPasswordShouldBeCheckedAsWeakResult() {
+    public void testWeakPasswordShouldBeCheckedAsResultWeak() {
         String weakPassword = "123456789";
         assertThat("Weak password has to be returned with WEAK",
                 PasswordChecker.checkStrength(weakPassword),
@@ -103,7 +103,7 @@ public class PasswordCheckerTest {
     }
 
     @Test
-    public void testWeakPasswordShouldBeCheckedAsWeakResult2() {
+    public void testWeakPasswordShouldBeCheckedAsResultWeak2() {
         String weakPassword = "!@#$&*(}\":]";
         assertThat("Weak password has to be returned with WEAK",
                 PasswordChecker.checkStrength(weakPassword),
