@@ -45,6 +45,8 @@ public class JandiRestClientTest {
 
         jandiRestClient_ = new JandiRestClient_(Robolectric.application);
 
+        ResAccessToken accessToken = getAccessToken();
+        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
@@ -76,13 +78,11 @@ public class JandiRestClientTest {
     @Test
     public void testGetLeftSideMenu() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
 
         ResMyTeam teamId = jandiRestClient_.getTeamId("mk@tosslab.com");
 
         System.out.println("========= Get Team Info =========");
 
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(teamId.teamList.get(0).teamId);
 
@@ -95,8 +95,6 @@ public class JandiRestClientTest {
     @Test
     public void testCreateNewTeam() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         // FIXME 요청 정보에서 누락이 있는지 계속적으로 실패함
         ReqCreateNewTeam reqNewTeam = new ReqCreateNewTeam("Toss Lab, Inc", "testab", "좐수", "john@tosslab.com");
@@ -115,123 +113,8 @@ public class JandiRestClientTest {
     }
 
     @Test
-    public void testCreateTopic() throws Exception {
-
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
-        ReqCreateTopic reaCreateTopic = new ReqCreateTopic();
-        reaCreateTopic.name = "test123123";
-        reaCreateTopic.teamId = 279;
-
-        ResCommon result = null;
-        try {
-            result = jandiRestClient_.createChannel(reaCreateTopic);
-        } catch (HttpStatusCodeException e) {
-            System.out.println(e.getResponseBodyAsString());
-            fail();
-        }
-
-        System.out.println(result);
-
-    }
-
-    @Test
-    public void testModifyChannelName() throws Exception {
-
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
-        ReqCreateTopic reaCreateTopic = new ReqCreateTopic();
-        reaCreateTopic.name = "test12312443";
-        reaCreateTopic.teamId = 279;
-
-        ResCommon resCommon = null;
-        try {
-            resCommon = jandiRestClient_.modifyChannelName(reaCreateTopic, 6808);
-        } catch (HttpStatusCodeException e) {
-            System.out.println(e.getResponseBodyAsString());
-            fail();
-        }
-
-        assertNotNull(resCommon);
-    }
-
-    @Test
-    public void testDeleteChannel() throws Exception {
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
-
-        int myChannelId = 0;
-        for (ResLeftSideMenu.Entity entity : infosForSideMenu.entities) {
-
-            if (entity instanceof ResLeftSideMenu.Channel) {
-                ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
-
-                if (channel.ch_creatorId == 285) {
-                    myChannelId = channel.id;
-                    break;
-                }
-            }
-        }
-
-        if (myChannelId == 0) {
-            fail();
-        }
-
-        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic();
-        reqDeleteTopic.teamId = 279;
-
-        ResCommon resCommon = null;
-        try {
-            resCommon = jandiRestClient_.deleteTopic(myChannelId, reqDeleteTopic);
-        } catch (HttpStatusCodeException e) {
-            System.out.println(e.getResponseBodyAsString());
-            fail();
-        }
-
-        assertNotNull(resCommon);
-
-    }
-
-    @Test
-    public void testLeave_JoinTopic() throws Exception {
-
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
-
-        int myChannelId = 0;
-        for (ResLeftSideMenu.Entity entity : infosForSideMenu.entities) {
-
-            if (entity instanceof ResLeftSideMenu.Channel) {
-                ResLeftSideMenu.Channel channel = (ResLeftSideMenu.Channel) entity;
-
-                if (channel.ch_creatorId != infosForSideMenu.user.id) {
-                    myChannelId = channel.id;
-                    break;
-                }
-            }
-        }
-
-        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic();
-        reqDeleteTopic.teamId = 279;
-        ResCommon resCommon = jandiRestClient_.leaveTopic(myChannelId, reqDeleteTopic);
-
-        assertNotNull("Leave Fail", resCommon);
-
-        ResCommon resCommon1 = jandiRestClient_.joinTopic(myChannelId, reqDeleteTopic);
-        assertNotNull("Join Fail", resCommon1);
-    }
-
-    @Test
     public void testSearchFile() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.teamId = 279;
@@ -253,8 +136,6 @@ public class JandiRestClientTest {
     @Test
     public void testGetAccountInfo() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         ResAccountInfo accountInfo = jandiRestClient_.getAccountInfo();
 
@@ -292,8 +173,6 @@ public class JandiRestClientTest {
     @Test
     public void testGetMyPendingInvitations() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         List<ResPendingTeamInfo> myPendingInvitations = jandiRestClient_.getMyPendingInvitations();
 
@@ -303,29 +182,8 @@ public class JandiRestClientTest {
     }
 
     @Test
-    public void testInviteTeamMembers() throws Exception {
-
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
-        List<String> list = new ArrayList<String>();
-        list.add("test.test@test.com");
-        list.add("john@tosslab.com");
-
-        ReqInvitationMembers invitations = new ReqInvitationMembers(279, list, "ko");
-        List<ResInvitationMembers> resInvitationses = jandiRestClient_.inviteMembers(invitations);
-
-        assertNotNull(resInvitationses);
-
-        System.out.println(resInvitationses);
-
-    }
-
-    @Test
     public void testSetMarker() throws Exception {
 
-        ResAccessToken accessToken = getAccessToken();
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         ResCommon resCommon = jandiRestClient_.setMarker(281, new ReqSetMarker(279, 12554, ReqSetMarker.CHANNEL));
 

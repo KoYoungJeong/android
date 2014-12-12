@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
@@ -81,7 +82,9 @@ public class ProfileActivity extends BaseAnalyticsActivity {
 
     @RestService
     JandiRestClient jandiRestClient;
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
 
     private Context mContext;
     private String mMyToken;
@@ -106,7 +109,6 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         mProgressWheel.init();
 
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
         getProfile();
     }
 

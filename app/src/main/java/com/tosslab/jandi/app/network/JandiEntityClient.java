@@ -1,8 +1,14 @@
 package com.tosslab.jandi.app.network;
 
+import android.content.Context;
+
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
+import com.tosslab.jandi.app.network.client.notification.NotificationApiClient;
+import com.tosslab.jandi.app.network.client.privatetopic.GroupApiClient;
+import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
-import com.tosslab.jandi.app.network.models.ReqInvitation;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
@@ -13,29 +19,64 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResInvitation;
+import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.rest.RestService;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
- * TODO MessageManipulator 와 합쳐지겠지...
  */
+@EBean
 public class JandiEntityClient {
     private final String AUTH_HEADER = JandiConstants.AUTH_HEADER;
     private final String ACCEPT_HEADER = "Accept";
 
-    private JandiRestClient mJandiRestClient;
+    @RestService
+    JandiRestClient mJandiRestClient;
 
-    public JandiEntityClient(JandiRestClient jandiRestClient, String token) {
-        mJandiRestClient = jandiRestClient;
-        mJandiRestClient.setHeader(AUTH_HEADER, token);
-        mJandiRestClient.setHeader(ACCEPT_HEADER,
-                JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+    @RestService
+    InvitationApiClient invitationApiClient;
+
+    @RestService
+    NotificationApiClient notificationApiClient;
+
+    @RestService
+    GroupApiClient groupApiClient;
+
+    @RestService
+    ChannelApiClient channelApiClient;
+
+    @RootContext
+    Context context;
+
+    @AfterInject
+    void initAuthentication() {
+        String myToken = JandiPreference.getMyToken(context);
+        mJandiRestClient.setHeader(AUTH_HEADER, myToken);
+        mJandiRestClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+
+        invitationApiClient.setHeader(AUTH_HEADER, myToken);
+        invitationApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+
+        notificationApiClient.setHeader(AUTH_HEADER, myToken);
+        notificationApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+
+        groupApiClient.setHeader(AUTH_HEADER, myToken);
+        groupApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+
+        channelApiClient.setHeader(AUTH_HEADER, myToken);
+        channelApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+
     }
 
     /**
@@ -43,9 +84,10 @@ public class JandiEntityClient {
      * 팀 관리
      * **********************************************************
      */
-    public ResInvitation inviteTeamMember(String email) throws JandiNetworkException {
+    public List<ResInvitationMembers> inviteTeamMember(String email) throws JandiNetworkException {
         try {
-            return mJandiRestClient.inviteTeamMember(new ReqInvitation(email));
+            List<String> strings = Arrays.asList(email);
+            return invitationApiClient.inviteMembers(new ReqInvitationMembers(1, strings, "ko"));
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -69,7 +111,8 @@ public class JandiEntityClient {
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.name = entityName;
         try {
-            return mJandiRestClient.createChannel(reqCreateTopic);
+            return channelApiClient.createChannel(reqCreateTopic);
+
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -79,7 +122,8 @@ public class JandiEntityClient {
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.name = entityName;
         try {
-            return mJandiRestClient.createPrivateGroup(reqCreateTopic);
+            return groupApiClient.createPrivateGroup(reqCreateTopic);
+
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -87,7 +131,8 @@ public class JandiEntityClient {
 
     public ResCommon joinChannel(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
         try {
-            return mJandiRestClient.joinChannel(channel.id);
+            return channelApiClient.joinChannel(channel.id);
+
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -95,7 +140,8 @@ public class JandiEntityClient {
 
     public ResCommon leaveChannel(int id) throws JandiNetworkException {
         try {
-            return mJandiRestClient.leaveChannel(id);
+            return channelApiClient.leaveChannel(id);
+
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -103,7 +149,7 @@ public class JandiEntityClient {
 
     public ResCommon leavePrivateGroup(int id) throws JandiNetworkException {
         try {
-            return mJandiRestClient.leaveGroup(id);
+            return channelApiClient.leaveChannel(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -113,7 +159,7 @@ public class JandiEntityClient {
         ReqCreateTopic entityInfo = new ReqCreateTopic();
         entityInfo.name = name;
         try {
-            return mJandiRestClient.modifyChannelName(entityInfo, id);
+            return channelApiClient.modifyChannelName(entityInfo, id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -123,7 +169,7 @@ public class JandiEntityClient {
         ReqCreateTopic entityInfo = new ReqCreateTopic();
         entityInfo.name = name;
         try {
-            return mJandiRestClient.modifyGroup(entityInfo, id);
+            return groupApiClient.modifyGroup(entityInfo, id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -131,7 +177,7 @@ public class JandiEntityClient {
 
     public ResCommon deleteChannel(int id) throws JandiNetworkException {
         try {
-            return mJandiRestClient.deleteChannel(id);
+            return channelApiClient.deleteChannel(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -139,7 +185,8 @@ public class JandiEntityClient {
 
     public ResCommon deletePrivateGroup(int id) throws JandiNetworkException {
         try {
-            return mJandiRestClient.deleteGroup(id);
+            return null;
+//            return mJandiRestClient.deleteGroup(id);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -148,7 +195,7 @@ public class JandiEntityClient {
     public ResCommon inviteChannel(int id, List<Integer> invitedUsers) throws JandiNetworkException {
         ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
         try {
-            return mJandiRestClient.inviteChannel(id, reqInviteUsers);
+            return channelApiClient.inviteChannel(id, reqInviteUsers);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -157,7 +204,7 @@ public class JandiEntityClient {
     public ResCommon invitePrivateGroup(int id, List<Integer> invitedUsers) throws JandiNetworkException {
         ReqInviteUsers reqInviteUsers = new ReqInviteUsers(invitedUsers);
         try {
-            return mJandiRestClient.inviteGroup(id, reqInviteUsers);
+            return groupApiClient.inviteGroup(id, reqInviteUsers);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -213,7 +260,7 @@ public class JandiEntityClient {
     public ResCommon registerNotificationToken(String oldDevToken, String newDevToken) throws JandiNetworkException {
         ReqNotificationRegister req = new ReqNotificationRegister("android", oldDevToken, newDevToken);
         try {
-            return mJandiRestClient.registerNotificationToken(req);
+            return notificationApiClient.registerNotificationToken(req);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -221,7 +268,7 @@ public class JandiEntityClient {
 
     public ResCommon deleteNotificationToken(String regId) throws JandiNetworkException {
         try {
-            return mJandiRestClient.deleteNotificationToken(regId);
+            return notificationApiClient.deleteNotificationToken(regId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -231,7 +278,7 @@ public class JandiEntityClient {
         ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
 
         try {
-            return mJandiRestClient.subscribeNotification(regId, req);
+            return notificationApiClient.subscribeNotification(regId, req);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -240,7 +287,7 @@ public class JandiEntityClient {
     public ResCommon setNotificationTarget(String target) throws JandiNetworkException {
         ReqNotificationTarget req = new ReqNotificationTarget(target);
         try {
-            return mJandiRestClient.setNotificationTarget(req);
+            return notificationApiClient.setNotificationTarget(req);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }

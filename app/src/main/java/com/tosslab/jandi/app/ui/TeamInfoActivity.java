@@ -25,7 +25,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.models.ResInvitation;
+import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -62,7 +62,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
     private String mMyToken;
 
     private EditText mEditTextEmailAddress;
@@ -80,9 +81,9 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         initNetworkClientForInvitation();
         addInvitationViewAsListviewFooter();
 
-        imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mEntityManager = ((JandiApplication)getApplication()).getEntityManager();
+        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
         retrieveTeamUserList(mEntityManager.getFormattedUsers());
     }
 
@@ -110,7 +111,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
     private void initNetworkClientForInvitation() {
         mMyToken = JandiPreference.getMyToken(this);
-        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
     }
 
     @SupposeUiThread
@@ -122,10 +122,12 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         // 텍스트에 글이 있으면 버튼 색상 변경
         mEditTextEmailAddress.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -140,7 +142,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         mButtonInvitation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(),0);
+                imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(), 0);
                 String email = mEditTextEmailAddress.getEditableText().toString();
                 mEditTextEmailAddress.setText("");
                 inviteTeamMember(email);
@@ -152,7 +154,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         // 스크롤의 맨 아래로 내려가면 안내 tooltip 보이기
         listViewInvitation.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) { }
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem,
@@ -227,9 +230,11 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 팀원으로 초대
-     ************************************************************/
+     * **********************************************************
+     */
     @UiThread
     public void inviteTeamMember(String email) {
         mProgressWheel.show();
@@ -239,7 +244,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @Background
     public void inviteTeamMemberInBackground(String email) {
         try {
-            ResInvitation resInvitation = mJandiEntityClient.inviteTeamMember(email);
+            List<ResInvitationMembers> resInvitation = mJandiEntityClient.inviteTeamMember(email);
             inviteTeamMemberSucceed(resInvitation, email);
         } catch (JandiNetworkException e) {
             log.error("Invitation failed", e);
@@ -251,13 +256,14 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    public void inviteTeamMemberSucceed(ResInvitation resInvitation, String succeedEmail) {
+    public void inviteTeamMemberSucceed(List<ResInvitationMembers> resInvitation, String succeedEmail) {
         mProgressWheel.dismiss();
-        if (resInvitation.sendMailFailCount == 0) {
-            ColoredToast.show(this, getString(R.string.jandi_invitation_succeed));
-            teamUserListAdapter.addMember(new FormattedDummyEntity(succeedEmail));
-            if (mEntityManager != null)
+        ColoredToast.show(this, getString(R.string.jandi_invitation_succeed));
+        for (ResInvitationMembers resInvitationMembers : resInvitation) {
+            teamUserListAdapter.addMember(new FormattedDummyEntity(resInvitationMembers.getEmail()));
+            if (mEntityManager != null) {
                 trackInviteUser(mEntityManager.getDistictId());
+            }
         }
     }
 

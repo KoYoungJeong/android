@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -33,7 +34,9 @@ public class SettingFragmentViewModel {
 
     @RestService
     JandiRestClient jandiRestClient;
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
 
     private String myToken;
 
@@ -41,7 +44,6 @@ public class SettingFragmentViewModel {
     void initObject() {
         myToken = JandiPreference.getMyToken(context);
 
-        mJandiEntityClient = new JandiEntityClient(jandiRestClient, myToken);
     }
 
     @Background

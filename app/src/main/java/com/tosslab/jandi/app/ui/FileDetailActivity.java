@@ -108,7 +108,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
     private EntityManager mEntityManager;
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
 
     @AfterViews
     public void initForm() {
@@ -158,7 +160,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     private void initNetworkClientForFileDetail() {
         myToken = JandiPreference.getMyToken(this);
-        mJandiEntityClient = new JandiEntityClient(jandiRestClient, myToken);
     }
 
     @Override

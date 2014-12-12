@@ -115,8 +115,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @RestService
     JandiRestClient jandiRestClient;
-    private JandiEntityClient mJandiEntityClient;
-    private MessageManipulator mJandiMessageClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
+    @Bean
+    MessageManipulator messageManipulator;
 
     @ViewById(R.id.list_messages)
     PullToRefreshListView pullToRefreshListViewMessages;
@@ -150,10 +153,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         messageState = new MessageState();
 
         mMessageItemConverter = new MessageItemConverter();
-        mJandiEntityClient = new JandiEntityClient(jandiRestClient, mMyToken);
 
         mChattingInformations = new ChattingInfomations(mContext, entityId, entityType, isFromPush, isFavorite);
-        mJandiMessageClient = new MessageManipulator(jandiRestClient, mMyToken,
+        messageManipulator.initEntity(mMyToken,
                 mChattingInformations.entityType, mChattingInformations.entityId);
 
     }
@@ -214,7 +216,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
                 pauseUpdateTimer();
 
-                new Thread(new RefreshRequestor(mContext, messageItemListAdapter, mJandiMessageClient, messageState, mMessageItemConverter, new RefreshRequestor.Callback() {
+                new Thread(new RefreshRequestor(mContext, messageItemListAdapter, messageManipulator, messageState, mMessageItemConverter, new RefreshRequestor.Callback() {
                     @Override
                     public void onResult(String errorMsg, int lastCount) {
                         refreshFinish(errorMsg, lastCount);
@@ -488,7 +490,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void getMessagesInBackground() {
         try {
-            ResMessages restResMessages = mJandiMessageClient.getMessages(messageState.getFirstItemId());
+            ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId());
 
             if (messageState.getFirstItemId() == -1) {
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
@@ -585,7 +587,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getUpdateMessagesInBackground(boolean doWithResumingUpdateTimer) {
         try {
             if (messageState.getLastUpdateLinkId() >= 0) {
-                ResUpdateMessages resUpdateMessages = mJandiMessageClient.updateMessages(messageState.getLastUpdateLinkId());
+                ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
                 int nMessages = resUpdateMessages.updateInfo.messageCount;
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
@@ -644,7 +646,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     public void sendMessageInBackground(String message) {
         try {
-            mJandiMessageClient.sendMessage(message);
+            messageManipulator.sendMessage(message);
             log.debug("sendMessageInBackground : succeed");
             sendMessageSucceed();
         } catch (RestClientException e) {
@@ -745,7 +747,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void deleteMessageInBackground(int messageType, int messageId, int feedbackId) {
         try {
             if (messageType == MessageItem.TYPE_STRING) {
-                mJandiMessageClient.deleteMessage(messageId);
+                messageManipulator.deleteMessage(messageId);
                 log.debug("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 mJandiEntityClient.deleteMessageComment(messageId, feedbackId);
@@ -1025,7 +1027,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void setMarker() {
         try {
             if (messageState.getLastUpdateLinkId() > 0) {
-                mJandiMessageClient.setMarker(messageState.getLastUpdateLinkId());
+                messageManipulator.setMarker(messageState.getLastUpdateLinkId());
             }
         } catch (RestClientException e) {
             log.error("set marker failed", e);

@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -47,7 +48,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
     JandiRestClient mJandiRestClient;
 
     private EntityExpandableListAdapter mEntityListAdapter;
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
     private String mMyToken;
     private EntityManager mEntityManager;
 
@@ -57,7 +60,6 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
-        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, mMyToken);
 
         mEntityListAdapter = new EntityExpandableListAdapter(mContext,
                 EntityExpandableListAdapter.TYPE_PUBLIC_ENTITY_LIST);

@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
@@ -53,7 +54,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private Context mContext;
 
     private EntityManager mEntityManager;
-    private JandiEntityClient mJandiEntityClient;
+    @Bean
+    JandiEntityClient mJandiEntityClient;
+
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private ViewPager mViewPager;
 
@@ -71,7 +74,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // myToken 획득
         mMyToken = JandiPreference.getMyToken(mContext);
         // Network Client 설정
-        mJandiEntityClient = new JandiEntityClient(mJandiRestClient, mMyToken);
 
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayUseLogoEnabled(false);

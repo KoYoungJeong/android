@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
+import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -130,33 +131,6 @@ public interface JandiRestClient {
     @RequiresAuthentication
     ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
 
-    // 팀 멤버 초대
-    @Post("/invitation/team")
-    @RequiresAuthentication
-    @Deprecated
-    ResInvitation inviteTeamMember(ReqInvitation invitation);
-
-    /**
-     * 여러명 초대하기.
-     */
-    @Post("/invitations")
-    @RequiresAuthentication
-    List<ResInvitationMembers> inviteMembers(ReqInvitationMembers invitation);
-
-    /**
-     * 초대 수락하기.
-     */
-    @Put("/invitations")
-    @RequiresAuthentication
-    List<ResTeamDetailInfo> confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
-
-    /**
-     * 초대 거절하기
-     */
-    @Put("/invitations")
-    @RequiresAuthentication
-    List<ResPendingTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
-
     /**
      * *********************************************************
      * 즐겨찾기
@@ -169,183 +143,6 @@ public interface JandiRestClient {
     @Delete("/settings/starred/entities/{entityId}")
     @RequiresAuthentication
     ResCommon disableFavorite(int entityId);
-
-    /**
-     * *********************************************************
-     * 채널 관련
-     * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     * **********************************************************
-     */
-    // 채널에서 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
-    @RequiresAuthentication
-    ResMessages getChannelMessages(int channelId, int fromId, int numOfPost);
-
-    // 채널의 업데이트 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/update/{currentLinkId}")
-    @RequiresAuthentication
-    ResUpdateMessages getChannelMessagesUpdated(int channelId, int currentLinkId);
-
-    // 채널 생성
-    @Post("/channel")
-    @RequiresAuthentication
-    ResCommon createChannel(ReqCreateTopic channel);
-
-    // 채널 이름 수정
-    @Put("/channels/{channelId}")
-    @RequiresAuthentication
-    ResCommon modifyChannelName(ReqCreateTopic channel, int channelId);
-
-    // 채널 삭제
-    @Delete("/channels/{channelId}")
-    @RequiresAuthentication
-    @Deprecated
-    ResCommon deleteChannel(int channelId);
-
-    // 채널 삭제
-    @Delete("/channels/{channelId}")
-    @RequiresAuthentication
-    ResCommon deleteTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
-
-    // 채널 Join
-    @Put("/channels/{channelId}/join")
-    @RequiresAuthentication
-    @Deprecated
-    ResCommon joinChannel(int channelId);
-
-    // 채널 Join
-    @Put("/channels/{channelId}/join")
-    @RequiresAuthentication
-    ResCommon joinTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
-
-    // 채널 leave
-    @Put("/channels/{channelId}/leave")
-    @RequiresAuthentication
-    @Deprecated
-    ResCommon leaveChannel(int channelId);
-
-    // 채널 leave
-    @Put("/channels/{channelId}/leave")
-    @RequiresAuthentication
-    ResCommon leaveTopic(int channelId, ReqDeleteTopic reqDeleteTopic);
-
-    // 채널 invite
-    @Put("/channels/{channelId}/invite")
-    @RequiresAuthentication
-    @Deprecated
-    ResCommon inviteChannel(int channelId, ReqInviteUsers inviteUsers);
-
-    // 채널 invite
-    @Put("/channels/{channelId}/invite")
-    @RequiresAuthentication
-    ResCommon inviteTopic(int channelId, ReqInviteTopicUsers reqInviteTopicUsers);
-
-    // 채널에서 Message 생성
-    @Post("/channels/{channelId}/message")
-    @RequiresAuthentication
-    ResCommon sendChannelMessage(ReqSendMessage message, int channelId);
-
-    // 채널에서 Message 수정
-    @Put("/channels/{channelId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon modifyChannelMessage(ReqModifyMessage message,
-                                   int channelId, int messageId);
-
-    // 채널에서 Message 삭제
-    @Delete("/channels/{channelId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon deleteChannelMessage(int channelId, int messageId);
-
-
-    /**
-     * *********************************************************
-     * Direct Message 관련
-     * 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     * **********************************************************
-     */
-    // Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
-    @RequiresAuthentication
-    ResMessages getDirectMessages(int userId, int fromId, int numOfPost);
-
-    // Updated 된 Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages/update/{timeAfter}")
-    @RequiresAuthentication
-    ResUpdateMessages getDirectMessagesUpdated(int userId, long timeAfter);
-
-    // Direct Message 생성
-    @Post("/users/{userId}/message")
-    @RequiresAuthentication
-    ResCommon sendDirectMessage(ReqSendMessage message, int userId);
-
-    // Direct Message 수정
-    @Put("/users/{userId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon modifyDirectMessage(ReqModifyMessage message,
-                                  int userId, int messageId);
-
-    // Direct Message 삭제
-    @Delete("/users/{userId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon deleteDirectMessage(int userId, int messageId);
-
-
-    /**
-     * *********************************************************
-     * PG 관련
-     * 생성 / 수정 / 삭제, 내부 메시지 생성 / 수정 / 삭제
-     * **********************************************************
-     */
-    // Private Group의 Message 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
-    @RequiresAuthentication
-    ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
-
-    // Updated 된 Private Group의 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
-    @RequiresAuthentication
-    ResUpdateMessages getGroupMessagesUpdated(int groupId, long timeAfter);
-
-    // Private Group 생성
-    @Post("/privateGroup")
-    @RequiresAuthentication
-    ResCommon createPrivateGroup(ReqCreateTopic group);
-
-    // Private Group 수정
-    @Put("/privateGroups/{groupId}")
-    @RequiresAuthentication
-    ResCommon modifyGroup(ReqCreateTopic channel, int groupId);
-
-    // Private Group 삭제
-    @Delete("/privateGroups/{groupId}")
-    @RequiresAuthentication
-    ResCommon deleteGroup(int groupId);
-
-    // Private Group Leave
-    @Put("/privateGroups/{groupId}/leave")
-    @RequiresAuthentication
-    ResCommon leaveGroup(int groupId);
-
-    // Private Group invite
-    @Put("/privateGroups/{groupId}/invite")
-    @RequiresAuthentication
-    ResCommon inviteGroup(int groupId, ReqInviteUsers inviteUsers);
-
-    // Private Group에서의 Message 생성
-    @Post("/privateGroups/{groupId}/message")
-    @RequiresAuthentication
-    ResCommon sendGroupMessage(ReqSendMessage message, int groupId);
-
-    // Private Group Message 수정
-    @Put("/privateGroups/{groupId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon modifyPrivateGroupMessage(ReqModifyMessage message,
-                                        int groupId, int messageId);
-
-    // Private Group Message 삭제
-    @Delete("/privateGroups/{groupId}/messages/{messageId}")
-    @RequiresAuthentication
-    ResCommon deletePrivateGroupMessage(int groupId, int messageId);
 
     /**
      * *********************************************************
@@ -402,28 +199,4 @@ public interface JandiRestClient {
     @RequiresAuthentication
     ResSearchFile searchFile(ReqSearchFile reqSearchFile);
 
-    /**
-     * *********************************************************
-     * Notification
-     * **********************************************************
-     */
-    // Notification Token 등록
-    @Put("/settings/notifications")
-    @RequiresAuthentication
-    ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
-
-    // Notification Token 삭제
-    @Delete("/settings/notifications/{deviceToken}")
-    @RequiresAuthentication
-    ResCommon deleteNotificationToken(String deviceToken);
-
-    // Notification 켜고 끄기
-    @Put("/settings/notifications/{deviceToken}/subscribe")
-    @RequiresAuthentication
-    ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
-
-    // Notification Target 설정
-    @Put("/settings/notification/target")
-    @RequiresAuthentication
-    ResCommon setNotificationTarget(ReqNotificationTarget reqNotificationTarget);
 }
