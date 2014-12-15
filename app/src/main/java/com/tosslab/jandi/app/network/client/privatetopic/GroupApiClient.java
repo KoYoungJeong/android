@@ -1,10 +1,11 @@
 package com.tosslab.jandi.app.network.client.privatetopic;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.LoggerInterceptor;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
+import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -50,14 +51,14 @@ public interface GroupApiClient {
     ResCommon modifyGroup(ReqCreateTopic channel, int groupId);
 
     // Private Group 삭제
-    @Delete("/privateGroups/{groupId}")
+    @Delete("/privateGroups/{groupId}?teamId={teamId}")
     @RequiresAuthentication
-    ResCommon deleteGroup(int groupId);
+    ResCommon deleteGroup(int teamId, int groupId);
 
     // Private Group Leave
     @Put("/privateGroups/{groupId}/leave")
     @RequiresAuthentication
-    ResCommon leaveGroup(int groupId);
+    ResCommon leaveGroup(ReqTeam team, int groupId);
 
     // Private Group invite
     @Put("/privateGroups/{groupId}/invite")

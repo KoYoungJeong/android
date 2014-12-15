@@ -48,13 +48,13 @@ public class SettingFragmentViewModel {
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {
-        try {
-            mJandiEntityClient.setNotificationTarget(notificationTarget);
-            log.debug("notification target has been changed : " + notificationTarget);
-        } catch (JandiNetworkException e) {
-            log.error("change notification target failed");
-            changeNotificationTagerFailed("변환에 실패했습니다");
-        }
+//        try {
+//            mJandiEntityClient.setNotificationTarget(notificationTarget);
+//            log.debug("notification target has been changed : " + notificationTarget);
+//        } catch (JandiNetworkException e) {
+//            log.error("change notification target failed");
+//            changeNotificationTagerFailed("변환에 실패했습니다");
+//        }
     }
 
     @UiThread

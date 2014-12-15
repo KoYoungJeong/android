@@ -13,4 +13,12 @@ import java.util.List;
 public class ResFileDetail {
     public int messageCount;
     public List<ResMessages.OriginalMessage> messageDetails;
+
+    @Override
+    public String toString() {
+        return "ResFileDetail{" +
+                "messageCount=" + messageCount +
+                ", messageDetails=" + messageDetails +
+                '}';
+    }
 }

@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.JandiEntityClient;
 import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -152,10 +153,12 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         super.onStop();
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 프로필 가져오기
      * TODO Background 는 공통으로 빼고 Success, Fail 리스너를 둘 것.
-     ************************************************************/
+     * **********************************************************
+     */
     @UiThread
     void getProfile() {
         mProgressWheel.show();
@@ -165,7 +168,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @Background
     void getProfileInBackground() {
         try {
-            EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+            EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
             ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
             getProfileSuccess(me);
         } catch (JandiNetworkException e) {
@@ -244,9 +247,11 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 프로필 수정
-     ************************************************************/
+     * **********************************************************
+     */
     @Click(R.id.profile_user_status_message)
     void editStatusMessage() {
         // 닉네임
@@ -382,9 +387,11 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 프로필 사진 업로드
-     ************************************************************/
+     * **********************************************************
+     */
     @Click(R.id.profile_photo)
     void getPicture() {
         Intent intent = new Intent(
@@ -399,13 +406,17 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
     }
 
-    /** 임시 저장 파일의 경로를 반환 */
+    /**
+     * 임시 저장 파일의 경로를 반환
+     */
     private Uri getTempUri() {
         mTempPhotoFile = getTempFile();
         return Uri.fromFile(mTempPhotoFile);
     }
 
-    /** 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환  */
+    /**
+     * 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환
+     */
     private File getTempFile() {
         if (isSDCARDMOUNTED()) {
             File f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
@@ -420,7 +431,9 @@ public class ProfileActivity extends BaseAnalyticsActivity {
             return null;
     }
 
-    /** SD카드가 마운트 되어 있는지 확인 */
+    /**
+     * SD카드가 마운트 되어 있는지 확인
+     */
     private boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
         if (status.equals(Environment.MEDIA_MOUNTED))
@@ -429,7 +442,9 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         return false;
     }
 
-    /** 다시 액티비티로 복귀하였을때 이미지를 셋팅 */
+    /**
+     * 다시 액티비티로 복귀하였을때 이미지를 셋팅
+     */
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent imageData) {
         super.onActivityResult(requestCode, resultCode, imageData);
@@ -461,8 +476,10 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         progressDialog.setMessage(getString(R.string.jandi_file_uploading));
         progressDialog.show();
 
+        EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
+
         String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";
+                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/photo";
 
         Ion.with(mContext)
                 .load(requestURL)
@@ -470,11 +487,11 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                 .progress(new ProgressCallback() {
                     @Override
                     public void onProgress(long downloaded, long total) {
-                        progressDialog.setProgress((int)(downloaded/total));
+                        progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
                 .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
-                .setHeader("Accept", "application/vnd.tosslab.jandi-v1+json")
+                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(mTempPhotoFile.getName()), mTempPhotoFile)
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -504,7 +521,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     private String getDistictId() {
-        EntityManager entityManager = ((JandiApplication)getApplication()).getEntityManager();
+        EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
         return entityManager.getDistictId();
     }
 }

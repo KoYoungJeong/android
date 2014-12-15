@@ -86,7 +86,7 @@ public class ResAccountInfo {
                 '}';
     }
 
-    private static class UserDevice {
+    public static class UserDevice {
         private String token;
         private String type;
         private int badgeCount;
@@ -165,7 +165,7 @@ public class ResAccountInfo {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    private static class UserEmail {
+    public static class UserEmail {
 
         private String email;
         private boolean primary;

@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.LoggerInterceptor;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -42,14 +42,14 @@ public interface DirectMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages/{fromId}/{numOfPost}")
+    @Get("/users/{userId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
     @RequiresAuthentication
-    ResMessages getDirectMessages(int userId, int fromId, int numOfPost);
+    ResMessages getDirectMessages(int teamId, int userId, int fromId, int numOfPost);
 
     // Updated 된 Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages/update/{timeAfter}")
+    @Get("/users/{userId}/messages/update/{timeAfter}?teamId={teamId}")
     @RequiresAuthentication
-    ResUpdateMessages getDirectMessagesUpdated(int userId, long timeAfter);
+    ResUpdateMessages getDirectMessagesUpdated(int teamId, int userId, long timeAfter);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")
@@ -63,8 +63,8 @@ public interface DirectMessageApiClient {
                                   int userId, int messageId);
 
     // Direct Message 삭제
-    @Delete("/users/{userId}/messages/{messageId}")
+    @Delete("/users/{userId}/messages/{messageId}?teamId={teamId}")
     @RequiresAuthentication
-    ResCommon deleteDirectMessage(int userId, int messageId);
+    ResCommon deleteDirectMessage(int teamId, int userId, int messageId);
 
 }

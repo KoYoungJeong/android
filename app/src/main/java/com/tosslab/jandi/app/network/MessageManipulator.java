@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageAp
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
-import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -51,11 +50,12 @@ public class MessageManipulator {
     public ResMessages getMessages(int firstItemId) throws RestClientException {
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
-                return channelMessageApiClient.getPublicTopicMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                // TODO Temp Team Id
+                return channelMessageApiClient.getPublicTopicMessages(NUMBER_OF_MESSAGES, 1, mEntityId, firstItemId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return directMessageApiClient.getDirectMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                return directMessageApiClient.getDirectMessages(1, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return groupMessageApiClient.getGroupMessages(mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                return groupMessageApiClient.getGroupMessages(1, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
             default:
                 return null;
 
@@ -65,11 +65,12 @@ public class MessageManipulator {
     public ResUpdateMessages updateMessages(int fromCurrentId) throws RestClientException {
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
-                return channelMessageApiClient.getPublicTopicMessagesUpdated(mEntityId, fromCurrentId);
+                // TODO Temp Team Id
+                return channelMessageApiClient.getPublicTopicUpdatedMessages(fromCurrentId, 1, mEntityId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return directMessageApiClient.getDirectMessagesUpdated(mEntityId, fromCurrentId);
+                return directMessageApiClient.getDirectMessagesUpdated(1, mEntityId, fromCurrentId);
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return groupMessageApiClient.getGroupMessagesUpdated(mEntityId, fromCurrentId);
+                return groupMessageApiClient.getGroupMessagesUpdated(1, mEntityId, fromCurrentId);
             default:
                 return null;
         }
@@ -112,14 +113,14 @@ public class MessageManipulator {
     }
 
     public ResCommon deleteMessage(int messageId) throws RestClientException {
+        // TODO Temp Team Id
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
-                // TODO Temp Team Id
-                return channelMessageApiClient.deletePublicTopicMessage(new ReqTeam(1), mEntityId, messageId);
+                return channelMessageApiClient.deletePublicTopicMessage(1, mEntityId, messageId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return directMessageApiClient.deleteDirectMessage(mEntityId, messageId);
+                return directMessageApiClient.deleteDirectMessage(1, mEntityId, messageId);
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return groupMessageApiClient.deletePrivateGroupMessage(mEntityId, messageId);
+                return groupMessageApiClient.deletePrivateGroupMessage(1, mEntityId, messageId);
             default:
                 return null;
         }

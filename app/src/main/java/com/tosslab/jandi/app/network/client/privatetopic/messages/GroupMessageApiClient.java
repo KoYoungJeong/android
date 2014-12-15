@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.LoggerInterceptor;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -42,14 +42,14 @@ public interface GroupMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Private Group의 Message 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}")
+    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
     @RequiresAuthentication
-    ResMessages getGroupMessages(int groupId, int fromId, int numOfPost);
+    ResMessages getGroupMessages(int teamId, int groupId, int fromId, int numOfPost);
 
     // Updated 된 Private Group의 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}")
+    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}?teamId={teamId}")
     @RequiresAuthentication
-    ResUpdateMessages getGroupMessagesUpdated(int groupId, long timeAfter);
+    ResUpdateMessages getGroupMessagesUpdated(int teamId, int groupId, long timeAfter);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
@@ -63,8 +63,8 @@ public interface GroupMessageApiClient {
                                         int groupId, int messageId);
 
     // Private Group Message 삭제
-    @Delete("/privateGroups/{groupId}/messages/{messageId}")
+    @Delete("/privateGroups/{groupId}/messages/{messageId}?teamId={teamId}")
     @RequiresAuthentication
-    ResCommon deletePrivateGroupMessage(int groupId, int messageId);
+    ResCommon deletePrivateGroupMessage(int teamId, int groupId, int messageId);
 
 }

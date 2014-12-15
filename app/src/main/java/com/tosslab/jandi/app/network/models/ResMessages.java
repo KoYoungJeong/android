@@ -22,6 +22,18 @@ public class ResMessages {
     public int messageCount;
     public List<Link> messages;
 
+    @Override
+    public String toString() {
+        return "ResMessages{" +
+                "lastLinkId=" + lastLinkId +
+                ", numOfPage=" + numOfPage +
+                ", firstIdOfReceivedList=" + firstIdOfReceivedList +
+                ", isFirst=" + isFirst +
+                ", messageCount=" + messageCount +
+                ", messages=" + messages +
+                '}';
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
@@ -35,6 +47,22 @@ public class ResMessages {
         public Info info;
         public OriginalMessage feedback;
         public OriginalMessage message;
+
+        @Override
+        public String toString() {
+            return "Link{" +
+                    "id=" + id +
+                    ", teamId=" + teamId +
+                    ", fromEntity=" + fromEntity +
+                    ", time=" + time +
+                    ", messageId=" + messageId +
+                    ", status='" + status + '\'' +
+                    ", feedbackId=" + feedbackId +
+                    ", info=" + info +
+                    ", feedback=" + feedback +
+                    ", message=" + message +
+                    '}';
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -43,6 +71,15 @@ public class ResMessages {
         public int invitorId;
         public List<Integer> inviteUsers;
         public String eventType;
+
+        @Override
+        public String toString() {
+            return "Info{" +
+                    "invitorId=" + invitorId +
+                    ", inviteUsers=" + inviteUsers +
+                    ", eventType='" + eventType + '\'' +
+                    '}';
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -68,6 +105,24 @@ public class ResMessages {
         public int permission;
         public int feedbackId;
         public FileMessage feedback;
+
+        @Override
+        public String toString() {
+            return "OriginalMessage{" +
+                    "id=" + id +
+                    ", teamId=" + teamId +
+                    ", writer=" + writer +
+                    ", writerId=" + writerId +
+                    ", createTime=" + createTime +
+                    ", updateTime=" + updateTime +
+                    ", contentType='" + contentType + '\'' +
+                    ", status='" + status + '\'' +
+                    ", shareEntities=" + shareEntities +
+                    ", permission=" + permission +
+                    ", feedbackId=" + feedbackId +
+                    ", feedback=" + feedback +
+                    '}';
+        }
     }
 
     public static class TextMessage extends OriginalMessage {
@@ -97,6 +152,20 @@ public class ResMessages {
         public String ext;
         public int size;
         public ThumbnailUrls extraInfo;
+
+        @Override
+        public String toString() {
+            return "FileContent{" +
+                    "title='" + title + '\'' +
+                    ", name='" + name + '\'' +
+                    ", type='" + type + '\'' +
+                    ", serverUrl='" + serverUrl + '\'' +
+                    ", fileUrl='" + fileUrl + '\'' +
+                    ", ext='" + ext + '\'' +
+                    ", size=" + size +
+                    ", extraInfo=" + extraInfo +
+                    '}';
+        }
     }
 
     @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
@@ -105,6 +174,15 @@ public class ResMessages {
         public String smallThumbnailUrl;
         public String mediumThumbnailUrl;
         public String largeThumbnailUrl;
+
+        @Override
+        public String toString() {
+            return "ThumbnailUrls{" +
+                    "smallThumbnailUrl='" + smallThumbnailUrl + '\'' +
+                    ", mediumThumbnailUrl='" + mediumThumbnailUrl + '\'' +
+                    ", largeThumbnailUrl='" + largeThumbnailUrl + '\'' +
+                    '}';
+        }
     }
 
 }

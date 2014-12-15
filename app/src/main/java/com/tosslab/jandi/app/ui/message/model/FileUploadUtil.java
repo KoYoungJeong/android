@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 
 import org.apache.log4j.Logger;
@@ -59,7 +59,8 @@ public class FileUploadUtil {
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)
-                .setMultipartParameter("permission", permissionCode);
+                .setMultipartParameter("permission", permissionCode)
+                .setMultipartParameter("teamId", "1"); // TODO Temp Team Id
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {

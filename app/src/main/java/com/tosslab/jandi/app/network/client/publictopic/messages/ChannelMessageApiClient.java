@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.network.client.publictopic.messages;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.LoggerInterceptor;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
-import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -43,14 +42,14 @@ public interface ChannelMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // 채널에서 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}")
+    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
     @RequiresAuthentication
-    ResMessages getPublicTopicMessages(int channelId, int fromId, int numOfPost);
+    ResMessages getPublicTopicMessages(int teamId, int channelId, int fromId, int numOfPost);
 
     // 채널의 업데이트 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/update/{currentLinkId}")
+    @Get("/channels/{channelId}/messages/update/{currentLinkId}?teamId={teamId}")
     @RequiresAuthentication
-    ResUpdateMessages getPublicTopicMessagesUpdated(int channelId, int currentLinkId);
+    ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")
@@ -63,7 +62,7 @@ public interface ChannelMessageApiClient {
     ResCommon modifyPublicTopicMessage(ReqModifyMessage message, int channelId, int messageId);
 
     // 채널에서 Message 삭제
-    @Delete("/channels/{channelId}/messages/{messageId}")
+    @Delete("/channels/{channelId}/messages/{messageId}?teamId={teamId}")
     @RequiresAuthentication
-    ResCommon deletePublicTopicMessage(ReqTeam team, int channelId, int messageId);
+    ResCommon deletePublicTopicMessage(int teamId, int channelId, int messageId);
 }

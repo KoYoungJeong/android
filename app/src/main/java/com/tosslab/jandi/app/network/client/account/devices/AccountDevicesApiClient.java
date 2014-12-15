@@ -1,15 +1,19 @@
-package com.tosslab.jandi.app.network.client.notification;
+package com.tosslab.jandi.app.network.client.account.devices;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.LoggerInterceptor;
+import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
-import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
+import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.spring.HttpRequestFactory;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
+import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
@@ -28,11 +32,12 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class},
+        requestFactory = HttpRequestFactory.class,
         interceptors = {LoggerInterceptor.class}
 )
 
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-public interface NotificationApiClient {
+public interface AccountDevicesApiClient {
 
     void setHeader(String name, String value);
 
@@ -40,22 +45,28 @@ public interface NotificationApiClient {
 
 
     // Notification Token 등록
-    @Put("/settings/notifications")
+    @Post("/account/devices")
     @RequiresAuthentication
-    ResCommon registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
+    ResAccountInfo registerNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
     // Notification Token 삭제
-    @Delete("/settings/notifications/{deviceToken}")
+    @Delete("/account/devices")
     @RequiresAuthentication
-    ResCommon deleteNotificationToken(String deviceToken);
+    ResAccountInfo deleteNotificationToken(ReqDeviceToken reqDeviceToken);
 
     // Notification 켜고 끄기
-    @Put("/settings/notifications/{deviceToken}/subscribe")
+    @Put("/account/devices")
     @RequiresAuthentication
-    ResCommon subscribeNotification(String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe);
+    @Deprecated
+    ResCommon subscribeStateNotification(/*String deviceToken, ReqNotificationSubscribe reqNotificationSubscribe*/);
 
-    // Notification Target 설정
-    @Put("/settings/notification/target")
+    // Notification 켜고 끄기
+    @Put("/account/devices")
     @RequiresAuthentication
-    ResCommon setNotificationTarget(ReqNotificationTarget reqNotificationTarget);
+    ResAccountInfo subscribeStateNotification(ReqSubscibeToken reqDeviceToken);
+
+    // ios 뱃지
+    @Put("/account/devices/badge")
+    @RequiresAuthentication
+    ResCommon getNotificationBadge(ReqNotificationTarget reqNotificationTarget);
 }

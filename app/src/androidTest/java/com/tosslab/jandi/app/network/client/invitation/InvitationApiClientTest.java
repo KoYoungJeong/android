@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.invitation;
 
 import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.JandiRestClient_;
-import com.tosslab.jandi.app.network.JandiV2HttpAuthentication;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;

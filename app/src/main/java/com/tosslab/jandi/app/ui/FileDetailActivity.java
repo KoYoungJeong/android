@@ -40,7 +40,6 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.JandiEntityClient;
-import com.tosslab.jandi.app.network.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -62,9 +61,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.RestClientException;
 
 import java.io.File;
 import java.util.List;
@@ -80,8 +77,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Extra
     public int fileId;
 
-    @RestService
-    JandiRestClient jandiRestClient;
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
     @ViewById(R.id.list_file_detail_comments)
@@ -263,9 +258,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     void getFileDetailInBackend() {
         log.debug("try to get file detail having ID, " + fileId);
         try {
-            ResFileDetail resFileDetail = jandiRestClient.getFileDetail(fileId);
+            ResFileDetail resFileDetail = mJandiEntityClient.getFileDetail(fileId);
             getFileDetailSucceed(resFileDetail);
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
         }
