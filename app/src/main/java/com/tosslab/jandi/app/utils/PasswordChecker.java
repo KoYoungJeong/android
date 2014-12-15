@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
+import com.tosslab.jandi.app.R;
+
 /**
  * Created by justinygchoi on 14. 12. 11..
  */
@@ -50,5 +52,33 @@ public class PasswordChecker {
             strength++;
 
         return strength;
+    }
+
+    public static int getBarometerStringRes(int level) {
+        switch (level) {
+            case PasswordChecker.WEAK:
+                return R.string.jandi_password_strength_weak;
+            case PasswordChecker.AVERAGE:
+                return R.string.jandi_password_strength_average;
+            case PasswordChecker.SAFE:
+                return R.string.jandi_password_strength_safe;
+            case PasswordChecker.STRONG:
+                return R.string.jandi_password_strength_strong;
+            default:    // TOO_SHORT
+                return R.string.jandi_password_strength_too_short;
+        }
+    }
+
+    public static int getBarometerColorRes(int level) {
+        switch (level) {
+            case PasswordChecker.AVERAGE:
+                return R.color.jandi_password_strength_average;
+            case PasswordChecker.SAFE:
+                return R.color.jandi_password_strength_safe;
+            case PasswordChecker.STRONG:
+                return R.color.jandi_password_strength_strong;
+            default:    // TOO_SHORT, WEAK
+                return R.color.jandi_password_strength_weak;
+        }
     }
 }

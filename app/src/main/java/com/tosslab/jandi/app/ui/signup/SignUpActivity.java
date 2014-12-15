@@ -10,11 +10,13 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
 
 /**
  * Created by justinygchoi on 14. 12. 11..
  */
 @EActivity(R.layout.activity_signup)
+@OptionsMenu(R.menu.confirm_signup_menu)
 public class SignUpActivity extends Activity {
     @Bean
     public SignUpViewModel signUpViewModel;

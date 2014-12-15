@@ -12,6 +12,15 @@
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_main</color>
 
+    <!--Sign Up-->
+    <color name="jandi_password_strength_weak">#C03131</color>
+    <color name="jandi_password_strength_average">#C0BB31</color>
+    <color name="jandi_password_strength_safe">#609AE8</color>
+    <color name="jandi_password_strength_strong">#31C08A</color>
+    <color name="jandi_agree_policy_pressed">#551A9B6A</color>
+    <color name="jandi_agree_policy_selected_all">#221A9B6A</color>
+    <color name="jandi_agree_policy_selected">#111A9B6A</color>
+
     <!--Log in-->
     <color name="jandi_login_message_bg">#ddf0e9</color>
     <!-- Main Tab -->
