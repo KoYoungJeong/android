@@ -56,6 +56,7 @@ public class SignUpViewModel {
 
     private ProgressWheel mProgressWheel;
 
+    // 각 항목의 체크 여부를 가지고 최종 가입 버튼의 활성화 여부 판별
     static class CheckPointsHolder {
         static final int NOT_KNOW   = -1;
         static final int INVALID    = 0;
