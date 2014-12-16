@@ -27,6 +27,19 @@
 <string name="err_team_creation_failed">"Email could not be sent"</string>
 <string name="jandi_question_team_create">"Don't have a team on JANDI yet?"</string>
 
+<!--Sign Up-->
+<string name="jandi_signup_required">"필수"</string>
+<string name="jandi_signup_title">"가입하기"</string>
+<string name="jandi_signup_confirm">"지금 가입하기"</string>
+<string name="jandi_signup_input_email">"팀에서 사용할 이메일 주소"</string>
+<string name="jandi_signup_agree_all">"잔디 회원가입 약관에 모두 동의합니다."</string>
+<string name="jandi_signup_agree_tos"><a href="https://www.google.pl/"><b>서비스 이용약관</b></a>을 확인하였으며 이에 동의합니다.</string>
+<string name="jandi_signup_agree_pp"><a href="https://www.google.pl/"><b>개인정보취급방침</b></a>에 관한 약관을 확인하였으며 이에 동의합니다.</string>
+<string name="jandi_password_strength_too_short">"8자 이상 입력하세요"</string>
+<string name="jandi_password_strength_weak">"숫자, 대문자 혹은 특수기호가 1개 이상 필요합니다"</string>
+<string name="jandi_password_strength_average">"평균"</string>
+<string name="jandi_password_strength_safe">"안전"</string>
+<string name="jandi_password_strength_strong">"강력"</string>
 <!-- Login -->
 <string name="jandi_action_start">"Getting Started"</string>
 <string name="jandi_action_login">"Sign in"</string>
