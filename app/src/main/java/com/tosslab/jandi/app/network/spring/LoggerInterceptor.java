@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 public class LoggerInterceptor implements ClientHttpRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(org.springframework.http.HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+        Log.d("", "Request head: " + request.getHeaders());
         Log.d("", "Request body: " + new String(body));
 
         ClientHttpResponse response = execution.execute(request, body);

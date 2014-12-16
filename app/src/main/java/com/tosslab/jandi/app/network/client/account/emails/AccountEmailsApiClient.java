@@ -13,6 +13,7 @@ import org.androidannotations.annotations.rest.Delete;
 import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
+import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
 import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
@@ -38,6 +39,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 public interface AccountEmailsApiClient {
 
     void setHeader(String name, String value);
+
+    String getHeader(String name);
 
     void setAuthentication(HttpAuthentication auth);
 
@@ -69,5 +72,6 @@ public interface AccountEmailsApiClient {
      */
     @Delete("/account/emails")
     @RequiresAuthentication
+    @RequiresHeader("Accept")
     ResAccountInfo deleteEmail(ReqAccountEmail reqConfirmEmail);
 }

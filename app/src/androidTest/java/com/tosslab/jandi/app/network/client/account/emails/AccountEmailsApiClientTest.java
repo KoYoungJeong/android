@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class AccountEmailsApiClientTest {
 
         ResAccessToken accessToken = null;
         try {
-            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("steve@tosslab.com", "dnrl~12AB"));
+            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
         } catch (HttpStatusCodeException e) {
             System.out.println(e.getResponseBodyAsString());
             e.printStackTrace();
@@ -91,7 +92,7 @@ public class AccountEmailsApiClientTest {
     @Test
     public void testConfirmEmail() throws Exception {
 
-        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "1c3a4168-5473-48fc-a3b4-c19f93113ffe"));
+        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "5aec5981-5aeb-4391-8981-36f4f5373175"));
 
         assertThat(resAccountInfo, is(notNullValue()));
 
@@ -112,6 +113,7 @@ public class AccountEmailsApiClientTest {
 
         ResAccountInfo resAccountInfo = null;
         try {
+            accountEmailsApiClient.setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME + ", application/json");
             resAccountInfo = accountEmailsApiClient.deleteEmail(new ReqAccountEmail(SAMPLE_EMAIL));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
