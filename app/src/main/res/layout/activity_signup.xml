@@ -36,7 +36,7 @@
         <EditText
             android:id="@+id/et_signup_email"
             style="@style/JandiSignUp.EditText"
-            android:hint="팀에서 사용할 이메일 주소"
+            android:hint="@string/jandi_signup_input_email"
             android:inputType="textEmailAddress" />
 
         <View
@@ -98,7 +98,7 @@
             <TextView
                 style="@style/JandiSignUp.LabelText.Bold"
                 android:layout_marginLeft="8dp"
-                android:text="필수"
+                android:text="@string/jandi_signup_required"
                 android:textColor="@color/jandi_text_light"/>
             <TextView
                 android:id="@+id/txt_signup_agree_tos"
@@ -130,7 +130,7 @@
             <TextView
                 style="@style/JandiSignUp.LabelText.Bold"
                 android:layout_marginLeft="8dp"
-                android:text="필수"
+                android:text="@string/jandi_signup_required"
                 android:textColor="@color/jandi_text_light"/>
             <TextView
                 android:id="@+id/txt_signup_agree_pp"
@@ -159,5 +159,5 @@
         android:id="@+id/btn_signup_confirm"
         style="@style/JandiStyle.Button.Dynamic"
         android:layout_margin="24dp"
-        android:text="지금 가입하기" />
+        android:text="@string/jandi_signup_confirm" />
 </LinearLayout>
