@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -65,7 +64,13 @@ public class AccountEmailsApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = null;
+        try {
+            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("steve@tosslab.com", "dnrl~12AB"));
+        } catch (HttpStatusCodeException e) {
+            System.out.println(e.getResponseBodyAsString());
+            e.printStackTrace();
+        }
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
@@ -83,23 +88,22 @@ public class AccountEmailsApiClientTest {
         assertThat(resAccountInfo, is(notNullValue()));
     }
 
-    @Ignore
     @Test
     public void testConfirmEmail() throws Exception {
 
-        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "718d27de-0814-427e-a7e0-af35e32c1170"));
+        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "1c3a4168-5473-48fc-a3b4-c19f93113ffe"));
 
         assertThat(resAccountInfo, is(notNullValue()));
 
         ResAccountInfo.UserEmail tempEmail = null;
         for (ResAccountInfo.UserEmail userEmail : resAccountInfo.getEmails()) {
 
-            if (TextUtils.equals(userEmail.getEmail(), SAMPLE_EMAIL)) {
+            if (TextUtils.equals(userEmail.getId(), SAMPLE_EMAIL)) {
                 tempEmail = userEmail;
             }
         }
 
-        assertThat(tempEmail.getEmail(), is(equalTo(SAMPLE_EMAIL)));
+        assertThat(tempEmail.getId(), is(equalTo(SAMPLE_EMAIL)));
 
     }
 

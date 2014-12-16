@@ -167,13 +167,13 @@ public class ResAccountInfo {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class UserEmail {
 
-        private String email;
+        private String id;
         private boolean primary;
         private String confirmedAt;
         private String status;
 
-        public String getEmail() {
-            return email;
+        public String getId() {
+            return id;
         }
 
         public boolean isPrimary() {
@@ -191,7 +191,7 @@ public class ResAccountInfo {
         @Override
         public String toString() {
             return "UserEmail{" +
-                    "email='" + email + '\'' +
+                    "id='" + id + '\'' +
                     ", primary=" + primary +
                     ", confirmedAt='" + confirmedAt + '\'' +
                     ", status='" + status + '\'' +

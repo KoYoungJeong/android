@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.network.client.account.emails;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
-import com.tosslab.jandi.app.network.models.ReqDeviceToken;
-import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.HttpRequestFactory;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -66,8 +64,8 @@ public interface AccountEmailsApiClient {
     /**
      * delete email
      *
-     *
-     * @param reqConfirmEmail@return
+     * @param reqConfirmEmail
+     * @return
      */
     @Delete("/account/emails")
     @RequiresAuthentication
