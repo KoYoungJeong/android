@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-import com.tosslab.jandi.app.network.MessageManipulator;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 

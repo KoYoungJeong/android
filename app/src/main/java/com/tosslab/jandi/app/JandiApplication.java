@@ -1,39 +1,17 @@
 package com.tosslab.jandi.app;
 
 import android.app.Application;
-import android.app.DownloadManager;
 import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.koushikdutta.async.http.AsyncSSLEngineConfigurator;
-import com.koushikdutta.async.http.socketio.ErrorCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.Response;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.parse.Parse;
-import com.parse.ParseACL;
-import com.parse.ParseException;
-import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.ParseRole;
-import com.parse.SaveCallback;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;
 
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by justinygchoi on 2014. 6. 19..
@@ -85,9 +63,11 @@ public class JandiApplication extends Application {
         return mTrackers.get(trackerId);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Accessors for global
-     ************************************************************/
+     * **********************************************************
+     */
     public EntityManager getEntityManager() {
         return mEntityManager;
     }

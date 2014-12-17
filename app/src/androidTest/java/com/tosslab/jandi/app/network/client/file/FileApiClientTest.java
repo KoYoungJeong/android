@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.network.client.file;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -10,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -95,7 +95,6 @@ public class FileApiClientTest {
         }
         return fileMessage;
     }
-
 
 
     @Test

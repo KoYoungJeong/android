@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network;
 
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
@@ -9,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
@@ -27,8 +30,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -187,6 +193,15 @@ public class JandiRestClientTest {
 
         System.out.println(resCommon);
 
+    }
+
+    @Test
+    public void testGetConfig() throws Exception {
+        ResConfig config = jandiRestClient_.getConfig();
+
+        assertThat(config, is(notNullValue()));
+
+        System.out.println(config);
     }
 
     private ResAccessToken getAccessToken() {

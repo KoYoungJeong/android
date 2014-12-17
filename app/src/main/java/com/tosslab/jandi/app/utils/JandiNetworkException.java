@@ -27,10 +27,12 @@ public class JandiNetworkException extends Exception {
     public String errReason;
     public int httpStatusCode;
     public String httpStatusMessage;
+    public String httpBody;
 
     public JandiNetworkException(HttpStatusCodeException e) {
         this.httpStatusCode = e.getStatusCode().value();
         this.httpStatusMessage = e.getStatusText();
+        this.httpBody = e.getResponseBodyAsString();
 
         ObjectMapper om = new ObjectMapper();
         try {

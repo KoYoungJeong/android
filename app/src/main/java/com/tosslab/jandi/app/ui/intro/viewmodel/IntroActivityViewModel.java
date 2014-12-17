@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.MainTabActivity_;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
@@ -55,12 +57,24 @@ public class IntroActivityViewModel {
 
     @UiThread
     public void checkAutoSignIn() {
-        String myToken = JandiPreference.getMyToken(activity);
-        if (myToken != null && myToken.length() > 0) {
-            moveToMainActivity();
+        String accessToken = JandiPreference.getAccessToken(activity);
+        int mySelectedTeamId = JandiPreference.getMyEntityId(activity);
+        if (!TextUtils.isEmpty(accessToken)) {
+            if (mySelectedTeamId != JandiPreference.NOT_SET_YET) {
+                moveToMainActivity();
+            } else {
+                moveTeamSelectActivity();
+            }
         } else {
             moveToIntroTutorialActivity();
         }
+    }
+
+    private void moveTeamSelectActivity() {
+        TeamSelectionActivity_
+                .intent(activity)
+                .start();
+        activity.finish();
     }
 
     @SupposeUiThread

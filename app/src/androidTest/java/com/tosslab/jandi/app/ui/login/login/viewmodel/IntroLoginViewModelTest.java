@@ -2,19 +2,15 @@ package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.widget.Button;
-import android.widget.EditText;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.ui.TeamSelectionActivity_;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
+import com.tosslab.jandi.app.ui.team.TeamSelectionActivity_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,54 +51,6 @@ public class IntroLoginViewModelTest {
 
     }
 
-    @Test
-    public void testGetEmailFromEditText() throws Exception {
-
-        EditText editTextEmail = (EditText) introLoginFragment.getView().findViewById(R.id.et_intro_login_email);
-        String email = "steve@tosslab.com";
-        editTextEmail.setText(email);
-
-        String emailFromEditText = introLoginViewModel.getEmailFromEditText();
-
-        assertThat(emailFromEditText, is(equalTo(email)));
-
-    }
-
-    @Test
-    public void testIsEmailButtonSelected() throws Exception {
-
-        Button emailCheckButton = (Button) introLoginFragment.getView().findViewById(R.id.btn_intro_action_signin_start);
-
-        // check state
-        emailCheckButton.setSelected(true);
-        boolean emailButtonSelected = introLoginViewModel.isEmailButtonSelected();
-        assertThat(emailButtonSelected, is(true));
-
-        emailCheckButton.setSelected(false);
-        emailButtonSelected = introLoginViewModel.isEmailButtonSelected();
-        assertThat(emailButtonSelected, is(false));
-
-        // check behavior
-
-        // When : Input Righteous Email
-        EditText editTextEmail = (EditText) introLoginFragment.getView().findViewById(R.id.et_intro_login_email);
-        String email = "steve@tosslab.com";
-        editTextEmail.setText(email);
-
-        // Then : Success
-        emailButtonSelected = introLoginViewModel.isEmailButtonSelected();
-        assertThat(emailButtonSelected, is(true));
-
-        // When : Input Unrighteous Email
-        email = "steve";
-        editTextEmail.setText(email);
-
-        // Then : Fail
-        emailButtonSelected = introLoginViewModel.isEmailButtonSelected();
-        assertThat(emailButtonSelected, is(false));
-
-
-    }
 
     @Test
     public void testCreateTeamSucceed() throws Exception {
@@ -137,7 +85,7 @@ public class IntroLoginViewModelTest {
         resMyTeam.teamList.add(team);
 
         // When : call to success to get team list
-        introLoginViewModel.getTeamListSucceed("steve@tosslab.com", resMyTeam);
+        introLoginViewModel.loginSuccess("steve@tosslab.com");
 
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
@@ -162,7 +110,7 @@ public class IntroLoginViewModelTest {
 
 
         // When : move team select activity
-        introLoginViewModel.moveToTeamSelectionActivity("steve@tosslab.com", new ObjectMapper().writeValueAsString(resMyTeam));
+        introLoginViewModel.moveToTeamSelectionActivity("steve@tosslab.com");
 
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());

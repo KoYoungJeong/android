@@ -122,7 +122,7 @@ public class ResAccountInfo {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    private static class UserTeam {
+    public static class UserTeam {
         private int teamId;
         private int memberId;
         private String name;
@@ -135,20 +135,40 @@ public class ResAccountInfo {
             return teamId;
         }
 
+        public void setTeamId(int teamId) {
+            this.teamId = teamId;
+        }
+
         public int getMemberId() {
             return memberId;
+        }
+
+        public void setMemberId(int memberId) {
+            this.memberId = memberId;
         }
 
         public String getName() {
             return name;
         }
 
+        public void setName(String name) {
+            this.name = name;
+        }
+
         public String getTeamDomain() {
             return teamDomain;
         }
 
+        public void setTeamDomain(String teamDomain) {
+            this.teamDomain = teamDomain;
+        }
+
         public int getUnread() {
             return unread;
+        }
+
+        public void setUnread(int unread) {
+            this.unread = unread;
         }
 
         @Override

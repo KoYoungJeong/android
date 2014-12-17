@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.network.client.account.emails;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;

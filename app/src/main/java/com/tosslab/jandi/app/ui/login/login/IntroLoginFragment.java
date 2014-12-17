@@ -6,7 +6,6 @@ import android.app.Fragment;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.TeamCreationDialogFragment;
 import com.tosslab.jandi.app.events.RequestTeamCreationEvent;
-import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -43,25 +42,25 @@ public class IntroLoginFragment extends Fragment {
             }
 
             @Override
-            public void onGetTeamListSuccess(String myEmailId, ResMyTeam resMyTeam) {
-                introLoginViewModel.getTeamListSucceed(myEmailId, resMyTeam);
+            public void onLoginSuccess(String myEmailId) {
+                introLoginViewModel.loginSuccess(myEmailId);
             }
 
             @Override
-            public void onGetTeamListFail(int errorStringResId) {
-                introLoginViewModel.getTeamListFailed(errorStringResId);
+            public void onLoginFail(int errorStringResId) {
+                introLoginViewModel.loginFail(errorStringResId);
             }
         });
 
         introLoginViewModel.setViewCallback(new IntroLoginViewModel.ViewCallback() {
             @Override
-            public void onTeamCreate() {
-                showTeamTeamCreationFragment();
+            public void onTeamCreate(String email) {
+                showTeamTeamCreationFragment(email);
             }
 
             @Override
-            public void onLogin() {
-                startLogin();
+            public void onLogin(String email, String password) {
+                startLogin(email, password);
             }
         });
     }
@@ -79,9 +78,8 @@ public class IntroLoginFragment extends Fragment {
     }
 
 
-    private void showTeamTeamCreationFragment() {
+    private void showTeamTeamCreationFragment(String email) {
         // belong to Fragment? LoginViewModel?
-        String email = introLoginViewModel.getEmailFromEditText();
         DialogFragment newFragment = TeamCreationDialogFragment.newInstance(email);
         newFragment.show(getFragmentManager(), "dialog");
     }
@@ -96,14 +94,12 @@ public class IntroLoginFragment extends Fragment {
         introLoginModel.createTeamInBackground(mail);
     }
 
-    private void startLogin() {
+    private void startLogin(String email, String password) {
         // belong to Fragment? LoginViewModel?
-        if (introLoginViewModel.isEmailButtonSelected()) {
-            introLoginViewModel.hideKeypad();
+        introLoginViewModel.hideKeypad();
 
-            introLoginViewModel.showProgressDialog();
-            introLoginModel.getTeamListInBackground(introLoginViewModel.getEmailFromEditText());
-        }
+        introLoginViewModel.showProgressDialog();
+        introLoginModel.startLogin(email, password);
     }
 
 }

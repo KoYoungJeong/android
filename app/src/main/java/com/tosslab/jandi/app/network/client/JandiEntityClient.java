@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 

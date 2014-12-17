@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 

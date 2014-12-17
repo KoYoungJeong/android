@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.settings.starred;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient_;

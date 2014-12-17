@@ -61,7 +61,7 @@
         android:layout_width="260dp"
         android:layout_height="0.5dp"
         android:layout_marginTop="10dp"
-        android:background="@color/jandi_border"/>
+        android:background="@color/jandi_border_gray"/>
     <LinearLayout
         android:id="@+id/ly_user_info_mail"
         android:layout_width="wrap_content"
@@ -117,7 +117,7 @@
         android:id="@+id/border_user_info_direct_message"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:background="@color/jandi_border"/>
+        android:background="@color/jandi_border_gray"/>
     <LinearLayout
         android:id="@+id/ly_user_info_direct_message"
         android:layout_width="match_parent"

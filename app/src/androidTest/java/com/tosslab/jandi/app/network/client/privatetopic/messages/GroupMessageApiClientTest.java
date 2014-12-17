@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;

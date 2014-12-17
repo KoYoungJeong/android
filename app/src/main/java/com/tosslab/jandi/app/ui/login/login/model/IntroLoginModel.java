@@ -1,16 +1,22 @@
 package com.tosslab.jandi.app.ui.login.login.model;
 
+import android.content.Context;
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiAuthClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
@@ -23,17 +29,16 @@ public class IntroLoginModel {
 
     private final Logger log = Logger.getLogger(IntroLoginModel.class);
 
+    @Bean
+    JandiAuthClient mJandiAuthClient;
+
     @RestService
     JandiRestClient jandiRestClient;
 
-    private JandiAuthClient mJandiAuthClient;
+    @RootContext
+    Context context;
 
     private Callback callback;
-
-    @AfterInject
-    void initObject() {
-        mJandiAuthClient = new JandiAuthClient(jandiRestClient);
-    }
 
     public void setCallback(Callback callback) {
         this.callback = callback;
@@ -63,20 +68,29 @@ public class IntroLoginModel {
     }
 
     @Background
-    public void getTeamListInBackground(String myEmailId) {
+    public void startLogin(String myEmailId, String password) {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
         final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
         try {
-            // 나의 팀 ID 획득
-            ResMyTeam resMyTeam = mJandiAuthClient.getMyTeamId(myEmailId);
-            if (resMyTeam.teamList.size() > 0) {
+
+            // Get Access Token
+            ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
+            ResAccessToken accessToken = jandiRestClient.getAccessToken(passwordReqToken);
+
+            if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
+                // Save Token & Get TeamList
+                TokenUtil.saveTokenInfo(context, accessToken);
+
                 if (callback != null) {
-                    callback.onGetTeamListSuccess(myEmailId, resMyTeam);
+                    callback.onLoginSuccess(myEmailId);
                 }
             } else {
-                getTeamListFailed(errStringResNotRegisteredId);
+                // Login Fail
+                throw new Exception("Login Fail");
             }
+
+
             return;
         } catch (JandiNetworkException e) {
             int errorStringRes = R.string.err_network;
@@ -84,10 +98,10 @@ public class IntroLoginModel {
                 // 팀이 아무것도 없는 사용자일 경우
                 errorStringRes = errStringResNotRegisteredId;
             }
-            getTeamListFailed(errorStringRes);
+            loginFail(errorStringRes);
         } catch (Exception e) {
             log.error(e.toString(), e);
-            getTeamListFailed(R.string.err_network);
+            loginFail(R.string.err_network);
         }
     }
 
@@ -100,9 +114,9 @@ public class IntroLoginModel {
         return true;
     }
 
-    private void getTeamListFailed(int errStringResNotRegisteredId) {
+    private void loginFail(int errStringResNotRegisteredId) {
         if (callback != null) {
-            callback.onGetTeamListFail(errStringResNotRegisteredId);
+            callback.onLoginFail(errStringResNotRegisteredId);
         }
     }
 
@@ -112,9 +126,9 @@ public class IntroLoginModel {
 
         void onCreateTeamFail(int stringResId);
 
-        void onGetTeamListSuccess(String myEmailId, ResMyTeam resMyTeam);
+        void onLoginSuccess(String email);
 
-        void onGetTeamListFail(int errorStringResId);
+        void onLoginFail(int errorStringResId);
 
 
     }

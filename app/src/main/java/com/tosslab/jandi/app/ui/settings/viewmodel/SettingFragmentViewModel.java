@@ -3,12 +3,10 @@ package com.tosslab.jandi.app.ui.settings.viewmodel;
 import android.content.Context;
 import android.content.Intent;
 
-import com.tosslab.jandi.app.network.JandiEntityClient;
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.MixpanelAnalyticsClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;

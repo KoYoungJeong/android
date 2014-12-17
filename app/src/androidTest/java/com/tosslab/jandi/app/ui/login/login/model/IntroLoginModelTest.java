@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,12 +60,12 @@ public class IntroLoginModelTest {
             }
 
             @Override
-            public void onGetTeamListSuccess(String myEmailId, ResMyTeam resMyTeam) {
+            public void onLoginSuccess(String email) {
 
             }
 
             @Override
-            public void onGetTeamListFail(int errorStringResId) {
+            public void onLoginFail(int errorStringResId) {
 
             }
         });
@@ -98,18 +99,18 @@ public class IntroLoginModelTest {
             }
 
             @Override
-            public void onGetTeamListSuccess(String myEmailId, ResMyTeam resMyTeam) {
-                resMyTeams[0] = resMyTeam;
+            public void onLoginSuccess(String email) {
+                resMyTeams[0] = new ResMyTeam();
                 isCalled[0] = true;
             }
 
             @Override
-            public void onGetTeamListFail(int errorStringResId) {
+            public void onLoginFail(int errorStringResId) {
                 isCalled[0] = true;
             }
         });
 
-        introLoginModel.getTeamListInBackground("steve@tosslab.com");
+        introLoginModel.startLogin("steve@tosslab.com", "1234");
 
         await().until(new Callable<Boolean>() {
             @Override
@@ -118,7 +119,7 @@ public class IntroLoginModelTest {
             }
         });
 
-        assertThat(resMyTeams[0], is(notNullValue()));
+        assertThat(JandiPreference.getAccessToken(Robolectric.application), is(notNullValue()));
     }
 
     @Test

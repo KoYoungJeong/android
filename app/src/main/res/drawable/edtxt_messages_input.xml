@@ -4,7 +4,7 @@
     <item android:state_pressed="true" android:state_enabled="true">
         <shape>
             <solid android:color="@color/jandi_messages_edittext_bg"/>
-            <stroke android:width="1dip" android:color="@color/jandi_border"/>
+            <stroke android:width="1dip" android:color="@color/jandi_border_gray"/>
             <corners android:radius="3dip"/>
             <padding
                 android:left="7dip"
@@ -16,7 +16,7 @@
     <item android:state_focused="true" android:state_enabled="true">
         <shape>
             <solid android:color="@color/jandi_messages_edittext_bg"/>
-            <stroke android:width="1dip" android:color="@color/jandi_border"/>
+            <stroke android:width="1dip" android:color="@color/jandi_border_gray"/>
             <corners android:radius="3dip"/>
             <padding
                 android:left="7dip"
@@ -28,7 +28,7 @@
     <item android:state_enabled="false">
         <shape>
             <solid android:color="@color/jandi_messages_edittext_bg"/>
-            <stroke android:width="1dip" android:color="@color/jandi_border"/>
+            <stroke android:width="1dip" android:color="@color/jandi_border_gray"/>
             <corners android:radius="3dip"/>
             <padding
                 android:left="7dip"
@@ -40,7 +40,7 @@
     <item android:state_enabled="true">
         <shape>
             <solid android:color="@color/jandi_messages_edittext_bg"/>
-            <stroke android:width="1dip" android:color="@color/jandi_border"/>
+            <stroke android:width="1dip" android:color="@color/jandi_border_gray"/>
             <corners android:radius="3dip"/>
             <padding
                 android:left="7dip"

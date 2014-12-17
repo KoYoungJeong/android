@@ -1,13 +1,14 @@
 package com.tosslab.jandi.app.network.client.invitation;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -79,5 +80,13 @@ public class InvitationApiClientTest {
 
     }
 
+    @Test
+    public void testGetPendingTeamInfo() {
+        List<ResPendingTeamInfo> pedingTeamInfo = invitationApiClient.getPedingTeamInfo();
+
+        assertNotNull(pedingTeamInfo);
+
+        System.out.println(pedingTeamInfo);
+    }
 
 }

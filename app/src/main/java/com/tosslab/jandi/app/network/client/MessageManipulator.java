@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiClient;

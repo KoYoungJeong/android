@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.messages;
 
-import com.tosslab.jandi.app.network.JandiRestClient;
-import com.tosslab.jandi.app.network.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient_;

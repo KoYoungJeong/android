@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;

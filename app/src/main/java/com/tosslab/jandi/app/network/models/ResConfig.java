@@ -6,8 +6,23 @@ package com.tosslab.jandi.app.network.models;
 public class ResConfig {
     public Version versions;
 
+    @Override
+    public String toString() {
+        return "ResConfig{" +
+                "versions=" + versions +
+                '}';
+    }
+
     public static class Version {
         public String ios;
         public int android;
+
+        @Override
+        public String toString() {
+            return "Version{" +
+                    "ios='" + ios + '\'' +
+                    ", android=" + android +
+                    '}';
+        }
     }
 }

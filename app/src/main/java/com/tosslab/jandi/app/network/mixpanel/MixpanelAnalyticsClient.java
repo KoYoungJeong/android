@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.mixpanel;
 
 import android.content.Context;
 

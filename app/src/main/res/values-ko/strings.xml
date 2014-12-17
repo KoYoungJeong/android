@@ -224,4 +224,5 @@
 <string name="err_profile_exceed_length_of_phone">"전화번호는 20자를 넘을 수 없습니다"</string>
 <string name="err_profile_exceed_length_of_division">"부서명은 60자를 넘을 수 없습니다"</string>
 <string name="err_profile_exceed_length_of_position">"직책명은 60자를 넘을 수 없습니다"</string>
+    <string name="what_is_team_domain">팀 도메인은 팀에 쉽게 접속하실 수 있도록 잔디가 발급해드리는 고유 웹 주소입니다. 팀 이름과는 달라도 되지만 기억하기 쉬운 이름이 좋습니다. 영어 알파벳 3자 이상으로 숫자 또는 빼기(-) 표시와 함께 구성하시면 됩니다.</string>
 </resources>

@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.tosslab.jandi.app.network.JandiAuthClient;
-import com.tosslab.jandi.app.network.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiAuthClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
@@ -32,18 +32,14 @@ public class IntroActivityModel {
     @RestService
     JandiRestClient mJandiRestClient;
 
-    private JandiAuthClient mJandiAuthClient;
+    @Bean
+    JandiAuthClient mJandiAuthClient;
     private Callback callback;
 
     private static final long MAX_DELAY_MS = 1500l;
 
     // check for Splash time (1500ms)
     private final long initTime = System.currentTimeMillis();
-
-    @AfterInject
-    void initObject() {
-        mJandiAuthClient = new JandiAuthClient(mJandiRestClient);
-    }
 
     public void setCallback(Callback callback) {
         this.callback = callback;
@@ -118,8 +114,6 @@ public class IntroActivityModel {
                     callback.onIntroFinish();
                 }
             }
-
-
         }
     }
 

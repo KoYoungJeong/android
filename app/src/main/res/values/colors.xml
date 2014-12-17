@@ -5,7 +5,8 @@
     <color name="jandi_text_medium">#666666</color>
     <color name="jandi_text_light">#999999</color>
     <color name="jandi_text_white">#FFFFFF</color>
-    <color name="jandi_border">#999999</color>
+    <color name="jandi_border_gray">#999999</color>
+    <color name="jandi_border_green">#31C08A</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
 
@@ -20,6 +21,14 @@
     <color name="jandi_agree_policy_pressed">#551A9B6A</color>
     <color name="jandi_agree_policy_selected_all">#221A9B6A</color>
     <color name="jandi_agree_policy_selected">#111A9B6A</color>
+
+    <!-- Team Select -->
+    <color name="jandi_team_select_pendning_name">#999999</color>
+    <color name="jandi_team_select_pendning_ignore">#999999</color>
+    <color name="jandi_team_select_pendning_accept">#31C08A</color>
+
+    <!-- Team Info -->
+    <color name="jandi_team_info_whole_background">#E8E8E8</color>
 
     <!--Log in-->
     <color name="jandi_login_message_bg">#ddf0e9</color>
@@ -91,9 +100,6 @@
     <color name="transparent">#00000000</color>
 
 
-
-
-
     <color name="bg_message_input_panel">#EEEEEE</color>
     <color name="button_text">#FFFFFF</color>
 
@@ -112,18 +118,17 @@
     <color name="file_type">#777777</color>
 
 
-
-
-
-
     <!-- custom light theme: -->
     <color name="dialog_message_text">#333333</color>
     <color name="dialog_title_text">#f3a71e</color>
     <color name="dialog_title_separator">#f3a71e</color>
     <color name="dialog_button_text">#333333</color>
     <color name="dialog_button_normal">@android:color/transparent</color>
-    <color name="dialog_button_pressed">#99f3a71e</color> <!-- 60 % opacity -->
-    <color name="dialog_button_focused">#4Cf3a71e</color> <!-- 30 % opacity -->
-    <color name="dialog_button_separator">#25000000</color> <!-- 7% opacity -->
+    <color name="dialog_button_pressed">#99f3a71e</color>
+    <!-- 60 % opacity -->
+    <color name="dialog_button_focused">#4Cf3a71e</color>
+    <!-- 30 % opacity -->
+    <color name="dialog_button_separator">#25000000</color>
+    <!-- 7% opacity -->
     <color name="background">#FFA500</color>
 </resources>

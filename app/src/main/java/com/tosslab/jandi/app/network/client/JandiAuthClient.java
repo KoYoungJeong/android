@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqCreateTeam;
@@ -6,9 +6,10 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.rest.RestService;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.Locale;
@@ -16,13 +17,11 @@ import java.util.Locale;
 /**
  * Created by justinygchoi on 2014. 7. 16..
  */
+@EBean
 public class JandiAuthClient {
-    JandiRestClient mRestClient;
 
-    public JandiAuthClient(JandiRestClient jandiRestClient) {
-        mRestClient = jandiRestClient;
-        mRestClient.setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
-    }
+    @RestService
+    JandiRestClient mRestClient;
 
     public ResConfig getConfig() throws JandiNetworkException {
         try {
