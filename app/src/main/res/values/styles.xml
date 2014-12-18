@@ -191,6 +191,9 @@
         <item name="android:textSize">16sp</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">textImeMultiLine</item>
+        <item name="android:imeOptions">actionNext</item>
     </style>
 
     <style name="JandiTeam.TextView.Explain" parent="JandiTeam">

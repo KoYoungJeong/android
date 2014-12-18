@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.lists.entities;
 
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.ParsePush;
-import com.parse.SaveCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.apache.log4j.Logger;
@@ -25,6 +23,9 @@ public class EntityManager {
 
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
+
+    private ResAccountInfo accountInfo;
+
     private HashMap<Integer, FormattedEntity> mJoinedTopics;
     private HashMap<Integer, FormattedEntity> mUnjoinedTopics;
     private HashMap<Integer, FormattedEntity> mUsers;
@@ -67,9 +68,11 @@ public class EntityManager {
         mTotalBadgeCount = retrieveTotalBadgeCount();
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * for Badge Count
-     ************************************************************/
+     * **********************************************************
+     */
     private int retrieveTotalBadgeCount() {
         int totalBadgeCount = 0;
 
@@ -97,6 +100,7 @@ public class EntityManager {
 
     /**
      * 현재 entity에 해당하는 Marker가 존재하는지 확인하여 있으면 정보를 추가한다
+     *
      * @param entity
      * @return
      */
@@ -181,9 +185,11 @@ public class EntityManager {
         mSortedGroups = null;
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Getter
-     ************************************************************/
+     * **********************************************************
+     */
     public List<FormattedEntity> getJoinedChannels() {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
         if (mSortedJoinedTopics == null) {
@@ -225,7 +231,7 @@ public class EntityManager {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
         if (mSortedUsersWithoutMe == null) {
             HashMap<Integer, FormattedEntity> usersWithoutMe
-                    = (HashMap<Integer, FormattedEntity>)mUsers.clone();
+                    = (HashMap<Integer, FormattedEntity>) mUsers.clone();
             usersWithoutMe.remove(mMe.id);
             mSortedUsersWithoutMe = sortFormattedEntityList(usersWithoutMe.values());
         }
@@ -246,7 +252,7 @@ public class EntityManager {
     }
 
     public String getDistictId() {
-        return  mMe.id+ "-" + mMyTeam.id;
+        return mMe.id + "-" + mMyTeam.id;
     }
 
     public String getTeamName() {
@@ -259,6 +265,7 @@ public class EntityManager {
 
     /**
      * 인자로 주어진 ID에 해당하는 CDP를 추출한다.
+     *
      * @param givenEntityIds
      * @return
      */
@@ -268,6 +275,7 @@ public class EntityManager {
 
     /**
      * 인자로 주어진 ID 를 제외한 공유 대상 CDP를 추출한다.
+     *
      * @param givenEntityIds
      * @return
      */
@@ -333,9 +341,9 @@ public class EntityManager {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
 
         HashMap<Integer, FormattedEntity> starredUsers
-                = (HashMap<Integer, FormattedEntity>)mStarredUsers.clone();
+                = (HashMap<Integer, FormattedEntity>) mStarredUsers.clone();
         HashMap<Integer, FormattedEntity> users
-                = (HashMap<Integer, FormattedEntity>)mUsers.clone();
+                = (HashMap<Integer, FormattedEntity>) mUsers.clone();
 
         for (int id : joinedMembers) {
             starredUsers.remove(id);
@@ -346,10 +354,12 @@ public class EntityManager {
         return ret;
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 각 채팅 종류별로 새로운 메시지가 있는지 확인
      * 뱃지 카운트의 존재 여부를 검사하여...
-     ************************************************************/
+     * **********************************************************
+     */
     public boolean hasNewTopicMessage() {
         return hasNewMessage(getJoinedChannels());
     }
@@ -417,9 +427,11 @@ public class EntityManager {
         return null;
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Parse subscription
-     ************************************************************/
+     * **********************************************************
+     */
     public void subscribeChannelForParse() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put(JandiConstants.PARSE_MY_ENTITY_ID, mMe.id);
@@ -498,14 +510,24 @@ public class EntityManager {
         return subscribedChannelsFromParse;
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 오름차순 정렬
-     ************************************************************/
+     * **********************************************************
+     */
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
         List<FormattedEntity> sortedEntities = new ArrayList<FormattedEntity>(naiveEntities);
         Collections.sort(sortedEntities, new NameAscCompare());
 
         return sortedEntities;
+    }
+
+    public ResAccountInfo getAccountInfo() {
+        return accountInfo;
+    }
+
+    public void setAccountInfo(ResAccountInfo accountInfo) {
+        this.accountInfo = accountInfo;
     }
 
     static class NameAscCompare implements Comparator<FormattedEntity> {

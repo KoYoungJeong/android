@@ -22,6 +22,7 @@ public class JandiPreference {
     private static final String PREF_ACCESS_TOKEN = "access_token";
     private static final String PREF_ACCESS_TOKEN_TYPE = "access_token_type";
     private static final String PREF_REFRESH_TOKEN_TIME = "refresh_token_time";
+    private static final String PREF_LAST_SELECTED_TEAM_ID = "last_selected_team_id";
 
     public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -144,5 +145,15 @@ public class JandiPreference {
     public static long getLastRefreshTokenTime(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return pref.getLong(PREF_REFRESH_TOKEN_TIME, 0);
+    }
+
+    public static int getLastSelectedTeamId(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(PREF_LAST_SELECTED_TEAM_ID, -1);
+    }
+
+    public static void setLastSelectedTeamId(Context context, int lastSelectedTeamId) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        pref.edit().putInt(PREF_LAST_SELECTED_TEAM_ID, lastSelectedTeamId).commit();
     }
 }

@@ -212,7 +212,7 @@ public class ResAccountInfo {
         public String toString() {
             return "UserEmail{" +
                     "id='" + id + '\'' +
-                    ", primary=" + primary +
+                    ", is_primary=" + primary +
                     ", confirmedAt='" + confirmedAt + '\'' +
                     ", status='" + status + '\'' +
                     '}';

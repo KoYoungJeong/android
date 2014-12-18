@@ -24,22 +24,17 @@ import org.apache.log4j.Logger;
 @EBean
 public class IntroActivityModel {
 
+    private static final long MAX_DELAY_MS = 1500l;
     private final Logger log = Logger.getLogger(IntroActivityModel.class);
-
+    // check for Splash time (1500ms)
+    private final long initTime = System.currentTimeMillis();
     @RootContext
     Context context;
-
     @RestService
     JandiRestClient mJandiRestClient;
-
     @Bean
     JandiAuthClient mJandiAuthClient;
     private Callback callback;
-
-    private static final long MAX_DELAY_MS = 1500l;
-
-    // check for Splash time (1500ms)
-    private final long initTime = System.currentTimeMillis();
 
     public void setCallback(Callback callback) {
         this.callback = callback;
@@ -104,15 +99,15 @@ public class IntroActivityModel {
             long currentTimeGap = currentTimeMillis - initTime;
             long sleepTime = MAX_DELAY_MS - currentTimeGap;
 
-            if (sleepTime > 0) {
-                try {
+            try {
+                if (sleepTime > 0) {
                     // delay for splash
                     Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    callback.onIntroFinish();
                 }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                callback.onIntroFinish();
             }
         }
     }

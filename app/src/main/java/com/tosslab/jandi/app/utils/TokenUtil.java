@@ -16,6 +16,12 @@ public class TokenUtil {
         JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
     }
 
+    public static void clearTokenInfo(Context context) {
+        JandiPreference.setAccessToken(context, "");
+        JandiPreference.setAccessTokenType(context, "");
+        JandiPreference.setRefreshToken(context, "");
+    }
+
     public static JandiV2HttpAuthentication getRequestAuthentication(Context context) {
         return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(context), JandiPreference.getAccessToken(context));
     }

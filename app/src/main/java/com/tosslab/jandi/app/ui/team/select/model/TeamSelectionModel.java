@@ -2,12 +2,14 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -97,4 +99,33 @@ public class TeamSelectionModel {
     }
 
 
+    @SupposeBackground
+    public List<ResPendingTeamInfo> ignoreInvite(Team team) {
+
+        IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, invitationApiClient, team);
+        RequestManager<List<ResPendingTeamInfo>> requestManager = RequestManager.newInstance(context, ignoreInviteRequest);
+        try {
+            return requestManager.request();
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @SupposeBackground
+    public List<ResTeamDetailInfo> acceptInvite(Team team) {
+
+        ResAccountInfo accountInfo = ((JandiApplication) context.getApplicationContext()).getEntityManager().getAccountInfo();
+        AcceptInviteRequest request = AcceptInviteRequest.create(context, invitationApiClient, team, accountInfo.getName());
+        RequestManager<List<ResTeamDetailInfo>> requestManager = RequestManager.newInstance(context, request);
+        try {
+            return requestManager.request();
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+    }
 }

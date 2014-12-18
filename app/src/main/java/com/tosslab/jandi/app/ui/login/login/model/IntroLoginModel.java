@@ -3,12 +3,16 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -81,6 +85,11 @@ public class IntroLoginModel {
             if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
                 // Save Token & Get TeamList
                 TokenUtil.saveTokenInfo(context, accessToken);
+
+                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
+                RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
+                ResAccountInfo resAccountInfo = requestManager.request();
+                ((JandiApplication) context.getApplicationContext()).getEntityManager().setAccountInfo(resAccountInfo);
 
                 if (callback != null) {
                     callback.onLoginSuccess(myEmailId);

@@ -58,7 +58,7 @@ public class IntroActivityViewModel {
     @UiThread
     public void checkAutoSignIn() {
         String accessToken = JandiPreference.getAccessToken(activity);
-        int mySelectedTeamId = JandiPreference.getMyEntityId(activity);
+        int mySelectedTeamId = JandiPreference.getLastSelectedTeamId(activity);
         if (!TextUtils.isEmpty(accessToken)) {
             if (mySelectedTeamId != JandiPreference.NOT_SET_YET) {
                 moveToMainActivity();

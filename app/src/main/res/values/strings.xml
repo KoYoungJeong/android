@@ -231,4 +231,5 @@ Welcome to JANDI"</string>
     <string name="what_is_member_profile">"팀에서 사용할 이름과 이메일을 선택해주세요.
 계정 정보와는 다른 내용을 사용할 수 있지만, 이름은 멘션 또는 검색에도 이용되기 때문에 팀원들에게 통용되는 호칭이 좋습니다."</string>
     <string name="team_create">팀 생성</string>
+    <string name="fail_to_create_team">팀 생성에 실패하였습니다. 다시 시도해주십시요.</string>
 </resources>

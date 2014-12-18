@@ -14,6 +14,8 @@ public class Team {
     private final String teamDomain;
     private Status status;
     private boolean isSelected;
+    private String userEmail;
+    private String token;
 
     private Team(int teamId, int memberId, String name, String teamDomain, Status status) {
         this.teamId = teamId;
@@ -29,11 +31,22 @@ public class Team {
     }
 
     public static Team createTeam(ResPendingTeamInfo resPendingTeamInfo) {
-        return new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING);
+        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING);
+        team.setUserEmail(resPendingTeamInfo.getToEmail());
+        team.setToken(resPendingTeamInfo.getToken());
+        return team;
     }
 
     public static Team createEmptyTeam() {
         return new Team(0, 0, "", "", Status.CREATE);
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public int getTeamId() {
@@ -68,9 +81,28 @@ public class Team {
         this.isSelected = isSelected;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "teamId=" + teamId +
+                ", memberId=" + memberId +
+                ", name='" + name + '\'' +
+                ", teamDomain='" + teamDomain + '\'' +
+                ", status=" + status +
+                ", isSelected=" + isSelected +
+                ", userEmail='" + userEmail + '\'' +
+                '}';
+    }
+
     public enum Status {
         JOINED, PENDING, CREATE
     }
-
-
 }

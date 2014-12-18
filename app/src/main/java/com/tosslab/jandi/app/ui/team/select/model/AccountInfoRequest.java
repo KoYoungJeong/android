@@ -32,10 +32,6 @@ public class AccountInfoRequest implements Request<ResAccountInfo> {
 
         jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        try {
-            return jandiRestClient.getAccountInfo();
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        }
+        return jandiRestClient.getAccountInfo();
     }
 }

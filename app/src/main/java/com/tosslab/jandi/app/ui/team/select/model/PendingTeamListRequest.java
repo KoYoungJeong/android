@@ -30,10 +30,6 @@ public class PendingTeamListRequest implements Request<List<ResPendingTeamInfo>>
     public List<ResPendingTeamInfo> request() throws JandiNetworkException {
         invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        try {
-            return invitationApiClient.getPedingTeamInfo();
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        }
+        return invitationApiClient.getPedingTeamInfo();
     }
 }

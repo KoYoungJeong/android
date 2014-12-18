@@ -1,28 +1,46 @@
 package com.tosslab.jandi.app.lists.team;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
+import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by justinygchoi on 2014. 9. 25..
  */
-public class TeamListAdapter extends ArrayAdapter<Team> {
+public class TeamListAdapter extends BaseAdapter {
+
+    private final ArrayList<Team> teams;
+    private Context context;
 
     public TeamListAdapter(Context context) {
-        super(context, R.layout.item_team_list, new ArrayList<Team>());
+        this.context = context;
+        teams = new ArrayList<Team>();
     }
 
+    @Override
+    public int getCount() {
+        return teams != null ? teams.size() : 0;
+    }
+
+    @Override
+    public Team getItem(int position) {
+        return teams.get(position);
+    }
 
     @Override
     public long getItemId(int i) {
@@ -32,7 +50,7 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
     @Override
     public View getView(int position, View convertView, ViewGroup viewGroup) {
         Team team = getItem(position);
-        Context context = getContext();
+        getItemViewType(position);
         if (convertView == null) {
             switch (team.getStatus()) {
                 case JOINED:
@@ -59,9 +77,31 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
                 nameView.setText(team.getName());
                 break;
             case PENDING:
-
+                acceptBtn = (Button) convertView.findViewById(R.id.btn_team_list_accept);
+                ignoreBtn = (Button) convertView.findViewById(R.id.btn_team_list_ignore);
+                acceptBtn.setTag(team);
+                ignoreBtn.setTag(team);
                 iconView.setImageResource(R.drawable.jandi_team_selector_icon);
                 nameView.setText(team.getName());
+                ignoreBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Team clickedTeam = (Team) v.getTag();
+                        Log.d("", clickedTeam.toString());
+                        EventBus.getDefault().post(TeamInviteIgnoreEvent.create(clickedTeam));
+                    }
+                });
+
+                acceptBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Team clickedTeam = (Team) v.getTag();
+                        Log.d("", clickedTeam.toString());
+                        EventBus.getDefault().post(TeamInviteAcceptEvent.create(clickedTeam));
+
+                    }
+                });
+
                 break;
             case CREATE:
                 iconView.setImageResource(R.drawable.jandi_icon_teamlist_add);
@@ -78,45 +118,16 @@ public class TeamListAdapter extends ArrayAdapter<Team> {
     @Override
     public int getViewTypeCount() {
 
-        int realCount = getCount();
-
-        boolean hasJoinTeam = false;
-        boolean hasPendingTeam = false;
-        // Create Team Type
-        int viewTypeCount = 1;
-
-        for (int idx = 0; idx < realCount; ++idx) {
-            Team.Status status = getItem(idx).getStatus();
-
-            switch (status) {
-
-                case JOINED:
-                    if (!hasJoinTeam) {
-                        hasJoinTeam = true;
-                        ++viewTypeCount;
-                    }
-                    break;
-                case PENDING:
-                    if (!hasPendingTeam) {
-                        hasPendingTeam = true;
-                        ++viewTypeCount;
-                    }
-                    break;
-                case CREATE:
-                    break;
-            }
-
-            if (hasJoinTeam && hasPendingTeam) {
-                break;
-            }
-        }
-
-        return viewTypeCount;
+        return Team.Status.values().length;
     }
 
     @Override
     public int getItemViewType(int position) {
 
         return getItem(position).getStatus().ordinal();
+    }
+
+    public void add(Team userTeam) {
+        teams.add(userTeam);
     }
 }

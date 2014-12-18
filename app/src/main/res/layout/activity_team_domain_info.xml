@@ -49,11 +49,12 @@
         android:id="@+id/et_team_detail_info_member_name"
         style="@style/JandiTeam.EditText"
         android:hint="이름"
+        android:imeOptions="actionDone"
         android:paddingLeft="16dp"
         android:paddingRight="16dp" />
 
     <Spinner
-        android:id="@+id/et_team_detail_info_member_email"
+        android:id="@+id/spinner_team_detail_info_member_email"
         style="@style/JandiTeam.EditText"
         android:layout_marginTop="1dp"
         android:paddingLeft="16dp"

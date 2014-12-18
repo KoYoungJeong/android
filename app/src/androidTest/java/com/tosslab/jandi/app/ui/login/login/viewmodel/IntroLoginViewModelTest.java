@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
-import com.tosslab.jandi.app.ui.team.TeamSelectionActivity_;
+import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.junit.Before;

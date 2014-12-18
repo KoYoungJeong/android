@@ -1,11 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.tosslab.jandi.app.R;
 
@@ -30,13 +26,5 @@ public class ProgressWheel extends ProgressDialog {
     public void show() {
         super.show();
         setContentView(R.layout.progress_wheel);
-    }
-
-    public static ProgressWheel getInstance(Context context) {
-        if (__instance__ == null) {
-            __instance__ = new ProgressWheel(context);
-            __instance__.init();
-        }
-        return __instance__;
     }
 }
