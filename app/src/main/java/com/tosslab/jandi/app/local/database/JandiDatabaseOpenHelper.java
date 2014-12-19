@@ -25,16 +25,20 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
 
             DatabaseConsts.Table.account_email + " (" +
                     DatabaseConsts.AccountEmail._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.AccountEmail.id + " TEXT NOT NULL, " +
                     DatabaseConsts.AccountEmail.confirmedAt + " TEXT NOT NULL, " +
-                    DatabaseConsts.AccountEmail.is_primary + " INTEGER, " +
+                    DatabaseConsts.AccountEmail.is_primary + " INTEGER NOT NULL DEFAULT 0, " +
                     DatabaseConsts.AccountEmail.status + " TEXT" +
                     ");",
 
             DatabaseConsts.Table.account_team + " (" +
                     DatabaseConsts.AccountTeam._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.AccountTeam.name + " TEXT NOT NULL, " +
-                    DatabaseConsts.AccountTeam.teamId + " INTEGER, " +
-                    DatabaseConsts.AccountTeam.memberId + " INTEGER" +
+                    DatabaseConsts.AccountTeam.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.AccountTeam.teamDomain + " TEXT NOT NULL, " +
+                    DatabaseConsts.AccountTeam.unread + " INTEGER, " +
+                    DatabaseConsts.AccountTeam.memberId + " INTEGER," +
+                    DatabaseConsts.AccountTeam.selected + " INTEGER NOT NULL DEFAULT 0" +
                     ");",
 
             DatabaseConsts.Table.account_device + " (" +

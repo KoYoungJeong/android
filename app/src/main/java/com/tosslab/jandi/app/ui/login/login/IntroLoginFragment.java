@@ -1,18 +1,18 @@
 package com.tosslab.jandi.app.ui.login.login;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.TeamCreationDialogFragment;
-import com.tosslab.jandi.app.events.RequestTeamCreationEvent;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
-import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.ui.signup.SignUpActivity_;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
-import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.springframework.http.HttpStatus;
 
 import de.greenrobot.event.EventBus;
 
@@ -28,78 +28,44 @@ public class IntroLoginFragment extends Fragment {
     @Bean
     public IntroLoginViewModel introLoginViewModel;
 
-    @AfterViews
-    void initView() {
-        introLoginModel.setCallback(new IntroLoginModel.Callback() {
-            @Override
-            public void onCreateTeamSuccess() {
-                introLoginViewModel.createTeamSucceed();
-            }
+    @Background
+    void startLogin(String email, String password) {
 
-            @Override
-            public void onCreateTeamFail(int stringResId) {
-                introLoginViewModel.createTeamFailed(stringResId);
-            }
+        int httpCode = introLoginModel.startLogin(email, password);
 
-            @Override
-            public void onLoginSuccess(String myEmailId) {
-                introLoginViewModel.loginSuccess(myEmailId);
-            }
+        introLoginViewModel.dissmissProgressDialog();
 
-            @Override
-            public void onLoginFail(int errorStringResId) {
-                introLoginViewModel.loginFail(errorStringResId);
-            }
-        });
+        if (httpCode == HttpStatus.OK.value()) {
+            introLoginViewModel.loginSuccess(email);
+        } else if (httpCode == JandiNetworkException.DATA_NOT_FOUND) {
+            introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
+        } else {
+            introLoginViewModel.loginFail(R.string.err_network);
 
-        introLoginViewModel.setViewCallback(new IntroLoginViewModel.ViewCallback() {
-            @Override
-            public void onTeamCreate(String email) {
-                showTeamTeamCreationFragment(email);
-            }
-
-            @Override
-            public void onLogin(String email, String password) {
-                startLogin(email, password);
-            }
-        });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-
-    private void showTeamTeamCreationFragment(String email) {
-        // belong to Fragment? LoginViewModel?
-        DialogFragment newFragment = TeamCreationDialogFragment.newInstance(email);
-        newFragment.show(getFragmentManager(), "dialog");
-    }
-
-    public void onEvent(RequestTeamCreationEvent event) {
-        String mail = event.email;
-        if (introLoginModel.isValidEmailFormat(mail)) {
-            ColoredToast.showError(getActivity(), getString(R.string.err_login_invalid_id));
-            return;
         }
-        introLoginViewModel.showProgressDialog();
-        introLoginModel.createTeamInBackground(mail);
     }
 
-    private void startLogin(String email, String password) {
-        // belong to Fragment? LoginViewModel?
+
+    /**
+     * SignUp
+     */
+    @Click(R.id.btn_getting_started)
+    void onClickSignUp() {
+        SignUpActivity_.intent(getActivity())
+                .start();
+    }
+
+    /**
+     * Login
+     */
+    @Click(R.id.btn_intro_action_signin_start)
+    void onClickLogin() {
+
         introLoginViewModel.hideKeypad();
-
         introLoginViewModel.showProgressDialog();
-        introLoginModel.startLogin(email, password);
-    }
 
+        String emailText = introLoginViewModel.getEmailText();
+        String passwordText = introLoginViewModel.getPasswordText();
+        startLogin(emailText, passwordText);
+    }
 }

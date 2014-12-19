@@ -5,4 +5,8 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqDeleteTopic {
     public int teamId;
+
+    public ReqDeleteTopic(int teamId) {
+        this.teamId = teamId;
+    }
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.maintab;
 
 import android.app.ActionBar;
 import android.content.BroadcastReceiver;
@@ -16,9 +16,11 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -33,7 +35,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -46,21 +47,26 @@ import de.greenrobot.event.EventBus;
 public class MainTabActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MainTabActivity.class);
 
-    @RestService
-    JandiRestClient mJandiRestClient;
-
-    private String mMyToken;
-    private ProgressWheel mProgressWheel;
-    private Context mContext;
-
-    private EntityManager mEntityManager;
     @Bean
     JandiEntityClient mJandiEntityClient;
 
+    private ProgressWheel mProgressWheel;
+    private Context mContext;
+    private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private ViewPager mViewPager;
 
-    private boolean isFirst = true;    // TODO poor implementation
+    private boolean isFirst = true;    // poor implementation
+    /**
+     * JandiGCMBroadcastReceiver로부터 Push가 들어왔다는 event가 MainTabActivity를 보고 있을 때
+     * 발생한다면 알람 카운트 갱신을 위해 다시 받아온다.
+     */
+    private BroadcastReceiver mRefreshEntities = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            getEntities();
+        }
+    };
 
     @AfterViews
     void initView() {
@@ -71,14 +77,13 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        // myToken 획득
-        mMyToken = JandiPreference.getMyToken(mContext);
-        // Network Client 설정
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        actionBar.setTitle(selectedTeamInfo.getName());
 
         // ViewPager
         View[] tabViews = new View[4];
@@ -126,16 +131,18 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         getEntities();
     }
 
+    /**
+     * *********************************************************
+     * Entities List Update / Refresh
+     * **********************************************************
+     */
+
     @Override
     public void onPause() {
         unregisterReceiver(mRefreshEntities);
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
-
-    /************************************************************
-     * Entities List Update / Refresh
-     ************************************************************/
 
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
@@ -148,8 +155,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            // TODO Temp TeamId
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo(1);
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
             log.error(e.getErrorInfo() + "get entity failed", e);
@@ -222,24 +228,14 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     /**
-     * JandiGCMBroadcastReceiver로부터 Push가 들어왔다는 event가 MainTabActivity를 보고 있을 때
-     * 발생한다면 알람 카운트 갱신을 위해 다시 받아온다.
-     */
-    private BroadcastReceiver mRefreshEntities = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            getEntities();
-        }
-    };
-
-    /**
      * ************************
      * TODO Settings 에 있는 것과 동일. 뺄까 ??
      */
 
     public void onEvent(SignOutEvent event) {
-        if (mEntityManager != null)
+        if (mEntityManager != null) {
             trackSignOut(mEntityManager.getDistictId());
+        }
         returnToLoginActivity();
     }
 

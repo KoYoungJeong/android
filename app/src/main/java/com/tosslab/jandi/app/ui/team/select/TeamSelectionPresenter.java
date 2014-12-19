@@ -8,7 +8,9 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.team.TeamListAdapter;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -81,7 +83,7 @@ public class TeamSelectionPresenter {
                 // nothing action
                 break;
             case CREATE:
-                // TODO create team action
+                // create team action
                 TeamDomainInfoActivity_.intent(activity)
                         .mode(TeamDomainInfoActivity.Mode.CREATE.name())
                         .startForResult(TeamSelectionActivity.REQ_TEAM_CREATE);
@@ -121,11 +123,17 @@ public class TeamSelectionPresenter {
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         TokenUtil.clearTokenInfo(activity);
+
+                        JandiDatabaseManager.getInstance(activity).deleteAccountInfo();
+                        JandiDatabaseManager.getInstance(activity).deleteAccountTeams();
+                        JandiDatabaseManager.getInstance(activity).deleteAccountEmails();
+                        JandiDatabaseManager.getInstance(activity).deleteAccountDevices();
 
                         IntroMainActivity_.intent(activity)
                                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                .startForResult(TeamSelectionActivity.REQ_TEAM_CREATE);
+                                .start();
 
                         activity.finish();
 
@@ -154,7 +162,17 @@ public class TeamSelectionPresenter {
         return lastSelectedPosition;
     }
 
-    public void selectTeam(int lastSelectedPosition) {
-        log.debug("Selected Team Id : " + lastSelectedPosition);
+    public Team getLastSelectedItem() {
+        return teamListAdapter.getItem(lastSelectedPosition);
+    }
+
+    @UiThread
+    public void selectTeam(Team team) {
+        log.debug("Selected Team Id : " + team);
+
+        MainTabActivity_.intent(activity)
+                .start();
+        activity.finish();
+
     }
 }

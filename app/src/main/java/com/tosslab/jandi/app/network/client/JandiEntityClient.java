@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.account.devices.AccountDevicesApiClient;
 import com.tosslab.jandi.app.network.client.file.FileApiClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.client.profile.ProfileApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
 import com.tosslab.jandi.app.network.client.settings.starred.StarredEntityApiClient;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
+import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteUsers;
@@ -28,9 +29,9 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -46,8 +47,6 @@ import java.util.List;
  */
 @EBean
 public class JandiEntityClient {
-    private final String AUTH_HEADER = JandiConstants.AUTH_HEADER;
-    private final String ACCEPT_HEADER = "Accept";
 
     @RestService
     JandiRestClient mJandiRestClient;
@@ -81,36 +80,33 @@ public class JandiEntityClient {
 
     @RootContext
     Context context;
+    private int selectedTeamId;
 
     @AfterInject
     void initAuthentication() {
-        String myToken = JandiPreference.getMyToken(context);
-        mJandiRestClient.setHeader(AUTH_HEADER, myToken);
-        mJandiRestClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
 
-        invitationApiClient.setHeader(AUTH_HEADER, myToken);
-        invitationApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        selectedTeamId = selectedTeamInfo.getTeamId();
 
-        accountDevicesApiClient.setHeader(AUTH_HEADER, myToken);
-        accountDevicesApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        JandiV2HttpAuthentication authentication = TokenUtil.getRequestAuthentication(context);
 
-        groupApiClient.setHeader(AUTH_HEADER, myToken);
-        groupApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        mJandiRestClient.setAuthentication(authentication);
 
-        channelApiClient.setHeader(AUTH_HEADER, myToken);
-        channelApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        invitationApiClient.setAuthentication(authentication);
 
-        messagesApiClient.setHeader(AUTH_HEADER, myToken);
-        messagesApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        accountDevicesApiClient.setAuthentication(authentication);
 
-        fileApiClient.setHeader(AUTH_HEADER, myToken);
-        fileApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        groupApiClient.setAuthentication(authentication);
 
-        starredEntityApiClient.setHeader(AUTH_HEADER, myToken);
-        starredEntityApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        channelApiClient.setAuthentication(authentication);
 
-        profileApiClient.setHeader(AUTH_HEADER, myToken);
-        profileApiClient.setHeader(ACCEPT_HEADER, JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME);
+        messagesApiClient.setAuthentication(authentication);
+
+        fileApiClient.setAuthentication(authentication);
+
+        starredEntityApiClient.setAuthentication(authentication);
+
+        profileApiClient.setAuthentication(authentication);
     }
 
     /**
@@ -121,7 +117,7 @@ public class JandiEntityClient {
     public List<ResInvitationMembers> inviteTeamMember(String email) throws JandiNetworkException {
         try {
             List<String> strings = Arrays.asList(email);
-            return invitationApiClient.inviteMembers(new ReqInvitationMembers(1, strings, "ko"));
+            return invitationApiClient.inviteMembers(new ReqInvitationMembers(selectedTeamId, strings, "ko"));
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -132,10 +128,10 @@ public class JandiEntityClient {
      * Entity (Channel, Private Group, Direct Message) 관련
      * **********************************************************
      */
-    public ResLeftSideMenu getTotalEntitiesInfo(int teamId) throws JandiNetworkException {
+    public ResLeftSideMenu getTotalEntitiesInfo() throws JandiNetworkException {
         try {
 
-            return mJandiRestClient.getInfosForSideMenu(teamId);
+            return mJandiRestClient.getInfosForSideMenu(selectedTeamId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -143,6 +139,7 @@ public class JandiEntityClient {
 
     public ResCommon createPublicTopic(String entityName) throws JandiNetworkException {
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
         try {
             return channelApiClient.createChannel(reqCreateTopic);
@@ -154,6 +151,7 @@ public class JandiEntityClient {
 
     public ResCommon createPrivateGroup(String entityName) throws JandiNetworkException {
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
         try {
             return groupApiClient.createPrivateGroup(reqCreateTopic);
@@ -165,7 +163,7 @@ public class JandiEntityClient {
 
     public ResCommon joinChannel(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
         try {
-            return channelApiClient.joinChannel(channel.id);
+            return channelApiClient.joinTopic(channel.id, new ReqDeleteTopic(selectedTeamId));
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
@@ -174,7 +172,7 @@ public class JandiEntityClient {
 
     public ResCommon leaveChannel(int id) throws JandiNetworkException {
         try {
-            return channelApiClient.leaveChannel(id);
+            return channelApiClient.leaveTopic(id, new ReqDeleteTopic(selectedTeamId));
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
@@ -183,7 +181,7 @@ public class JandiEntityClient {
 
     public ResCommon leavePrivateGroup(int id) throws JandiNetworkException {
         try {
-            return channelApiClient.leaveChannel(id);
+            return channelApiClient.leaveTopic(id, new ReqDeleteTopic(selectedTeamId));
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -251,7 +249,7 @@ public class JandiEntityClient {
      */
     public ResCommon enableFavorite(int entityId) throws JandiNetworkException {
         try {
-            return starredEntityApiClient.enableFavorite(new ReqTeam(1), entityId);
+            return starredEntityApiClient.enableFavorite(new ReqTeam(selectedTeamId), entityId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -259,7 +257,7 @@ public class JandiEntityClient {
 
     public ResCommon disableFavorite(int entityId) throws JandiNetworkException {
         try {
-            return starredEntityApiClient.disableFavorite(1, entityId);
+            return starredEntityApiClient.disableFavorite(selectedTeamId, entityId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -326,7 +324,7 @@ public class JandiEntityClient {
      */
     public ResFileDetail getFileDetail(int messageId) throws JandiNetworkException {
         try {
-            return messagesApiClient.getFileDetail(1, messageId);
+            return messagesApiClient.getFileDetail(selectedTeamId, messageId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -353,7 +351,7 @@ public class JandiEntityClient {
     }
 
     public ResCommon unshareMessage(int messageId, int cdpIdToBeunshared) throws JandiNetworkException {
-        ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(1, cdpIdToBeunshared);
+        ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(selectedTeamId, cdpIdToBeunshared);
         try {
             return messagesApiClient.unshareMessage(reqUnshareMessage, messageId);
         } catch (HttpStatusCodeException e) {
@@ -374,7 +372,7 @@ public class JandiEntityClient {
 
     public ResCommon deleteMessageComment(int messageId, int feedbackId) throws JandiNetworkException {
         try {
-            return commentsApiClient.deleteMessageComment(1, feedbackId, messageId);
+            return commentsApiClient.deleteMessageComment(selectedTeamId, feedbackId, messageId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
@@ -382,7 +380,7 @@ public class JandiEntityClient {
 
     public ResCommon deleteFile(int fileId) throws JandiNetworkException {
         try {
-            return fileApiClient.deleteFile(1, fileId);
+            return fileApiClient.deleteFile(selectedTeamId, fileId);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }

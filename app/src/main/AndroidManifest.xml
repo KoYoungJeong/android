@@ -47,7 +47,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified" />
         <activity
-            android:name=".ui.MainTabActivity_"
+            android:name=".ui.maintab.MainTabActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity

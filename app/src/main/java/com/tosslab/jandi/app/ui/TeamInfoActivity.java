@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -58,14 +57,11 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
     @RestService
     JandiRestClient jandiRestClient;
-
+    @Bean
+    JandiEntityClient mJandiEntityClient;
     private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-    @Bean
-    JandiEntityClient mJandiEntityClient;
-    private String mMyToken;
-
     private EditText mEditTextEmailAddress;
     private Button mButtonInvitation;
     private ToolTipRelativeLayout mToolTipRelativeLayout;
@@ -78,7 +74,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         setUpToolTip();
         setUpActionBar();
         initProgressWheel();
-        initNetworkClientForInvitation();
         addInvitationViewAsListviewFooter();
 
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -107,10 +102,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
-    }
-
-    private void initNetworkClientForInvitation() {
-        mMyToken = JandiPreference.getMyToken(this);
     }
 
     @SupposeUiThread

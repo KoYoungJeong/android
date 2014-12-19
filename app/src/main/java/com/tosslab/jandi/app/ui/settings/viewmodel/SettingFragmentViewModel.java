@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -34,15 +33,6 @@ public class SettingFragmentViewModel {
     JandiRestClient jandiRestClient;
     @Bean
     JandiEntityClient mJandiEntityClient;
-
-
-    private String myToken;
-
-    @AfterInject
-    void initObject() {
-        myToken = JandiPreference.getMyToken(context);
-
-    }
 
     @Background
     public void changeNotificationTarget(String notificationTarget) {

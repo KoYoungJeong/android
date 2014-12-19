@@ -50,7 +50,6 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -95,17 +94,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     ImageView imageViewPhotoFile;
     ImageView iconFileType;
-
-    public String myToken;
-
+    @Bean
+    JandiEntityClient mJandiEntityClient;
     private ResMessages.FileMessage mResFileDetail;
     private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
     private EntityManager mEntityManager;
-    @Bean
-    JandiEntityClient mJandiEntityClient;
-
 
     @AfterViews
     public void initForm() {
@@ -114,7 +109,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         setUpActionBar();
         initProgressWheel();
         addFileDetailViewAsListviewHeader();
-        initNetworkClientForFileDetail();
         setEditTextWatcher();
 
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -151,10 +145,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
-    }
-
-    private void initNetworkClientForFileDetail() {
-        myToken = JandiPreference.getMyToken(this);
     }
 
     @Override

@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -46,20 +45,14 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     ExpandableListView mListViewEntities;
     @RestService
     JandiRestClient mJandiRestClient;
-
-    private EntityExpandableListAdapter mEntityListAdapter;
     @Bean
     JandiEntityClient mJandiEntityClient;
-
-    private String mMyToken;
+    private EntityExpandableListAdapter mEntityListAdapter;
     private EntityManager mEntityManager;
 
     @AfterViews
     void bindAdapter() {
         setHasOptionsMenu(true);
-
-        // myToken 획득
-        mMyToken = JandiPreference.getMyToken(mContext);
 
         mEntityListAdapter = new EntityExpandableListAdapter(mContext,
                 EntityExpandableListAdapter.TYPE_PRIVATE_ENTITY_LIST);
@@ -112,6 +105,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
 
     /**
      * Event from MainTabActivity
+     *
      * @param event
      */
     public void onEvent(RetrieveTopicListEvent event) {
@@ -119,7 +113,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     }
 
     private void retrieveEntityList() {
-        EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
+        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
             mEntityManager = entityManager;
             mEntityListAdapter.retrieveChildList(
@@ -133,6 +127,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
 
     /**
      * 채널에 대한 리스트를 눌렀을 때...
+     *
      * @param formattedEntity
      */
     void main_list_entitiesItemClicked(final FormattedEntity formattedEntity) {
@@ -160,6 +155,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
 
     /**
      * PrivateGroup 생성 이벤트 획득 from EditTextDialogFragment
+     *
      * @param event
      */
     public void onEvent(ConfirmCreatePrivateTopicEvent event) {

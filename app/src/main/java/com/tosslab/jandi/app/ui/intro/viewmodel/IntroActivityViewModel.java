@@ -5,17 +5,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.MainTabActivity_;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 
 /**
@@ -55,29 +54,26 @@ public class IntroActivityViewModel {
                 .show();
     }
 
-    @UiThread
-    public void checkAutoSignIn() {
-        String accessToken = JandiPreference.getAccessToken(activity);
-        int mySelectedTeamId = JandiPreference.getLastSelectedTeamId(activity);
-        if (!TextUtils.isEmpty(accessToken)) {
-            if (mySelectedTeamId != JandiPreference.NOT_SET_YET) {
-                moveToMainActivity();
-            } else {
-                moveTeamSelectActivity();
-            }
+    public void moveMainOrTeamSelectActivity() {
+
+        ResAccountInfo.UserTeam mySelectedTeam = JandiDatabaseManager.getInstance(activity).getSelectedTeamInfo();
+
+        if (mySelectedTeam != null) {
+            moveToMainActivity();
         } else {
-            moveToIntroTutorialActivity();
+            moveTeamSelectActivity();
         }
     }
 
-    private void moveTeamSelectActivity() {
+    @UiThread
+    void moveTeamSelectActivity() {
         TeamSelectionActivity_
                 .intent(activity)
                 .start();
         activity.finish();
     }
 
-    @SupposeUiThread
+    @UiThread
     void moveToMainActivity() {
         // Move MainActivity
         MainTabActivity_.intent(activity)
@@ -89,9 +85,8 @@ public class IntroActivityViewModel {
         activity.finish();
     }
 
-
-    @SupposeUiThread
-    void moveToIntroTutorialActivity() {
+    @UiThread
+    public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
         IntroMainActivity_.intent(activity).start();
         activity.finish();

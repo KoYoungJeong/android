@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
-import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -23,6 +22,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.rest.RestService;
 
 import java.util.ArrayList;
@@ -95,21 +95,21 @@ public class TeamSelectionActivity extends Activity {
 
     public void onEvent(TeamInviteAcceptEvent teamInviteAcceptEvent) {
 
-        teamSelectionPresenter.showProgressWheel();
         acceptInviteTeam(teamInviteAcceptEvent);
 
     }
 
     public void onEvent(TeamInviteIgnoreEvent teamInviteIgnoreEvent) {
-        teamSelectionPresenter.showProgressWheel();
         ignoreInviteTeam(teamInviteIgnoreEvent);
 
     }
 
     @Background
     void acceptInviteTeam(TeamInviteAcceptEvent teamInviteAcceptEvent) {
+        teamSelectionPresenter.showProgressWheel();
         List<ResTeamDetailInfo> resTeamDetailInfos = teamSelectionModel.acceptInvite(teamInviteAcceptEvent.getTeam());
         if (resTeamDetailInfos != null) {
+            teamSelectionModel.updateToDBJoinedTeamInfo();
             getTeamList();
         } else {
             teamSelectionPresenter.showErrorToast(400, "");
@@ -119,9 +119,11 @@ public class TeamSelectionActivity extends Activity {
 
     @Background
     void ignoreInviteTeam(TeamInviteIgnoreEvent teamInviteIgnoreEvent) {
+        teamSelectionPresenter.showProgressWheel();
         List<ResPendingTeamInfo> resPendingTeamInfos = teamSelectionModel.ignoreInvite(teamInviteIgnoreEvent.getTeam());
 
         if (resPendingTeamInfos != null) {
+            teamSelectionModel.updateToDBJoinedTeamInfo();
             getTeamList();
         } else {
             teamSelectionPresenter.showErrorToast(400, "");
@@ -147,22 +149,18 @@ public class TeamSelectionActivity extends Activity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+    @OptionsItem(R.id.action_confirm)
+    void selectTeam() {
 
-                movePreviousActivity();
+        Team lastSelectedItem = teamSelectionPresenter.getLastSelectedItem();
+        teamSelectionModel.updateSelectedTeam(lastSelectedItem);
+        teamSelectionPresenter.selectTeam(lastSelectedItem);
+    }
 
-                return true;
-            case R.id.action_confirm:
+    @OptionsItem(android.R.id.home)
+    void goHome() {
+        movePreviousActivity();
 
-                teamSelectionPresenter.selectTeam(teamSelectionPresenter.getLastSelectedPosition());
-
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void movePreviousActivity() {

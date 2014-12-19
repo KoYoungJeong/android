@@ -16,7 +16,7 @@ public class RequestManager<ResponseObject> {
     private final static Logger logger = Logger.getLogger(RequestManager.class);
 
     private final Context context;
-    private final Request<ResponseObject> request;
+    private Request<ResponseObject> request;
 
     private RequestManager(Context context, Request<ResponseObject> request) {
         this.context = context;
@@ -67,7 +67,8 @@ public class RequestManager<ResponseObject> {
 
             ++loginRetryCount;
             try {
-                accessToken = new TokenRefreshRequest(context, "").request();
+                // Request Access token, and save token
+                accessToken = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
             } catch (HttpStatusCodeException e) {
                 e.printStackTrace();
             }

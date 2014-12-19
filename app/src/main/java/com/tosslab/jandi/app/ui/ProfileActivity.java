@@ -31,14 +31,14 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -61,11 +61,9 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_profile)
 public class ProfileActivity extends BaseAnalyticsActivity {
-    private final Logger log = Logger.getLogger(ProfileActivity.class);
-
     private static final int REQ_CODE_PICK_IMAGE = 0;
     private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
-
+    private final Logger log = Logger.getLogger(ProfileActivity.class);
     @ViewById(R.id.profile_photo)
     ImageView imageViewProfilePhoto;
     @ViewById(R.id.profile_user_realname)
@@ -88,7 +86,6 @@ public class ProfileActivity extends BaseAnalyticsActivity {
 
 
     private Context mContext;
-    private String mMyToken;
     private ProgressWheel mProgressWheel;
 
     private File mTempPhotoFile;  // 프로필 사진 변경시 선택한 임시 파일
@@ -109,7 +106,6 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        mMyToken = JandiPreference.getMyToken(mContext);
         getProfile();
     }
 
@@ -490,7 +486,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                         progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
-                .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(mContext).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(mTempPhotoFile.getName()), mTempPhotoFile)
                 .asJsonObject()

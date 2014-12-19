@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.apache.log4j.Logger;
 
@@ -33,7 +34,7 @@ public class FileUploadUtil {
 
     private static final Logger log = Logger.getLogger(FileUploadUtil.class);
 
-    public static void uploadStart(ConfirmFileUploadEvent event, Context context, String mMyToken, ChattingInfomations chattingInfomations, final UploadCallback uploadCallback) {
+    public static void uploadStart(ConfirmFileUploadEvent event, Context context, ChattingInfomations chattingInfomations, final UploadCallback uploadCallback) {
 
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -55,7 +56,7 @@ public class FileUploadUtil {
                         progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
-                .setHeader(JandiConstants.AUTH_HEADER, mMyToken)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)

@@ -7,12 +7,16 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
+import org.androidannotations.annotations.UiThread;
 
 /**
  * Created by justinygchoi on 14. 11. 6..
@@ -23,6 +27,8 @@ import org.androidannotations.annotations.Fullscreen;
 @Fullscreen
 @EActivity(R.layout.activity_intro)
 public class IntroActivity extends Activity {
+
+    private static final long MAX_DELAY_MS = 1500l;
 
     @Bean
     IntroActivityModel introModel;
@@ -38,20 +44,54 @@ public class IntroActivity extends Activity {
     @AfterViews
     void startOn() {
 
-        introModel.setCallback(new IntroActivityModel.Callback() {
-            @Override
-            public void onUpdateDialog() {
-                introViewModel.showUpdateDialog();
+        checkNewVersion();
+
+    }
+
+    @Background
+    void checkNewVersion() {
+        long initTime = System.currentTimeMillis();
+        boolean isNewVersion = introModel.checkNewVersion();
+        if (!isNewVersion) {
+            introModel.sleep(initTime, MAX_DELAY_MS);
+            introViewModel.showUpdateDialog();
+        } else {
+
+            if (!introModel.isNeedLogin()) {
+                refreshTokenAndGoNextActivity(initTime);
+            } else {
+                introModel.sleep(initTime, MAX_DELAY_MS);
+                introViewModel.moveToIntroTutorialActivity();
             }
+        }
 
-            @Override
-            public void onIntroFinish() {
-                introViewModel.checkAutoSignIn();
+    }
+
+    @Background
+    void refreshTokenAndGoNextActivity(long initTime) {
+        try {
+            introModel.refreshToken();
+            introModel.refreshAccountInfo();
+            introModel.sleep(initTime, MAX_DELAY_MS);
+            introViewModel.moveMainOrTeamSelectActivity();
+        } catch (JandiNetworkException e) {
+            if (e.httpStatusCode == 401) {
+                // 인증 에러시 재로그인 처리
+                introModel.clearTokenInfo();
+                introModel.clearAccountInfo();
+
+                introModel.sleep(initTime, MAX_DELAY_MS);
+                introViewModel.moveToIntroTutorialActivity();
+            } else {
+                ColoredToast.showWarning(IntroActivity.this, getString(R.string.err_network));
+                finishOnUiThread();
             }
-        });
+        }
+    }
 
-        introModel.checkNewVersion();
-
+    @UiThread
+    void finishOnUiThread() {
+        finish();
     }
 
     private void registerNewRelicToken() {

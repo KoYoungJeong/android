@@ -29,44 +29,88 @@ public class ResAccountInfo {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getTutoredAt() {
         return tutoredAt;
+    }
+
+    public void setTutoredAt(String tutoredAt) {
+        this.tutoredAt = tutoredAt;
     }
 
     public String getUpdatedAt() {
         return updatedAt;
     }
 
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getLoggedAt() {
         return loggedAt;
     }
 
+    public void setLoggedAt(String loggedAt) {
+        this.loggedAt = loggedAt;
+    }
+
     public String getActivatedAt() {
         return activatedAt;
+    }
+
+    public void setActivatedAt(String activatedAt) {
+        this.activatedAt = activatedAt;
     }
 
     public String getNotificationTarget() {
         return notificationTarget;
     }
 
+    public void setNotificationTarget(String notificationTarget) {
+        this.notificationTarget = notificationTarget;
+    }
+
     public String getStatus() {
         return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<UserDevice> getDevices() {
         return devices;
     }
 
+    public void setDevices(List<UserDevice> devices) {
+        this.devices = devices;
+    }
+
     public List<UserTeam> getMemberships() {
         return memberships;
     }
 
+    public void setMemberships(List<UserTeam> memberships) {
+        this.memberships = memberships;
+    }
+
     public List<UserEmail> getEmails() {
         return emails;
+    }
+
+    public void setEmails(List<UserEmail> emails) {
+        this.emails = emails;
     }
 
     @Override
@@ -96,16 +140,32 @@ public class ResAccountInfo {
             return token;
         }
 
+        public void setToken(String token) {
+            this.token = token;
+        }
+
         public String getType() {
             return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
         }
 
         public int getBadgeCount() {
             return badgeCount;
         }
 
+        public void setBadgeCount(int badgeCount) {
+            this.badgeCount = badgeCount;
+        }
+
         public boolean isSubscribe() {
             return subscribe;
+        }
+
+        public void setSubscribe(boolean subscribe) {
+            this.subscribe = subscribe;
         }
 
         @Override
@@ -196,16 +256,32 @@ public class ResAccountInfo {
             return id;
         }
 
+        public void setId(String id) {
+            this.id = id;
+        }
+
         public boolean isPrimary() {
             return primary;
+        }
+
+        public void setPrimary(boolean primary) {
+            this.primary = primary;
         }
 
         public String getConfirmedAt() {
             return confirmedAt;
         }
 
+        public void setConfirmedAt(String confirmedAt) {
+            this.confirmedAt = confirmedAt;
+        }
+
         public String getStatus() {
             return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
 
         @Override

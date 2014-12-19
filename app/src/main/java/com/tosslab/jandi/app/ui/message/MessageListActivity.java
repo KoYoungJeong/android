@@ -60,7 +60,7 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.FileExplorerActivity;
-import com.tosslab.jandi.app.ui.MainTabActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.model.FileUploadUtil;
 import com.tosslab.jandi.app.ui.message.model.RefreshRequestor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -101,7 +101,7 @@ import de.greenrobot.event.EventBus;
 public class MessageListActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MessageListActivity.class);
     private final String DIALOG_TAG = "dialog";
-
+    public EntityManager mEntityManager;
     @Extra
     int entityType;
     @Extra
@@ -110,9 +110,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     boolean isFavorite = false;
     @Extra
     boolean isFromPush = false;
-
-    private ChattingInfomations mChattingInformations;
-
     @RestService
     JandiRestClient jandiRestClient;
     @Bean
@@ -130,32 +127,32 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     EditText etMessage;
     @ViewById(R.id.btn_send_message)
     Button buttonSendMessage;
-
+    private ChattingInfomations mChattingInformations;
     private Context mContext;
-    private String mMyToken;
     private ProgressWheel mProgressWheel;
-
     // Update 관련
     private Timer mTimer;
-
     private MessageItemConverter mMessageItemConverter;
-
-    public EntityManager mEntityManager;
-
     private MessageState messageState;
+    /**
+     * *********************************************************
+     * 사진 직접 찍어 올리기
+     * **********************************************************
+     */
+
+    private Uri mImageUriFromCamera = null;
 
     @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
         mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
-        mMyToken = JandiPreference.getMyToken(mContext);
 
         messageState = new MessageState();
 
         mMessageItemConverter = new MessageItemConverter();
 
         mChattingInformations = new ChattingInfomations(mContext, entityId, entityType, isFromPush, isFavorite);
-        messageManipulator.initEntity(mMyToken,
+        messageManipulator.initEntity(
                 mChattingInformations.entityType, mChattingInformations.entityId);
 
     }
@@ -293,7 +290,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         setIntent(intent);
         mContext = getApplicationContext();
         mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
-        mMyToken = JandiPreference.getMyToken(mContext);
         initProgressWheel();
         bindAdapter();
     }
@@ -371,7 +367,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     /**
      * *********************************************************
      * Timer Task
@@ -393,17 +388,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     /**
-     * Polling task
-     * Timer는 OnResume, OnPause 의 생명주기와 함께함
-     */
-    private class UpdateTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            getUpdateMessagesWithoutResumingUpdateTimer();
-        }
-    }
-
-    /**
      * *********************************************************
      * EntityManager 획득
      * Push 에서 바로 현재 Activity로 이동했다면 EntityManager를 호출한다.
@@ -413,7 +397,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getEntitiesInBackground() {
         try {
             // TODO Temp TeamId
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo(1);
+            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기
@@ -852,7 +836,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void onEvent(ConfirmFileUploadEvent event) {
         pauseUpdateTimer();
 
-        FileUploadUtil.uploadStart(event, MessageListActivity.this, mMyToken, mChattingInformations, new FileUploadUtil.UploadCallback() {
+        FileUploadUtil.uploadStart(event, MessageListActivity.this, mChattingInformations, new FileUploadUtil.UploadCallback() {
 
             @Override
             public void onUploadFail() {
@@ -887,14 +871,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
         getUpdateMessagesAndResumeUpdateTimer();
     }
-
-    /**
-     * *********************************************************
-     * 사진 직접 찍어 올리기
-     * **********************************************************
-     */
-
-    private Uri mImageUriFromCamera = null;
 
     // 카메라에서 가져오기
     public void getPictureFromCamera() {
@@ -1103,5 +1079,16 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                         .start();
             }
         }, 250);
+    }
+
+    /**
+     * Polling task
+     * Timer는 OnResume, OnPause 의 생명주기와 함께함
+     */
+    private class UpdateTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            getUpdateMessagesWithoutResumingUpdateTimer();
+        }
     }
 }

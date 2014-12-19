@@ -10,10 +10,15 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
  */
 public class TokenUtil {
 
-    public static void saveTokenInfo(Context context, ResAccessToken accessToken) {
+    public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
         JandiPreference.setAccessToken(context, accessToken.getAccessToken());
         JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
         JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+    }
+
+    public static void saveTokenInfoByRefresh(Context context, ResAccessToken accessToken) {
+        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
     }
 
     public static void clearTokenInfo(Context context) {

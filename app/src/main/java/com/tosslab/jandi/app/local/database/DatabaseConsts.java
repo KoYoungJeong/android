@@ -18,7 +18,7 @@ public class DatabaseConsts {
     }
 
     public enum AccountTeam {
-        _id, teamId, memberId, name
+        _id, teamId, memberId, name, teamDomain, unread, selected;
     }
 
     public enum AccountDevice {

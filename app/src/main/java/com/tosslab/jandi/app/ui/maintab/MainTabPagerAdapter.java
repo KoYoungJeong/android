@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.maintab;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -6,6 +6,10 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.FileListFragment_;
+import com.tosslab.jandi.app.ui.MainMoreFragment_;
+import com.tosslab.jandi.app.ui.MainPrivateListFragment_;
+import com.tosslab.jandi.app.ui.maintab.topic.MainPublicListFragment_;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 
 /**
@@ -13,10 +17,10 @@ import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
  */
 public class MainTabPagerAdapter extends FragmentPagerAdapter
         implements PagerSlidingTabStrip.ViewTabProvider {
-    private static final int TAB_TOPIC  = 0;
-    private static final int TAB_CHAT   = 1;
-    private static final int TAB_FILE   = 2;
-    private static final int TAB_MORE   = 3;
+    private static final int TAB_TOPIC = 0;
+    private static final int TAB_CHAT = 1;
+    private static final int TAB_FILE = 2;
+    private static final int TAB_MORE = 3;
 
     View[] mTabs;
 
@@ -62,6 +66,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public void showNewTopicBadge() {
         showBadge(TAB_TOPIC);
     }
+
     public void showNewChatBadge() {
         showBadge(TAB_CHAT);
     }
@@ -76,6 +81,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public void hideNewTopicBadge() {
         hideBadge(TAB_TOPIC);
     }
+
     public void hideNewChatBadge() {
         hideBadge(TAB_CHAT);
     }

@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
-import com.tosslab.jandi.app.network.models.ReqCreateTeam;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -14,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -30,8 +28,6 @@ import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
-
-import java.util.List;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -56,11 +52,6 @@ public interface JandiRestClient {
     @Get("/config")
     ResConfig getConfig();
 
-    // 팀 생성 요청 이메일 전송
-    @Deprecated
-    @Post("/teams/new")
-    ResCommon createTeam(ReqCreateTeam req);
-
     @Post("/teams")
     @RequiresAuthentication
     ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
@@ -77,10 +68,6 @@ public interface JandiRestClient {
     @Get("/account")
     @RequiresAuthentication
     ResAccountInfo getAccountInfo();
-
-    @Get("/account/invitations")
-    @RequiresAuthentication
-    List<ResPendingTeamInfo> getMyPendingInvitations();
 
     @Post("/accounts")
     ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);

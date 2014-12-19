@@ -2,22 +2,20 @@ package com.tosslab.jandi.app.ui.team.info.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,17 +58,8 @@ public class TeamDomainInfoModel {
         this.callback = callback;
     }
 
-    @SupposeBackground
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
-        RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-        try {
-            ResAccountInfo request = requestManager.request();
-            return request.getEmails();
-        } catch (JandiNetworkException e) {
-            logger.debug("Get Email Info Fail");
-            return new ArrayList<ResAccountInfo.UserEmail>();
-        }
+        return JandiDatabaseManager.getInstance(context).getUserEmails();
     }
 
     public interface Callback {

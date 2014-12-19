@@ -24,8 +24,6 @@ public class EntityManager {
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
 
-    private ResAccountInfo accountInfo;
-
     private HashMap<Integer, FormattedEntity> mJoinedTopics;
     private HashMap<Integer, FormattedEntity> mUnjoinedTopics;
     private HashMap<Integer, FormattedEntity> mUsers;
@@ -520,14 +518,6 @@ public class EntityManager {
         Collections.sort(sortedEntities, new NameAscCompare());
 
         return sortedEntities;
-    }
-
-    public ResAccountInfo getAccountInfo() {
-        return accountInfo;
-    }
-
-    public void setAccountInfo(ResAccountInfo accountInfo) {
-        this.accountInfo = accountInfo;
     }
 
     static class NameAscCompare implements Comparator<FormattedEntity> {

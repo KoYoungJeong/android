@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterTextChange;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -45,7 +44,6 @@ public class IntroLoginViewModel {
      */
     @SystemService
     InputMethodManager imm;
-    private ViewCallback viewCallback;
     private ProgressWheel mProgressWheel;
 
 
@@ -105,6 +103,7 @@ public class IntroLoginViewModel {
         TeamSelectionActivity_.intent(activity)
                 .start();
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        activity.finish();
     }
 
 
@@ -114,43 +113,22 @@ public class IntroLoginViewModel {
         ColoredToast.showError(activity, activity.getString(errMessageResId));
     }
 
+    public String getEmailText() {
+        return editTextEmail.getText().toString();
+    }
+
+    public String getPasswordText() {
+        return editTextPassword.getText().toString();
+    }
+
     @SupposeUiThread
     void setReadFlagForTutorial() {
         JandiPreference.setFlagForTutorial(activity, true);
-    }
-
-    /**
-     * SignUp
-     */
-    @Click(R.id.btn_getting_started)
-    void showTeamTeamCreationFragment() {
-        if (viewCallback != null) {
-            viewCallback.onTeamCreate(editTextEmail.getText().toString());
-        }
-    }
-
-    /**
-     * Login
-     */
-    @Click(R.id.btn_intro_action_signin_start)
-    void startLogin() {
-        if (viewCallback != null) {
-            viewCallback.onLogin(editTextEmail.getText().toString(), editTextPassword.getText().toString());
-        }
     }
 
     public void hideKeypad() {
         imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
     }
 
-    public void setViewCallback(ViewCallback viewCallback) {
-        this.viewCallback = viewCallback;
-    }
-
-    public interface ViewCallback {
-        void onTeamCreate(String email);
-
-        void onLogin(String email, String password);
-    }
 
 }

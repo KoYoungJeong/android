@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
@@ -42,12 +42,11 @@ public class TeamSelectionModel {
 
         ArrayList<Team> teams = new ArrayList<Team>();
 
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
-        RequestManager<ResAccountInfo> resAccountInfoRequestManager = RequestManager.newInstance(context, accountInfoRequest);
         try {
-            ResAccountInfo accountInfo = resAccountInfoRequestManager.request();
 
-            teams.addAll(convertJoinedTeamList(accountInfo.getMemberships()));
+            List<ResAccountInfo.UserTeam> userTeams = JandiDatabaseManager.getInstance(context).getUserTeams();
+
+            teams.addAll(convertJoinedTeamList(userTeams));
 
             PendingTeamListRequest pendingTeamListRequest = new PendingTeamListRequest(context, invitationApiClient);
             RequestManager<List<ResPendingTeamInfo>> pendingTeaListManager = RequestManager.newInstance(context, pendingTeamListRequest);
@@ -105,7 +104,8 @@ public class TeamSelectionModel {
         IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, invitationApiClient, team);
         RequestManager<List<ResPendingTeamInfo>> requestManager = RequestManager.newInstance(context, ignoreInviteRequest);
         try {
-            return requestManager.request();
+            List<ResPendingTeamInfo> resPendingTeamInfos = requestManager.request();
+            return resPendingTeamInfos;
         } catch (JandiNetworkException e) {
             e.printStackTrace();
             return null;
@@ -116,16 +116,40 @@ public class TeamSelectionModel {
     @SupposeBackground
     public List<ResTeamDetailInfo> acceptInvite(Team team) {
 
-        ResAccountInfo accountInfo = ((JandiApplication) context.getApplicationContext()).getEntityManager().getAccountInfo();
+        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(context).getAccountInfo();
+
+        if (accountInfo == null) {
+            return null;
+        }
+
         AcceptInviteRequest request = AcceptInviteRequest.create(context, invitationApiClient, team, accountInfo.getName());
         RequestManager<List<ResTeamDetailInfo>> requestManager = RequestManager.newInstance(context, request);
         try {
-            return requestManager.request();
+            List<ResTeamDetailInfo> resTeamDetailInfos = requestManager.request();
+            return resTeamDetailInfos;
         } catch (JandiNetworkException e) {
             e.printStackTrace();
             return null;
         }
 
 
+    }
+
+    public void updateToDBJoinedTeamInfo() {
+        // Team
+        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
+        RequestManager<ResAccountInfo> resAccountInfoRequestManager = RequestManager.newInstance(context, accountInfoRequest);
+        ResAccountInfo resAccountInfo = null;
+        try {
+            resAccountInfo = resAccountInfoRequestManager.request();
+            JandiDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
+        } catch (JandiNetworkException e) {
+
+
+        }
+    }
+
+    public void updateSelectedTeam(Team lastSelectedItem) {
+        JandiDatabaseManager.getInstance(context).updateSelectedTeam(lastSelectedItem.getTeamId());
     }
 }

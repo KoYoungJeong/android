@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
@@ -27,8 +26,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -171,17 +168,6 @@ public class JandiRestClientTest {
 
     }
 
-
-    @Test
-    public void testGetMyPendingInvitations() throws Exception {
-
-
-        List<ResPendingTeamInfo> myPendingInvitations = jandiRestClient_.getMyPendingInvitations();
-
-        assertNotNull(myPendingInvitations);
-
-        System.out.println(myPendingInvitations);
-    }
 
     @Test
     public void testSetMarker() throws Exception {

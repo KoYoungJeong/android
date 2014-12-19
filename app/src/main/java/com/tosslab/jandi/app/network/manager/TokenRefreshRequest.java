@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 16..
@@ -28,8 +29,7 @@ public class TokenRefreshRequest implements Request<ResAccessToken> {
         ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
 
         // save token info
-        JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
-        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+        TokenUtil.saveTokenInfoByRefresh(context, accessToken);
         JandiPreference.setLastRefreshTokenTime(context);
 
         return accessToken;

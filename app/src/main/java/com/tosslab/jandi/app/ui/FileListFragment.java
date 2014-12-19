@@ -37,8 +37,8 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -85,15 +85,24 @@ public class FileListFragment extends Fragment {
     JandiRestClient jandiRestClient;
     @FragmentArg
     int entityIdForCategorizing = -1;
-
+    @FragmentArg
+    String mCurrentEntityCategorizingAccodingBy = null;
     private MenuItem mSearch;   // ActionBar의 검색뷰
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
-    private String mMyToken;
     private Context mContext;
     private EntityManager mEntityManager;
-
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+    /**
+     * *********************************************************
+     * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
+     * **********************************************************
+     */
+    private String mCurrentUserNameCategorizingAccodingBy = null;
+    private String mCurrentFileTypeCategorizingAccodingBy = null;
+    private AlertDialog mFileTypeSelectDialog;
+    private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
+    private AlertDialog mEntitySelectDialog;
 
     @AfterInject
     void init() {
@@ -109,12 +118,11 @@ public class FileListFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // myToken 획득
-        mMyToken = JandiPreference.getMyToken(mContext);
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         retrieveEntityManager();
         setSpinnerAsCategorizingAccodingByFileType();
@@ -167,7 +175,7 @@ public class FileListFragment extends Fragment {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem menuItem) {
-                imm.hideSoftInputFromWindow(sv.getWindowToken(),0);
+                imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
                 doKeywordSearch("");
                 return true;
             }
@@ -176,7 +184,7 @@ public class FileListFragment extends Fragment {
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                imm.hideSoftInputFromWindow(sv.getWindowToken(),0);
+                imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
                 doKeywordSearch(s);
                 return true;
             }
@@ -214,17 +222,17 @@ public class FileListFragment extends Fragment {
     }
 
     private void retrieveEntityManager() {
-        EntityManager entityManager = ((JandiApplication)getActivity().getApplication()).getEntityManager();
+        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
         if (entityManager != null) {
             mEntityManager = entityManager;
         }
     }
 
-
-
-    /************************************************************
+    /**
+     * *********************************************************
      * 검색
-     ************************************************************/
+     * **********************************************************
+     */
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
         doSearch();
@@ -256,10 +264,10 @@ public class FileListFragment extends Fragment {
 
     @Background
     void doSearchInBackground() {
-        jandiRestClient.setHeader(JandiConstants.AUTH_HEADER, mMyToken);
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
+            jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(getActivity()));
             ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
             searchSucceed(resSearchFile);
         } catch (RestClientException e) {
@@ -292,68 +300,6 @@ public class FileListFragment extends Fragment {
     void searchFailed(int errMessageRes) {
         ColoredToast.showError(mContext, getString(errMessageRes));
     }
-
-    /**
-     * Full To Refresh 전용
-     * TODO 위에 거랑 합치기.
-     */
-    private class GetPreviousFilesTask extends AsyncTask<Void, Void, String> {
-        private int justGetFilesSize;
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            try {
-                ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
-                ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
-
-                justGetFilesSize = resSearchFile.fileCount;
-                if (justGetFilesSize > 0) {
-                    mAdapter.insert(resSearchFile);
-                    mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
-                }
-                return null;
-            } catch (RestClientException e) {
-                log.error("fail to get searched files.", e);
-                return getString(R.string.err_file_search);
-            } catch (HttpMessageNotReadableException e) {
-                log.error("fail to get searched files.", e);
-                return getString(R.string.err_file_search);
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String errMessage) {
-            pullToRefreshListViewSearchedFiles.onRefreshComplete();
-            if (justGetFilesSize < ReqSearchFile.MAX) {
-                ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_files));
-                pullToRefreshListViewSearchedFiles.setMode(PullToRefreshBase.Mode.DISABLED);
-            }
-
-            if (errMessage == null) {
-                // Success
-                mAdapter.notifyDataSetChanged();
-            } else {
-                ColoredToast.showError(mContext, errMessage);
-            }
-            super.onPostExecute(errMessage);
-        }
-    }
-
-    /************************************************************
-     * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
-     ************************************************************/
-    private String mCurrentUserNameCategorizingAccodingBy = null;
-    private String mCurrentFileTypeCategorizingAccodingBy = null;
-    @FragmentArg
-    String mCurrentEntityCategorizingAccodingBy = null;
-
-    private AlertDialog mFileTypeSelectDialog;
-    private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
-    private AlertDialog mEntitySelectDialog;
 
     private void setSpinnerAsCategorizingAccodingByFileType() {
         textViewFileListType.setText(
@@ -400,6 +346,7 @@ public class FileListFragment extends Fragment {
     /**
      * 파일 타입 리스트 Dialog 를 보여준 뒤, 선택된 타입만 검색하라는 이벤트를
      * FileListFragment에 전달
+     *
      * @param textVewFileType
      */
     private void showFileTypeDialog(final TextView textVewFileType) {
@@ -428,6 +375,7 @@ public class FileListFragment extends Fragment {
     /**
      * 사용자 리스트 Dialog 를 보여준 뒤, 선택된 사용자가 올린 파일을 검색하라는 이벤트를
      * FileListFragment에 전달
+     *
      * @param textViewUser
      */
     private void showUsersDialog(final TextView textViewUser) {
@@ -483,6 +431,7 @@ public class FileListFragment extends Fragment {
     /**
      * 모든 Entity 리스트 Dialog 를 보여준 뒤, 선택된 장소에 share 된 파일만 검색하라는 이벤트를
      * FileListFragment에 전달
+     *
      * @param textVew
      */
     private void showEntityDialog(final TextView textVew) {
@@ -518,9 +467,11 @@ public class FileListFragment extends Fragment {
         mEntitySelectDialog.setCanceledOnTouchOutside(true);
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * Etc
-     ************************************************************/
+     * **********************************************************
+     */
     void list_searched_messagesItemClicked(ResMessages.FileMessage searchedFile) {
         moveToFileDetailActivity(searchedFile.id);
     }
@@ -533,12 +484,65 @@ public class FileListFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
-    /************************************************************
+    /**
+     * Full To Refresh 전용
+     * TODO 위에 거랑 합치기.
+     */
+    private class GetPreviousFilesTask extends AsyncTask<Void, Void, String> {
+        private int justGetFilesSize;
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
+                jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(getActivity()));
+                ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
+
+                justGetFilesSize = resSearchFile.fileCount;
+                if (justGetFilesSize > 0) {
+                    mAdapter.insert(resSearchFile);
+                    mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
+                }
+                return null;
+            } catch (RestClientException e) {
+                log.error("fail to get searched files.", e);
+                return getString(R.string.err_file_search);
+            } catch (HttpMessageNotReadableException e) {
+                log.error("fail to get searched files.", e);
+                return getString(R.string.err_file_search);
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String errMessage) {
+            pullToRefreshListViewSearchedFiles.onRefreshComplete();
+            if (justGetFilesSize < ReqSearchFile.MAX) {
+                ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_files));
+                pullToRefreshListViewSearchedFiles.setMode(PullToRefreshBase.Mode.DISABLED);
+            }
+
+            if (errMessage == null) {
+                // Success
+                mAdapter.notifyDataSetChanged();
+            } else {
+                ColoredToast.showError(mContext, errMessage);
+            }
+            super.onPostExecute(errMessage);
+        }
+    }
+
+    /**
+     * *********************************************************
      * 파일 검색을 담당하는 쿼리 클래스
-     ************************************************************/
+     * **********************************************************
+     */
     private class SearchQuery {
-        private final String CATEGORY_ALL   = "all";
-        private final int LATEST_MESSAGE    = -1;
+        private final String CATEGORY_ALL = "all";
+        private final int LATEST_MESSAGE = -1;
 
         private String mSearchFileType;
         private String mSearchUser;
