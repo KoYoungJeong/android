@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -27,12 +28,11 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
@@ -47,7 +47,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -79,8 +78,6 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @ViewById(R.id.profile_user_position)
     TextView textViewProfileUserPosition;
 
-    @RestService
-    JandiRestClient jandiRestClient;
     @Bean
     JandiEntityClient mJandiEntityClient;
 
@@ -165,7 +162,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     void getProfileInBackground() {
         try {
             EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
-            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
+            ResMemberProfile me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
             getProfileSuccess(me);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -177,7 +174,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getProfileSuccess(ResLeftSideMenu.User me) {
+    void getProfileSuccess(ResMemberProfile me) {
         mProgressWheel.dismiss();
         attemptToUpdate = false;
         attemptToUpdatePhoto = false;
@@ -191,20 +188,19 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         finish();
     }
 
-    void displayProfile(ResLeftSideMenu.User me) {
-        FormattedEntity user = new FormattedEntity(me);
+    void displayProfile(ResMemberProfile user) {
         // 프로필 사진
         Glide.with(this)
-                .load(user.getUserLargeProfileUrl())
+                .load(!TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl)
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new GlideCircleTransform(this))
                 .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                 .into(imageViewProfilePhoto);
         // 프로필 이름
-        textViewProfileRealName.setText(user.getName());
+        textViewProfileRealName.setText(user.name);
         // 상태 메시지
-        String strStatus = (user.getUserStatusMessage());
-        if (strStatus.length() > 0) {
+        String strStatus = (user.u_statusMessage);
+        if (!TextUtils.isEmpty(strStatus)) {
             textViewProfileStatusMessage.setText(strStatus);
             textViewProfileStatusMessage.setTextColor(getResources().getColor(R.color.jandi_text));
         } else {
@@ -213,10 +209,10 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         }
 
         // 이메일
-        textViewProfileUserEmail.setText(user.getUserEmail());
+        textViewProfileUserEmail.setText(user.u_email);
         // 폰넘버
-        String strPhone = (user.getUserPhoneNumber());
-        if (strPhone.length() > 0) {
+        String strPhone = (user.u_extraData.phoneNumber);
+        if (!TextUtils.isEmpty(strPhone)) {
             textViewProfileUserPhone.setText(strPhone);
             textViewProfileUserPhone.setTextColor(getResources().getColor(R.color.jandi_text));
         } else {
@@ -224,8 +220,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
             textViewProfileUserPhone.setTextColor(getResources().getColor(R.color.jandi_text_light));
         }
         // 부서
-        String strDivision = (user.getUserDivision());
-        if (strDivision.length() > 0) {
+        String strDivision = (user.u_extraData.department);
+        if (!TextUtils.isEmpty(strDivision)) {
             textViewProfileUserDivision.setText(strDivision);
             textViewProfileUserDivision.setTextColor(getResources().getColor(R.color.jandi_text));
         } else {
@@ -233,8 +229,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
             textViewProfileUserDivision.setTextColor(getResources().getColor(R.color.jandi_text_light));
         }
         // 직책
-        String strPosition = (user.getUserPosition());
-        if (strPosition.length() > 0) {
+        String strPosition = user.u_extraData.position;
+        if (!TextUtils.isEmpty(strPosition)) {
             textViewProfileUserPosition.setText(strPosition);
             textViewProfileUserPosition.setTextColor(getResources().getColor(R.color.jandi_text));
         } else {
@@ -362,7 +358,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     @Background
     void updateProfileInBackground(ReqUpdateProfile reqUpdateProfile) {
         try {
-            ResLeftSideMenu.User me = mJandiEntityClient.updateUserProfile(reqUpdateProfile);
+            EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+            ResMemberProfile me = mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
             updateProfileSucceed(me);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -371,10 +368,26 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void updateProfileSucceed(ResLeftSideMenu.User me) {
+    void updateProfileSucceed(ResMemberProfile user) {
         ColoredToast.show(this, getString(R.string.jandi_profile_update_succeed));
+
+        // TODO It's Temp way!!! Must need refactor
+        ResLeftSideMenu.User me = new ResLeftSideMenu.User();
+        me.u_extraData = user.u_extraData;
+        me.id = user.id;
+        me.u_starredEntities = user.u_starredEntities;
+        me.u_authority = user.u_authority;
+        me.u_email = user.u_email;
+        me.u_messageMarkers = user.u_messageMarkers;
+        me.u_photoThumbnailUrl = user.u_photoThumbnailUrl;
+        me.u_photoUrl = user.u_photoUrl;
+        me.u_statusMessage = user.u_statusMessage;
+        me.name = user.name;
+        me.teamId = user.teamId;
+        me.type = user.type;
+
         trackUpdateProfile(getDistictId(), me);
-        getProfileSuccess(me);
+        getProfileSuccess(user);
     }
 
     @UiThread

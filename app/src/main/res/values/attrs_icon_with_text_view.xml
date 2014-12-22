@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="IconWithTextView">
+        <attr name="img" format="reference" />
+        <attr name="srcWidth" format="dimension" />
+        <attr name="srcHeight" format="dimension" />
+        <attr name="marginSrcText" format="dimension" />
+    </declare-styleable>
+
+
+</resources>

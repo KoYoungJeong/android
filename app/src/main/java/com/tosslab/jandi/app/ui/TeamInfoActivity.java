@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -38,7 +37,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -55,11 +53,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @Bean
     TeamMemberListAdapter teamUserListAdapter;
 
-    @RestService
-    JandiRestClient jandiRestClient;
     @Bean
     JandiEntityClient mJandiEntityClient;
-    private Context mContext;
     private ProgressWheel mProgressWheel;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
     private EditText mEditTextEmailAddress;
@@ -70,7 +65,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     public void initForm() {
-        mContext = getApplicationContext();
         setUpToolTip();
         setUpActionBar();
         initProgressWheel();

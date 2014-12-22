@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.team.select.model;
 import android.content.Context;
 
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -29,8 +30,8 @@ public class AcceptInviteRequest implements Request<List<ResTeamDetailInfo>> {
         this.myName = myName;
     }
 
-    public static AcceptInviteRequest create(Context context, InvitationApiClient invitationApiClient, Team team, String myName) {
-        return new AcceptInviteRequest(context, invitationApiClient, team, myName);
+    public static AcceptInviteRequest create(Context context, Team team, String myName) {
+        return new AcceptInviteRequest(context, new InvitationApiClient_(context), team, myName);
     }
 
 

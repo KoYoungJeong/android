@@ -25,7 +25,6 @@ public class TokenRefreshRequest implements Request<ResAccessToken> {
     @Override
     public ResAccessToken request() {
         JandiRestClient jandiRestClient_ = new JandiRestClient_(context);
-
         ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
 
         // save token info

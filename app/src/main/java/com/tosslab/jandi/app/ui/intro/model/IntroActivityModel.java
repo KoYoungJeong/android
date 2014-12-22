@@ -9,8 +9,7 @@ import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
@@ -97,11 +96,8 @@ public class IntroActivityModel {
         try {
             String refreshToken = JandiPreference.getRefreshToken(context);
 
-            // Get Access Token
-            ReqAccessToken passwordReqToken = ReqAccessToken.createRefreshReqToken(refreshToken);
-            ResAccessToken accessToken = jandiRestClient.getAccessToken(passwordReqToken);
-
-            TokenUtil.saveTokenInfoByRefresh(context, accessToken);
+            // in logic, get access token and then save token.
+            new TokenRefreshRequest(context, refreshToken).request();
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
@@ -110,7 +106,7 @@ public class IntroActivityModel {
 
     public void refreshAccountInfo() throws JandiNetworkException {
 
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
+        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
         RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
         ResAccountInfo resAccountInfo = requestManager.request();
 

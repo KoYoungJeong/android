@@ -91,12 +91,6 @@ public interface ChannelApiClient {
     // 채널 invite
     @Put("/channels/{channelId}/invite")
     @RequiresAuthentication
-    @Deprecated
-    ResCommon inviteChannel(int channelId, ReqInviteUsers inviteUsers);
-
-    // 채널 invite
-    @Put("/channels/{channelId}/invite")
-    @RequiresAuthentication
     ResCommon invitePublicTopic(int channelId, ReqInviteTopicUsers reqInviteTopicUsers);
 
 }

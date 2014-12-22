@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.network.ResultObject;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectionModel;
@@ -23,7 +22,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.rest.RestService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,10 +39,9 @@ public class TeamSelectionActivity extends Activity {
     int calledType = CALLED_MUST_SELECT_TEAM;
     public final static int CALLED_CHANGE_TEAM = 101;
     public static final int REQ_TEAM_CREATE = 2031;
-    @RestService
-    JandiRestClient mJandiRestClient;
     @Bean
     TeamSelectionPresenter teamSelectionPresenter;
+
     @Bean
     TeamSelectionModel teamSelectionModel;
 

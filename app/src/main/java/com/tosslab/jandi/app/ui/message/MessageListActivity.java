@@ -52,9 +52,9 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -84,9 +84,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.RestClientException;
 
 import java.io.File;
 import java.util.Timer;
@@ -110,8 +108,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     boolean isFavorite = false;
     @Extra
     boolean isFromPush = false;
-    @RestService
-    JandiRestClient jandiRestClient;
+
     @Bean
     JandiEntityClient mJandiEntityClient;
 
@@ -492,7 +489,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             log.debug("getMessagesInBackground : " + restResMessages.messageCount
                     + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("getMessagesInBackground : FAILED", e);
             getMessagesFailed(getString(R.string.err_messages_get));
         }
@@ -590,7 +587,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             } else {
                 log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + messageState.getLastUpdateLinkId());
             }
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to get updated messages", e);
         }
 
@@ -633,7 +630,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             messageManipulator.sendMessage(message);
             log.debug("sendMessageInBackground : succeed");
             sendMessageSucceed();
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("sendMessageInBackground : FAILED", e);
             sendMessageFailed(R.string.err_messages_send);
         }
@@ -737,9 +734,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mJandiEntityClient.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
-        } catch (RestClientException e) {
-            log.error("deleteMessageInBackground : FAILED", e);
-            deleteMessageDone(false, getString(R.string.err_messages_delete));
         } catch (JandiNetworkException e) {
             log.error("deleteMessageInBackground : FAILED", e);
             deleteMessageDone(false, getString(R.string.err_messages_delete));
@@ -1005,7 +999,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageManipulator.setMarker(messageState.getLastUpdateLinkId());
             }
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("set marker failed", e);
         } catch (Exception e) {
             log.error("set marker failed", e);
@@ -1026,7 +1020,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void getProfileInBackground(int userEntityId) {
         try {
-            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
+            ResMemberProfile user = mJandiEntityClient.getUserProfile(userEntityId);
             getProfileSuccess(user);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -1038,8 +1032,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getProfileSuccess(ResLeftSideMenu.User user) {
-        showUserInfoDialog(new FormattedEntity(user));
+    void getProfileSuccess(ResMemberProfile user) {
+        showUserInfoDialog(user);
     }
 
     @UiThread
@@ -1048,8 +1042,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         finish();
     }
 
-    private void showUserInfoDialog(FormattedEntity user) {
-        boolean isMe = mEntityManager.isMe(user.getId());
+    private void showUserInfoDialog(ResMemberProfile user) {
+        boolean isMe = mEntityManager.getMe().getId() == user.id;
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {

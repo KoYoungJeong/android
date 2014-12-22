@@ -16,7 +16,6 @@ import java.util.concurrent.Callable;
 import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class IntroActivityModelTest {
@@ -40,18 +39,6 @@ public class IntroActivityModelTest {
 
     @Test
     public void testCheckNewVersion() throws Exception {
-
-        introActivityModel.setCallback(new IntroActivityModel.Callback() {
-            @Override
-            public void onUpdateDialog() {
-                isCalled = true;
-            }
-
-            @Override
-            public void onIntroFinish() {
-                fail("It must be not to call!! ::: onIntroFinish");
-            }
-        });
 
         // When : Check app version to server
         introActivityModel.checkNewVersion();
@@ -107,44 +94,4 @@ public class IntroActivityModelTest {
         assertThat(latestVersionInBackground[0] > 0, is(true));
     }
 
-    @Test
-    public void testCheckWhetherUpdating() throws Exception {
-        {
-
-            // if called onUpdateDialog, then fail
-            IntroActivityModel.Callback callback = new IntroActivityModel.Callback() {
-                @Override
-                public void onUpdateDialog() {
-                    fail("It must be not to call");
-                }
-
-                @Override
-                public void onIntroFinish() {
-
-                }
-            };
-
-            introActivityModel.setCallback(callback);
-            introActivityModel.checkWhetherUpdating(false);
-        }
-
-        {
-
-            // if called onIntroFinish, then fail
-            IntroActivityModel.Callback callback = new IntroActivityModel.Callback() {
-                @Override
-                public void onUpdateDialog() {
-                }
-
-                @Override
-                public void onIntroFinish() {
-                    fail("It must be not to call");
-                }
-            };
-
-            introActivityModel.setCallback(callback);
-            introActivityModel.checkWhetherUpdating(true);
-        }
-
-    }
 }

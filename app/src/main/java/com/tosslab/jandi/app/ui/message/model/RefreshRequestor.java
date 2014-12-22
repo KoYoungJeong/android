@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
@@ -64,7 +65,7 @@ public class RefreshRequestor implements Runnable {
             log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
                     + " messages from " + messageState.getFirstItemId());
             return null;
-        } catch (RestClientException e) {
+        } catch (JandiNetworkException e) {
             log.error("GetFutherMessagesTask : FAILED", e);
             return context.getString(R.string.err_messages_get);
         }

@@ -39,7 +39,6 @@ public class TeamSelectionModel {
     @SupposeBackground
     public ResultObject<ArrayList<Team>> getMyTeamList() {
 
-
         ArrayList<Team> teams = new ArrayList<Team>();
 
         try {
@@ -48,7 +47,7 @@ public class TeamSelectionModel {
 
             teams.addAll(convertJoinedTeamList(userTeams));
 
-            PendingTeamListRequest pendingTeamListRequest = new PendingTeamListRequest(context, invitationApiClient);
+            PendingTeamListRequest pendingTeamListRequest = PendingTeamListRequest.create(context);
             RequestManager<List<ResPendingTeamInfo>> pendingTeaListManager = RequestManager.newInstance(context, pendingTeamListRequest);
 
             List<ResPendingTeamInfo> pedingTeamInfo = pendingTeaListManager.request();
@@ -101,7 +100,7 @@ public class TeamSelectionModel {
     @SupposeBackground
     public List<ResPendingTeamInfo> ignoreInvite(Team team) {
 
-        IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, invitationApiClient, team);
+        IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, team);
         RequestManager<List<ResPendingTeamInfo>> requestManager = RequestManager.newInstance(context, ignoreInviteRequest);
         try {
             List<ResPendingTeamInfo> resPendingTeamInfos = requestManager.request();
@@ -122,7 +121,7 @@ public class TeamSelectionModel {
             return null;
         }
 
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, invitationApiClient, team, accountInfo.getName());
+        AcceptInviteRequest request = AcceptInviteRequest.create(context, team, accountInfo.getName());
         RequestManager<List<ResTeamDetailInfo>> requestManager = RequestManager.newInstance(context, request);
         try {
             List<ResTeamDetailInfo> resTeamDetailInfos = requestManager.request();
@@ -137,7 +136,7 @@ public class TeamSelectionModel {
 
     public void updateToDBJoinedTeamInfo() {
         // Team
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
+        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
         RequestManager<ResAccountInfo> resAccountInfoRequestManager = RequestManager.newInstance(context, accountInfoRequest);
         ResAccountInfo resAccountInfo = null;
         try {

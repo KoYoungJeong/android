@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -32,13 +32,15 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.ui.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.maintab.file.model.FileSearchRequest;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -48,10 +50,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
@@ -81,8 +81,6 @@ public class FileListFragment extends Fragment {
     ListView actualListView;
     @Bean
     SearchedFileItemListAdapter mAdapter;
-    @RestService
-    JandiRestClient jandiRestClient;
     @FragmentArg
     int entityIdForCategorizing = -1;
     @FragmentArg
@@ -267,13 +265,10 @@ public class FileListFragment extends Fragment {
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
-            jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(getActivity()));
-            ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
+            RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(getActivity(), FileSearchRequest.create(getActivity(), reqSearchFile));
+            ResSearchFile resSearchFile = requestManager.request();
             searchSucceed(resSearchFile);
-        } catch (RestClientException e) {
-            log.error("fail to get searched files.", e);
-            searchFailed(R.string.err_file_search);
-        } catch (HttpMessageNotReadableException e) {
+        } catch (JandiNetworkException e) {
             log.error("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         }
@@ -499,8 +494,8 @@ public class FileListFragment extends Fragment {
         protected String doInBackground(Void... voids) {
             try {
                 ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
-                jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(getActivity()));
-                ResSearchFile resSearchFile = jandiRestClient.searchFile(reqSearchFile);
+                RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(getActivity(), FileSearchRequest.create(getActivity(), reqSearchFile));
+                ResSearchFile resSearchFile = requestManager.request();
 
                 justGetFilesSize = resSearchFile.fileCount;
                 if (justGetFilesSize > 0) {
@@ -508,7 +503,7 @@ public class FileListFragment extends Fragment {
                     mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
                 }
                 return null;
-            } catch (RestClientException e) {
+            } catch (JandiNetworkException e) {
                 log.error("fail to get searched files.", e);
                 return getString(R.string.err_file_search);
             } catch (HttpMessageNotReadableException e) {

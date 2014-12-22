@@ -1,184 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
     <!-- GridLayout은 weight 조절이 안되서 일단 LiniarLayout 떡칠. -->
     <!-- 첫 째 줄 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/jandi_more_bg">
-        <!-- 프로필 -->
-        <LinearLayout
-            android:id="@+id/ly_more_profile"
+        android:background="@color/jandi_more_bg"
+        android:weightSum="3">
+        <!-- 계정 -->
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_account"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:id="@+id/img_more_user_profile"
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:src="@drawable/jandi_profile"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_profile_actionb"/>
-        </LinearLayout>
+            app:img="@drawable/jandi_more_btn_account"
+            android:text="@string/jandi_account" />
+
         <!-- 팀 -->
-        <LinearLayout
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
             android:id="@+id/ly_more_team"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_team"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_team_info"/>
-        </LinearLayout>
-        <!-- 설정 -->
-        <LinearLayout
-            android:id="@+id/ly_more_setting"
+            app:img="@drawable/jandi_icon_more_about"
+            android:text="@string/jandi_team_info" />
+
+
+        <!-- 도움말 -->
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_help"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:layout_weight="1"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_setting"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_settings"/>
-        </LinearLayout>
+            app:img="@drawable/jandi_icon_more_help"
+            android:text="@string/jandi_help" />
+
+
     </LinearLayout>
     <!-- 둘 째 줄 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/jandi_more_bg">
-        <!-- About -->
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="1dp"
-                android:background="@color/white"
-                android:orientation="vertical"
-                android:gravity="center">
-            <!--<LinearLayout-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_weight="1"-->
-                <!--android:layout_marginBottom="1dp"-->
-                <!--android:background="@color/white"-->
-                <!--android:orientation="vertical"-->
-                <!--android:gravity="center">-->
-                <ImageView
-                    android:layout_width="33dp"
-                    android:layout_height="33dp"
-                    android:src="@drawable/jandi_icon_more_about"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/jandi_text_medium"
-                    android:text="@string/jandi_about"/>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#99ffffff"/>
-        </FrameLayout>
+        android:background="@color/jandi_more_bg"
+        android:paddingBottom="1dp"
+        android:weightSum="3">
 
-        <!-- 도움말 -->
-        <LinearLayout
-            android:id="@+id/ly_more_help"
+        <!-- 프로필 -->
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_profile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:img="@drawable/jandi_profile"
+            android:text="@string/jandi_profile_actionb" />
+
+
+        <!-- About -->
+
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_team_member"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"
-            android:layout_marginBottom="1dp"
+            android:layout_weight="1"
             android:background="@color/white"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_help"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_help"/>
-        </LinearLayout>
+            app:img="@drawable/jandi_icon_more_team"
+            android:text="@string/jandi_team_member" />
+
+
         <!-- 로그아웃 -->
-        <LinearLayout
-            android:id="@+id/ly_more_logout"
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_invite"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginBottom="1dp"
+            android:layout_weight="1"
             android:background="@color/white"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_icon_more_logout"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_text_medium"
-                android:text="@string/jandi_setting_sign_out"/>
-        </LinearLayout>
+            app:img="@drawable/jandi_more_btn_invite"
+            android:text="@string/jandi_invitation" />
+
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/jandi_more_bg"
+        android:weightSum="3">
+
+        <!-- 설정 -->
+        <com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView
+            android:id="@+id/ly_more_setting"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="1dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:img="@drawable/jandi_icon_more_setting"
+            android:text="@string/jandi_settings" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_weight="2"
+            android:background="@color/white" />
+
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:gravity="center"
         android:orientation="vertical"
-        android:gravity="center">
+        android:padding="20dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/jandi_text_medium"
-            android:text="JANDI"/>
+            android:text="JANDI"
+            android:textColor="@color/jandi_text_medium" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="3dp"
+            android:text="TOSS LAB, INC."
+            android:textColor="@color/jandi_text_light" />
+
         <TextView
             android:id="@+id/txt_more_jandi_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/jandi_text_medium"
-            />
+            android:textColor="@color/jandi_text_medium" />
+
         <TextView
+            android:id="@+id/txt_more_jandi_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/jandi_text_light"
-            android:text="TOSS LAB, INC."/>
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:text="@string/jandi_setting_sign_out"
+            android:textColor="@color/jandi_text" />
     </LinearLayout>
 </LinearLayout>

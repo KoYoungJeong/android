@@ -123,7 +123,7 @@ public class ChannelApiClientTest {
             fail();
         }
 
-        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic();
+        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic(279);
         reqDeleteTopic.teamId = 279;
 
         ResCommon resCommon = null;
@@ -157,7 +157,7 @@ public class ChannelApiClientTest {
             }
         }
 
-        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic();
+        ReqDeleteTopic reqDeleteTopic = new ReqDeleteTopic(279);
         reqDeleteTopic.teamId = 279;
         ResCommon resCommon = channelApiClient.leaveTopic(myChannelId, reqDeleteTopic);
 

@@ -1,12 +1,12 @@
 package com.tosslab.jandi.app.network.client.privatetopic;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
-import com.tosslab.jandi.app.network.models.ReqInviteUsers;
+import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -63,5 +63,5 @@ public interface GroupApiClient {
     // Private Group invite
     @Put("/privateGroups/{groupId}/invite")
     @RequiresAuthentication
-    ResCommon inviteGroup(int groupId, ReqInviteUsers inviteUsers);
+    ResCommon inviteGroup(int groupId, ReqInviteTopicUsers inviteUsers);
 }

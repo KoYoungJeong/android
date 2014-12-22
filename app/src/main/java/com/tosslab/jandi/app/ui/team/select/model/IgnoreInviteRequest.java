@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.team.select.model;
 import android.content.Context;
 
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
+import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
@@ -27,8 +28,8 @@ public class IgnoreInviteRequest implements Request<List<ResPendingTeamInfo>> {
         this.team = team;
     }
 
-    public static IgnoreInviteRequest create(Context context, InvitationApiClient invitationApiClient, Team team) {
-        return new IgnoreInviteRequest(context, invitationApiClient, team);
+    public static IgnoreInviteRequest create(Context context, Team team) {
+        return new IgnoreInviteRequest(context, new InvitationApiClient_(context), team);
     }
 
 

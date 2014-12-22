@@ -38,7 +38,7 @@ public class TeamDomainInfoModel {
     public void createNewTeam(String name, String teamDomain, String myName, String myEmail) {
 
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain, myName, myEmail);
-        TeamCreateRequest teamCreateRequest = TeamCreateRequest.create(context, jandiRestClient, reqCreateNewTeam);
+        TeamCreateRequest teamCreateRequest = TeamCreateRequest.create(context, reqCreateNewTeam);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, teamCreateRequest);
 
         try {

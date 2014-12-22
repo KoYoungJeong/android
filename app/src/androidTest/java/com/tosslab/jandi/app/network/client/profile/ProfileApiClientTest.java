@@ -2,14 +2,16 @@ package com.tosslab.jandi.app.network.client.profile;
 
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMemberProfile;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,6 +67,20 @@ public class ProfileApiClientTest {
         return accessToken;
     }
 
+    @Test
+    public void testGetMemberProfile() throws Exception {
+
+        ResMemberProfile memberProfile = null;
+        try {
+            memberProfile = profileApiClient.getMemberProfile(sideMenu.user.id);
+        } catch (HttpStatusCodeException e) {
+            Assert.fail(e.getResponseBodyAsString());
+        }
+
+        assertThat(memberProfile, is(notNullValue()));
+
+        System.out.println(memberProfile);
+    }
 
     @Test
     public void testUpdateUserProfile() throws Exception {

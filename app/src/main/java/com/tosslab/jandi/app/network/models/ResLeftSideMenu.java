@@ -65,12 +65,16 @@ public class ResLeftSideMenu {
         public String name;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class Channel extends Entity {
         public int ch_creatorId;
         public Date ch_createTime;
         public List<Integer> ch_members;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class User extends Entity {
         public String u_email;
         public String u_authority;
@@ -82,12 +86,17 @@ public class ResLeftSideMenu {
         public List<Integer> u_starredEntities;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+
     static public class PrivateGroup extends Entity {
         public int pg_creatorId;
         public Date pg_createTime;
         public List<Integer> pg_members;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class MessageMarker {
         public String entityType;
         public int entityId;

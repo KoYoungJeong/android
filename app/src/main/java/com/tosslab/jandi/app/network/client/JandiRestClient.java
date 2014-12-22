@@ -85,11 +85,6 @@ public interface JandiRestClient {
     @RequiresAuthentication
     ResCommon setMarker(int entityId, ReqSetMarker reqSetMarker);
 
-    // 프로필
-    @Get("/users/{userEntityId}")
-    @RequiresAuthentication
-    ResLeftSideMenu.User getUserProfile(int userEntityId);
-
     /**
      * *********************************************************
      * Search

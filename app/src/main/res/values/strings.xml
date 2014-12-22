@@ -232,4 +232,8 @@ Welcome to JANDI"</string>
 계정 정보와는 다른 내용을 사용할 수 있지만, 이름은 멘션 또는 검색에도 이용되기 때문에 팀원들에게 통용되는 호칭이 좋습니다."</string>
     <string name="team_create">팀 생성</string>
     <string name="fail_to_create_team">팀 생성에 실패하였습니다. 다시 시도해주십시요.</string>
+    <string name="jandi_team_member">팀 멤버</string>
+    <string name="jandi_logout">로그아웃</string>
+    <string name="jandi_sign_out_message">로그아웃 하시겠습니까?</string>
+    <string name="jandi_account">계정</string>
 </resources>

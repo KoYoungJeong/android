@@ -1,14 +1,16 @@
 package com.tosslab.jandi.app.network.client.profile;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMemberProfile;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
@@ -39,14 +41,13 @@ public interface ProfileApiClient {
     void setAuthentication(HttpAuthentication auth);
 
 
+    @Get("/members/{memberId}")
+    @RequiresAuthentication
+    ResMemberProfile getMemberProfile(int memberId);
+
     @Put("/members/{memberId}/profile")
     @RequiresAuthentication
-    ResLeftSideMenu.User updateUserProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
-
-    @Post("/members/profile")
-    @RequiresAuthentication
-    @Deprecated
-    ResLeftSideMenu.User updateUserProfile(ReqUpdateProfile reqUpdateProfile);
+    ResMemberProfile updateUserProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
 
     @Put("/members/{memberId}/name")
     @RequiresAuthentication
@@ -56,5 +57,6 @@ public interface ProfileApiClient {
     @RequiresAuthentication
     @Deprecated
     ResLeftSideMenu.User updateUserName(ReqUpdateProfile reqUpdateProfile);
+
 
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import de.greenrobot.event.EventBus;
@@ -25,15 +27,15 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 9. 3..
  */
 public class UserInfoDialogFragment extends DialogFragment {
-    private final static String ARG_USER_ID         = "userId";
-    private final static String ARG_USER_NAME       = "userName";
-    private final static String ARG_USER_STATUS_MSG   = "userStatusMessage";
-    private final static String ARG_USER_DIVISION   = "userDivision";
-    private final static String ARG_USER_POSITION   = "userPosition";
-    private final static String ARG_USER_PHONE_NUMBER   = "userPhoneNumber";
-    private final static String ARG_USER_EMAIL          = "userEmail";
-    private final static String ARG_USER_PROFILE_URL    = "profileUrl";
-    private final static String ARG_USER_IS_ME      = "isMe";
+    private final static String ARG_USER_ID = "userId";
+    private final static String ARG_USER_NAME = "userName";
+    private final static String ARG_USER_STATUS_MSG = "userStatusMessage";
+    private final static String ARG_USER_DIVISION = "userDivision";
+    private final static String ARG_USER_POSITION = "userPosition";
+    private final static String ARG_USER_PHONE_NUMBER = "userPhoneNumber";
+    private final static String ARG_USER_EMAIL = "userEmail";
+    private final static String ARG_USER_PROFILE_URL = "profileUrl";
+    private final static String ARG_USER_IS_ME = "isMe";
 
     public static UserInfoDialogFragment newInstance(FormattedEntity user, boolean isMe) {
         UserInfoDialogFragment frag = new UserInfoDialogFragment();
@@ -46,6 +48,23 @@ public class UserInfoDialogFragment extends DialogFragment {
         args.putString(ARG_USER_PHONE_NUMBER, user.getUserPhoneNumber());
         args.putString(ARG_USER_EMAIL, user.getUserEmail());
         args.putString(ARG_USER_PROFILE_URL, user.getUserLargeProfileUrl());
+        args.putBoolean(ARG_USER_IS_ME, isMe);
+
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static UserInfoDialogFragment newInstance(ResMemberProfile user, boolean isMe) {
+        UserInfoDialogFragment frag = new UserInfoDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_USER_ID, user.id);
+        args.putString(ARG_USER_NAME, user.name);
+        args.putString(ARG_USER_STATUS_MSG, user.u_statusMessage);
+        args.putString(ARG_USER_DIVISION, !TextUtils.isEmpty(user.u_extraData.department) ? user.u_extraData.department : "");
+        args.putString(ARG_USER_POSITION, !TextUtils.isEmpty(user.u_extraData.position) ? user.u_extraData.position : "");
+        args.putString(ARG_USER_PHONE_NUMBER, !TextUtils.isEmpty(user.u_extraData.phoneNumber) ? user.u_extraData.phoneNumber : "");
+        args.putString(ARG_USER_EMAIL, user.u_email);
+        args.putString(ARG_USER_PROFILE_URL, !TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl);
         args.putBoolean(ARG_USER_IS_ME, isMe);
 
         frag.setArguments(args);

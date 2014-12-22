@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
@@ -11,14 +12,24 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 public class TokenUtil {
 
     public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
-        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
-        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
-        JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+//        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+//        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
+//        JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+        saveTokenInfoByRefresh(context, accessToken);
     }
 
     public static void saveTokenInfoByRefresh(Context context, ResAccessToken accessToken) {
-        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
-        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
+        if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
+            JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+        }
+
+        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
+            JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+        }
+
+        if (!TextUtils.isEmpty(accessToken.getTokenType())) {
+            JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
+        }
     }
 
     public static void clearTokenInfo(Context context) {

@@ -17,18 +17,12 @@ import java.util.HashMap;
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends Application {
+    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
     /**
      * Application의 모든 Activities 가 사용하는 전역 변수
      * Static 등으로 사용하면 LMK에 의해 삭제될 위험이 있음
      */
     private EntityManager mEntityManager = null;
-
-    public enum TrackerName {
-        APP_TRACKER,
-        GLOBAL_TRACKER,
-    }
-
-    HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
 
     @Override
     public void onCreate() {
@@ -54,10 +48,18 @@ public class JandiApplication extends Application {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            analytics.setLocalDispatchPeriod(120);
             Tracker t = (trackerId == TrackerName.APP_TRACKER)
                     ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
                     : analytics.newTracker(R.xml.global_tracker);
+            t.setSessionTimeout(60);
+            t.enableAutoActivityTracking(true);
+            t.enableExceptionReporting(true);
+            t.setAppName("JANDI");
+            t.setAppVersion("0.4.5");
+
             mTrackers.put(trackerId, t);
+
 
         }
         return mTrackers.get(trackerId);
@@ -74,6 +76,11 @@ public class JandiApplication extends Application {
 
     public void setEntityManager(EntityManager entityManager) {
         mEntityManager = entityManager;
+    }
+
+    public enum TrackerName {
+        APP_TRACKER,
+        GLOBAL_TRACKER,
     }
 
 }

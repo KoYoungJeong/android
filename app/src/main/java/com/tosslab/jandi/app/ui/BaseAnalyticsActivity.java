@@ -22,19 +22,19 @@ import org.json.JSONException;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class BaseAnalyticsActivity extends Activity {
-    private static String GA_PATH_FILE_DETAIL     = "File Detail";
-    private static String GA_PATH_PROFILE         = "Profile";
-    private static String GA_PATH_TEAM_INFO       = "Team Info";
+    private static String GA_PATH_FILE_DETAIL = "File Detail";
+    private static String GA_PATH_PROFILE = "Profile";
+    private static String GA_PATH_TEAM_INFO = "Team Info";
 
-    private static String GA_PATH_CHANNEL         = "Topic";
-    private static String GA_PATH_DIRECT_MESSAGE  = "Direct Message";
-    private static String GA_PATH_PRIVATE_GROUP   = "Private Group";
+    private static String GA_PATH_CHANNEL = "Topic";
+    private static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
+    private static String GA_PATH_PRIVATE_GROUP = "Private Group";
 
 
-    private static String GA_PATH_CHANNEL_PANEL         = "Channel Panel";
-    private static String GA_PATH_DIRECT_MESSAGE_PANEL  = "Direct Message Panel";
-    private static String GA_PATH_PRIVATE_GROUP_PANEL   = "Private Group Panel";
-    private static String GA_PATH_FILE_PANEL            = "File Panel";
+    private static String GA_PATH_CHANNEL_PANEL = "Channel Panel";
+    private static String GA_PATH_DIRECT_MESSAGE_PANEL = "Direct Message Panel";
+    private static String GA_PATH_PRIVATE_GROUP_PANEL = "Private Group Panel";
+    private static String GA_PATH_FILE_PANEL = "File Panel";
 
     private final Logger log = Logger.getLogger(BaseAnalyticsActivity.class);
 
@@ -143,7 +143,7 @@ public class BaseAnalyticsActivity extends Activity {
     }
 
     protected void trackUnsharingFile(EntityManager entityManager,
-                                    int entityType, ResMessages.FileMessage fileInfo) {
+                                      int entityType, ResMessages.FileMessage fileInfo) {
         if (entityManager != null) {
             mMixpanelAnalyticsClient = MixpanelAnalyticsClient.getInstance(this, entityManager.getDistictId());
             try {
@@ -156,6 +156,7 @@ public class BaseAnalyticsActivity extends Activity {
 
     /**
      * ProfileActivity에서는 entityManager가 없기 때문에 distictId를 그대로 가져온다.
+     *
      * @param distictId
      * @param updatedMyProfile
      */
@@ -192,7 +193,8 @@ public class BaseAnalyticsActivity extends Activity {
     }
 
 
-    /*************************
+    /**
+     * **********************
      * Google Analytics
      */
     protected void trackGaFileDetail(EntityManager entityManager) {
@@ -217,7 +219,9 @@ public class BaseAnalyticsActivity extends Activity {
     }
 
     protected void trackGaTab(EntityManager entityManager, int tabPosition) {
-        if (entityManager == null) return;
+        if (entityManager == null) {
+            return;
+        }
 
         String gaPath;
         switch (tabPosition) {
@@ -239,6 +243,7 @@ public class BaseAnalyticsActivity extends Activity {
     }
 
     private void trackGa(final String distictId, final String gaPath) {
+
         Tracker screenViewTracker = ((JandiApplication) getApplication())
                 .getTracker(JandiApplication.TrackerName.APP_TRACKER);
         screenViewTracker.set("&uid", distictId);

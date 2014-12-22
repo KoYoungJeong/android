@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.FileListActivity_;
+import com.tosslab.jandi.app.ui.maintab.file.FileListActivity_;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 
 /**

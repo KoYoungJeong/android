@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -16,8 +16,10 @@ import org.androidannotations.annotations.Extra;
  */
 @EActivity(R.layout.activity_file_list)
 public class FileListActivity extends Activity {
+
     @Extra
     int entityId;
+
     @Extra
     String entityName;
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.team.info.model;
 import android.content.Context;
 
 import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -24,8 +25,8 @@ public class TeamCreateRequest implements Request<ResTeamDetailInfo> {
         this.reqCreateNewTeam = reqCreateNewTeam;
     }
 
-    public static TeamCreateRequest create(Context context, JandiRestClient jandiRestClient, ReqCreateNewTeam reqCreateNewTeam) {
-        return new TeamCreateRequest(context, jandiRestClient, reqCreateNewTeam);
+    public static TeamCreateRequest create(Context context, ReqCreateNewTeam reqCreateNewTeam) {
+        return new TeamCreateRequest(context, new JandiRestClient_(context), reqCreateNewTeam);
     }
 
 

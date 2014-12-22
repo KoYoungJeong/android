@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -15,7 +14,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,8 +27,6 @@ public class SettingFragmentViewModel {
     @RootContext
     Context context;
 
-    @RestService
-    JandiRestClient jandiRestClient;
     @Bean
     JandiEntityClient mJandiEntityClient;
 

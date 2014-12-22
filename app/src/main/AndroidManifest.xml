@@ -13,10 +13,11 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/origin_play_service_version"
             tools:replace="android:value" />
+        <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
             android:resource="@xml/global_tracker" />
-
+        -->
         <activity
             android:name=".ui.signup.SignUpActivity_"
             android:label="@string/jandi_signup_title"
@@ -56,7 +57,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
-            android:name=".ui.FileListActivity_"
+            android:name=".ui.maintab.file.FileListActivity_"
             android:label="@string/jandi_tab_file"
             android:screenOrientation="portrait" />
         <activity

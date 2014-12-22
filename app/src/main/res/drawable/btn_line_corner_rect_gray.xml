@@ -5,6 +5,7 @@
 
         <shape android:shape="rectangle">
 
+            <corners android:radius="2dp" />
             <solid android:color="@color/jandi_border_gray" />
             <stroke android:width="0.5dp" android:color="@color/jandi_border_gray" />
             <size android:width="1dp" android:height="1dp" />
@@ -16,6 +17,7 @@
     <item>
         <shape android:shape="rectangle">
 
+            <corners android:radius="2dp" />
             <solid android:color="@color/white" />
             <stroke android:width="0.5dp" android:color="@color/jandi_border_gray" />
             <size android:width="1dp" android:height="1dp" />

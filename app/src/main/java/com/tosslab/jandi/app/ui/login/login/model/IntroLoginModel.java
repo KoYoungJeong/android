@@ -57,7 +57,7 @@ public class IntroLoginModel {
                 // Save Token & Get TeamList
                 TokenUtil.saveTokenInfoByPassword(context, accessToken);
 
-                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context, jandiRestClient);
+                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
                 RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
                 ResAccountInfo resAccountInfo = requestManager.request();
 
