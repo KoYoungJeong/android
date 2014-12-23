@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,10 @@ public class JandiDatabaseManager {
         int loggedIndex = cursor.getColumnIndex(Account.loggedAt.name());
         int activedIndex = cursor.getColumnIndex(Account.activatedAt.name());
         int notiTargetIndex = cursor.getColumnIndex(Account.notificationTarget.name());
+        int photoUrlIndex = cursor.getColumnIndex(Account.photoUrl.name());
+        int largePhotoUrlIndex = cursor.getColumnIndex(Account.largeThumbPhotoUrl.name());
+        int mediumPhotoUrlIndex = cursor.getColumnIndex(Account.mediumThumbPhotoUrl.name());
+        int smallPhotoUrlIndex = cursor.getColumnIndex(Account.smallThumbPhotoUrl.name());
         int statusIndex = cursor.getColumnIndex(Account.status.name());
 
         resAccountInfo.setName(cursor.getString(nameIndex));
@@ -77,6 +82,15 @@ public class JandiDatabaseManager {
         resAccountInfo.setActivatedAt(cursor.getString(activedIndex));
         resAccountInfo.setNotificationTarget(cursor.getString(notiTargetIndex));
         resAccountInfo.setStatus(cursor.getString(statusIndex));
+        resAccountInfo.setPhotoUrl(cursor.getString(photoUrlIndex));
+
+        ResMessages.ThumbnailUrls photoThumbnailUrl = new ResMessages.ThumbnailUrls();
+        photoThumbnailUrl.largeThumbnailUrl = cursor.getString(largePhotoUrlIndex);
+        photoThumbnailUrl.mediumThumbnailUrl = cursor.getString(mediumPhotoUrlIndex);
+        photoThumbnailUrl.smallThumbnailUrl = cursor.getString(smallPhotoUrlIndex);
+
+        resAccountInfo.setPhotoThumbnailUrl(photoThumbnailUrl);
+
 
         closeCursor(cursor);
         return resAccountInfo;
@@ -96,6 +110,13 @@ public class JandiDatabaseManager {
         contentValue.put(Account.loggedAt.name(), resAccountInfo.getLoggedAt());
         contentValue.put(Account.activatedAt.name(), resAccountInfo.getActivatedAt());
         contentValue.put(Account.notificationTarget.name(), resAccountInfo.getNotificationTarget());
+        contentValue.put(Account.photoUrl.name(), resAccountInfo.getPhotoUrl());
+
+        ResMessages.ThumbnailUrls photoThumbnailUrl = resAccountInfo.getPhotoThumbnailUrl();
+
+        contentValue.put(Account.largeThumbPhotoUrl.name(), photoThumbnailUrl.largeThumbnailUrl);
+        contentValue.put(Account.mediumThumbPhotoUrl.name(), photoThumbnailUrl.mediumThumbnailUrl);
+        contentValue.put(Account.smallThumbPhotoUrl.name(), photoThumbnailUrl.smallThumbnailUrl);
         contentValue.put(Account.status.name(), resAccountInfo.getStatus());
 
         return database.insert(Table.account.name(), null, contentValue);
@@ -360,6 +381,17 @@ public class JandiDatabaseManager {
         closeCursor(cursor);
 
         return userTeam;
+
+    }
+
+    public void clearAllData() {
+
+        SQLiteDatabase database = getWriteableDatabase();
+        Table[] tables = Table.values();
+
+        for (Table table : tables) {
+            database.delete(table.name(), null, null);
+        }
 
     }
 }

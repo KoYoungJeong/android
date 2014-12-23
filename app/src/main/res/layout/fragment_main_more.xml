@@ -159,13 +159,5 @@
             android:layout_height="wrap_content"
             android:textColor="@color/jandi_text_medium" />
 
-        <TextView
-            android:id="@+id/txt_more_jandi_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:padding="5dp"
-            android:text="@string/jandi_setting_sign_out"
-            android:textColor="@color/jandi_text" />
     </LinearLayout>
 </LinearLayout>

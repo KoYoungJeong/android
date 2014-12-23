@@ -120,7 +120,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         // Push가 MainTabActivity를 보고 있을 때
         // 발생한다면 알람 카운트 갱신을 위한 BR 등록
         IntentFilter intentFilter = new IntentFilter();
@@ -140,7 +139,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onPause() {
         unregisterReceiver(mRefreshEntities);
-        EventBus.getDefault().unregister(this);
         super.onPause();
     }
 
@@ -225,30 +223,5 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private void postShowChattingListEvent() {
         EventBus.getDefault().post(new RetrieveTopicListEvent());
-    }
-
-    /**
-     * ************************
-     * TODO Settings 에 있는 것과 동일. 뺄까 ??
-     */
-
-    public void onEvent(SignOutEvent event) {
-        if (mEntityManager != null) {
-            trackSignOut(mEntityManager.getDistictId());
-        }
-        returnToLoginActivity();
-    }
-
-    public void returnToLoginActivity() {
-        // Access Token 삭제
-        JandiPreference.clearMyToken(mContext);
-
-        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
-        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
-        parseInstallation.saveInBackground();
-
-        Intent intent = new Intent(mContext, IntroActivity_.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 }

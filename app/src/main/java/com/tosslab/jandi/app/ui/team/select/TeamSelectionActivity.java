@@ -151,6 +151,7 @@ public class TeamSelectionActivity extends Activity {
 
         Team lastSelectedItem = teamSelectionPresenter.getLastSelectedItem();
         teamSelectionModel.updateSelectedTeam(lastSelectedItem);
+        teamSelectionModel.clearEntityManager();
         teamSelectionPresenter.selectTeam(lastSelectedItem);
     }
 

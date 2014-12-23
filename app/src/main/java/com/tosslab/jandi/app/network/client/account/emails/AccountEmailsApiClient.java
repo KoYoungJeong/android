@@ -40,8 +40,6 @@ public interface AccountEmailsApiClient {
 
     void setHeader(String name, String value);
 
-    String getHeader(String name);
-
     void setAuthentication(HttpAuthentication auth);
 
     /**

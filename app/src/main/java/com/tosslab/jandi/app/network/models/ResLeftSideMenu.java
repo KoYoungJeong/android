@@ -53,7 +53,8 @@ public class ResLeftSideMenu {
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "type")
+            property = "type",
+            defaultImpl = User.class)
     @JsonSubTypes({
             @JsonSubTypes.Type(value = Channel.class, name = "channel"),
             @JsonSubTypes.Type(value = PrivateGroup.class, name = "privateGroup"),
@@ -78,12 +79,20 @@ public class ResLeftSideMenu {
     static public class User extends Entity {
         public String u_email;
         public String u_authority;
-        public String u_photoUrl;
+        public String u_nickname;
+        public String u_tutoredAt;
+        public String accountId;
+        public Date updatedAt;
+        public Date createdAt;
         public String u_statusMessage;
         public ExtraData u_extraData;
+        public String u_photoUrl;
         public ResMessages.ThumbnailUrls u_photoThumbnailUrl;
         public List<MessageMarker> u_messageMarkers;
         public List<Integer> u_starredEntities;
+        public List<Integer> u_joinEntities;
+        public List<Integer> u_starredMessages;
+        public String status;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -21,6 +21,7 @@ public class BaseInitUtil {
     public static final String TEXT_PASSWORD = "1234";
 
     public static void initData(Context context) {
+        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
         JandiRestClient jandiRestClient = new JandiRestClient_(context);
         ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(TEST_ID, TEXT_PASSWORD));
@@ -33,7 +34,6 @@ public class BaseInitUtil {
         JandiDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
         JandiDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
     }

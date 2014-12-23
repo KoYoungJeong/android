@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Handler;
-import android.text.Html;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,9 +13,10 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.ui.ProfileActivity_;
 import com.tosslab.jandi.app.ui.TeamInfoActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
+import com.tosslab.jandi.app.ui.profile.account.AccountProfileActivity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
@@ -45,8 +44,7 @@ public class MainMoreFragment extends Fragment {
 
     @ViewById(R.id.txt_more_jandi_version)
     TextView textViewJandiVersion;
-    @Bean
-    MainMoreFragPresenter mainMoreFragPresenter;
+
     private EntityManager mEntityManager;
 
     @AfterInject
@@ -59,8 +57,6 @@ public class MainMoreFragment extends Fragment {
     void initView() {
 
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
-        TextView logoutView = (TextView) getView().findViewById(R.id.txt_more_jandi_logout);
-        logoutView.setText(Html.fromHtml(String.format("<u>%s</u>", logoutView.getText().toString())));
 
         showUserProfile();
         showJandiVersion();
@@ -94,6 +90,9 @@ public class MainMoreFragment extends Fragment {
             @Override
             public void run() {
                 logger.debug("Move to Account Info");
+
+                AccountProfileActivity_.intent(mContext)
+                        .start();
             }
         });
     }
@@ -103,7 +102,7 @@ public class MainMoreFragment extends Fragment {
         runActivityWithDelay(new Runnable() {
             @Override
             public void run() {
-                ProfileActivity_.intent(mContext)
+                MemberProfileActivity_.intent(mContext)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         .start();
             }
@@ -129,7 +128,7 @@ public class MainMoreFragment extends Fragment {
             public void run() {
                 TeamSelectionActivity_.intent(mContext)
                         .calledType(TeamSelectionActivity.CALLED_CHANGE_TEAM)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .start();
             }
         });
@@ -169,14 +168,6 @@ public class MainMoreFragment extends Fragment {
     private void runActivityWithDelay(Runnable runnable) {
         Handler handler = new Handler();
         handler.postDelayed(runnable, 250);
-    }
-
-
-    @Click(R.id.txt_more_jandi_logout)
-    public void signOut() {
-
-        mainMoreFragPresenter.showLogoutDialog();
-
     }
 
 }

@@ -19,8 +19,10 @@ import com.tosslab.jandi.app.network.client.profile.ProfileApiClient;
 import com.tosslab.jandi.app.network.client.profile.ProfileApiClient_;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient_;
-import com.tosslab.jandi.app.network.client.settings.starred.StarredEntityApiClient;
-import com.tosslab.jandi.app.network.client.settings.starred.StarredEntityApiClient_;
+import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient;
+import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient_;
+import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
+import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
@@ -41,7 +43,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -370,15 +371,15 @@ public class JandiEntityClient {
      * 사용자 프로필
      * **********************************************************
      */
-    public ResMemberProfile getUserProfile(final int entityId) throws JandiNetworkException {
+    public ResLeftSideMenu.User getUserProfile(final int entityId) throws JandiNetworkException {
         try {
-            return RequestManager.newInstance(context, new Request<ResMemberProfile>() {
+            return RequestManager.newInstance(context, new Request<ResLeftSideMenu.User>() {
                 @Override
-                public ResMemberProfile request() throws JandiNetworkException {
+                public ResLeftSideMenu.User request() throws JandiNetworkException {
 
-                    ProfileApiClient mJandiRestClient = new ProfileApiClient_(context);
-                    mJandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                    return mJandiRestClient.getMemberProfile(entityId);
+                    TeamsApiClient teamsApiClient = new TeamsApiClient_(context);
+                    teamsApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+                    return teamsApiClient.getMemberProfile(selectedTeamId, entityId);
                 }
             }).request();
         } catch (HttpStatusCodeException e) {
@@ -386,12 +387,12 @@ public class JandiEntityClient {
         }
     }
 
-    public ResMemberProfile updateUserProfile(final int entityId, final ReqUpdateProfile reqUpdateProfile) throws JandiNetworkException {
+    public ResLeftSideMenu.User updateUserProfile(final int entityId, final ReqUpdateProfile reqUpdateProfile) throws JandiNetworkException {
         try {
 
-            return RequestManager.newInstance(context, new Request<ResMemberProfile>() {
+            return RequestManager.newInstance(context, new Request<ResLeftSideMenu.User>() {
                 @Override
-                public ResMemberProfile request() throws JandiNetworkException {
+                public ResLeftSideMenu.User request() throws JandiNetworkException {
                     ProfileApiClient profileApiClient = new ProfileApiClient_(context);
                     profileApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
                     return profileApiClient.updateUserProfile(entityId, reqUpdateProfile);

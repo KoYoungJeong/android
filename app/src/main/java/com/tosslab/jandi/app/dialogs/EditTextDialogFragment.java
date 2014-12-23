@@ -17,11 +17,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmCreatePublicTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
-import com.tosslab.jandi.app.events.messages.ConfirmModifyMessageEvent;
-import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 
 import org.androidannotations.annotations.EFragment;
 import org.apache.log4j.Logger;
@@ -35,25 +34,24 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment
 public class EditTextDialogFragment extends DialogFragment {
+    public final static int ACTION_CREATE_TOPIC = 0;
+    public final static int ACTION_MODIFY_TOPIC = 1;
+    public final static int ACTION_MODIFY_PROFILE_STATUS = 3;
+    public final static int ACTION_MODIFY_PROFILE_PHONE = 4;
+    public final static int ACTION_MODIFY_PROFILE_DIVISION = 5;
+    public final static int ACTION_MODIFY_PROFILE_POSITION = 6;
+    public final static int ACTION_MODIFY_PROFILE_ACCOUNT_NAME = 7;
+    private final static int MAX_LENGTH_OF_TOPIC_NAME = 60;
+    private final static int MAX_LENGTH_OF_PHONE = 20;
+    private static final int MAX_LENGTH_OF_ACCOUNT_NAME = 20;
+    private final static int MAX_LENGTH_OF_STATUS = 60;
+    private final static int MAX_LENGTH_OF_DIVISION = 60;
+    private final static int MAX_LENGTH_OF_POSITION = 60;
+    private final static String ARG_ACTION_TYPE = "actionType";
+    private final static String ARG_TOPIC_TYPE = "topicType";
+    private final static String ARG_TOPIC_ID = "topicId";
+    private final static String ARG_CURRENT_MGS = "currentMessage";
     private final Logger log = Logger.getLogger(EditTextDialogFragment.class);
-
-    private final static int MAX_LENGTH_OF_TOPIC_NAME   = 60;
-    private final static int MAX_LENGTH_OF_PHONE        = 20;
-    private final static int MAX_LENGTH_OF_STATUS       = 60;
-    private final static int MAX_LENGTH_OF_DIVISION     = 60;
-    private final static int MAX_LENGTH_OF_POSITION     = 60;
-
-    public final static int ACTION_CREATE_TOPIC             = 0;
-    public final static int ACTION_MODIFY_TOPIC             = 1;
-    public final static int ACTION_MODIFY_PROFILE_STATUS    = 3;
-    public final static int ACTION_MODIFY_PROFILE_PHONE     = 4;
-    public final static int ACTION_MODIFY_PROFILE_DIVISION  = 5;
-    public final static int ACTION_MODIFY_PROFILE_POSITION  = 6;
-
-    private final static String ARG_ACTION_TYPE     = "actionType";
-    private final static String ARG_TOPIC_TYPE      = "topicType";
-    private final static String ARG_TOPIC_ID        = "topicId";
-    private final static String ARG_CURRENT_MGS     = "currentMessage";
 
     /**
      * topic 생성에 사용되는 Dialog.
@@ -147,6 +145,7 @@ public class EditTextDialogFragment extends DialogFragment {
         setEditTextByPurpose(editTextInput, buttonConfirm, currentMessage, actionType);
         // 수정 대화상자의 경우 현재 메시지를 보여준다.
         editTextInput.setText(currentMessage);
+        editTextInput.setSelection(currentMessage.length());
 
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,6 +171,7 @@ public class EditTextDialogFragment extends DialogFragment {
                         case ACTION_MODIFY_PROFILE_PHONE:
                         case ACTION_MODIFY_PROFILE_DIVISION:
                         case ACTION_MODIFY_PROFILE_POSITION:
+                        case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                             EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
                             break;
                         default:
@@ -209,6 +209,9 @@ public class EditTextDialogFragment extends DialogFragment {
             case ACTION_MODIFY_PROFILE_POSITION:
                 input.setHint(R.string.jandi_profile_division_hint);
                 break;
+            case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+                input.setHint(R.string.jandi_title_name);
+                break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
                 input.setHint("");
@@ -217,10 +220,12 @@ public class EditTextDialogFragment extends DialogFragment {
 
         input.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
@@ -232,8 +237,8 @@ public class EditTextDialogFragment extends DialogFragment {
                     case ACTION_CREATE_TOPIC:
                     case ACTION_MODIFY_TOPIC:
                         confirm.setSelected((inputLength > 0)
-                                        && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
-                                        && (!inputText.equals(currentMessage)));
+                                && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
+                                && (!inputText.equals(currentMessage)));
                         break;
                     case ACTION_MODIFY_PROFILE_STATUS:
                         confirm.setSelected(inputLength < MAX_LENGTH_OF_STATUS);
@@ -247,6 +252,8 @@ public class EditTextDialogFragment extends DialogFragment {
                     case ACTION_MODIFY_PROFILE_POSITION:
                         confirm.setSelected(inputLength < MAX_LENGTH_OF_POSITION);
                         break;
+                    case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+                        confirm.setSelected(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME);
                     default:
                         // DO NOTHING
                         break;
@@ -277,6 +284,8 @@ public class EditTextDialogFragment extends DialogFragment {
                 return R.string.jandi_profile_division;
             case ACTION_MODIFY_PROFILE_POSITION:
                 return R.string.jandi_profile_position;
+            case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+                return R.string.jandi_title_name;
             default:
                 return R.string.jandi_empty;
         }

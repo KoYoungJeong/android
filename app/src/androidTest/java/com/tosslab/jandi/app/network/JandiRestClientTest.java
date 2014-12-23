@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
-import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -15,7 +14,6 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
@@ -25,14 +23,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiRestClientTest {
@@ -88,26 +84,6 @@ public class JandiRestClientTest {
         assertNotNull(infosForSideMenu);
 
         System.out.println(infosForSideMenu);
-
-    }
-
-    @Test
-    public void testCreateNewTeam() throws Exception {
-
-
-        // FIXME 요청 정보에서 누락이 있는지 계속적으로 실패함
-        ReqCreateNewTeam reqNewTeam = new ReqCreateNewTeam("Toss Lab, Inc", "testab", "좐수", "john@tosslab.com");
-        ResTeamDetailInfo newTeam = null;
-        try {
-            newTeam = jandiRestClient_.createNewTeam(reqNewTeam);
-        } catch (HttpStatusCodeException e) {
-            System.out.println(e.getResponseBodyAsString());
-            fail(e.getMessage());
-        }
-
-        assertNotNull(newTeam);
-
-        System.out.println(newTeam);
 
     }
 

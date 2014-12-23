@@ -74,7 +74,13 @@
             android:label="@string/jandi_settings"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ProfileActivity_"
+            android:name=".ui.profile.member.MemberProfileActivity_"
+            android:label="@string/jandi_profile_actionb"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.profile.account.AccountProfileActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_profile_actionb"
             android:screenOrientation="portrait" />
         <activity

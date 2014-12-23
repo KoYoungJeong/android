@@ -1,10 +1,13 @@
-package com.tosslab.jandi.app.network.client.profile;
+package com.tosslab.jandi.app.network.client.settings;
+
+/**
+ * Created by Steve SeongUg Jung on 14. 12. 15..
+ */
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
@@ -18,9 +21,6 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
-/**
- * Created by Steve SeongUg Jung on 14. 12. 15..
- */
 @Rest(
         rootUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api",
         converters = {
@@ -30,26 +30,19 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 StringHttpMessageConverter.class},
         interceptors = {LoggerInterceptor.class}
 )
-
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-public interface ProfileApiClient {
+public interface AccountProfileClient {
 
     void setHeader(String name, String value);
 
     void setAuthentication(HttpAuthentication auth);
 
-    @Put("/members/{memberId}/profile")
+    @Post("/settings/name")
     @RequiresAuthentication
-    ResLeftSideMenu.User updateUserProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
+    ResAccountInfo changeName(ReqProfileName reqProfileName);
 
-    @Put("/members/{memberId}/name")
+    @Put("/settings/primaryEmail")
     @RequiresAuthentication
-    ResCommon updateUserName(int memberId, ReqProfileName reqProfileName);
-
-    @Post("/members/name")
-    @RequiresAuthentication
-    @Deprecated
-    ResLeftSideMenu.User updateUserName(ReqUpdateProfile reqUpdateProfile);
-
+    ResAccountInfo changePrimaryEmail(ReqAccountEmail reqAccountEmail);
 
 }

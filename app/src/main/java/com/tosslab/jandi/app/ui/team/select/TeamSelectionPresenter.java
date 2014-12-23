@@ -171,6 +171,7 @@ public class TeamSelectionPresenter {
         log.debug("Selected Team Id : " + team);
 
         MainTabActivity_.intent(activity)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
         activity.finish();
 

@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -42,7 +43,7 @@ public class FileUploadUtil {
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
         String permissionCode = (chattingInfomations.isPublicTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -61,7 +62,7 @@ public class FileUploadUtil {
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", "1"); // TODO Temp Team Id
+                .setMultipartParameter("teamId", String.valueOf(JandiDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {

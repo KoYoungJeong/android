@@ -1,16 +1,15 @@
-package com.tosslab.jandi.app.network.client.profile;
+package com.tosslab.jandi.app.network.client.teams;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.models.ReqProfileName;
-import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
-import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
-import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
 import org.springframework.http.HttpAuthentication;
@@ -30,26 +29,21 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 StringHttpMessageConverter.class},
         interceptors = {LoggerInterceptor.class}
 )
-
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-public interface ProfileApiClient {
+public interface TeamsApiClient {
 
     void setHeader(String name, String value);
 
     void setAuthentication(HttpAuthentication auth);
 
-    @Put("/members/{memberId}/profile")
-    @RequiresAuthentication
-    ResLeftSideMenu.User updateUserProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
 
-    @Put("/members/{memberId}/name")
+    @Post("/teams")
     @RequiresAuthentication
-    ResCommon updateUserName(int memberId, ReqProfileName reqProfileName);
+    ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
 
-    @Post("/members/name")
+
+    @Get("/teams/{teamId}/members/{memberId}")
     @RequiresAuthentication
-    @Deprecated
-    ResLeftSideMenu.User updateUserName(ReqUpdateProfile reqUpdateProfile);
-
+    ResLeftSideMenu.User getMemberProfile(int teamId, int memberId);
 
 }

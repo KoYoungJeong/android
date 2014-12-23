@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.R;
  * Created by justinygchoi on 2014. 2. 15..
  */
 public class ProgressWheel extends ProgressDialog {
-    private static ProgressWheel __instance__;
     Context mContext;
 
     public ProgressWheel(Context context) {

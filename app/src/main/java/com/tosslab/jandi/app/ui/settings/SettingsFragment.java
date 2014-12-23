@@ -46,12 +46,6 @@ public class SettingsFragment extends PreferenceFragment {
                 log.debug("canceled");
                 offPushNotification();
             }
-        } else if (preference.getKey().equals("setting_logout")) {
-            log.debug("setting_logout clicked");
-            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
-
-            // Notification Token을 삭제
-            settingFragmentViewModel.returnToLoginActivity();
         }
         return false;
     }

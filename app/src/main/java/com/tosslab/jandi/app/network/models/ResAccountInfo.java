@@ -25,6 +25,12 @@ public class ResAccountInfo {
     private List<UserTeam> memberships;
     private List<UserEmail> emails;
 
+    @JsonProperty("u_photoThumbnailUrl")
+    private ResMessages.ThumbnailUrls photoThumbnailUrl;
+    @JsonProperty("u_photoUrl")
+    private String photoUrl;
+
+
     public String getName() {
         return name;
     }
@@ -128,6 +134,22 @@ public class ResAccountInfo {
                 ", memberships=" + memberships +
                 ", emails=" + emails +
                 '}';
+    }
+
+    public ResMessages.ThumbnailUrls getPhotoThumbnailUrl() {
+        return photoThumbnailUrl;
+    }
+
+    public void setPhotoThumbnailUrl(ResMessages.ThumbnailUrls photoThumbnailUrl) {
+        this.photoThumbnailUrl = photoThumbnailUrl;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     public static class UserDevice {

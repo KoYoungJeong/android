@@ -52,10 +52,6 @@ public interface JandiRestClient {
     @Get("/config")
     ResConfig getConfig();
 
-    @Post("/teams")
-    @RequiresAuthentication
-    ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
-
     // 내 팀 정보 획득
     @Get("/info/teamlist/email/{userEmail}")
     ResMyTeam getTeamId(String userEmail);

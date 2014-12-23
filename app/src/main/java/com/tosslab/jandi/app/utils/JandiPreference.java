@@ -79,13 +79,6 @@ public class JandiPreference {
         return pref.getString(PREF_TOKEN, "");
     }
 
-    public static void setMyToken(Context context, String token) {
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString(PREF_TOKEN, token);
-        editor.commit();
-    }
-
     public static void clearMyToken(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -144,6 +137,11 @@ public class JandiPreference {
     public static long getLastRefreshTokenTime(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         return pref.getLong(PREF_REFRESH_TOKEN_TIME, 0);
+    }
+
+    public static void signOut(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        pref.edit().clear().commit();
     }
 
 }

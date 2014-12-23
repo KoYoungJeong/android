@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.ActionBar;
 import android.app.DialogFragment;
@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -32,10 +28,11 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -50,7 +47,6 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URLConnection;
 
 import de.greenrobot.event.EventBus;
@@ -59,10 +55,10 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
-public class ProfileActivity extends BaseAnalyticsActivity {
+public class MemberProfileActivity extends BaseAnalyticsActivity {
     private static final int REQ_CODE_PICK_IMAGE = 0;
     private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
-    private final Logger log = Logger.getLogger(ProfileActivity.class);
+    private final Logger log = Logger.getLogger(MemberProfileActivity.class);
     @ViewById(R.id.profile_photo)
     ImageView imageViewProfilePhoto;
     @ViewById(R.id.profile_user_realname)
@@ -162,7 +158,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     void getProfileInBackground() {
         try {
             EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
-            ResMemberProfile me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
+            ResLeftSideMenu.User me = mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
             getProfileSuccess(me);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -174,7 +170,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getProfileSuccess(ResMemberProfile me) {
+    void getProfileSuccess(ResLeftSideMenu.User me) {
         mProgressWheel.dismiss();
         attemptToUpdate = false;
         attemptToUpdatePhoto = false;
@@ -188,10 +184,10 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         finish();
     }
 
-    void displayProfile(ResMemberProfile user) {
+    void displayProfile(ResLeftSideMenu.User user) {
         // 프로필 사진
         Glide.with(this)
-                .load(!TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl)
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + (!TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl))
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new GlideCircleTransform(this))
                 .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
@@ -359,7 +355,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     void updateProfileInBackground(ReqUpdateProfile reqUpdateProfile) {
         try {
             EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
-            ResMemberProfile me = mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
+            ResLeftSideMenu.User me = mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
             updateProfileSucceed(me);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -368,25 +364,9 @@ public class ProfileActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void updateProfileSucceed(ResMemberProfile user) {
+    void updateProfileSucceed(ResLeftSideMenu.User user) {
         ColoredToast.show(this, getString(R.string.jandi_profile_update_succeed));
-
-        // TODO It's Temp way!!! Must need refactor
-        ResLeftSideMenu.User me = new ResLeftSideMenu.User();
-        me.u_extraData = user.u_extraData;
-        me.id = user.id;
-        me.u_starredEntities = user.u_starredEntities;
-        me.u_authority = user.u_authority;
-        me.u_email = user.u_email;
-        me.u_messageMarkers = user.u_messageMarkers;
-        me.u_photoThumbnailUrl = user.u_photoThumbnailUrl;
-        me.u_photoUrl = user.u_photoUrl;
-        me.u_statusMessage = user.u_statusMessage;
-        me.name = user.name;
-        me.teamId = user.teamId;
-        me.type = user.type;
-
-        trackUpdateProfile(getDistictId(), me);
+        trackUpdateProfile(getDistictId(), user);
         getProfileSuccess(user);
     }
 
@@ -408,47 +388,10 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");              // 모든 이미지
         intent.putExtra("crop", "true");        // Crop기능 활성화
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempUri());     // 임시파일 생성
         intent.putExtra("outputFormat",         // 포맷방식
                 Bitmap.CompressFormat.PNG.toString());
 
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
-    }
-
-    /**
-     * 임시 저장 파일의 경로를 반환
-     */
-    private Uri getTempUri() {
-        mTempPhotoFile = getTempFile();
-        return Uri.fromFile(mTempPhotoFile);
-    }
-
-    /**
-     * 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환
-     */
-    private File getTempFile() {
-        if (isSDCARDMOUNTED()) {
-            File f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
-                    TEMP_PHOTO_FILE);
-            try {
-                f.createNewFile();      // 외장메모리에 temp.png 파일 생성
-            } catch (IOException e) {
-            }
-
-            return f;
-        } else
-            return null;
-    }
-
-    /**
-     * SD카드가 마운트 되어 있는지 확인
-     */
-    private boolean isSDCARDMOUNTED() {
-        String status = Environment.getExternalStorageState();
-        if (status.equals(Environment.MEDIA_MOUNTED))
-            return true;
-
-        return false;
     }
 
     /**
@@ -462,10 +405,8 @@ public class ProfileActivity extends BaseAnalyticsActivity {
             case REQ_CODE_PICK_IMAGE:
                 if (resultCode == RESULT_OK) {
                     if (imageData != null) {
-                        String filePath = Environment.getExternalStorageDirectory() + "/" + TEMP_PHOTO_FILE;
-                        log.debug("temp profile img : " + filePath);
                         attemptToUpdatePhoto = true;
-                        mTempPhotoFile = new File(filePath);
+                        mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
                         Glide.with(this)
                                 .load(mTempPhotoFile)
                                 .placeholder(R.drawable.jandi_profile)
@@ -488,7 +429,7 @@ public class ProfileActivity extends BaseAnalyticsActivity {
         EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
 
         String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/photo";
+                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         Ion.with(mContext)
                 .load(requestURL)
@@ -502,18 +443,19 @@ public class ProfileActivity extends BaseAnalyticsActivity {
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(mContext).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(mTempPhotoFile.getName()), mTempPhotoFile)
-                .asJsonObject()
-                .setCallback(new FutureCallback<JsonObject>() {
+                .asString()
+                .setCallback(new FutureCallback<String>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject result) {
+                    public void onCompleted(Exception e, String result) {
                         progressDialog.dismiss();
+                        log.debug("Upload Result : " + result);
                         uploadProfilePhotoDone(e, result);
                     }
                 });
     }
 
     @UiThread
-    void uploadProfilePhotoDone(Exception exception, JsonObject result) {
+    void uploadProfilePhotoDone(Exception exception, String result) {
         if (exception == null) {
             log.debug(result);
             attemptToUpdatePhoto = false;

@@ -42,7 +42,6 @@ import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.MessageListActivity_;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
@@ -654,7 +653,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Background
     void getProfileInBackground(int userEntityId) {
         try {
-            ResMemberProfile user = mJandiEntityClient.getUserProfile(userEntityId);
+            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
             getProfileSuccess(user);
         } catch (JandiNetworkException e) {
             log.error("get profile failed", e);
@@ -666,8 +665,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getProfileSuccess(ResMemberProfile user) {
-        showUserInfoDialog(user);
+    void getProfileSuccess(ResLeftSideMenu.User user) {
+        showUserInfoDialog(new FormattedEntity(user));
     }
 
     @UiThread
@@ -676,8 +675,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         finish();
     }
 
-    private void showUserInfoDialog(ResMemberProfile user) {
-        boolean isMe = mEntityManager.getMe().getId() == user.id;
+    private void showUserInfoDialog(FormattedEntity user) {
+        boolean isMe = mEntityManager.isMe(user.getId());
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {

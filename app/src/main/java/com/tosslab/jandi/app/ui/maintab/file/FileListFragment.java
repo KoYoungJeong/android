@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -101,6 +102,7 @@ public class FileListFragment extends Fragment {
     private AlertDialog mFileTypeSelectDialog;
     private AlertDialog mUserSelectDialog;  // 사용자별 검색시 사용할 리스트 다이얼로그
     private AlertDialog mEntitySelectDialog;
+    private int selectedTeamId;
 
     @AfterInject
     void init() {
@@ -147,6 +149,8 @@ public class FileListFragment extends Fragment {
                 list_searched_messagesItemClicked(mAdapter.getItem(i - 1));
             }
         });
+
+        selectedTeamId = JandiDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
     }
 
     @Override
@@ -265,6 +269,7 @@ public class FileListFragment extends Fragment {
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
+            reqSearchFile.teamId = selectedTeamId;
             RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(getActivity(), FileSearchRequest.create(getActivity(), reqSearchFile));
             ResSearchFile resSearchFile = requestManager.request();
             searchSucceed(resSearchFile);

@@ -54,23 +54,6 @@ public class UserInfoDialogFragment extends DialogFragment {
         return frag;
     }
 
-    public static UserInfoDialogFragment newInstance(ResMemberProfile user, boolean isMe) {
-        UserInfoDialogFragment frag = new UserInfoDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_USER_ID, user.id);
-        args.putString(ARG_USER_NAME, user.name);
-        args.putString(ARG_USER_STATUS_MSG, user.u_statusMessage);
-        args.putString(ARG_USER_DIVISION, !TextUtils.isEmpty(user.u_extraData.department) ? user.u_extraData.department : "");
-        args.putString(ARG_USER_POSITION, !TextUtils.isEmpty(user.u_extraData.position) ? user.u_extraData.position : "");
-        args.putString(ARG_USER_PHONE_NUMBER, !TextUtils.isEmpty(user.u_extraData.phoneNumber) ? user.u_extraData.phoneNumber : "");
-        args.putString(ARG_USER_EMAIL, user.u_email);
-        args.putString(ARG_USER_PROFILE_URL, !TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl);
-        args.putBoolean(ARG_USER_IS_ME, isMe);
-
-        frag.setArguments(args);
-        return frag;
-    }
-
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.client.settings.starred;
+package com.tosslab.jandi.app.network.client.settings;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 15..

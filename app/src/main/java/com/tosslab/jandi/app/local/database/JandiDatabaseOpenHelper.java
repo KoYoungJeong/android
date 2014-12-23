@@ -20,6 +20,10 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.Account.createdAt + " TEXT, " +
                     DatabaseConsts.Account.loggedAt + " TEXT, " +
                     DatabaseConsts.Account.notificationTarget + " TEXT, " +
+                    DatabaseConsts.Account.photoUrl + " TEXT, " +
+                    DatabaseConsts.Account.largeThumbPhotoUrl + " TEXT, " +
+                    DatabaseConsts.Account.mediumThumbPhotoUrl + " TEXT, " +
+                    DatabaseConsts.Account.smallThumbPhotoUrl + " TEXT, " +
                     DatabaseConsts.Account.status + " TEXT" +
                     ");",
 
