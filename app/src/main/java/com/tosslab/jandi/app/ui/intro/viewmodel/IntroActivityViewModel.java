@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -90,6 +91,12 @@ public class IntroActivityViewModel {
         // Move TutorialActivity
         IntroMainActivity_.intent(activity).start();
         activity.finish();
+    }
+
+    @UiThread
+    public void showWarningToast(String message) {
+        ColoredToast.showWarning(activity, message);
+
     }
 
 }

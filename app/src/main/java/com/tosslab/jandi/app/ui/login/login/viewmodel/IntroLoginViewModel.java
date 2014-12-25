@@ -1,7 +1,12 @@
 package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -131,4 +136,26 @@ public class IntroLoginViewModel {
     }
 
 
+    public void showSuccessSignUp(String signedEmail, final String emailHost) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.move)
+                .setMessage(activity.getString(R.string.sent_auth_email, signedEmail));
+
+        if (!TextUtils.isEmpty(emailHost)) {
+            builder
+                    .setNegativeButton(R.string.jandi_cancel, null)
+                    .setPositiveButton(R.string.open_web_browser, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse("http://" + emailHost));
+                            activity.startActivity(intent);
+                        }
+                    }).create().show();
+        } else {
+            builder.setPositiveButton(R.string.jandi_confirm, null)
+                    .create().show();
+        }
+
+    }
 }

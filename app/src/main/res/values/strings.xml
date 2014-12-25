@@ -230,13 +230,18 @@ Welcome to JANDI"</string>
     <string name="member_profile">"Member Profile"</string>
     <string name="what_is_member_profile">"팀에서 사용할 이름과 이메일을 선택해주세요.
 계정 정보와는 다른 내용을 사용할 수 있지만, 이름은 멘션 또는 검색에도 이용되기 때문에 팀원들에게 통용되는 호칭이 좋습니다."</string>
-    <string name="team_create">팀 생성</string>
-    <string name="fail_to_create_team">팀 생성에 실패하였습니다. 다시 시도해주십시요.</string>
-    <string name="jandi_team_member">팀 멤버</string>
-    <string name="jandi_logout">로그아웃</string>
-    <string name="jandi_sign_out_message">로그아웃 하시겠습니까?</string>
-    <string name="jandi_account">계정</string>
-    <string name="jandi_name_in_jandi">잔디 사용자 이름</string>
-    <string name="jandi_user_default_email">기본 이메일 주소</string>
+    <string name="team_create">"팀 생성"</string>
+    <string name="fail_to_create_team">"팀 생성에 실패하였습니다. 다시 시도해주십시요."</string>
+    <string name="jandi_team_member">"팀 멤버"</string>
+    <string name="jandi_logout">"로그아웃"</string>
+    <string name="jandi_sign_out_message">"로그아웃 하시겠습니까?"</string>
+    <string name="jandi_account">"계정"</string>
+    <string name="jandi_name_in_jandi">"잔디 사용자 이름"</string>
+    <string name="jandi_user_default_email">"기본 이메일 주소"</string>
     <string name="jandi_title_name">이름</string>
+    <string name="move">"이동하기"</string>
+    <string name="sent_auth_email">"%s 로 인증메일을 보냈습니다.
+메일을 확인해보십시요."</string>
+    <string name="open_web_browser">"브라우저 열기"</string>
+    <string name="exclamation_mark">"!"</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.login.login;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
@@ -12,9 +14,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OnActivityResult;
 import org.springframework.http.HttpStatus;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 14. 11. 13..
@@ -22,6 +23,9 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.fragment_intro_input_id)
 public class IntroLoginFragment extends Fragment {
 
+    public static final String RES_EXTRA_EMAIL = "res_email";
+
+    private static final int REQ_SIGNUP = 1081;
     @Bean
     public IntroLoginModel introLoginModel;
 
@@ -51,8 +55,11 @@ public class IntroLoginFragment extends Fragment {
      */
     @Click(R.id.btn_getting_started)
     void onClickSignUp() {
-        SignUpActivity_.intent(getActivity())
-                .start();
+
+        String emailText = introLoginViewModel.getEmailText();
+        SignUpActivity_.intent(IntroLoginFragment.this)
+                .email(emailText)
+                .startForResult(REQ_SIGNUP);
     }
 
     /**
@@ -67,5 +74,21 @@ public class IntroLoginFragment extends Fragment {
         String emailText = introLoginViewModel.getEmailText();
         String passwordText = introLoginViewModel.getPasswordText();
         startLogin(emailText, passwordText);
+    }
+
+    @OnActivityResult(REQ_SIGNUP)
+    void activityResultSignUp(int resultCode, Intent dataIntent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        String signedEmail;
+        if (dataIntent != null) {
+            signedEmail = dataIntent.getStringExtra(RES_EXTRA_EMAIL);
+        } else {
+            signedEmail = "";
+        }
+        String emailHost = introLoginModel.getEmailHost(signedEmail);
+        introLoginViewModel.showSuccessSignUp(signedEmail, emailHost);
     }
 }

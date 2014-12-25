@@ -7,7 +7,6 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
@@ -83,7 +82,7 @@ public class IntroActivity extends Activity {
                 introModel.sleep(initTime, MAX_DELAY_MS);
                 introViewModel.moveToIntroTutorialActivity();
             } else {
-                ColoredToast.showWarning(IntroActivity.this, getString(R.string.err_network));
+                introViewModel.showWarningToast(getString(R.string.err_network));
                 finishOnUiThread();
             }
         }

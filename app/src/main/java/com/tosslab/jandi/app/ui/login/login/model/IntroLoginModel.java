@@ -88,4 +88,18 @@ public class IntroLoginModel {
         }
         return true;
     }
+
+    public String getEmailHost(String signedEmail) {
+        if (TextUtils.isEmpty(signedEmail)) {
+            return "";
+        }
+
+        int i = signedEmail.indexOf("@");
+
+        if (i > 0 && i < signedEmail.length()) {
+            return signedEmail.substring(i + 1);
+        } else {
+            return "";
+        }
+    }
 }

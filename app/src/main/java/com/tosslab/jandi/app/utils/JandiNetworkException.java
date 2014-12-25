@@ -32,7 +32,6 @@ public class JandiNetworkException extends Exception {
     public JandiNetworkException(HttpStatusCodeException e) {
         this.httpStatusCode = e.getStatusCode().value();
         this.httpStatusMessage = e.getStatusText();
-        this.httpBody = e.getResponseBodyAsString();
 
         ObjectMapper om = new ObjectMapper();
         try {
@@ -43,6 +42,7 @@ public class JandiNetworkException extends Exception {
             );
             this.errCode = m.containsKey(ERR_CODE) ? (Integer) m.get(ERR_CODE) : httpStatusCode;
             this.errReason = m.containsKey(ERR_MSG) ? (String) m.get(ERR_MSG) : httpStatusMessage;
+            this.httpBody = e.getResponseBodyAsString();
         } catch (IOException e1) {
             this.errCode = -1;
             this.errReason = null;

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.publictopic;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.spring.HttpRequestFactory;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
@@ -30,6 +31,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class},
+        requestFactory = HttpRequestFactory.class,
         interceptors = {LoggerInterceptor.class}
 )
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)

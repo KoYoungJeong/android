@@ -44,6 +44,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -432,7 +433,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         Ion.with(mContext)
-                .load(requestURL)
+                .load(HttpPut.METHOD_NAME, requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress(new ProgressCallback() {
                     @Override

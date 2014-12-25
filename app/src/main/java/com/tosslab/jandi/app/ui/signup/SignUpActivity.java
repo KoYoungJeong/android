@@ -3,27 +3,46 @@ package com.tosslab.jandi.app.ui.signup;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.text.Editable;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.signup.model.SignUpModel;
+import com.tosslab.jandi.app.ui.signup.to.CheckPointsHolder;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
+import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
+import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 14. 12. 11..
  */
 @EActivity(R.layout.activity_signup)
-@OptionsMenu(R.menu.confirm_signup_menu)
 public class SignUpActivity extends Activity {
+
+    private final static Logger logger = Logger.getLogger(SignUpActivity.class);
+
     @Bean
-    public SignUpViewModel signUpViewModel;
+    SignUpViewModel signUpViewModel;
+
+    @Bean
+    SignUpModel signUpModel;
+
+    @Extra
+    String email;
 
     @AfterViews
     void init() {
         setUpActionBar();
+        signUpViewModel.setDefaultEmail(email);
     }
 
     private void setUpActionBar() {
@@ -39,4 +58,99 @@ public class SignUpActivity extends Activity {
     void homeSelected() {
         finish();
     }
+
+    @AfterTextChange(R.id.et_signup_email)
+    void changeValidEmail(Editable text) {
+        boolean isValidEmail = signUpModel.isValidEmail(text.toString());
+
+        int textColorRes = signUpModel.getEmailTextColor(isValidEmail);
+        int validState = signUpModel.getEmailValidValue(isValidEmail);
+
+        signUpModel.activateSignUpButtonByEmail(validState);
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+        signUpViewModel.editTextSignUpEmail.setTextColor(textColorRes);
+        signUpViewModel.toggleEmailAlert(isValidEmail);
+    }
+
+    @AfterTextChange(R.id.et_signup_password)
+    void changePasswordStrength(Editable text) {
+        int strength = signUpModel.checkPasswordStrength(text.toString());
+        signUpViewModel.setStrengthBarometer(strength);
+
+        int textColorRes = signUpModel.getSignUpPasswordTextColor(strength);
+        int validState = signUpModel.getSignUpButtonState(strength);
+
+        signUpModel.activateSignUpButtonByPassword(validState);
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+        signUpViewModel.editTextSignUpPassword.setTextColor(textColorRes);
+        signUpViewModel.togglePasswordAlert(validState);
+    }
+
+    @AfterTextChange(R.id.et_signup_name)
+    void changeName(Editable text) {
+        int valid = signUpModel.getNameValidState(text.length());
+        signUpModel.activateSignUpButtonByName(valid);
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+        signUpViewModel.toggleNameAlert(valid);
+    }
+
+    @Click({R.id.btn_signup_agree_tos, R.id.ly_signup_agree_tos})
+    void clickAgreeEula() {
+        signUpViewModel.toggleEula();
+        boolean isAllAgreed = signUpViewModel.checkAllAgree();
+        signUpModel.activateSignUpButtonByAgreeAll(isAllAgreed ? CheckPointsHolder.VALID : CheckPointsHolder.INVALID);
+
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+    }
+
+    @Click({R.id.btn_signup_agree_pp, R.id.ly_signup_agree_pp})
+    void clickAgreePrivate() {
+        signUpViewModel.togglePrivate();
+        boolean isAllAgreed = signUpViewModel.checkAllAgree();
+        signUpModel.activateSignUpButtonByAgreeAll(isAllAgreed ? CheckPointsHolder.VALID : CheckPointsHolder.INVALID);
+
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+    }
+
+    @Click({R.id.btn_signup_agree_all, R.id.ly_signup_agree_all})
+    void clickAgreeAll() {
+        boolean allAgree = signUpModel.isAllAgree();
+        signUpViewModel.toggleAllAgree(!allAgree);
+        signUpModel.activateSignUpButtonByAgreeAll(!allAgree ? CheckPointsHolder.VALID : CheckPointsHolder.INVALID);
+
+        boolean allValid = signUpModel.isAllValid();
+        signUpViewModel.activateSignUpButton(allValid);
+    }
+
+    @Click(R.id.btn_signup_confirm)
+    void clickSignUp() {
+
+        logger.debug("Click : clickSignUp");
+
+        signUp();
+    }
+
+    @Background
+    void signUp() {
+        String email = signUpViewModel.getEmailText();
+        String password = signUpViewModel.getPasswordText();
+        String name = signUpViewModel.getNameText();
+        String lang = LanguageUtil.getLanguage(SignUpActivity.this);
+
+        try {
+            ResAccountInfo resAccountInfo = signUpModel.requestSignUp(email, password, name, lang);
+            signUpViewModel.finishWithEmail(email);
+        } catch (JandiNetworkException e) {
+            logger.debug(e.getErrorInfo() + " , Response Body : " + e.httpBody);
+            signUpViewModel.showErrorToast(getString(R.string.err_network));
+        }
+
+
+    }
+
 }

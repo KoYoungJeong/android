@@ -127,6 +127,8 @@ public class MessageItemView extends LinearLayout {
         // 프로필 사진
         mUserProfileImage.setVisibility(VISIBLE);
 
+        log.debug("User Profile Image : " + item.getUserProfileUrl());
+
         Glide.with(mContext)
                 .load(item.getUserProfileUrl())
                 .placeholder(R.drawable.jandi_profile)
