@@ -142,12 +142,19 @@ public class SignUpActivity extends Activity {
         String name = signUpViewModel.getNameText();
         String lang = LanguageUtil.getLanguage(SignUpActivity.this);
 
+        signUpViewModel.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = signUpModel.requestSignUp(email, password, name, lang);
             signUpViewModel.finishWithEmail(email);
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " , Response Body : " + e.httpBody);
-            signUpViewModel.showErrorToast(getString(R.string.err_network));
+            if (e.errCode == 40001) {
+                signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
+            } else {
+                signUpViewModel.showErrorToast(getString(R.string.err_network));
+            }
+        } finally {
+            signUpViewModel.dismissProgressWheel();
         }
 
 

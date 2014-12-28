@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -68,7 +69,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         setUpToolTip();
         setUpActionBar();
         initProgressWheel();
-        addInvitationViewAsListviewFooter();
+        listViewInvitation.setAdapter(teamUserListAdapter);
+//        addInvitationViewAsListviewFooter();
 
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -182,8 +184,10 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 finish();
                 return true;
             case R.id.action_invitation:
-                listViewInvitation.setSelection(teamUserListAdapter.getCount());
-                showToolTip();
+//                listViewInvitation.setSelection(teamUserListAdapter.getCount());
+//                showToolTip();
+                InviteActivity_.intent(TeamInfoActivity.this)
+                        .start();
                 return true;
         }
 

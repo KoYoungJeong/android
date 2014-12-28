@@ -53,6 +53,13 @@ public class SignUpViewModel {
     TextView textViewSignUpAgreePp;
 
     @ViewById(R.id.tv_signup_name_valid)
+    TextView nameValidView;
+    @ViewById(R.id.tv_signup_email_valid)
+    TextView emailValidView;
+    @ViewById(R.id.tv_signup_password_valid)
+    TextView passwordValidView;
+
+    @ViewById(R.id.tv_signup_name_valid)
     TextView alertNameValidView;
     @ViewById(R.id.tv_signup_email_valid)
     TextView alertEmailValidView;
@@ -149,22 +156,46 @@ public class SignUpViewModel {
 
     public void toggleNameAlert(int valid) {
 
-        // TODO Check Last Anim & Visible & then show Anim
         if (valid == CheckPointsHolder.VALID) {
-
+            nameValidView.setVisibility(View.GONE);
         } else {
-
+            nameValidView.setVisibility(View.VISIBLE);
         }
 
     }
 
     public void toggleEmailAlert(boolean isValidEmail) {
-        // TODO Check Last Anim & Visible & then show Anim
+        if (isValidEmail) {
+            emailValidView.setVisibility(View.GONE);
+        } else {
+            emailValidView.setVisibility(View.VISIBLE);
+        }
 
     }
 
     public void togglePasswordAlert(int validState) {
-        // TODO Check Last Anim & Visible & then show Anim
-
+        if (validState == CheckPointsHolder.VALID) {
+            passwordValidView.setVisibility(View.GONE);
+        } else {
+            passwordValidView.setVisibility(View.VISIBLE);
+        }
     }
+
+    @UiThread
+    public void showProgressWheel() {
+        dismissProgressWheel();
+        if (mProgressWheel != null) {
+            mProgressWheel.show();
+        }
+    }
+
+    @UiThread
+    public void dismissProgressWheel() {
+
+        if (mProgressWheel != null && mProgressWheel.isShowing()) {
+            mProgressWheel.show();
+        }
+    }
+
+
 }

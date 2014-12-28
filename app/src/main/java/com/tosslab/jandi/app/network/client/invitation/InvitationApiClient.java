@@ -43,7 +43,7 @@ public interface InvitationApiClient {
 
 
     /**
-     * Topic 에 초대하기.
+     * 팀에 초대하기.
      */
     @Post("/invitations")
     @RequiresAuthentication

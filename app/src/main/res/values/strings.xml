@@ -244,4 +244,7 @@ Welcome to JANDI"</string>
 메일을 확인해보십시요."</string>
     <string name="open_web_browser">"브라우저 열기"</string>
     <string name="exclamation_mark">"!"</string>
+    <string name="jandi_no_invite_email">"초대할 이메일이 없습니다. 이메일을 입력해 주십시요."</string>
+    <string name="jandi_invite_success">"초대 되었습니다. 이메일을 확인해보십시요."</string>
+    <string name="jandi_duplicate_email">이미 등록된 이메일입니다.</string>
 </resources>

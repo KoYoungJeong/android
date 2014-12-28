@@ -87,6 +87,10 @@
             android:name=".ui.TeamInfoActivity_"
             android:label="@string/jandi_team_info"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.invites.InviteActivity_"
+            android:label="@string/menu_entity_invite"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".ui.photo.PhotoViewActivity_"
