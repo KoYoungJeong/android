@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -111,28 +110,6 @@ public class TeamSelectionModel {
             e.printStackTrace();
             return null;
         }
-
-    }
-
-    @SupposeBackground
-    public List<ResTeamDetailInfo> acceptInvite(Team team) {
-
-        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(context).getAccountInfo();
-
-        if (accountInfo == null) {
-            return null;
-        }
-
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, team, accountInfo.getName());
-        RequestManager<List<ResTeamDetailInfo>> requestManager = RequestManager.newInstance(context, request);
-        try {
-            List<ResTeamDetailInfo> resTeamDetailInfos = requestManager.request();
-            return resTeamDetailInfos;
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-            return null;
-        }
-
 
     }
 

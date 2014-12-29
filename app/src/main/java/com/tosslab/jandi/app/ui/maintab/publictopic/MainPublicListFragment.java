@@ -49,6 +49,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
 
     private EntityManager mEntityManager;
 
+
     @AfterViews
     void bindAdapter() {
         setHasOptionsMenu(true);

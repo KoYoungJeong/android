@@ -11,7 +11,8 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
+import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectionModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
@@ -37,8 +38,9 @@ public class TeamSelectionActivity extends Activity {
     public final static int CALLED_MUST_SELECT_TEAM = 100;
     @Extra
     int calledType = CALLED_MUST_SELECT_TEAM;
-    public final static int CALLED_CHANGE_TEAM = 101;
+    public static final int CALLED_CHANGE_TEAM = 101;
     public static final int REQ_TEAM_CREATE = 2031;
+    private static final int REQ_TEAM_JOIN = 2032;
     @Bean
     TeamSelectionPresenter teamSelectionPresenter;
 
@@ -92,26 +94,20 @@ public class TeamSelectionActivity extends Activity {
 
     public void onEvent(TeamInviteAcceptEvent teamInviteAcceptEvent) {
 
-        acceptInviteTeam(teamInviteAcceptEvent);
+        Team team = teamInviteAcceptEvent.getTeam();
+        TeamDomainInfoActivity_.intent(TeamSelectionActivity.this)
+                .mode(TeamDomainInfoActivity.Mode.JOIN.name())
+                .teamId(team.getTeamId())
+                .teamName(team.getName())
+                .domain(team.getTeamDomain())
+                .token(team.getToken())
+                .startForResult(REQ_TEAM_JOIN);
 
     }
 
     public void onEvent(TeamInviteIgnoreEvent teamInviteIgnoreEvent) {
         ignoreInviteTeam(teamInviteIgnoreEvent);
 
-    }
-
-    @Background
-    void acceptInviteTeam(TeamInviteAcceptEvent teamInviteAcceptEvent) {
-        teamSelectionPresenter.showProgressWheel();
-        List<ResTeamDetailInfo> resTeamDetailInfos = teamSelectionModel.acceptInvite(teamInviteAcceptEvent.getTeam());
-        if (resTeamDetailInfos != null) {
-            teamSelectionModel.updateToDBJoinedTeamInfo();
-            getTeamList();
-        } else {
-            teamSelectionPresenter.showErrorToast(400, "");
-        }
-        teamSelectionPresenter.dismissProgressWheel();
     }
 
     @Background
@@ -171,6 +167,15 @@ public class TeamSelectionActivity extends Activity {
 
     @OnActivityResult(REQ_TEAM_CREATE)
     void onTeamCreateResult(int resultCode, Intent data) {
+
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        getTeamList();
+    }
+
+    @OnActivityResult(REQ_TEAM_JOIN)
+    void onTeamJoinResult(int resultCode, Intent data) {
 
         if (resultCode != RESULT_OK) {
             return;

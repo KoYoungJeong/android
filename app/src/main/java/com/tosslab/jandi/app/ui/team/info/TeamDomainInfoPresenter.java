@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.team.info;
 
 import android.app.Activity;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -38,6 +40,9 @@ public class TeamDomainInfoPresenter {
     @RootContext
     Activity activity;
 
+    @SystemService
+    InputMethodManager inputMethodManager;
+
     public void setTeamCreatable(boolean isTeamCreatable) {
 
         teamNameView.setEnabled(isTeamCreatable);
@@ -49,8 +54,16 @@ public class TeamDomainInfoPresenter {
         return teamNameView.getText().toString();
     }
 
+    public void setTeamName(String teamName) {
+        teamNameView.setText(teamName);
+    }
+
     public String getTeamDomain() {
         return teamDomainView.getText().toString();
+    }
+
+    public void setTeamDomain(String domain) {
+        teamDomainView.setText(domain);
     }
 
     public String getMyName() {
@@ -87,4 +100,18 @@ public class TeamDomainInfoPresenter {
         myEmailView.setAdapter(new ArrayAdapter<String>(activity, android.R.layout.simple_list_item_1, emails));
         myEmailView.setPrompt(emails.get(0));
     }
+
+    @UiThread
+    public void successJoinTeam() {
+
+        activity.setResult(Activity.RESULT_OK);
+        activity.finish();
+
+    }
+
+    @UiThread
+    public void failJoinTeam() {
+        ColoredToast.showWarning(activity, activity.getString(R.string.jandi_team_join_fail));
+    }
+
 }

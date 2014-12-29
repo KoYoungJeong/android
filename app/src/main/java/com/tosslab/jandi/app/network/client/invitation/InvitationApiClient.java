@@ -54,7 +54,7 @@ public interface InvitationApiClient {
      */
     @Put("/invitations")
     @RequiresAuthentication
-    List<ResTeamDetailInfo> confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
+    ResTeamDetailInfo confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
 
     /**
      * 초대 거절하기

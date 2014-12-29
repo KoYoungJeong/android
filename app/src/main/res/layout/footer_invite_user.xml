@@ -34,7 +34,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="6dp"
         android:background="@drawable/jandi_btn_dynamic_selector_v2"
-        android:text="@string/jandi_action_invite"
+        android:text="@string/jandi_add"
         android:textColor="@color/jandi_messages_button_text"
         android:enabled="false"
         android:textSize="14sp" />

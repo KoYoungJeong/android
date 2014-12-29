@@ -16,5 +16,5 @@
         android:layout_marginTop="27dp"
         android:textSize="14sp"
         android:textColor="#999999"
-        android:text="검색 결과가 없습니다"/>
+        android:text="@string/jandi_cannot_find_search_result"/>
 </LinearLayout>

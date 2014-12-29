@@ -48,7 +48,6 @@ public interface AccountPasswordApiClient {
      * @return
      */
     @Post("/accounts/password/resetToken")
-    @RequiresAuthentication
     ResCommon resetPassword(ReqAccountEmail reqAccountEmail);
 
     /**

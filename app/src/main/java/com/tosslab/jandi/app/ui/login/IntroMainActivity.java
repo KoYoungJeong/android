@@ -22,8 +22,6 @@ import org.androidannotations.annotations.ViewById;
 @EActivity(R.layout.activity_intro_tutorial)
 public class IntroMainActivity extends Activity {
 
-    private ViewPager mViewPager;
-    private IntroMainPagerAdapter mAdapter;
     @ViewById(R.id.btn_tutorial_first)
     Button buttonTutorialFirst;
     @ViewById(R.id.btn_tutorial_second)
@@ -32,22 +30,24 @@ public class IntroMainActivity extends Activity {
     Button buttonTutorialThird;
     @ViewById(R.id.btn_tutorial_last)
     Button buttonTutorialLast;
+    private ViewPager mViewPager;
+    private IntroMainPagerAdapter mAdapter;
 
     @AfterViews
     void init() {
         setUpView();
         setTab();
+
+        if (JandiPreference.isFirstLogin(IntroMainActivity.this)) {
+            // If Log in User, then move last page
+            mViewPager.setCurrentItem(mAdapter.getCount() - 1);
+        }
     }
 
-    private void setUpView(){
-        boolean didReadTutorial = JandiPreference.getFlagForTutorial(this);
-        if (didReadTutorial) {
-            hideIndicators();
-        } else {
-            buttonTutorialFirst.setSelected(true);
-        }
+    private void setUpView() {
+        buttonTutorialFirst.setSelected(true);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
-        mAdapter = new IntroMainPagerAdapter(getFragmentManager(), didReadTutorial);
+        mAdapter = new IntroMainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(IntroTutorialFragment.FIRST_PAGE);
 
@@ -60,13 +60,17 @@ public class IntroMainActivity extends Activity {
         buttonTutorialLast.setVisibility(View.GONE);
     }
 
-    private void setTab(){
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+    private void setTab() {
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
-            public void onPageScrollStateChanged(int position) {}
+            public void onPageScrollStateChanged(int position) {
+            }
+
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+
             @Override
             public void onPageSelected(int position) {
                 btnAction(position);

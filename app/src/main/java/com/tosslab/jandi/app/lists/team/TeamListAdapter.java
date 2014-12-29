@@ -71,10 +71,22 @@ public class TeamListAdapter extends BaseAdapter {
         Button ignoreBtn;
         Button acceptBtn;
 
+
         switch (team.getStatus()) {
             case JOINED:
                 iconView.setImageResource(R.drawable.jandi_team_selector_icon);
                 nameView.setText(team.getName());
+
+                int unread = team.getUnread();
+                TextView badgeView = (TextView) convertView.findViewById(R.id.txt_team_list_badge);
+
+                if (unread > 0) {
+                    badgeView.setVisibility(View.VISIBLE);
+                    badgeView.setText(String.valueOf(unread));
+                } else {
+                    badgeView.setVisibility(View.INVISIBLE);
+                }
+
                 break;
             case PENDING:
                 acceptBtn = (Button) convertView.findViewById(R.id.btn_team_list_accept);
@@ -106,6 +118,8 @@ public class TeamListAdapter extends BaseAdapter {
             case CREATE:
                 iconView.setImageResource(R.drawable.jandi_icon_teamlist_add);
                 nameView.setText(R.string.jandi_team_select_create_a_team);
+                TextView badgeView2 = (TextView) convertView.findViewById(R.id.txt_team_list_badge);
+                badgeView2.setVisibility(View.GONE);
                 break;
         }
 

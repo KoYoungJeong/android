@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.TeamInfoActivity_;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.profile.account.AccountProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -151,7 +152,8 @@ public class MainMoreFragment extends Fragment {
         runActivityWithDelay(new Runnable() {
             @Override
             public void run() {
-                logger.debug("Move to Invitation Activity");
+                InviteActivity_.intent(MainMoreFragment.this)
+                        .start();
             }
         });
 

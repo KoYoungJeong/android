@@ -12,33 +12,35 @@ public class Team {
     private final int memberId;
     private final String name;
     private final String teamDomain;
+    private final int unread;
     private Status status;
     private boolean isSelected;
     private String userEmail;
     private String token;
 
-    private Team(int teamId, int memberId, String name, String teamDomain, Status status) {
+    private Team(int teamId, int memberId, String name, String teamDomain, Status status, int unread) {
         this.teamId = teamId;
         this.memberId = memberId;
         this.name = name;
         this.teamDomain = teamDomain;
         this.status = status;
         this.isSelected = false;
+        this.unread = unread;
     }
 
     public static Team createTeam(ResAccountInfo.UserTeam userTeam) {
-        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED);
+        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED, userTeam.getUnread());
     }
 
     public static Team createTeam(ResPendingTeamInfo resPendingTeamInfo) {
-        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING);
+        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING, -1);
         team.setUserEmail(resPendingTeamInfo.getToEmail());
         team.setToken(resPendingTeamInfo.getToken());
         return team;
     }
 
     public static Team createEmptyTeam() {
-        return new Team(0, 0, "", "", Status.CREATE);
+        return new Team(0, 0, "", "", Status.CREATE, -1);
     }
 
     public String getUserEmail() {
@@ -100,6 +102,10 @@ public class Team {
                 ", isSelected=" + isSelected +
                 ", userEmail='" + userEmail + '\'' +
                 '}';
+    }
+
+    public int getUnread() {
+        return unread;
     }
 
     public enum Status {

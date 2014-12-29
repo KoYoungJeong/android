@@ -21,6 +21,8 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmCreatePrivateTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmCreatePublicTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
+import com.tosslab.jandi.app.utils.FormatConverter;
 
 import org.androidannotations.annotations.EFragment;
 import org.apache.log4j.Logger;
@@ -41,6 +43,7 @@ public class EditTextDialogFragment extends DialogFragment {
     public final static int ACTION_MODIFY_PROFILE_DIVISION = 5;
     public final static int ACTION_MODIFY_PROFILE_POSITION = 6;
     public final static int ACTION_MODIFY_PROFILE_ACCOUNT_NAME = 7;
+    public final static int ACTION_FORGOT_PASSWORD = 8;
     private final static int MAX_LENGTH_OF_TOPIC_NAME = 60;
     private final static int MAX_LENGTH_OF_PHONE = 20;
     private static final int MAX_LENGTH_OF_ACCOUNT_NAME = 20;
@@ -174,6 +177,9 @@ public class EditTextDialogFragment extends DialogFragment {
                         case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                             EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
                             break;
+                        case ACTION_FORGOT_PASSWORD:
+                            EventBus.getDefault().post(new ForgotPasswordEvent(input));
+                            break;
                         default:
                             // DO NOTHING
                             break;
@@ -211,6 +217,10 @@ public class EditTextDialogFragment extends DialogFragment {
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                 input.setHint(R.string.jandi_title_name);
+                break;
+            case ACTION_FORGOT_PASSWORD:
+                input.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                input.setHint(R.string.jandi_user_id);
                 break;
             default:
                 input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -254,6 +264,10 @@ public class EditTextDialogFragment extends DialogFragment {
                         break;
                     case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                         confirm.setSelected(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME);
+                        break;
+                    case ACTION_FORGOT_PASSWORD:
+                        confirm.setSelected(!FormatConverter.isInvalidEmailString(inputText));
+                        break;
                     default:
                         // DO NOTHING
                         break;
@@ -286,6 +300,8 @@ public class EditTextDialogFragment extends DialogFragment {
                 return R.string.jandi_profile_position;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                 return R.string.jandi_title_name;
+            case ACTION_FORGOT_PASSWORD:
+                return R.string.jandi_user_id;
             default:
                 return R.string.jandi_empty;
         }

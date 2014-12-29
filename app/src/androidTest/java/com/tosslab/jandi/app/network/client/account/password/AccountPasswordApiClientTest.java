@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -73,7 +74,7 @@ public class AccountPasswordApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = accountPasswordApiClient.resetPassword(new ReqAccountEmail("jsuch2362@naver.com"));
+            resCommon = accountPasswordApiClient.resetPassword(new ReqAccountEmail("jsuch2362@naver.com", LanguageUtil.getLanguage(Robolectric.application)));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

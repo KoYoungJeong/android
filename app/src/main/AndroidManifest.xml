@@ -44,9 +44,9 @@
             android:windowSoftInputMode="adjustUnspecified" />
         <activity
             android:name=".ui.team.info.TeamDomainInfoActivity_"
-            android:label="@string/jandi_select_team"
+            android:label="@string/team_info"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustUnspecified" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustUnspecified" />
         <activity
             android:name=".ui.maintab.MainTabActivity_"
             android:label="@string/app_name"
@@ -85,7 +85,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.TeamInfoActivity_"
-            android:label="@string/jandi_team_info"
+            android:label="@string/jandi_team_member"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.invites.InviteActivity_"

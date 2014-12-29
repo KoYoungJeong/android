@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
@@ -26,8 +27,17 @@ import java.util.List;
 @OptionsMenu(R.menu.teamdomain_info)
 public class TeamDomainInfoActivity extends Activity {
 
-    @Extra()
-    String mode = "INFO";
+    @Extra
+    String mode = "CREATE";
+
+    @Extra
+    String token;
+    @Extra
+    String domain;
+    @Extra
+    String teamName;
+    @Extra
+    int teamId;
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
@@ -44,7 +54,9 @@ public class TeamDomainInfoActivity extends Activity {
             case CREATE:
                 teamDomainInfoPresenter.setTeamCreatable(true);
                 break;
-            case INFO:
+            case JOIN:
+                teamDomainInfoPresenter.setTeamDomain(domain);
+                teamDomainInfoPresenter.setTeamName(teamName);
                 teamDomainInfoPresenter.setTeamCreatable(false);
                 break;
         }
@@ -91,18 +103,34 @@ public class TeamDomainInfoActivity extends Activity {
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
         Mode activityMode = Mode.valueOf(mode);
-        if (activityMode == Mode.INFO) {
-            finish();
-            return;
+        if (activityMode == Mode.JOIN) {
+
+            // TODO Call Team Join API
+            String myName = teamDomainInfoPresenter.getMyName();
+            String myEmail = teamDomainInfoPresenter.getMyEmail();
+            joinTeam(token, myName, myEmail);
+        } else {
+
+            // Team Creation
+            String teamName = teamDomainInfoPresenter.getTeamName();
+            String teamDomain = teamDomainInfoPresenter.getTeamDomain();
+            String myName = teamDomainInfoPresenter.getMyName();
+            String myEmail = teamDomainInfoPresenter.getMyEmail();
+            teamDomainInfoModel.createNewTeam(teamName, teamDomain, myName, myEmail);
         }
 
-        // Team Creation
-        String teamName = teamDomainInfoPresenter.getTeamName();
-        String teamDomain = teamDomainInfoPresenter.getTeamDomain();
-        String myName = teamDomainInfoPresenter.getMyName();
-        String myEmail = teamDomainInfoPresenter.getMyEmail();
-        teamDomainInfoModel.createNewTeam(teamName, teamDomain, myName, myEmail);
 
+    }
+
+    @Background
+    void joinTeam(String token, String myName, String myEmail) {
+        ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName);
+        if (resTeamDetailInfos != null) {
+            teamDomainInfoModel.updateTeamInfo(teamId);
+            teamDomainInfoPresenter.successJoinTeam();
+        } else {
+            teamDomainInfoPresenter.failJoinTeam();
+        }
     }
 
     private void setUpActionBar(Mode mode) {
@@ -113,19 +141,10 @@ public class TeamDomainInfoActivity extends Activity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-        switch (mode) {
-            case CREATE:
-                actionBar.setTitle(R.string.team_create);
-                break;
-            case INFO:
-                actionBar.setTitle(R.string.team_info);
-                break;
-        }
     }
 
-
     public enum Mode {
-        CREATE, INFO
+        CREATE, JOIN
     }
 
 }

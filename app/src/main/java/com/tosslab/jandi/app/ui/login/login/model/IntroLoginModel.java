@@ -7,13 +7,17 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.Bean;
@@ -39,8 +43,15 @@ public class IntroLoginModel {
     @RestService
     JandiRestClient jandiRestClient;
 
+    @RestService
+    AccountPasswordApiClient accountPasswordApiClient;
+
     @RootContext
     Context context;
+
+    private boolean isValidEmail;
+    private boolean isValidPassword;
+
 
     @SupposeBackground
     public int startLogin(String myEmailId, String password) {
@@ -101,5 +112,22 @@ public class IntroLoginModel {
         } else {
             return "";
         }
+    }
+
+    public ResCommon requestPasswordReset(String email) {
+
+        return accountPasswordApiClient.resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
+    }
+
+    public void setValidEmail(boolean isValidEmail) {
+        this.isValidEmail = isValidEmail;
+    }
+
+    public void setValidPassword(boolean isValidPassword) {
+        this.isValidPassword = isValidPassword;
+    }
+
+    public boolean isValidEmailPassword() {
+        return isValidEmail && isValidPassword;
     }
 }

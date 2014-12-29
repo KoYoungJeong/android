@@ -14,17 +14,15 @@ import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment_;
 public class IntroMainPagerAdapter extends FragmentPagerAdapter {
     final int NUM_OF_PAGES_WITHOUT_TUTORIAL = 1;
     final int NUM_OF_PAGES_WITH_TUTORIAL = 4;
-    private boolean mDidReadTutorial;
 
-    public IntroMainPagerAdapter(FragmentManager fm, boolean didReadTutorial) {
+    public IntroMainPagerAdapter(FragmentManager fm) {
         super(fm);
-        mDidReadTutorial = didReadTutorial;
     }
 
     @Override
     public Fragment getItem(int position) {
         // 튜토리얼을 읽었거나, 튜토리얼 이후의 페이지는 로그인 fragment
-        if (mDidReadTutorial || (position > IntroTutorialFragment.LAST_PAGE)) {
+        if (position > IntroTutorialFragment.LAST_PAGE) {
             return IntroLoginFragment_.builder().build();
         }
 
@@ -33,6 +31,6 @@ public class IntroMainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return (mDidReadTutorial) ? NUM_OF_PAGES_WITHOUT_TUTORIAL : NUM_OF_PAGES_WITH_TUTORIAL;
+        return NUM_OF_PAGES_WITH_TUTORIAL;
     }
 }

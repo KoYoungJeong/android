@@ -2,11 +2,6 @@ package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.Editable;
-import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,12 +9,9 @@ import android.widget.EditText;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -58,15 +50,6 @@ public class IntroLoginViewModel {
         mProgressWheel.init();
     }
 
-    @AfterTextChange(R.id.et_intro_login_email)
-    void checkValidEmail(Editable editable) {
-        if (FormatConverter.isInvalidEmailString(editable.toString())) {
-            buttonSignInStart.setEnabled(false);
-        } else {
-            buttonSignInStart.setEnabled(true);
-        }
-    }
-
     public void showProgressDialog() {
 
         dissmissProgressDialog();
@@ -85,7 +68,6 @@ public class IntroLoginViewModel {
     public void createTeamSucceed() {
         dissmissProgressDialog();
         ColoredToast.showLong(activity, activity.getString(R.string.jandi_team_creation_succeed));
-        setReadFlagForTutorial();
         activity.finish();
     }
 
@@ -98,7 +80,6 @@ public class IntroLoginViewModel {
     @UiThread
     public void loginSuccess(String myEmailId) {
         dissmissProgressDialog();
-        setReadFlagForTutorial();
 
         moveToTeamSelectionActivity(myEmailId);
     }
@@ -126,11 +107,6 @@ public class IntroLoginViewModel {
         return editTextPassword.getText().toString();
     }
 
-    @SupposeUiThread
-    void setReadFlagForTutorial() {
-        JandiPreference.setFlagForTutorial(activity, true);
-    }
-
     public void hideKeypad() {
         imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
     }
@@ -138,24 +114,24 @@ public class IntroLoginViewModel {
 
     public void showSuccessSignUp(String signedEmail, final String emailHost) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.move)
-                .setMessage(activity.getString(R.string.sent_auth_email, signedEmail));
+        builder.setMessage(activity.getString(R.string.sent_auth_email, signedEmail));
+        builder.setPositiveButton(R.string.jandi_confirm, null)
+                .create().show();
 
-        if (!TextUtils.isEmpty(emailHost)) {
-            builder
-                    .setNegativeButton(R.string.jandi_cancel, null)
-                    .setPositiveButton(R.string.open_web_browser, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(Uri.parse("http://" + emailHost));
-                            activity.startActivity(intent);
-                        }
-                    }).create().show();
-        } else {
-            builder.setPositiveButton(R.string.jandi_confirm, null)
-                    .create().show();
-        }
+    }
 
+    @UiThread
+    public void showFailPasswordResetToast() {
+        ColoredToast.show(activity, activity.getString(R.string.jandi_fail_send_password_reset_email));
+
+    }
+
+    @UiThread
+    public void showSuccessPasswordResetToast() {
+        ColoredToast.show(activity, activity.getString(R.string.jandi_sent_password_reset_mail));
+    }
+
+    public void setSignInButtonEnable(boolean validEmailPassword) {
+        buttonSignInStart.setEnabled(validEmailPassword);
     }
 }

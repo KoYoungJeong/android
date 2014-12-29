@@ -23,9 +23,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="4dp"
+        android:layout_weight="1"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="Team Name"
         android:textColor="@drawable/jandi_team_selector_text"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txt_team_list_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/jandi_badge_starred"
+        android:gravity="center"
+        android:minHeight="24dp"
+        android:minWidth="24dp"
+        android:padding="4dp"
+        android:text="0"
+        android:textColor="@color/jandi_text_white"
+        android:textSize="@dimen/jandi_entity_badge_font"
+        android:textStyle="bold" />
+
+
 </LinearLayout>

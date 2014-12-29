@@ -120,8 +120,11 @@ public class InviteActivity extends Activity {
     @Click(R.id.btn_invitation_confirm)
     void onInviteListAddClick() {
         String emailText = invitePresenter.getEmailText();
-        invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+        if (invitePresenter.getInvites().contains(emailText)) {
+            invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+        }
         invitePresenter.clearEmailTextView();
+
     }
 
     @ItemClick(R.id.lv_invite)
