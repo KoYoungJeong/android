@@ -145,4 +145,15 @@ public class IntroActivityModel {
 
 
     }
+
+    public boolean hasOldToken() {
+
+        String myToken = JandiPreference.getMyToken(context);
+
+        return !TextUtils.isEmpty(myToken);
+    }
+
+    public void removeOldToken() {
+        JandiPreference.clearMyToken(context);
+    }
 }

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
@@ -36,6 +37,10 @@ public class IntroLoginViewModel {
 
     @ViewById(R.id.btn_intro_action_signin_start)
     Button buttonSignInStart;
+
+    @ViewById(R.id.txt_intro_login_forgot_password)
+    TextView forgotPasswordView;
+
     /**
      * 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
      */
@@ -48,6 +53,10 @@ public class IntroLoginViewModel {
     void initObject() {
         mProgressWheel = new ProgressWheel(activity);
         mProgressWheel.init();
+    }
+
+    void initView() {
+//        forgotPasswordView.setText();
     }
 
     public void showProgressDialog() {

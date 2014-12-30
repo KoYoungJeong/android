@@ -195,7 +195,7 @@ JANDIへようこそ"</string>
     <string name="jandi_message_join_entity">"%1$s が参加しました"</string>
     <string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
     <string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
-    <string name="jandi_forgot_password">"パスワードを忘れた場合"</string>
+    <string name="jandi_forgot_password"><b><u>パスワードを忘れた場合</u></b></string>
     <string name="jandi_message_ask_about_deleting">"削除しますか？"</string>
     <string name="jandi_profile_phone_number_hint">"電話番号"</string>
     <string name="jandi_profile_division_hint">"部署"</string>
@@ -228,8 +228,8 @@ JANDIへようこそ"</string>
     <string name="jandi_password_strength_weak">"最低1文字の数字または大文字または記号を含めてください"</string>
     <string name="jandi_password_strength_too_short">"8文字以上入力してください"</string>
     <string name="jandi_sign_out_message">"本当にログアウトしますか？"</string>
-    <string name="jandi_signup_agree_pp"><a href="https://www.google.pl/"><b>プライバシーポリシー</b></a>を読み同意します</string>
-    <string name="jandi_signup_agree_tos"><a href="https://www.google.pl/"><b>利用規約</b></a>を読み同意します</string>
+    <string name="jandi_signup_agree_pp"><u><b>プライバシーポリシー</b></u>を読み同意します</string>
+    <string name="jandi_signup_agree_tos"><u><b>利用規約</b></u>を読み同意します</string>
     <string name="jandi_signup_title">"新規登録"</string>
     <string name="jandi_signup_confirm">"今すぐ新規登録する"</string>
     <string name="jandi_signup_required">"必須"</string>
@@ -257,4 +257,9 @@ JANDIへようこそ"</string>
     <string name="jandi_fail_send_password_reset_email">"パスワード再設定メールが送信されませんでした "</string>
     <string name="member_profile">"プロフィール"</string>
     <string name="jandi_add">"追加"</string>
+    <string name="jandi_success_web_token">ログインしました。</string>
+    <string name="jandi_error_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
+    <string name="err_login_invalid_id_or_password">"アカウントまたはパスワードが正しくありません "</string>
+    <string name="jandi_term_of_service">"サービス利用規約 "</string>
+    <string name="jandi_privacy_policy">"プライバシーポリシー "</string>
 </resources>

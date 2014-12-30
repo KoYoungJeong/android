@@ -44,6 +44,7 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -89,7 +90,7 @@ public class JandiEntityClient {
                 public List<ResInvitationMembers> request() throws JandiNetworkException {
                     InvitationApiClient invitationApiClient = new InvitationApiClient_(context);
                     invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                    return invitationApiClient.inviteMembers(new ReqInvitationMembers(selectedTeamId, strings, "ko"));
+                    return invitationApiClient.inviteMembers(new ReqInvitationMembers(selectedTeamId, strings, LanguageUtil.getLanguage(context)));
                 }
             }).request();
 

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app;
+package com.tosslab.jandi.app.push;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -19,11 +19,14 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.ui.message.MessageListActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -32,21 +35,21 @@ import java.io.IOException;
  * Created by justinygchoi on 14. 12. 3..
  */
 public class JandiBroadcastReceiver extends BroadcastReceiver {
-    private static final String JSON_KEY_DATA  = "com.parse.Data";
-    private static final String JSON_KEY_TYPE     = "type";
-    private static final String JSON_KEY_INFO       = "info";
-    private static final String JSON_KEY_INFO_MESSAGE    = "alert";
-    private static final String JSON_KEY_INFO_CHAT_ID    = "chatId";
-    private static final String JSON_KEY_INFO_CHAT_NAME  = "chatName";
-    private static final String JSON_KEY_INFO_CHAT_TYPE  = "chatType";
-    private static final String JSON_KEY_INFO_WRITER_ID     = "writerId";
-    private static final String JSON_KEY_INFO_WRITER_THUMB  = "writerThumb";
+    private static final String JSON_KEY_DATA = "com.parse.Data";
+    private static final String JSON_KEY_TYPE = "type";
+    private static final String JSON_KEY_INFO = "info";
+    private static final String JSON_KEY_INFO_MESSAGE = "alert";
+    private static final String JSON_KEY_INFO_CHAT_ID = "chatId";
+    private static final String JSON_KEY_INFO_CHAT_NAME = "chatName";
+    private static final String JSON_KEY_INFO_CHAT_TYPE = "chatType";
+    private static final String JSON_KEY_INFO_WRITER_ID = "writerId";
+    private static final String JSON_KEY_INFO_WRITER_THUMB = "writerThumb";
 
-    private static final String JSON_VALUE_TYPE_PUSH        = "push";
-    private static final String JSON_VALUE_TYPE_SUBSCRIBE   = "subscribe";
+    private static final String JSON_VALUE_TYPE_PUSH = "push";
+    private static final String JSON_VALUE_TYPE_SUBSCRIBE = "subscribe";
     private static final String JSON_VALUE_TYPE_UNSUBSCRIBE = "unsubscribe";
 
-    private static final int MAX_LENGTH_SMALL_NOTIFICATION  = 20;
+    private static final int MAX_LENGTH_SMALL_NOTIFICATION = 20;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -62,27 +65,28 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             String jsonData = extras.getString(JSON_KEY_DATA);
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode dataObj = mapper.readTree(jsonData);
-                if (dataObj == null) {
+                PushTO pushTO = mapper.readValue(jsonData, PushTO.class);
+                if (pushTO == null) {
                     return;
                 }
-                String type = getJsonTypeValue(dataObj);
-                JsonNode infoObj = dataObj.get(JSON_KEY_INFO);
+                String type = pushTO.getType();
+                PushTO.PushInfo pushTOInfo = pushTO.getInfo();
 
                 // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
-                int writerId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_WRITER_ID);
-                if (writerId == myEntityId) {
-                    return;
-                }
-
                 if (type.equals(JSON_VALUE_TYPE_PUSH)) {
-                    sendNotificationWithProfile(context, infoObj);
+                    PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTOInfo;
+                    if (messagePush.getWriterId() == myEntityId) {
+                        return;
+                    }
+                    sendNotificationWithProfile(context, messagePush);
                     // Update count of badge
                     BadgeUtils.setBadge(context, recalculateBadgeCount(context));
                 } else if (type.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
-                    subscribeTopic(infoObj);
+                    PushTO.SubscribePush subscribePush = (PushTO.SubscribePush) pushTOInfo;
+                    subscribeTopic(subscribePush.getChatId());
                 } else if (type.equals(JSON_VALUE_TYPE_UNSUBSCRIBE)) {
-                    unsubscribeTopic(infoObj);
+                    PushTO.UnSubscribePush unSubscribePush = (PushTO.UnSubscribePush) pushTOInfo;
+                    unsubscribeTopic(unSubscribePush.getChatId());
                 } else {
                     // DO NOTHING
                 }
@@ -95,10 +99,10 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         return;
     }
 
-    private void sendNotificationWithProfile(final Context context, final JsonNode infoObj) {
+    private void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
         // 현재 JANDI client 가 chatting 중이라면 해당 채팅방에 대한 push 는 무시한다.
         int activatedChatId = JandiPreference.getActivatedChatId(context);
-        int chatIdFromPush = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
+        int chatIdFromPush = messagePush.getChatId();
         if (activatedChatId == chatIdFromPush) {
             return;
         }
@@ -111,7 +115,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-        String writerProfile = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_WRITER_THUMB);
+        String writerProfile = messagePush.getWriterThumb();
         Log.d("Profile Url", JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile);
         if (writerProfile != null) {
             Glide.with(context)
@@ -120,36 +124,36 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
                             if (resource != null) {
-                                Bitmap bitmap = ((GlideBitmapDrawable)resource).getBitmap();
-                                sendNotification(context, infoObj, bitmap);
+                                Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
+                                sendNotification(context, messagePush, bitmap);
                             } else {
-                                sendNotification(context, infoObj, null);
+                                sendNotification(context, messagePush, null);
                             }
                         }
 
                         @Override
                         public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                            sendNotification(context, infoObj, null);
+                            sendNotification(context, messagePush, null);
                         }
                     });
         }
     }
 
-    private void sendNotification(final Context context, final JsonNode infoObj, Bitmap writerProfile) {
+    private void sendNotification(final Context context, final PushTO.MessagePush messagePush, Bitmap writerProfile) {
         NotificationManager nm =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = generateNotification(context, infoObj, writerProfile);
+        Notification notification = generateNotification(context, messagePush, writerProfile);
         if (notification != null) {
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
 
-    private Notification generateNotification(Context context, JsonNode infoObj, Bitmap writerProfile) {
-        String message = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_MESSAGE);
-        String chatName = getJsonNodeStringValue(infoObj, JSON_KEY_INFO_CHAT_NAME);
+    private Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile) {
+        String message = messagePush.getAlert();
+        String chatName = messagePush.getChatName();
 
-        int chatId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
-        int chatType = retrieveEntityTypeFromJsonNode(infoObj, JSON_KEY_INFO_CHAT_TYPE);
+        int chatId = messagePush.getChatId();
+        int chatType = getEntityType(messagePush);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setContentTitle(chatName);
@@ -168,7 +172,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         JandiPreference.setChatIdFromPush(context, chatId);
 
         // 노티를 터치할 경우 실행 intent 설정
-        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType);
+        PendingIntent pendingIntent = generatePendingIntent(context, chatId, chatType, messagePush.getTeamId());
         builder.setContentIntent(pendingIntent);
         if (writerProfile != null) {    // 작성자의 프로필 사진
             builder.setLargeIcon(writerProfile);
@@ -185,8 +189,8 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         return bigTextStyle;
     }
 
-    private int retrieveEntityTypeFromJsonNode(JsonNode dataObj, String key) {
-        String entityType = getJsonNodeStringValue(dataObj, key);
+    private int getEntityType(PushTO.MessagePush messagePush) {
+        String entityType = messagePush.getChatType();
 
         if (entityType.equals("channel")) {
             return JandiConstants.TYPE_PUBLIC_TOPIC;
@@ -199,12 +203,13 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         }
     }
 
-    private PendingIntent generatePendingIntent(Context context, int chatId, int chatType) {
+    private PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
         Intent intent = new Intent(context, MessageListActivity_.class);
         if (chatType >= 0 && chatId >= 0) {
             intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
             intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, chatType);
             intent.putExtra(JandiConstants.EXTRA_IS_FROM_PUSH, true);
+            intent.putExtra(JandiConstants.EXTRA_TEAM_ID, teamId);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -212,39 +217,14 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
-    private void subscribeTopic(JsonNode infoObj) {
-        int chatId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
-        if (chatId > 0) {
-            ParsePush.subscribeInBackground(JandiConstants.PUSH_CHANNEL_PREFIX + chatId);
-        }
+    private void subscribeTopic(String chatId) {
+        ParsePush.subscribeInBackground(chatId);
+
     }
 
-    private void unsubscribeTopic(JsonNode infoObj) {
-        int chatId = getJsonNodeIntValue(infoObj, JSON_KEY_INFO_CHAT_ID);
-        if (chatId > 0) {
-            ParsePush.unsubscribeInBackground(JandiConstants.PUSH_CHANNEL_PREFIX + chatId);
-        }
-    }
+    private void unsubscribeTopic(String chatId) {
+        ParsePush.unsubscribeInBackground(chatId);
 
-    private String getJsonTypeValue(JsonNode node) {
-        return getJsonNodeStringValue(node, JSON_KEY_TYPE);
-    }
-
-    private String getJsonNodeStringValue(JsonNode node, String key) {
-        JsonNode jsonNode = getJsonNodeValue(node, key);
-        return (jsonNode != null) ? jsonNode.asText() : "";
-    }
-
-    private int getJsonNodeIntValue(JsonNode node, String key) {
-        JsonNode jsonNode = getJsonNodeValue(node, key);
-        return (jsonNode != null) ? jsonNode.asInt() : -1;
-    }
-
-    private JsonNode getJsonNodeValue(JsonNode node, String key) {
-        if (node != null && node.get(key) != null) {
-            return node.get(key);
-        }
-        return null;
     }
 
     int recalculateBadgeCount(Context context) {

@@ -6,15 +6,22 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.model.TeamSelectionModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -52,6 +59,10 @@ public class TeamSelectionActivity extends Activity {
         setUpActionBar();
 
         teamSelectionPresenter.showProgressWheel();
+
+        MixpanelMemberAnalyticsClient.getInstance(TeamSelectionActivity.this, null)
+                .flush()
+                .clear();
 
         getTeamList();
     }
@@ -143,12 +154,27 @@ public class TeamSelectionActivity extends Activity {
     }
 
     @OptionsItem(R.id.action_confirm)
+    void onSelectTeam() {
+
+        selectTeam();
+
+    }
+
+    @Background
     void selectTeam() {
 
         Team lastSelectedItem = teamSelectionPresenter.getLastSelectedItem();
         teamSelectionModel.updateSelectedTeam(lastSelectedItem);
         teamSelectionModel.clearEntityManager();
-        teamSelectionPresenter.selectTeam(lastSelectedItem);
+        try {
+            ResLeftSideMenu resLeftSideMenu = teamSelectionModel.updateIdentityManager(lastSelectedItem.getTeamId());
+            teamSelectionModel.setEntityManager(resLeftSideMenu);
+
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
+        teamSelectionPresenter.selectTeam();
     }
 
     @OptionsItem(android.R.id.home)
@@ -161,6 +187,12 @@ public class TeamSelectionActivity extends Activity {
         if (calledType == CALLED_MUST_SELECT_TEAM) {
             teamSelectionPresenter.showLogoutDialog();
         } else if (calledType == CALLED_CHANGE_TEAM) {
+
+            ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(TeamSelectionActivity.this).getSelectedTeamInfo();
+            String distictId = selectedTeamInfo.getMemberId() + "_" + selectedTeamInfo.getTeamId();
+            MixpanelMemberAnalyticsClient.getInstance(TeamSelectionActivity.this, distictId)
+                    .setNewIdentify(distictId);
+
             finish();
         }
     }
@@ -171,7 +203,32 @@ public class TeamSelectionActivity extends Activity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        getTeamList();
+
+        teamDomainResult(true);
+
+    }
+
+    @Background
+    void teamDomainResult(boolean isOwner) {
+        teamSelectionModel.clearEntityManager();
+
+        JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(TeamSelectionActivity.this);
+        ResAccountInfo.UserTeam newSelectTeam = databaseManager.getSelectedTeamInfo();
+
+        try {
+            ResLeftSideMenu resLeftSideMenu = teamSelectionModel.updateIdentityManager(newSelectTeam.getTeamId());
+            EntityManager entityManager = teamSelectionModel.setEntityManager(resLeftSideMenu);
+
+            MixpanelMemberAnalyticsClient mixpanelMemberAnalyticsClient = MixpanelMemberAnalyticsClient.getInstance(TeamSelectionActivity.this, null);
+            mixpanelMemberAnalyticsClient.setNewIdentify(entityManager.getDistictId());
+            mixpanelMemberAnalyticsClient.setPeoplekProfile(isOwner, resLeftSideMenu);
+
+            mixpanelMemberAnalyticsClient.trackSignUp();
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
+        teamSelectionPresenter.selectTeam();
     }
 
     @OnActivityResult(REQ_TEAM_JOIN)
@@ -180,7 +237,17 @@ public class TeamSelectionActivity extends Activity {
         if (resultCode != RESULT_OK) {
             return;
         }
-        getTeamList();
+
+        if (calledType != CALLED_MUST_SELECT_TEAM) {
+            String distictId = ((JandiApplication) getApplicationContext()).getEntityManager().getDistictId();
+            MixpanelMemberAnalyticsClient
+                    .getInstance(TeamSelectionActivity.this, distictId)
+                    .trackSignOut()
+                    .flush()
+                    .clear();
+        }
+
+        teamDomainResult(false);
     }
 
     private void setUpActionBar() {

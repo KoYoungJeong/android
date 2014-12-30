@@ -61,6 +61,7 @@ public class JandiDatabaseManager {
 
         cursor.moveToFirst();
 
+        int idIndex = cursor.getColumnIndex(Account.id.name());
         int nameIndex = cursor.getColumnIndex(Account.name.name());
         int tutoredIndex = cursor.getColumnIndex(Account.tutoredAt.name());
         int updatedIndex = cursor.getColumnIndex(Account.updatedAt.name());
@@ -74,6 +75,7 @@ public class JandiDatabaseManager {
         int smallPhotoUrlIndex = cursor.getColumnIndex(Account.smallThumbPhotoUrl.name());
         int statusIndex = cursor.getColumnIndex(Account.status.name());
 
+        resAccountInfo.setId(cursor.getString(idIndex));
         resAccountInfo.setName(cursor.getString(nameIndex));
         resAccountInfo.setTutoredAt(cursor.getString(tutoredIndex));
         resAccountInfo.setUpdatedAt(cursor.getString(updatedIndex));
@@ -104,6 +106,7 @@ public class JandiDatabaseManager {
 
         ContentValues contentValue = new ContentValues();
         contentValue.put(Account.name.name(), resAccountInfo.getName());
+        contentValue.put(Account.id.name(), resAccountInfo.getId());
         contentValue.put(Account.tutoredAt.name(), resAccountInfo.getTutoredAt());
         contentValue.put(Account.updatedAt.name(), resAccountInfo.getUpdatedAt());
         contentValue.put(Account.createdAt.name(), resAccountInfo.getCreatedAt());
@@ -350,6 +353,38 @@ public class JandiDatabaseManager {
         String selection = AccountTeam.teamId + " = ?";
         String[] selectionArgs = {String.valueOf(teamId)};
         return database.update(Table.account_team.name(), contentValue, selection, selectionArgs);
+    }
+
+    public ResAccountInfo.UserTeam getTeamInfo(int teamId) {
+        SQLiteDatabase database = getReadableDatabase();
+
+        String selection = AccountTeam.teamId + " = " + teamId;
+        Cursor cursor = database.query(Table.account_team.name(), null, selection, null, null, null, null);
+
+        if (cursor == null || cursor.getCount() <= 0) {
+            return null;
+        }
+
+        cursor.moveToFirst();
+
+        int nameIndex = cursor.getColumnIndex(AccountTeam.name.name());
+        int memberIdIndex = cursor.getColumnIndex(AccountTeam.memberId.name());
+        int teamDomainIndex = cursor.getColumnIndex(AccountTeam.teamDomain.name());
+        int teamIdIndex = cursor.getColumnIndex(AccountTeam.teamId.name());
+        int unreadIndex = cursor.getColumnIndex(AccountTeam.unread.name());
+
+        ResAccountInfo.UserTeam userTeam = new ResAccountInfo.UserTeam();
+
+        userTeam.setMemberId(cursor.getInt(memberIdIndex));
+        userTeam.setName(cursor.getString(nameIndex));
+        userTeam.setTeamDomain(cursor.getString(teamDomainIndex));
+        userTeam.setTeamId(cursor.getInt(teamIdIndex));
+        userTeam.setUnread(cursor.getInt(unreadIndex));
+
+        closeCursor(cursor);
+
+        return userTeam;
+
     }
 
     public ResAccountInfo.UserTeam getSelectedTeamInfo() {

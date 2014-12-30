@@ -190,7 +190,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
-    <string name="jandi_forgot_password">"忘了密码？"</string>
+    <string name="jandi_forgot_password"><b><u>忘记您的密码了？</u></b></string>
     <string name="jandi_message_ask_about_deleting">"您确定您要删除它？"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
@@ -219,8 +219,8 @@
     <string name="jandi_password_strength_weak">"必须含有至少一个数字、 大写字母或特殊字符。"</string>
     <string name="jandi_password_strength_too_short">"必须至少八个字符"</string>
     <string name="jandi_sign_out_message">"您确定您要登出？"</string>
-    <string name="jandi_signup_agree_pp">我已经看过并且同意这隐<a href="https://www.google.pl/"><b>隐私权</b></a>条款</string>
-    <string name="jandi_signup_agree_tos">我已经看过并且同意这<a href="https://www.google.pl/"><b>服务条款</b></a></string>
+    <string name="jandi_signup_agree_pp">我已经看过并且同意这隐<u><b>隐私权</b></u>条款</string>
+    <string name="jandi_signup_agree_tos">我已经看过并且同意这<u><b>服务条款</b></u></string>
     <string name="jandi_signup_title">"注册"</string>
     <string name="jandi_signup_confirm">"现在就注册！"</string>
     <string name="jandi_signup_required">"必须"</string>
@@ -251,4 +251,7 @@
     <string name="jandi_success_web_token">"登入成功"</string>
     <string name="member_profile">"简介"</string>
     <string name="jandi_add">"增加"</string>
+    <string name="err_login_invalid_id_or_password">"账号或密码无效 "</string>
+    <string name="jandi_term_of_service">"使用条款 "</string>
+    <string name="jandi_privacy_policy">"隐私权条款 "</string>
 </resources>

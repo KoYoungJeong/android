@@ -9,6 +9,8 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.team.TeamListAdapter;
 import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
@@ -135,6 +137,14 @@ public class TeamSelectionPresenter {
                                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .start();
 
+                        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(activity).getAccountInfo();
+
+                        MixpanelAccountAnalyticsClient
+                                .getInstance(activity, accountInfo.getId())
+                                .trackAccountSigningOut()
+                                .flush()
+                                .clear();
+
                         activity.finish();
 
                     }
@@ -167,8 +177,7 @@ public class TeamSelectionPresenter {
     }
 
     @UiThread
-    public void selectTeam(Team team) {
-        log.debug("Selected Team Id : " + team);
+    public void selectTeam() {
 
         MainTabActivity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

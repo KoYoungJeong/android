@@ -43,7 +43,7 @@ public class TeamSelectionActivityTest {
         // When
         Team team = Team.createTeam(userTeam);
         teamSelectionActivity.teamSelectionModel.updateSelectedTeam(team);
-        teamSelectionActivity.teamSelectionPresenter.selectTeam(team);
+        teamSelectionActivity.teamSelectionPresenter.selectTeam();
 
         // Then
         Intent nextStartedActivity = Robolectric.shadowOf(teamSelectionActivity).getNextStartedActivity();

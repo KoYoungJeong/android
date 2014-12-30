@@ -49,9 +49,8 @@ public class JandiApplication extends Application {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             analytics.setLocalDispatchPeriod(120);
-            Tracker t = (trackerId == TrackerName.APP_TRACKER)
-                    ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
-                    : analytics.newTracker(R.xml.global_tracker);
+            Tracker t = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
+
             t.setSessionTimeout(60);
             t.enableAutoActivityTracking(true);
             t.enableExceptionReporting(true);

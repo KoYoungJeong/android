@@ -47,7 +47,7 @@ public class TeamDomainInfoModel {
         try {
             ResTeamDetailInfo resTeamDetailInfo = requestManager.request();
             if (callback != null) {
-                callback.onTeamCreateSuccess(name);
+                callback.onTeamCreateSuccess(name, resTeamDetailInfo.getInviteTeamMember().getId(), resTeamDetailInfo.getInviteTeam().getTeamId());
             }
         } catch (JandiNetworkException e) {
             if (callback != null) {
@@ -93,8 +93,13 @@ public class TeamDomainInfoModel {
         ResAccountInfo resAccountInfo = null;
         try {
             resAccountInfo = resAccountInfoRequestManager.request();
-            JandiDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
-            JandiDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+            JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(context);
+
+            databaseManager.upsertAccountTeams(resAccountInfo.getMemberships());
+            databaseManager.upsertAccountDevices(resAccountInfo.getDevices());
+            databaseManager.upsertAccountInfo(resAccountInfo);
+            databaseManager.upsertAccountEmail(resAccountInfo.getEmails());
+            databaseManager.updateSelectedTeam(teamId);
         } catch (JandiNetworkException e) {
 
 
@@ -102,7 +107,7 @@ public class TeamDomainInfoModel {
     }
 
     public interface Callback {
-        void onTeamCreateSuccess(String name);
+        void onTeamCreateSuccess(String name, int memberId, int teamId);
 
         void onTeamCreateFail(int statusCode);
     }

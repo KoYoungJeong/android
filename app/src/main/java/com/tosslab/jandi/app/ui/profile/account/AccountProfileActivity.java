@@ -1,13 +1,16 @@
 package com.tosslab.jandi.app.ui.profile.account;
 
+import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Menu;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -15,6 +18,10 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.events.profile.AccountEmailChangeEvent;
 import com.tosslab.jandi.app.events.profile.ProfileImageCompleteEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.account.model.AccountProfileModel;
@@ -62,11 +69,22 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         super.onResume();
         EventBus.getDefault().register(this);
         initProfileView();
+        EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+        trackGaAccountInfo(entityManager.getDistictId());
     }
 
     @AfterViews
     void afterViews() {
         progressDialog = new ProgressDialog(AccountProfileActivity.this);
+        setActionBarSetting();
+    }
+
+    private void setActionBarSetting() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
     }
 
@@ -136,6 +154,14 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
                 isNeedUploadName = false;
             }
             accountProfilePresenter.showSuccessToModifyProfile();
+
+            if (resAccountInfo != null) {
+
+                MixpanelAccountAnalyticsClient
+                        .getInstance(AccountProfileActivity.this, resAccountInfo.getId())
+                        .trackSetAccount();
+            }
+
             updateOptionMenu();
         } catch (Exception e) {
             accountProfilePresenter.showFailToModifyProfile();
@@ -171,6 +197,23 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         accountProfilePresenter.showProgressDialog();
         try {
             accountProfileModel.signOut();
+
+            ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(AccountProfileActivity.this).getAccountInfo();
+            MixpanelAccountAnalyticsClient
+                    .getInstance(AccountProfileActivity.this, accountInfo.getId())
+                    .trackAccountSigningOut()
+                    .flush()
+                    .clear();
+
+            EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+
+            MixpanelMemberAnalyticsClient
+                    .getInstance(AccountProfileActivity.this, entityManager.getDistictId())
+                    .trackSignOut()
+                    .flush()
+                    .clear();
+
+
         } catch (Exception e) {
             // TODO Show Fail Toast
         }

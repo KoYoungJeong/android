@@ -10,7 +10,7 @@ public class DatabaseConsts {
     }
 
     public enum Account {
-        _id, name, updatedAt, tutoredAt, createdAt, loggedAt, activatedAt, notificationTarget, status, photoUrl, largeThumbPhotoUrl, mediumThumbPhotoUrl, smallThumbPhotoUrl
+        _id, id, name, updatedAt, tutoredAt, createdAt, loggedAt, activatedAt, notificationTarget, status, photoUrl, largeThumbPhotoUrl, mediumThumbPhotoUrl, smallThumbPhotoUrl
     }
 
     public enum AccountEmail {

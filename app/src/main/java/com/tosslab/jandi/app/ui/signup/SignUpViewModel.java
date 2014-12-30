@@ -59,13 +59,6 @@ public class SignUpViewModel {
     @ViewById(R.id.tv_signup_password_valid)
     TextView passwordValidView;
 
-    @ViewById(R.id.tv_signup_name_valid)
-    TextView alertNameValidView;
-    @ViewById(R.id.tv_signup_email_valid)
-    TextView alertEmailValidView;
-    @ViewById(R.id.tv_signup_password_valid)
-    TextView alertPasswordValidView;
-
     @ViewById(R.id.ly_password_strength_barometer)
     PasswordStrengthBarometerView passwordStrengthBarometerView;
     private ProgressWheel mProgressWheel;

@@ -51,8 +51,10 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -107,6 +109,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     boolean isFavorite = false;
     @Extra
     boolean isFromPush = false;
+    @Extra
+    int teamId;
 
     @Bean
     JandiEntityClient mJandiEntityClient;
@@ -142,6 +146,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void initInformations() {
         mContext = getApplicationContext();
         mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+
+        if (isFromPush) {
+            ResAccountInfo.UserTeam teamInfo = JandiDatabaseManager.getInstance(mContext).getTeamInfo(teamId);
+            if (teamInfo != null) {
+                JandiDatabaseManager.getInstance(mContext).updateSelectedTeam(teamId);
+            }
+        }
 
         messageState = new MessageState();
 

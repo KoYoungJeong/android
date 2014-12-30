@@ -12,10 +12,8 @@ public class JandiPreference {
     // SharedPreference Key 값
     private static final String PREF_NAME = "JandiPref";
     private static final String PREF_TOKEN = "token";
-    private static final String PREF_LOGIN_ID = "loginId";
     private static final String PREF_CHAT_ID = "chatId";
     private static final String PREF_CHAT_ID_FROM_PUSH = "pushEntity";
-    private static final String PREF_HAS_READ_TUTORIAL = "hasReadTutorial";
     private static final String PREF_BADGE_COUNT = "badgeCount";
     private static final String PREF_MY_ENTITY_ID = "myEntityId";
     private static final String PREF_REFRESH_TOKEN = "refresh_token";

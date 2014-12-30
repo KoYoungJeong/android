@@ -115,7 +115,7 @@
                 <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".JandiBroadcastReceiver">
+        <receiver android:name=".push.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
@@ -141,6 +141,8 @@
                 <data android:scheme="tosslabjandi" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.term.TermActivity_" />
     </application>
 
     // for samsung or sony device to show badge

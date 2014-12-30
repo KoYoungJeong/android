@@ -12,6 +12,7 @@ public class JandiConstants {
     public static final String EXTRA_ENTITY_TYPE    = "entityType";
     public static final String EXTRA_ENTITY_ID      = "entityId";
     public static final String EXTRA_IS_FROM_PUSH   = "isFromPush";
+    public static final String EXTRA_TEAM_ID        = "teamId";
 
     public static final String PARSE_MY_ENTITY_ID   = "myEntityId";
     public static final String PARSE_CHANNELS       = "channels";

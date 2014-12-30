@@ -9,7 +9,9 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
@@ -42,6 +44,14 @@ public class TeamDomainInfoPresenter {
 
     @SystemService
     InputMethodManager inputMethodManager;
+
+    ProgressWheel progressWheel;
+
+    @AfterViews
+    void initView() {
+        progressWheel = new ProgressWheel(activity);
+        progressWheel.init();
+    }
 
     public void setTeamCreatable(boolean isTeamCreatable) {
 
@@ -112,6 +122,23 @@ public class TeamDomainInfoPresenter {
     @UiThread
     public void failJoinTeam() {
         ColoredToast.showWarning(activity, activity.getString(R.string.jandi_team_join_fail));
+    }
+
+    @UiThread
+    public void showProgressWheel() {
+        dismissProgressWheel();
+
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
+    }
+
+    @UiThread
+    public void dismissProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
     }
 
 }

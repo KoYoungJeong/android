@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -50,11 +51,16 @@ public class TeamDomainInfoActivity extends Activity {
 
         Mode activityMode = Mode.valueOf(mode);
 
+
         switch (activityMode) {
             case CREATE:
+                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                        .pageViewTeamCreate();
                 teamDomainInfoPresenter.setTeamCreatable(true);
                 break;
             case JOIN:
+                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                        .pageViewMemberCreate();
                 teamDomainInfoPresenter.setTeamDomain(domain);
                 teamDomainInfoPresenter.setTeamName(teamName);
                 teamDomainInfoPresenter.setTeamCreatable(false);
@@ -65,12 +71,21 @@ public class TeamDomainInfoActivity extends Activity {
 
         teamDomainInfoModel.setCallback(new TeamDomainInfoModel.Callback() {
             @Override
-            public void onTeamCreateSuccess(String name) {
+            public void onTeamCreateSuccess(String name, int memberId, int teamId) {
+
+                String distictId = memberId + "-" + teamId;
+                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                        .pageViewTeamCreateSuccess();
+
+                teamDomainInfoModel.updateTeamInfo(teamId);
+                teamDomainInfoPresenter.dismissProgressWheel();
                 teamDomainInfoPresenter.successCreateTeam(name);
+
             }
 
             @Override
             public void onTeamCreateFail(int statusCode) {
+                teamDomainInfoPresenter.dismissProgressWheel();
                 teamDomainInfoPresenter.failCreateTeam(statusCode);
 
             }
@@ -111,6 +126,8 @@ public class TeamDomainInfoActivity extends Activity {
             joinTeam(token, myName, myEmail);
         } else {
 
+            teamDomainInfoPresenter.showProgressWheel();
+
             // Team Creation
             String teamName = teamDomainInfoPresenter.getTeamName();
             String teamDomain = teamDomainInfoPresenter.getTeamDomain();
@@ -124,13 +141,21 @@ public class TeamDomainInfoActivity extends Activity {
 
     @Background
     void joinTeam(String token, String myName, String myEmail) {
+        teamDomainInfoPresenter.showProgressWheel();
+
         ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName);
         if (resTeamDetailInfos != null) {
             teamDomainInfoModel.updateTeamInfo(teamId);
             teamDomainInfoPresenter.successJoinTeam();
+            String distictId = resTeamDetailInfos.getInviteTeamMember().getId() + "-" + resTeamDetailInfos.getInviteTeamMember().getTeamId();
+            MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                    .pageViewMemberCreateSuccess();
         } else {
             teamDomainInfoPresenter.failJoinTeam();
         }
+
+        teamDomainInfoPresenter.dismissProgressWheel();
+
     }
 
     private void setUpActionBar(Mode mode) {

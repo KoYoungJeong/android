@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Handler;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -87,75 +86,47 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_account)
     public void moveToAccountInfoActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                logger.debug("Move to Account Info");
+        logger.debug("Move to Account Info");
 
-                AccountProfileActivity_.intent(mContext)
-                        .start();
-            }
-        });
+        AccountProfileActivity_.intent(mContext)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     @Click(R.id.ly_more_profile)
     public void moveToProfileActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                MemberProfileActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .start();
-            }
-        });
+        MemberProfileActivity_.intent(mContext)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     @Click(R.id.ly_more_setting)
     public void moveToSettingActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                SettingsActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .start();
-            }
-        });
+        SettingsActivity_.intent(mContext)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     @Click(R.id.ly_more_team)
     public void moveToTeamSelectActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                TeamSelectionActivity_.intent(mContext)
-                        .calledType(TeamSelectionActivity.CALLED_CHANGE_TEAM)
-                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .start();
-            }
-        });
+        TeamSelectionActivity_.intent(mContext)
+                .calledType(TeamSelectionActivity.CALLED_CHANGE_TEAM)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
     @Click(R.id.ly_more_team_member)
     public void moveToTeamMemberActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                TeamInfoActivity_.intent(mContext)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .start();
-            }
-        });
+        TeamInfoActivity_.intent(mContext)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
     }
 
     @Click(R.id.ly_more_invite)
     public void moveToInvitationActivity() {
-        runActivityWithDelay(new Runnable() {
-            @Override
-            public void run() {
-                InviteActivity_.intent(MainMoreFragment.this)
-                        .start();
-            }
-        });
+        InviteActivity_.intent(MainMoreFragment.this)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
 
     }
 
@@ -165,11 +136,4 @@ public class MainMoreFragment extends Fragment {
                 Uri.parse("http://support.jandi.com"));
         startActivity(browserIntent);
     }
-
-
-    private void runActivityWithDelay(Runnable runnable) {
-        Handler handler = new Handler();
-        handler.postDelayed(runnable, 250);
-    }
-
 }

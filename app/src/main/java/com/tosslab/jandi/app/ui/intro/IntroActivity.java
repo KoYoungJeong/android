@@ -56,6 +56,10 @@ public class IntroActivity extends Activity {
             introViewModel.showUpdateDialog();
         } else {
 
+            if (introModel.hasOldToken()) {
+                introModel.removeOldToken();
+            }
+
             if (!introModel.isNeedLogin()) {
                 refreshTokenAndGoNextActivity(initTime);
             } else {

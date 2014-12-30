@@ -8,11 +8,12 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
                     DatabaseConsts.Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.Account.id + " TEXT NOT NULL, " +
                     DatabaseConsts.Account.name + " TEXT NOT NULL, " +
                     DatabaseConsts.Account.tutoredAt + " TEXT, " +
                     DatabaseConsts.Account.updatedAt + " TEXT, " +

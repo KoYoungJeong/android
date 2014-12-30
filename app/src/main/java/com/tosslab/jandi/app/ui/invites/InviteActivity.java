@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.ui.invites;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 import android.view.Menu;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.adapter.InviteListAdapter;
 import com.tosslab.jandi.app.ui.invites.model.InviteModel;
 import com.tosslab.jandi.app.ui.invites.to.EmailTO;
@@ -29,7 +31,7 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
 @EActivity(R.layout.activity_invite)
-public class InviteActivity extends Activity {
+public class InviteActivity extends BaseAnalyticsActivity {
 
     private static final Logger logger = Logger.getLogger(InviteActivity.class);
 
@@ -40,7 +42,7 @@ public class InviteActivity extends Activity {
     InvitePresenter invitePresenter;
 
     @AfterViews
-    void initView(){
+    void initView() {
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -49,6 +51,13 @@ public class InviteActivity extends Activity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+        trackGaInviteMember(entityManager.getDistictId());
     }
 
     @Override

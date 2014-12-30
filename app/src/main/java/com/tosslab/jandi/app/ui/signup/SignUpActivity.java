@@ -6,9 +6,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.signup.model.SignUpModel;
 import com.tosslab.jandi.app.ui.signup.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.term.TermActivity;
+import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
@@ -43,6 +46,10 @@ public class SignUpActivity extends Activity {
     void init() {
         setUpActionBar();
         signUpViewModel.setDefaultEmail(email);
+
+        MixpanelAccountAnalyticsClient.getInstance(SignUpActivity.this, null)
+                .pageViewAccountCreate();
+
     }
 
     private void setUpActionBar() {
@@ -97,6 +104,20 @@ public class SignUpActivity extends Activity {
         signUpViewModel.toggleNameAlert(valid);
     }
 
+    @Click(R.id.txt_signup_agree_tos)
+    void clickAgreeEulaLink() {
+        TermActivity_.intent(SignUpActivity.this)
+                .termMode(TermActivity.Mode.Agreement.name())
+                .start();
+    }
+
+    @Click(R.id.txt_signup_agree_pp)
+    void clickAgreePrivacyLink() {
+        TermActivity_.intent(SignUpActivity.this)
+                .termMode(TermActivity.Mode.Privacy.name())
+                .start();
+    }
+
     @Click({R.id.btn_signup_agree_tos, R.id.ly_signup_agree_tos})
     void clickAgreeEula() {
         signUpViewModel.toggleEula();
@@ -146,6 +167,11 @@ public class SignUpActivity extends Activity {
         try {
             ResAccountInfo resAccountInfo = signUpModel.requestSignUp(email, password, name, lang);
             signUpViewModel.finishWithEmail(email);
+
+            MixpanelAccountAnalyticsClient
+                    .getInstance(SignUpActivity.this, resAccountInfo.getId())
+                    .pageViewAccountCreateSuccess();
+
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             if (e.errCode == 40001) {
@@ -153,6 +179,7 @@ public class SignUpActivity extends Activity {
             } else {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
+            signUpViewModel.dismissProgressWheel();
         } finally {
             signUpViewModel.dismissProgressWheel();
         }

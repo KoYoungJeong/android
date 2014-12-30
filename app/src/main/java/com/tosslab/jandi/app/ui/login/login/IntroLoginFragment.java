@@ -10,6 +10,9 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
+import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.SignUpActivity_;
@@ -54,10 +57,17 @@ public class IntroLoginFragment extends Fragment {
         if (httpCode == HttpStatus.OK.value()) {
             introLoginViewModel.loginSuccess(email);
             JandiPreference.setFirstLogin(getActivity());
+
+
+            ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(getActivity()).getAccountInfo();
+            MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
+            mixpanelAccountAnalyticsClient.trackAccountSingingIn();
+
+
         } else if (httpCode == JandiNetworkException.DATA_NOT_FOUND) {
             introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
         } else {
-            introLoginViewModel.loginFail(R.string.err_network);
+            introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
 
         }
     }

@@ -12,6 +12,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAccountInfo {
+    private String id;
     private String name;
     private String tutoredAt;
     private String updatedAt;
@@ -150,6 +151,14 @@ public class ResAccountInfo {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public static class UserDevice {

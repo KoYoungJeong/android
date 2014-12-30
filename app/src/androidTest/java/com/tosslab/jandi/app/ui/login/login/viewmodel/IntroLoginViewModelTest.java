@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +61,6 @@ public class IntroLoginViewModelTest {
         assertThat(introLoginFragment.getActivity().isFinishing(), is(true));
 
         // Then 2 : Tutorial Read flag is True
-        assertThat(JandiPreference.getFlagForTutorial(introLoginFragment.getActivity()), is(true));
     }
 
     @Test
@@ -123,17 +121,6 @@ public class IntroLoginViewModelTest {
     public void testGetTeamListFailed() throws Exception {
 
         // cannot test
-    }
-
-    @Test
-    public void testSetReadFlagForTutorial() throws Exception {
-        // cannot test
-
-        // When : set read flag
-        introLoginViewModel.setReadFlagForTutorial();
-
-        // Then : flag is true
-        assertThat(JandiPreference.getFlagForTutorial(introLoginFragment.getActivity()), is(true));
     }
 
     @Test

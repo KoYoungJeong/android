@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAnalyticsClient;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.BaseChatListFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -186,7 +186,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     public void createGroupSucceed(int entityId, String entityName) {
         try {
             if (mEntityManager != null) {
-                MixpanelAnalyticsClient
+                MixpanelMemberAnalyticsClient
                         .getInstance(mContext, mEntityManager.getDistictId())
                         .trackCreatingEntity(false);
             }
