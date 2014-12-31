@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
@@ -210,6 +209,7 @@ public class TeamSelectionActivity extends Activity {
 
     @Background
     void teamDomainResult(boolean isOwner) {
+        teamSelectionPresenter.showProgressWheel();
         teamSelectionModel.clearEntityManager();
 
         JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(TeamSelectionActivity.this);
@@ -228,6 +228,7 @@ public class TeamSelectionActivity extends Activity {
             e.printStackTrace();
         }
 
+        teamSelectionPresenter.dismissProgressWheel();
         teamSelectionPresenter.selectTeam();
     }
 
@@ -236,15 +237,6 @@ public class TeamSelectionActivity extends Activity {
 
         if (resultCode != RESULT_OK) {
             return;
-        }
-
-        if (calledType != CALLED_MUST_SELECT_TEAM) {
-            String distictId = ((JandiApplication) getApplicationContext()).getEntityManager().getDistictId();
-            MixpanelMemberAnalyticsClient
-                    .getInstance(TeamSelectionActivity.this, distictId)
-                    .trackSignOut()
-                    .flush()
-                    .clear();
         }
 
         teamDomainResult(false);

@@ -36,6 +36,7 @@
             android:name=".ui.login.IntroMainActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
             android:theme="@style/JandiTheme.NoActionBar" />
         <activity
             android:name=".ui.team.select.TeamSelectionActivity_"
@@ -81,7 +82,7 @@
         <activity
             android:name=".ui.profile.account.AccountProfileActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_profile_actionb"
+            android:label="@string/jandi_account"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.TeamInfoActivity_"

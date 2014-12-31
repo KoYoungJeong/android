@@ -88,6 +88,11 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
 
     }
 
+    @OptionsItem(android.R.id.home)
+    void onHomeOptionSelection() {
+        finish();
+    }
+
     @UiThread
     void initProfileView() {
 

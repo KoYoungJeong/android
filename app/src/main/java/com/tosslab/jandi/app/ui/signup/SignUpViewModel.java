@@ -186,7 +186,7 @@ public class SignUpViewModel {
     public void dismissProgressWheel() {
 
         if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.show();
+            mProgressWheel.dismiss();
         }
     }
 
