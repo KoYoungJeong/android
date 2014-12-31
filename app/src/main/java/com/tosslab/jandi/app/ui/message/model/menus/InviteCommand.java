@@ -82,10 +82,11 @@ class InviteCommand implements MenuCommand {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 List<Integer> selectedCdp = adapter.getSelectedUserIds();
-                for (int item : selectedCdp) {
-                    log.debug("Entity ID, " + item + " is Selected");
+                if (selectedCdp != null && !selectedCdp.isEmpty()) {
+                    inviteInBackground(selectedCdp);
+                } else {
+                    inviteFailed(activity.getString(R.string.title_cdp_invite));
                 }
-                inviteInBackground(selectedCdp);
             }
         });
         dialog.show();

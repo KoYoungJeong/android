@@ -59,7 +59,7 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
             holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    FormattedEntity item = (FormattedEntity)compoundButton.getTag();
+                    FormattedEntity item = (FormattedEntity) compoundButton.getTag();
                     item.isSelectedToBeJoined = b;
                 }
             });
@@ -79,13 +79,18 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
                     .into(holder.imageView);
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);
+            if (entity.isSelectedToBeJoined) {
+                holder.checkBox.setChecked(true);
+            } else {
+                holder.checkBox.setChecked(false);
+            }
         }
 
         return convertView;
     }
 
     public List<Integer> getSelectedUserIds() {
-        ArrayList<Integer> selectedUserIds = new ArrayList<Integer>();
+        List<Integer> selectedUserIds = new ArrayList<Integer>();
         for (FormattedEntity selectedItem : listUserToBeJoined) {
             if (selectedItem.isSelectedToBeJoined) {
                 selectedUserIds.add(selectedItem.getUser().id);
