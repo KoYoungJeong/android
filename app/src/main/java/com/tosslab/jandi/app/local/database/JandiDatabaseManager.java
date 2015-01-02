@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -113,13 +114,15 @@ public class JandiDatabaseManager {
         contentValue.put(Account.loggedAt.name(), resAccountInfo.getLoggedAt());
         contentValue.put(Account.activatedAt.name(), resAccountInfo.getActivatedAt());
         contentValue.put(Account.notificationTarget.name(), resAccountInfo.getNotificationTarget());
-        contentValue.put(Account.photoUrl.name(), resAccountInfo.getPhotoUrl());
+        contentValue.put(Account.photoUrl.name(), !TextUtils.isEmpty(resAccountInfo.getPhotoUrl()) ? resAccountInfo.getPhotoUrl() : "");
 
         ResMessages.ThumbnailUrls photoThumbnailUrl = resAccountInfo.getPhotoThumbnailUrl();
 
-        contentValue.put(Account.largeThumbPhotoUrl.name(), photoThumbnailUrl.largeThumbnailUrl);
-        contentValue.put(Account.mediumThumbPhotoUrl.name(), photoThumbnailUrl.mediumThumbnailUrl);
-        contentValue.put(Account.smallThumbPhotoUrl.name(), photoThumbnailUrl.smallThumbnailUrl);
+        if (photoThumbnailUrl != null) {
+            contentValue.put(Account.largeThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.largeThumbnailUrl) ? photoThumbnailUrl.largeThumbnailUrl : "");
+            contentValue.put(Account.mediumThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.mediumThumbnailUrl) ? photoThumbnailUrl.mediumThumbnailUrl : "");
+            contentValue.put(Account.smallThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.smallThumbnailUrl) ? photoThumbnailUrl.smallThumbnailUrl : "");
+        }
         contentValue.put(Account.status.name(), resAccountInfo.getStatus());
 
         return database.insert(Table.account.name(), null, contentValue);
