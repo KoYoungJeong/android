@@ -137,6 +137,8 @@ public class AccountProfilePresenter {
             progressWheel.init();
         }
 
+        dismissProgressDialog();
+
         progressWheel.show();
 
     }
