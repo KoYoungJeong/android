@@ -241,10 +241,8 @@ Please note that your teammates may view and use this information to mention, se
     <string name="jandi_name_in_jandi">"Account Name"</string>
     <string name="jandi_user_default_email">"Primary email address"</string>
     <string name="jandi_title_name">"Name"</string>
-    <string name="move">"이동하기"</string>
     <string name="sent_auth_email">"An email has been sent to your inbox.
 Please follow the link provided to verify your account and sign in."</string>
-    <string name="open_web_browser">"브라우저 열기"</string>
     <string name="exclamation_mark">"!"</string>
     <string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
     <string name="jandi_invite_success">"Invitation has been sent successfully"</string>
