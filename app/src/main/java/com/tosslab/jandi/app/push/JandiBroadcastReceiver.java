@@ -151,17 +151,18 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     private Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile) {
         String message = messagePush.getAlert();
         String chatName = messagePush.getChatName();
+        String writerName = messagePush.getWriterName();
 
         int chatId = messagePush.getChatId();
         int chatType = getEntityType(messagePush);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setContentTitle(chatName);
+        builder.setContentTitle(writerName);
         builder.setContentText(message);
-        // 메시지 길이에 따른 노티 크기 설정
-        if (message.length() > MAX_LENGTH_SMALL_NOTIFICATION) {
-            builder.setStyle(getBigTextStyle(chatName, message, context.getString(R.string.app_name)));
+        if (chatType == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            chatName = context.getString(R.string.jandi_tab_direct_message);
         }
+        builder.setStyle(getBigTextStyle(writerName, message, chatName));
         builder.setDefaults(Notification.DEFAULT_ALL);
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
         builder.setPriority(Notification.PRIORITY_MAX);

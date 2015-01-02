@@ -10,10 +10,46 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.io.File;
+import java.io.IOException;
+
 //import android.provider.DocumentsContract;
 
 public class ImageFilePath {
+    private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
 
+    /** 임시 저장 파일의 경로를 반환 */
+    public static Uri getTempUri() {
+        return Uri.fromFile(getTempFile());
+    }
+
+    /** 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환  */
+    public static File getTempFile() {
+        if (isSDCARDMOUNTED()) {
+            File f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
+                    TEMP_PHOTO_FILE);
+            try {
+                f.createNewFile();      // 외장메모리에 temp.png 파일 생성
+            } catch (IOException e) {
+            }
+
+            return f;
+        } else
+            return null;
+    }
+
+    public static String getTempPath() {
+        return Environment.getExternalStorageDirectory() + "/" + TEMP_PHOTO_FILE;
+    }
+
+    /** SD카드가 마운트 되어 있는지 확인 */
+    private static boolean isSDCARDMOUNTED() {
+        String status = Environment.getExternalStorageState();
+        if (status.equals(Environment.MEDIA_MOUNTED))
+            return true;
+
+        return false;
+    }
 
     /**
      * Method for return file path of Gallery image
