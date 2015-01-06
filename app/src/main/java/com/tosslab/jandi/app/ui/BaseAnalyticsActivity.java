@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -44,7 +45,8 @@ public class BaseAnalyticsActivity extends Activity {
     private MixpanelMemberAnalyticsClient mMixpanelMemberAnalyticsClient;
 
     protected void returnToIntroStartActivity() {
-        JandiPreference.clearMyToken(this);
+        JandiPreference.signOut(this);
+        JandiAccountDatabaseManager.getInstance(this).clearAllData();
         Intent intent = new Intent(this, IntroActivity_.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

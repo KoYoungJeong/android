@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -52,6 +52,68 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.AccountDevice.type + " TEXT, " +
                     DatabaseConsts.AccountDevice.badgeCount + " TEXT, " +
                     DatabaseConsts.AccountDevice.subscribe + " INTEGER" +
+                    ");",
+
+            DatabaseConsts.Table.left_team + " (" +
+                    DatabaseConsts.LeftTeam._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftTeam.id + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftTeam.name + " TEXT, " +
+                    DatabaseConsts.LeftTeam.teamDomain + " TEXT, " +
+                    DatabaseConsts.LeftTeam.teamDefaultChannelId + " INTEGER  NOT NULL" +
+                    ");",
+
+            DatabaseConsts.Table.left_user + " (" +
+                    DatabaseConsts.LeftUser._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftUser.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftUser.id + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftUser.name + " TEXT, " +
+                    DatabaseConsts.LeftUser.email + " TEXT  NOT NULL, " +
+                    DatabaseConsts.LeftUser.authority + " TEXT, " +
+                    DatabaseConsts.LeftUser.firstName + " TEXT, " +
+                    DatabaseConsts.LeftUser.lastName + " TEXT, " +
+                    DatabaseConsts.LeftUser.photoUrl + " TEXT, " +
+                    DatabaseConsts.LeftUser.statusMessage + " TEXT, " +
+                    DatabaseConsts.LeftUser.nickName + " TEXT, " +
+                    DatabaseConsts.LeftUser.phoneNumber + " TEXT, " +
+                    DatabaseConsts.LeftUser.department + " TEXT, " +
+                    DatabaseConsts.LeftUser.position + " TEXT, " +
+                    DatabaseConsts.LeftUser.thumbSmall + " TEXT, " +
+                    DatabaseConsts.LeftUser.thumbMedium + " TEXT, " +
+                    DatabaseConsts.LeftUser.thumbLarge + " TEXT, " +
+                    DatabaseConsts.LeftUser.isMe + " INTEGER NOT NULL DEFAULT 0" +
+                    ");",
+
+            DatabaseConsts.Table.left_starred_entity + " (" +
+                    DatabaseConsts.LeftStarredEntity._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftStarredEntity.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftStarredEntity.entityId + " INTEGER NOT NULL" +
+                    ");",
+
+            DatabaseConsts.Table.left_message_marker + " (" +
+                    DatabaseConsts.LeftMessageMarkers._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftMessageMarkers.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftMessageMarkers.entityType + " TEXT, " +
+                    DatabaseConsts.LeftMessageMarkers.entityId + " INTEGER, " +
+                    DatabaseConsts.LeftMessageMarkers.lastLinkId + " INTEGER, " +
+                    DatabaseConsts.LeftMessageMarkers.alarmCount + " INTEGER " +
+                    ");",
+
+            DatabaseConsts.Table.left_topic_entity + " (" +
+                    DatabaseConsts.LeftTopicEntity._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftTopicEntity.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftTopicEntity.id + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftTopicEntity.type + " TEXT NOT NULL, " +
+                    DatabaseConsts.LeftTopicEntity.name + " TEXT, " +
+                    DatabaseConsts.LeftTopicEntity.creatorId + " INTEGER, " +
+                    DatabaseConsts.LeftTopicEntity.createdTime + " TEXT, " +
+                    DatabaseConsts.LeftTopicEntity.members + " TEXT " +
+                    ");",
+
+            DatabaseConsts.Table.left_join_entity + " (" +
+                    DatabaseConsts.LeftJoinEntity._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftJoinEntity.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftJoinEntity.id + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftJoinEntity.type + " TEXT NOT NULL " +
                     ");"
     };
 

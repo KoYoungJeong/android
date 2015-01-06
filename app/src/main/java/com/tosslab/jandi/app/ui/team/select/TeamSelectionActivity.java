@@ -10,7 +10,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -187,7 +188,7 @@ public class TeamSelectionActivity extends Activity {
             teamSelectionPresenter.showLogoutDialog();
         } else if (calledType == CALLED_CHANGE_TEAM) {
 
-            ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(TeamSelectionActivity.this).getSelectedTeamInfo();
+            ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(TeamSelectionActivity.this).getSelectedTeamInfo();
             String distictId = selectedTeamInfo.getMemberId() + "_" + selectedTeamInfo.getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(TeamSelectionActivity.this, distictId)
                     .setNewIdentify(distictId);
@@ -212,7 +213,7 @@ public class TeamSelectionActivity extends Activity {
         teamSelectionPresenter.showProgressWheel();
         teamSelectionModel.clearEntityManager();
 
-        JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(TeamSelectionActivity.this);
+        JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(TeamSelectionActivity.this);
         ResAccountInfo.UserTeam newSelectTeam = databaseManager.getSelectedTeamInfo();
 
         try {

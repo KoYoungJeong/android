@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.local.database;
+package com.tosslab.jandi.app.local.database.account;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -22,19 +23,19 @@ import static com.tosslab.jandi.app.local.database.DatabaseConsts.Table;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
-public class JandiDatabaseManager {
+public class JandiAccountDatabaseManager {
 
-    private static JandiDatabaseManager instance;
+    private static JandiAccountDatabaseManager instance;
 
     private JandiDatabaseOpenHelper jandiDatabaseOpenHelper;
 
-    private JandiDatabaseManager(Context context) {
+    private JandiAccountDatabaseManager(Context context) {
         jandiDatabaseOpenHelper = new JandiDatabaseOpenHelper(context);
     }
 
-    public static JandiDatabaseManager getInstance(Context context) {
+    public static JandiAccountDatabaseManager getInstance(Context context) {
         if (instance == null) {
-            instance = new JandiDatabaseManager(context);
+            instance = new JandiAccountDatabaseManager(context);
         }
         return instance;
     }
@@ -122,6 +123,10 @@ public class JandiDatabaseManager {
             contentValue.put(Account.largeThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.largeThumbnailUrl) ? photoThumbnailUrl.largeThumbnailUrl : "");
             contentValue.put(Account.mediumThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.mediumThumbnailUrl) ? photoThumbnailUrl.mediumThumbnailUrl : "");
             contentValue.put(Account.smallThumbPhotoUrl.name(), !TextUtils.isEmpty(photoThumbnailUrl.smallThumbnailUrl) ? photoThumbnailUrl.smallThumbnailUrl : "");
+        } else {
+            contentValue.put(Account.largeThumbPhotoUrl.name(), "");
+            contentValue.put(Account.mediumThumbPhotoUrl.name(), "");
+            contentValue.put(Account.smallThumbPhotoUrl.name(), "");
         }
         contentValue.put(Account.status.name(), resAccountInfo.getStatus());
 

@@ -79,12 +79,22 @@ public class MemberProfilePresenter {
     @UiThread
     public void displayProfile(ResLeftSideMenu.User user) {
         // 프로필 사진
-        Glide.with(activity)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + (!TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl))
-                .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(activity))
-                .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
-                .into(imageViewProfilePhoto);
+
+        String profileImageUrlPath = null;
+        if (user.u_photoThumbnailUrl != null) {
+            profileImageUrlPath = !TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl;
+        } else if (!TextUtils.isEmpty(user.u_photoUrl)) {
+            profileImageUrlPath = user.u_photoUrl;
+        }
+
+        if (!TextUtils.isEmpty(profileImageUrlPath)) {
+            Glide.with(activity)
+                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath)
+                    .placeholder(R.drawable.jandi_profile)
+                    .transform(new GlideCircleTransform(activity))
+                    .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
+                    .into(imageViewProfilePhoto);
+        }
         // 프로필 이름
         textViewProfileRealName.setText(user.name);
         // 상태 메시지

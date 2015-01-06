@@ -6,7 +6,7 @@ package com.tosslab.jandi.app.local.database;
 public class DatabaseConsts {
 
     public enum Table {
-        account, account_email, account_team, account_device
+        account, account_email, account_team, account_device, left_team, left_user, left_starred_entity, left_message_marker, left_topic_entity, left_join_entity
     }
 
     public enum Account {
@@ -23,5 +23,39 @@ public class DatabaseConsts {
 
     public enum AccountDevice {
         _id, token, type, badgeCount, subscribe
+    }
+
+    public enum LeftTeam {
+        _id, id, name, teamDomain, teamDefaultChannelId
+    }
+
+    public enum LeftUser {
+        /* user */
+        _id, id, teamId, name, email, authority, firstName, lastName, photoUrl, statusMessage, nickName,
+
+        /* u_extraData*/
+        phoneNumber, department, position,
+
+        /* u_photoThumbnailUrl*/
+        thumbSmall, thumbMedium, thumbLarge,
+
+        isMe
+    }
+
+    public enum LeftStarredEntity {
+        _id, teamId, entityId
+    }
+
+    public enum LeftMessageMarkers {
+        _id, teamId, entityType, entityId, lastLinkId, alarmCount
+    }
+
+    public enum LeftTopicEntity {
+        _id, teamId, id, type, name, creatorId, createdTime, members
+    }
+
+    public enum LeftJoinEntity {
+        /* reference User & TopicEntity */
+        _id, teamId, id, type
     }
 }

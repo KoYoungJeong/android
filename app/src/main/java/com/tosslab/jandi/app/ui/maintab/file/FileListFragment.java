@@ -32,7 +32,7 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -150,7 +150,7 @@ public class FileListFragment extends Fragment {
             }
         });
 
-        selectedTeamId = JandiDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+        selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
     }
 
     @Override

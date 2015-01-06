@@ -4,7 +4,8 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
@@ -48,7 +49,7 @@ public class TeamSelectionModel {
 
         try {
 
-            List<ResAccountInfo.UserTeam> userTeams = JandiDatabaseManager.getInstance(context).getUserTeams();
+            List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
 
             teams.addAll(convertJoinedTeamList(userTeams));
 
@@ -124,7 +125,7 @@ public class TeamSelectionModel {
         ResAccountInfo resAccountInfo = null;
         try {
             resAccountInfo = resAccountInfoRequestManager.request();
-            JandiDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
         } catch (JandiNetworkException e) {
 
 
@@ -132,7 +133,7 @@ public class TeamSelectionModel {
     }
 
     public void updateSelectedTeam(Team lastSelectedItem) {
-        JandiDatabaseManager.getInstance(context).updateSelectedTeam(lastSelectedItem.getTeamId());
+        JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(lastSelectedItem.getTeamId());
     }
 
     public void clearEntityManager() {
@@ -159,6 +160,10 @@ public class TeamSelectionModel {
     }
 
     public EntityManager setEntityManager(ResLeftSideMenu resLeftSideMenu) {
+
+        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+
+
         EntityManager entityManager = new EntityManager(resLeftSideMenu);
         ((JandiApplication) context.getApplicationContext()).setEntityManager(entityManager);
         return entityManager;

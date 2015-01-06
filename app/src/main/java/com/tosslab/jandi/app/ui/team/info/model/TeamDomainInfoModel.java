@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.team.info.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
@@ -62,13 +62,13 @@ public class TeamDomainInfoModel {
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
-        return JandiDatabaseManager.getInstance(context).getUserEmails();
+        return JandiAccountDatabaseManager.getInstance(context).getUserEmails();
     }
 
     @SupposeBackground
     public ResTeamDetailInfo acceptInvite(String token, String userEmail, String name) {
 
-        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(context).getAccountInfo();
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
 
         if (accountInfo == null) {
             return null;
@@ -93,7 +93,7 @@ public class TeamDomainInfoModel {
         ResAccountInfo resAccountInfo = null;
         try {
             resAccountInfo = resAccountInfoRequestManager.request();
-            JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(context);
+            JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(context);
 
             databaseManager.upsertAccountTeams(resAccountInfo.getMemberships());
             databaseManager.upsertAccountDevices(resAccountInfo.getDevices());

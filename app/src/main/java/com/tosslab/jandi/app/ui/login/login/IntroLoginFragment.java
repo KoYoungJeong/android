@@ -10,7 +10,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
@@ -59,7 +59,7 @@ public class IntroLoginFragment extends Fragment {
             JandiPreference.setFirstLogin(getActivity());
 
 
-            ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(getActivity()).getAccountInfo();
+            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(getActivity()).getAccountInfo();
             MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
             mixpanelAccountAnalyticsClient.trackAccountSingingIn();
 

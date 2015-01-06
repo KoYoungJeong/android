@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -45,17 +45,17 @@ public class AccountProfileModel {
      * @return
      */
     public String getAccountName() {
-        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(context).getAccountInfo();
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
         return accountInfo.getName();
     }
 
     public String getAccountProfileImage() {
-        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(context).getAccountInfo();
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
         return !TextUtils.isEmpty(accountInfo.getPhotoThumbnailUrl().largeThumbnailUrl) ? accountInfo.getPhotoThumbnailUrl().largeThumbnailUrl : accountInfo.getPhotoUrl();
     }
 
     public String getAccountPrimaryEmail() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
@@ -68,7 +68,7 @@ public class AccountProfileModel {
 
     public List<ResAccountInfo.UserEmail> getAccountEmails() {
 
-        return JandiDatabaseManager.getInstance(context).getUserEmails();
+        return JandiAccountDatabaseManager.getInstance(context).getUserEmails();
     }
 
     /**
@@ -115,7 +115,7 @@ public class AccountProfileModel {
     }
 
     public void updateAccountInfo(ResAccountInfo resAccountInfo) {
-        JandiDatabaseManager databaseManager = JandiDatabaseManager.getInstance(context);
+        JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(context);
         databaseManager.upsertAccountInfo(resAccountInfo);
         databaseManager.upsertAccountEmail(resAccountInfo.getEmails());
 
@@ -129,7 +129,7 @@ public class AccountProfileModel {
         parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
         parseInstallation.saveInBackground();
 
-        JandiDatabaseManager.getInstance(context).clearAllData();
+        JandiAccountDatabaseManager.getInstance(context).clearAllData();
 
     }
 }

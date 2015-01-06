@@ -97,7 +97,6 @@ public class ResLeftSideMenu {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-
     static public class PrivateGroup extends Entity {
         public int pg_creatorId;
         public Date pg_createTime;

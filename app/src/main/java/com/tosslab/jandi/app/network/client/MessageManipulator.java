@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.network.client;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiClient;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
@@ -53,7 +53,7 @@ public class MessageManipulator {
 
     @AfterInject
     void initSelectedTeam() {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
 
         JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);

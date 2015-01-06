@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -57,7 +57,7 @@ public class IntroActivityViewModel {
 
     public void moveMainOrTeamSelectActivity() {
 
-        ResAccountInfo.UserTeam mySelectedTeam = JandiDatabaseManager.getInstance(activity).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam mySelectedTeam = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo();
 
         if (mySelectedTeam != null) {
             moveToMainActivity();

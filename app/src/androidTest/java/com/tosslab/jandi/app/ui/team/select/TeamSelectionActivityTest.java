@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.team.select;
 
 import android.content.Intent;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -37,7 +37,7 @@ public class TeamSelectionActivityTest {
     @Test
     public void testSelectTeam() throws Exception {
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiDatabaseManager.getInstance(Robolectric.application).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
         ResAccountInfo.UserTeam userTeam = userTeams.get(0);
 
         // When
@@ -47,7 +47,7 @@ public class TeamSelectionActivityTest {
 
         // Then
         Intent nextStartedActivity = Robolectric.shadowOf(teamSelectionActivity).getNextStartedActivity();
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(Robolectric.application).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(Robolectric.application).getSelectedTeamInfo();
 
         assertThat(nextStartedActivity, is(notNullValue()));
         assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(MainTabActivity_.class.getName())));

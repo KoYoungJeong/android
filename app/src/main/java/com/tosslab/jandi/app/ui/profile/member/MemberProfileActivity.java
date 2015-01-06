@@ -259,7 +259,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        if (imageData != null) {
+        if (imageData != null && imageData.getData() != null) {
             attemptToUpdatePhoto = true;
             mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
             memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);

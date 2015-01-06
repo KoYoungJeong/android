@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.account.devices.AccountDevicesApiClient;
 import com.tosslab.jandi.app.network.client.account.devices.AccountDevicesApiClient_;
 import com.tosslab.jandi.app.network.client.file.FileApiClient;
@@ -69,7 +69,7 @@ public class JandiEntityClient {
     @AfterInject
     void initAuthentication() {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
 
     }

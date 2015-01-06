@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.local.database;
 
-import android.database.sqlite.SQLiteDatabase;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,12 +14,9 @@ public class JandiDatabaseOpenHelperTest {
 
     @Test
     public void testInit() throws Exception {
-        JandiDatabaseManager jandiDatabaseManager = JandiDatabaseManager.getInstance(Robolectric.application);
-        SQLiteDatabase readableDatabase = jandiDatabaseManager.getReadableDatabase();
+        JandiAccountDatabaseManager jandiAccountDatabaseManager = JandiAccountDatabaseManager.getInstance(Robolectric.application);
 
         assertTrue(true);
-
-        System.out.println(readableDatabase.getPath());
 
     }
 }

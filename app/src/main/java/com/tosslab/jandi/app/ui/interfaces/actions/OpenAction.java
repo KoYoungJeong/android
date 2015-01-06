@@ -5,7 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -64,10 +64,10 @@ public class OpenAction implements Action {
             ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
 
             TokenUtil.saveTokenInfoByRefresh(context, accessToken);
-            JandiDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
-            JandiDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
-            JandiDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
-            JandiDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());
 
             successAccessToken(accountInfo);
         } catch (HttpStatusCodeException e) {

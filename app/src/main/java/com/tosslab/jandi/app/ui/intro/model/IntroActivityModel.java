@@ -5,13 +5,19 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -110,10 +116,10 @@ public class IntroActivityModel {
         RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
         ResAccountInfo resAccountInfo = requestManager.request();
 
-        JandiDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
-        JandiDatabaseManager.getInstance(context).upsertAccountEmail(resAccountInfo.getEmails());
-        JandiDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
-        JandiDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
+        JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+        JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(resAccountInfo.getEmails());
+        JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
+        JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
 
     }
 
@@ -122,10 +128,10 @@ public class IntroActivityModel {
     }
 
     public void clearAccountInfo() {
-        JandiDatabaseManager.getInstance(context).deleteAccountDevices();
-        JandiDatabaseManager.getInstance(context).deleteAccountEmails();
-        JandiDatabaseManager.getInstance(context).deleteAccountInfo();
-        JandiDatabaseManager.getInstance(context).deleteAccountTeams();
+        JandiAccountDatabaseManager.getInstance(context).deleteAccountDevices();
+        JandiAccountDatabaseManager.getInstance(context).deleteAccountEmails();
+        JandiAccountDatabaseManager.getInstance(context).deleteAccountInfo();
+        JandiAccountDatabaseManager.getInstance(context).deleteAccountTeams();
     }
 
     public void sleep(long initTime, long maxDelayMs) {
@@ -155,5 +161,28 @@ public class IntroActivityModel {
 
     public void removeOldToken() {
         JandiPreference.clearMyToken(context);
+    }
+
+    public void refreshEntityInfo() {
+
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+
+        if (selectedTeamInfo == null) {
+            return;
+        }
+
+        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+
+        try {
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+
+            ((JandiApplication) context.getApplicationContext()).setEntityManager(new EntityManager(totalEntitiesInfo));
+
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

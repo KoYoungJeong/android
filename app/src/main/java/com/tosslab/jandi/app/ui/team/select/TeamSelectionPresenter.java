@@ -8,7 +8,7 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.team.TeamListAdapter;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
@@ -128,16 +128,16 @@ public class TeamSelectionPresenter {
 
                         TokenUtil.clearTokenInfo(activity);
 
-                        JandiDatabaseManager.getInstance(activity).deleteAccountInfo();
-                        JandiDatabaseManager.getInstance(activity).deleteAccountTeams();
-                        JandiDatabaseManager.getInstance(activity).deleteAccountEmails();
-                        JandiDatabaseManager.getInstance(activity).deleteAccountDevices();
+                        JandiAccountDatabaseManager.getInstance(activity).deleteAccountInfo();
+                        JandiAccountDatabaseManager.getInstance(activity).deleteAccountTeams();
+                        JandiAccountDatabaseManager.getInstance(activity).deleteAccountEmails();
+                        JandiAccountDatabaseManager.getInstance(activity).deleteAccountDevices();
 
                         IntroMainActivity_.intent(activity)
                                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .start();
 
-                        ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(activity).getAccountInfo();
+                        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
 
                         MixpanelAccountAnalyticsClient
                                 .getInstance(activity, accountInfo.getId())

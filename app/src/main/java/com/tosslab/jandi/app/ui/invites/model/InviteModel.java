@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.invites.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -28,7 +28,7 @@ public class InviteModel {
 
     public List<ResInvitationMembers> inviteMembers(List<String> invites) throws JandiNetworkException {
 
-        int teamId = JandiDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
 
         return RequestManager.newInstance(context, new InviteRequest(context, teamId, invites)).request();
     }

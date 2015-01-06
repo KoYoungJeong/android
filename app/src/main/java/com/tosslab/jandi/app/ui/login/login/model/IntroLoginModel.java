@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiClient;
@@ -72,10 +72,10 @@ public class IntroLoginModel {
                 RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
                 ResAccountInfo resAccountInfo = requestManager.request();
 
-                JandiDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
-                JandiDatabaseManager.getInstance(context).upsertAccountEmail(resAccountInfo.getEmails());
-                JandiDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
-                JandiDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
+                JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+                JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(resAccountInfo.getEmails());
+                JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
+                JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
 
                 return HttpStatus.OK.value();
             } else {

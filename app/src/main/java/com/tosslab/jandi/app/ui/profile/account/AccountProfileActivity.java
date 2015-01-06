@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.events.profile.AccountEmailChangeEvent;
 import com.tosslab.jandi.app.events.profile.ProfileImageCompleteEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -203,7 +203,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         try {
             accountProfileModel.signOut();
 
-            ResAccountInfo accountInfo = JandiDatabaseManager.getInstance(AccountProfileActivity.this).getAccountInfo();
+            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(AccountProfileActivity.this).getAccountInfo();
             MixpanelAccountAnalyticsClient
                     .getInstance(AccountProfileActivity.this, accountInfo.getId())
                     .trackAccountSigningOut()
@@ -260,10 +260,13 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
-        accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
-        isNeedUploadImage = true;
-        invalidateOptionsMenu();
+        if (data != null && data.getData() != null) {
+
+            tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
+            accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
+            isNeedUploadImage = true;
+            invalidateOptionsMenu();
+        }
 
     }
 

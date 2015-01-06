@@ -14,7 +14,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.JandiDatabaseManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -74,7 +74,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
         final ActionBar actionBar = getActionBar();
         actionBar.setDisplayUseLogoEnabled(false);

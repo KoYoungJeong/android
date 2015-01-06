@@ -75,6 +75,7 @@ public class IntroActivity extends Activity {
         try {
             introModel.refreshToken();
             introModel.refreshAccountInfo();
+            introModel.refreshEntityInfo();
             introModel.sleep(initTime, MAX_DELAY_MS);
             introViewModel.moveMainOrTeamSelectActivity();
         } catch (JandiNetworkException e) {
