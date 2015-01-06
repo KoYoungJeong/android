@@ -224,4 +224,35 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="JandiTopic" />
+
+    <style name="JandiTopic.Create.TextView.RowLayout" parent="JandiTopic">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">43dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">25dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="JandiTopic.Create.TextView.Title" parent="JandiTopic">
+        <item name="android:layout_width">106dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="JandiTopic.Create.TextView.Type" parent="JandiTopic">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+
+    <style name="JandiTopic.Create.TextView.Edit" parent="JandiTopic">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
 </resources>

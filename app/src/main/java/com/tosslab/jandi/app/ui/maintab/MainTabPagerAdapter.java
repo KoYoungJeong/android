@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
 import com.tosslab.jandi.app.ui.maintab.privatetopic.MainPrivateListFragment_;
 import com.tosslab.jandi.app.ui.maintab.publictopic.MainPublicListFragment_;
+import com.tosslab.jandi.app.ui.maintab.topic.MainTopicListFragment_;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 
 /**
@@ -33,7 +34,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     public Fragment getItem(int position) {
         switch (position) {
             case TAB_TOPIC:
-                return MainPublicListFragment_
+                return MainTopicListFragment_
                         .builder()
                         .build();
             case TAB_CHAT:
@@ -49,7 +50,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
                         .builder()
                         .build();
             default:
-                return MainPublicListFragment_.builder().build();
+                return MainTopicListFragment_.builder().build();
         }
     }
 

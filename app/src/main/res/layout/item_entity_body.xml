@@ -1,79 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/transparent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
         android:orientation="horizontal">
-        <FrameLayout
+
+        <RelativeLayout
             android:layout_width="@dimen/jandi_entity_item_title_margin_left"
             android:layout_height="@dimen/jandi_entity_item_title_margin_left">
+
             <ImageView
                 android:id="@+id/img_entity_listitem_icon"
                 android:layout_width="@dimen/jandi_entity_item_icon"
                 android:layout_height="@dimen/jandi_entity_item_icon"
-                android:layout_gravity="center"
-                android:src="@drawable/jandi_icon_topic"/>
+                android:layout_centerInParent="true"
+                android:src="@drawable/jandi_topic_icon" />
+
             <ImageView
                 android:id="@+id/img_entity_listitem_fav"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:layout_marginLeft="12dp"
-                android:src="@drawable/jandi_icon_fav"/>
-        </FrameLayout>
+                android:layout_alignLeft="@+id/img_entity_listitem_icon"
+                android:layout_alignTop="@+id/img_entity_listitem_icon"
+                android:layout_marginLeft="-3dp"
+                android:layout_marginTop="-1dp"
+                android:src="@drawable/jandi_icon_fav" />
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
             <TextView
                 android:id="@+id/txt_entity_listitem_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/jandi_entity_item_title_margin_bottom"
-                android:maxLines="2"
                 android:ellipsize="end"
-                android:textStyle="bold"
-                android:textSize="@dimen/jandi_entity_item_title_font"
+                android:maxLines="2"
+                android:text="Topic Name"
                 android:textColor="#333333"
-                android:text="Topic Name"/>
+                android:textSize="@dimen/jandi_entity_item_title_font"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/txt_entity_listitem_additional"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/jandi_entity_item_subtitle_font"
+                android:text="0 users"
                 android:textColor="#666666"
-                android:text="0 users"/>
+                android:textSize="@dimen/jandi_entity_item_subtitle_font" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="56dp"
             android:layout_height="match_parent"
             android:gravity="center">
+
             <TextView
                 android:id="@+id/txt_entity_listitem_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minWidth="24dp"
-                android:minHeight="24dp"
-                android:padding="4dp"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:background="@drawable/jandi_badge_starred"
-                android:textStyle="bold"
+                android:gravity="center"
+                android:minHeight="24dp"
+                android:minWidth="24dp"
+                android:padding="4dp"
+                android:text="0"
                 android:textColor="@color/jandi_text_white"
                 android:textSize="@dimen/jandi_entity_badge_font"
-                android:text="0"/>
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
+
     <View
         android:id="@+id/view_entity_unjoined"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_entity_item_height"
-        android:background="#99ffffff"/>
+        android:background="#99ffffff"
+        android:visibility="invisible" />
 </FrameLayout>

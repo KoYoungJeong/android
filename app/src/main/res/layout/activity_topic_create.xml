@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/jandi_entities_bg"
+    android:orientation="vertical">
+
+    <LinearLayout style="@style/JandiTopic.Create.TextView.RowLayout">
+
+        <TextView
+            style="@style/JandiTopic.Create.TextView.Title"
+            android:text="@string/jandi_topic_title" />
+
+        <EditText
+            android:id="@+id/et_topic_create_title"
+            style="@style/JandiTopic.Create.TextView.Edit"
+            android:hint="@string/jandi_topic_title_hint" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_topic_create_public_check"
+        style="@style/JandiTopic.Create.TextView.RowLayout"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            style="@style/JandiTopic.Create.TextView.Type"
+            android:layout_weight="1"
+            android:text="@string/jandi_topic_public" />
+
+        <ImageView
+            android:id="@+id/img_topic_create_public_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/jandi_topic_type_selector" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_topic_create_private_check"
+        style="@style/JandiTopic.Create.TextView.RowLayout"
+        android:layout_marginTop="1dp">
+
+        <TextView
+            style="@style/JandiTopic.Create.TextView.Type"
+            android:layout_weight="1"
+            android:text="@string/jandi_topic_private" />
+
+        <ImageView
+            android:id="@+id/img_topic_create_private_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/jandi_topic_type_selector" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/jandi_what_is_topic_type"
+        android:textColor="#FF999999"
+        android:textSize="12sp" />
+
+</LinearLayout>

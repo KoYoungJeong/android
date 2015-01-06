@@ -36,8 +36,8 @@
             android:name=".ui.login.IntroMainActivity_"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
-            android:theme="@style/JandiTheme.NoActionBar" />
+            android:theme="@style/JandiTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".ui.team.select.TeamSelectionActivity_"
             android:label="@string/jandi_select_team"
@@ -98,6 +98,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:logo="@drawable/jandi_actionb_logo"
             android:theme="@style/JandiTheme.ActionBarOverlay" />
+        <activity
+            android:name=".ui.term.TermActivity_"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.maintab.topic.create.TopicCreateActivity_"
+            android:label="@string/jandi_create_channel"
+            android:screenOrientation="portrait" />
 
         <service android:name="com.parse.PushService" />
 
@@ -143,7 +151,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.term.TermActivity_" />
     </application>
 
     // for samsung or sony device to show badge
