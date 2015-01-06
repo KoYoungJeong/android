@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -131,6 +131,12 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        for (DatabaseConsts.Table table : DatabaseConsts.Table.values()) {
+            db.execSQL("DROP TABLE IF EXISTS " + table);
+        }
 
+        for (String createTable : CREATE_TABLES) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS " + createTable);
+        }
     }
 }
