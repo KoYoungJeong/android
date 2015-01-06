@@ -184,8 +184,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 finish();
                 return true;
             case R.id.action_invitation:
-//                listViewInvitation.setSelection(teamUserListAdapter.getCount());
-//                showToolTip();
                 InviteActivity_.intent(TeamInfoActivity.this)
                         .start();
                 return true;

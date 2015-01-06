@@ -120,11 +120,20 @@ public class TeamSelectionPresenter {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.jandi_setting_sign_out)
-                .setMessage("다른 아이디로 로그인하시겠습니까?")
+                .setMessage(R.string.jandi_sign_out_message)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+
+                        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
+
+                        MixpanelAccountAnalyticsClient
+                                .getInstance(activity, accountInfo.getId())
+                                .trackAccountSigningOut()
+                                .flush()
+                                .clear();
 
                         TokenUtil.clearTokenInfo(activity);
 
@@ -136,14 +145,6 @@ public class TeamSelectionPresenter {
                         IntroMainActivity_.intent(activity)
                                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .start();
-
-                        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
-
-                        MixpanelAccountAnalyticsClient
-                                .getInstance(activity, accountInfo.getId())
-                                .trackAccountSigningOut()
-                                .flush()
-                                .clear();
 
                         activity.finish();
 

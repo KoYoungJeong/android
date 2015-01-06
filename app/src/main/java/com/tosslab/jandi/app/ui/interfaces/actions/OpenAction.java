@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.interfaces.actions;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -54,9 +55,19 @@ public class OpenAction implements Action {
     @Background
     void checkSession(Uri data) {
         showProgress();
+
+        String access_token = data.getQueryParameter("access_token");
+        String refresh_token = data.getQueryParameter("refresh_token");
+
+        if (TextUtils.isEmpty(access_token) || TextUtils.isEmpty(refresh_token)) {
+
+            startIntroActivity();
+            return;
+        }
+
         ResAccessToken accessToken = new ResAccessToken();
-        accessToken.setAccessToken(data.getQueryParameter("access_token"));
-        accessToken.setRefreshToken(data.getQueryParameter("refresh_token"));
+        accessToken.setAccessToken(access_token);
+        accessToken.setRefreshToken(refresh_token);
         accessToken.setTokenType("bearer");
 
         try {
@@ -97,14 +108,19 @@ public class OpenAction implements Action {
     @UiThread
     void failAccessToken() {
         ColoredToast.showWarning(context, context.getString(R.string.jandi_error_web_token));
-        IntroActivity_.intent(context);
-        ((Activity) context).finish();
+        startIntroActivity();
     }
 
     @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
         ColoredToast.show(context, context.getString(R.string.jandi_success_web_token));
-        IntroActivity_.intent(context);
+        startIntroActivity();
+    }
+
+    @UiThread
+    void startIntroActivity() {
+        IntroActivity_.intent(context)
+                .start();
         ((Activity) context).finish();
     }
 }
