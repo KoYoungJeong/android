@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
 
@@ -247,6 +248,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");              // 모든 이미지
         intent.putExtra("crop", "true");        // Crop기능 활성화
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri());
         intent.putExtra("outputFormat",         // 포맷방식
                 Bitmap.CompressFormat.PNG.toString());
 
@@ -260,13 +262,11 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        if (data != null && data.getData() != null) {
-
-            tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
-            accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
-            isNeedUploadImage = true;
-            invalidateOptionsMenu();
-        }
+//        tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
+        tempFile = new File(ImageFilePath.getTempPath());
+        accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
+        isNeedUploadImage = true;
+        invalidateOptionsMenu();
 
     }
 

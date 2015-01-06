@@ -142,7 +142,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private Uri mImageUriFromCamera = null;
 
-    @AfterInject
     void initInformations() {
         mContext = getApplicationContext();
         mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
@@ -166,6 +165,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     void bindAdapter() {
+        initInformations();
         clearPushNotification(entityId);
         BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         initProgressWheel();
@@ -295,9 +295,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public void onNewIntent(Intent intent) {
         setIntent(intent);
-        mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
-        initProgressWheel();
         bindAdapter();
     }
 

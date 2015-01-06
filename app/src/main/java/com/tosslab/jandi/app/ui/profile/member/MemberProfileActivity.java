@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -247,6 +248,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");              // 모든 이미지
         intent.putExtra("crop", "true");        // Crop기능 활성화
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri());
         intent.putExtra("outputFormat",         // 포맷방식
                 Bitmap.CompressFormat.PNG.toString());
 
@@ -261,7 +263,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
         if (imageData != null && imageData.getData() != null) {
             attemptToUpdatePhoto = true;
-            mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
+//            mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
+            mTempPhotoFile = new File(ImageFilePath.getTempPath());
             memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
             invalidateOptionsMenu();
         }

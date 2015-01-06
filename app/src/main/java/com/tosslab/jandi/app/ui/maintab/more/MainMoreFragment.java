@@ -68,6 +68,7 @@ public class MainMoreFragment extends Fragment {
             Glide.with(mContext)
                     .load(me.getUserSmallProfileUrl())
                     .placeholder(R.drawable.jandi_profile)
+                    .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                     .transform(new GlideCircleTransform(mContext))
                     .into(profileIconView.getImageView());
         }
