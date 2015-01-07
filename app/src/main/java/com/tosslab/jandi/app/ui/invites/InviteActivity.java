@@ -82,6 +82,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
     void onInviteOptionSelected() {
         List<String> invites = invitePresenter.getInvites();
         if (invites != null && !invites.isEmpty()) {
+            invitePresenter.showProgressWheel();
             invite(invites);
         } else {
             // No Item Dialog
@@ -96,7 +97,6 @@ public class InviteActivity extends BaseAnalyticsActivity {
 
     @Background
     void invite(List<String> invites) {
-        invitePresenter.showProgressWheel();
 
         try {
             inviteModel.inviteMembers(invites);
@@ -104,10 +104,11 @@ public class InviteActivity extends BaseAnalyticsActivity {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody);
         }
 
-        invitePresenter.dismissProgressWheel();
 
         // invite success dialog
         invitePresenter.clearItems();
+        invitePresenter.dismissProgressWheel();
+
         invitePresenter.showSuccessDialog();
     }
 
@@ -129,7 +130,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @Click(R.id.btn_invitation_confirm)
     void onInviteListAddClick() {
         String emailText = invitePresenter.getEmailText();
-        if (invitePresenter.getInvites().contains(emailText)) {
+        if (!invitePresenter.getInvites().contains(emailText)) {
             invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
         }
         invitePresenter.clearEmailTextView();

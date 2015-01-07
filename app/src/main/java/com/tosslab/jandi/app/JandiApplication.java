@@ -55,7 +55,7 @@ public class JandiApplication extends Application {
             t.enableAutoActivityTracking(true);
             t.enableExceptionReporting(true);
             t.setAppName("JANDI");
-            t.setAppVersion("0.4.5");
+            t.setAppVersion("0.9.1");
 
             mTrackers.put(trackerId, t);
 

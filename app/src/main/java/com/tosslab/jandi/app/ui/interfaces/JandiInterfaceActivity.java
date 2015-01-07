@@ -7,7 +7,7 @@ import android.net.Uri;
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
 import com.tosslab.jandi.app.ui.interfaces.actions.ActionFactory;
 
-import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EActivity;
 
 /**
@@ -17,13 +17,13 @@ import org.androidannotations.annotations.EActivity;
 @EActivity
 public class JandiInterfaceActivity extends Activity {
 
-    @AfterViews
+    @AfterInject
     void initView() {
 
         Intent intent = getIntent();
         Uri data = intent.getData();
 
-        Action action = ActionFactory.getAction(JandiInterfaceActivity.this, data.getPath());
+        Action action = ActionFactory.getAction(JandiInterfaceActivity.this, data);
         action.execute(data);
 
     }
