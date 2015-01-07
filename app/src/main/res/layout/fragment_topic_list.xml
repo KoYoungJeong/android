@@ -2,14 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/jandi_entities_bg"
     android:orientation="vertical">
+
 
     <ExpandableListView
         android:id="@+id/list_main_topic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:choiceMode="singleChoice"
         android:divider="@color/jandi_entities_divider"
         android:dividerHeight="1dp"
         android:groupIndicator="@null"

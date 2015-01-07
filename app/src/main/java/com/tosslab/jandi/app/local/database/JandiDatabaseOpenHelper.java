@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 6;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -114,6 +114,20 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.LeftJoinEntity.teamId + " INTEGER NOT NULL, " +
                     DatabaseConsts.LeftJoinEntity.id + " INTEGER NOT NULL, " +
                     DatabaseConsts.LeftJoinEntity.type + " TEXT NOT NULL " +
+                    ");",
+
+            DatabaseConsts.Table.messages + " (" +
+                    DatabaseConsts.Messages._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.Messages.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.Messages.entityId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.Messages.link + " TEXT NOT NULL " +
+                    ");",
+
+            DatabaseConsts.Table.temp_messages + " (" +
+                    DatabaseConsts.TempMessages._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.TempMessages.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.TempMessages.entityId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.TempMessages.text + " TEXT NOT NULL " +
                     ");"
     };
 

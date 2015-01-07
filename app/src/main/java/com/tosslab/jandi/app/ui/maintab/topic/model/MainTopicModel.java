@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Bean;
@@ -53,5 +54,9 @@ public class MainTopicModel {
 
 
         return entities;
+    }
+
+    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
+        jandiEntityClient.joinChannel(channel);
     }
 }

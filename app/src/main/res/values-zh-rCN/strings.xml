@@ -254,4 +254,13 @@
     <string name="err_login_invalid_id_or_password">"账号或密码无效 "</string>
     <string name="jandi_term_of_service">"使用条款 "</string>
     <string name="jandi_privacy_policy">"隐私权条款 "</string>
+    <string name="jandi_topic_private">"非公开"</string>
+    <string name="jandi_topic_public">"公开"</string>
+    <string name="jandi_unstarred">"取消标记"</string>
+    <string name="jandi_starred">"取消标记"</string>
+    <string name="jandi_message_leave_private_topic">"您如果离开这个私人议题群组，未来希望能够重新加入，必须先取得其它人的邀请。您确定您想要离开？"</string>
+    <string name="jandi_topic_title_hint">"议题"</string>
+    <string name="jandi_topic_title">"议题"</string>
+    <string name="jandi_fail_web_token">"登入时遇到问题。请再试一次。"</string>
+    <string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
 </resources>

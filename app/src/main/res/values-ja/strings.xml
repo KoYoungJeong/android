@@ -262,4 +262,13 @@ JANDIへようこそ"</string>
     <string name="err_login_invalid_id_or_password">"アカウントまたはパスワードが正しくありません "</string>
     <string name="jandi_term_of_service">"サービス利用規約 "</string>
     <string name="jandi_privacy_policy">"プライバシーポリシー "</string>
+    <string name="jandi_topic_private">"非公開"</string>
+    <string name="jandi_topic_public">"公開"</string>
+    <string name="jandi_unstarred">"お気に入りから削除する"</string>
+    <string name="jandi_starred">"お気に入りに追加"</string>
+    <string name="jandi_message_leave_private_topic">"プライベートトピックから退出すると、そのプライベートトピックのメンバーに改めて招待されない限り再び参加することはできません。本当に退出しますか？"</string>
+    <string name="jandi_topic_title_hint">"タイトル"</string>
+    <string name="jandi_topic_title">"タイトル"</string>
+    <string name="jandi_fail_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
+    <string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
 </resources>

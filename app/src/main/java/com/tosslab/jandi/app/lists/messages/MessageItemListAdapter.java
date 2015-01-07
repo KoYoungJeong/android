@@ -19,10 +19,9 @@ import java.util.List;
 @EBean
 public class MessageItemListAdapter extends BaseAdapter {
     private final Logger log = Logger.getLogger(MessageItemListAdapter.class);
-    private List<MessageItem> mFormattedMessages;
-
     @RootContext
     Context mContext;
+    private List<MessageItem> mFormattedMessages;
 
     @AfterInject
     void initAdapter() {
@@ -34,6 +33,10 @@ public class MessageItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void clearAdapterWithoutUpdate() {
+        mFormattedMessages.clear();
+    }
+
     public void replaceMessageItem(List<MessageItem> messageItems) {
         mFormattedMessages = messageItems;
     }
@@ -41,7 +44,7 @@ public class MessageItemListAdapter extends BaseAdapter {
     public int getLastLinkId() {
         return (mFormattedMessages.size() <= 0)
                 ? -1
-                : mFormattedMessages.get(mFormattedMessages.size()-1).getLinkId();
+                : mFormattedMessages.get(mFormattedMessages.size() - 1).getLinkId();
     }
 
     @Override

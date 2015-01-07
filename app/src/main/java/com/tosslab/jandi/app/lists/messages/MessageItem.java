@@ -1,11 +1,11 @@
 package com.tosslab.jandi.app.lists.messages;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.FormatConverter;
-
-import org.apache.log4j.Logger;
 
 import java.util.Date;
 
@@ -13,23 +13,20 @@ import java.util.Date;
  * Created by justinygchoi on 2014. 5. 27..
  */
 public class MessageItem {
-    private final Logger log = Logger.getLogger(MessageItem.class);
 
     public static final int TYPE_STRING = 0;
-    public static final int TYPE_IMAGE  = 1;
-    public static final int TYPE_COMMENT  = 2;
-
-    public static final int TYPE_FILE  = 10;
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_COMMENT = 2;
+    public static final int TYPE_FILE = 10;
 
     public boolean isDateDivider;   // 날짜 경계선인지 여부
     public boolean isNested;        // 상위 메시지 아이템에 종속된 댓글인지의 여부
     public boolean isNestedOfMine;  // 상위 메시지 아이템이 본인의 것인지의 여부
-    private Date mCurrentDate;
     public boolean isToday;
-
+    private Date mCurrentDate;
     private ResMessages.Link mLink;
     private ResMessages.OriginalMessage mMessage;
-//    private ResLeftSideMenu.User mWriter;
+    //    private ResLeftSideMenu.User mWriter;
     private FormattedEntity mWriter;
 
     public MessageItem(ResMessages.Link message) {
@@ -44,6 +41,7 @@ public class MessageItem {
 
     /**
      * 날짜 경계선 용...
+     *
      * @param currentDate
      * @param isToday
      */
@@ -55,9 +53,14 @@ public class MessageItem {
         isNestedOfMine = false;
     }
 
+    public ResMessages.Link getLink() {
+        return mLink;
+    }
+
     public int getLinkId() {
         return mLink.id;
     }
+
     public int getMessageId() {
         return mLink.messageId;
     }
@@ -72,9 +75,10 @@ public class MessageItem {
         }
         return null;
     }
+
     public String getFeedbackFileName() {
         if (mLink.feedback != null) {
-            return ((ResMessages.FileMessage)mLink.feedback).content.name;
+            return ((ResMessages.FileMessage) mLink.feedback).content.name;
         }
         return null;
     }
@@ -101,8 +105,7 @@ public class MessageItem {
             return TYPE_STRING;
         } else if (mMessage instanceof ResMessages.FileMessage) {
             String fileType = ((ResMessages.FileMessage) mMessage).content.type;
-            log.debug("fileType : " + fileType);
-            if (fileType == null || fileType.equals("null")) {
+            if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
                 return TYPE_FILE;
             }
             if (fileType.startsWith("image")) {
@@ -179,6 +182,7 @@ public class MessageItem {
     public Date getLinkTime() {
         return mLink.time;
     }
+
     public Date getCreatTime() {
         return mMessage.createTime;
     }

@@ -19,7 +19,7 @@ import java.util.List;
 public class MessageItemConverter {
     private final Logger log = Logger.getLogger(MessageItemConverter.class);
 
-    private final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat ("yyyyMMdd");
+    private final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
     private List<MessageItem> mOriginalMessageList;
 
     public MessageItemConverter() {
@@ -29,8 +29,10 @@ public class MessageItemConverter {
     public void clear() {
         mOriginalMessageList.clear();
     }
+
     /**
      * Get Message 혹은, Update Message에서 들어오는 message를 link id로 정렬
+     *
      * @param links
      * @param isDescendingOrder 내림 차순으로 정렬 여부
      * @return
@@ -41,12 +43,19 @@ public class MessageItemConverter {
         Comparator<ResMessages.Link> sort = new Comparator<ResMessages.Link>() {
             @Override
             public int compare(ResMessages.Link link, ResMessages.Link link2) {
+
+                if (link == null) {
+                    return (isDescendingOrder) ? -1 : 1;
+                } else if (link2 == null) {
+                    return (isDescendingOrder) ? 1 : -1;
+                }
+
                 if (link.id > link2.id)
-                    return (isDescendingOrder)?-1:1;
+                    return (isDescendingOrder) ? -1 : 1;
                 else if (link.id == link2.id)
                     return 0;
                 else
-                    return (isDescendingOrder)?1:-1;
+                    return (isDescendingOrder) ? 1 : -1;
             }
         };
         Collections.sort(ret, sort);
@@ -57,12 +66,17 @@ public class MessageItemConverter {
         patchMessageItem(messages.messages, true);
     }
 
+    public void insertMessageItem(List<ResMessages.Link> messages) {
+        patchMessageItem(messages, true);
+    }
+
     public void updatedMessageItem(ResUpdateMessages messages) {
         patchMessageItem(messages.updateInfo.messages, false);
     }
 
     /**
      * Message Item을 정렬하여 각 상태에 따라 삭제하고 추가하는 작업.
+     *
      * @param links
      * @param isDescendingOrder
      */
@@ -76,7 +90,7 @@ public class MessageItemConverter {
         // 업데이트 된 메시지들의 상태를 보고,
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.
         for (ResMessages.Link link : sortedLinks) {
-            log.debug("patchMessageItem, LinkId:" + link.id + " / status:"+ link.status);
+            log.debug("patchMessageItem, LinkId:" + link.id + " / status:" + link.status);
             if (link.status.equals("created") || link.status.equals("shared")) {
                 if (isDescendingOrder)
                     mOriginalMessageList.add(0, new MessageItem(link));
@@ -122,7 +136,7 @@ public class MessageItemConverter {
 
         // 동기화 유틸로 Fail-fast Iterator 멀티 쓰레드 무결성 해결
         List<MessageItem> originalMessageList = Collections.synchronizedList(mOriginalMessageList);
-        synchronized(originalMessageList) {
+        synchronized (originalMessageList) {
             for (MessageItem item : originalMessageList) {
                 String strDay = DATE_FORMATTER.format(item.getLinkTime());
                 String strToday = DATE_FORMATTER.format(new Date());
@@ -167,7 +181,7 @@ public class MessageItemConverter {
 
     // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
     private int searchIndexOfMessages(List<MessageItem> messageItems, int messageId) {
-        for (int i=0; i< messageItems.size(); i++) {
+        for (int i = 0; i < messageItems.size(); i++) {
             if (messageItems.get(i).getMessageId() == messageId)
                 return i;
         }

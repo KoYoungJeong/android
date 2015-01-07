@@ -255,4 +255,13 @@
     <string name="jandi_term_of_service">"使用條款 "</string>
     <string name="jandi_privacy_policy">"隱私權條款 "</string>
     <string name="err_login_invalid_id_or_password">"帳號或密碼無效 "</string>
+    <string name="jandi_topic_public">"公開"</string>
+    <string name="jandi_topic_private">"非公開"</string>
+    <string name="jandi_unstarred">"取消標記"</string>
+    <string name="jandi_starred">"取消標記"</string>
+    <string name="jandi_message_leave_private_topic">"您如果離開這個私人議題群組，未來希望能夠重新加入，必須先取得其它人的邀請。您確定您想要離開？"</string>
+    <string name="jandi_topic_title_hint">"議題"</string>
+    <string name="jandi_topic_title">"議題"</string>
+    <string name="jandi_fail_web_token">"登入時遇到問題。請再試一次。"</string>
+    <string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
 </resources>

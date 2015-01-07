@@ -52,6 +52,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -63,6 +64,7 @@ import com.tosslab.jandi.app.ui.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.model.FileUploadUtil;
+import com.tosslab.jandi.app.ui.message.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.model.RefreshRequestor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
@@ -74,7 +76,6 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -88,6 +89,7 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -123,6 +125,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     ListView actualListView;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
+
+    @Bean
+    MessageListModel messageListModel;
+
     @ViewById(R.id.et_message)
     EditText etMessage;
     @ViewById(R.id.btn_send_message)
@@ -164,8 +170,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     @AfterViews
-    void bindAdapter() {
+    void initViews() {
         initInformations();
+        initTempMessage();
         clearPushNotification(entityId);
         BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         initProgressWheel();
@@ -174,6 +181,22 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         setupScrollView();
 
         getMessages();
+    }
+
+    private void initTempMessage() {
+        String tempMessage = messageListModel.getTempMessage(teamId, entityId);
+        etMessage.setText(tempMessage);
+        etMessage.setSelection(etMessage.getText().length());
+    }
+
+    private void showCachedMessage() {
+
+        List<ResMessages.Link> cachedMessage = messageListModel.getCachedMessage(teamId, entityId);
+
+        mMessageItemConverter.insertMessageItem(cachedMessage);
+        messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
+        refreshListAdapter();
+        goToBottomOfListView();
     }
 
     private void setUpActionBar(String entityName) {
@@ -274,7 +297,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     /**
      * 리스트 뷰의 최하단으로 이동한다.
      */
-    private void goToBottomOfListView() {
+    @UiThread
+    void goToBottomOfListView() {
         actualListView.setSelection(messageItemListAdapter.getCount() - 1);
     }
 
@@ -295,7 +319,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Override
     public void onNewIntent(Intent intent) {
         setIntent(intent);
-        bindAdapter();
+        initViews();
     }
 
     @Override
@@ -308,9 +332,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public void onStop() {
-        if (mProgressWheel != null)
-            mProgressWheel.dismiss();
+        dismissProgressWheel();
         super.onStop();
+
+        messageListModel.saveMessagesForCache(teamId, entityId, messageItemListAdapter);
+        messageListModel.saveTempMessage(teamId, entityId, etMessage.getText().toString());
     }
 
     @Override
@@ -454,6 +480,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getMessages() {
         pauseUpdateTimer();
 
+        showProgressWheel();
+
         // 현재의 entityId로 오는 푸시 메시지는 무시하기 위하여 entityId를 저장
         JandiPreference.setActivatedChatId(this, entityId);
 
@@ -467,20 +495,41 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
 
         messageState.setFirstItemId(-1);
-        mMessageItemConverter.clear();
-        messageItemListAdapter.clearAdapter();
 
-        mProgressWheel.show();
         trackGaMessageList(mEntityManager, mChattingInformations.entityType);
         getMessagesInBackground();
+    }
+
+    @UiThread
+    void showProgressWheel() {
+        dismissProgressWheel();
+        if (mProgressWheel != null) {
+            mProgressWheel.show();
+        }
+    }
+
+    void dismissProgressWheel() {
+        if (mProgressWheel != null && mProgressWheel.isShowing()) {
+            mProgressWheel.dismiss();
+        }
     }
 
     @Background
     public void getMessagesInBackground() {
         try {
+
+            if (messageState.getFirstItemId() == -1) {
+                // 메세지를 가져온 기록이 없으면 캐싱된 데이터를 미리 보여줌
+                showCachedMessage();
+                dismissProgressWheel();
+            }
+
             ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId());
 
             if (messageState.getFirstItemId() == -1) {
+
+                clearMessageDatas();
+
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
                 messageState.setLastUpdateLinkId(restResMessages.lastLinkId);
                 if (restResMessages.messageCount <= 0) {
@@ -499,12 +548,19 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("getMessagesInBackground : FAILED", e);
             getMessagesFailed(getString(R.string.err_messages_get));
+        } finally {
+            dismissProgressWheel();
         }
     }
 
     @UiThread
+    void clearMessageDatas() {
+        mMessageItemConverter.clear();
+        messageItemListAdapter.clearAdapterWithoutUpdate();
+    }
+
+    @UiThread
     public void showWarningEmpty() {
-        mProgressWheel.dismiss();
         messageState.setLastUpdateLinkId(0);
         ColoredToast.showWarning(mContext, getString(R.string.warn_messages_empty));
         resumeUpdateTimer();
@@ -512,7 +568,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getMessagesSucceed(ResMessages resMessages) {
-        mProgressWheel.dismiss();
         if (messageState.isFirstMessage()) {
             // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
             pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
@@ -527,10 +582,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getMessagesFailed(String errMessage) {
-        mProgressWheel.dismiss();
         ColoredToast.showError(mContext, errMessage);
     }
 
+    @UiThread
     void refreshListAdapter() {
         messageItemListAdapter.notifyDataSetChanged();
     }

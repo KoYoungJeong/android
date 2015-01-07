@@ -9,7 +9,7 @@
     <string name="jandi_upload">"업로드"</string>
     <string name="jandi_action_share">"공유"</string>
     <string name="jandi_action_invite">"초대"</string>
-    <string name="jandi_action_leave">"탈퇴"</string>
+    <string name="jandi_action_leave">"나가기"</string>
     <string name="jandi_action_rename">"이름수정"</string>
     <string name="err_network">"네트워크 오류가 발생했습니다"</string>
     <string name="jandi_help">"도움말"</string>
@@ -95,7 +95,7 @@
     <string name="err_entity_join">"해당 토픽 참여에 실패하였습니다"</string>
     <string name="err_entity_duplicated_name">"동일한 이름이 존재합니다"</string>
     <string name="err_entity_invite">"초대에 실패했습니다"</string>
-    <string name="err_entity_leave">"탈퇴에 실패했습니다"</string>
+    <string name="err_entity_leave">"나가기에 실패했습니다"</string>
     <string name="err_entity_modify">"수정에 실패했습니다"</string>
     <string name="err_entity_delete">"삭제에 실패했습니다"</string>
 
@@ -146,7 +146,7 @@
     <string name="menu_entity_edit">"이름 수정"</string>
     <string name="menu_entity_delete">"삭제"</string>
     <string name="menu_entity_invite">"초대"</string>
-    <string name="menu_entity_leave">"탈퇴"</string>
+    <string name="menu_entity_leave">"나가기"</string>
 
     <!-- Message -->
     <string name="modify_message">"Message 수정"</string>
@@ -271,4 +271,13 @@
     <string name="err_login_invalid_id_or_password">"계정이 존재하지 않거나 비밀번호가 올바르지 않습니다."</string>
     <string name="jandi_term_of_service">"이용 약관 "</string>
     <string name="jandi_privacy_policy">"개인정보 취급방침 "</string>
+    <string name="jandi_topic_private">"비공개"</string>
+    <string name="jandi_topic_public">"공개"</string>
+    <string name="jandi_unstarred">"즐겨찾기 해제"</string>
+    <string name="jandi_starred">"즐겨찾기 추가"</string>
+    <string name="jandi_message_leave_private_topic">"비공개 토픽을 나가시면 초대를 받지 않는한 다시 참여하실 수 없습니다. 나가시겠습니까?"</string>
+    <string name="jandi_topic_title_hint">"제목"</string>
+    <string name="jandi_topic_title">"제목"</string>
+    <string name="jandi_fail_web_token">"로그인 중 에러가 발생했습니다. 다시 시도해 주세요."</string>
+    <string name="sent_auth_email_short">"이메일이 성공적으로 발송되었습니다. 지금 메일함을 확인해주세요."</string>
 </resources>
