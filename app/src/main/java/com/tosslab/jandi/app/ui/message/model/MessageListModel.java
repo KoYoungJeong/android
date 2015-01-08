@@ -32,7 +32,7 @@ public class MessageListModel {
 
         List<ResMessages.Link> links = new ArrayList<ResMessages.Link>();
 
-        for (int idx = count - 1; idx >= lastSaveIndex; --idx) {
+        for (int idx = lastSaveIndex; idx < count; ++idx) {
             MessageItem item = messageItemListAdapter.getItem(idx);
 
             ResMessages.Link link = item.getLink();
