@@ -1,10 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@android:color/white" >
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
-        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ListView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
         android:layout_height="0px"
@@ -12,43 +12,44 @@
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:transcriptMode="alwaysScroll"
-        android:smoothScrollbar="true"
         android:fillViewport="true"
-        ptr:ptrPullLabel="@string/jandi_messages_pull"
-        ptr:ptrRefreshLabel="@string/jandi_messages_refresh"
-        ptr:ptrReleaseLabel="@string/jandi_messages_release" />
+        android:smoothScrollbar="true"
+        android:transcriptMode="alwaysScroll" />
 
     <!-- Message Input Layout -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/jandi_border_gray" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/jandi_messages_bottom_bg"
         android:gravity="center_vertical">
+
         <ImageButton
             android:id="@+id/btn_upload_file"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
             android:layout_marginLeft="4dp"
-            android:background="@drawable/jandi_upload_file"/>
+            android:layout_marginRight="4dp"
+            android:background="@drawable/jandi_upload_file" />
+
         <EditText
             android:id="@+id/et_message"
             style="@style/JandiChat.EditText"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/jandi_message_hint"/>
+            android:hint="@string/jandi_message_hint" />
+
         <Button
             android:id="@+id/btn_send_message"
             style="@style/JandiChat.Button.Dynamic"
-            android:layout_marginRight="10dp"
             android:layout_marginLeft="6dp"
-            android:text="@string/jandi_message_send"/>
+            android:layout_marginRight="10dp"
+            android:text="@string/jandi_message_send" />
     </LinearLayout>
 
 </LinearLayout>

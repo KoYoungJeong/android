@@ -13,7 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +24,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -45,6 +42,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.ReqeustMoreMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -52,7 +50,6 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -60,8 +57,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.model.FileUploadUtil;
 import com.tosslab.jandi.app.ui.message.model.MessageListModel;
@@ -121,7 +118,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     MessageManipulator messageManipulator;
 
     @ViewById(R.id.list_messages)
-    PullToRefreshListView pullToRefreshListViewMessages;
     ListView actualListView;
     @Bean
     MessageItemListAdapter messageItemListAdapter;
@@ -147,6 +143,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
 
     private Uri mImageUriFromCamera = null;
+    private boolean isRefreshDisable = true;
 
     void initInformations() {
         mContext = getApplicationContext();
@@ -228,31 +225,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void setupScrollView() {
-        //
-        // Set up of PullToRefresh
-        pullToRefreshListViewMessages.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
-            @Override
-            public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
-                String label = DateUtils.formatDateTime(
-                        mContext,
-                        System.currentTimeMillis(),
-                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-
-                // Update the LastUpdatedLabel
-                listViewPullToRefreshBase.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-
-                pauseUpdateTimer();
-
-                new Thread(new RefreshRequestor(mContext, messageItemListAdapter, messageManipulator, messageState, mMessageItemConverter, new RefreshRequestor.Callback() {
-                    @Override
-                    public void onResult(String errorMsg, int lastCount) {
-                        refreshFinish(errorMsg, lastCount);
-                        resumeUpdateTimer();
-                    }
-                })).start();
-            }
-        });
-        actualListView = pullToRefreshListViewMessages.getRefreshableView();
 
         // Empty View를 가진 ListView 설정
         View emptyView = LayoutInflater.from(mContext).inflate(R.layout.view_message_list_empty, null);
@@ -292,6 +264,26 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
             }
         });
+    }
+
+    public void onEvent(ReqeustMoreMessageEvent event) {
+
+        if (isRefreshDisable) {
+            return;
+        }
+
+        reqeustMoreMessage();
+
+    }
+
+    @Background
+    void reqeustMoreMessage() {
+        pauseUpdateTimer();
+        int count = messageItemListAdapter.getCount();
+        String moreMessageResult = new RefreshRequestor(mContext, messageItemListAdapter, messageManipulator, messageState, mMessageItemConverter).getMoreMessageResult();
+        refreshFinish(moreMessageResult, count);
+        resumeUpdateTimer();
+
     }
 
     /**
@@ -492,7 +484,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
 
         messageState.setFirstMessage(false);
-        pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.PULL_FROM_START);
 
         messageState.setFirstItemId(-1);
 
@@ -572,7 +563,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getMessagesSucceed(ResMessages resMessages) {
         if (messageState.isFirstMessage()) {
             // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
-            pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+            isRefreshDisable = true;
+        } else {
+            isRefreshDisable = false;
         }
         mMessageItemConverter.insertMessageItem(resMessages);
         messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
@@ -594,21 +587,22 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     protected void refreshFinish(String errMessage, int lastMessageSize) {
-        pullToRefreshListViewMessages.onRefreshComplete();
         if (messageState.isFirstMessage()) {
             ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_messages));
-            pullToRefreshListViewMessages.setMode(PullToRefreshBase.Mode.DISABLED);
+            isRefreshDisable = true;
+        } else {
+            isRefreshDisable = false;
         }
 
         if (errMessage == null) {
             // Success
+            int index = messageItemListAdapter.getCount() - lastMessageSize + 1;
+            log.debug("GetFutherMessagesTask : REFRESH at " + index);
+            actualListView.setSelectionFromTop(index, 0);
             refreshListAdapter();
             // 리스트에 아이템이 추가되더라도 현재 위치를 고수하도록 이동한다.
             // +1 은 이전 메시지의 0번째 item은 실제 아이템이 아닌 날짜 경계선이기에 그 포지션을 뺀다.
             // +1 은 인덱스 0 - 사이즈는 1부터...
-            int index = messageItemListAdapter.getCount() - lastMessageSize + 2;
-            log.debug("GetFutherMessagesTask : REFRESH at " + index);
-            actualListView.setSelectionFromTop(index, 0);
         } else {
             ColoredToast.showError(mContext, errMessage);
         }

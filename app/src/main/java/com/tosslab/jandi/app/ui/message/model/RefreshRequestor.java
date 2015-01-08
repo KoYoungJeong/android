@@ -11,45 +11,29 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.apache.log4j.Logger;
-import org.springframework.web.client.RestClientException;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
-public class RefreshRequestor implements Runnable {
+public class RefreshRequestor {
 
     private static final Logger log = Logger.getLogger(RefreshRequestor.class);
-
-    private int currentMessagesSize;
-
     Context context;
     MessageItemListAdapter messageItemListAdapter;
     MessageManipulator mJandiMessageClient;
     MessageState messageState;
     MessageItemConverter mMessageItemConverter;
-    private final Callback callback;
 
-    public RefreshRequestor(Context context, MessageItemListAdapter messageItemListAdapter, MessageManipulator mJandiMessageClient, MessageState messageState, MessageItemConverter mMessageItemConverter, Callback callback) {
+    public RefreshRequestor(Context context, MessageItemListAdapter messageItemListAdapter, MessageManipulator mJandiMessageClient, MessageState messageState, MessageItemConverter mMessageItemConverter) {
         this.context = context;
         this.messageItemListAdapter = messageItemListAdapter;
         this.mJandiMessageClient = mJandiMessageClient;
         this.messageState = messageState;
         this.mMessageItemConverter = mMessageItemConverter;
-        this.callback = callback;
     }
 
-    @Override
-    public void run() {
-        onPreExecute();
-        String result = doInBackground();
-
-        if (callback != null) {
-            callback.onResult(result, currentMessagesSize);
-        }
-    }
-
-    protected void onPreExecute() {
-        currentMessagesSize = messageItemListAdapter.getCount();
+    public String getMoreMessageResult() {
+        return doInBackground();
     }
 
     protected String doInBackground(Void... voids) {
