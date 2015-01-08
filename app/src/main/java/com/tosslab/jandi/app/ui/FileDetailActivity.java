@@ -332,19 +332,16 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        Glide.with(mContext).load(thumbnailPhotoUrl).placeholder(R.drawable.jandi_down_img).centerCrop().fitCenter().into(imageViewPhotoFile);
+                        Glide.with(mContext)
+                                .load(thumbnailPhotoUrl)
+                                .placeholder(R.drawable.jandi_down_img)
+                                .crossFade()
+                                .fitCenter()
+                                .into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-//                                Intent hideyBarPhotoViewIntent = HideyBarPhotoViewIntent.newConfiguration()
-//                                        .setPhotoUrl(photoUrl, new PicassoPhotoLoader().baseSetup()
-//                                                .setPlaceHolderResId(R.drawable.jandi_down_img)
-//                                                .showProgressView(false))
-//                                        .timeToStartHideyMode(2000)
-//                                        .screenTitle(fileMessage.content.name)
-//                                        .create(mContext, HideyBarPhotoViewScreen.class);
-//                                startActivity(hideyBarPhotoViewIntent);
 
                                 PhotoViewActivity_.intent(FileDetailActivity.this).imageUrl(photoUrl).start();
 

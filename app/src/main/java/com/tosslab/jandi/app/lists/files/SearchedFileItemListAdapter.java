@@ -37,11 +37,15 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void clearAdapterWithoutNotify() {
+        searedFiles.clear();
+    }
+
     public void insert(ResSearchFile resSearchFile) {
         List<ResMessages.OriginalMessage> sortedFiles = descSortByCreateTime(resSearchFile.files);
         for (ResMessages.OriginalMessage message : sortedFiles) {
             if (message instanceof ResMessages.FileMessage && message.status.equals("created")) {
-                searedFiles.add((ResMessages.FileMessage)message);
+                searedFiles.add((ResMessages.FileMessage) message);
             }
         }
     }

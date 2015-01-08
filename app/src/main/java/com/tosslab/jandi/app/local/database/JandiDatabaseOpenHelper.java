@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 9;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -129,7 +129,13 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.TempMessages._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.TempMessages.teamId + " INTEGER NOT NULL, " +
                     DatabaseConsts.TempMessages.entityId + " INTEGER NOT NULL, " +
-                    DatabaseConsts.TempMessages.text + " TEXT NOT NULL " +
+                    DatabaseConsts.TempMessages.text + " TEXT " +
+                    ");",
+
+            DatabaseConsts.Table.files + " (" +
+                    DatabaseConsts.Files._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.Files.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.Files.files + " TEXT " +
                     ");"
     };
 

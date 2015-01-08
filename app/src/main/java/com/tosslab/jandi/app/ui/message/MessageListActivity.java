@@ -522,9 +522,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 // 메세지를 가져온 기록이 없으면 캐싱된 데이터를 미리 보여줌
                 showCachedMessage();
                 dismissProgressWheel();
+                log.debug("complete get cached data");
             }
 
             ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId());
+            log.debug("complete get server data");
 
             if (messageState.getFirstItemId() == -1) {
 
@@ -1111,7 +1113,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         if (prev != null) {
             ft.remove(prev);
         }
-        ft.addToBackStack(null);
 
         UserInfoDialogFragment dialog = UserInfoDialogFragment.newInstance(user, isMe);
         dialog.show(ft, "dialog");

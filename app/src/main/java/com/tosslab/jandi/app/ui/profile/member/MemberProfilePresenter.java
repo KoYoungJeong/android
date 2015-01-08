@@ -102,9 +102,6 @@ public class MemberProfilePresenter {
         if (!TextUtils.isEmpty(strStatus)) {
             textViewProfileStatusMessage.setText(strStatus);
             textViewProfileStatusMessage.setTextColor(activity.getResources().getColor(R.color.jandi_text));
-        } else {
-            textViewProfileStatusMessage.setText(R.string.jandi_profile_optional);
-            textViewProfileStatusMessage.setTextColor(activity.getResources().getColor(R.color.jandi_text_light));
         }
 
         // 이메일
@@ -114,55 +111,35 @@ public class MemberProfilePresenter {
         if (!TextUtils.isEmpty(strPhone)) {
             textViewProfileUserPhone.setText(strPhone);
             textViewProfileUserPhone.setTextColor(activity.getResources().getColor(R.color.jandi_text));
-        } else {
-            textViewProfileUserPhone.setText(R.string.jandi_profile_optional);
-            textViewProfileUserPhone.setTextColor(activity.getResources().getColor(R.color.jandi_text_light));
         }
         // 부서
         String strDivision = (user.u_extraData.department);
         if (!TextUtils.isEmpty(strDivision)) {
             textViewProfileUserDivision.setText(strDivision);
             textViewProfileUserDivision.setTextColor(activity.getResources().getColor(R.color.jandi_text));
-        } else {
-            textViewProfileUserDivision.setText(R.string.jandi_profile_optional);
-            textViewProfileUserDivision.setTextColor(activity.getResources().getColor(R.color.jandi_text_light));
         }
         // 직책
         String strPosition = user.u_extraData.position;
         if (!TextUtils.isEmpty(strPosition)) {
             textViewProfileUserPosition.setText(strPosition);
             textViewProfileUserPosition.setTextColor(activity.getResources().getColor(R.color.jandi_text));
-        } else {
-            textViewProfileUserPosition.setText(R.string.jandi_profile_optional);
-            textViewProfileUserPosition.setTextColor(activity.getResources().getColor(R.color.jandi_text_light));
         }
     }
 
     public void launchEditDialog(int dialogActionType, TextView textView) {
         String currentText = textView.getText().toString();
         // 현재 Text가 미지정 된 경우 빈칸으로 바꿔서 입력 받는다.
-        if (currentText.equals(activity.getString(R.string.jandi_profile_optional))) {
-            currentText = "";
-        }
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 dialogActionType, currentText);
         newFragment.show(activity.getFragmentManager(), "dialog");
     }
 
-    private String getOptionalString(TextView textView) {
-        if (textView.getText().toString().equals(activity.getString(R.string.jandi_profile_optional))) {
-            return "";
-        } else {
-            return textView.getText().toString();
-        }
-    }
-
     public ReqUpdateProfile getUpdateProfile() {
         ReqUpdateProfile reqUpdateProfile = new ReqUpdateProfile();
         reqUpdateProfile.statusMessage = textViewProfileStatusMessage.getText().toString();
-        reqUpdateProfile.phoneNumber = getOptionalString(textViewProfileUserPhone);
-        reqUpdateProfile.department = getOptionalString(textViewProfileUserDivision);
-        reqUpdateProfile.position = getOptionalString(textViewProfileUserPosition);
+        reqUpdateProfile.phoneNumber = textViewProfileUserPhone.getText().toString();
+        reqUpdateProfile.department = textViewProfileUserDivision.getText().toString();
+        reqUpdateProfile.position = textViewProfileUserPosition.getText().toString();
         return reqUpdateProfile;
     }
 
@@ -178,10 +155,6 @@ public class MemberProfilePresenter {
 
     @UiThread
     void setTextAndChangeColor(TextView textView, String textToBeChanged) {
-        if (textToBeChanged.length() <= 0) {
-            ColoredToast.showError(activity, activity.getString(R.string.err_profile_empty_info));
-            return;
-        }
         textView.setText(textToBeChanged);
         textView.setTextColor(activity.getResources().getColor(R.color.jandi_profile_edited_text));
     }
@@ -208,7 +181,6 @@ public class MemberProfilePresenter {
     @UiThread
     public void showToastNoUpdateProfile() {
         ColoredToast.showWarning(activity, activity.getString(R.string.err_profile_unmodified));
-
     }
 
     @UiThread

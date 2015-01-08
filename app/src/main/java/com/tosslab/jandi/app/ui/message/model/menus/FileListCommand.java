@@ -29,7 +29,7 @@ class FileListCommand implements MenuCommand {
             @Override
             public void run() {
                 FileListActivity_.intent(activity)
-                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         .entityId(chattingInfomations.entityId)
                         .entityName(chattingInfomations.entityName)
                         .start();
