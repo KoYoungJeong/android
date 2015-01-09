@@ -405,6 +405,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private void resumeUpdateTimer() {
         log.info("resumeUpdateTimer");
         TimerTask task = new UpdateTimerTask();
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer.purge();
+        }
         mTimer = new Timer();
         mTimer.schedule(task, 3000, 3000);  // 3초뒤, 3초마다
     }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by justinygchoi on 2014. 8. 8..
@@ -20,10 +21,10 @@ public class MessageItemConverter {
     private final Logger log = Logger.getLogger(MessageItemConverter.class);
 
     private final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
-    private List<MessageItem> mOriginalMessageList;
+    private CopyOnWriteArrayList<MessageItem> mOriginalMessageList;
 
     public MessageItemConverter() {
-        mOriginalMessageList = new ArrayList<MessageItem>();
+        mOriginalMessageList = new CopyOnWriteArrayList<MessageItem>();
     }
 
     public void clear() {
@@ -80,7 +81,7 @@ public class MessageItemConverter {
      * @param links
      * @param isDescendingOrder
      */
-    public void patchMessageItem(List<ResMessages.Link> links, boolean isDescendingOrder) {
+    synchronized public void patchMessageItem(List<ResMessages.Link> links, boolean isDescendingOrder) {
         if (links.size() <= 0) {
             return;
         }
@@ -89,32 +90,34 @@ public class MessageItemConverter {
 
         // 업데이트 된 메시지들의 상태를 보고,
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.
-        for (ResMessages.Link link : sortedLinks) {
-            log.debug("patchMessageItem, LinkId:" + link.id + " / status:" + link.status);
-            if (link.status.equals("created") || link.status.equals("shared")) {
-                if (isDescendingOrder)
-                    mOriginalMessageList.add(0, new MessageItem(link));
-                else
-                    mOriginalMessageList.add(new MessageItem(link));
-            } else if (link.status.equals("edited")) {
-                int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
-                if (position >= 0) {
-                    mOriginalMessageList.set(position, new MessageItem(link));
-                }
-            } else if (link.status.equals("archived")) {
-                int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
-                if (position >= 0) {
-                    mOriginalMessageList.remove(position);
-                }
-            } else if (link.status.equals("unshared")) {
-                int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
-                if (position >= 0) {
-                    mOriginalMessageList.set(position, new MessageItem(link));
-                } else {
+        synchronized (mOriginalMessageList) {
+            for (ResMessages.Link link : sortedLinks) {
+                log.debug("patchMessageItem, LinkId:" + link.id + " / status:" + link.status);
+                if (link.status.equals("created") || link.status.equals("shared")) {
                     if (isDescendingOrder)
                         mOriginalMessageList.add(0, new MessageItem(link));
                     else
                         mOriginalMessageList.add(new MessageItem(link));
+                } else if (link.status.equals("edited")) {
+                    int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
+                    if (position >= 0) {
+                        mOriginalMessageList.set(position, new MessageItem(link));
+                    }
+                } else if (link.status.equals("archived")) {
+                    int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
+                    if (position >= 0) {
+                        mOriginalMessageList.remove(position);
+                    }
+                } else if (link.status.equals("unshared")) {
+                    int position = searchIndexOfMessages(mOriginalMessageList, link.messageId);
+                    if (position >= 0) {
+                        mOriginalMessageList.set(position, new MessageItem(link));
+                    } else {
+                        if (isDescendingOrder)
+                            mOriginalMessageList.add(0, new MessageItem(link));
+                        else
+                            mOriginalMessageList.add(new MessageItem(link));
+                    }
                 }
             }
         }
@@ -135,9 +138,8 @@ public class MessageItemConverter {
         MessageItem formerMessageItem = null;
 
         // 동기화 유틸로 Fail-fast Iterator 멀티 쓰레드 무결성 해결
-        List<MessageItem> originalMessageList = Collections.synchronizedList(mOriginalMessageList);
-        synchronized (originalMessageList) {
-            for (MessageItem item : originalMessageList) {
+        synchronized (mOriginalMessageList) {
+            for (MessageItem item : mOriginalMessageList) {
                 String strDay = DATE_FORMATTER.format(item.getLinkTime());
                 String strToday = DATE_FORMATTER.format(new Date());
                 if (!currentDay.equals(strDay)) {
