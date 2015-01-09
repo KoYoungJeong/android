@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.signup;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
@@ -75,6 +76,7 @@ public class SignUpViewModel {
         textViewSignUpAgreeTos.setMovementMethod(LinkMovementMethod.getInstance());
         textViewSignUpAgreePp.setMovementMethod(LinkMovementMethod.getInstance());
         editTextSignUpEmail.setText(defaultEmail);
+        editTextSignUpEmail.setSelection(!TextUtils.isEmpty(defaultEmail) ? defaultEmail.length() : 0);
     }
 
     @SupposeUiThread
@@ -112,11 +114,15 @@ public class SignUpViewModel {
     public void setStrengthBarometer(int strength) {
         passwordStrengthBarometerView.setVisibility(View.VISIBLE);
         passwordStrengthBarometerView.setStrengthBarometer(strength);
-
     }
 
     public String getEmailText() {
         return editTextSignUpEmail.getText().toString();
+    }
+
+    public void setEmailText(String email) {
+        editTextSignUpEmail.setText(email);
+        editTextSignUpEmail.setSelection(email.length());
     }
 
     public String getPasswordText() {

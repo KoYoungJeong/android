@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
@@ -68,7 +69,14 @@ public class SignUpActivity extends Activity {
 
     @AfterTextChange(R.id.et_signup_email)
     void changeValidEmail(Editable text) {
-        boolean isValidEmail = signUpModel.isValidEmail(text.toString());
+        String email = text.toString();
+
+        if (!TextUtils.equals(email, email.toLowerCase())) {
+            signUpViewModel.setEmailText(email.toLowerCase());
+            return;
+        }
+
+        boolean isValidEmail = signUpModel.isValidEmail(email);
 
         int textColorRes = signUpModel.getEmailTextColor(isValidEmail);
         int validState = signUpModel.getEmailValidValue(isValidEmail);

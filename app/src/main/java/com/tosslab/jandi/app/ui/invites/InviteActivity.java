@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.invites;
 import android.app.ActionBar;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.view.Menu;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -123,7 +124,15 @@ public class InviteActivity extends BaseAnalyticsActivity {
 
     @AfterTextChange(R.id.et_invitation_email)
     void onEmailTextChange(Editable text) {
-        boolean isValidEmail = inviteModel.isValidEmailFormat(text.toString());
+
+        String email = text.toString();
+
+        if (!TextUtils.equals(email, email.toLowerCase())) {
+            invitePresenter.setEmailText(email.toLowerCase());
+            return ;
+        }
+
+        boolean isValidEmail = inviteModel.isValidEmailFormat(email);
         invitePresenter.setEnableAddButton(isValidEmail);
     }
 

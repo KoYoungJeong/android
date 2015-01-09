@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -7,24 +7,29 @@
     <ListView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/space_messages_divider"
+        android:layout_alignParentTop="true"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:fillViewport="true"
         android:smoothScrollbar="true"
         android:transcriptMode="alwaysScroll" />
 
     <!-- Message Input Layout -->
     <View
+        android:id="@+id/space_messages_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_above="@+id/ll_messages"
         android:background="@color/jandi_border_gray" />
 
     <LinearLayout
+        android:id="@+id/ll_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@color/jandi_messages_bottom_bg"
         android:gravity="center_vertical">
 
@@ -52,4 +57,4 @@
             android:text="@string/jandi_message_send" />
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

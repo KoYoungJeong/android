@@ -55,6 +55,11 @@ public class InvitePresenter {
         return emailTextView.getText().toString();
     }
 
+    public void setEmailText(String email) {
+        emailTextView.setText(email);
+        emailTextView.setSelection(email.length());
+    }
+
     public void setEnableAddButton(boolean invalidEmail) {
         inviteButton.setEnabled(invalidEmail);
     }

@@ -74,7 +74,15 @@ public class IntroLoginFragment extends Fragment {
 
     @AfterTextChange(R.id.et_intro_login_email)
     void checkValidEmail(Editable editable) {
-        introLoginModel.setValidEmail(!FormatConverter.isInvalidEmailString(editable.toString()));
+
+        String email = editable.toString();
+
+        if (!TextUtils.equals(email, email.toLowerCase())) {
+            introLoginViewModel.setEmailText(email.toLowerCase());
+            return;
+        }
+
+        introLoginModel.setValidEmail(!FormatConverter.isInvalidEmailString(email));
         introLoginViewModel.setSignInButtonEnable(introLoginModel.isValidEmailPassword());
     }
 

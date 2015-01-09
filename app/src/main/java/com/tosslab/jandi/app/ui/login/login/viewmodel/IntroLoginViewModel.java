@@ -112,6 +112,11 @@ public class IntroLoginViewModel {
         return editTextEmail.getText().toString();
     }
 
+    public void setEmailText(String email) {
+        editTextEmail.setText(email);
+        editTextEmail.setSelection(email.length());
+    }
+
     public String getPasswordText() {
         return editTextPassword.getText().toString();
     }
@@ -119,7 +124,6 @@ public class IntroLoginViewModel {
     public void hideKeypad() {
         imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
     }
-
 
     public void showSuccessSignUp(String signedEmail, final String emailHost) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
