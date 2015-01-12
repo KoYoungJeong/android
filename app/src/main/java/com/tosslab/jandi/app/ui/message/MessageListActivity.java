@@ -543,7 +543,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                     + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
         } catch (JandiNetworkException e) {
-            log.error("getMessagesInBackground : FAILED", e);
+            log.error("getMessagesInBackground : FAILED" + e.httpBody, e);
+            log.error(e.getErrorInfo(), e);
             getMessagesFailed(getString(R.string.err_messages_get));
         } finally {
             dismissProgressWheel();

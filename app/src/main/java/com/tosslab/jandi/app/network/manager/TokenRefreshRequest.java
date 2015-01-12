@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 /**
@@ -29,7 +28,6 @@ public class TokenRefreshRequest implements Request<ResAccessToken> {
 
         // save token info
         TokenUtil.saveTokenInfoByRefresh(context, accessToken);
-        JandiPreference.setLastRefreshTokenTime(context);
 
         return accessToken;
     }

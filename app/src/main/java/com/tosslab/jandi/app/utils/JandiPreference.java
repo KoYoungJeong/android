@@ -115,16 +115,6 @@ public class JandiPreference {
         pref.edit().putString(PREF_REFRESH_TOKEN, refreshToken).commit();
     }
 
-    public static void setLastRefreshTokenTime(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        pref.edit().putLong(PREF_REFRESH_TOKEN_TIME, System.currentTimeMillis()).commit();
-    }
-
-    public static long getLastRefreshTokenTime(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        return pref.getLong(PREF_REFRESH_TOKEN_TIME, 0);
-    }
-
     public static void signOut(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         pref.edit().clear().commit();

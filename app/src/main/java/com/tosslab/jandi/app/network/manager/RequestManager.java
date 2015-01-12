@@ -39,16 +39,17 @@ public class RequestManager<ResponseObject> {
                         return request.request();
                     } catch (HttpStatusCodeException e1) {
                         // unknown exception
-                        logger.debug(request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString());
+                        logger.debug("Retry Fail" + request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString());
                         throw new JandiNetworkException(e1);
                     }
                 } else {
                     // unauthorized exception
+                    logger.debug("Refresh Token Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
                     throw new JandiNetworkException(e);
                 }
             } else {
                 // exception, not unauthorized
-                logger.debug(request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
+                logger.debug("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
                 throw new JandiNetworkException(e);
             }
         }
@@ -60,17 +61,12 @@ public class RequestManager<ResponseObject> {
         int loginRetryCount = 0;
 
         while (accessToken == null && loginRetryCount <= 3) {
-            if (System.currentTimeMillis() - JandiPreference.getLastRefreshTokenTime(context) < 1000 * 30) {
-                // not null, return empty object
-                return new ResAccessToken();
-            }
-
             ++loginRetryCount;
             try {
                 // Request Access token, and save token
                 accessToken = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
             } catch (HttpStatusCodeException e) {
-                e.printStackTrace();
+                logger.error("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
             }
         }
 
