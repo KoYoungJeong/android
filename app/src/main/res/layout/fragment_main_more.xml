@@ -33,7 +33,7 @@
             android:gravity="center"
             android:orientation="vertical"
             app:img="@drawable/jandi_icon_more_about"
-            android:text="@string/jandi_team_info" />
+            android:text="@string/jandi_switch_team" />
 
 
         <!-- 도움말 -->

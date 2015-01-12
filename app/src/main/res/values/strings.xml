@@ -262,8 +262,9 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_topic_title_hint">"Title"</string>
     <string name="jandi_topic_public">"Public"</string>
     <string name="jandi_topic_private">"Private"</string>
-    <string name="jandi_what_is_topic_type">공개 여부 설정은 이후에 변경이 불가능합니다.</string>
+    <string name="jandi_what_is_topic_type">"Topic type cannot be switched between public and private after creation"</string>
     <string name="jandi_unstarred">"Unstar this topic"</string>
     <string name="jandi_starred">"Star this topic"</string>
     <string name="jandi_message_leave_private_topic">"If you leave this private topic, you will only be able to rejoin if you receive another invitation. Are you sure you want to leave?"</string>
+    <string name="jandi_switch_team">"Switch Teams"</string>
 </resources>

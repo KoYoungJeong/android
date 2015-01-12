@@ -271,4 +271,6 @@ JANDIへようこそ"</string>
     <string name="jandi_topic_title">"タイトル"</string>
     <string name="jandi_fail_web_token">"ログイン中にエラーが発生しました。もう一度お試しください"</string>
     <string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
+    <string name="jandi_switch_team">"チーム切替"</string>
+    <string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
 </resources>

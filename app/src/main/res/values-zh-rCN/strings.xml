@@ -263,4 +263,6 @@
     <string name="jandi_topic_title">"议题"</string>
     <string name="jandi_fail_web_token">"登入时遇到问题。请再试一次。"</string>
     <string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
+    <string name="jandi_switch_team">"更换团队"</string>
+    <string name="jandi_what_is_topic_type">"议题群组一经建立将无法在公开或私人两种类别之间自由转换"</string>
 </resources>

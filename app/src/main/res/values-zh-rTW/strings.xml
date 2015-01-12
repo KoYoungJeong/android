@@ -264,4 +264,6 @@
     <string name="jandi_topic_title">"議題"</string>
     <string name="jandi_fail_web_token">"登入時遇到問題。請再試一次。"</string>
     <string name="sent_auth_email_short">"電子郵件已經成功寄出。 請查看您的郵箱"</string>
+    <string name="jandi_switch_team">"更換團隊"</string>
+    <string name="jandi_what_is_topic_type">"議題群組一經建立將無法在公開或私人兩種類別之間自由轉換"</string>
 </resources>
