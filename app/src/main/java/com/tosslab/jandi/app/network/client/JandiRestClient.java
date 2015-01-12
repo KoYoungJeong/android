@@ -3,10 +3,10 @@ package com.tosslab.jandi.app.network.client;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
-import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
+import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -14,13 +14,13 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
+import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.RequiresHeader;
 import org.androidannotations.annotations.rest.Rest;
@@ -68,7 +68,12 @@ public interface JandiRestClient {
     @Post("/accounts")
     ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);
 
+    @Put("/account")
+    @RequiresAuthentication
+    ResAccountInfo updatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo);
+
     @Post("/accounts/activate")
+    @RequiresAuthentication
     ResAccountInfo activateAccount(ReqAccountActivate reqAccountActivate);
 
     // 채널, PG, DM 리스트 획득

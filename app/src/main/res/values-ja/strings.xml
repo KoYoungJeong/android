@@ -273,4 +273,7 @@ JANDIへようこそ"</string>
     <string name="sent_auth_email_short">"メールが送信されました。 メールを確認してください"</string>
     <string name="jandi_switch_team">"チーム切替"</string>
     <string name="jandi_what_is_topic_type">"トピックを作成した後に、公開・非公開を変更することはできません"</string>
+    <string name="jandi_choose_email">"メールアドレスを選択"</string>
+    <string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
+    <string name="jandi_add_an_email_address">"メールアドレスを追加する"</string>
 </resources>
