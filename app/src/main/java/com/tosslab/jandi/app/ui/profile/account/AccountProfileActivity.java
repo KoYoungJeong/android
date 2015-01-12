@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.account.model.AccountProfileModel;
+import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 
@@ -40,7 +41,6 @@ import org.androidannotations.annotations.UiThread;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.File;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -229,8 +229,13 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.txt_account_profile_user_email)
     void chooseEmail() {
-        List<ResAccountInfo.UserEmail> accountEmails = accountProfileModel.getAccountEmails();
-        accountProfilePresenter.showEmailsDialog(accountEmails);
+
+        EmailChooseActivity_
+                .intent(AccountProfileActivity.this)
+                .start();
+
+//        List<ResAccountInfo.UserEmail> accountEmails = accountProfileModel.getAccountEmails();
+//        accountProfilePresenter.showEmailsDialog(accountEmails);
     }
 
     @Click(R.id.txt_account_profile_user_name)

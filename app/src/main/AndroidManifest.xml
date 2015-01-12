@@ -107,6 +107,11 @@
             android:label="@string/jandi_create_channel"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.profile.email.EmailChooseActivity_"
+            android:label="@string/jandi_choose_email"
+            android:screenOrientation="portrait" />
+
         <service android:name="com.parse.PushService" />
 
         <receiver android:name="com.parse.ParseBroadcastReceiver">

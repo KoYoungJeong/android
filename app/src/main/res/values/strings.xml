@@ -267,4 +267,5 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_starred">"Star this topic"</string>
     <string name="jandi_message_leave_private_topic">"If you leave this private topic, you will only be able to rejoin if you receive another invitation. Are you sure you want to leave?"</string>
     <string name="jandi_switch_team">"Switch Teams"</string>
+    <string name="jandi_choose_email">"Choose an email"</string>
 </resources>

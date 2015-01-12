@@ -265,4 +265,5 @@
     <string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
     <string name="jandi_switch_team">"更换团队"</string>
     <string name="jandi_what_is_topic_type">"议题群组一经建立将无法在公开或私人两种类别之间自由转换"</string>
+    <string name="jandi_choose_email">"选择一个电子邮件"</string>
 </resources>
