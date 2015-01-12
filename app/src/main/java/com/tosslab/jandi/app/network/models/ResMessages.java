@@ -141,6 +141,7 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileMessage extends OriginalMessage {
         public FileContent content;
+        public int commentCount;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

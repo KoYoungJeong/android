@@ -1,78 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/jandi_file_search_item_height"
     android:background="@color/white">
+
     <ImageView
         android:id="@+id/img_searched_file_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/jandi_file_search_item_type_icon_margin_left"
         android:layout_centerVertical="true"
-        android:src="@drawable/jandi_fl_icon_txt"/>
+        android:layout_marginLeft="@dimen/jandi_file_search_item_type_icon_margin_left"
+        android:src="@drawable/jandi_fl_icon_txt" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/jandi_file_search_item_margin_left"
         android:layout_marginRight="@dimen/jandi_file_search_item_margin_right">
+
         <TextView
             android:id="@+id/txt_searched_file_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:singleLine="true"
             android:ellipsize="end"
-            android:textStyle="bold"
-            android:textSize="@dimen/jandi_file_search_item_name_text"
-            android:textColor="@color/jandi_file_search_item_name_text"
+            android:singleLine="true"
             android:text="File Name"
-            />
+            android:textColor="@color/jandi_file_search_item_name_text"
+            android:textSize="@dimen/jandi_file_search_item_name_text"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/txt_searched_file_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txt_searched_file_name"
+            android:layout_alignBottom="@+id/txt_searched_file_type_comment"
             android:layout_alignLeft="@id/txt_searched_file_name"
-            android:layout_marginTop="@dimen/jandi_file_search_item_text_margin"
-            android:singleLine="true"
+            android:layout_alignTop="@+id/txt_searched_file_type_comment"
             android:ellipsize="end"
-            android:textColor="@color/jandi_file_search_item_type_text"
-            android:textSize="@dimen/jandi_file_search_item_type_text"
+            android:gravity="center_vertical"
+            android:singleLine="true"
             android:text="file type"
-            />
+            android:textColor="@color/jandi_file_search_item_type_text"
+            android:textSize="@dimen/jandi_file_search_item_type_text" />
+
+        <ImageView
+            android:id="@+id/img_searched_file_type_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_searched_file_type_comment"
+            android:layout_alignTop="@+id/txt_searched_file_type_comment"
+            android:layout_marginLeft="3dp"
+            android:layout_toRightOf="@+id/txt_searched_file_type"
+            android:scaleType="centerInside"
+            android:src="@drawable/icon_comment" />
+
+        <TextView
+            android:id="@+id/txt_searched_file_type_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_searched_file_name"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="@dimen/jandi_file_search_item_text_margin"
+            android:layout_toRightOf="@+id/img_searched_file_type_comment"
+            android:src="@drawable/icon_comment"
+            android:text="3"
+            android:textColor="@color/jandi_file_search_item_type_text"
+            android:textSize="@dimen/jandi_file_search_item_date_text" />
+
         <TextView
             android:id="@+id/txt_searched_file_owner_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/txt_searched_file_name"
             android:layout_below="@id/txt_searched_file_type"
             android:layout_marginTop="@dimen/jandi_file_search_item_text_margin"
-            android:layout_alignLeft="@id/txt_searched_file_name"
-            android:textSize="@dimen/jandi_file_search_item_owner_text"
+            android:text="Justin"
             android:textColor="@color/jandi_file_search_item_owner_text"
-            android:text="Justin" />
+            android:textSize="@dimen/jandi_file_search_item_owner_text" />
         />
+
         <TextView
             android:id="@+id/txt_searched_file_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/txt_searched_file_owner_name"
             android:layout_marginLeft="@dimen/jandi_file_search_item_text_margin"
             android:layout_toRightOf="@id/txt_searched_file_owner_name"
-            android:layout_alignBaseline="@id/txt_searched_file_owner_name"
-            android:textColor="@color/jandi_file_search_item_type_text"
-            android:textSize="@dimen/jandi_file_search_item_date_text"
             android:text="Date"
-            />
+            android:textColor="@color/jandi_file_search_item_type_text"
+            android:textSize="@dimen/jandi_file_search_item_date_text" />
     </RelativeLayout>
 
     <!--<TextView-->
-        <!--android:id="@+id/txt_searched_file_in_cdp"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_toRightOf="@id/txt_searched_file_date"-->
-        <!--android:layout_alignBottom="@id/txt_searched_file_date"-->
-        <!--android:textColor="@color/message_date_text"-->
-        <!--android:text="in somewhere"-->
-        <!--/>-->
+    <!--android:id="@+id/txt_searched_file_in_cdp"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_toRightOf="@id/txt_searched_file_date"-->
+    <!--android:layout_alignBottom="@id/txt_searched_file_date"-->
+    <!--android:textColor="@color/message_date_text"-->
+    <!--android:text="in somewhere"-->
+    <!--/>-->
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -30,6 +31,11 @@ public class SearchedFileItemView extends RelativeLayout {
     TextView textViewSearchedFileDate;
     @ViewById(R.id.img_searched_file_type)
     ImageView imageViewSearchedFileType;
+
+    @ViewById(R.id.txt_searched_file_type_comment)
+    TextView commentTextView;
+    @ViewById(R.id.img_searched_file_type_comment)
+    ImageView commentImageView;
 
     Context mContext;
 
@@ -70,5 +76,14 @@ public class SearchedFileItemView extends RelativeLayout {
             }
         }
 
+        commentTextView.setText(String.valueOf(searchedFile.commentCount));
+
+        if (searchedFile.commentCount > 0) {
+            commentImageView.setVisibility(View.VISIBLE);
+            commentTextView.setVisibility(View.VISIBLE);
+        } else {
+            commentImageView.setVisibility(View.INVISIBLE);
+            commentTextView.setVisibility(View.INVISIBLE);
+        }
     }
 }

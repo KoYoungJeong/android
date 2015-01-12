@@ -143,6 +143,7 @@ public class FileListFragment extends Fragment {
         super.onResume();
         mSearchQuery.setToFirst();
         // 서치 시작
+        mAdapter.clearAdapterWithoutNotify();
         doSearch();
     }
 
