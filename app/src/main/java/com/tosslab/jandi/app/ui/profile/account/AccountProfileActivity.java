@@ -234,8 +234,6 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
                 .intent(AccountProfileActivity.this)
                 .start();
 
-//        List<ResAccountInfo.UserEmail> accountEmails = accountProfileModel.getAccountEmails();
-//        accountProfilePresenter.showEmailsDialog(accountEmails);
     }
 
     @Click(R.id.txt_account_profile_user_name)

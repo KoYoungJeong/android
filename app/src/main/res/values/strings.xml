@@ -268,4 +268,7 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_message_leave_private_topic">"If you leave this private topic, you will only be able to rejoin if you receive another invitation. Are you sure you want to leave?"</string>
     <string name="jandi_switch_team">"Switch Teams"</string>
     <string name="jandi_choose_email">"Choose an email"</string>
+    <string name="jandi_already_linked_email">"This email is already linked to your account"</string>
+    <string name="jandi_retry_auth_email">인증을 기다리는 중입니다. 인증 메일을 다시 요청하시겠습니까?</string>
+    <string name="jandi_add_an_email_address">"Add an Email Address"</string>
 </resources>

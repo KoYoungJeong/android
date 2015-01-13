@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 10;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -33,7 +33,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
             DatabaseConsts.Table.account_email + " (" +
                     DatabaseConsts.AccountEmail._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.AccountEmail.id + " TEXT NOT NULL, " +
-                    DatabaseConsts.AccountEmail.confirmedAt + " TEXT NOT NULL, " +
+                    DatabaseConsts.AccountEmail.confirmedAt + " TEXT, " +
                     DatabaseConsts.AccountEmail.is_primary + " INTEGER NOT NULL DEFAULT 0, " +
                     DatabaseConsts.AccountEmail.status + " TEXT" +
                     ");",

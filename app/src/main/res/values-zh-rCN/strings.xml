@@ -266,4 +266,6 @@
     <string name="jandi_switch_team">"更换团队"</string>
     <string name="jandi_what_is_topic_type">"议题群组一经建立将无法在公开或私人两种类别之间自由转换"</string>
     <string name="jandi_choose_email">"选择一个电子邮件"</string>
+    <string name="jandi_already_linked_email">"这电子邮件已经连结到您的帐号"</string>
+    <string name="jandi_add_an_email_address">"增加一个电子邮件地址"</string>
 </resources>

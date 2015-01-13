@@ -283,4 +283,6 @@
     <string name="jandi_switch_team">"팀 전환하기"</string>
     <string name="jandi_what_is_topic_type">"공개 여부 설정은 토픽 생성 이후에 변경할 수 없습니다."</string>
     <string name="jandi_choose_email">"이메일 선택"</string>
+    <string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
+    <string name="jandi_add_an_email_address">"이메일 추가하기"</string>
 </resources>

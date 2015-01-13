@@ -55,15 +55,20 @@ public class EmailChooseAdapter extends BaseAdapter {
         AccountEmail item = getItem(position);
 
 
-        if (item.isConfirmed()) {
+        if (!(item instanceof AccountEmail.DummyEmail)) {
+            imageView.setImageResource(R.drawable.jandi_team_selector_icon);
+            nameView.setText(item.getEmail());
+
             imageView.setSelected(item.isSelected());
             nameView.setSelected(item.isSelected());
+            nameView.setEnabled(item.isConfirmed());
 
-            nameView.setTextColor(context.getResources().getColor(R.color.jandi_team_selector_text));
-            nameView.setText(item.getEmail());
         } else {
-            nameView.setTextColor(context.getResources().getColor(R.color.jandi_team_select_pendning_name));
-            nameView.setText("Add New Email...");
+
+            imageView.setImageResource(R.drawable.jandi_icon_teamlist_add);
+
+            nameView.setText(R.string.jandi_add_an_email_address);
+            nameView.setEnabled(false);
         }
 
         return convertView;
