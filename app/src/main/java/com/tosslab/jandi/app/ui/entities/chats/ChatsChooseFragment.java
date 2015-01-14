@@ -6,6 +6,10 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -21,6 +25,7 @@ import org.androidannotations.annotations.ViewById;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -72,6 +77,24 @@ public class ChatsChooseFragment extends Fragment {
                     chatChooseAdapter.addAll(chatChooseItems);
                     chatChooseAdapter.notifyDataSetChanged();
                 });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(ProfileDetailEvent event) {
+        int entityId = event.getEntityId();
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
     }
 
     @ItemClick(R.id.list_chat_choose)

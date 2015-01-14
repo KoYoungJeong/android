@@ -10,11 +10,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -86,6 +89,8 @@ public class MainChatListAdapter extends BaseAdapter {
 
         viewHolder.viewMaskUnjoined.setVisibility(View.GONE);
 
+        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+
         Glide.with(context)
                 .load(item.getPhoto())
                 .placeholder(R.drawable.jandi_profile)
@@ -94,6 +99,13 @@ public class MainChatListAdapter extends BaseAdapter {
 
 
         return convertView;
+    }
+
+    private View.OnClickListener getProfileClickListener(int entityId) {
+        return v -> {
+
+            EventBus.getDefault().post(new ProfileDetailEvent(entityId));
+        };
     }
 
     public void setChatItem(List<ChatItem> chatItems) {

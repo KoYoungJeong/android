@@ -163,9 +163,9 @@ public class EmailChooseActivity extends Activity {
 
     public void onEvent(NewEmailEvent newEmailEvent) {
         if (!emailChoosePresenter.hasSameEmail(newEmailEvent.getEmail())) {
-            requestNewEmail(newEmailEvent.getEmail());
-        } else if (!emailChooseModel.isConfirmedEmail(newEmailEvent.getEmail())) {
-            emailChoosePresenter.showRetryEmailDialog(newEmailEvent.getEmail());
+            if (!emailChooseModel.isConfirmedEmail(newEmailEvent.getEmail())) {
+                requestNewEmail(newEmailEvent.getEmail());
+            }
         } else {
             emailChoosePresenter.showFailToast(getString(R.string.jandi_already_linked_email));
         }

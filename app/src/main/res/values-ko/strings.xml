@@ -11,7 +11,7 @@
     <string name="jandi_action_invite">"초대"</string>
     <string name="jandi_action_leave">"나가기"</string>
     <string name="jandi_action_rename">"이름수정"</string>
-    <string name="err_network">"네트워크 오류가 발생했습니다"</string>
+    <string name="err_network">"네트워크 상태 확인 후 다시 시도해주세요"</string>
     <string name="jandi_help">"도움말"</string>
     <string name="jandi_about">"About"</string>
 
@@ -285,4 +285,5 @@
     <string name="jandi_choose_email">"이메일 선택"</string>
     <string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
     <string name="jandi_add_an_email_address">"이메일 추가하기"</string>
+    <string name="jandi_messages">"메시지"</string>
 </resources>

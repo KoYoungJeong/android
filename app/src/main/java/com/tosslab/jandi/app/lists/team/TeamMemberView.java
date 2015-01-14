@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.lists.team;
  */
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -12,12 +13,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
+
+import de.greenrobot.event.EventBus;
 
 @EViewGroup(R.layout.item_team_member)
 public class TeamMemberView extends LinearLayout {
@@ -39,6 +43,14 @@ public class TeamMemberView extends LinearLayout {
     }
 
     public void bind(FormattedEntity formattedEntity) {
+
+        imageViewTeamMemberIcon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new ProfileDetailEvent(formattedEntity.getId()));
+            }
+        });
+
         if (formattedEntity instanceof FormattedDummyEntity) {
             drawInvitedUserDummyLayout(((FormattedDummyEntity) formattedEntity).getEmailForInvitation());
             return;
