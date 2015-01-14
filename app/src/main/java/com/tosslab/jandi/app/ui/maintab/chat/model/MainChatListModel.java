@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -48,8 +48,6 @@ public class MainChatListModel {
         Observable.from(chatList)
                 .map(resChat -> {
 
-                    Log.d("INFO", "HAHAHAH");
-
                     ResLeftSideMenu.User userEntity = JandiEntityDatabaseManager.getInstance(context).getUserEntity(teamId, resChat.getEntityId());
 
                     ChatItem chatItem = new ChatItem();
@@ -65,8 +63,17 @@ public class MainChatListModel {
                     return chatItem;
                 })
                 .collect(() -> chatItems, (chatItems1, chatItem) -> chatItems1.add(chatItem))
-                .subscribe();
+                .subscribe()
+                .unsubscribe();
 
         return chatItems;
+    }
+
+    public List<ChatItem> getSavedChatList(int teamId) {
+        return JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+    }
+
+    public void saveChatList(int teamId, List<ChatItem> chatItems) {
+        JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
     }
 }

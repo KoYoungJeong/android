@@ -7,6 +7,8 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 /**
@@ -39,19 +41,22 @@ public class RequestManager<ResponseObject> {
                         return request.request();
                     } catch (HttpStatusCodeException e1) {
                         // unknown exception
-                        logger.debug("Retry Fail" + request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString());
+                        logger.error("Retry Fail" + request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString(), e1);
                         throw new JandiNetworkException(e1);
                     }
                 } else {
                     // unauthorized exception
-                    logger.debug("Refresh Token Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
+                    logger.error("Refresh Token Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                     throw new JandiNetworkException(e);
                 }
             } else {
                 // exception, not unauthorized
-                logger.debug("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
+                logger.error("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                 throw new JandiNetworkException(e);
             }
+        } catch (Exception e) {
+            logger.error("Unknown Request Error : " + request.getClass() + " : " + e.getMessage(), e);
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
 
     }

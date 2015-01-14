@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.account.emails.AccountEmailsApiClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
@@ -33,6 +32,11 @@ public class EmailChooseModel {
         List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
+
+            if (!TextUtils.equals(userEmail.getStatus(), "confirmed")) {
+                continue;
+            }
+
             AccountEmail object = new AccountEmail(userEmail.getId(), TextUtils.equals(userEmail.getStatus(), "confirmed"));
 
             if (userEmail.isPrimary()) {

@@ -1,33 +1,21 @@
-package com.tosslab.jandi.app.ui;
+package com.tosslab.jandi.app.ui.member;
 
 import android.app.ActionBar;
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
-import com.nhaarman.supertooltips.ToolTip;
-import com.nhaarman.supertooltips.ToolTipRelativeLayout;
-import com.nhaarman.supertooltips.ToolTipView;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.lists.team.TeamMemberListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
+import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -47,32 +35,27 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_team_info)
 public class TeamInfoActivity extends BaseAnalyticsActivity {
-    private final Logger log = Logger.getLogger(TeamInfoActivity.class);
+
+    private static final Logger log = Logger.getLogger(TeamInfoActivity.class);
 
     @ViewById(R.id.list_team_users)
     ListView listViewInvitation;
+
+
     @Bean
     TeamMemberListAdapter teamUserListAdapter;
 
     @Bean
     JandiEntityClient mJandiEntityClient;
+
     private ProgressWheel mProgressWheel;
-    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-    private EditText mEditTextEmailAddress;
-    private Button mButtonInvitation;
-    private ToolTipRelativeLayout mToolTipRelativeLayout;
-    private ToolTipView mToolTipView;
     private EntityManager mEntityManager;
 
     @AfterViews
     public void initForm() {
-        setUpToolTip();
         setUpActionBar();
         initProgressWheel();
         listViewInvitation.setAdapter(teamUserListAdapter);
-//        addInvitationViewAsListviewFooter();
-
-        imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mEntityManager = EntityManager.getInstance(TeamInfoActivity.this);
         retrieveTeamUserList(mEntityManager.getFormattedUsers());
@@ -89,71 +72,10 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     }
 
     @SupposeUiThread
-    void setUpToolTip() {
-        mToolTipRelativeLayout = (ToolTipRelativeLayout) findViewById(R.id.activity_main_tooltipRelativeLayout);
-    }
-
-    @SupposeUiThread
     void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
-    }
-
-    @SupposeUiThread
-    void addInvitationViewAsListviewFooter() {
-        View footer = getLayoutInflater().inflate(R.layout.footer_invite_user, null, false);
-        mEditTextEmailAddress = (EditText) footer.findViewById(R.id.et_invitation_email);
-        mButtonInvitation = (Button) footer.findViewById(R.id.btn_invitation_confirm);
-
-        // 텍스트에 글이 있으면 버튼 색상 변경
-        mEditTextEmailAddress.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (FormatConverter.isInvalidEmailString(editable.toString())) {
-                    mButtonInvitation.setBackgroundResource(R.drawable.jandi_btn_selector);
-                } else {
-                    mButtonInvitation.setBackgroundResource(R.color.jandi_inactive_button);
-                }
-            }
-        });
-
-        mButtonInvitation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imm.hideSoftInputFromWindow(mEditTextEmailAddress.getWindowToken(), 0);
-                String email = mEditTextEmailAddress.getEditableText().toString();
-                mEditTextEmailAddress.setText("");
-                inviteTeamMember(email);
-            }
-        });
-        listViewInvitation.addFooterView(footer);
-        listViewInvitation.setAdapter(teamUserListAdapter);
-
-        // 스크롤의 맨 아래로 내려가면 안내 tooltip 보이기
-        listViewInvitation.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                if ((visibleItemCount == (totalItemCount - firstVisibleItem))) {
-                    showToolTip();
-                } else {
-                    hideToolTip();
-                }
-            }
-        });
     }
 
     @Override
@@ -194,27 +116,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
     void retrieveTeamUserList(List<FormattedEntity> users) {
         teamUserListAdapter.retrieveList(users);
-    }
-
-    private void showToolTip() {
-        // Button에 툴팁 넣기
-        if (mToolTipView == null) {
-            ToolTip toolTip = new ToolTip()
-                    .withText(getString(R.string.jandi_invitation_help))
-                    .withTextColor(getResources().getColor(R.color.jandi_text_white))
-                    .withColor(getResources().getColor(R.color.jandi_main))
-                    .withAnimationType(ToolTip.AnimationType.NONE);
-
-            mToolTipView = mToolTipRelativeLayout.showToolTipForViewResId(this, toolTip, R.id.btn_invitation_tooltipBase);
-
-        }
-    }
-
-    private void hideToolTip() {
-        if (mToolTipView != null) {
-            mToolTipView.remove();
-            mToolTipView = null;
-        }
     }
 
     /**

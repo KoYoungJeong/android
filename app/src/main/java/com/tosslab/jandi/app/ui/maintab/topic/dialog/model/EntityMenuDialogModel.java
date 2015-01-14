@@ -6,7 +6,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.maintab.chat.model.ChatDeleteRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Bean;
@@ -50,5 +53,10 @@ public class EntityMenuDialogModel {
     public void refreshEntities() throws JandiNetworkException {
         ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+        EntityManager.getInstance(context).refreshEntity(context);
+    }
+
+    public ResCommon requestDeleteChat(int memberId, int entityId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, ChatDeleteRequest.create(context, memberId, entityId)).request();
     }
 }
