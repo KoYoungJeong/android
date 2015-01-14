@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,7 +20,6 @@ import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResMemberProfile;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import de.greenrobot.event.EventBus;
@@ -36,6 +37,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     private final static String ARG_USER_EMAIL = "userEmail";
     private final static String ARG_USER_PROFILE_URL = "profileUrl";
     private final static String ARG_USER_IS_ME = "isMe";
+    private static final String ARG_USER_STARRED = "isStarred";
 
     public static UserInfoDialogFragment newInstance(FormattedEntity user, boolean isMe) {
         UserInfoDialogFragment frag = new UserInfoDialogFragment();
@@ -48,6 +50,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         args.putString(ARG_USER_PHONE_NUMBER, user.getUserPhoneNumber());
         args.putString(ARG_USER_EMAIL, user.getUserEmail());
         args.putString(ARG_USER_PROFILE_URL, user.getUserLargeProfileUrl());
+        args.putBoolean(ARG_USER_STARRED, user.isStarred);
         args.putBoolean(ARG_USER_IS_ME, isMe);
 
         frag.setArguments(args);
@@ -73,11 +76,13 @@ public class UserInfoDialogFragment extends DialogFragment {
         final String userEmail = bundle.getString(ARG_USER_EMAIL);
         final String userProfileUrl = bundle.getString(ARG_USER_PROFILE_URL);
         final boolean isMe = bundle.getBoolean(ARG_USER_IS_ME, false);
+        final boolean isStarred = bundle.getBoolean(ARG_USER_STARRED, false);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_user_profile, null);
 
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
+        final ImageView imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
         final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);
         final TextView txtUserNickname = (TextView) mainView.findViewById(R.id.txt_user_info_nickname);
         final TextView txtUserDivision = (TextView) mainView.findViewById(R.id.txt_user_info_division);
@@ -88,6 +93,12 @@ public class UserInfoDialogFragment extends DialogFragment {
         final LinearLayout lyUserPhone = (LinearLayout) mainView.findViewById(R.id.ly_user_info_phone);
         final LinearLayout lyUserDirectMessage = (LinearLayout) mainView.findViewById(R.id.ly_user_info_direct_message);
         final View borderUserDirectMessage = mainView.findViewById(R.id.border_user_info_direct_message);
+
+        if (isStarred) {
+            imgStarred.setImageResource(R.drawable.profile_fav_on);
+        } else {
+            imgStarred.setImageResource(R.drawable.profile_fav_off);
+        }
 
         if (isMe) {     // 본인의 정보면 1:1 대화 버튼을 보여주지 않는다.
             lyUserDirectMessage.setVisibility(View.GONE);
@@ -147,7 +158,12 @@ public class UserInfoDialogFragment extends DialogFragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(mainView);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         return dialog;
     }
+
 }

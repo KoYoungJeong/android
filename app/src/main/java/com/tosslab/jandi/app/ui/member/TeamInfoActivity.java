@@ -7,6 +7,8 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -29,6 +31,8 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 9. 18..
@@ -81,10 +85,24 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         if (mEntityManager != null) {
             trackGaTeamInfo(mEntityManager.getDistictId());
         }
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEventMainThread(ProfileDetailEvent event) {
+        int entityId = event.getEntityId();
+        FormattedEntity entity = EntityManager.getInstance(TeamInfoActivity.this).getEntityById(entityId);
+        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
+    }
+
 
     @Override
     protected void onStop() {

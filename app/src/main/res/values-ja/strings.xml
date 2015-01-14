@@ -11,7 +11,7 @@
     <string name="jandi_action_invite">"招待する"</string>
     <string name="jandi_action_leave">"退出する"</string>
     <string name="jandi_action_rename">"変更する"</string>
-    <string name="err_network">"ネットワークエラー"</string>
+    <string name="err_network">"ネットワーク接続を確認してください"</string>
     <string name="jandi_help">"ヘルプ"</string>
     <string name="jandi_about">"JANDIについて"</string>
 
@@ -276,4 +276,5 @@ JANDIへようこそ"</string>
     <string name="jandi_choose_email">"メールアドレスを選択"</string>
     <string name="jandi_already_linked_email">"このメールアドレスは既にアカウントに登録されています"</string>
     <string name="jandi_add_an_email_address">"メールアドレスを追加する"</string>
+    <string name="jandi_messages">"メッセージ "</string>
 </resources>

@@ -162,6 +162,7 @@ public class TeamSelectionActivity extends Activity {
     @Background
     void selectTeam() {
 
+        teamSelectionPresenter.showProgressWheel();
         Team lastSelectedItem = teamSelectionPresenter.getLastSelectedItem();
         teamSelectionModel.updateSelectedTeam(lastSelectedItem);
         try {
@@ -170,6 +171,8 @@ public class TeamSelectionActivity extends Activity {
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } finally {
+            teamSelectionPresenter.dismissProgressWheel();
         }
 
         teamSelectionPresenter.selectTeam();
@@ -224,9 +227,10 @@ public class TeamSelectionActivity extends Activity {
             mixpanelMemberAnalyticsClient.trackSignUp();
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } finally {
+            teamSelectionPresenter.dismissProgressWheel();
         }
 
-        teamSelectionPresenter.dismissProgressWheel();
         teamSelectionPresenter.selectTeam();
     }
 

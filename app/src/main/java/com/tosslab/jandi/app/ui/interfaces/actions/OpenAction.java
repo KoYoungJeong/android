@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -82,8 +83,12 @@ public class OpenAction implements Action {
 
             successAccessToken(accountInfo);
         } catch (HttpStatusCodeException e) {
+            TokenUtil.clearTokenInfo(context);
+            JandiAccountDatabaseManager.getInstance(context).clearAllData();
+            failAccessToken();
             logger.debug(e.getStatusCode() + " : " + e.getMessage());
         } finally {
+            startIntroActivity();
             dismissProgress();
         }
 
@@ -91,6 +96,11 @@ public class OpenAction implements Action {
 
     @UiThread
     void showProgress() {
+
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
         if (progressWheel != null) {
             progressWheel.show();
         }
@@ -108,18 +118,17 @@ public class OpenAction implements Action {
     @UiThread
     void failAccessToken() {
         ColoredToast.showWarning(context, context.getString(R.string.jandi_error_web_token));
-        startIntroActivity();
     }
 
     @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
         ColoredToast.show(context, context.getString(R.string.jandi_success_web_token));
-        startIntroActivity();
     }
 
     @UiThread
     void startIntroActivity() {
         IntroActivity_.intent(context)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();
         ((Activity) context).finish();
     }

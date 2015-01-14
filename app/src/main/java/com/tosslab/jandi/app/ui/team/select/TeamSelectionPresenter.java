@@ -157,7 +157,9 @@ public class TeamSelectionPresenter {
 
     @UiThread
     public void showProgressWheel() {
-        dismissProgressWheel();
+        if (mProgressWheel != null && mProgressWheel.isShowing()) {
+            mProgressWheel.dismiss();
+        }
 
         mProgressWheel.show();
     }

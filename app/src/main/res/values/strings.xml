@@ -11,7 +11,7 @@
     <string name="jandi_action_invite">"Invite"</string>
     <string name="jandi_action_leave">"Leave"</string>
     <string name="jandi_action_rename">"Rename"</string>
-    <string name="err_network">"Network error"</string>
+    <string name="err_network">"Please check your network connection"</string>
     <string name="jandi_help">"Help"</string>
     <string name="jandi_about">"About"</string>
 
@@ -271,4 +271,5 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_already_linked_email">"This email is already linked to your account"</string>
     <string name="jandi_retry_auth_email">인증을 기다리는 중입니다. 인증 메일을 다시 요청하시겠습니까?</string>
     <string name="jandi_add_an_email_address">"Add an Email Address"</string>
+    <string name="jandi_messages">"Messages"</string>
 </resources>
