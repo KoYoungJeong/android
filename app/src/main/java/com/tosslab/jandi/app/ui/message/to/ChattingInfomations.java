@@ -30,7 +30,7 @@ public class ChattingInfomations {
     }
 
     public void loadExtraInfo() {
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
         if (entityManager != null) {
             this.isMyEntity = entityManager.isMyTopic(entityId);
             this.entityName = entityManager.getEntityNameById(entityId);

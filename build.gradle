@@ -10,6 +10,8 @@ buildscript {
         classpath 'com.newrelic.agent.android:agent-gradle-plugin:4.+'
         // Roblectric > v0.12 need to Gradle 2.x
         classpath 'org.robolectric:robolectric-gradle-plugin:0.14.+'
+        // RetroLambda
+        classpath 'me.tatarka:gradle-retrolambda:2.5.0'
     }
 }
 

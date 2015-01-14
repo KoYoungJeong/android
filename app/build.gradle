@@ -2,6 +2,7 @@ apply plugin: 'android'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
 apply plugin: 'robolectric'     // Android-Test
+apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply from: 'test.gradle'       // Android-Test Env Setting
 
 configurations {
@@ -39,6 +40,9 @@ dependencies {
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
     compile 'com.parse.bolts:bolts-android:1.1.3'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    // RxJava
+    compile 'io.reactivex:rxandroid:0.24.+'
 
     // Test : Robolectric, Junit4
     androidTestCompile 'org.robolectric:robolectric:2.3'
@@ -94,11 +98,8 @@ android {
             keyAlias "tosskeystore"
             storePassword "Xhtmfoq23@#"
             keyPassword "Xhtmfoq23@#"
-//            storePassword System.getenv("JANDI_KSTOREPWD")
-//            keyPassword System.getenv("JANDI_KEYPWD")
         }
         debug {
-//            storeFile file("debug.keystore")
         }
     }
 
@@ -107,8 +108,14 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
     lintOptions {
         abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -128,4 +135,10 @@ robolectric {
     maxHeapSize = "2048m"
 
 
+}
+
+retrolambda {
+    jdk java8_home
+    oldJdk java6_home
+    javaVersion JavaVersion.VERSION_1_6
 }

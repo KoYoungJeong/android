@@ -40,7 +40,6 @@ public class TopicCreateModel {
         ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
 
-        ((JandiApplication) context.getApplicationContext()).setEntityManager(new EntityManager(totalEntitiesInfo));
     }
 
     public boolean isOverMaxLength(CharSequence text) {

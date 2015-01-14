@@ -53,12 +53,10 @@ public class BaseChatListFragment extends Fragment {
     }
 
     protected void moveToPublicTopicMessageActivity(int channelId) {
-        ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
         moveToMessageActivity(channelId, JandiConstants.TYPE_PUBLIC_TOPIC, false);
     }
 
     protected void moveToPrivateTopicMessageActivity(int privateGroupId) {
-        ((JandiApplication)getActivity().getApplication()).setEntityManager(null);
         moveToMessageActivity(privateGroupId, JandiConstants.TYPE_PRIVATE_TOPIC, false);
     }
 

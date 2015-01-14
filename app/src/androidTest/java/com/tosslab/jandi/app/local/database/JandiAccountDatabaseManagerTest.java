@@ -14,6 +14,8 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
+import static junit.framework.Assert.assertNotNull;
+
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiAccountDatabaseManagerTest {
 
@@ -36,6 +38,8 @@ public class JandiAccountDatabaseManagerTest {
 
         JandiEntityDatabaseManager databaseManager = JandiEntityDatabaseManager.getInstance(Robolectric.application);
         databaseManager.upsertLeftSideMenu(infosForSideMenu);
+
+        assertNotNull(infosForSideMenu);
 
     }
 }

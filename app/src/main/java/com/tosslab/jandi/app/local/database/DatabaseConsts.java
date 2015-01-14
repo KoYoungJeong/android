@@ -8,7 +8,7 @@ public class DatabaseConsts {
     public enum Table {
         account, account_email, account_team, account_device,
 
-        left_team, left_user, left_starred_entity, left_message_marker, left_topic_entity, left_join_entity,
+        left_whole, left_team, left_user, left_starred_entity, left_message_marker, left_topic_entity, left_join_entity,
 
         messages, temp_messages,
 
@@ -29,6 +29,10 @@ public class DatabaseConsts {
 
     public enum AccountDevice {
         _id, token, type, badgeCount, subscribe
+    }
+
+    public enum LeftWhole {
+        _id, teamId, whole
     }
 
     public enum LeftTeam {

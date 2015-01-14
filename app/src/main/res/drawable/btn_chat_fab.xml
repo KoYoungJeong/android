@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <inset android:drawable="@drawable/chat_fab" android:insetBottom="2dp" android:insetLeft="2dp" android:insetRight="2dp" android:insetTop="2dp" />
+    </item>
+
+    <item android:drawable="@drawable/chat_fab" />
+
+</selector>

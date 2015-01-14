@@ -18,7 +18,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
@@ -208,9 +207,13 @@ public class FileDetailPresenter {
 
     @UiThread
     public void drawFileSharedEntities(ResMessages.FileMessage resFileDetail) {
-        if (resFileDetail == null) return;
-        EntityManager mEntityManager = ((JandiApplication) activity.getApplicationContext()).getEntityManager();
-        if (mEntityManager == null) return;
+        if (resFileDetail == null) {
+            return;
+        }
+        EntityManager mEntityManager = EntityManager.getInstance(activity);
+        if (mEntityManager == null) {
+            return;
+        }
 
         // 공유 CDP 이름
         String sharedEntityNames = "";
@@ -287,7 +290,7 @@ public class FileDetailPresenter {
 
     @UiThread
     public void showUserInfoDialog(FormattedEntity user) {
-        EntityManager entityManager = ((JandiApplication) activity.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(activity);
         boolean isMe = entityManager.isMe(user.getId());
         FragmentManager fragmentManager = activity.getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();

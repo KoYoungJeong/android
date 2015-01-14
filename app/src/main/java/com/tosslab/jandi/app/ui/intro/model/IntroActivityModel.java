@@ -177,8 +177,6 @@ public class IntroActivityModel {
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
 
-            ((JandiApplication) context.getApplicationContext()).setEntityManager(new EntityManager(totalEntitiesInfo));
-
         } catch (JandiNetworkException e) {
             e.printStackTrace();
         }

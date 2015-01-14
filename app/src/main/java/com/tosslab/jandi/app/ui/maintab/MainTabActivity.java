@@ -9,7 +9,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -69,7 +68,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
         mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mEntityManager = EntityManager.getInstance(MainTabActivity.this);
+
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
@@ -166,8 +166,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mProgressWheel.dismiss();
-        mEntityManager = new EntityManager(resLeftSideMenu);
-        ((JandiApplication) getApplication()).setEntityManager(mEntityManager);
+        mEntityManager = EntityManager.getInstance(MainTabActivity.this);
         mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());

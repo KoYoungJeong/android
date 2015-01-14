@@ -74,7 +74,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
         imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mEntityManager = EntityManager.getInstance(TeamInfoActivity.this);
         retrieveTeamUserList(mEntityManager.getFormattedUsers());
     }
 

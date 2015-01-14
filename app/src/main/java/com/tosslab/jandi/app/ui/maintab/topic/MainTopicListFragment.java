@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -72,7 +71,7 @@ public class MainTopicListFragment extends Fragment {
     @AfterInject
     void initObject() {
 
-        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
 
         List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
         List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
@@ -143,7 +142,7 @@ public class MainTopicListFragment extends Fragment {
 
         try {
             mainTopicModel.joinPublicTopic(entity.getChannel());
-            EntityManager entityManager = ((JandiApplication) getActivity().getApplicationContext()).getEntityManager();
+            EntityManager entityManager = EntityManager.getInstance(getActivity());
             if (entityManager != null) {
                 MixpanelMemberAnalyticsClient
                         .getInstance(getActivity(), entityManager.getDistictId())
@@ -160,7 +159,7 @@ public class MainTopicListFragment extends Fragment {
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
-        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
 
         List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
         List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());

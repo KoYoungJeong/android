@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -136,14 +135,6 @@ public class TeamSelectionModel {
         JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(lastSelectedItem.getTeamId());
     }
 
-    public void clearEntityManager() {
-        JandiApplication jandiApplication = (JandiApplication) context.getApplicationContext();
-        EntityManager entityManager = jandiApplication.getEntityManager();
-        if (entityManager != null) {
-            jandiApplication.setEntityManager(null);
-        }
-    }
-
     public ResLeftSideMenu updateIdentityManager(final int teamId) throws JandiNetworkException {
 
         // JandiEntityClient.getTotalEntitiesInfo();
@@ -163,9 +154,7 @@ public class TeamSelectionModel {
 
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
 
-
-        EntityManager entityManager = new EntityManager(resLeftSideMenu);
-        ((JandiApplication) context.getApplicationContext()).setEntityManager(entityManager);
+        EntityManager entityManager = EntityManager.getInstance(context);
         return entityManager;
     }
 }

@@ -6,6 +6,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.chat.MainChatListFragment_;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.maintab.more.MainMoreFragment_;
 import com.tosslab.jandi.app.ui.maintab.privatetopic.MainPrivateListFragment_;
@@ -38,7 +39,7 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
                         .builder()
                         .build();
             case TAB_CHAT:
-                return MainPrivateListFragment_
+                return MainChatListFragment_
                         .builder()
                         .build();
             case TAB_FILE:
