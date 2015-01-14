@@ -10,6 +10,8 @@ import android.widget.Button;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -46,6 +48,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @Bean
     EntityMenuDialogModel entityMenuDialogModel;
+
+    @Bean
+    JandiEntityClient jandiEntityClient;
     private ProgressWheel progressWheel;
 
     @AfterViews
@@ -57,53 +62,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
         progressWheel = new ProgressWheel(getActivity());
         progressWheel.init();
 
-//        if (entity.isPrivateGroup()) {
-//            holdLeaveButton();
-//        }
     }
-
-    @Background
-    void holdLeaveButton() {
-
-        int count = 3;
-
-        String text;
-        if (isVisible()) {
-            text = String.format("%s (%d)", getString(R.string.jandi_action_leave), count);
-            setLeaveButton(text, false);
-        }
-        while (count != 0) {
-
-            try {
-                Thread.sleep(1000);
-                if (!isVisible()) {
-                    return;
-                }
-            } catch (InterruptedException e) {
-            }
-
-            --count;
-            if (isVisible()) {
-                text = String.format("%s (%d)", getString(R.string.jandi_action_leave), count);
-                setLeaveButton(text, false);
-            } else {
-                return;
-            }
-        }
-
-        if (isVisible()) {
-            text = getString(R.string.jandi_action_leave);
-            setLeaveButton(text, true);
-        }
-
-    }
-
-    @UiThread
-    void setLeaveButton(String text, boolean enabled) {
-        leaveButton.setText(text);
-        leaveButton.setEnabled(enabled);
-    }
-
 
     public void setStarredButtonText(boolean isStarred) {
         if (isStarred) {
@@ -137,12 +96,18 @@ public class EntityMenuDialogFragment extends DialogFragment {
         try {
             if (entity.isStarred) {
                 entityMenuDialogModel.requestUnstarred(entityId);
-                showToast(getString(R.string.jandi_message_no_starred));
             } else {
                 entityMenuDialogModel.requestStarred(entityId);
-                showToast(getString(R.string.jandi_message_starred));
             }
             entity.isStarred = !entity.isStarred;
+
+            entityMenuDialogModel.refreshEntities();
+
+            if (entity.isStarred) {
+                showToast(getString(R.string.jandi_message_starred));
+            } else {
+                showToast(getString(R.string.jandi_message_no_starred));
+            }
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
@@ -178,9 +143,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
 
-        if (entity.isPublicTopic()) {
+        if (entity.isPublicTopic() || entity.isUser()) {
             showProgressWheel();
-            leaveEntity(entityId, entity.isPublicTopic());
+            leaveEntity(entityId, entity.isPublicTopic(), entity.isUser());
         } else {
             showPrivateTopicLeaveDialog(entityId, entity.getName());
             dismissOnUiThread();
@@ -196,15 +161,20 @@ public class EntityMenuDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         showProgressWheel();
-                        leaveEntity(entityId, false);
+                        leaveEntity(entityId, false, false);
                     }
                 }).create().show();
     }
 
     @Background
-    void leaveEntity(int entityId, boolean publicTopic) {
+    void leaveEntity(int entityId, boolean publicTopic, boolean isUser) {
         try {
-            entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
+            if (!isUser) {
+                entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
+            } else {
+                int memberId = EntityManager.getInstance(getActivity()).getMe().getId();
+                entityMenuDialogModel.requestDeleteChat(memberId, entityId);
+            }
             entityMenuDialogModel.refreshEntities();
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (JandiNetworkException e) {
@@ -223,7 +193,10 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
     @UiThread
     void showProgressWheel() {
-        dismissProgressWheel();
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
         if (progressWheel != null) {
             progressWheel.show();
         }

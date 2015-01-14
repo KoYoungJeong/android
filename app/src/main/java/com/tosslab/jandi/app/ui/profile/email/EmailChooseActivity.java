@@ -155,10 +155,8 @@ public class EmailChooseActivity extends Activity {
     void onEmailItemLongClick(AccountEmail accountEmail) {
         if (!(accountEmail instanceof AccountEmail.DummyEmail)) {
             String primaryEmail = emailChooseModel.getPrimaryEmail();
-            if (!TextUtils.equals(primaryEmail, accountEmail.getEmail())) {
+            if (!TextUtils.equals(primaryEmail, accountEmail.getEmail()) && !accountEmail.isSelected()) {
                 emailChoosePresenter.showDeleteEmail(accountEmail.getEmail());
-            } else {
-                emailChoosePresenter.showWarning("message");
             }
         }
     }

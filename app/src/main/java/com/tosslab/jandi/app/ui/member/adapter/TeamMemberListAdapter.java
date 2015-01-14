@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists.team;
+package com.tosslab.jandi.app.ui.member.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.team.TeamMemberView;
+import com.tosslab.jandi.app.lists.team.TeamMemberView_;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;

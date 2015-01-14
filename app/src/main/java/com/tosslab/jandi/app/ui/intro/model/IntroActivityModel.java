@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -176,6 +175,7 @@ public class IntroActivityModel {
         try {
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            EntityManager.getInstance(context).refreshEntity(context);
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();

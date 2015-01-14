@@ -155,6 +155,7 @@ public class TeamSelectionModel {
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
 
         EntityManager entityManager = EntityManager.getInstance(context);
+        entityManager.refreshEntity(context);
         return entityManager;
     }
 }

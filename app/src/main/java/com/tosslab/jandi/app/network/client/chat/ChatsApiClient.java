@@ -2,11 +2,13 @@ package com.tosslab.jandi.app.network.client.chat;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.spring.HttpRequestFactory;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Delete;
 import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
@@ -41,4 +43,9 @@ public interface ChatsApiClient {
     @Get("/members/{memberId}/chats")
     @RequiresAuthentication
     List<ResChat> getChatList(int memberId);
+
+    @Delete("/members/{memberId}/chats/{entityId}")
+    @RequiresAuthentication
+    ResCommon deleteChat(int memberId, int entityId);
+
 }
