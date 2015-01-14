@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -116,7 +115,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     }
 
     private void retrieveEntityList() {
-        EntityManager entityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
         if (entityManager != null) {
             mEntityManager = entityManager;
             mEntityListAdapter.retrieveChildList(

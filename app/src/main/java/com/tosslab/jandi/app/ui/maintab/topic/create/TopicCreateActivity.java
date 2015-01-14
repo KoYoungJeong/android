@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -67,7 +66,7 @@ public class TopicCreateActivity extends Activity {
             ResCommon topic = topicCreateModel.createTopic(topicTitle, publicSelected);
 
             try {
-                EntityManager mEntityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+                EntityManager mEntityManager = EntityManager.getInstance(TopicCreateActivity.this);
                 if (mEntityManager != null) {
                     MixpanelMemberAnalyticsClient
                             .getInstance(TopicCreateActivity.this, mEntityManager.getDistictId())

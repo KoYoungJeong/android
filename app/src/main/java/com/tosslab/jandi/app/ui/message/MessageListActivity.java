@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
@@ -50,6 +49,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -147,7 +147,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     void initInformations() {
         mContext = getApplicationContext();
-        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mEntityManager = EntityManager.getInstance(mContext);
 
         if (isFromPush) {
             ResAccountInfo.UserTeam teamInfo = JandiAccountDatabaseManager.getInstance(mContext).getTeamInfo(teamId);
@@ -424,6 +424,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             // TODO Temp TeamId
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(MessageListActivity.this).upsertLeftSideMenu(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기
@@ -435,8 +436,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
-        mEntityManager = new EntityManager(resLeftSideMenu);
-        ((JandiApplication) getApplication()).setEntityManager(mEntityManager);
+        mEntityManager = EntityManager.getInstance(MessageListActivity.this);
         FormattedEntity entity = mEntityManager.getEntityById(mChattingInformations.entityId);
         if (entity == null) {
             getEntitiesFailed(getString(R.string.err_messages_invaild_entity));

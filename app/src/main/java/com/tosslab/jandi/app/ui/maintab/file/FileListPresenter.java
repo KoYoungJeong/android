@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -75,7 +74,7 @@ public class FileListPresenter {
 
     @AfterInject
     void initObject() {
-        entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        entityManager = EntityManager.getInstance(context);
     }
 
     @AfterViews

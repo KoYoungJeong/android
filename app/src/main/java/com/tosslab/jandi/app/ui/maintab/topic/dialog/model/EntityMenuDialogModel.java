@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.ui.maintab.topic.dialog.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -26,7 +26,7 @@ public class EntityMenuDialogModel {
     JandiEntityClient jandiEntityClient;
 
     public FormattedEntity getEntity(int entityId) {
-        return ((JandiApplication) context.getApplicationContext()).getEntityManager().getEntityById(entityId);
+        return EntityManager.getInstance(context).getEntityById(entityId);
     }
 
     public void requestStarred(int entityId) throws JandiNetworkException {
@@ -49,6 +49,6 @@ public class EntityMenuDialogModel {
 
     public void refreshEntities() throws JandiNetworkException {
         ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-        ((JandiApplication) context.getApplicationContext()).setEntityManager(new EntityManager(totalEntitiesInfo));
+        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
     }
 }

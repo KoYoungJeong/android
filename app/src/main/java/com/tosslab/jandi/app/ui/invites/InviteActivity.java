@@ -6,7 +6,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Menu;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -57,7 +56,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(InviteActivity.this);
         trackGaInviteMember(entityManager.getDistictId());
     }
 
@@ -129,7 +128,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
 
         if (!TextUtils.equals(email, email.toLowerCase())) {
             invitePresenter.setEmailText(email.toLowerCase());
-            return ;
+            return;
         }
 
         boolean isValidEmail = inviteModel.isValidEmailFormat(email);

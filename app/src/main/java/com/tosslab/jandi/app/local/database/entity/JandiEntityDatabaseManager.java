@@ -5,21 +5,19 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.text.TextUtils;
 
+import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.Account;
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.AccountDevice;
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.AccountEmail;
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.AccountTeam;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftJoinEntity;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftMessageMarkers;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftStarredEntity;
@@ -67,7 +65,7 @@ public class JandiEntityDatabaseManager {
 
         database.delete(Table.left_team.name(), LeftTeam.id + " = ?", new String[]{String.valueOf(teamId)});
 
-        database.delete(Table.left_user.name(), LeftUser.id + " = ? and " + LeftUser.teamId + " = ?", new String[]{String.valueOf(memberId), String.valueOf(leftSideMenu.user.teamId)});
+        database.delete(Table.left_user.name(), LeftUser.teamId + " = ?", new String[]{String.valueOf(leftSideMenu.user.teamId)});
 
         database.delete(Table.left_message_marker.name(), LeftMessageMarkers.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
@@ -76,6 +74,24 @@ public class JandiEntityDatabaseManager {
         database.delete(Table.left_topic_entity.name(), LeftTopicEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
         database.delete(Table.left_join_entity.name(), LeftJoinEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
+
+        database.delete(Table.left_whole.name(), DatabaseConsts.LeftWhole.teamId + " = ?", new String[]{String.valueOf(teamId)});
+
+        if (leftSideMenu != null) {
+
+            try {
+                String jsonWholeValue = new ObjectMapper().writeValueAsString(leftSideMenu);
+
+                ContentValues values = new ContentValues();
+                values.put(DatabaseConsts.LeftWhole.teamId.name(), teamId);
+                values.put(DatabaseConsts.LeftWhole.whole.name(), jsonWholeValue);
+                database.insert(Table.left_whole.name(), null, values);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 
         if (leftSideMenu.team != null) {
@@ -292,6 +308,37 @@ public class JandiEntityDatabaseManager {
         return values;
     }
 
+    public ResLeftSideMenu.User getUserEntity(int teamId, int entityId) {
+        SQLiteDatabase database = getReadableDatabase();
+        String selection = LeftUser.teamId + " = ? and " + LeftUser.id + " = ?";
+        String[] selectionArgs = {String.valueOf(teamId), String.valueOf(entityId)};
+        Cursor cursor = database.query(Table.left_user.name(), null, selection, selectionArgs, null, null, null);
+
+        if (cursor == null || cursor.getCount() <= 0) {
+            return null;
+        }
+
+        cursor.moveToFirst();
+
+        ResLeftSideMenu.User user = convertUser(cursor);
+
+        closeCursor(cursor);
+
+        return user;
+    }
+
+    public boolean isStarredEntity(int teamId, int entityId) {
+        SQLiteDatabase database = getReadableDatabase();
+        String selection = LeftStarredEntity.teamId + " = ? and " + LeftStarredEntity.entityId + " = ?";
+        String[] selectionArgs = {String.valueOf(teamId), String.valueOf(entityId)};
+
+        Cursor cursor = database.query(Table.left_starred_entity.name(), null, selection, selectionArgs, null, null, null);
+
+        boolean isStarredEntity = (cursor != null && cursor.getCount() > 0);
+        closeCursor(cursor);
+        return isStarredEntity;
+    }
+
     public void clearAllData() {
 
         SQLiteDatabase database = getWriteableDatabase();
@@ -301,5 +348,178 @@ public class JandiEntityDatabaseManager {
             database.delete(table.name(), null, null);
         }
 
+    }
+
+    private void closeCursor(Cursor cursor) {
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+    }
+
+    public ResLeftSideMenu getEntityInfoAtWhole(int teamId) {
+        SQLiteDatabase database = getReadableDatabase();
+
+        String[] columns = {DatabaseConsts.LeftWhole.whole.name()};
+        String selection = DatabaseConsts.LeftWhole.teamId.name() + " = ?";
+        String[] selectionArgs = {String.valueOf(teamId)};
+        Cursor cursor = database.query(Table.left_whole.name(), columns, selection, selectionArgs, null, null, null);
+
+        ResLeftSideMenu resLeftSideMenu = null;
+
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            String jsonWholeValue = cursor.getString(cursor.getColumnIndex(DatabaseConsts.LeftWhole.whole.name()));
+
+            try {
+                resLeftSideMenu = new ObjectMapper().readValue(jsonWholeValue, ResLeftSideMenu.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return resLeftSideMenu;
+    }
+
+    public ResLeftSideMenu getEntityInfoAtOrigin(int teamId) {
+
+//        database.delete(Table.left_user.name(), LeftUser.teamId + " = ?", new String[]{String.valueOf(leftSideMenu.user.teamId)});
+//
+//        database.delete(Table.left_starred_entity.name(), LeftStarredEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
+//
+//        database.delete(Table.left_topic_entity.name(), LeftTopicEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
+//
+//        database.delete(Table.left_join_entity.name(), LeftJoinEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
+
+
+        SQLiteDatabase database = getReadableDatabase();
+
+        ResLeftSideMenu resLeftSideMenu = new ResLeftSideMenu();
+
+        Cursor teamCursor = database.query(Table.left_team.name(), null, LeftTeam.id + " = ? ", new String[]{String.valueOf(teamId)}, null, null, null);
+
+
+        if (teamCursor != null && teamCursor.getCount() > 0) {
+            teamCursor.moveToFirst();
+            resLeftSideMenu.team = convertTeam(teamCursor);
+        }
+        closeCursor(teamCursor);
+
+
+        Cursor myUserCursor = database.query(Table.left_user.name(), null, LeftUser.teamId + " = ? and " + LeftUser.isMe + " = 1", new String[]{String.valueOf(teamId)}, null, null, null);
+
+        if (myUserCursor != null && myUserCursor.getCount() > 0) {
+            myUserCursor.moveToFirst();
+
+            resLeftSideMenu.user = convertUser(myUserCursor);
+
+        } else {
+            resLeftSideMenu.user = new ResLeftSideMenu.User();
+        }
+
+        closeCursor(myUserCursor);
+
+        Cursor markerCursor = database.query(Table.left_message_marker.name(), null, LeftMessageMarkers.teamId + " = ?", new String[]{String.valueOf(teamId)}, null, null, null);
+
+        if (markerCursor != null && markerCursor.getCount() > 0) {
+
+            resLeftSideMenu.user.u_messageMarkers = convertMessageMarkers(markerCursor);
+
+        }
+
+        closeCursor(markerCursor);
+
+        Cursor starredCursor = database.query(Table.left_starred_entity.name(), null, LeftStarredEntity.teamId + " = ?", new String[]{String.valueOf(teamId)}, null, null, null);
+
+        if (starredCursor != null && starredCursor.getCount() > 0) {
+            resLeftSideMenu.user.u_starredEntities = convertStarred(starredCursor);
+        }
+
+        closeCursor(starredCursor);
+
+        Cursor entityCursor = database.query(Table.left_topic_entity.name(), null, LeftStarredEntity.teamId + " = ?", new String[]{String.valueOf(teamId)}, null, null, null);
+
+        if (entityCursor != null && entityCursor.getCount() > 0) {
+
+        }
+
+        return resLeftSideMenu;
+    }
+
+    private List<Integer> convertStarred(Cursor starredCursor) {
+        List<Integer> starredEntities = new ArrayList<Integer>();
+
+        while (starredCursor.moveToNext()) {
+            starredEntities.add(starredCursor.getInt(starredCursor.getColumnIndex(LeftStarredEntity.entityId.name())));
+        }
+        return starredEntities;
+    }
+
+    private List<ResLeftSideMenu.MessageMarker> convertMessageMarkers(Cursor markerCursor) {
+        List<ResLeftSideMenu.MessageMarker> messageMarkers = new ArrayList<ResLeftSideMenu.MessageMarker>();
+
+        while (markerCursor.moveToNext()) {
+            ResLeftSideMenu.MessageMarker messageMarker = new ResLeftSideMenu.MessageMarker();
+
+            messageMarker.entityId = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.entityId.name()));
+            messageMarker.entityType = markerCursor.getString(markerCursor.getColumnIndex(LeftMessageMarkers.entityType.name()));
+            messageMarker.lastLinkId = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.lastLinkId.name()));
+            messageMarker.alarmCount = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.alarmCount.name()));
+
+            messageMarkers.add(messageMarker);
+        }
+        return messageMarkers;
+    }
+
+    private ResLeftSideMenu.User convertUser(Cursor myUserCursor) {
+        int idIdx = myUserCursor.getColumnIndex(LeftUser.id.name());
+        int teamIdIdx = myUserCursor.getColumnIndex(LeftUser.teamId.name());
+        int nameIdx = myUserCursor.getColumnIndex(LeftUser.name.name());
+        int emailIdx = myUserCursor.getColumnIndex(LeftUser.email.name());
+        int authorityIdx = myUserCursor.getColumnIndex(LeftUser.authority.name());
+        int photoUrlIdx = myUserCursor.getColumnIndex(LeftUser.photoUrl.name());
+        int statusMessageIdx = myUserCursor.getColumnIndex(LeftUser.statusMessage.name());
+        int nickNameIdx = myUserCursor.getColumnIndex(LeftUser.nickName.name());
+        int phoneNumberIdx = myUserCursor.getColumnIndex(LeftUser.phoneNumber.name());
+        int departmentIdx = myUserCursor.getColumnIndex(LeftUser.department.name());
+        int positionIdx = myUserCursor.getColumnIndex(LeftUser.position.name());
+        int thumbLargeIdx = myUserCursor.getColumnIndex(LeftUser.thumbLarge.name());
+        int thumbMediumIdx = myUserCursor.getColumnIndex(LeftUser.thumbMedium.name());
+        int thumbSmallIdx = myUserCursor.getColumnIndex(LeftUser.thumbSmall.name());
+
+        ResLeftSideMenu.User user = new ResLeftSideMenu.User();
+
+        user.id = myUserCursor.getInt(idIdx);
+        user.teamId = myUserCursor.getInt(teamIdIdx);
+        user.name = myUserCursor.getString(nameIdx);
+        user.u_email = myUserCursor.getString(emailIdx);
+        user.u_authority = myUserCursor.getString(authorityIdx);
+        user.u_photoUrl = myUserCursor.getString(photoUrlIdx);
+        user.u_statusMessage = myUserCursor.getString(statusMessageIdx);
+        user.u_nickname = myUserCursor.getString(nickNameIdx);
+
+        user.u_extraData = new ResLeftSideMenu.ExtraData();
+        user.u_extraData.phoneNumber = myUserCursor.getString(phoneNumberIdx);
+        user.u_extraData.department = myUserCursor.getString(departmentIdx);
+        user.u_extraData.position = myUserCursor.getString(positionIdx);
+
+        user.u_photoThumbnailUrl = new ResMessages.ThumbnailUrls();
+        user.u_photoThumbnailUrl.smallThumbnailUrl = myUserCursor.getString(thumbSmallIdx);
+        user.u_photoThumbnailUrl.mediumThumbnailUrl = myUserCursor.getString(thumbMediumIdx);
+        user.u_photoThumbnailUrl.largeThumbnailUrl = myUserCursor.getString(thumbLargeIdx);
+        return user;
+    }
+
+    private ResLeftSideMenu.Team convertTeam(Cursor teamCursor) {
+        int idIdx = teamCursor.getColumnIndex(LeftTeam.id.name());
+        int nameIdx = teamCursor.getColumnIndex(LeftTeam.name.name());
+        int teamDomainIdx = teamCursor.getColumnIndex(LeftTeam.teamDomain.name());
+        int teamDefaultChannelIdIdx = teamCursor.getColumnIndex(LeftTeam.teamDefaultChannelId.name());
+
+        ResLeftSideMenu.Team team = new ResLeftSideMenu.Team();
+        team.id = teamCursor.getInt(idIdx);
+        team.name = teamCursor.getString(nameIdx);
+        team.t_domain = teamCursor.getString(teamDomainIdx);
+        team.t_defaultChannelId = teamCursor.getInt(teamDefaultChannelIdIdx);
+        return team;
     }
 }

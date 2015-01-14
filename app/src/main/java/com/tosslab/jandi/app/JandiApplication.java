@@ -73,10 +73,6 @@ public class JandiApplication extends Application {
         return mEntityManager;
     }
 
-    public void setEntityManager(EntityManager entityManager) {
-        mEntityManager = entityManager;
-    }
-
     public enum TrackerName {
         APP_TRACKER,
         GLOBAL_TRACKER,

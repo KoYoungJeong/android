@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -50,7 +49,7 @@ public class MainMoreFragment extends Fragment {
     @AfterInject
     void init() {
         mContext = getActivity();
-        mEntityManager = ((JandiApplication) getActivity().getApplication()).getEntityManager();
+        mEntityManager = EntityManager.getInstance(getActivity());
     }
 
     @AfterViews

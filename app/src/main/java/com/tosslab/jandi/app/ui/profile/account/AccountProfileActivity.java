@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -70,7 +69,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         super.onResume();
         EventBus.getDefault().register(this);
         initProfileView();
-        EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(AccountProfileActivity.this);
         trackGaAccountInfo(entityManager.getDistictId());
     }
 
@@ -211,7 +210,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
                     .flush()
                     .clear();
 
-            EntityManager entityManager = ((JandiApplication) getApplicationContext()).getEntityManager();
+            EntityManager entityManager = EntityManager.getInstance(AccountProfileActivity.this);
 
             MixpanelMemberAnalyticsClient
                     .getInstance(AccountProfileActivity.this, entityManager.getDistictId())

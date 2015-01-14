@@ -38,12 +38,12 @@ public class MemberProfileModel {
     JandiEntityClient mJandiEntityClient;
 
     public ResLeftSideMenu.User getProfile() throws JandiNetworkException {
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
         return mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
     }
 
     public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws JandiNetworkException {
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
         return mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 

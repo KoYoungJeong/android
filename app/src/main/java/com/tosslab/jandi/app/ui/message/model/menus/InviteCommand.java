@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -43,7 +42,7 @@ class InviteCommand implements MenuCommand {
         this.activity = activity;
         this.mJandiEntityClient = mJandiEntityClient;
         this.chattingInfomations = chattingInfomations;
-        entityManager = ((JandiApplication) activity.getApplicationContext()).getEntityManager();
+        entityManager = EntityManager.getInstance(activity);
     }
 
     @Override

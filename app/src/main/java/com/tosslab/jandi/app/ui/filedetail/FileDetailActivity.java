@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -71,7 +70,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         setUpActionBar();
 
-        mEntityManager = ((JandiApplication) getApplication()).getEntityManager();
+        mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
+
 
         getFileDetail();
     }

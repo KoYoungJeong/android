@@ -7,7 +7,6 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
@@ -50,7 +49,8 @@ public class FileListModel {
     }
 
     public EntityManager retrieveEntityManager() {
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
+
         if (entityManager != null) {
             return entityManager;
         }

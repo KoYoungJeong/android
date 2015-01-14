@@ -1,9 +1,12 @@
 package com.tosslab.jandi.app.lists.entities;
 
+import android.content.Context;
+
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.apache.log4j.Logger;
@@ -19,7 +22,9 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class EntityManager {
-    private final Logger log = Logger.getLogger(EntityManager.class);
+    private static final Logger log = Logger.getLogger(EntityManager.class);
+
+    private static EntityManager entityManager;
 
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
@@ -44,7 +49,21 @@ public class EntityManager {
 
     private int mTotalBadgeCount;
 
-    public EntityManager(ResLeftSideMenu resLeftSideMenu) {
+    private EntityManager(Context context) {
+        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+        init(resLeftSideMenu);
+    }
+
+    public static EntityManager getInstance(Context context) {
+        if (entityManager == null) {
+            entityManager = new EntityManager(context);
+        }
+
+        return entityManager;
+    }
+
+    void init(ResLeftSideMenu resLeftSideMenu) {
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
         mGroups = new HashMap<Integer, FormattedEntity>();
@@ -64,6 +83,16 @@ public class EntityManager {
         }
         arrangeEntities(resLeftSideMenu);
         mTotalBadgeCount = retrieveTotalBadgeCount();
+    }
+
+    public void refreshEntity(Context context) {
+        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+        init(resLeftSideMenu);
+    }
+
+    public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
+        init(resLeftSideMenu);
     }
 
     /**

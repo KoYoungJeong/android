@@ -85,7 +85,7 @@ public class AccountProfileModel {
 
     public String uploadImage(final File filePath, final ProgressDialog progressDialog) throws Exception {
 
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
 
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/settings/profiles/photo";

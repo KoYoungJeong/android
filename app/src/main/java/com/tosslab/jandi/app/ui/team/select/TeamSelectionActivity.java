@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteIgnoreEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -165,7 +164,6 @@ public class TeamSelectionActivity extends Activity {
 
         Team lastSelectedItem = teamSelectionPresenter.getLastSelectedItem();
         teamSelectionModel.updateSelectedTeam(lastSelectedItem);
-        teamSelectionModel.clearEntityManager();
         try {
             ResLeftSideMenu resLeftSideMenu = teamSelectionModel.updateIdentityManager(lastSelectedItem.getTeamId());
             teamSelectionModel.setEntityManager(resLeftSideMenu);
@@ -211,7 +209,6 @@ public class TeamSelectionActivity extends Activity {
     @Background
     void teamDomainResult(boolean isOwner) {
         teamSelectionPresenter.showProgressWheel();
-        teamSelectionModel.clearEntityManager();
 
         JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(TeamSelectionActivity.this);
         ResAccountInfo.UserTeam newSelectTeam = databaseManager.getSelectedTeamInfo();

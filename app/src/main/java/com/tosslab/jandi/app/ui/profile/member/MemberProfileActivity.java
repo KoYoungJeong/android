@@ -271,7 +271,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     private String getDistictId() {
-        EntityManager entityManager = ((JandiApplication) getApplication()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(MemberProfileActivity.this);
         return entityManager.getDistictId();
     }
 }

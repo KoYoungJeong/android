@@ -56,6 +56,12 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.AccountDevice.subscribe + " INTEGER" +
                     ");",
 
+            DatabaseConsts.Table.left_whole + " (" +
+                    DatabaseConsts.LeftWhole._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.LeftWhole.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.LeftWhole.whole + " TEXT " +
+                    ");",
+
             DatabaseConsts.Table.left_team + " (" +
                     DatabaseConsts.LeftTeam._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.LeftTeam.id + " INTEGER NOT NULL, " +
