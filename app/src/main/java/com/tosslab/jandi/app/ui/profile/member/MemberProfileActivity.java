@@ -12,12 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
+import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -57,8 +58,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     private Context mContext;
 
     private File mTempPhotoFile;  // 프로필 사진 변경시 선택한 임시 파일
-    private boolean attemptToUpdate = false;
+    private boolean attemptToUpdateData = false;
+    private boolean attemptToUpdateName = false;
     private boolean attemptToUpdatePhoto = false;
+    private boolean attemptToUpdateEmail = false;
 
     @AfterViews
     void bindAdapter() {
@@ -77,7 +80,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.clear();
 
-        if (attemptToUpdate || attemptToUpdatePhoto) {
+        if (attemptToUpdateData || attemptToUpdatePhoto || attemptToUpdateName || attemptToUpdateEmail) {
             getMenuInflater().inflate(R.menu.update_profile_menu, menu);
         }
         return true;
@@ -163,6 +166,14 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         );
     }
 
+    @Click(R.id.profile_user_realname)
+    void editName(View view) {
+        memberProfilePresenter.launchEditDialog(
+                EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
+                ((TextView) view)
+        );
+    }
+
     @Click(R.id.profile_user_division)
     void editDivision(View view) {
         // 부서
@@ -181,9 +192,26 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         );
     }
 
+    @Click(R.id.profile_user_email)
+    void editEmail(View view) {
+        String[] accountEmails = memberProfileModel.getAccountEmails();
+        String email = memberProfilePresenter.getEmail();
+        memberProfilePresenter.showEmailChooseDialog(accountEmails, email);
+    }
+
+    public void onEvent(MemberEmailChangeEvent event) {
+        memberProfilePresenter.updateEmailTextColor(event.getEmail());
+        attemptToUpdateEmail = true;
+        invalidateOptionsMenu();
+    }
+
     public void onEvent(ConfirmModifyProfileEvent event) {
         memberProfilePresenter.updateProfileTextColor(event.actionType, event.inputMessage);
-        attemptToUpdate = true;
+        if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
+            attemptToUpdateName = true;
+        } else {
+            attemptToUpdateData = true;
+        }
         invalidateOptionsMenu();
     }
 
@@ -193,7 +221,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Background
     void onUpdateProfile(ProgressDialog progressDialog) {
-        if (!attemptToUpdatePhoto && !attemptToUpdate) {
+        if (!attemptToUpdatePhoto && !attemptToUpdateData && !attemptToUpdateName && !attemptToUpdateEmail) {
             memberProfilePresenter.showToastNoUpdateProfile();
             return;
         }
@@ -216,22 +244,48 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
             memberProfilePresenter.dismissProgressDialog(progressDialog);
         }
-        if (attemptToUpdate) {
+        memberProfilePresenter.showProgressWheel();
+        if (attemptToUpdateData) {
             ReqUpdateProfile reqUpdateProfile = memberProfilePresenter.getUpdateProfile();
-            memberProfilePresenter.showProgressWheel();
             try {
                 ResLeftSideMenu.User me = memberProfileModel.updateProfile(reqUpdateProfile);
                 memberProfilePresenter.updateProfileSucceed();
-                attemptToUpdate = false;
+                attemptToUpdateData = false;
                 trackUpdateProfile(getDistictId(), me);
                 memberProfilePresenter.displayProfile(me);
             } catch (JandiNetworkException e) {
                 log.error("get profile failed", e);
                 memberProfilePresenter.updateProfileFailed();
-            } finally {
-                memberProfilePresenter.dismissProgressWheel();
             }
         }
+
+        if (attemptToUpdateName) {
+            String name = memberProfilePresenter.getName();
+            try {
+                memberProfileModel.updateProfileName(new ReqProfileName(name));
+                memberProfilePresenter.updateProfileSucceed();
+                attemptToUpdateName = false;
+                memberProfilePresenter.successUpdateNameColor();
+            } catch (JandiNetworkException e) {
+                e.printStackTrace();
+                memberProfilePresenter.updateProfileFailed();
+            }
+        }
+
+        if (attemptToUpdateEmail) {
+            String email = memberProfilePresenter.getEmail();
+            try {
+                memberProfileModel.updateProfileEmail(email);
+                memberProfilePresenter.updateProfileSucceed();
+                attemptToUpdateEmail = false;
+                memberProfilePresenter.successUpdateEmailColor();
+            } catch (JandiNetworkException e) {
+                memberProfilePresenter.updateProfileFailed();
+            }
+        }
+
+        memberProfilePresenter.dismissProgressWheel();
+
 
         invalidateOptionsMenu();
     }

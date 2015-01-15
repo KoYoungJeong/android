@@ -9,8 +9,11 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -23,6 +26,7 @@ import org.apache.http.client.methods.HttpPut;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -68,5 +72,29 @@ public class MemberProfileModel {
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();
+    }
+
+    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws JandiNetworkException {
+        EntityManager entityManager = EntityManager.getInstance(context);
+        return mJandiEntityClient.updateMemberName(entityManager.getMe().getId(), reqProfileName);
+    }
+
+    public String[] getAccountEmails() {
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+
+        int size = userEmails.size();
+        String[] emails = new String[size];
+
+        for (int idx = 0; idx < size; ++idx) {
+            emails[idx] = userEmails.get(idx).getId();
+        }
+
+        return emails;
+
+    }
+
+    public ResLeftSideMenu.User updateProfileEmail(String email) throws JandiNetworkException {
+        EntityManager entityManager = EntityManager.getInstance(context);
+        return mJandiEntityClient.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 }

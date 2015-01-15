@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.profile;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -40,11 +41,15 @@ public interface ProfileApiClient {
 
     @Put("/members/{memberId}/profile")
     @RequiresAuthentication
-    ResLeftSideMenu.User updateUserProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
+    ResLeftSideMenu.User updateMemberProfile(int memberId, ReqUpdateProfile reqUpdateProfile);
 
     @Put("/members/{memberId}/name")
     @RequiresAuthentication
-    ResCommon updateUserName(int memberId, ReqProfileName reqProfileName);
+    ResCommon updateMemberName(int memberId, ReqProfileName reqProfileName);
+
+    @Put("/members/{memberId}/email")
+    @RequiresAuthentication
+    ResLeftSideMenu.User updateMemberEmail(int memberId, ReqAccountEmail reqAccountEmail);
 
     @Post("/members/name")
     @RequiresAuthentication
