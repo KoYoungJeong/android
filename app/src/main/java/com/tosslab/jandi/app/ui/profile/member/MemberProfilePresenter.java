@@ -66,7 +66,9 @@ public class MemberProfilePresenter {
     @UiThread
     public void showProgressWheel() {
 
-        dismissProgressWheel();
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
 
         if (progressWheel != null) {
             progressWheel.show();
