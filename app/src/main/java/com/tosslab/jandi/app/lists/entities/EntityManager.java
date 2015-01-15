@@ -388,12 +388,11 @@ public class EntityManager {
      * **********************************************************
      */
     public boolean hasNewTopicMessage() {
-        return hasNewMessage(getJoinedChannels());
+        return hasNewMessage(getJoinedChannels()) || hasNewMessage(getGroups());
     }
 
     public boolean hasNewChatMessage() {
-        return hasNewMessage(getGroups())
-                || hasNewMessage(getFormattedUsersWithoutMe());
+        return hasNewMessage(getFormattedUsersWithoutMe());
     }
 
     private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
