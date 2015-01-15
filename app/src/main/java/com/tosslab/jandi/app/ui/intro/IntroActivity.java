@@ -73,7 +73,6 @@ public class IntroActivity extends Activity {
     @Background
     void refreshTokenAndGoNextActivity(long initTime) {
         try {
-            introModel.refreshToken();
             introModel.refreshAccountInfo();
             introModel.refreshEntityInfo();
             introModel.sleep(initTime, MAX_DELAY_MS);

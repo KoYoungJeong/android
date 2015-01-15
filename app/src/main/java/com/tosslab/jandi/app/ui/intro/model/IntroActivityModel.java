@@ -97,18 +97,6 @@ public class IntroActivityModel {
         return TextUtils.isEmpty(refreshToken);
     }
 
-    public void refreshToken() throws JandiNetworkException {
-        try {
-            String refreshToken = JandiPreference.getRefreshToken(context);
-
-            // in logic, get access token and then save token.
-            new TokenRefreshRequest(context, refreshToken).request();
-
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        }
-    }
-
     public void refreshAccountInfo() throws JandiNetworkException {
 
         AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);

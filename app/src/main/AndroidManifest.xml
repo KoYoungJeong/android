@@ -160,6 +160,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".push.PushInterfaceActivity_" />
+
     </application>
 
     // for samsung or sony device to show badge

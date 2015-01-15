@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -205,7 +204,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
-        Intent intent = new Intent(context, MessageListActivity_.class);
+        Intent intent = new Intent(context, PushInterfaceActivity_.class);
         if (chatType >= 0 && chatId >= 0) {
             intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, chatId);
             intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, chatType);
