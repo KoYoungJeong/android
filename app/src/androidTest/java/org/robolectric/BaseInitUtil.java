@@ -18,13 +18,13 @@ import org.robolectric.shadows.ShadowLog;
 public class BaseInitUtil {
 
     public static final String TEST_ID = "steve@tosslab.com";
-    public static final String TEXT_PASSWORD = "dnrl~12AB";
+    public static final String TEST_PASSWORD = "dnrl~12AB";
 
     public static void initData(Context context) {
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
         JandiRestClient jandiRestClient = new JandiRestClient_(context);
-        ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(TEST_ID, TEXT_PASSWORD));
+        ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
         TokenUtil.saveTokenInfoByPassword(context, accessToken);
 
         jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));

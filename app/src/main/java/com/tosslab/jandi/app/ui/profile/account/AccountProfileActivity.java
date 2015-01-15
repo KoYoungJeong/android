@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.SignOutEvent;
-import com.tosslab.jandi.app.events.profile.AccountEmailChangeEvent;
 import com.tosslab.jandi.app.events.profile.ProfileImageCompleteEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -57,7 +56,6 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
     @Bean
     AccountProfileModel accountProfileModel;
 
-    private boolean isNeedUploadPrimaryEmail;
     private boolean isNeedUploadName;
     private boolean isNeedUploadImage;
     private File tempFile;
@@ -117,7 +115,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
 
         menu.clear();
 
-        if (isNeedUploadImage || isNeedUploadName || isNeedUploadPrimaryEmail) {
+        if (isNeedUploadImage || isNeedUploadName) {
             getMenuInflater().inflate(R.menu.account_profile_change, menu);
         }
 
@@ -148,11 +146,6 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
             }
 
             accountProfilePresenter.showProgressDialog();
-            if (isNeedUploadPrimaryEmail) {
-                // 이메일 업로드
-                resAccountInfo = accountProfileModel.uploadPrimaryEmail(accountProfilePresenter.getPrimaryEmail());
-                isNeedUploadPrimaryEmail = false;
-            }
             if (isNeedUploadName) {
                 // 이름 업로드
                 resAccountInfo = accountProfileModel.uploadName(accountProfilePresenter.getName());
@@ -270,16 +263,6 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         isNeedUploadImage = true;
         invalidateOptionsMenu();
 
-    }
-
-    public void onEvent(AccountEmailChangeEvent event) {
-
-        if (!TextUtils.equals(event.getUserEmail().getId(), accountProfileModel.getAccountPrimaryEmail())) {
-            // if same Primary & choosed Email
-            isNeedUploadPrimaryEmail = true;
-            accountProfilePresenter.setEmail(event.getUserEmail().getId());
-            invalidateOptionsMenu();
-        }
     }
 
     public void onEvent(ProfileImageCompleteEvent e) {

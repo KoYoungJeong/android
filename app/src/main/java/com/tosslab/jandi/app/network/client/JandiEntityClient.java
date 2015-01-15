@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
 import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
@@ -32,6 +33,7 @@ import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
+import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
@@ -396,13 +398,42 @@ public class JandiEntityClient {
                 public ResLeftSideMenu.User request() throws JandiNetworkException {
                     ProfileApiClient profileApiClient = new ProfileApiClient_(context);
                     profileApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                    return profileApiClient.updateUserProfile(entityId, reqUpdateProfile);
+                    return profileApiClient.updateMemberProfile(entityId, reqUpdateProfile);
                 }
             }).request();
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         }
+    }
+
+    public ResCommon updateMemberName(final int entityId, final ReqProfileName profileName) throws JandiNetworkException {
+        try {
+
+            return RequestManager.newInstance(context, new Request<ResCommon>() {
+                @Override
+                public ResCommon request() throws JandiNetworkException {
+                    ProfileApiClient profileApiClient = new ProfileApiClient_(context);
+                    profileApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+                    return profileApiClient.updateMemberName(entityId, profileName);
+                }
+            }).request();
+
+        } catch (HttpStatusCodeException e) {
+            throw new JandiNetworkException(e);
+        }
+    }
+
+    public ResLeftSideMenu.User updateMemberEmail(int entityId, String email) throws JandiNetworkException {
+        return RequestManager.newInstance(context, new Request<ResLeftSideMenu.User>() {
+            @Override
+            public ResLeftSideMenu.User request() throws JandiNetworkException {
+
+                ProfileApiClient profileApiClient = new ProfileApiClient_(context);
+                profileApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+                return profileApiClient.updateMemberEmail(entityId, new ReqAccountEmail(email));
+            }
+        }).request();
     }
 
     /**

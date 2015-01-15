@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.profile;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -13,6 +14,7 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -60,7 +62,7 @@ public class ProfileApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
@@ -80,7 +82,7 @@ public class ProfileApiClientTest {
         reqUpdateProfile.statusMessage = "test " + oldStatusMessage;
         reqUpdateProfile.phoneNumber = "test " + oldPhoneNumber;
 
-        profileApiClient.updateUserProfile(sideMenu.user.id, reqUpdateProfile);
+        profileApiClient.updateMemberProfile(sideMenu.user.id, reqUpdateProfile);
 
         ResLeftSideMenu sideMenu1 = getSideMenu();
 
@@ -94,8 +96,17 @@ public class ProfileApiClientTest {
         reqUpdateProfile.statusMessage = oldStatusMessage;
         reqUpdateProfile.phoneNumber = oldPhoneNumber;
 
-        profileApiClient.updateUserProfile(sideMenu.user.id, reqUpdateProfile);
+        profileApiClient.updateMemberProfile(sideMenu.user.id, reqUpdateProfile);
 
+
+    }
+
+    @Test
+    public void testUpdateUserEmail() throws Exception {
+
+        ResLeftSideMenu.User user = profileApiClient.updateMemberEmail(sideMenu.user.id, new ReqAccountEmail("jsuch2362@gmail.com"));
+
+        assertThat(user, is(notNullValue()));
 
     }
 
@@ -104,7 +115,7 @@ public class ProfileApiClientTest {
         ResCommon user = null;
         String oldName = sideMenu.user.name;
         try {
-            user = profileApiClient.updateUserName(sideMenu.user.id, new ReqProfileName("test " + oldName));
+            user = profileApiClient.updateMemberName(sideMenu.user.id, new ReqProfileName("test " + oldName));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -115,7 +126,7 @@ public class ProfileApiClientTest {
 
         assertThat(sideMenu1.user.name, is(equalTo("test " + oldName)));
 
-        profileApiClient.updateUserName(sideMenu.user.id, new ReqProfileName(oldName));
+        profileApiClient.updateMemberName(sideMenu.user.id, new ReqProfileName(oldName));
 
     }
 }

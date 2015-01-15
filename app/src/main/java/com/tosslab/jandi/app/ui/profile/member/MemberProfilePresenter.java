@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
+import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -24,6 +27,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 31..
@@ -173,6 +178,9 @@ public class MemberProfilePresenter {
             case EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION:
                 setTextAndChangeColor(textViewProfileUserPosition, inputMessage);
                 break;
+            case EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                setTextAndChangeColor(textViewProfileRealName, inputMessage);
+                break;
             default:
                 break;
         }
@@ -228,4 +236,53 @@ public class MemberProfilePresenter {
         activity.finish();
     }
 
+    public String getName() {
+        return textViewProfileRealName.getText().toString();
+    }
+
+    @UiThread
+    public void successUpdateNameColor() {
+        textViewProfileRealName.setTextColor(activity.getResources().getColor(R.color.jandi_text));
+
+    }
+
+    public void showEmailChooseDialog(String[] emails, String currentEmail) {
+
+        int checkedIdx = 0;
+
+        for (int idx = 0; idx < emails.length; idx++) {
+
+            if (TextUtils.equals(emails[idx], currentEmail)) {
+                checkedIdx = idx;
+                break;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.jandi_choose_email)
+                .setSingleChoiceItems(emails, checkedIdx, null)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int checkedItemPosition = ((AlertDialog) dialog).getListView().getCheckedItemPosition();
+                        EventBus.getDefault().post(new MemberEmailChangeEvent(emails[checkedItemPosition]));
+                    }
+                })
+                .create().show();
+    }
+
+    public String getEmail() {
+
+        return textViewProfileUserEmail.getText().toString();
+    }
+
+    public void updateEmailTextColor(String email) {
+        setTextAndChangeColor(textViewProfileUserEmail, email);
+    }
+
+    @UiThread
+    public void successUpdateEmailColor() {
+        textViewProfileUserEmail.setTextColor(activity.getResources().getColor(R.color.jandi_text));
+    }
 }
