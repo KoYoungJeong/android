@@ -1,17 +1,15 @@
 package com.tosslab.jandi.app.ui.maintab;
 
 import android.app.ActionBar;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -54,16 +52,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private ViewPager mViewPager;
 
     private boolean isFirst = true;    // poor implementation
-    /**
-     * JandiGCMBroadcastReceiver로부터 Push가 들어왔다는 event가 MainTabActivity를 보고 있을 때
-     * 발생한다면 알람 카운트 갱신을 위해 다시 받아온다.
-     */
-    private BroadcastReceiver mRefreshEntities = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            getEntities();
-        }
-    };
 
     @AfterViews
     void initView() {
@@ -118,13 +106,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // Push가 MainTabActivity를 보고 있을 때
-        // 발생한다면 알람 카운트 갱신을 위한 BR 등록
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(JandiConstants.PUSH_REFRESH_ACTION);
-        registerReceiver(mRefreshEntities, intentFilter);
-
         // Entity의 리스트를 획득하여 저장한다.
+        EventBus.getDefault().register(this);
         getEntities();
     }
 
@@ -136,8 +119,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Override
     public void onPause() {
-        unregisterReceiver(mRefreshEntities);
         super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -221,5 +204,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private void postShowChattingListEvent() {
         EventBus.getDefault().post(new RetrieveTopicListEvent());
+    }
+
+    public void onEvent(MessagePushEvent event) {
+        if (!TextUtils.equals(event.getEntityType(), "user")) {
+            getEntities();
+        }
     }
 }

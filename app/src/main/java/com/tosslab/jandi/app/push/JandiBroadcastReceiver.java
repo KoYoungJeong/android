@@ -22,6 +22,7 @@ import com.parse.ParsePush;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -29,6 +30,8 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 14. 12. 3..
@@ -80,6 +83,11 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                     sendNotificationWithProfile(context, messagePush);
                     // Update count of badge
                     BadgeUtils.setBadge(context, recalculateBadgeCount(context));
+
+                    EventBus eventBus = EventBus.getDefault();
+                    if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
+                        eventBus.post(new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
+                    }
                 } else if (type.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
                     PushTO.SubscribePush subscribePush = (PushTO.SubscribePush) pushTOInfo;
                     subscribeTopic(subscribePush.getChatId());

@@ -270,4 +270,5 @@
     <string name="jandi_already_linked_email">"這電子郵件已經連結到您的帳號"</string>
     <string name="jandi_add_an_email_address">"增加一個電子郵件地址"</string>
     <string name="jandi_messages">"私信"</string>
+    <string name="jandi_topic_paricipants">"議題參與成員"</string>
 </resources>

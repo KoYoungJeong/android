@@ -3,9 +3,12 @@ package com.tosslab.jandi.app.dialogs;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,6 +155,37 @@ public class UserInfoDialogFragment extends DialogFragment {
                 .transform(new GlideCircleTransform(getActivity()))
                 .into(imgUserPhoto);
 
+        if (!TextUtils.isEmpty(userProfileUrl)) {
+            imgUserPhoto.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Dialog alertDialog = new Dialog(getActivity());
+                    ImageView profileView = new ImageView(getActivity());
+                    profileView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    alertDialog.setContentView(profileView);
+
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    Window alertWindow = alertDialog.getWindow();
+
+                    DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+                    WindowManager.LayoutParams attributes = alertWindow.getAttributes();
+                    attributes.width = displayMetrics.widthPixels;
+                    attributes.height = displayMetrics.heightPixels;
+                    alertWindow.setAttributes(attributes);
+                    alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    alertDialog.show();
+
+                    Glide.with(getActivity())
+                            .load(userProfileUrl)
+                            .crossFade()
+                            .into(profileView);
+
+                }
+            });
+        }
+
         // creating the fullscreen dialog
         final Dialog dialog = new Dialog(getActivity());
         dialog.setCancelable(true);
@@ -162,7 +196,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        window.setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         return dialog;
     }
 

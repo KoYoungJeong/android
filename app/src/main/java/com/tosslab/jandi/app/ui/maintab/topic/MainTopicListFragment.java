@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
@@ -9,6 +10,7 @@ import android.widget.ExpandableListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -165,6 +167,12 @@ public class MainTopicListFragment extends Fragment {
         List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         mainTopicPresenter.setEntities(joinEntities, unjoinEntities);
+    }
+
+    public void onEvent(MessagePushEvent event) {
+        if (!TextUtils.equals(event.getEntityType(), "user")) {
+
+        }
     }
 
 }

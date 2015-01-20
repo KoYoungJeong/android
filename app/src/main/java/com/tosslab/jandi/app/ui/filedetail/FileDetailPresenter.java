@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -175,6 +176,9 @@ public class FileDetailPresenter {
                         } else if (fileMessage.content.type.startsWith("text")) {
                             iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
                             imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
+                        } else if (TextUtils.equals(fileMessage.content.type, "application/x-hwp")) {
+                            iconFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_hwp);
                         } else if (FormatConverter.isMsOfficeMimeType(fileMessage.content.type)) {
                             iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
                             imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);

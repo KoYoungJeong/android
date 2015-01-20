@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -53,7 +52,7 @@ public class MemberProfileModel {
 
     public String uploadProfilePhoto(final ProgressDialog progressDialog, File file) throws ExecutionException, InterruptedException {
 
-        EntityManager entityManager = ((JandiApplication) context.getApplicationContext()).getEntityManager();
+        EntityManager entityManager = EntityManager.getInstance(context);
 
         String requestURL
                 = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";

@@ -257,8 +257,8 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-//        tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
-        tempFile = new File(ImageFilePath.getTempPath());
+        tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
+//        tempFile = new File(ImageFilePath.getTempPath());
         accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
         isNeedUploadImage = true;
         invalidateOptionsMenu();

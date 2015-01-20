@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -69,6 +70,8 @@ public class SearchedFileItemView extends RelativeLayout {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_pdf);
             } else if (fileType.startsWith("text")) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
+            } else if (TextUtils.equals(fileType, "application/x-hwp")) {
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
             } else if (FormatConverter.isMsOfficeMimeType(fileType)) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
             } else {

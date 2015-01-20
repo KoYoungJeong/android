@@ -286,4 +286,5 @@
     <string name="jandi_already_linked_email">"이미 계정과 연동되어있는 이메일입니다"</string>
     <string name="jandi_add_an_email_address">"이메일 추가하기"</string>
     <string name="jandi_messages">"메시지"</string>
+    <string name="jandi_topic_paricipants">"참여 멤버"</string>
 </resources>

@@ -59,6 +59,11 @@ public class MenuCommandBuilder {
                 LeaveEntityCommand_ leaveEntityCommand_ = LeaveEntityCommand_.getInstance_(activity);
                 leaveEntityCommand_.initData(activity, mJandiEntityClient, chattingInfomations);
                 return leaveEntityCommand_;
+            case R.id.action_entity_members:
+            case R.id.action_my_entity_members:
+                TopicParticipantCommand topicParticipantCommand = TopicParticipantCommand_.getInstance_(activity);
+                topicParticipantCommand.setEntity(chattingInfomations.entityId);
+                return topicParticipantCommand;
         }
         return null;
     }

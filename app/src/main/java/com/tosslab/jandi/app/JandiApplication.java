@@ -64,15 +64,6 @@ public class JandiApplication extends Application {
         return mTrackers.get(trackerId);
     }
 
-    /**
-     * *********************************************************
-     * Accessors for global
-     * **********************************************************
-     */
-    public EntityManager getEntityManager() {
-        return mEntityManager;
-    }
-
     public enum TrackerName {
         APP_TRACKER,
         GLOBAL_TRACKER,

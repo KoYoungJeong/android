@@ -25,7 +25,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="justin"
             android:textSize="@dimen/jandi_file_detail_text_user_name"
             android:textStyle="bold" />
 
@@ -33,7 +32,6 @@
             android:id="@+id/txt_file_detail_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="date"
             android:textColor="@color/jandi_file_detail_date"
             android:textSize="@dimen/jandi_file_detail_text_date" />
     </LinearLayout>
@@ -73,7 +71,6 @@
                 android:id="@+id/txt_file_detail_file_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 Kb Text"
                 android:textColor="@color/jandi_file_detail_type_text"
                 android:textSize="@dimen/jandi_file_detail_file_type_text" />
 
@@ -83,7 +80,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txt_file_detail_file_info"
                 android:layout_marginTop="8dp"
-                android:text="Shared in "
                 android:textColor="@color/jandi_file_detail_share_text"
                 android:textSize="@dimen/jandi_file_detail_file_share_text" />
 
