@@ -136,6 +136,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MainTabActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
             log.error(e.getErrorInfo() + "get entity failed", e);

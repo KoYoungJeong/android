@@ -1,14 +1,14 @@
 package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
-import android.text.TextUtils;
 
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResChat;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -16,6 +16,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
@@ -45,26 +46,29 @@ public class MainChatListModel {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
-        Observable.from(chatList)
+        Iterator<ChatItem> iterator = Observable.from(chatList)
                 .map(resChat -> {
 
-                    ResLeftSideMenu.User userEntity = JandiEntityDatabaseManager.getInstance(context).getUserEntity(teamId, resChat.getEntityId());
+                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getEntityId());
 
                     ChatItem chatItem = new ChatItem();
-                    chatItem.entityId(userEntity.id)
+                    chatItem.entityId(userEntity.getId())
                             .lastLinkId(resChat.getLastLinkId())
                             .lastMessage(resChat.getLastMessage())
                             .lastMessageId(resChat.getLastMessageId())
-                            .name(userEntity.name)
+                            .name(userEntity.getName())
                             .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getEntityId()))
                             .unread(resChat.getUnread())
-                            .photo(!(TextUtils.isEmpty(userEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? userEntity.u_photoThumbnailUrl.largeThumbnailUrl : userEntity.u_photoUrl);
+                            .photo(userEntity.getUserLargeProfileUrl());
 
                     return chatItem;
                 })
-                .collect(() -> chatItems, (chatItems1, chatItem) -> chatItems1.add(chatItem))
-                .subscribe()
-                .unsubscribe();
+                .toBlocking()
+                .getIterator();
+
+        while (iterator.hasNext()) {
+            chatItems.add(iterator.next());
+        }
 
         return chatItems;
     }

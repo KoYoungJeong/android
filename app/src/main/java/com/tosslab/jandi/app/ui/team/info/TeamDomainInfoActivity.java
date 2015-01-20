@@ -93,7 +93,15 @@ public class TeamDomainInfoActivity extends Activity {
 
 
         initUserEmailInfo();
+        initUserDefaultName();
 
+
+    }
+
+    @Background
+    void initUserDefaultName() {
+        String name = teamDomainInfoModel.getUserName();
+        teamDomainInfoPresenter.setDefaultName(name);
 
     }
 

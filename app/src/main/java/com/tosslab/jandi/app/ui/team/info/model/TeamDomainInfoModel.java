@@ -106,6 +106,10 @@ public class TeamDomainInfoModel {
         }
     }
 
+    public String getUserName() {
+        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
+    }
+
     public interface Callback {
         void onTeamCreateSuccess(String name, int memberId, int teamId);
 

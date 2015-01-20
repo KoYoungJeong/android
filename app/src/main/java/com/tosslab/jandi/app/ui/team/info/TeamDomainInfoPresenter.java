@@ -141,4 +141,8 @@ public class TeamDomainInfoPresenter {
 
     }
 
+    @UiThread
+    public void setDefaultName(String name) {
+        myNameView.setText(name);
+    }
 }

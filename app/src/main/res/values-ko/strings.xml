@@ -287,4 +287,5 @@
     <string name="jandi_add_an_email_address">"이메일 추가하기"</string>
     <string name="jandi_messages">"메시지"</string>
     <string name="jandi_topic_paricipants">"참여 멤버"</string>
+    <string name="jandi_new_team_name">"새로운 팀 이름"</string>
 </resources>

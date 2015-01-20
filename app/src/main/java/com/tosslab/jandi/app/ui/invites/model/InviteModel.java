@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.invites.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -33,4 +35,15 @@ public class InviteModel {
         return RequestManager.newInstance(context, new InviteRequest(context, teamId, invites)).request();
     }
 
+    public boolean isNotMyEmail(String emailText) {
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+
+        for (ResAccountInfo.UserEmail userEmail : userEmails) {
+            if (TextUtils.equals(emailText, userEmail.getId())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

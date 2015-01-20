@@ -139,7 +139,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @Click(R.id.btn_invitation_confirm)
     void onInviteListAddClick() {
         String emailText = invitePresenter.getEmailText();
-        if (!invitePresenter.getInvites().contains(emailText)) {
+        if (!invitePresenter.getInvites().contains(emailText) && inviteModel.isNotMyEmail(emailText)) {
             invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
         }
         invitePresenter.clearEmailTextView();

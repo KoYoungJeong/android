@@ -12,6 +12,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
@@ -30,7 +31,7 @@ public class ChatChooseModel {
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
-        Observable.from(formattedUsersWithoutMe)
+        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -42,8 +43,12 @@ public class ChatChooseModel {
 
                     return chatChooseItem;
                 })
-                .collect(() -> chatChooseItems, (chatChooseItems1, chatChooseItem) -> chatChooseItems1.add(chatChooseItem)
-                ).subscribe().unsubscribe();
+                .toBlocking()
+                .getIterator();
+
+        while (iterator.hasNext()) {
+            chatChooseItems.add(iterator.next());
+        }
 
 
         return chatChooseItems;
@@ -56,7 +61,7 @@ public class ChatChooseModel {
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
-        Observable.from(formattedUsersWithoutMe)
+        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
                 .filter(formattedEntity -> !TextUtils.isEmpty(formattedEntity.getName()) && formattedEntity.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
@@ -69,8 +74,12 @@ public class ChatChooseModel {
 
                     return chatChooseItem;
                 })
-                .collect(() -> chatChooseItems, (chatChooseItems1, chatChooseItem) -> chatChooseItems1.add(chatChooseItem)
-                ).subscribe().unsubscribe();
+                .toBlocking()
+                .getIterator();
+
+        while (iterator.hasNext()) {
+            chatChooseItems.add(iterator.next());
+        }
 
 
         return chatChooseItems;

@@ -128,14 +128,6 @@ public class FileListFragment extends Fragment {
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
-
-        ResSearchFile files = fileListModel.getFiles(selectedTeamId);
-
-        if (files != null) {
-            mAdapter.insert(files);
-        }
-        mAdapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -248,6 +240,7 @@ public class FileListFragment extends Fragment {
     @Background
     void doSearchInBackground() {
 
+
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             reqSearchFile.teamId = selectedTeamId;
@@ -269,7 +262,7 @@ public class FileListFragment extends Fragment {
 
     private void updateAdapter(ResSearchFile resSearchFile) {
         if (resSearchFile.fileCount > 0) {
-            mAdapter.insert(resSearchFile);
+            mAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
             mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
         }
 
@@ -330,7 +323,7 @@ public class FileListFragment extends Fragment {
 
                 justGetFilesSize = resSearchFile.fileCount;
                 if (justGetFilesSize > 0) {
-                    mAdapter.insert(resSearchFile);
+                    mAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
                     mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
                 }
                 return null;

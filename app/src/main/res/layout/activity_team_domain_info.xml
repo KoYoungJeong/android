@@ -17,7 +17,7 @@
         <EditText
             android:id="@+id/et_team_detail_info_team_name"
             style="@style/JandiTeam.EditText"
-            android:hint="@string/team_info" />
+            android:hint="@string/jandi_new_team_name" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,7 +53,7 @@
         <EditText
             android:id="@+id/et_team_detail_info_member_name"
             style="@style/JandiTeam.EditText"
-            android:hint="이름"
+            android:hint="@string/jandi_title_name"
             android:imeOptions="actionDone"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
