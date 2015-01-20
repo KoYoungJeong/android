@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.local.database;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -8,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 10;
 
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
@@ -131,6 +133,8 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        ContentValues contentValues = getSelectedTeamValues(db);
+
         for (DatabaseConsts.Table table : DatabaseConsts.Table.values()) {
             db.execSQL("DROP TABLE IF EXISTS " + table);
         }
@@ -138,5 +142,41 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
         for (String createTable : CREATE_TABLES) {
             db.execSQL("CREATE TABLE IF NOT EXISTS " + createTable);
         }
+
+        if (contentValues != null) {
+            db.insert(DatabaseConsts.Table.account_team.name(), null, contentValues);
+        }
+    }
+
+    private ContentValues getSelectedTeamValues(SQLiteDatabase db) {
+
+        ContentValues contentValues = null;
+
+        String selection = DatabaseConsts.AccountTeam.selected + " = 1";
+        Cursor cursor = db.query(DatabaseConsts.Table.account_team.name(), null, selection, null, null, null, null);
+
+
+        try {
+            if (cursor != null && cursor.getCount() > 0) {
+                cursor.moveToFirst();
+                contentValues = new ContentValues();
+
+                for (String columnName : cursor.getColumnNames()) {
+                    int columnIndex = cursor.getColumnIndex(columnName);
+                    int type = cursor.getType(columnIndex);
+
+                    if (type == Cursor.FIELD_TYPE_INTEGER) {
+                        contentValues.put(columnName, cursor.getInt(columnIndex));
+                    } else if (type == Cursor.FIELD_TYPE_STRING) {
+                        contentValues.put(columnName, cursor.getString(columnIndex));
+                    }
+                }
+            }
+        } finally {
+            if (cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return contentValues;
     }
 }
