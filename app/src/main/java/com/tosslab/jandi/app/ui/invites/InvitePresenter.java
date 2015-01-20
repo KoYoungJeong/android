@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.adapter.InviteListAdapter;
 import com.tosslab.jandi.app.ui.invites.to.EmailTO;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -157,5 +158,10 @@ public class InvitePresenter {
     public void clearItems() {
         adapter.clear();
         notifyDatasetChanged();
+    }
+
+    @UiThread
+    public void showErrorToast(String message) {
+        ColoredToast.showError(activity, message);
     }
 }

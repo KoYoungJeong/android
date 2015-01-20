@@ -82,7 +82,6 @@ public class InviteActivity extends BaseAnalyticsActivity {
     void onInviteOptionSelected() {
         List<String> invites = invitePresenter.getInvites();
         if (invites != null && !invites.isEmpty()) {
-            invitePresenter.showProgressWheel();
             invite(invites);
         } else {
             // No Item Dialog
@@ -97,19 +96,21 @@ public class InviteActivity extends BaseAnalyticsActivity {
 
     @Background
     void invite(List<String> invites) {
+        invitePresenter.showProgressWheel();
 
         try {
             inviteModel.inviteMembers(invites);
+            invitePresenter.clearItems();
+            invitePresenter.showSuccessDialog();
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody);
+            invitePresenter.showErrorToast(getString(R.string.err_team_creation_failed));
+        } finally {
+            // invite success dialog
+            invitePresenter.dismissProgressWheel();
+
         }
 
-
-        // invite success dialog
-        invitePresenter.clearItems();
-        invitePresenter.dismissProgressWheel();
-
-        invitePresenter.showSuccessDialog();
     }
 
     @OptionsItem(R.id.action_delete)
