@@ -201,6 +201,7 @@ public class FileDetailPresenter {
             }
         }
 
+        fileDetailCommentListAdapter.clear();
         fileDetailCommentListAdapter.updateFileComments(resFileDetail);
         fileDetailCommentListAdapter.notifyDataSetChanged();
     }
@@ -237,7 +238,9 @@ public class FileDetailPresenter {
 
     @UiThread
     public void showProgressWheel() {
-        dismissProgressWheel();
+        if (mProgressWheel != null && mProgressWheel.isShowing()) {
+            mProgressWheel.dismiss();
+        }
 
         if (mProgressWheel != null) {
             mProgressWheel.show();

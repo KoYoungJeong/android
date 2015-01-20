@@ -56,12 +56,7 @@ public class MessageManipulator {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
 
-        JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
 
-        directMessageApiClient.setAuthentication(requestAuthentication);
-        groupMessageApiClient.setAuthentication(requestAuthentication);
-        channelMessageApiClient.setAuthentication(requestAuthentication);
-        jandiRestClient.setAuthentication(requestAuthentication);
 
     }
 
@@ -77,6 +72,12 @@ public class MessageManipulator {
         return RequestManager.newInstance(context, new Request<ResMessages>() {
             @Override
             public ResMessages request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                directMessageApiClient.setAuthentication(requestAuthentication);
+                groupMessageApiClient.setAuthentication(requestAuthentication);
+                channelMessageApiClient.setAuthentication(requestAuthentication);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         return channelMessageApiClient.getPublicTopicMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
@@ -97,6 +98,12 @@ public class MessageManipulator {
         return RequestManager.newInstance(context, new Request<ResUpdateMessages>() {
             @Override
             public ResUpdateMessages request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                directMessageApiClient.setAuthentication(requestAuthentication);
+                groupMessageApiClient.setAuthentication(requestAuthentication);
+                channelMessageApiClient.setAuthentication(requestAuthentication);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         return channelMessageApiClient.getPublicTopicUpdatedMessages(selectedTeamId, mEntityId, fromCurrentId);
@@ -116,6 +123,12 @@ public class MessageManipulator {
         return RequestManager.newInstance(context, new Request<ResCommon>() {
             @Override
             public ResCommon request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                directMessageApiClient.setAuthentication(requestAuthentication);
+                groupMessageApiClient.setAuthentication(requestAuthentication);
+                channelMessageApiClient.setAuthentication(requestAuthentication);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 String entityType;
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -144,6 +157,12 @@ public class MessageManipulator {
         return RequestManager.newInstance(context, new Request<ResCommon>() {
             @Override
             public ResCommon request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                directMessageApiClient.setAuthentication(requestAuthentication);
+                groupMessageApiClient.setAuthentication(requestAuthentication);
+                channelMessageApiClient.setAuthentication(requestAuthentication);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         return channelMessageApiClient.sendPublicTopicMessage(sendingMessage, mEntityId);
@@ -164,6 +183,12 @@ public class MessageManipulator {
         return RequestManager.newInstance(context, new Request<ResCommon>() {
             @Override
             public ResCommon request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                directMessageApiClient.setAuthentication(requestAuthentication);
+                groupMessageApiClient.setAuthentication(requestAuthentication);
+                channelMessageApiClient.setAuthentication(requestAuthentication);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         return channelMessageApiClient.deletePublicTopicMessage(selectedTeamId, mEntityId, messageId);

@@ -153,12 +153,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      */
     @UiThread
     void getFileDetail() {
-        fileDetailPresenter.showProgressWheel();
         getFileDetailInBackend();
     }
 
     @Background
     void getFileDetailInBackend() {
+        fileDetailPresenter.showProgressWheel();
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
@@ -172,18 +172,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
+
     }
 
     @UiThread
     void getFileDetailSucceed(ResFileDetail resFileDetail) {
-        fileDetailPresenter.showProgressWheel();
         fileDetailPresenter.drawFileDetail(resFileDetail);
     }
 
     @UiThread
     void getFileDetailFailed(String errMessage) {
-        fileDetailPresenter.dismissProgressWheel();
         ColoredToast.showError(this, errMessage);
     }
 
@@ -346,19 +347,21 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Background
     public void sendCommentInBackground(String message) {
+        fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.sendMessageComment(fileId, message);
+            sendCommentDone();
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
 
-        sendCommentDone();
     }
 
     @UiThread
     public void sendCommentDone() {
-        fileDetailPresenter.clearAdapter();
         getFileDetail();
     }
 

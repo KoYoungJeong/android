@@ -234,14 +234,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         actualListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                messagesItemLongClicked(messageItemListAdapter.getItem(i - 1));
+                messagesItemLongClicked(messageItemListAdapter.getItem(i));
                 return true;
             }
         });
         actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                messagesItemClicked(messageItemListAdapter.getItem(i - 1));
+                messagesItemClicked(messageItemListAdapter.getItem(i));
             }
         });
 
