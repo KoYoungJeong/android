@@ -254,4 +254,5 @@
     <string name="err_login_invalid_id_or_password">"账号或密码无效 "</string>
     <string name="jandi_term_of_service">"使用条款 "</string>
     <string name="jandi_privacy_policy">"隐私权条款 "</string>
+    <string name="jandi_switch_team">"更换团队"</string>
 </resources>

@@ -271,4 +271,5 @@
     <string name="err_login_invalid_id_or_password">"계정이 존재하지 않거나 비밀번호가 올바르지 않습니다."</string>
     <string name="jandi_term_of_service">"이용 약관 "</string>
     <string name="jandi_privacy_policy">"개인정보 취급방침 "</string>
+    <string name="jandi_switch_team">"팀 전환하기"</string>
 </resources>
