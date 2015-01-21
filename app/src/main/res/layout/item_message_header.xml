@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ly_message_date_devider"
+    android:layout_width="match_parent"
+    android:layout_height="36dp"
+    android:background="@drawable/message_list_selector"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="visible">
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/jandi_main" />
+
+    <TextView
+        android:id="@+id/txt_message_date_devider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="When"
+        android:textColor="@color/jandi_messages_date_divider"
+        android:textSize="@dimen/jandi_messages_date_divider"
+        android:textStyle="bold" />
+</LinearLayout>

@@ -58,6 +58,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
+            android:name=".ui.message.v2.MessageListV2Activity_"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+        <activity
             android:name=".ui.maintab.file.FileListActivity_"
             android:label="@string/jandi_tab_file"
             android:screenOrientation="portrait" />

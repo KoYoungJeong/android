@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -103,7 +103,7 @@ public class ChatsChooseFragment extends Fragment {
         getActivity().finish();
 
         int entityId = chatChooseItem.getEntityId();
-        MessageListActivity_.intent(getActivity())
+        MessageListV2Activity_.intent(getActivity())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .teamId(chatChooseModel.getTeamId())

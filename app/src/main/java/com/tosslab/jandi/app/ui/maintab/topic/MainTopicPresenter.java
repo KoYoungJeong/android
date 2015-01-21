@@ -7,7 +7,7 @@ import android.widget.ExpandableListView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -51,7 +51,7 @@ public class MainTopicPresenter {
     }
 
     public void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred) {
-        MessageListActivity_.intent(context)
+        MessageListV2Activity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -105,7 +105,7 @@ public class TopicCreatePresenter {
             entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
         }
 
-        MessageListActivity_.intent(activity)
+        MessageListV2Activity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)

@@ -201,7 +201,11 @@ public class EntityManager {
         // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
         zeroizeSortedEntityList();
         // Parse 에 등록된 채널들과 동기화
-        subscribeChannelForParse();
+        try {
+            subscribeChannelForParse();
+        } catch (Exception e) {
+
+        }
     }
 
     private void zeroizeSortedEntityList() {
