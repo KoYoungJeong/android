@@ -56,8 +56,6 @@ public class MessageManipulator {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
 
-
-
     }
 
 
@@ -73,17 +71,15 @@ public class MessageManipulator {
             @Override
             public ResMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
-
-                directMessageApiClient.setAuthentication(requestAuthentication);
-                groupMessageApiClient.setAuthentication(requestAuthentication);
-                channelMessageApiClient.setAuthentication(requestAuthentication);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
                         return channelMessageApiClient.getPublicTopicMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
                     case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
                         return directMessageApiClient.getDirectMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
                     case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
                         return groupMessageApiClient.getGroupMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
                     default:
                         return null;
@@ -99,17 +95,15 @@ public class MessageManipulator {
             @Override
             public ResUpdateMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
-
-                directMessageApiClient.setAuthentication(requestAuthentication);
-                groupMessageApiClient.setAuthentication(requestAuthentication);
-                channelMessageApiClient.setAuthentication(requestAuthentication);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
                         return channelMessageApiClient.getPublicTopicUpdatedMessages(selectedTeamId, mEntityId, fromCurrentId);
                     case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
                         return directMessageApiClient.getDirectMessagesUpdated(selectedTeamId, mEntityId, fromCurrentId);
                     case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
                         return groupMessageApiClient.getGroupMessagesUpdated(selectedTeamId, mEntityId, fromCurrentId);
                     default:
                         return null;
@@ -124,11 +118,6 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
-
-                directMessageApiClient.setAuthentication(requestAuthentication);
-                groupMessageApiClient.setAuthentication(requestAuthentication);
-                channelMessageApiClient.setAuthentication(requestAuthentication);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 String entityType;
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -143,6 +132,7 @@ public class MessageManipulator {
                         break;
                 }
                 ReqSetMarker reqSetMarker = new ReqSetMarker(selectedTeamId, lastLinkId, entityType);
+                jandiRestClient.setAuthentication(requestAuthentication);
                 return jandiRestClient.setMarker(mEntityId, reqSetMarker);
             }
         }).request();
@@ -158,17 +148,15 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
-
-                directMessageApiClient.setAuthentication(requestAuthentication);
-                groupMessageApiClient.setAuthentication(requestAuthentication);
-                channelMessageApiClient.setAuthentication(requestAuthentication);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
                         return channelMessageApiClient.sendPublicTopicMessage(sendingMessage, mEntityId);
                     case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
                         return directMessageApiClient.sendDirectMessage(sendingMessage, mEntityId);
                     case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
                         return groupMessageApiClient.sendGroupMessage(sendingMessage, mEntityId);
                     default:
                         return null;
@@ -184,17 +172,15 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
-
-                directMessageApiClient.setAuthentication(requestAuthentication);
-                groupMessageApiClient.setAuthentication(requestAuthentication);
-                channelMessageApiClient.setAuthentication(requestAuthentication);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
                         return channelMessageApiClient.deletePublicTopicMessage(selectedTeamId, mEntityId, messageId);
                     case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
                         return directMessageApiClient.deleteDirectMessage(selectedTeamId, mEntityId, messageId);
                     case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
                         return groupMessageApiClient.deletePrivateGroupMessage(selectedTeamId, mEntityId, messageId);
                     default:
                         return null;
