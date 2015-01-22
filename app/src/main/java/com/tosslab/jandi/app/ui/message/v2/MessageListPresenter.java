@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -26,6 +28,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -156,8 +159,6 @@ public class MessageListPresenter {
     public void openCameraForActivityResult(Fragment fragment) {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        Uri mImageUriFromCamera = FileUploadUtil.createCacheFile(activity);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriFromCamera);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
@@ -182,14 +183,57 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void showFailMessage(String message) {
+    public void showFailToast(String message) {
         ColoredToast.showError(activity, message);
     }
 
     public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, true);
         newFragment.show(activity.getFragmentManager(), "dioalog");
+    }
 
+    public void showMessageMenuDialog(boolean myMessage, ResMessages.CommentMessage commentMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, true);
+        newFragment.show(activity.getFragmentManager(), "dioalog");
+    }
 
+    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage(activity.getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
+        progressDialog.show();
+
+        return progressDialog;
+
+    }
+
+    @UiThread
+    public void showSuccessToast(String message) {
+        ColoredToast.show(activity, message);
+    }
+
+    @UiThread
+    public void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
+        if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
+            uploadProgressDialog.dismiss();
+        }
+    }
+
+    @UiThread
+    public void clearMessages() {
+        messageListAdapter.clear();
+        messageListAdapter.notifyDataSetChanged();
+
+    }
+
+    public List<ResMessages.Link> getLastItems() {
+        int count = messageListAdapter.getCount();
+        int lastIdx = Math.max(count - 20, 0);
+        List<ResMessages.Link> lastItems = new ArrayList<ResMessages.Link>();
+        for (int idx = count - 1; idx >= lastIdx; --idx) {
+            lastItems.add(messageListAdapter.getItem(idx));
+        }
+
+        return lastItems;
     }
 }

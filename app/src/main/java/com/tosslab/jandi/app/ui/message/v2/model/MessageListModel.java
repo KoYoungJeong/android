@@ -1,34 +1,57 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
+import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+import de.greenrobot.event.EventBus;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EBean
 public class MessageListModel {
+
+    private static final Logger logger = Logger.getLogger(MessageListModel.class);
 
     private static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
     @Bean
@@ -39,6 +62,37 @@ public class MessageListModel {
     MessageListTimer messageListTimer;
     @RootContext
     Activity activity;
+    private PublishSubject<String> publishSubject;
+
+
+    @AfterInject
+    void initObject() {
+
+
+        publishSubject = PublishSubject.create();
+
+
+        publishSubject.observeOn(Schedulers.io())
+                .map(message -> {
+                    boolean isSuccess;
+                    try {
+                        messageManipulator.sendMessage(message);
+                        isSuccess = true;
+                    } catch (JandiNetworkException e) {
+                        logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+                        isSuccess = false;
+                    }
+
+                    return isSuccess;
+                })
+                .skip(500, TimeUnit.MILLISECONDS)
+                .subscribe(isSuccess -> {
+                    if (isSuccess) {
+                        EventBus.getDefault().post(new RefreshNewMessageEvent());
+                    }
+                })
+        ;
+    }
 
     public void setEntityInfo(int entityType, int entityId) {
         messageManipulator.initEntity(entityType, entityId);
@@ -115,11 +169,58 @@ public class MessageListModel {
         return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
-    public void sendMessage(String message) throws JandiNetworkException {
-        messageManipulator.sendMessage(message);
+    public void sendMessage(String message) {
+        publishSubject.onNext(message);
     }
 
     public boolean isMyMessage(int writerId) {
         return EntityManager.getInstance(activity).getMe().getId() == writerId;
+    }
+
+    public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
+        File uploadFile = new File(event.realFilePath);
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String permissionCode = (isPublicTopic) ? "744" : "740";
+        Builders.Any.M ionBuilder
+                = Ion
+                .with(activity)
+                .load(requestURL)
+                .uploadProgressDialog(progressDialog)
+                .progress(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long downloaded, long total) {
+
+                        progressDialog.setProgress((int) (downloaded / total));
+                    }
+                })
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(activity).getHeaderValue())
+                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setMultipartParameter("title", uploadFile.getName())
+                .setMultipartParameter("share", "" + event.entityId)
+                .setMultipartParameter("permission", permissionCode)
+                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId()));
+
+        // Comment가 함께 등록될 경우 추가
+        if (event.comment != null && !event.comment.isEmpty()) {
+            ionBuilder.setMultipartParameter("comment", event.comment);
+        }
+
+        JsonObject userFile = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject()
+                .get();
+
+        return userFile;
+    }
+
+    public void updateMarker(int lastUpdateLinkId) throws JandiNetworkException {
+        messageManipulator.setMarker(lastUpdateLinkId);
+    }
+
+    public void saveMessages(int teamId, int entityId, List<ResMessages.Link> lastItems) {
+        JandiMessageDatabaseManager.getInstance(activity).upsertMessage(teamId, entityId, lastItems);
+    }
+
+    public void saveTempMessage(int teamId, int entityId, String sendEditText) {
+        JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
     }
 }

@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
@@ -13,11 +14,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -25,6 +28,7 @@ import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -43,6 +47,9 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.TextChange;
 import org.apache.log4j.Logger;
+
+import java.io.File;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -85,10 +92,6 @@ public class MessageListFragment extends Fragment {
         setUpActionbar();
         setHasOptionsMenu(true);
 
-        messageListModel.setEntityInfo(entityType, entityId);
-        messageListPresenter.showProgressWheel();
-        getOldMessageList(messageState.getFirstItemId());
-
         ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -103,6 +106,21 @@ public class MessageListFragment extends Fragment {
                 return true;
             }
         });
+
+        messageListModel.setEntityInfo(entityType, entityId);
+
+        List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
+        if (savedMessages != null) {
+            messageListPresenter.addAll(0, savedMessages);
+        } else {
+            messageListPresenter.showProgressWheel();
+        }
+
+        String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
+        messageListPresenter.setSendEditText(tempMessage);
+
+        getOldMessageList(messageState.getFirstItemId());
+
 
     }
 
@@ -167,12 +185,17 @@ public class MessageListFragment extends Fragment {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+
         messageListModel.stopRefreshTimer();
+
+        messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItems());
+        messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
     }
 
     @Background
     void getOldMessageList(int linkId) {
         try {
+
             ResMessages oldMessage = messageListModel.getOldMessage(linkId);
 
             messageState.setFirstItemId(oldMessage.firstIdOfReceivedList);
@@ -180,9 +203,13 @@ public class MessageListFragment extends Fragment {
 
             if (linkId == -1) {
 
+                messageListPresenter.clearMessages();
+
                 messageListPresenter.addAll(0, oldMessage.messages);
                 messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
                 messageListPresenter.moveLastPage();
+
+                updateMarker();
 
             } else {
 
@@ -208,22 +235,42 @@ public class MessageListFragment extends Fragment {
     }
 
     @Background
+    public void updateMarker() {
+        try {
+            if (messageState.getLastUpdateLinkId() > 0) {
+                messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            }
+        } catch (JandiNetworkException e) {
+            logger.error("set marker failed", e);
+        } catch (Exception e) {
+            logger.error("set marker failed", e);
+        }
+    }
+
+    @Background
     void getNewMessageList(int linkId) {
-        messageListModel.stopRefreshTimer();
         if (linkId <= 0) {
             return;
         }
+
+        messageListModel.stopRefreshTimer();
+
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
-//            List<ResMessages.Link> links = messageListModel.sortById(newMessage.updateInfo.messages);
-            int lastItemPosition = messageListPresenter.getLastItemPosition();
-            messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
-            messageState.setLastUpdateLinkId(newMessage.lastLinkId);
+
+            if (newMessage.updateInfo.messageCount > 0) {
+                int lastItemPosition = messageListPresenter.getLastItemPosition();
+                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
+                messageState.setLastUpdateLinkId(newMessage.lastLinkId);
+                updateMarker();
+            }
+
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+        } finally {
+            messageListModel.startRefreshTimer();
         }
-        messageListModel.startRefreshTimer();
     }
 
     @Click(R.id.btn_upload_file)
@@ -243,14 +290,8 @@ public class MessageListFragment extends Fragment {
 
     }
 
-    @Background
     void sendMessage(String message) {
-        try {
-            messageListModel.sendMessage(message);
-            getNewMessageList(messageState.getLastUpdateLinkId());
-        } catch (JandiNetworkException e) {
-            messageListPresenter.showFailMessage(getString(R.string.err_messages_send));
-        }
+        messageListModel.sendMessage(message);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -281,7 +322,6 @@ public class MessageListFragment extends Fragment {
         String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
                 if (resultCode == Activity.RESULT_OK) {
@@ -289,6 +329,11 @@ public class MessageListFragment extends Fragment {
                     realFilePath = ImageFilePath.getPath(getActivity(), data.getData());
                     showFileUploadDialog(realFilePath);
                 }
+                break;
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+
+                realFilePath = data.getStringExtra("GetPath") + File.separator + data.getStringExtra("GetFileName");
+                showFileUploadDialog(realFilePath);
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
                 logger.info("onActivityResult : Come from FileDetailActivity");
@@ -308,7 +353,6 @@ public class MessageListFragment extends Fragment {
             DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
             newFragment.show(getFragmentManager(), "dialog");
         }
-
     }
 
     @TextChange(R.id.et_message)
@@ -334,7 +378,11 @@ public class MessageListFragment extends Fragment {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
             messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
+        } else if (link.message instanceof ResMessages.CommentMessage) {
+            messageListPresenter.showMessageMenuDialog(false, ((ResMessages.CommentMessage) link.message));
         }
+
+
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
@@ -345,6 +393,36 @@ public class MessageListFragment extends Fragment {
     // 삭제 확인
     public void onEvent(ConfirmDeleteMessageEvent event) {
         deleteMessage(event.messageType, event.messageId);
+    }
+
+    public void onEvent(ConfirmFileUploadEvent event) {
+        ProgressDialog uploadProgress = messageListPresenter.getUploadProgress(event);
+
+        uploadFile(event, uploadProgress);
+    }
+
+    @Background
+    void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
+        boolean isPublicTopic = entityType == JandiConstants.TYPE_PUBLIC_TOPIC;
+        try {
+            JsonObject result = messageListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
+            if (result.get("code") == null) {
+
+                logger.error("Upload Success : " + result);
+                messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
+            } else {
+                logger.error("Upload Fail : Result : " + result);
+                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+            }
+
+            getNewMessageList(messageState.getLastUpdateLinkId());
+
+        } catch (Exception e) {
+            logger.error("Upload Error : ", e);
+            messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+        } finally {
+            messageListPresenter.dismissProgressDialog(uploadProgressDialog);
+        }
     }
 
     @Background

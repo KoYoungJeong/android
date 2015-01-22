@@ -67,6 +67,20 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         return frag;
     }
 
+    public static ManipulateMessageDialogFragment newInstanceByCommentMessage(ResMessages.CommentMessage item, boolean isMine) {
+        String title = DateTransformator.getTimeString(item.createTime);
+
+        ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putInt(MESSAGE_ID, item.id);
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
+        args.putString(CURRENT_MESSAGE, item.content.body);
+        args.putBoolean(IS_MINE, isMine);
+        frag.setArguments(args);
+        return frag;
+    }
+
     @Override
     public void onActivityCreated(Bundle bundle) {
         super.onActivityCreated(bundle);

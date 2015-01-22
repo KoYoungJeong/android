@@ -254,6 +254,10 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return -1;
     }
 
+    public void clear() {
+        messageList.clear();
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
     }
