@@ -1,11 +1,21 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.content.Context;
+import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.content.Intent;
+import android.provider.MediaStore;
 import android.widget.Button;
+import android.widget.EditText;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -35,8 +45,11 @@ public class MessageListPresenter {
     @ViewById(R.id.btn_send_message)
     Button sendButton;
 
+    @ViewById(R.id.et_message)
+    EditText messageEditText;
+
     @RootContext
-    Context context;
+    Activity activity;
 
     private MessageListAdapter messageListAdapter;
 
@@ -44,9 +57,9 @@ public class MessageListPresenter {
 
     @AfterInject
     void initObject() {
-        messageListAdapter = new MessageListAdapter(context);
+        messageListAdapter = new MessageListAdapter(activity);
 
-        progressWheel = new ProgressWheel(context);
+        progressWheel = new ProgressWheel(activity);
         progressWheel.init();
     }
 
@@ -86,7 +99,7 @@ public class MessageListPresenter {
     }
 
     public int getLastItemPosition() {
-        return messageListAdapter.getCount() - 1;
+        return messageListAdapter.getCount();
     }
 
     @UiThread
@@ -116,5 +129,67 @@ public class MessageListPresenter {
 
     public int getFirstVisibleItemTop() {
         return messageListView.getChildAt(0).getTop();
+    }
+
+    @UiThread
+    public void showNoMoreMessage() {
+        ColoredToast.showWarning(activity, activity.getString(R.string.warn_no_more_messages));
+    }
+
+    public void moveFileDetailActivity(int messageId) {
+        FileDetailActivity_
+                .intent(activity)
+                .fileId(messageId)
+                .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+        activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    }
+
+    public ResMessages.Link getItem(int position) {
+        return messageListAdapter.getItem(position);
+    }
+
+    public void openExplorerForActivityResult(Fragment fragment) {
+        Intent intent = new Intent(activity, FileExplorerActivity.class);
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+    }
+
+    public void openCameraForActivityResult(Fragment fragment) {
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        Uri mImageUriFromCamera = FileUploadUtil.createCacheFile(activity);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriFromCamera);
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+    }
+
+    public void openAlbumForActivityResult(Fragment fragment) {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+    }
+
+    public void exceedMaxFileSizeError() {
+
+        ColoredToast.showError(activity, activity.getString(R.string.err_file_upload_failed));
+    }
+
+    public String getSendEditText() {
+        return messageEditText.getText().toString();
+    }
+
+
+    public void setSendEditText(String text) {
+        messageEditText.setText(text);
+    }
+
+    @UiThread
+    public void showFailMessage(String message) {
+        ColoredToast.showError(activity, message);
+    }
+
+    public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, true);
+        newFragment.show(activity.getFragmentManager(), "dioalog");
+
+
     }
 }

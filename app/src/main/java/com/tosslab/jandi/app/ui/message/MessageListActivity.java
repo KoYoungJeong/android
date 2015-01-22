@@ -41,7 +41,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
-import com.tosslab.jandi.app.events.messages.ReqeustMoreMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -266,7 +266,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         });
     }
 
-    public void onEvent(ReqeustMoreMessageEvent event) {
+    public void onEvent(RefreshOldMessageEvent event) {
 
         if (isRefreshDisable) {
             return;

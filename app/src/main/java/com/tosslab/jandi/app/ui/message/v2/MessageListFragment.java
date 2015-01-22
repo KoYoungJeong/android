@@ -1,14 +1,37 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
+import android.app.ActionBar;
+import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.ReqeustMoreMessageEvent;
+import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
+import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
+import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
+import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
+import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
@@ -22,6 +45,7 @@ import org.androidannotations.annotations.TextChange;
 import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -57,21 +81,93 @@ public class MessageListFragment extends Fragment {
 
     @AfterViews
     void initViews() {
+
+        setUpActionbar();
+        setHasOptionsMenu(true);
+
         messageListModel.setEntityInfo(entityType, entityId);
         messageListPresenter.showProgressWheel();
         getOldMessageList(messageState.getFirstItemId());
+
+        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onMessageItemClick(messageListPresenter.getItem(position));
+            }
+        });
+
+        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                onMessageItemLonkClick(messageListPresenter.getItem(position));
+                return true;
+            }
+        });
+
+    }
+
+    private void setUpActionbar() {
+        final ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
+        actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        final int FAVORITE_MENU_ITEM = 0;
+
+        menu.clear();
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+
+        inflater.inflate(R.menu.message_list_menu_basic, menu);
+        MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
+        if (isFavorite) {
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
+        } else {
+            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
+        }
+
+        // DirectMessage의 경우 확장 메뉴가 없음.
+        if (!messageListModel.isDirectMessage(entityType)) {
+            if (messageListModel.isMyTopic(entityId)) {
+                inflater.inflate(R.menu.manipulate_my_entity_menu, menu);
+            } else {
+                inflater.inflate(R.menu.manipulate_entity_menu, menu);
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isFavorite), item);
+
+        if (menuCommand != null) {
+            menuCommand.execute(item);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        messageListModel.startRefreshTimer();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        messageListModel.stopRefreshTimer();
     }
 
     @Background
@@ -100,6 +196,7 @@ public class MessageListFragment extends Fragment {
             if (!oldMessage.isFirst) {
                 messageListPresenter.setLoadingComplete();
             } else {
+                messageListPresenter.showNoMoreMessage();
                 messageListPresenter.setNoMoreLoading();
             }
 
@@ -112,6 +209,10 @@ public class MessageListFragment extends Fragment {
 
     @Background
     void getNewMessageList(int linkId) {
+        messageListModel.stopRefreshTimer();
+        if (linkId <= 0) {
+            return;
+        }
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 //            List<ResMessages.Link> links = messageListModel.sortById(newMessage.updateInfo.messages);
@@ -122,15 +223,91 @@ public class MessageListFragment extends Fragment {
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
         }
+        messageListModel.startRefreshTimer();
     }
 
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
-
+        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
     }
 
     @Click(R.id.btn_send_message)
     void onSendClick() {
+
+        String message = messageListPresenter.getSendEditText();
+        if (message.length() > 0) {
+            sendMessage(message);
+        }
+        messageListPresenter.setSendEditText("");
+
+    }
+
+    @Background
+    void sendMessage(String message) {
+        try {
+            messageListModel.sendMessage(message);
+            getNewMessageList(messageState.getLastUpdateLinkId());
+        } catch (JandiNetworkException e) {
+            messageListPresenter.showFailMessage(getString(R.string.err_messages_send));
+        }
+    }
+
+    public void onEvent(RequestFileUploadEvent event) {
+        switch (event.type) {
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
+                logger.info("RequestFileUploadEvent : from gallery");
+                messageListPresenter.openAlbumForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                messageListPresenter.openCameraForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                logger.info("RequestFileUploadEvent : from explorer");
+                messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        logger.debug("onActivityResult : " + requestCode + " / " + resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        String realFilePath;
+        switch (requestCode) {
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+
+                if (resultCode == Activity.RESULT_OK) {
+
+                    realFilePath = ImageFilePath.getPath(getActivity(), data.getData());
+                    showFileUploadDialog(realFilePath);
+                }
+                break;
+            case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
+                logger.info("onActivityResult : Come from FileDetailActivity");
+                break;
+            default:
+                break;
+        }
+    }
+
+    // File Upload 대화상자 보여주기
+    void showFileUploadDialog(String realFilePath) {
+        // 업로드 파일 용량 체크
+
+        if (messageListModel.isOverSize(realFilePath)) {
+            messageListPresenter.exceedMaxFileSizeError();
+        } else {
+            DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
 
     }
 
@@ -142,10 +319,56 @@ public class MessageListFragment extends Fragment {
 
     }
 
-    public void onEvent(ReqeustMoreMessageEvent event) {
+    void onMessageItemClick(ResMessages.Link link) {
+
+        if (messageListModel.isFileType(link.message)) {
+            messageListPresenter.moveFileDetailActivity(link.messageId);
+        } else if (messageListModel.isCommentType(link.message)) {
+            messageListPresenter.moveFileDetailActivity(link.message.feedbackId);
+        }
+
+    }
+
+    void onMessageItemLonkClick(ResMessages.Link link) {
+        if (link.message instanceof ResMessages.TextMessage) {
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
+            messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
+        }
+    }
+
+    public void onEvent(RequestDeleteMessageEvent event) {
+        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    // 삭제 확인
+    public void onEvent(ConfirmDeleteMessageEvent event) {
+        deleteMessage(event.messageType, event.messageId);
+    }
+
+    @Background
+    void deleteMessage(int messageType, int messageId) {
+        messageListPresenter.showProgressWheel();
+        try {
+            if (messageType == MessageItem.TYPE_STRING) {
+                messageListModel.deleteMessage(messageId);
+                logger.debug("deleteMessageInBackground : succeed");
+            }
+        } catch (JandiNetworkException e) {
+            logger.error("deleteMessageInBackground : FAILED", e);
+        }
+        messageListPresenter.dismissProgressWheel();
+    }
+
+    public void onEvent(RefreshOldMessageEvent event) {
         if (!messageState.isFirstMessage()) {
             getOldMessageList(messageState.getFirstItemId());
         }
+    }
+
+    public void onEvent(RefreshNewMessageEvent event) {
+        getNewMessageList(messageState.getLastUpdateLinkId());
     }
 }
 

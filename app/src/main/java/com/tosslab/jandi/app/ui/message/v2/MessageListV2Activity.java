@@ -42,7 +42,10 @@ public class MessageListV2Activity extends Activity {
                                 .isFavorite(isFavorite)
                                 .isFromPush(isFromPush)
                                 .teamId(teamId)
-                                .build())
+                                .build(),
+                        MessageListFragment.class.getName()
+
+                )
                 .commit();
 
     }

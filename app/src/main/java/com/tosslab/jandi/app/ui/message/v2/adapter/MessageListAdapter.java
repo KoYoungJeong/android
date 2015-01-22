@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.events.messages.ReqeustMoreMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -36,7 +36,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     public MessageListAdapter(Context context) {
         this.context = context;
-        this.messageList = new ArrayList<ResMessages.Link>();
+        this.messageList = new CopyOnWriteArrayList<ResMessages.Link>();
         moreState = MoreState.Idle;
     }
 
@@ -91,7 +91,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         viewHolder.bindData(item);
 
         if (position == 0 && moreState == MoreState.Idle) {
-            EventBus.getDefault().post(new ReqeustMoreMessageEvent());
+            EventBus.getDefault().post(new RefreshOldMessageEvent());
             moreState = MoreState.Loading;
         }
 
@@ -135,37 +135,40 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return position;
     }
 
-    synchronized public void addAll(int position, List<ResMessages.Link> messages) {
+    public void addAll(int position, List<ResMessages.Link> messages) {
 
-        int size = messages.size();
-        ResMessages.Link link;
-        for (int idx = size - 1; idx >= 0; --idx) {
-            link = messages.get(idx);
-            if (link.status.equals("created") || link.status.equals("shared")) {
-            } else if (link.status.equals("edited")) {
-                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-                if (searchedPosition >= 0) {
-                    messageList.set(searchedPosition, link);
+        synchronized (messageList) {
+
+            int size = messages.size();
+            ResMessages.Link link;
+            for (int idx = size - 1; idx >= 0; --idx) {
+                link = messages.get(idx);
+                if (link.status.equals("created") || link.status.equals("shared")) {
+                } else if (link.status.equals("edited")) {
+                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                    if (searchedPosition >= 0) {
+                        messageList.set(searchedPosition, link);
+                    }
+                    messages.remove(link);
+                } else if (link.status.equals("archived")) {
+                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                    if (searchedPosition >= 0) {
+                        messageList.remove(searchedPosition);
+                    }
+                    messages.remove(link);
+                } else if (link.status.equals("unshared")) {
+                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                    if (searchedPosition >= 0) {
+                        messageList.set(searchedPosition, link);
+                    }
+                    messages.remove(link);
+                } else {
+                    messages.remove(link);
                 }
-                messages.remove(link);
-            } else if (link.status.equals("archived")) {
-                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-                if (searchedPosition >= 0) {
-                    messageList.remove(searchedPosition);
-                }
-                messages.remove(link);
-            } else if (link.status.equals("unshared")) {
-                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-                if (searchedPosition >= 0) {
-                    messageList.set(searchedPosition, link);
-                }
-                messages.remove(link);
-            } else {
-                messages.remove(link);
             }
-        }
 
-        messageList.addAll(Math.min(position, getCount()), messages);
+            messageList.addAll(Math.min(position, getCount()), messages);
+        }
     }
 
     private int searchIndexOfMessages(List<ResMessages.Link> messageItems, int messageId) {
