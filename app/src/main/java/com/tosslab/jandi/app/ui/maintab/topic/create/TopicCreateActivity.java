@@ -78,6 +78,7 @@ public class TopicCreateActivity extends Activity {
 
             topicCreateModel.refreshEntity();
 
+            EntityManager.getInstance(TopicCreateActivity.this).refreshEntity(TopicCreateActivity.this);
 
             topicCreatePresenter.createTopicSuccess(topic.id, topicTitle, publicSelected);
 

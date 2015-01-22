@@ -108,7 +108,7 @@ public class FileDetailPresenter {
     }
 
     @UiThread
-    public void drawFileDetail(ResFileDetail resFileDetail) {
+    public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
                 final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
@@ -148,12 +148,14 @@ public class FileDetailPresenter {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        Glide.with(activity)
-                                .load(thumbnailPhotoUrl)
-                                .placeholder(R.drawable.jandi_down_img)
-                                .crossFade()
-                                .fitCenter()
-                                .into(imageViewPhotoFile);
+                        if (imageViewPhotoFile.getDrawable() == null) {
+                            Glide.with(activity)
+                                    .load(thumbnailPhotoUrl)
+                                    .placeholder(R.drawable.jandi_down_img)
+                                    .crossFade()
+                                    .fitCenter()
+                                    .into(imageViewPhotoFile);
+                        }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -208,6 +210,10 @@ public class FileDetailPresenter {
         fileDetailCommentListAdapter.clear();
         fileDetailCommentListAdapter.updateFileComments(resFileDetail);
         fileDetailCommentListAdapter.notifyDataSetChanged();
+
+        if (isSendAction) {
+            listFileDetailComments.setSelection(fileDetailCommentListAdapter.getCount());
+        }
     }
 
     @UiThread

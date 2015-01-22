@@ -223,4 +223,20 @@ public class MessageListModel {
     public void saveTempMessage(int teamId, int entityId, String sendEditText) {
         JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
     }
+
+    public void deleteTopic(int entityId, int entityType) throws JandiNetworkException {
+        if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
+            jandiEntityClient.deleteChannel(entityId);
+        } else {
+            jandiEntityClient.deletePrivateGroup(entityId);
+        }
+    }
+
+    public void modifyTopicName(int entityType, int entityId, String inputName) throws JandiNetworkException {
+        if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
+            jandiEntityClient.modifyChannelName(entityId, inputName);
+        } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
+            jandiEntityClient.modifyPrivateGroupName(entityId, inputName);
+        }
+    }
 }

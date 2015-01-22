@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -57,7 +55,7 @@ class LeaveEntityCommand implements MenuCommand {
 
     @UiThread
     public void leaveEntitySucceed() {
-        ((BaseAnalyticsActivity) activity).trackLeavingEntity(EntityManager.getInstance(activity), chattingInfomations.entityType);
+//        ((BaseAnalyticsActivity) activity).trackLeavingEntity(EntityManager.getInstance(activity), chattingInfomations.entityType);
         activity.finish();
     }
 

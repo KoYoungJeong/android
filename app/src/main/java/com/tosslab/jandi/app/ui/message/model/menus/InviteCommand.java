@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -113,7 +112,7 @@ class InviteCommand implements MenuCommand {
         String rawString = activity.getString(R.string.jandi_message_invite_entity);
         String formatString = String.format(rawString, memberSize);
 
-        ((BaseAnalyticsActivity) activity).trackInvitingToEntity(entityManager, chattingInfomations.entityType);
+//        ((BaseAnalyticsActivity) activity).trackInvitingToEntity(entityManager, chattingInfomations.entityType);
         ColoredToast.show(activity, formatString);
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -69,5 +70,14 @@ public class FileDetailModel {
                 .progressDialog(progressDialog)
                 .write(new File(dir, fileName))
                 .get();
+    }
+
+    public boolean isMyComment(int writerId) {
+        return EntityManager.getInstance(context).getMe().getId() == writerId;
+    }
+
+    public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {
+        jandiEntityClient.deleteMessageComment(messageId, feedbackId);
+
     }
 }

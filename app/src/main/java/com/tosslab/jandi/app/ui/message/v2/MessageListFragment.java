@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
+import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -45,7 +47,9 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.TextChange;
+import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -367,11 +371,15 @@ public class MessageListFragment extends Fragment {
     void onMessageItemClick(ResMessages.Link link) {
 
         if (messageListModel.isFileType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(link.messageId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId);
         } else if (messageListModel.isCommentType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(link.message.feedbackId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
         }
+    }
 
+    @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
+    void onFileDetailResult() {
+        getNewMessageList(messageState.getLastUpdateLinkId());
     }
 
     void onMessageItemLonkClick(ResMessages.Link link) {
@@ -380,7 +388,7 @@ public class MessageListFragment extends Fragment {
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
             messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
         } else if (link.message instanceof ResMessages.CommentMessage) {
-            messageListPresenter.showMessageMenuDialog(false, ((ResMessages.CommentMessage) link.message));
+            messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         }
 
 
@@ -401,6 +409,23 @@ public class MessageListFragment extends Fragment {
 
         uploadFile(event, uploadProgress);
     }
+
+    public void onEvent(ConfirmDeleteTopicEvent event) {
+        deleteTopic();
+    }
+
+    @Background
+    void deleteTopic() {
+
+        try {
+            messageListModel.deleteTopic(entityId, entityType);
+            messageListPresenter.finish();
+        } catch (JandiNetworkException e) {
+            logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        }
+
+    }
+
 
     @Background
     void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
@@ -449,6 +474,33 @@ public class MessageListFragment extends Fragment {
     public void onEvent(RefreshNewMessageEvent event) {
         getNewMessageList(messageState.getLastUpdateLinkId());
     }
+
+    public void onEvent(ConfirmModifyTopicEvent event) {
+        modifyEntity(event);
+    }
+
+
+    @Background
+    void modifyEntity(ConfirmModifyTopicEvent event) {
+        try {
+            messageListModel.modifyTopicName(entityType, entityId, event.inputName);
+
+            modifyEntitySucceed(event.inputName);
+        } catch (JandiNetworkException e) {
+            logger.error("modify failed " + e.getErrorInfo(), e);
+            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+                messageListPresenter.showFailToast(getString(R.string.err_entity_duplicated_name));
+            } else {
+                messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
+            }
+        }
+    }
+
+    @UiThread
+    void modifyEntitySucceed(String changedEntityName) {
+        getActivity().getActionBar().setTitle(changedEntityName);
+    }
+
 }
 
 

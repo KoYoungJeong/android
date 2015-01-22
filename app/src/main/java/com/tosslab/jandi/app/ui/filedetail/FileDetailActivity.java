@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -16,9 +17,13 @@ import android.widget.ListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
+import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
@@ -38,6 +43,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
@@ -75,6 +81,36 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         getFileDetail();
     }
+
+    @ItemLongClick(R.id.list_file_detail_comments)
+    void onCommentLongClick(ResMessages.CommentMessage item) {
+        boolean isMine = fileDetailModel.isMyComment(item.writerId);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(item, isMine);
+        newFragment.show(getFragmentManager(), "dioalog");
+    }
+
+    public void onEvent(RequestDeleteMessageEvent event) {
+        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    // 삭제 확인
+    public void onEvent(ConfirmDeleteMessageEvent event) {
+        deleteComment(event.messageType, event.messageId, event.feedbackId);
+    }
+
+    @Background
+    void deleteComment(int messageType, int messageId, int feedbackId) {
+        fileDetailPresenter.showProgressWheel();
+        try {
+            fileDetailModel.deleteComment(messageId, feedbackId);
+            getFileDetailInBackend(false);
+        } catch (JandiNetworkException e) {
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
+        }
+    }
+
 
     private void setUpActionBar() {
         // Set up the action bar.
@@ -153,11 +189,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      */
     @UiThread
     void getFileDetail() {
-        getFileDetailInBackend();
+        getFileDetailInBackend(false);
     }
 
     @Background
-    void getFileDetailInBackend() {
+    void getFileDetailInBackend(boolean isSendAction) {
         fileDetailPresenter.showProgressWheel();
         log.debug("try to get file detail having ID, " + fileId);
         try {
@@ -168,7 +204,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     break;
                 }
             }
-            getFileDetailSucceed(resFileDetail);
+            getFileDetailSucceed(resFileDetail, isSendAction);
+
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
@@ -179,8 +216,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @UiThread
-    void getFileDetailSucceed(ResFileDetail resFileDetail) {
-        fileDetailPresenter.drawFileDetail(resFileDetail);
+    void getFileDetailSucceed(ResFileDetail resFileDetail, boolean isSendAction) {
+        fileDetailPresenter.drawFileDetail(resFileDetail, isSendAction);
     }
 
     @UiThread
@@ -350,7 +387,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.sendMessageComment(fileId, message);
-            sendCommentDone();
+
+            getFileDetailInBackend(true);
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
@@ -360,10 +398,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     }
 
-    @UiThread
-    public void sendCommentDone() {
-        getFileDetail();
-    }
 
     /**
      * *********************************************************

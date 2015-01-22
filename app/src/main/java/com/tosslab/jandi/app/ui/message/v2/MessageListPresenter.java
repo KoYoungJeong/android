@@ -142,9 +142,9 @@ public class MessageListPresenter {
         ColoredToast.showWarning(activity, activity.getString(R.string.warn_no_more_messages));
     }
 
-    public void moveFileDetailActivity(int messageId) {
+    public void moveFileDetailActivity(Fragment fragment, int messageId) {
         FileDetailActivity_
-                .intent(activity)
+                .intent(fragment)
                 .fileId(messageId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
@@ -183,6 +183,9 @@ public class MessageListPresenter {
 
     public void setSendEditText(String text) {
         tempMessage = text;
+        if (messageEditText != null) {
+            messageEditText.setText(tempMessage);
+        }
     }
 
     @UiThread
@@ -191,12 +194,12 @@ public class MessageListPresenter {
     }
 
     public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, true);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, myMessage);
         newFragment.show(activity.getFragmentManager(), "dioalog");
     }
 
-    public void showMessageMenuDialog(boolean myMessage, ResMessages.CommentMessage commentMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, true);
+    public void showMessageMenuDialog(ResMessages.CommentMessage commentMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, false);
         newFragment.show(activity.getFragmentManager(), "dioalog");
     }
 
@@ -237,5 +240,10 @@ public class MessageListPresenter {
         }
 
         return lastItems;
+    }
+
+    @UiThread
+    public void finish() {
+        activity.finish();
     }
 }
