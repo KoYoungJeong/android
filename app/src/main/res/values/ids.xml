@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="message_header" type="id" />
+    <item name="message_msg" type="id" />
+    <item name="message_file" type="id" />
+    <item name="message_img" type="id" />
+    <item name="message_cmt_with_file" type="id" />
+    <item name="message_cmt_without_file" type="id" />
+
+</resources>

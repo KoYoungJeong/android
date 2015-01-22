@@ -29,7 +29,7 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class DirectMessageApiClientTest {
+public class DirectBodyViewHolderApiClientTest {
 
     private JandiRestClient jandiRestClient_;
     private ResLeftSideMenu sideMenu;

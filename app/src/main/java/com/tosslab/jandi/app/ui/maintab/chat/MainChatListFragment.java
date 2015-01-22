@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Background;
@@ -94,7 +94,7 @@ public class MainChatListFragment extends Fragment {
 
     @ItemClick(R.id.lv_main_chat_list)
     void onEntityItemClick(ChatItem chatItem) {
-        MessageListActivity_.intent(getActivity())
+        MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityId(chatItem.getEntityId())
                 .isFavorite(chatItem.isStarred())

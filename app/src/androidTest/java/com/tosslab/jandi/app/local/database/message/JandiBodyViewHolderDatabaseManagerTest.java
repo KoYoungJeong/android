@@ -29,7 +29,7 @@ import java.util.List;
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class JandiMessageDatabaseManagerTest {
+public class JandiBodyViewHolderDatabaseManagerTest {
 
     @Before
     public void setUp() throws Exception {

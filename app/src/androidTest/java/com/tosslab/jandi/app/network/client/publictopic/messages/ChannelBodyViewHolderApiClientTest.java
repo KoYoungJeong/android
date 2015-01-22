@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class ChannelMessageApiClientTest {
+public class ChannelBodyViewHolderApiClientTest {
 
 
     private JandiRestClient jandiRestClient_;

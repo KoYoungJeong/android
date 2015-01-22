@@ -28,7 +28,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class GroupMessageApiClientTest {
+public class GroupBodyViewHolderApiClientTest {
 
     private JandiRestClient jandiRestClient_;
     private GroupMessageApiClient groupMessageApiClient;

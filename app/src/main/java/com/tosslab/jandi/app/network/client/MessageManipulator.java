@@ -71,6 +71,7 @@ public class MessageManipulator {
             @Override
             public ResMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         channelMessageApiClient.setAuthentication(requestAuthentication);
@@ -95,6 +96,7 @@ public class MessageManipulator {
             @Override
             public ResUpdateMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         channelMessageApiClient.setAuthentication(requestAuthentication);
@@ -118,6 +120,8 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                jandiRestClient.setAuthentication(requestAuthentication);
                 String entityType;
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -132,7 +136,6 @@ public class MessageManipulator {
                         break;
                 }
                 ReqSetMarker reqSetMarker = new ReqSetMarker(selectedTeamId, lastLinkId, entityType);
-                jandiRestClient.setAuthentication(requestAuthentication);
                 return jandiRestClient.setMarker(mEntityId, reqSetMarker);
             }
         }).request();
@@ -148,6 +151,7 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         channelMessageApiClient.setAuthentication(requestAuthentication);
@@ -172,6 +176,7 @@ public class MessageManipulator {
             @Override
             public ResCommon request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         channelMessageApiClient.setAuthentication(requestAuthentication);

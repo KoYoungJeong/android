@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import de.greenrobot.event.EventBus;
@@ -64,8 +63,8 @@ public class BaseChatListFragment extends Fragment {
         int type = (entity.isPublicTopic())
                 ? JandiConstants.TYPE_PUBLIC_TOPIC
                 : (entity.isPrivateGroup())
-                    ? JandiConstants.TYPE_PRIVATE_TOPIC
-                    : JandiConstants.TYPE_DIRECT_MESSAGE;
+                ? JandiConstants.TYPE_PRIVATE_TOPIC
+                : JandiConstants.TYPE_DIRECT_MESSAGE;
         moveToMessageActivity(entity.getId(), type, entity.isStarred);
     }
 
@@ -74,7 +73,7 @@ public class BaseChatListFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageListActivity_.intent(mContext)
+                MessageListV2Activity_.intent(mContext)
                         .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .entityType(entityType)
                         .entityId(entityId)

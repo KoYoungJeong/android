@@ -14,9 +14,9 @@ import android.widget.Spinner;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.ui.message.MessageListActivity;
-import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 
 import org.apache.log4j.Logger;
 
@@ -28,10 +28,9 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 6. 20..
  */
 public class FileUploadDialogFragment extends DialogFragment {
+    static private int selectedEntityIdToBeShared;    // Share 할 chat-room
     private final Logger log = Logger.getLogger(FileUploadDialogFragment.class);
     private EntityArrayAdapter mEntityArrayAdapter;
-
-    static private int selectedEntityIdToBeShared;    // Share 할 chat-room
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
         selectedEntityIdToBeShared = currentEntityId;
@@ -50,7 +49,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         Dialog me = getDialog();
         me.setCanceledOnTouchOutside(true);
         // 키보드 자동 올리기
-        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE  | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
@@ -63,7 +62,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         View mainView = inflater.inflate(R.layout.dialog_upload_file, null);
 
         // 파일 이름
-        final EditText editTextInputName = (EditText)mainView.findViewById(R.id.et_file_name_to_be_uploaded);
+        final EditText editTextInputName = (EditText) mainView.findViewById(R.id.et_file_name_to_be_uploaded);
         if (realFilePath.length() > 0) {
             File f = new File(realFilePath);
             editTextInputName.setText(f.getName());
@@ -72,17 +71,17 @@ public class FileUploadDialogFragment extends DialogFragment {
         }
 
         // CDP
-        final Spinner spinner = (Spinner)mainView.findViewById(R.id.spinner_cdps);
+        final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt(getString(R.string.jandi_action_share));
         mEntityArrayAdapter = new EntityArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
-                ((MessageListActivity)getActivity()).mEntityManager.retrieveAccessableEntities());
+                EntityManager.getInstance(getActivity()).retrieveAccessableEntities());
         spinner.setAdapter(mEntityArrayAdapter);
         spinner.setSelection(mEntityArrayAdapter.getPosition(currentEntityId));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedEntityIdToBeShared
-                        = ((FormattedEntity)adapterView.getItemAtPosition(i)).getEntity().id;
+                        = ((FormattedEntity) adapterView.getItemAtPosition(i)).getEntity().id;
                 log.debug("Change to cdp ID to be shared : " + selectedEntityIdToBeShared);
             }
 
@@ -93,7 +92,7 @@ public class FileUploadDialogFragment extends DialogFragment {
         });
 
         // File 코멘트
-        final EditText editTextFileComment = (EditText)mainView.findViewById(R.id.et_comment_with_file_upload);
+        final EditText editTextFileComment = (EditText) mainView.findViewById(R.id.et_comment_with_file_upload);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(R.string.title_file_upload)

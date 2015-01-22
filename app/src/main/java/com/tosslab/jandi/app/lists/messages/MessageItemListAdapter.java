@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.tosslab.jandi.app.events.messages.ReqeustMoreMessageEvent;
+import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -67,7 +67,7 @@ public class MessageItemListAdapter extends BaseAdapter {
         messageItemView.bind(getItem(position));
 
         if (position == 0 && moreState == MoreState.IDLE) {
-            EventBus.getDefault().post(new ReqeustMoreMessageEvent());
+            EventBus.getDefault().post(new RefreshOldMessageEvent());
             moreState = MoreState.LOADING;
         }
 

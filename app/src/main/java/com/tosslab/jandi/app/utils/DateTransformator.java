@@ -55,6 +55,11 @@ public class DateTransformator {
         return mCreateDateFormat.format(date);
     }
 
+    public static String getTimeStringForDivider(long dateTime) {
+        DateFormat mCreateDateFormat = new SimpleDateFormat("yyyy/MM/dd, EEE");
+        return mCreateDateFormat.format(dateTime);
+    }
+
     public static String getTimeStringForSimple(Date date) {
         DateFormat mCreateDateFormat = new SimpleDateFormat("a h:mm");
         return mCreateDateFormat.format(date);

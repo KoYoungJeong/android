@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
-import com.tosslab.jandi.app.ui.message.MessageListActivity_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
@@ -91,7 +91,7 @@ public class PushInterfaceActivity extends Activity {
 
     @UiThread
     void moveMessageListActivity() {
-        Intent intent = new Intent(PushInterfaceActivity.this, MessageListActivity_.class);
+        Intent intent = new Intent(PushInterfaceActivity.this, MessageListV2Activity_.class);
         intent.putExtra(JandiConstants.EXTRA_ENTITY_ID, entityId);
         intent.putExtra(JandiConstants.EXTRA_ENTITY_TYPE, entityType);
         intent.putExtra(JandiConstants.EXTRA_IS_FROM_PUSH, true);
