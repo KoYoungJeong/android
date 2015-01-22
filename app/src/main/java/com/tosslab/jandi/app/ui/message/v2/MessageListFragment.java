@@ -112,6 +112,7 @@ public class MessageListFragment extends Fragment {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
         if (savedMessages != null) {
             messageListPresenter.addAll(0, savedMessages);
+            messageListPresenter.moveLastPage();
         } else {
             messageListPresenter.showProgressWheel();
         }

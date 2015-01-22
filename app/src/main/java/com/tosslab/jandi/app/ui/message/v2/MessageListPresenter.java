@@ -57,6 +57,7 @@ public class MessageListPresenter {
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
+    private String tempMessage;
 
     @AfterInject
     void initObject() {
@@ -70,6 +71,8 @@ public class MessageListPresenter {
     void initViews() {
         messageListView.setAreHeadersSticky(false);
         messageListView.setAdapter(messageListAdapter);
+
+        setSendEditText(tempMessage);
 
     }
 
@@ -179,7 +182,7 @@ public class MessageListPresenter {
 
 
     public void setSendEditText(String text) {
-        messageEditText.setText(text);
+        tempMessage = text;
     }
 
     @UiThread
@@ -222,7 +225,6 @@ public class MessageListPresenter {
     @UiThread
     public void clearMessages() {
         messageListAdapter.clear();
-        messageListAdapter.notifyDataSetChanged();
 
     }
 
