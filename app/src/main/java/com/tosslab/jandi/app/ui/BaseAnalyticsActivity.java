@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
 import android.app.Activity;
-import android.content.Intent;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -9,12 +8,9 @@ import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.intro.IntroActivity_;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -45,11 +41,7 @@ public class BaseAnalyticsActivity extends Activity {
     private MixpanelMemberAnalyticsClient mMixpanelMemberAnalyticsClient;
 
     protected void returnToIntroStartActivity() {
-        JandiPreference.signOut(this);
-        JandiAccountDatabaseManager.getInstance(this).clearAllData();
-        Intent intent = new Intent(this, IntroActivity_.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        finish();
     }
 
     protected void trackSigningIn(EntityManager entityManager) {

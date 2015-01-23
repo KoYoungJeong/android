@@ -48,7 +48,6 @@ public class ImageViewHolder implements BodyViewHolder {
                 .into(profileImageView);
 
 
-
         nameTextView.setText(link.message.writer.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
@@ -59,7 +58,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
             Glide.with(fileImageView.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.jandi_profile)
+                    .placeholder(R.drawable.jandi_fl_icon_img)
                     .crossFade()
                     .into(fileImageView);
 

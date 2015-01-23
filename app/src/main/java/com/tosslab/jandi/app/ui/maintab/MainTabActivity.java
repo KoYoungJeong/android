@@ -31,6 +31,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.ResourceAccessException;
 
 import de.greenrobot.event.EventBus;
@@ -140,7 +141,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
             log.error(e.getErrorInfo() + "get entity failed", e);
-            getEntitiesFailed(getString(R.string.err_expired_session));
+            if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
+                getEntitiesFailed(getString(R.string.err_expired_session));
+            } else {
+                getEntitiesFailed(getString(R.string.err_service_connection));
+            }
         } catch (ResourceAccessException e) {
             log.error("connect failed", e);
             getEntitiesFailed(getString(R.string.err_service_connection));

@@ -72,6 +72,9 @@ public class RequestManager<ResponseObject> {
                 accessToken = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
             } catch (HttpStatusCodeException e) {
                 logger.error("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
+                if (e.getStatusCode() != HttpStatus.UNAUTHORIZED) {
+                    return null;
+                }
             }
         }
 

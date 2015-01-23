@@ -153,8 +153,9 @@ public class FileDetailPresenter {
                                     .load(thumbnailPhotoUrl)
                                     .placeholder(R.drawable.jandi_down_img)
                                     .crossFade()
-                                    .fitCenter()
-                                    .into(imageViewPhotoFile);
+                                    .into(imageViewPhotoFile)
+
+                            ;
                         }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
