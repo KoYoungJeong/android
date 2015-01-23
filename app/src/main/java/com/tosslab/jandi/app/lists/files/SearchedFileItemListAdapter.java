@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.androidannotations.annotations.AfterInject;
@@ -13,6 +14,8 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 7. 5..
@@ -23,6 +26,8 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
 
     @RootContext
     Context mContext;
+
+    MoreState moreState = MoreState.Idle;
 
     @AfterInject
     void initAdapter() {
@@ -72,6 +77,25 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
 
         searchedFileItemView.bind(getItem(position));
 
+        if (position == getCount() - 1 && moreState == MoreState.Idle) {
+            moreState = MoreState.Loading;
+
+            EventBus.getDefault().post(new RefreshOldFileEvent());
+        }
+
         return searchedFileItemView;
+    }
+
+    public void setNoMoreLoad() {
+        moreState = MoreState.NoMore;
+    }
+
+    public void setReadyMore() {
+        moreState = MoreState.Idle;
+
+    }
+
+    private enum MoreState {
+        Idle, Loading, NoMore
     }
 }

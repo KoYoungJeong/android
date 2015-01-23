@@ -221,6 +221,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Background
     void onUpdateProfile(ProgressDialog progressDialog) {
+        // TODO Refactoring...
+
         if (!attemptToUpdatePhoto && !attemptToUpdateData && !attemptToUpdateName && !attemptToUpdateEmail) {
             memberProfilePresenter.showToastNoUpdateProfile();
             return;

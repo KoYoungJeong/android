@@ -10,19 +10,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -41,10 +39,13 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 10. 13..
@@ -54,7 +55,6 @@ public class FileListFragment extends Fragment {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
     @ViewById(R.id.list_searched_files)
-    PullToRefreshListView pullToRefreshListViewSearchedFiles;
     ListView actualListView;
     @Bean
     SearchedFileItemListAdapter mAdapter;
@@ -106,37 +106,33 @@ public class FileListFragment extends Fragment {
 
         fileListModel.retrieveEntityManager();
 
-        pullToRefreshListViewSearchedFiles.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ListView>() {
-            @Override
-            public void onRefresh(PullToRefreshBase<ListView> listViewPullToRefreshBase) {
-                new GetPreviousFilesTask().execute();
-            }
-        });
-        actualListView = pullToRefreshListViewSearchedFiles.getRefreshableView();
-
         // Empty View를 가진 ListView 설정
         View emptyView = LayoutInflater.from(getActivity()).inflate(R.layout.view_search_list_empty, null);
         actualListView.setEmptyView(emptyView);
         actualListView.setAdapter(mAdapter);
 
-        actualListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                list_searched_messagesItemClicked(mAdapter.getItem(i - 1));
-            }
-        });
-
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
+    }
+
+    public void onEvent(RefreshOldFileEvent event) {
+        new GetPreviousFilesTask().execute();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         mSearchQuery.setToFirst();
         // 서치 시작
         mAdapter.clearAdapterWithoutNotify();
         doSearch();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -272,9 +268,9 @@ public class FileListFragment extends Fragment {
     void searchSucceed(ResSearchFile resSearchFile) {
 
         if (resSearchFile.fileCount < ReqSearchFile.MAX) {
-            pullToRefreshListViewSearchedFiles.setMode(PullToRefreshBase.Mode.DISABLED);
+            mAdapter.setNoMoreLoad();
         } else {
-            pullToRefreshListViewSearchedFiles.setMode(PullToRefreshBase.Mode.PULL_FROM_END);
+            mAdapter.setReadyMore();
         }
 
         log.debug("success to find " + resSearchFile.fileCount + " files.");
@@ -286,11 +282,7 @@ public class FileListFragment extends Fragment {
         ColoredToast.showError(mContext, getString(errMessageRes));
     }
 
-    /**
-     * *********************************************************
-     * Etc
-     * **********************************************************
-     */
+    @ItemClick(R.id.list_searched_files)
     void list_searched_messagesItemClicked(ResMessages.FileMessage searchedFile) {
         moveToFileDetailActivity(searchedFile.id);
     }
@@ -338,10 +330,11 @@ public class FileListFragment extends Fragment {
 
         @Override
         protected void onPostExecute(String errMessage) {
-            pullToRefreshListViewSearchedFiles.onRefreshComplete();
             if (justGetFilesSize < ReqSearchFile.MAX) {
                 ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_files));
-                pullToRefreshListViewSearchedFiles.setMode(PullToRefreshBase.Mode.DISABLED);
+                mAdapter.setNoMoreLoad();
+            } else {
+                mAdapter.setReadyMore();
             }
 
             if (errMessage == null) {

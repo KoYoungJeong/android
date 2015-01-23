@@ -239,4 +239,14 @@ public class MessageListModel {
             jandiEntityClient.modifyPrivateGroupName(entityId, inputName);
         }
     }
+
+    public List<ResMessages.Link> sortDescById(List<ResMessages.Link> messages) {
+        Collections.sort(messages, new Comparator<ResMessages.Link>() {
+            @Override
+            public int compare(ResMessages.Link lhs, ResMessages.Link rhs) {
+                return lhs.id - rhs.id;
+            }
+        });
+        return messages;
+    }
 }

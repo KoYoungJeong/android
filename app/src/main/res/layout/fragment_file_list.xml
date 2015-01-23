@@ -48,7 +48,7 @@
         android:layout_height="0.5dp"
         android:background="@color/jandi_file_search_item_divider" />
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView xmlns:ptr="http://schemas.android.com/apk/res-auto"
+    <ListView
         android:id="@+id/list_searched_files"
         android:layout_width="match_parent"
         android:layout_height="0px"
@@ -57,8 +57,5 @@
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
         android:fillViewport="true"
-        android:smoothScrollbar="true"
-        ptr:ptrPullLabel="@string/jandi_file_list_pull"
-        ptr:ptrRefreshLabel="@string/jandi_file_list_refresh"
-        ptr:ptrReleaseLabel="@string/jandi_file_list_release" />
+        android:smoothScrollbar="true" />
 </LinearLayout>
