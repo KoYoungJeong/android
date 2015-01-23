@@ -73,7 +73,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.FileExplorerActivity"
+            android:name=".ui.fileexplorer.FileExplorerActivity"
             android:label="@string/jandi_title_activity_file_explorer"
             android:screenOrientation="portrait"></activity>
         <activity

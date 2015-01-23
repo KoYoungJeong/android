@@ -337,8 +337,10 @@ public class MessageListFragment extends Fragment {
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
-                realFilePath = data.getStringExtra("GetPath") + File.separator + data.getStringExtra("GetFileName");
-                showFileUploadDialog(realFilePath);
+                if (resultCode == Activity.RESULT_OK) {
+                    realFilePath = data.getStringExtra("GetPath") + File.separator + data.getStringExtra("GetFileName");
+                    showFileUploadDialog(realFilePath);
+                }
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
                 logger.info("onActivityResult : Come from FileDetailActivity");

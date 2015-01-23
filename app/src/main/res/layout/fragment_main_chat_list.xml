@@ -10,6 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <include
+        android:id="@+id/layout_main_chat_list_empty"
+        layout="@layout/view_chat_list_empty" />
+
     <ImageView
         android:id="@+id/btn_main_chat_fab"
         android:layout_width="wrap_content"

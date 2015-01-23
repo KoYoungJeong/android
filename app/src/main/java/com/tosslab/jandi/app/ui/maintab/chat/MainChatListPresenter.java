@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.chat;
 
 import android.content.Context;
+import android.view.View;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
@@ -28,6 +29,9 @@ public class MainChatListPresenter {
     @ViewById(R.id.lv_main_chat_list)
     ListView chatListView;
 
+    @ViewById(R.id.layout_main_chat_list_empty)
+    View emptyView;
+
     MainChatListAdapter mainChatListAdapter;
 
 
@@ -38,6 +42,7 @@ public class MainChatListPresenter {
 
     @AfterViews
     void initViews() {
+        chatListView.setEmptyView(emptyView);
         chatListView.setAdapter(mainChatListAdapter);
     }
 

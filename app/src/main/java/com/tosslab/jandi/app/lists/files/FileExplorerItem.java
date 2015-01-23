@@ -10,37 +10,37 @@ public class FileExplorerItem implements Comparable<FileExplorerItem> {
     private String path;
     private String image;
 
-    public FileExplorerItem(String n, String d, String dt, String p, String img)
-    {
-        name = n;
-        data = d;
-        date = dt;
-        path = p;
-        image = img;
+    public FileExplorerItem(String name, String data, String date, String path, String image) {
+        this.name = name;
+        this.data = data;
+        this.date = date;
+        this.path = path;
+        this.image = image;
 
     }
-    public String getName()
-    {
+
+    public String getName() {
         return name;
     }
-    public String getData()
-    {
+
+    public String getData() {
         return data;
     }
-    public String getDate()
-    {
+
+    public String getDate() {
         return date;
     }
-    public String getPath()
-    {
+
+    public String getPath() {
         return path;
     }
+
     public String getImage() {
         return image;
     }
 
     public int compareTo(FileExplorerItem o) {
-        if(this.name != null)
+        if (this.name != null)
             return this.name.toLowerCase().compareTo(o.getName().toLowerCase());
         else
             throw new IllegalArgumentException();
