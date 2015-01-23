@@ -67,6 +67,7 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -1126,7 +1127,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MessageListActivity_.intent(mContext)
+                MessageListV2Activity_.intent(mContext)
                         .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                         .entityId(userId)
