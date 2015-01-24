@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Custom ruleset"
+    xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+    xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
+
+    <description>
+        This is Android RuleSet
+    </description>
+
+    <rule ref="rulesets/java/basic.xml">
+        <exclude name="AvoidUsingHardCodedIP" />
+    </rule>
+    <rule ref="rulesets/java/braces.xml"></rule>
+    <rule ref="rulesets/java/coupling.xml">
+        <exclude name="LooseCoupling" />
+        <!-- import 가 18개가 넘어가면 커플링이 심하다고 간주함..-->
+        <exclude name="ExcessiveImports" />
+    </rule>
+    <rule ref="rulesets/java/codesize.xml">
+        <exclude name="ExcessiveParameterList" />
+        <exclude name="ExcessivePublicCount" />
+        <!-- 메소드가 너무 많으면... -->
+        <exclude name="TooManyMethods" />
+        <!-- 높은 복잡도 노노...10 이상은 피하라..N'SIQ 가 대체할 수 있을거라 판단 -->
+        <exclude name="CyclomaticComplexity" />
+        <!-- 멤버 변수가 너무 많으면... -->
+        <exclude name="TooManyFields" />
+        <!-- 논의 필요...복잡도가 11만? 기준이 뭐지? -->
+        <exclude name="NPathComplexity" />
+        <!-- 아래에 별도로 처리하기 위함 -->
+        <exclude name="ExcessiveMethodLength" />
+    </rule>
+
+    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="150" />
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/java/design.xml">
+        <exclude name="ConfusingTernary" />
+        <!-- 논의 필요...생성자에서 메소드를 실행하지 말라는 의미인데...-->
+        <exclude name="ConstructorCallsOverridableMethod" />
+        <!-- 논의 필요...Adapter.getView 때문에 임시 예외 처리 -->
+        <exclude name="AvoidReassigningParameters" />
+        <!-- Switch-case 에서 Default 는 무조건 마지막에 위치해야 한다 -->
+        <exclude name="DefaultLabelNotLastInSwitchStmt" />
+        <!-- 생성자에 의해 final 멤버 변수가 있다면 클래스도 final 로 정의해야함 -->
+        <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal" />
+        <exclude name="SimpleDateFormatNeedsLocale" />
+        <exclude name="UseLocaleWithCaseConversions" />
+        <!-- 메소드에 synchronized 피하라 -->
+        <exclude name="AvoidSynchronizedAtMethodLevel" />
+        <exclude name="UseSingleton" />
+    </rule>
+    <rule ref="rulesets/java/imports.xml">
+        <!-- java.lang 이하 구문에 대한 제한..java.lang.Character.UnicodeBlock 때문에 예외 처리 함
+            하단에 예외 처리하려 했으나 설정이 안됨..추가 방법에 대해 논의 필요 -->
+        <exclude name="DontImportJavaLang" />
+    </rule>
+    <!--
+    <rule ref="rulesets/java/imports.xml/DontImportJavaLang">
+        <properties>
+            <property name="violationSuppressXPath" value="java.lang.Character.UnicodeBlock"/>
+        </properties>
+    </rule>
+    -->
+    <rule ref="rulesets/java/javabeans.xml">
+        <exclude name="BeanMembersShouldSerialize" />
+    </rule>
+    <rule ref="rulesets/java/naming.xml">
+        <exclude name="AbstractNaming" />
+        <!-- isBlocking 의 getter,setter 가 isBlocking(), setBlocking() 이며 안된다는데..대안이? -->
+        <exclude name="AvoidFieldNameMatchingMethodName" />
+        <exclude name="LongVariable" />
+        <exclude name="MethodNamingConventions" />
+        <exclude name="ShortVariable" />
+        <exclude name="VariableNamingConventions" />
+    </rule>
+    <rule ref="rulesets/java/strings.xml">
+        <!-- StringBuffer.append().append() 한번에 한 메소드만 호출..꼬리 물기 x-->
+        <exclude name="InsufficientStringBufferDeclaration" />
+        <!-- 중복되는 문자는 피하라.. 쿼리문에서 AND 반복되니깐 뜨더군요...-->
+        <exclude name="AvoidDuplicateLiterals" />
+        <!-- 1글자 짜리 String 사용 하지 말 것. " " 와 같은 띄어쓰기 대체 표현 방법 표현-->
+        <exclude name="AppendCharacterWithChar" />
+    </rule>
+
+    <rule ref="rulesets/java/unusedcode.xml">
+        <exclude name="UnusedPrivateField" />
+    </rule>
+</ruleset>
