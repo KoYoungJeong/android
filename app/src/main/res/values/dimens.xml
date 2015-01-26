@@ -61,7 +61,7 @@
     <dimen name="jandi_file_detail_text_date">12sp</dimen>
     <dimen name="jandi_file_detail_text_user_name">18sp</dimen>
     // 이미지 및 파일 타입 출력 부
-    <dimen name="jandi_file_detail_image_height">240dp</dimen>
+    <dimen name="jandi_file_detail_image_height">120dp</dimen>
     <dimen name="jandi_file_detail_file_margin_top">12dp</dimen>
     <dimen name="jandi_file_detail_file_icon_width">24dp</dimen>
     <dimen name="jandi_file_detail_file_icon_height">28dp</dimen>

@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -86,6 +87,8 @@ public class FileDetailPresenter {
         addFileDetailViewAsListviewHeader();
         mProgressWheel = new ProgressWheel(activity);
         mProgressWheel.init();
+
+        listFileDetailComments.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
     }
 
     private void addFileDetailViewAsListviewHeader() {
@@ -148,15 +151,11 @@ public class FileDetailPresenter {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        if (imageViewPhotoFile.getDrawable() == null) {
-                            Glide.with(activity)
-                                    .load(thumbnailPhotoUrl)
-                                    .placeholder(R.drawable.jandi_down_img)
-                                    .crossFade()
-                                    .into(imageViewPhotoFile)
-
-                            ;
-                        }
+                        Glide.with(activity)
+                                .load(thumbnailPhotoUrl)
+                                .fitCenter()
+                                .crossFade()
+                                .into(imageViewPhotoFile);
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -320,4 +319,5 @@ public class FileDetailPresenter {
     public String getCommentText() {
         return editTextComment.getText().toString();
     }
+
 }
