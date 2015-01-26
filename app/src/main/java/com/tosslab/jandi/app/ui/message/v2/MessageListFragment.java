@@ -35,6 +35,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -219,6 +220,7 @@ public class MessageListFragment extends Fragment {
         super.onResume();
         EventBus.getDefault().register(this);
         messageListModel.startRefreshTimer();
+        PushMonitor.getInstance().register(entityId);
     }
 
     @Override
@@ -230,6 +232,7 @@ public class MessageListFragment extends Fragment {
 
         messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItems());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
+        PushMonitor.getInstance().unregister(entityId);
     }
 
     void getOldMessageList(int linkId) {

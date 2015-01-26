@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -23,6 +24,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -30,6 +34,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -55,8 +60,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int myEntityId = JandiPreference.getMyEntityId(context);
-        if (myEntityId == JandiPreference.NOT_SET_YET) {
+        if (TextUtils.isEmpty(JandiPreference.getRefreshToken(context))) {
             // 이전에 JANDI 를 설치하고 삭제한 경우, 해당 디바이스 ID 가 남아있어 push 가 전송될 수 있다.
             // 새로 설치하고 아직 sign-in 을 하지 않은 경우 이전 사용자에 대한 push 가 전송됨으로 이를 무시한다.
             return;
@@ -77,10 +81,16 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                 // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
                 if (type.equals(JSON_VALUE_TYPE_PUSH)) {
                     PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTOInfo;
-                    if (messagePush.getWriterId() == myEntityId) {
+                    // is From My Message???
+                    if (isMyEntityId(context, messagePush.getWriterId())) {
                         return;
                     }
-                    sendNotificationWithProfile(context, messagePush);
+
+                    // I'm seeing same Entity???
+                    if (!PushMonitor.getInstance().hasEntityId(messagePush.getChatId())) {
+                        sendNotificationWithProfile(context, messagePush);
+                    }
+
                     // Update count of badge
                     BadgeUtils.setBadge(context, recalculateBadgeCount(context));
 
@@ -104,6 +114,17 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             }
         }
         return;
+    }
+
+    private boolean isMyEntityId(Context context, int writerId) {
+        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+
+        for (ResAccountInfo.UserTeam userTeam : userTeams) {
+            if (userTeam.getMemberId() == writerId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
