@@ -20,6 +20,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -305,7 +307,9 @@ public class MessageListFragment extends Fragment {
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
-            messageListModel.startRefreshTimer();
+            if (!messageSubscription.isUnsubscribed()) {
+                messageListModel.startRefreshTimer();
+            }
         }
     }
 
@@ -509,6 +513,11 @@ public class MessageListFragment extends Fragment {
     public void onEvent(RefreshNewMessageEvent event) {
 //        getNewMessageList(messageState.getLastUpdateLinkId());
         sendMessagePublisherEvent(LoadType.New);
+    }
+
+    public void onEvent(RequestUserInfoEvent event) {
+        UserInfoDialogFragment dialogFragment = UserInfoDialogFragment.newInstance(EntityManager.getInstance(getActivity()).getEntityById(event.userId), EntityManager.getInstance(getActivity()).isMe(event.userId));
+        dialogFragment.show(getFragmentManager(), "dialog");
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
