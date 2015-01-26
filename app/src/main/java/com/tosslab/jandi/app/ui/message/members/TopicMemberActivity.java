@@ -3,10 +3,8 @@ package com.tosslab.jandi.app.ui.message.members;
 import android.app.Activity;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.message.members.model.TopicMemberModel;
 
@@ -62,7 +60,6 @@ public class TopicMemberActivity extends Activity {
 
     public void onEvent(ProfileDetailEvent event) {
         int entityId = event.getEntityId();
-        FormattedEntity entity = EntityManager.getInstance(TopicMemberActivity.this).getEntityById(entityId);
-        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(entityId).build().show(getFragmentManager(), "dialog");
     }
 }

@@ -20,7 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -519,8 +519,8 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RequestUserInfoEvent event) {
-        UserInfoDialogFragment dialogFragment = UserInfoDialogFragment.newInstance(EntityManager.getInstance(getActivity()).getEntityById(event.userId), EntityManager.getInstance(getActivity()).isMe(event.userId));
-        dialogFragment.show(getFragmentManager(), "dialog");
+
+        UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {

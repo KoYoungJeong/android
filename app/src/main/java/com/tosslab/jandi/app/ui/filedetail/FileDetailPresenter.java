@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -304,16 +304,14 @@ public class FileDetailPresenter {
     @UiThread
     public void showUserInfoDialog(FormattedEntity user) {
         EntityManager entityManager = EntityManager.getInstance(activity);
-        boolean isMe = entityManager.isMe(user.getId());
         FragmentManager fragmentManager = activity.getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment prev = fragmentManager.findFragmentByTag("dialog");
         if (prev != null) {
             ft.remove(prev);
         }
+        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(activity.getFragmentManager(), "dialog");
 
-        UserInfoDialogFragment dialog = UserInfoDialogFragment.newInstance(user, isMe);
-        dialog.show(ft, "dialog");
     }
 
     public String getCommentText() {

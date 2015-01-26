@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -98,9 +98,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     }
 
     public void onEventMainThread(ProfileDetailEvent event) {
-        int entityId = event.getEntityId();
-        FormattedEntity entity = EntityManager.getInstance(TeamInfoActivity.this).getEntityById(entityId);
-        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
     }
 
 

@@ -6,10 +6,8 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -92,9 +90,8 @@ public class ChatsChooseFragment extends Fragment {
     }
 
     public void onEventMainThread(ProfileDetailEvent event) {
-        int entityId = event.getEntityId();
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
+
     }
 
     @ItemClick(R.id.list_chat_choose)

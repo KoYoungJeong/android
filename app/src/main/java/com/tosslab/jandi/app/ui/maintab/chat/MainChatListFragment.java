@@ -6,12 +6,10 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
@@ -59,9 +57,7 @@ public class MainChatListFragment extends Fragment {
     }
 
     public void onEventMainThread(ProfileDetailEvent event) {
-        int entityId = event.getEntityId();
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        UserInfoDialogFragment.newInstance(entity, false).show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {

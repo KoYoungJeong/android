@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment;
+import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -57,8 +57,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.model.FileUploadUtil;
 import com.tosslab.jandi.app.ui.message.model.MessageListModel;
@@ -1107,15 +1107,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void showUserInfoDialog(FormattedEntity user) {
-        boolean isMe = mEntityManager.isMe(user.getId());
+
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
             ft.remove(prev);
         }
 
-        UserInfoDialogFragment dialog = UserInfoDialogFragment.newInstance(user, isMe);
-        dialog.show(ft, "dialog");
+        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getFragmentManager(), "dialog");
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {

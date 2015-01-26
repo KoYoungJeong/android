@@ -22,70 +22,60 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
+import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 9. 3..
  */
+@EFragment
 public class UserInfoDialogFragment extends DialogFragment {
-    private final static String ARG_USER_ID = "userId";
-    private final static String ARG_USER_NAME = "userName";
-    private final static String ARG_USER_STATUS_MSG = "userStatusMessage";
-    private final static String ARG_USER_DIVISION = "userDivision";
-    private final static String ARG_USER_POSITION = "userPosition";
-    private final static String ARG_USER_PHONE_NUMBER = "userPhoneNumber";
-    private final static String ARG_USER_EMAIL = "userEmail";
-    private final static String ARG_USER_PROFILE_URL = "profileUrl";
-    private final static String ARG_USER_IS_ME = "isMe";
-    private static final String ARG_USER_STARRED = "isStarred";
 
-    public static UserInfoDialogFragment newInstance(FormattedEntity user, boolean isMe) {
-        UserInfoDialogFragment frag = new UserInfoDialogFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_USER_ID, user.getId());
-        args.putString(ARG_USER_NAME, user.getName());
-        args.putString(ARG_USER_STATUS_MSG, user.getUserStatusMessage());
-        args.putString(ARG_USER_DIVISION, user.getUserDivision());
-        args.putString(ARG_USER_POSITION, user.getUserPosition());
-        args.putString(ARG_USER_PHONE_NUMBER, user.getUserPhoneNumber());
-        args.putString(ARG_USER_EMAIL, user.getUserEmail());
-        args.putString(ARG_USER_PROFILE_URL, user.getUserLargeProfileUrl());
-        args.putBoolean(ARG_USER_STARRED, user.isStarred);
-        args.putBoolean(ARG_USER_IS_ME, isMe);
 
-        frag.setArguments(args);
-        return frag;
-    }
+    private static final Logger logger = Logger.getLogger(UserInfoDialogFragment.class);
 
-    @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
-        // 회면 밖 터치시 다이얼로그 종료
-        Dialog me = getDialog();
-        me.setCanceledOnTouchOutside(true);
-    }
+    @FragmentArg
+    int entityId;
+
+    @Bean
+    JandiEntityClient jandiEntityClient;
+    private ImageView imgStarred;
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         Bundle bundle = getArguments();
-        final int userId = bundle.getInt(ARG_USER_ID, -1);
-        final String userName = bundle.getString(ARG_USER_NAME);
-        final String userNickname = bundle.getString(ARG_USER_STATUS_MSG);
-        final String userDivision = bundle.getString(ARG_USER_DIVISION);
-        final String userPosition = bundle.getString(ARG_USER_POSITION);
-        final String userPhoneNumber = bundle.getString(ARG_USER_PHONE_NUMBER);
-        final String userEmail = bundle.getString(ARG_USER_EMAIL);
-        final String userProfileUrl = bundle.getString(ARG_USER_PROFILE_URL);
-        final boolean isMe = bundle.getBoolean(ARG_USER_IS_ME, false);
-        final boolean isStarred = bundle.getBoolean(ARG_USER_STARRED, false);
+        final int userId = entityId;
+
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+
+        final String userName = entity.getName();
+        final String userNickname = entity.getUserStatusMessage();
+        final String userDivision = entity.getUserDivision();
+        final String userPosition = entity.getUserPosition();
+        final String userPhoneNumber = entity.getUserPhoneNumber();
+        final String userEmail = entity.getUserEmail();
+        final String userProfileUrl = entity.getUserLargeProfileUrl();
+        final boolean isMe = EntityManager.getInstance(getActivity()).isMe(userId);
+        final boolean isStarred = entity.isStarred;
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_user_profile, null);
 
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
-        final ImageView imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
+        imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
         final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);
         final TextView txtUserNickname = (TextView) mainView.findViewById(R.id.txt_user_info_nickname);
         final TextView txtUserDivision = (TextView) mainView.findViewById(R.id.txt_user_info_division);
@@ -97,11 +87,20 @@ public class UserInfoDialogFragment extends DialogFragment {
         final LinearLayout lyUserDirectMessage = (LinearLayout) mainView.findViewById(R.id.ly_user_info_direct_message);
         final View borderUserDirectMessage = mainView.findViewById(R.id.border_user_info_direct_message);
 
-        if (isStarred) {
-            imgStarred.setImageResource(R.drawable.profile_fav_on);
+        if (!isMe) {
+            setProfileStarred(isStarred);
         } else {
-            imgStarred.setImageResource(R.drawable.profile_fav_off);
+            imgStarred.setVisibility(View.GONE);
         }
+
+        imgStarred.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                onStarClick(userId);
+
+            }
+        });
 
         if (isMe) {     // 본인의 정보면 1:1 대화 버튼을 보여주지 않는다.
             lyUserDirectMessage.setVisibility(View.GONE);
@@ -191,13 +190,48 @@ public class UserInfoDialogFragment extends DialogFragment {
         dialog.setCancelable(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(mainView);
-        dialog.setCanceledOnTouchOutside(false);
         Window window = dialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(true);
         return dialog;
+    }
+
+    @UiThread
+    void setProfileStarred(boolean isStarred) {
+        if (isStarred) {
+            imgStarred.setImageResource(R.drawable.profile_fav_on);
+        } else {
+            imgStarred.setImageResource(R.drawable.profile_fav_off);
+        }
+    }
+
+    @Background
+    void onStarClick(int entityId) {
+
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+
+        try {
+            if (entity.isStarred) {
+                RequestManager.newInstance(getActivity(), () -> jandiEntityClient.disableFavorite(entityId)).request();
+            } else {
+                RequestManager.newInstance(getActivity(), () -> jandiEntityClient.enableFavorite(entityId)).request();
+            }
+
+
+            entity.isStarred = !entity.isStarred;
+
+            setProfileStarred(entity.isStarred);
+
+            EventBus.getDefault().post(new RetrieveTopicListEvent());
+
+
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
