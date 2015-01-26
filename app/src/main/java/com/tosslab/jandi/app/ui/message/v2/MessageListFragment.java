@@ -56,6 +56,9 @@ import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
@@ -84,10 +87,27 @@ public class MessageListFragment extends Fragment {
     MessageListModel messageListModel;
 
     private MessageState messageState;
+    private PublishSubject<LoadType> messagePublishSubject;
+    private Subscription messageSubscription;
 
     @AfterInject
     void initObject() {
         messageState = new MessageState();
+
+        messagePublishSubject = PublishSubject.create();
+
+        messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
+                .subscribe(loadType -> {
+                    switch (loadType) {
+                        case Old:
+                            getOldMessageList(messageState.getFirstItemId());
+                            break;
+                        case New:
+                            getNewMessageList(messageState.getLastUpdateLinkId());
+                            break;
+                    }
+                });
+
     }
 
     @AfterViews
@@ -124,9 +144,22 @@ public class MessageListFragment extends Fragment {
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
-        getOldMessageList(messageState.getFirstItemId());
+//        getOldMessageList(messageState.getFirstItemId());
 
+        sendMessagePublisherEvent(LoadType.Old);
 
+    }
+
+    private void sendMessagePublisherEvent(LoadType old) {
+        if (!messageSubscription.isUnsubscribed()) {
+            messagePublishSubject.onNext(old);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        messageSubscription.unsubscribe();
     }
 
     private void setUpActionbar() {
@@ -197,7 +230,6 @@ public class MessageListFragment extends Fragment {
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
     }
 
-    @Background
     void getOldMessageList(int linkId) {
         try {
 
@@ -252,7 +284,6 @@ public class MessageListFragment extends Fragment {
         }
     }
 
-    @Background
     void getNewMessageList(int linkId) {
         if (linkId <= 0) {
             return;
@@ -381,7 +412,8 @@ public class MessageListFragment extends Fragment {
 
     @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
     void onFileDetailResult() {
-        getNewMessageList(messageState.getLastUpdateLinkId());
+//        getNewMessageList(messageState.getLastUpdateLinkId());
+        sendMessagePublisherEvent(LoadType.New);
     }
 
     void onMessageItemLonkClick(ResMessages.Link link) {
@@ -443,8 +475,8 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
 
-            getNewMessageList(messageState.getLastUpdateLinkId());
-
+//            getNewMessageList(messageState.getLastUpdateLinkId());
+            sendMessagePublisherEvent(LoadType.New);
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
             messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
@@ -469,12 +501,14 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(RefreshOldMessageEvent event) {
         if (!messageState.isFirstMessage()) {
-            getOldMessageList(messageState.getFirstItemId());
+            sendMessagePublisherEvent(LoadType.Old);
+//            getOldMessageList(messageState.getFirstItemId());
         }
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
-        getNewMessageList(messageState.getLastUpdateLinkId());
+//        getNewMessageList(messageState.getLastUpdateLinkId());
+        sendMessagePublisherEvent(LoadType.New);
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
@@ -503,6 +537,9 @@ public class MessageListFragment extends Fragment {
         getActivity().getActionBar().setTitle(changedEntityName);
     }
 
+    private enum LoadType {
+        Old, New
+    }
 }
 
 
