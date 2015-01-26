@@ -2,27 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg_message_item"
+    android:orientation="vertical"
     tools:context="com.tosslab.jandi.app.FileDetailActivity">
+
     <ListView
         android:id="@+id/list_file_detail_comments"
         android:layout_width="match_parent"
         android:layout_height="0px"
         android:layout_weight="1"
+        android:background="@color/jandi_file_detail_comments_bg"
         android:choiceMode="singleChoice"
+        android:clipToPadding="false"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
-        android:transcriptMode="normal"
-        android:fillViewport="true"
-        android:background="@color/jandi_file_detail_comments_bg">
-    </ListView>
+        android:paddingBottom="5dp"
+        android:transcriptMode="normal"></ListView>
 
     <!-- Message Input Layout -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/jandi_message_input_border" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,18 +32,19 @@
         android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
+
         <EditText
             android:id="@+id/et_file_detail_comment"
             style="@style/JandiChat.EditText"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/comment"/>
+            android:hint="@string/comment" />
+
         <Button
             android:id="@+id/btn_file_detail_send_comment"
             style="@style/JandiChat.Button.Dynamic"
             android:layout_marginLeft="6dp"
-            android:text="@string/jandi_message_send"
-            />
+            android:text="@string/jandi_message_send" />
     </LinearLayout>
 </LinearLayout>
