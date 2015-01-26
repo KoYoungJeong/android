@@ -53,14 +53,13 @@ public class MainChatListAdapter extends BaseAdapter {
 
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
             viewHolder = new ViewHolder();
             viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.viewMaskUnjoined = convertView.findViewById(R.id.view_entity_unjoined);
 
             convertView.setTag(viewHolder);
 
@@ -74,20 +73,18 @@ public class MainChatListAdapter extends BaseAdapter {
         if (item.isStarred()) {
             viewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.imageViewFavorite.setVisibility(View.GONE);
+            viewHolder.imageViewFavorite.setVisibility(View.INVISIBLE);
         }
 
         viewHolder.textViewBadgeCount.setText(String.valueOf(item.getUnread()));
 
         if (item.getUnread() <= 0) {
-            viewHolder.textViewBadgeCount.setVisibility(View.GONE);
+            viewHolder.textViewBadgeCount.setVisibility(View.INVISIBLE);
         } else {
             viewHolder.textViewBadgeCount.setVisibility(View.VISIBLE);
         }
 
         viewHolder.textViewAdditional.setText(item.getLastMessage());
-
-        viewHolder.viewMaskUnjoined.setVisibility(View.GONE);
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
@@ -120,7 +117,6 @@ public class MainChatListAdapter extends BaseAdapter {
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
-        public View viewMaskUnjoined;
 
     }
 }
