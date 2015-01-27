@@ -63,21 +63,13 @@ public class JandiEntityDatabaseManager {
         int teamId = leftSideMenu.team.id;
         int memberId = leftSideMenu.user.id;
 
-        database.delete(Table.left_team.name(), LeftTeam.id + " = ?", new String[]{String.valueOf(teamId)});
 
         database.delete(Table.left_user.name(), LeftUser.teamId + " = ?", new String[]{String.valueOf(leftSideMenu.user.teamId)});
 
-        database.delete(Table.left_message_marker.name(), LeftMessageMarkers.teamId + " = ?", new String[]{String.valueOf(teamId)});
-
-        database.delete(Table.left_starred_entity.name(), LeftStarredEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
-
         database.delete(Table.left_topic_entity.name(), LeftTopicEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
-        database.delete(Table.left_join_entity.name(), LeftJoinEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
-
-        database.delete(Table.left_whole.name(), DatabaseConsts.LeftWhole.teamId + " = ?", new String[]{String.valueOf(teamId)});
-
         if (leftSideMenu != null) {
+            database.delete(Table.left_whole.name(), DatabaseConsts.LeftWhole.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
             try {
                 String jsonWholeValue = new ObjectMapper().writeValueAsString(leftSideMenu);
@@ -95,6 +87,8 @@ public class JandiEntityDatabaseManager {
 
 
         if (leftSideMenu.team != null) {
+
+            database.delete(Table.left_team.name(), LeftTeam.id + " = ?", new String[]{String.valueOf(teamId)});
 
             ContentValues values = new ContentValues();
             values.put(LeftTeam.id.name(), teamId);
@@ -195,11 +189,12 @@ public class JandiEntityDatabaseManager {
 
         if (leftSideMenu.joinEntities != null) {
 
-            ContentValues values;
+            database.delete(Table.left_join_entity.name(), LeftJoinEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
             database.beginTransaction();
             try {
 
+                ContentValues values;
                 for (ResLeftSideMenu.Entity joinEntity : leftSideMenu.joinEntities) {
                     values = new ContentValues();
 
@@ -233,6 +228,8 @@ public class JandiEntityDatabaseManager {
 
 
             if (leftSideMenu.user.u_starredEntities != null) {
+                database.delete(Table.left_starred_entity.name(), LeftStarredEntity.teamId + " = ?", new String[]{String.valueOf(teamId)});
+
                 database.beginTransaction();
                 try {
 
@@ -253,6 +250,8 @@ public class JandiEntityDatabaseManager {
             }
 
             if (leftSideMenu.user.u_messageMarkers != null) {
+                database.delete(Table.left_message_marker.name(), LeftMessageMarkers.teamId + " = ?", new String[]{String.valueOf(teamId)});
+
                 database.beginTransaction();
                 try {
 
@@ -337,17 +336,6 @@ public class JandiEntityDatabaseManager {
         boolean isStarredEntity = (cursor != null && cursor.getCount() > 0);
         closeCursor(cursor);
         return isStarredEntity;
-    }
-
-    public void clearAllData() {
-
-        SQLiteDatabase database = getWriteableDatabase();
-        Table[] tables = Table.values();
-
-        for (Table table : tables) {
-            database.delete(table.name(), null, null);
-        }
-
     }
 
     private void closeCursor(Cursor cursor) {

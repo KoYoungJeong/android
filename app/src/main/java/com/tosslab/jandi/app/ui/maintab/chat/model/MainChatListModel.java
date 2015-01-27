@@ -47,6 +47,7 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Iterator<ChatItem> iterator = Observable.from(chatList)
+                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getEntityId()) != null)
                 .map(resChat -> {
 
                     FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getEntityId());
@@ -63,6 +64,7 @@ public class MainChatListModel {
 
                     return chatItem;
                 })
+
                 .toBlocking()
                 .getIterator();
 

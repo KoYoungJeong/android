@@ -86,12 +86,15 @@ public class EntityManager {
     }
 
     public void refreshEntity(Context context) {
+
+        log.debug("Refresh Entity~!");
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
         init(resLeftSideMenu);
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
+        log.debug("Refresh Entity~!");
         init(resLeftSideMenu);
     }
 

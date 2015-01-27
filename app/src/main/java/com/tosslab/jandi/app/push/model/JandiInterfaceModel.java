@@ -47,6 +47,10 @@ public class JandiInterfaceModel {
         JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
 
 
+        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+        ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+
     }
 
     public boolean hasBackStackActivity() {
