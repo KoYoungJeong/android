@@ -1,13 +1,16 @@
 package com.tosslab.jandi.app.ui.member;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -17,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -99,6 +103,17 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
     public void onEventMainThread(ProfileDetailEvent event) {
         UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        EntityManager entityManager = EntityManager.getInstance(TeamInfoActivity.this);
+        MessageListV2Activity_.intent(TeamInfoActivity.this)
+                .teamId(entityManager.getTeamId())
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(event.userId)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
 

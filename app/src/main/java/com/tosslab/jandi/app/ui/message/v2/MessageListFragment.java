@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
@@ -23,6 +21,7 @@ import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
@@ -459,6 +458,19 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
         deleteTopic();
+    }
+
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        MessageListV2Activity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .teamId(entityManager.getTeamId())
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(event.userId)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .isFromPush(isFromPush)
+                .start();
     }
 
     @Background

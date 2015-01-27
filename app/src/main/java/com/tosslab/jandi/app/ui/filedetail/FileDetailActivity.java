@@ -477,10 +477,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
-        MessageListV2Activity_.intent(mContext)
+        EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
+        MessageListV2Activity_.intent(FileDetailActivity.this)
+                .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }
 

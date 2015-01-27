@@ -7,9 +7,11 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
@@ -71,6 +73,17 @@ public class MainChatListFragment extends Fragment {
         if (TextUtils.equals(event.getEntityType(), "user")) {
             getChatList();
         }
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(entityManager.getTeamId())
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(event.userId)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
     @Background

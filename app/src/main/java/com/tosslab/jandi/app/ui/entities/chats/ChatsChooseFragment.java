@@ -1,13 +1,16 @@
 package com.tosslab.jandi.app.ui.entities.chats;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -92,6 +95,18 @@ public class ChatsChooseFragment extends Fragment {
     public void onEventMainThread(ProfileDetailEvent event) {
         UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
 
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        getActivity().finish();
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(entityManager.getTeamId())
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(event.userId)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
     }
 
     @ItemClick(R.id.list_chat_choose)

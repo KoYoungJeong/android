@@ -131,6 +131,13 @@ public class FileDetailPresenter {
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 
+                imageViewUserProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getFragmentManager(), "dialog");
+                    }
+                });
+
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
