@@ -109,7 +109,7 @@ Welcome to JANDI"</string>
     <string name="jandi_profile_position">"Position"</string>
     <string name="jandi_profile_optional">"(Optional)"</string>
     <string name="jandi_profile_update">"Update"</string>
-    <string name="err_profile_get_info">"Profile could not be found. Please try again."</string>
+    <string name="err_profile_get_info">"Failed to load the profile. Please try again"</string>
     <string name="err_profile_empty_info">"Please fill in"</string>
     <string name="err_profile_unmodified">"No changes to apply"</string>
     <string name="jandi_profile_update_succeed">"Profile has been updated"</string>
@@ -134,7 +134,7 @@ Welcome to JANDI"</string>
     <string name="warn_no_more_messages">"There are no more new messages"</string>
     <string name="warn_no_permission">"Access denied"</string>
     <string name="err_messages_invaild_entity">"Invalid Topic"</string>
-    <string name="err_messages_get">"Message could not be found"</string>
+    <string name="err_messages_get">"Failed to load messages. Please try again"</string>
     <string name="err_messages_send">"Message could not be sent"</string>
     <string name="err_messages_modify">"Message could not be edited"</string>
     <string name="err_messages_delete">"Message could not be deleted"</string>
@@ -157,7 +157,7 @@ Welcome to JANDI"</string>
     <string name="jandi_share_succeed">"...has been shared"</string>
     <string name="jandi_unshare_succeed">"...has been unshared"</string>
     <string name="jandi_delete_succeed">"...has been deleted"</string>
-    <string name="err_file_detail">"File could not be found"</string>
+    <string name="err_file_detail">"Failed to load the file detail. Please try again"</string>
     <string name="err_download">"File could not be downloaded"</string>
     <string name="err_share">"File could not be shared"</string>
     <string name="err_unshare">"File could not be unshared"</string>

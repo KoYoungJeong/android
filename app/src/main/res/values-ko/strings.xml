@@ -111,7 +111,7 @@
     <string name="jandi_profile_position">"직책"</string>
     <string name="jandi_profile_optional">"(선택 사항)"</string>
     <string name="jandi_profile_update">"완료"</string>
-    <string name="err_profile_get_info">"프로필 획득에 실패하였습니다. 다시 시도해주세요."</string>
+    <string name="err_profile_get_info">"프로필을 불러오지 못했습니다. 다시 시도해주세요"</string>
     <string name="err_profile_empty_info">"내용을 입력해주세요"</string>
     <string name="err_profile_unmodified">"수정된 내역이 없습니다"</string>
     <string name="jandi_profile_update_succeed">"프로필이 수정되었습니다"</string>
@@ -136,7 +136,7 @@
     <string name="warn_no_more_messages">"더 이상 메시지가 없습니다"</string>
     <string name="warn_no_permission">"권한이 없습니다"</string>
     <string name="err_messages_invaild_entity">"유효하지 않은 방입니다"</string>
-    <string name="err_messages_get">"메시지 획득에 실패했습니다"</string>
+    <string name="err_messages_get">"메시지를 불러오지 못했습니다. 다시 시도해 주세요"</string>
     <string name="err_messages_send">"메시지 전송에 실패했습니다"</string>
     <string name="err_messages_modify">"메시지 수정에 실패했습니다"</string>
     <string name="err_messages_delete">"메시지 삭제에 실패했습니다"</string>
@@ -159,7 +159,7 @@
     <string name="jandi_share_succeed">"공유되었습니다"</string>
     <string name="jandi_unshare_succeed">"공유가 해제되었습니다"</string>
     <string name="jandi_delete_succeed">"파일이 삭제되었습니다"</string>
-    <string name="err_file_detail">"파일 정보 획득에 실패했습니다"</string>
+    <string name="err_file_detail">"파일 정보를 불러오지 못했습니다. 다시 시도해 주세요"</string>
     <string name="err_download">"파일 다운로드에 실패했습니다"</string>
     <string name="err_share">"공유에 실패했습니다"</string>
     <string name="err_unshare">"공유 해제에 실패했습니다"</string>
