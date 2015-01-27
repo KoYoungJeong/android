@@ -12,7 +12,9 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -50,6 +52,9 @@ public class JandiInterfaceModel {
         JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
         ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+        JandiPreference.setBadgeCount(context, totalUnreadCount);
+        BadgeUtils.setBadge(context, totalUnreadCount);
 
     }
 
@@ -94,6 +99,9 @@ public class JandiInterfaceModel {
             try {
                 ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
                 JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+                int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+                JandiPreference.setBadgeCount(context, totalUnreadCount);
+                BadgeUtils.setBadge(context, totalUnreadCount);
                 EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
                 return true;

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -14,8 +16,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -24,6 +26,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -53,6 +56,9 @@ public class MessageListPresenter {
 
     @RootContext
     Activity activity;
+
+    @SystemService
+    ClipboardManager clipboardManager;
 
     private MessageListAdapter messageListAdapter;
 
@@ -245,5 +251,10 @@ public class MessageListPresenter {
     @UiThread
     public void finish() {
         activity.finish();
+    }
+
+    public void copyToClipboard(String contentString) {
+        final ClipData clipData = ClipData.newPlainText("", contentString);
+        clipboardManager.setPrimaryClip(clipData);
     }
 }

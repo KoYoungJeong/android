@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,16 @@ public class BadgeUtils {
     public static void setBadge(Context context, int count) {
         setBadgeSamsung(context, count);
         setBadgeSony(context, count);
+    }
+
+    public static int getTotalUnreadCount(ResLeftSideMenu resLeftSideMenu) {
+
+        int totalUnread = 0;
+        for (ResLeftSideMenu.AlarmInfo alarmInfo : resLeftSideMenu.alarmInfos) {
+            totalUnread += alarmInfo.alarmCount;
+        }
+
+        return totalUnread;
     }
 
     public static void clearBadge(Context context) {

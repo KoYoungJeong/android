@@ -17,7 +17,9 @@ import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -90,6 +92,14 @@ public class MainChatListFragment extends Fragment {
 
     @ItemClick(R.id.lv_main_chat_list)
     void onEntityItemClick(ChatItem chatItem) {
+
+        int unread = chatItem.getUnread();
+        chatItem.unread(0);
+        int badgeCount = JandiPreference.getBadgeCount(getActivity()) - unread;
+        JandiPreference.setBadgeCount(getActivity(), badgeCount);
+        BadgeUtils.setBadge(getActivity(), badgeCount);
+        mainChatListPresenter.refreshListView();
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityId(chatItem.getEntityId())

@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -97,6 +98,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     // 삭제 확인
     public void onEvent(ConfirmDeleteMessageEvent event) {
         deleteComment(event.messageType, event.messageId, event.feedbackId);
+    }
+
+    public void onEvent(ConfirmCopyMessageEvent event) {
+        fileDetailPresenter.copyToClipboard(event.contentString);
     }
 
     @Background

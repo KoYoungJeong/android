@@ -172,7 +172,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         initInformations();
         initTempMessage();
         clearPushNotification(entityId);
-        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
+//        BadgeUtils.clearBadge(mContext); // TODO BUG 현재 Activity 에서 홈버튼으로 돌아가면 아이콘에 뱃지가 0이 됨.
         initProgressWheel();
 
         setUpActionBar(mChattingInformations.entityName);
@@ -426,6 +426,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             // TODO Temp TeamId
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MessageListActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+            JandiPreference.setBadgeCount(MessageListActivity.this, totalUnreadCount);
+            BadgeUtils.setBadge(MessageListActivity.this, totalUnreadCount);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (Exception e) {
             // TODO 에러 상황 나누기
@@ -447,19 +450,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         log.debug("entity name from push : " + mChattingInformations.entityName);
         showActionBarTitle(mChattingInformations.entityName);
         trackSigningInFromPush(mEntityManager);
-        setBadgeCount(mEntityManager);
 
         getMessages();
-    }
-
-    @SupposeUiThread
-    void setBadgeCount(EntityManager entityManager) {
-        int badgeCount = entityManager.getTotalBadgeCount();
-        if (entityManager != null) {
-            log.debug("Reset badge count to " + badgeCount);
-            JandiPreference.setBadgeCount(this, badgeCount);
-            BadgeUtils.setBadge(this, badgeCount);
-        }
     }
 
     @UiThread

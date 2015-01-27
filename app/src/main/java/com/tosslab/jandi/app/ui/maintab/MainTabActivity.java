@@ -28,7 +28,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -137,6 +136,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MainTabActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+            BadgeUtils.setBadge(MainTabActivity.this, totalUnreadCount);
+            JandiPreference.setBadgeCount(MainTabActivity.this, totalUnreadCount);
             EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
@@ -161,7 +163,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         getActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
         checkNewTabBadges(mEntityManager);
-        setBadgeCount(mEntityManager);
         postAllEvents();
     }
 
@@ -185,16 +186,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             mMainTabPagerAdapter.showNewChatBadge();
         } else {
             mMainTabPagerAdapter.hideNewChatBadge();
-        }
-    }
-
-    @SupposeUiThread
-    void setBadgeCount(EntityManager entityManager) {
-        int badgeCount = entityManager.getTotalBadgeCount();
-        if (entityManager != null) {
-            log.debug("Reset badge count to " + badgeCount);
-            JandiPreference.setBadgeCount(this, badgeCount);
-            BadgeUtils.setBadge(this, badgeCount);
         }
     }
 

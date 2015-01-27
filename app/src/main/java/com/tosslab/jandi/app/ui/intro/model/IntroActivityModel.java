@@ -13,11 +13,11 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -28,7 +28,6 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpStatusCodeException;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -163,7 +162,11 @@ public class IntroActivityModel {
         try {
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            JandiPreference.setBadgeCount(context, totalUnreadCount);
+            BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(context);
+
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();

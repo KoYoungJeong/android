@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Menu;
@@ -26,6 +28,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
@@ -146,8 +149,6 @@ public class MessageListFragment extends Fragment {
 
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
-
-//        getOldMessageList(messageState.getFirstItemId());
 
         sendMessagePublisherEvent(LoadType.Old);
 
@@ -444,6 +445,11 @@ public class MessageListFragment extends Fragment {
     public void onEvent(ConfirmDeleteMessageEvent event) {
         deleteMessage(event.messageType, event.messageId);
     }
+
+    public void onEvent(ConfirmCopyMessageEvent event) {
+        messageListPresenter.copyToClipboard(event.contentString);
+    }
+
 
     public void onEvent(ConfirmFileUploadEvent event) {
         ProgressDialog uploadProgress = messageListPresenter.getUploadProgress(event);

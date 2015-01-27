@@ -51,4 +51,8 @@ public class MainChatListPresenter {
         mainChatListAdapter.setChatItem(chatItems);
         mainChatListAdapter.notifyDataSetChanged();
     }
+
+    public void refreshListView() {
+        mainChatListAdapter.notifyDataSetChanged();
+    }
 }

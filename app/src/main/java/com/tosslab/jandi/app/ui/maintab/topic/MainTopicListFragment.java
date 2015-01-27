@@ -18,7 +18,9 @@ import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -95,8 +97,12 @@ public class MainTopicListFragment extends Fragment {
 
                 TopicListAdapter adapter = (TopicListAdapter) parent.getExpandableListAdapter();
                 FormattedEntity entity = adapter.getChild(groupPosition, childPosition);
+                int badgeCount = JandiPreference.getBadgeCount(getActivity()) - entity.alarmCount;
+                JandiPreference.setBadgeCount(getActivity(), badgeCount);
+                BadgeUtils.setBadge(getActivity(), badgeCount);
                 entity.alarmCount = 0;
                 adapter.notifyDataSetChanged();
+
 
                 if (entity.isJoined || entity.isPrivateGroup()) {
                     int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;

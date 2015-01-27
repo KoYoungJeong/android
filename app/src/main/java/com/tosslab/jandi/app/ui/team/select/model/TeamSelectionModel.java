@@ -15,7 +15,9 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -153,6 +155,9 @@ public class TeamSelectionModel {
     public EntityManager setEntityManager(ResLeftSideMenu resLeftSideMenu) {
 
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+        JandiPreference.setBadgeCount(context, totalUnreadCount);
+        BadgeUtils.setBadge(context, totalUnreadCount);
 
         EntityManager entityManager = EntityManager.getInstance(context);
         entityManager.refreshEntity(context);

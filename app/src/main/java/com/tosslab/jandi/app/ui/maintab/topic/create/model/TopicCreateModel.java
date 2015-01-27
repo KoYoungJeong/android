@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.ui.maintab.topic.create.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -39,6 +39,9 @@ public class TopicCreateModel {
     public void refreshEntity() throws JandiNetworkException {
         ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+        JandiPreference.setBadgeCount(context, totalUnreadCount);
+        BadgeUtils.setBadge(context, totalUnreadCount);
 
     }
 

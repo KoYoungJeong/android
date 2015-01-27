@@ -132,4 +132,5 @@ public class JandiPreference {
         return pref.getBoolean(PREF_FIRST_LOGIN, false);
     }
 
+
 }

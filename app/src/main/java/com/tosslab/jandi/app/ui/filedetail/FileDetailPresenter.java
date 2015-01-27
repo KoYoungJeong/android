@@ -6,6 +6,8 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -59,6 +61,9 @@ public class FileDetailPresenter {
 
     @SystemService
     InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+
+    @SystemService
+    ClipboardManager clipboardManager;
 
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
@@ -316,6 +321,11 @@ public class FileDetailPresenter {
 
     public String getCommentText() {
         return editTextComment.getText().toString();
+    }
+
+    public void copyToClipboard(String contentString) {
+        ClipData clipData = ClipData.newPlainText("", contentString);
+        clipboardManager.setPrimaryClip(clipData);
     }
 
 }

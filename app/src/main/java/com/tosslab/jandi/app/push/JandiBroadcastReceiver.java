@@ -92,7 +92,9 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                     }
 
                     // Update count of badge
-                    BadgeUtils.setBadge(context, recalculateBadgeCount(context));
+                    int count = recalculateBadgeCount(context);
+                    JandiPreference.setBadgeCount(context, count);
+                    BadgeUtils.setBadge(context, count);
 
                     EventBus eventBus = EventBus.getDefault();
                     if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
@@ -259,7 +261,6 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     int recalculateBadgeCount(Context context) {
         int badgeCount = JandiPreference.getBadgeCount(context);
         badgeCount++;
-        JandiPreference.setBadgeCount(context, badgeCount);
         return badgeCount;
     }
 }
