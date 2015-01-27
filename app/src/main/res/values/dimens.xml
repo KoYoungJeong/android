@@ -28,46 +28,46 @@
 
 
     <!-- Messages -->
-    // 글씨 크기
+    <!--// 글씨 크기-->
     <dimen name="jandi_messages_user_name">18sp</dimen>
     <dimen name="jandi_messages_date_divider">14sp</dimen>
     <dimen name="jandi_messages_date">12sp</dimen>
     <dimen name="jandi_messages_content">14sp</dimen>
     <dimen name="jandi_messages_joined_cdp">12sp</dimen>
-    // 이미지 및 간격
+    <!--// 이미지 및 간격-->
     <dimen name="jandi_messages_profile_size">32dp</dimen>
     <dimen name="jandi_messages_padding_left">15dp</dimen>
     <dimen name="jandi_messages_padding_right">16dp</dimen>
     <dimen name="jandi_messages_profile_margin_right">11dp</dimen>
     <dimen name="jandi_messages_date_margin_left">6dp</dimen>
     <dimen name="jandi_messages_default_margin_bottom">12dp</dimen>
-    // 사진 파일일 경우
+    <!--// 사진 파일일 경우-->
     <dimen name="jandi_messages_image_size">50dp</dimen>
     <dimen name="jandi_messages_file_icon_width">24dp</dimen>
     <dimen name="jandi_messages_file_icon_height">30dp</dimen>
     <dimen name="jandi_messages_arrow_right_width">6dp</dimen>
     <dimen name="jandi_messages_arrow_right_height">11dp</dimen>
-    // 댓글
+    <!--// 댓글-->
     <dimen name="jandi_messages_comment_name">14sp</dimen>
     <dimen name="jandi_messages_comment">12sp</dimen>
 
 
     <!-- File Detail -->
-    // 상단 작성자 프로필 부
+    <!--// 상단 작성자 프로필 부-->
     <dimen name="jandi_file_detail_padding_sides">11dp</dimen>
     <dimen name="jandi_file_detail_uploder_layout_height">48dp</dimen>
     <dimen name="jandi_file_detail_uploder_profile_size">32dp</dimen>
     <dimen name="jandi_file_detail_uploder_profile_margin_right">8dp</dimen>
     <dimen name="jandi_file_detail_text_date">12sp</dimen>
     <dimen name="jandi_file_detail_text_user_name">18sp</dimen>
-    // 이미지 및 파일 타입 출력 부
+    <!--// 이미지 및 파일 타입 출력 부-->
     <dimen name="jandi_file_detail_image_height">120dp</dimen>
     <dimen name="jandi_file_detail_file_margin_top">12dp</dimen>
     <dimen name="jandi_file_detail_file_icon_width">24dp</dimen>
     <dimen name="jandi_file_detail_file_icon_height">28dp</dimen>
     <dimen name="jandi_file_detail_file_type_text">12sp</dimen>
     <dimen name="jandi_file_detail_file_share_text">12sp</dimen>
-    // 댓글
+    <!--// 댓글-->
     <dimen name="jandi_file_detail_comment_margin_top">12dp</dimen>
     <dimen name="jandi_file_detail_comment_margin_bottom">10dp</dimen>
     <dimen name="jandi_file_detail_comment_profile_margin_top">13dp</dimen>

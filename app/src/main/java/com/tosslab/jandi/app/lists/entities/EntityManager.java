@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by justinygchoi on 2014. 8. 11..
@@ -263,14 +264,22 @@ public class EntityManager {
 
     public List<FormattedEntity> getFormattedUsersWithoutMe() {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
+
+        if (mStarredUsers != null) {
+            Map<Integer, FormattedEntity> clone = (Map<Integer, FormattedEntity>) mStarredUsers.clone();
+            clone.remove(mMe.id);
+            ret.addAll(clone.values());
+        }
+
         if (mSortedUsersWithoutMe == null) {
             HashMap<Integer, FormattedEntity> usersWithoutMe
                     = (HashMap<Integer, FormattedEntity>) mUsers.clone();
             usersWithoutMe.remove(mMe.id);
             mSortedUsersWithoutMe = sortFormattedEntityList(usersWithoutMe.values());
         }
-        ret.addAll(mStarredUsers.values());
+
         ret.addAll(mSortedUsersWithoutMe);
+
         return ret;
     }
 

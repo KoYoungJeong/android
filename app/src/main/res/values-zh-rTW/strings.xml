@@ -272,4 +272,6 @@
     <string name="jandi_messages">"私信"</string>
     <string name="jandi_topic_paricipants">"議題參與成員"</string>
     <string name="jandi_new_team_name">"新團隊名稱"</string>
+    <string name="jandi_start_direct_messages">"<b>您所有直接傳訊的訊息現在是隱藏的。</b>\n\n
+點擊以下按鍵以開始或重新打開一個對話。"</string>
 </resources>

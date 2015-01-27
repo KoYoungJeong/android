@@ -8,11 +8,28 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/jandi_ic_launcher" />
+        android:src="@drawable/icon_emtpy_messages" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="아이템이 없다능~" />
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:text="@string/jandi_start_direct_messages"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_chat_list_no_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/jandi_select_direct_messages"
+        android:textColor="@color/jandi_border_green" />
 
 </LinearLayout>
