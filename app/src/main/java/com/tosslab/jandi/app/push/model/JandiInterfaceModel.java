@@ -94,24 +94,34 @@ public class JandiInterfaceModel {
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
 
             JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
 
-            try {
-                ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-                JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
-                int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-                JandiPreference.setBadgeCount(context, totalUnreadCount);
-                BadgeUtils.setBadge(context, totalUnreadCount);
-                EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-
-                return true;
-            } catch (JandiNetworkException e) {
-                logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
-                return false;
-            }
+            return getEntityInfo();
 
         } else {
+
+            try {
+                EntityManager.getInstance(context);
+                return true;
+            } catch (Exception e) {
+                return getEntityInfo();
+            }
+        }
+    }
+
+    private boolean getEntityInfo() {
+        try {
+            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            JandiPreference.setBadgeCount(context, totalUnreadCount);
+            BadgeUtils.setBadge(context, totalUnreadCount);
+            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+
             return true;
+        } catch (JandiNetworkException e) {
+            logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            return false;
         }
     }
 }
