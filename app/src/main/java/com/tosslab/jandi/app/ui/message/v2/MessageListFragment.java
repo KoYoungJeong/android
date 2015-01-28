@@ -199,6 +199,8 @@ public class MessageListFragment extends Fragment {
             } else {
                 inflater.inflate(R.menu.manipulate_entity_menu, menu);
             }
+        } else {
+            inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
         }
     }
 

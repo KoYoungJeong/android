@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.ui.maintab.chat.model.ChatDeleteRequest;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -37,7 +40,7 @@ class LeaveEntityCommand implements MenuCommand {
 
     @Override
     public void execute(MenuItem menuItem) {
-        if (chattingInfomations.isPublicTopic()) {
+        if (chattingInfomations.isPublicTopic() || chattingInfomations.isDirectMessage()) {
             leaveEntityInBackground();
         } else {
             showPrivateTopicLeaveDialog(chattingInfomations.entityId, chattingInfomations.entityName);
@@ -65,6 +68,9 @@ class LeaveEntityCommand implements MenuCommand {
                 mJandiEntityClient.leaveChannel(chattingInfomations.entityId);
             } else if (chattingInfomations.isPrivateTopic()) {
                 mJandiEntityClient.leavePrivateGroup(chattingInfomations.entityId);
+            } else if (chattingInfomations.isDirectMessage()) {
+                int memberId = EntityManager.getInstance(activity).getMe().getId();
+                RequestManager.newInstance(activity, ChatDeleteRequest.create(activity, memberId, chattingInfomations.entityId)).request();
             }
             leaveEntitySucceed();
         } catch (JandiNetworkException e) {
