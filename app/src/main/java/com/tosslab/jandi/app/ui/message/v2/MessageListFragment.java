@@ -549,10 +549,14 @@ public class MessageListFragment extends Fragment {
 
     @Background
     void modifyEntity(ConfirmModifyTopicEvent event) {
+        messageListPresenter.showProgressWheel();
         try {
             messageListModel.modifyTopicName(entityType, entityId, event.inputName);
 
             modifyEntitySucceed(event.inputName);
+
+            EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
+
         } catch (JandiNetworkException e) {
             logger.error("modify failed " + e.getErrorInfo(), e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
@@ -560,6 +564,8 @@ public class MessageListFragment extends Fragment {
             } else {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
             }
+        } finally {
+            messageListPresenter.dismissProgressWheel();
         }
     }
 
