@@ -79,6 +79,7 @@ public class AccountEmailsApiClientTest {
     }
 
 
+    @Ignore
     @Test
     public void testRequestAddEmail() throws Exception {
         ResAccountInfo resAccountInfo = null;
@@ -111,6 +112,7 @@ public class AccountEmailsApiClientTest {
 
     }
 
+    @Ignore
     @Test
     public void testDeleteEmail() throws Exception {
 

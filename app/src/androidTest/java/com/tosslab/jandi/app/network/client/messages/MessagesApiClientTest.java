@@ -1,26 +1,26 @@
 package com.tosslab.jandi.app.network.client.messages;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient_;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.shadows.ShadowLog;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import static junit.framework.Assert.fail;
@@ -40,38 +40,29 @@ public class MessagesApiClientTest {
     @Before
     public void setUp() throws Exception {
 
+        BaseInitUtil.initData(Robolectric.application);
+
         jandiRestClient_ = new JandiRestClient_(Robolectric.application);
         messagesApiClient = new MessagesApiClient_(Robolectric.application);
         channelMessageApiClient = new ChannelMessageApiClient_(Robolectric.application);
 
-        ResAccessToken accessToken = getAccessToken();
-
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        messagesApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        channelMessageApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+        messagesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+        channelMessageApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+    }
 
-        System.setProperty("robolectric.logging", "stdout");
-        ShadowLog.stream = System.out;
-
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
+        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
 
         return infosForSideMenu;
-    }
-
-    private ResAccessToken getAccessToken() {
-
-        jandiRestClient_.setHeader("Content-Type", "application/json");
-
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
-        System.out.println("========= Get Access Token =========");
-        return accessToken;
     }
 
 
@@ -133,6 +124,10 @@ public class MessagesApiClientTest {
 
         ResMessages.FileMessage fileMessage = getMyFileMessage(defaultChannel);
 
+        if (fileMessage == null) {
+            return;
+        }
+
         ResFileDetail fileDetail = messagesApiClient.getFileDetail(sideMenu.team.id, fileMessage.id);
 
         assertThat(fileDetail, is(notNullValue()));
@@ -146,6 +141,10 @@ public class MessagesApiClientTest {
         ResLeftSideMenu.Channel defaultChannel = getDefaultChannel();
 
         ResMessages.FileMessage myFileMessage = getMyFileMessage(defaultChannel);
+
+        if (myFileMessage == null) {
+            return;
+        }
 
         ReqShareMessage reqShareMessage = new ReqShareMessage();
         reqShareMessage.shareEntity = getOtherChannel().id;

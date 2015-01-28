@@ -70,6 +70,7 @@ public class AccountPasswordApiClientTest {
     }
 
 
+    @Ignore
     @Test
     public void testResetPassword() throws Exception {
 

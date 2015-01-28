@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
@@ -23,6 +24,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 public class TeamSelectionActivityTest {
 

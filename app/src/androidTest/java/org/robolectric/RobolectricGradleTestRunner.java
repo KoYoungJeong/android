@@ -1,7 +1,5 @@
 package org.robolectric;
 
-import com.tosslab.jandi.app.BuildConfig;
-
 import org.junit.runners.model.InitializationError;
 import org.robolectric.annotation.Config;
 import org.robolectric.res.Fs;
@@ -26,7 +24,12 @@ public class RobolectricGradleTestRunner extends RobolectricTestRunner {
         final String manifestProperty = _manifestProperty == null ? "app/src/main/AndroidManifest.xml" : _manifestProperty;
         final String resProperty = _resProperty == null ? buildPath + "/res" + flavorPath : _resProperty;
         final String assetsProperty = _assetsProperty == null ? buildPath + "/assets" + flavorPath : _assetsProperty;
-        final String packageProperty = "com.tosslab.jandi.app"; // System.getProperty("android.package");
+        final String packageProperty = "com.tosslab.jandi.app.dev"; // System.getProperty("android.package");
+
+        System.out.println(manifestProperty);
+        System.out.println(resProperty);
+        System.out.println(assetsProperty);
+        System.out.println(packageProperty);
 
         final AndroidManifestExt a = new AndroidManifestExt(
                 Fs.fileFromPath(manifestProperty),

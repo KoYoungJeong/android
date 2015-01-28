@@ -70,6 +70,7 @@ public class ChannelApiClientTest {
         return accessToken;
     }
 
+    @Ignore
     @Test
     public void testCreateTopic() throws Exception {
 

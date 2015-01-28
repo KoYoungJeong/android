@@ -93,6 +93,12 @@ android {
         versionName '0.9.3'
     }
     buildTypes {
+
+        debug {
+            debuggable true
+            testCoverageEnabled = true
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
@@ -146,7 +152,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    jacoco {
+        version = '0.7.2.201409121644'
+    }
 }
+
 
 apt {
     arguments {
@@ -163,6 +174,7 @@ robolectric {
     // configure max heap size of the test JVM
     maxHeapSize = "2048m"
 
+    ignoreFailures true
 
 }
 
@@ -170,4 +182,46 @@ retrolambda {
     jdk java8_home
     oldJdk java6_home
     javaVersion JavaVersion.VERSION_1_6
+}
+
+// It references by http://chrisjenx.com/gradle-robolectric-jacoco-dagger
+apply plugin: "jacoco"
+
+def coverageSourceDirs = [
+        'src/main/java'
+]
+
+// This differs per what flavors buildTypes etc.
+// But this example shows the 'testDebug'
+// which is standard for Robolectric
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+    }
+    // class R is used, but usage will not be covered, so ignore this class from report
+    // This differs per plugin version (0.10 -> 0.11)
+    // have very different fileTrees.
+    // I have added rules to Ignore Dagger/Butterknife
+    classDirectories = fileTree(
+            dir: 'build/intermediates/classes/dev/debug',
+            excludes: ['**/R*.class'])
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('build/jacoco/testDevDebug.exec')
+    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
+    // We iterate through the compiled .class tree and rename $$ to $.
+    doFirst {
+        new File('app/build/intermediates/classes/dev').eachFileRecurse { file ->
+            if (file.name.contains('$$')) {
+                file.renameTo(file.path.replace('$$', '$'))
+            }
+        }
+    }
+
+    afterEvaluate {
+        // just clean up coveralls dashboard, following reports are not of interest
+        testDevDebug.reports.junitXml.enabled = false
+    }
 }

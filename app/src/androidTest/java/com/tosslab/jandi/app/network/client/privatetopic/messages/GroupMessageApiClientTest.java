@@ -4,10 +4,8 @@ import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -16,12 +14,12 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.robolectric.shadows.ShadowLog;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
@@ -130,6 +128,7 @@ public class GroupMessageApiClientTest {
 
     }
 
+    @Ignore
     @Test
     public void testModifyPrivateGroupMessage() throws Exception {
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
@@ -145,6 +144,7 @@ public class GroupMessageApiClientTest {
 
     }
 
+    @Ignore
     @Test
     public void testDeletePrivateGroupMessage() throws Exception {
 
