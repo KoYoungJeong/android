@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -11,10 +12,13 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -28,7 +32,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class GroupBodyViewHolderApiClientTest {
+public class GroupMessageApiClientTest {
 
     private JandiRestClient jandiRestClient_;
     private GroupMessageApiClient groupMessageApiClient;
@@ -37,36 +41,29 @@ public class GroupBodyViewHolderApiClientTest {
     @Before
     public void setUp() throws Exception {
 
+        BaseInitUtil.initData(Robolectric.application);
+
         jandiRestClient_ = new JandiRestClient_(Robolectric.application);
         groupMessageApiClient = new GroupMessageApiClient_(Robolectric.application);
 
-        ResAccessToken accessToken = getAccessToken();
-
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        groupMessageApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+        groupMessageApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
 
         sideMenu = getSideMenu();
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-
-        System.setProperty("robolectric.logging", "stdout");
-        ShadowLog.stream = System.out;
-
     }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
+
+        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
 
         return infosForSideMenu;
-    }
-
-    private ResAccessToken getAccessToken() {
-
-        jandiRestClient_.setHeader("Content-Type", "application/json");
-
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
-        System.out.println("========= Get Access Token =========");
-        return accessToken;
     }
 
 

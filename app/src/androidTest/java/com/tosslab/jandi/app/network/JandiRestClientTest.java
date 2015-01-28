@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -62,7 +63,7 @@ public class JandiRestClientTest {
     @Test
     public void testGetMyTeam() throws Exception {
 
-        ResMyTeam teamId = jandiRestClient_.getTeamId("mk@tosslab.com");
+        ResMyTeam teamId = jandiRestClient_.getTeamId(BaseInitUtil.TEST_ID);
 
         assertNotNull(teamId);
 
@@ -74,7 +75,7 @@ public class JandiRestClientTest {
     public void testGetLeftSideMenu() throws Exception {
 
 
-        ResMyTeam teamId = jandiRestClient_.getTeamId("mk@tosslab.com");
+        ResMyTeam teamId = jandiRestClient_.getTeamId(BaseInitUtil.TEST_ID);
 
         System.out.println("========= Get Team Info =========");
 
@@ -170,7 +171,7 @@ public class JandiRestClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }

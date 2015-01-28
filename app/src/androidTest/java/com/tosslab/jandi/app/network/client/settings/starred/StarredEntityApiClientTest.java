@@ -2,20 +2,21 @@ package com.tosslab.jandi.app.network.client.settings.starred;
 
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient;
-import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient_;
+import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient;
+import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -64,7 +65,7 @@ public class StarredEntityApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }

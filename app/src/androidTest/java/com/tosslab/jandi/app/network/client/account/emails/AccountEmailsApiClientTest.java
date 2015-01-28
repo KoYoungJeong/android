@@ -14,8 +14,10 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -67,7 +69,7 @@ public class AccountEmailsApiClientTest {
 
         ResAccessToken accessToken = null;
         try {
-            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         } catch (HttpStatusCodeException e) {
             System.out.println(e.getResponseBodyAsString());
             e.printStackTrace();
@@ -89,6 +91,7 @@ public class AccountEmailsApiClientTest {
         assertThat(resAccountInfo, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testConfirmEmail() throws Exception {
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
@@ -27,10 +28,10 @@ public class JandiAccountDatabaseManager {
 
     private static JandiAccountDatabaseManager instance;
 
-    private JandiDatabaseOpenHelper jandiDatabaseOpenHelper;
+    private SQLiteOpenHelper jandiDatabaseOpenHelper;
 
     private JandiAccountDatabaseManager(Context context) {
-        jandiDatabaseOpenHelper = new JandiDatabaseOpenHelper(context);
+        jandiDatabaseOpenHelper = JandiDatabaseOpenHelper.getInstance(context);
     }
 
     public static JandiAccountDatabaseManager getInstance(Context context) {

@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -63,7 +64,7 @@ public class AccountPasswordApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
@@ -74,7 +75,7 @@ public class AccountPasswordApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = accountPasswordApiClient.resetPassword(new ReqAccountEmail("jsuch2362@naver.com", LanguageUtil.getLanguage(Robolectric.application)));
+            resCommon = accountPasswordApiClient.resetPassword(new ReqAccountEmail(BaseInitUtil.TEST_ID, LanguageUtil.getLanguage(Robolectric.application)));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

@@ -49,7 +49,6 @@ public class IntroActivityModel {
     /**
      * Check new app version
      */
-    @SupposeBackground
     public boolean checkNewVersion() {
         // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
         boolean isLatestVersion = true;

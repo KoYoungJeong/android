@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.local.database.message;
 
-import android.util.Log;
-
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
@@ -16,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,6 +34,12 @@ public class JandiBodyViewHolderDatabaseManagerTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData(Robolectric.application);
     }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
 
     @Test
     public void testUpsertMessage() throws Exception {
@@ -70,10 +75,6 @@ public class JandiBodyViewHolderDatabaseManagerTest {
         }
 
         JandiMessageDatabaseManager.getInstance(Robolectric.application).upsertMessage(teamId, entityId, links);
-
-        JandiDatabaseOpenHelper jandiDatabaseOpenHelper = new JandiDatabaseOpenHelper(Robolectric.application);
-
-        Log.d("INFO", jandiDatabaseOpenHelper.getReadableDatabase().getPath());
 
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(Robolectric.application).getSavedMessages(teamId, entityId);
 

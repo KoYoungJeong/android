@@ -2,12 +2,14 @@ package com.tosslab.jandi.app.network.client.chat;
 
 import android.app.Application;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,12 @@ public class ChatsApiClientTest {
         context = Robolectric.application;
         BaseInitUtil.initData(context);
     }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
 
     @Test
     public void testGetChatList() throws Exception {

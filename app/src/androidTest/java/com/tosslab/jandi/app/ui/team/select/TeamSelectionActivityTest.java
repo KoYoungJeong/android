@@ -2,11 +2,13 @@ package com.tosslab.jandi.app.ui.team.select;
 
 import android.content.Intent;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +35,12 @@ public class TeamSelectionActivityTest {
 
         teamSelectionActivity = Robolectric.buildActivity(TeamSelectionActivity_.class).create().start().resume().get();
     }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
 
     @Test
     public void testSelectTeam() throws Exception {

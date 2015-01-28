@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.client.teams;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
@@ -8,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,6 +36,11 @@ public class TeamsApiClientTest {
         teamsApiClient_ = new TeamsApiClient_(Robolectric.application);
         teamsApiClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
 
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
     }
 
 

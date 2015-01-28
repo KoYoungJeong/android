@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
@@ -21,10 +22,10 @@ public class JandiChatsDatabaseManager {
 
     private static JandiChatsDatabaseManager instance;
 
-    private JandiDatabaseOpenHelper jandiDatabaseOpenHelper;
+    private SQLiteOpenHelper jandiDatabaseOpenHelper;
 
     private JandiChatsDatabaseManager(Context context) {
-        jandiDatabaseOpenHelper = new JandiDatabaseOpenHelper(context);
+        jandiDatabaseOpenHelper = JandiDatabaseOpenHelper.getInstance(context);
     }
 
     public static JandiChatsDatabaseManager getInstance(Context context) {
