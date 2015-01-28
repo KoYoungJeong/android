@@ -205,7 +205,8 @@ public class MessageListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isFavorite), item);
+        boolean isStarred = EntityManager.getInstance(getActivity()).getEntityById(entityId).isStarred;
+        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
             menuCommand.execute(item);
