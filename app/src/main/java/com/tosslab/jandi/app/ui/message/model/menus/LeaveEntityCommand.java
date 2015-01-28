@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
@@ -35,8 +37,26 @@ class LeaveEntityCommand implements MenuCommand {
 
     @Override
     public void execute(MenuItem menuItem) {
-        leaveEntityInBackground();
+        if (chattingInfomations.isPublicTopic()) {
+            leaveEntityInBackground();
+        } else {
+            showPrivateTopicLeaveDialog(chattingInfomations.entityId, chattingInfomations.entityName);
+        }
     }
+
+    private void showPrivateTopicLeaveDialog(final int entityId, String entityName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(entityName)
+                .setMessage(R.string.jandi_message_leave_private_topic)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_action_leave, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        leaveEntityInBackground();
+                    }
+                }).create().show();
+    }
+
 
     @Background
     public void leaveEntityInBackground() {
