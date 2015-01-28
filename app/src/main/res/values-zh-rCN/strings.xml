@@ -273,4 +273,7 @@
     <string name="jandi_new_team_name">"新团队名称"</string>
     <string name="jandi_start_direct_messages">"<b>您所有直接传讯的讯息现在是隐藏的。</b>\n\n
 点击以下按键以开始或重新打开一个对话。"</string>
+    <string name="jandi_private_topic_tip_1">"私人群组对非邀请成员不开放"</string>
+    <string name="jandi_private_topic_tip_2">"在私人群组内已分享档案仅开放给其参与者"</string>
+    <string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
 </resources>

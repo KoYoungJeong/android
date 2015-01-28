@@ -277,4 +277,7 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_start_direct_messages">"<b>All of your direct messages are currently hidden.</b>\n\n
 Click the button below to start or reopen a conversation."</string>
     <string name="jandi_select_direct_messages">"Select Direct Message"</string>
+    <string name="jandi_private_topic_tip_1">"Private topics are not available to non-invited members"</string>
+    <string name="jandi_private_topic_tip_2">"Files shared in a private topic are only available to its participants"</string>
+    <string name="jandi_private_topic_tip_3">"Topics designated as public or private cannot be converted to the other after creation"</string>
 </resources>

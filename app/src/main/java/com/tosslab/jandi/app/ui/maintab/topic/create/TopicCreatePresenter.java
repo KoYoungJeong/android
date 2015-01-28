@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.create;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -39,6 +40,10 @@ public class TopicCreatePresenter {
 
     @ViewById(R.id.img_topic_create_public_check)
     ImageView publicCheckView;
+
+    @ViewById(R.id.layout_topic_create_tips)
+    View topicTipLayout;
+
     private ProgressWheel progressWheel;
 
 
@@ -117,4 +122,13 @@ public class TopicCreatePresenter {
     }
 
 
+    public void setTopicTip(boolean isPublic) {
+
+        if (isPublic) {
+            topicTipLayout.setVisibility(View.GONE);
+        } else {
+            topicTipLayout.setVisibility(View.VISIBLE);
+        }
+
+    }
 }
