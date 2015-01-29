@@ -210,7 +210,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
     // I have added rules to Ignore Dagger/Butterknife
     classDirectories = fileTree(
             dir: 'build/intermediates/classes/dev/debug',
-            excludes: ['**/R*.class', '**/*Presenter*.class', '**/*ViewModel*.class', '**/*_*.class'])
+            excludes: ['**/R.class', '**/*Presenter*.class', '**/*ViewModel*.class', '**/*_*.class', '**/android/support/v7/appcompat/*.class', '**/com/github/johnpersano/supertoasts/*.class', '**/com/google/android/gms/*.class', '**/com/mixpanel/android/*.class', '**/se/emilsjolander/stickylistheaders/*.class'])
     sourceDirectories = files(coverageSourceDirs)
     executionData = files('build/jacoco/testDevDebug.exec')
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
