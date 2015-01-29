@@ -29,7 +29,6 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +40,6 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
  */
 @EBean
 public class MessageListPresenter {
-
-    private static final Logger logger = Logger.getLogger(MessageListPresenter.class);
-
 
     @ViewById(R.id.list_messages)
     StickyListHeadersListView messageListView;
@@ -75,7 +71,7 @@ public class MessageListPresenter {
 
     @AfterViews
     void initViews() {
-        messageListView.setAreHeadersSticky(false);
+//        messageListView.setAreHeadersSticky(false);
         messageListView.setAdapter(messageListAdapter);
 
         setSendEditText(tempMessage);
@@ -257,4 +253,5 @@ public class MessageListPresenter {
         final ClipData clipData = ClipData.newPlainText("", contentString);
         clipboardManager.setPrimaryClip(clipData);
     }
+
 }

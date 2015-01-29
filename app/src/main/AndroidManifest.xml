@@ -176,7 +176,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".push.PushInterfaceActivity_" />
+        <activity
+            android:name=".push.PushInterfaceActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.PushIntro" />
 
     </application>
 

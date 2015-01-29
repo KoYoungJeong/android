@@ -3,7 +3,7 @@
     android:id="@+id/ly_message_date_devider"
     android:layout_width="match_parent"
     android:layout_height="36dp"
-    android:background="@drawable/message_list_selector"
+    android:background="@color/white"
     android:gravity="center"
     android:orientation="vertical"
     android:visibility="visible">

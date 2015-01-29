@@ -104,6 +104,15 @@ public class MessageListFragment extends Fragment {
 
         messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
                 .subscribe(loadType -> {
+
+//                    if (loadType == LoadType.Old && messageState.getFirstItemId() != -1) {
+//                        try {
+//                            Thread.sleep(500);
+//                        } catch (InterruptedException e) {
+//                            logger.error("Refresh Message Error : ", e);
+//                        }
+//                    }
+
                     switch (loadType) {
                         case Saved:
                             getSavedMessageList();
@@ -537,6 +546,7 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RefreshOldMessageEvent event) {
+
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(LoadType.Old);
 //            getOldMessageList(messageState.getFirstItemId());
