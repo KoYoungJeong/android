@@ -2,16 +2,15 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <RelativeLayout
+        android:id="@+id/rl_photo_view"
         android:layout_width="match_parent"
         android:background="@android:color/background_dark"
         android:layout_height="match_parent">
 
         <uk.co.senab.photoview.PhotoView
-            android:id="@+id/pv_photo_view"
-            android:background="@android:color/transparent"
+            android:id="@+id/photo_photo_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_height="match_parent" />
 
     </RelativeLayout>
 </merge>

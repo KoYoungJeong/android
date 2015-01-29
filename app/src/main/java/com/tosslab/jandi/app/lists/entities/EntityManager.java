@@ -23,7 +23,7 @@ import java.util.Map;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class EntityManager {
-    private static final Logger log = Logger.getLogger(EntityManager.class);
+    private static final Logger logger = Logger.getLogger(EntityManager.class);
 
     private static EntityManager entityManager;
 
@@ -88,14 +88,14 @@ public class EntityManager {
 
     public void refreshEntity(Context context) {
 
-        log.debug("Refresh Entity~!");
+        logger.debug("Refresh Entity~!");
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
         init(resLeftSideMenu);
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
-        log.debug("Refresh Entity~!");
+        logger.debug("Refresh Entity~!");
         init(resLeftSideMenu);
     }
 
@@ -475,12 +475,17 @@ public class EntityManager {
      * **********************************************************
      */
     public void subscribeChannelForParse() {
-        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put(JandiConstants.PARSE_MY_ENTITY_ID, mMe.id);
-        installation.addAllUnique(JandiConstants.PARSE_CHANNELS, getChannelsToBeSubscribed());
-        installation.saveInBackground();
-        installation.removeAll(JandiConstants.PARSE_CHANNELS, getChannelsToBeUnsubscribed());
-        installation.saveInBackground();
+
+        try {
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+            installation.put(JandiConstants.PARSE_MY_ENTITY_ID, mMe.id);
+            installation.addAllUnique(JandiConstants.PARSE_CHANNELS, getChannelsToBeSubscribed());
+            installation.saveInBackground();
+            installation.removeAll(JandiConstants.PARSE_CHANNELS, getChannelsToBeUnsubscribed());
+            installation.saveInBackground();
+        } catch (Exception e) {
+            logger.error("Parse Error", e);
+        }
     }
 
     // Parse 에 등록된 구독 채널 리스트
@@ -496,7 +501,7 @@ public class EntityManager {
         ArrayList<String> channelsToBeSubscribed = new ArrayList<String>();
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
-        log.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+        logger.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
@@ -520,7 +525,7 @@ public class EntityManager {
         }
 
 
-        log.debug(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
+        logger.debug(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
         return channelsToBeSubscribed;
     }
 
@@ -529,7 +534,7 @@ public class EntityManager {
     private List<String> getChannelsToBeUnsubscribed() {
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
-        log.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+        logger.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
@@ -548,7 +553,7 @@ public class EntityManager {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
             subscribedChannelsFromParse.remove(channel);
         }
-        log.debug(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
+        logger.debug(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
         return subscribedChannelsFromParse;
     }
 
