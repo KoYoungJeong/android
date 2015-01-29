@@ -19,9 +19,9 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 18..
  */
 public class EntitySimpleListAdapter extends BaseAdapter {
-    private List<FormattedEntity> mFormattedEntities;
-    private LayoutInflater mLayoutInflater;
-    private Context mContext;
+    private final List<FormattedEntity> mFormattedEntities;
+    private final LayoutInflater mLayoutInflater;
+    private final Context mContext;
 
     public EntitySimpleListAdapter(Context context, List<FormattedEntity> formattedEntities) {
         this.mFormattedEntities = formattedEntities;

@@ -56,7 +56,7 @@ public class EntityManager {
         init(resLeftSideMenu);
     }
 
-    public static EntityManager getInstance(Context context) {
+    synchronized public static EntityManager getInstance(Context context) {
         if (entityManager == null) {
             entityManager = new EntityManager(context);
         }
@@ -506,21 +506,21 @@ public class EntityManager {
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
-            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
                 channelsToBeSubscribed.add(channel);
         }
 
         // Private Topic
         for (FormattedEntity privateTopic : getGroups()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
-            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
                 channelsToBeSubscribed.add(channel);
         }
 
         FormattedEntity me = getMe();
         for (FormattedEntity member : getFormattedUsers()) {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
-            if (subscribedChannelsFromParse == null || subscribedChannelsFromParse.contains(channel) == false)
+            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
                 channelsToBeSubscribed.add(channel);
         }
 

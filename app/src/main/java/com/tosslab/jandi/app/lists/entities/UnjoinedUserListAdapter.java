@@ -22,9 +22,9 @@ import java.util.List;
  * Created by justinygchoi on 2014. 8. 14..
  */
 public class UnjoinedUserListAdapter extends BaseAdapter {
-    private List<FormattedEntity> listUserToBeJoined;
-    private LayoutInflater layoutInflater;
-    private Context context;
+    private final List<FormattedEntity> listUserToBeJoined;
+    private final LayoutInflater layoutInflater;
+    private final Context context;
 
     public UnjoinedUserListAdapter(Context context, List<FormattedEntity> users) {
         this.listUserToBeJoined = users;
