@@ -99,6 +99,10 @@ public class JandiInterfaceModel {
 
         } else {
 
+            if (hasBackStackActivity()) {
+                return true;
+            }
+
             try {
                 EntityManager.getInstance(context);
                 return true;
