@@ -37,6 +37,10 @@ task checkstyles(type: Checkstyle) {
 
 }
 
+checkstyle {
+    toolVersion = "6.2"
+}
+
 dependencies {
     apt 'org.androidannotations:androidannotations:3.2'
     // Google
