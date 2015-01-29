@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -49,6 +51,10 @@ public class PushInterfaceActivity extends Activity {
         }
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
+
+            String distictId = EntityManager.getInstance(PushInterfaceActivity.this).getDistictId();
+            MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
+
             moveMessageListActivity();
         } else {
             moveIntroActivity();

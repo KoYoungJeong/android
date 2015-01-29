@@ -5,10 +5,13 @@ import android.app.ProgressDialog;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -18,9 +21,11 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -32,6 +37,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -248,5 +254,47 @@ public class MessageListModel {
             }
         });
         return messages;
+    }
+
+    public void trackGetOldMessage(int entityType) {
+        String gaPath = (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? BaseAnalyticsActivity.GA_PATH_CHANNEL
+                : (entityType == JandiConstants.TYPE_DIRECT_MESSAGE) ? BaseAnalyticsActivity.GA_PATH_DIRECT_MESSAGE
+                : BaseAnalyticsActivity.GA_PATH_PRIVATE_GROUP;
+
+        Tracker screenViewTracker = ((JandiApplication) activity.getApplicationContext())
+                .getTracker(JandiApplication.TrackerName.APP_TRACKER);
+        screenViewTracker.set("&uid", EntityManager.getInstance(activity).getDistictId());
+        screenViewTracker.setScreenName(gaPath);
+        screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
+    }
+
+    public void trackUploadingFile(int entityType, JsonObject result) {
+
+        try {
+            MixpanelMemberAnalyticsClient.getInstance(activity, EntityManager.getInstance(activity).getDistictId()).trackUploadingFile(entityType, result);
+        } catch (JSONException e) {
+        }
+    }
+
+    public void trackChangingEntityName(int entityType) {
+
+        try {
+            String distictId = EntityManager.getInstance(activity).getDistictId();
+
+            MixpanelMemberAnalyticsClient
+                    .getInstance(activity, distictId)
+                    .trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
+        } catch (JSONException e) {
+        }
+    }
+
+    public void trackDeletingEntity(int entityType) {
+        String distictId = EntityManager.getInstance(activity).getDistictId();
+        try {
+            MixpanelMemberAnalyticsClient
+                    .getInstance(activity, distictId)
+                    .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
+        } catch (JSONException e) {
+        }
     }
 }

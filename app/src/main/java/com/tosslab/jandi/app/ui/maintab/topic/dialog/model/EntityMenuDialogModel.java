@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.chat.model.ChatDeleteRequest;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.json.JSONException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
@@ -63,5 +65,15 @@ public class EntityMenuDialogModel {
 
     public ResCommon requestDeleteChat(int memberId, int entityId) throws JandiNetworkException {
         return RequestManager.newInstance(context, ChatDeleteRequest.create(context, memberId, entityId)).request();
+    }
+
+    public void leaveEntity(boolean publicTopic) {
+        String distictId = EntityManager.getInstance(context).getDistictId();
+        try {
+            MixpanelMemberAnalyticsClient
+                    .getInstance(context, distictId)
+                    .trackLeavingEntity(publicTopic);
+        } catch (JSONException e) {
+        }
     }
 }

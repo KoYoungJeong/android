@@ -111,6 +111,8 @@ public class MessageListFragment extends Fragment {
                             break;
                         case Old:
                             getOldMessageList(messageState.getFirstItemId());
+                            messageListModel.trackGetOldMessage(entityType);
+
                             break;
                         case New:
                             getNewMessageList(messageState.getLastUpdateLinkId());
@@ -491,6 +493,7 @@ public class MessageListFragment extends Fragment {
 
         try {
             messageListModel.deleteTopic(entityId, entityType);
+            messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
         } catch (JandiNetworkException e) {
             logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
@@ -508,12 +511,13 @@ public class MessageListFragment extends Fragment {
 
                 logger.error("Upload Success : " + result);
                 messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
+                messageListModel.trackUploadingFile(entityType, result);
             } else {
                 logger.error("Upload Fail : Result : " + result);
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
 
-//            getNewMessageList(messageState.getLastUpdateLinkId());
+
             sendMessagePublisherEvent(LoadType.New);
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
@@ -568,6 +572,7 @@ public class MessageListFragment extends Fragment {
 
             modifyEntitySucceed(event.inputName);
 
+            messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
 
         } catch (JandiNetworkException e) {

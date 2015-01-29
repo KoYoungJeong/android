@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.ui.maintab.chat.model.ChatDeleteRequest;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -18,6 +20,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -72,6 +75,7 @@ class LeaveEntityCommand implements MenuCommand {
                 int memberId = EntityManager.getInstance(activity).getMe().getId();
                 RequestManager.newInstance(activity, ChatDeleteRequest.create(activity, memberId, chattingInfomations.entityId)).request();
             }
+            trackLeavingEntity(chattingInfomations.entityType);
             leaveEntitySucceed();
         } catch (JandiNetworkException e) {
             log.error("fail to leave cdp");
@@ -79,9 +83,19 @@ class LeaveEntityCommand implements MenuCommand {
         }
     }
 
+    private void trackLeavingEntity(int entityType) {
+        String distictId = EntityManager.getInstance(activity).getDistictId();
+        try {
+            MixpanelMemberAnalyticsClient
+                    .getInstance(activity, distictId)
+                    .trackLeavingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
+        } catch (JSONException e) {
+            log.error("CANNOT MEET", e);
+        }
+    }
+
     @UiThread
     public void leaveEntitySucceed() {
-//        ((BaseAnalyticsActivity) activity).trackLeavingEntity(EntityManager.getInstance(activity), chattingInfomations.entityType);
         activity.finish();
     }
 
