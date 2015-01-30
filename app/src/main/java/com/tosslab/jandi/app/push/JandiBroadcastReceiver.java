@@ -43,20 +43,10 @@ import de.greenrobot.event.EventBus;
  */
 public class JandiBroadcastReceiver extends BroadcastReceiver {
     private static final String JSON_KEY_DATA = "com.parse.Data";
-    private static final String JSON_KEY_TYPE = "type";
-    private static final String JSON_KEY_INFO = "info";
-    private static final String JSON_KEY_INFO_MESSAGE = "alert";
-    private static final String JSON_KEY_INFO_CHAT_ID = "chatId";
-    private static final String JSON_KEY_INFO_CHAT_NAME = "chatName";
-    private static final String JSON_KEY_INFO_CHAT_TYPE = "chatType";
-    private static final String JSON_KEY_INFO_WRITER_ID = "writerId";
-    private static final String JSON_KEY_INFO_WRITER_THUMB = "writerThumb";
 
     private static final String JSON_VALUE_TYPE_PUSH = "push";
     private static final String JSON_VALUE_TYPE_SUBSCRIBE = "subscribe";
     private static final String JSON_VALUE_TYPE_UNSUBSCRIBE = "unsubscribe";
-
-    private static final int MAX_LENGTH_SMALL_NOTIFICATION = 20;
 
     @Override
     public void onReceive(Context context, Intent intent) {

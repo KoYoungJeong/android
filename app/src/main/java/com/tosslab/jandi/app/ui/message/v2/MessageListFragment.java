@@ -58,6 +58,7 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -103,9 +104,15 @@ public class MessageListFragment extends Fragment {
 
         messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
                 .subscribe(loadType -> {
+
                     switch (loadType) {
+                        case Saved:
+                            getSavedMessageList();
+                            break;
                         case Old:
                             getOldMessageList(messageState.getFirstItemId());
+                            messageListModel.trackGetOldMessage(entityType);
+
                             break;
                         case New:
                             getNewMessageList(messageState.getLastUpdateLinkId());
@@ -113,6 +120,16 @@ public class MessageListFragment extends Fragment {
                     }
                 });
 
+    }
+
+    private void getSavedMessageList() {
+        List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
+        if (savedMessages != null) {
+            messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
+            messageListPresenter.moveLastPage();
+        } else {
+            messageListPresenter.showProgressWheel();
+        }
     }
 
     @AfterViews
@@ -138,17 +155,10 @@ public class MessageListFragment extends Fragment {
 
         messageListModel.setEntityInfo(entityType, entityId);
 
-        List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
-        if (savedMessages != null) {
-            messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
-            messageListPresenter.moveLastPage();
-        } else {
-            messageListPresenter.showProgressWheel();
-        }
-
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
+        sendMessagePublisherEvent(LoadType.Saved);
         sendMessagePublisherEvent(LoadType.Old);
 
     }
@@ -199,13 +209,16 @@ public class MessageListFragment extends Fragment {
             } else {
                 inflater.inflate(R.menu.manipulate_entity_menu, menu);
             }
+        } else {
+            inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isFavorite), item);
+        boolean isStarred = EntityManager.getInstance(getActivity()).getEntityById(entityId).isStarred;
+        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
             menuCommand.execute(item);
@@ -239,6 +252,8 @@ public class MessageListFragment extends Fragment {
         try {
 
             ResMessages oldMessage = messageListModel.getOldMessage(linkId);
+
+            Collections.sort(oldMessage.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
             messageState.setFirstItemId(oldMessage.firstIdOfReceivedList);
             messageState.setFirstMessage(oldMessage.isFirst);
@@ -478,6 +493,7 @@ public class MessageListFragment extends Fragment {
 
         try {
             messageListModel.deleteTopic(entityId, entityType);
+            messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
         } catch (JandiNetworkException e) {
             logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
@@ -495,12 +511,13 @@ public class MessageListFragment extends Fragment {
 
                 logger.error("Upload Success : " + result);
                 messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
+                messageListModel.trackUploadingFile(entityType, result);
             } else {
                 logger.error("Upload Fail : Result : " + result);
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
 
-//            getNewMessageList(messageState.getLastUpdateLinkId());
+
             sendMessagePublisherEvent(LoadType.New);
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
@@ -525,6 +542,7 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RefreshOldMessageEvent event) {
+
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(LoadType.Old);
 //            getOldMessageList(messageState.getFirstItemId());
@@ -548,10 +566,15 @@ public class MessageListFragment extends Fragment {
 
     @Background
     void modifyEntity(ConfirmModifyTopicEvent event) {
+        messageListPresenter.showProgressWheel();
         try {
             messageListModel.modifyTopicName(entityType, entityId, event.inputName);
 
             modifyEntitySucceed(event.inputName);
+
+            messageListModel.trackChangingEntityName(entityType);
+            EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
+
         } catch (JandiNetworkException e) {
             logger.error("modify failed " + e.getErrorInfo(), e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
@@ -559,6 +582,8 @@ public class MessageListFragment extends Fragment {
             } else {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
             }
+        } finally {
+            messageListPresenter.dismissProgressWheel();
         }
     }
 
@@ -568,7 +593,7 @@ public class MessageListFragment extends Fragment {
     }
 
     private enum LoadType {
-        Old, New
+        Saved, Old, New
     }
 }
 

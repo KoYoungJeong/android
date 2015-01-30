@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -63,11 +64,12 @@ public class AccountDevicesApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
 
+    @Ignore
     @Test
     public void testRegisterNotificationToken() throws Exception {
         ReqNotificationRegister reqNotiricationRegister = new ReqNotificationRegister("android", TEMP_TOKEN);
@@ -82,6 +84,7 @@ public class AccountDevicesApiClientTest {
         assertThat(resCommon, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testDeleteNotificationToken() throws Exception {
 
@@ -95,6 +98,7 @@ public class AccountDevicesApiClientTest {
 
     }
 
+    @Ignore
     @Test
     public void testSubscribeStateNotification() throws Exception {
         ResAccountInfo resCommon = null;

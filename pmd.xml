@@ -7,6 +7,9 @@
         This is Android RuleSet
     </description>
 
+    <!-- It's external library source -->
+    <exclude-pattern>.*/PagerSlidingTabStrip.java</exclude-pattern>
+
     <rule ref="rulesets/java/basic.xml">
         <exclude name="AvoidUsingHardCodedIP" />
     </rule>
@@ -15,6 +18,9 @@
         <exclude name="LooseCoupling" />
         <!-- import 가 18개가 넘어가면 커플링이 심하다고 간주함..-->
         <exclude name="ExcessiveImports" />
+
+        <!-- Method chaining, not locally object...-->
+        <exclude name="LawOfDemeter" />
     </rule>
     <rule ref="rulesets/java/codesize.xml">
         <exclude name="ExcessiveParameterList" />

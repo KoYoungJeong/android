@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -16,7 +18,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 15..
@@ -24,7 +25,6 @@ import org.apache.log4j.Logger;
 @EActivity(R.layout.activity_intro)
 public class PushInterfaceActivity extends Activity {
 
-    private static final Logger logger = Logger.getLogger(PushInterfaceActivity.class);
     @Extra(JandiConstants.EXTRA_ENTITY_ID)
     int entityId;
     @Extra(JandiConstants.EXTRA_ENTITY_TYPE)
@@ -51,6 +51,10 @@ public class PushInterfaceActivity extends Activity {
         }
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {
+
+            String distictId = EntityManager.getInstance(PushInterfaceActivity.this).getDistictId();
+            MixpanelMemberAnalyticsClient.getInstance(PushInterfaceActivity.this, distictId).trackMemberSingingIn();
+
             moveMessageListActivity();
         } else {
             moveIntroActivity();

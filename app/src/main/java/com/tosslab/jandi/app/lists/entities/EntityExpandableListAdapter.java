@@ -21,18 +21,16 @@ import java.util.List;
  * Created by justinygchoi on 2014. 10. 2..
  */
 public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
-    public static final int TYPE_PUBLIC_ENTITY_LIST     = 0;
-    public static final int TYPE_PRIVATE_ENTITY_LIST    = 1;
+    public static final int TYPE_PUBLIC_ENTITY_LIST = 0;
+    public static final int TYPE_PRIVATE_ENTITY_LIST = 1;
 
-    private int mType;
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private List<Integer> mEntityTitles = null;
-    private List<List<FormattedEntity>> mFormattedEntities = null;
+    private final LayoutInflater mInflater;
+    private final Context mContext;
+    private final List<Integer> mEntityTitles;
+    private final List<List<FormattedEntity>> mFormattedEntities;
 
     public EntityExpandableListAdapter(Context c, int type) {
         super();
-        mType = type;
         mContext = c;
         mInflater = LayoutInflater.from(mContext);
 
@@ -52,6 +50,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
 
     /**
      * Topic을 구분하여 삽입
+     *
      * @param first joined public topic || private topic
      * @param last  unjoined public topic || DM
      */
@@ -119,7 +118,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.textViewTitle = (TextView) convertView.findViewById(R.id.txt_entity_list_title);
             convertView.setTag(viewHolder);
         } else {
-            viewHolder = (TitleViewHolder)convertView.getTag();
+            viewHolder = (TitleViewHolder) convertView.getTag();
         }
 
         viewHolder.textViewTitle.setText(getGroup(groupPosition));
@@ -210,7 +209,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             }
             // 아이콘
             if (formattedEntity.isPublicTopic()) {
-                if (formattedEntity.isJoined == false) {
+                if (!formattedEntity.isJoined) {
                     viewMaskUnjoined.setVisibility(View.VISIBLE);
                     textViewBadgeCount.setVisibility(View.INVISIBLE);
                 }

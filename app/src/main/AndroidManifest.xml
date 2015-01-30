@@ -13,6 +13,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/origin_play_service_version"
             tools:replace="android:value" />
+
+        <meta-data
+            android:name="com.mixpanel.android.MPConfig.FlushInterval"
+            android:value="1000" />
         <!-- temp comment for protect ANR (Play-Service-Base : 6.5.87 issue
         <meta-data
             android:name="com.google.android.gms.analytics.globalConfigResource"
@@ -172,7 +176,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".push.PushInterfaceActivity_" />
+        <activity
+            android:name=".push.PushInterfaceActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/JandiTheme.PushIntro" />
 
     </application>
 

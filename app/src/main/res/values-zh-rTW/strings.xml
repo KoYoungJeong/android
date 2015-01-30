@@ -274,4 +274,7 @@
     <string name="jandi_new_team_name">"新團隊名稱"</string>
     <string name="jandi_start_direct_messages">"<b>您所有直接傳訊的訊息現在是隱藏的。</b>\n\n
 點擊以下按鍵以開始或重新打開一個對話。"</string>
+    <string name="jandi_private_topic_tip_1">"私人群組對非邀請成員不開放"</string>
+    <string name="jandi_private_topic_tip_2">"在私人群組内已分享檔案僅開放給其參與者"</string>
+    <string name="jandi_private_topic_tip_3">"已設定爲公開或私人的議題群組在建立之後不能被轉換成另一個"</string>
 </resources>

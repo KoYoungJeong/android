@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.R;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.Locale;
@@ -55,6 +56,11 @@ public class TermActivity extends Activity {
                 break;
         }
 
+    }
+
+    @OptionsItem(android.R.id.home)
+    void onGoHome() {
+        finish();
     }
 
     private String getUrl(Mode mode, String langCode) {

@@ -176,6 +176,11 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 entityMenuDialogModel.requestDeleteChat(memberId, entityId);
             }
             entityMenuDialogModel.refreshEntities();
+
+            FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
+
+            entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
+
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (JandiNetworkException e) {
             showErrorToast(getString(R.string.err_entity_leave));

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.widget.ArrayAdapter;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -13,7 +12,6 @@ import java.util.List;
  */
 public class EntityArrayAdapter extends ArrayAdapter<FormattedEntity> {
     private List<FormattedEntity> entities;
-    private LayoutInflater vi;
 
     public EntityArrayAdapter(Context context, int textViewResourceId, List<FormattedEntity> entities) {
         super(context, textViewResourceId, entities);

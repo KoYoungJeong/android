@@ -97,12 +97,14 @@ public class TopicCreateActivity extends Activity {
     @Click(R.id.layout_topic_create_public_check)
     void onPublicTypeClick() {
         topicCreatePresenter.setTopicType(true);
+        topicCreatePresenter.setTopicTip(true);
     }
 
 
     @Click(R.id.layout_topic_create_private_check)
     void onPrivateTypeClick() {
         topicCreatePresenter.setTopicType(false);
+        topicCreatePresenter.setTopicTip(false);
 
     }
 

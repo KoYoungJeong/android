@@ -21,6 +21,7 @@ public class BaseInitUtil {
     public static final String TEST_PASSWORD = "dnrl~12AB";
 
     public static void initData(Context context) {
+
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
         JandiRestClient jandiRestClient = new JandiRestClient_(context);

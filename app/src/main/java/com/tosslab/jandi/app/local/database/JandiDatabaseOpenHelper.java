@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 11;
-
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
                     DatabaseConsts.Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -156,10 +155,18 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.Chats.photo + " TEXT " +
                     ");"
     };
+    private static SQLiteOpenHelper sqLiteOpenHelper;
 
 
-    public JandiDatabaseOpenHelper(Context context) {
+    private JandiDatabaseOpenHelper(Context context) {
         super(context, "jandi.db", null, DB_VERSION);
+    }
+
+    public static SQLiteOpenHelper getInstance(Context context) {
+        if (sqLiteOpenHelper == null) {
+            sqLiteOpenHelper = new JandiDatabaseOpenHelper(context);
+        }
+        return sqLiteOpenHelper;
     }
 
     @Override

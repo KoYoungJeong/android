@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,6 +44,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ItemLongClick;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
@@ -56,6 +56,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
+@OptionsMenu(R.menu.file_detail_activity_menu)
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(FileDetailActivity.class);
@@ -127,12 +128,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -146,9 +141,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 return true;
             case R.id.action_file_detail_unshare:
                 clickUnshareButton();
-                return true;
-            case R.id.action_file_detail_delete:
-                deleteFileInBackground();
                 return true;
         }
 

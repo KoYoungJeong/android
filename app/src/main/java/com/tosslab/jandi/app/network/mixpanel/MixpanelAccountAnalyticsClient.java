@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.mixpanel;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.mixpanel.android.mpmetrics.MPConfig;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 

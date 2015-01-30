@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
@@ -163,17 +164,28 @@ public class FileDetailPresenter {
                         }
                         final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
                         final String photoUrl = serverUrl + fileMessage.content.fileUrl;
-                        Glide.with(activity)
-                                .load(thumbnailPhotoUrl)
-                                .fitCenter()
-                                .crossFade()
-                                .into(imageViewPhotoFile);
+
+                        if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
+                            Ion.with(activity)
+                                    .load(thumbnailPhotoUrl)
+                                    .intoImageView(imageViewPhotoFile);
+                        } else {
+                            Glide.with(activity)
+                                    .load(thumbnailPhotoUrl)
+                                    .fitCenter()
+                                    .crossFade()
+                                    .into(imageViewPhotoFile);
+                        }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
 
-                                PhotoViewActivity_.intent(activity).imageUrl(photoUrl).start();
+                                PhotoViewActivity_
+                                        .intent(activity)
+                                        .imageUrl(photoUrl)
+                                        .imageType(fileMessage.content.type)
+                                        .start();
 
                             }
                         });

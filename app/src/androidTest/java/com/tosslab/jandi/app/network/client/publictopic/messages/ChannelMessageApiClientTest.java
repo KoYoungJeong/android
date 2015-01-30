@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.client.publictopic.messages;
 
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -11,10 +10,12 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -28,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class ChannelBodyViewHolderApiClientTest {
+public class ChannelMessageApiClientTest {
 
 
     private JandiRestClient jandiRestClient_;
@@ -64,7 +65,7 @@ public class ChannelBodyViewHolderApiClientTest {
 
         jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken("mk@tosslab.com", "1234"));
+        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
@@ -97,6 +98,7 @@ public class ChannelBodyViewHolderApiClientTest {
         assertThat(resCommon, is(notNullValue()));
 
     }
+
 
     @Test
     public void testGetPublicTopicMessages() throws Exception {

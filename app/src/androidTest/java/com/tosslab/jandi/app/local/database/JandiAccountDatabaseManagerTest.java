@@ -5,9 +5,9 @@ import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +30,15 @@ public class JandiAccountDatabaseManagerTest {
         jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
     }
 
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
     @Test
     public void testUpsertLeftSideMenu() throws Exception {
 
-        ResMyTeam teamId = jandiRestClient.getTeamId("steve@tosslab.com");
+        ResMyTeam teamId = jandiRestClient.getTeamId(BaseInitUtil.TEST_ID);
 
         ResLeftSideMenu infosForSideMenu = jandiRestClient.getInfosForSideMenu(teamId.teamList.get(0).teamId);
 

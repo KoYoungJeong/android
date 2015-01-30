@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.app.Application;
 
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,9 +41,14 @@ public class MainChatListModelTest {
         JandiRestClient jandiRestClient = new JandiRestClient_(application);
         jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(application));
         ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
-        JandiAccountDatabaseManager.getInstance(application).upsertAccountTeams(accountInfo.getMemberships());
         JandiAccountDatabaseManager.getInstance(application).updateSelectedTeam(accountInfo.getMemberships().get(0).getTeamId());
     }
+
+    @After
+    public void tearDown() throws Exception {
+        JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
+    }
+
 
     @Test
     public void testConvertChatItem() throws Exception {

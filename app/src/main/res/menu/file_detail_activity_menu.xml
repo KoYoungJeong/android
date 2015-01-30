@@ -2,25 +2,22 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.tosslab.jandi.app.FileDetailActivity" >
+    tools:context="com.tosslab.jandi.app.FileDetailActivity">
     <item
         android:id="@+id/menu_overflow"
         android:icon="@drawable/jandi_icon_moremenu"
         android:showAsAction="always"
         android:title="">
         <menu>
-            <item android:id="@+id/action_file_detail_download"
-                android:title="@string/jandi_action_download"
-                />
-            <item android:id="@+id/action_file_detail_share"
-                android:title="@string/jandi_action_share"
-                />
-            <item android:id="@+id/action_file_detail_unshare"
-                android:title="@string/jandi_action_unshare"
-                />
-            <item android:id="@+id/action_file_detail_delete"
-                android:title="@string/jandi_action_delete"
-                />
+            <item
+                android:id="@+id/action_file_detail_download"
+                android:title="@string/jandi_action_download" />
+            <item
+                android:id="@+id/action_file_detail_share"
+                android:title="@string/jandi_action_share" />
+            <item
+                android:id="@+id/action_file_detail_unshare"
+                android:title="@string/jandi_action_unshare" />
         </menu>
     </item>
 </menu>

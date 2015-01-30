@@ -11,8 +11,10 @@ import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowActivity;
@@ -25,6 +27,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
+@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 public class IntroLoginViewModelTest {
 
@@ -83,7 +86,7 @@ public class IntroLoginViewModelTest {
         resMyTeam.teamList.add(team);
 
         // When : call to success to get team list
-        introLoginViewModel.loginSuccess("steve@tosslab.com");
+        introLoginViewModel.loginSuccess(BaseInitUtil.TEST_ID);
 
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
@@ -108,7 +111,7 @@ public class IntroLoginViewModelTest {
 
 
         // When : move team select activity
-        introLoginViewModel.moveToTeamSelectionActivity("steve@tosslab.com");
+        introLoginViewModel.moveToTeamSelectionActivity(BaseInitUtil.TEST_ID);
 
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());

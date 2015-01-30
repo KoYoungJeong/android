@@ -25,9 +25,9 @@ public class BaseAnalyticsActivity extends Activity {
     private static String GA_PATH_ACCOUNT_INFO = "Account Info";
     private static String GA_PATH_INVITE_MEMBER = "Invite Member";
 
-    private static String GA_PATH_CHANNEL = "Topic";
-    private static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
-    private static String GA_PATH_PRIVATE_GROUP = "Private Group";
+    public static String GA_PATH_CHANNEL = "Topic";
+    public static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
+    public static String GA_PATH_PRIVATE_GROUP = "Private Group";
 
 
     private static String GA_PATH_CHANNEL_PANEL = "Channel Panel";

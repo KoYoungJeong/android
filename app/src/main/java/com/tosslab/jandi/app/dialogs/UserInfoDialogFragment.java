@@ -38,6 +38,7 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
+import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by justinygchoi on 2014. 9. 3..
@@ -160,7 +161,7 @@ public class UserInfoDialogFragment extends DialogFragment {
                 public void onClick(View v) {
 
                     Dialog alertDialog = new Dialog(getActivity());
-                    ImageView profileView = new ImageView(getActivity());
+                    PhotoView profileView = new PhotoView(getActivity());
                     profileView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                     alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     alertDialog.setContentView(profileView);
