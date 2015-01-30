@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.util.Iterator;
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 14. 11. 10..
@@ -21,8 +25,28 @@ public class BadgeUtils {
     public static int getTotalUnreadCount(ResLeftSideMenu resLeftSideMenu) {
 
         int totalUnread = 0;
-        for (ResLeftSideMenu.AlarmInfo alarmInfo : resLeftSideMenu.alarmInfos) {
-            totalUnread += alarmInfo.alarmCount;
+
+        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfos = Observable.from(resLeftSideMenu.alarmInfos)
+                .filter(alarmInfo -> {
+
+                    if (TextUtils.equals(alarmInfo.entityType, "user")) {
+
+                        return true;
+                    } else {
+
+                        ResLeftSideMenu.Entity entity = Observable.from(resLeftSideMenu.joinEntities)
+                                .filter(joinEntity -> alarmInfo.entityId == joinEntity.id)
+                                .toBlocking()
+                                .firstOrDefault(new ResLeftSideMenu.Entity());
+
+                        return entity.id != 0;
+                    }
+
+                }).toBlocking()
+                .getIterator();
+
+        while (alarmInfos.hasNext()) {
+            totalUnread += alarmInfos.next().alarmCount;
         }
 
         return totalUnread;
