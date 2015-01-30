@@ -142,6 +142,7 @@ public class EmailChooseActivity extends Activity {
                 clickedItem.setSelected(!clickedItem.isSelected());
                 emailChoosePresenter.refreshListView();
             } else {
+                // non-case...
                 emailChoosePresenter.showRetryEmailDialog(selectedEmail.getEmail());
             }
 

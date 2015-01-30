@@ -128,9 +128,11 @@ public class EmailChoosePresenter {
 
     }
 
+    @Deprecated
     public void showRetryEmailDialog(final String email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(R.string.jandi_retry_auth_email)
+        builder
+//                .setMessage(R.string.jandi_retry_auth_email)
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
