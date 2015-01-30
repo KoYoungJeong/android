@@ -1,12 +1,17 @@
 package com.tosslab.jandi.app.ui.message.members;
 
 import android.app.Activity;
+import android.content.Intent;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.message.members.model.TopicMemberModel;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -61,5 +66,17 @@ public class TopicMemberActivity extends Activity {
     public void onEvent(ProfileDetailEvent event) {
         int entityId = event.getEntityId();
         UserInfoDialogFragment_.builder().entityId(entityId).build().show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(final RequestMoveDirectMessageEvent event) {
+        EntityManager entityManager = EntityManager.getInstance(TopicMemberActivity.this);
+        MessageListV2Activity_.intent(TopicMemberActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .teamId(entityManager.getTeamId())
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .entityId(event.userId)
+                .isFavorite(entityManager.getEntityById(event.userId).isStarred)
+                .isFromPush(false)
+                .start();
     }
 }

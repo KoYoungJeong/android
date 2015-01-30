@@ -280,7 +280,9 @@ public class MessageListFragment extends Fragment {
             if (!oldMessage.isFirst) {
                 messageListPresenter.setLoadingComplete();
             } else {
-                messageListPresenter.showNoMoreMessage();
+                if (linkId != -1) {
+                    messageListPresenter.showNoMoreMessage();
+                }
                 messageListPresenter.setNoMoreLoading();
             }
 

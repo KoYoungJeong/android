@@ -25,18 +25,18 @@ public class RobolectricGradleTestRunner extends RobolectricTestRunner {
         final String manifestProperty = _manifestProperty == null ? "app/src/main/AndroidManifest.xml" : _manifestProperty;
         final String resProperty = _resProperty == null ? buildPath + "/res" + flavorPath : _resProperty;
         final String assetsProperty = _assetsProperty == null ? buildPath + "/assets" + flavorPath : _assetsProperty;
-        final String packageProperty = _androidPackage == null ? "com.tosslab.jandi.app.dev" : _androidPackage; // System.getProperty("android.package");
+//        final String packageProperty = _androidPackage == null ? "com.tosslab.jandi.app.dev" : _androidPackage; // System.getProperty("android.package");
 
         System.out.println(manifestProperty);
         System.out.println(resProperty);
         System.out.println(assetsProperty);
-        System.out.println(packageProperty);
+//        System.out.println(packageProperty);
 
         final AndroidManifestExt a = new AndroidManifestExt(
                 Fs.fileFromPath(manifestProperty),
                 Fs.fileFromPath(resProperty),
                 Fs.fileFromPath(assetsProperty));
-        a.setPackageName(packageProperty);
+//        a.setPackageName(packageProperty);
 
         return a;
     }
