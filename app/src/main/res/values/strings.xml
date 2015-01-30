@@ -77,7 +77,8 @@ Welcome to JANDI"</string>
     <string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
     <string name="jandi_tutorial_topic_message">"Instantly connect with all your colleagues using Public Topics. The subject matter is up to you, whether it's a cross-departmental project or just some casual conversation. If you need privacy, you can invite members to Private Topics or exchange Direct Messages."</string>
     <string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
-    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. You no longer need to use other storage services or send links to files. <br>All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
+    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. You no longer need to use other storage services or send links to files.
+All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"My Topics"</string>
