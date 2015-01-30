@@ -148,12 +148,12 @@ public class IntroActivityModel {
         JandiPreference.clearMyToken(context);
     }
 
-    public void refreshEntityInfo() {
+    public boolean refreshEntityInfo() {
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
 
         if (selectedTeamInfo == null) {
-            return;
+            return false;
         }
 
         JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
@@ -166,9 +166,11 @@ public class IntroActivityModel {
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(context);
 
+            return true;
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+            return false;
         }
 
 

@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.intro.model;
 
+import android.util.Log;
+
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -13,6 +15,11 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
 
 import java.util.concurrent.Callable;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.functions.Func2;
 
 import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.core.Is.is;
@@ -64,6 +71,54 @@ public class IntroActivityModelTest {
 
         // Then : Maybe....show update dialog..Because AndroidManifest.xml is not defined.
         assertThat(versionCode > 0, is(true));
+
+    }
+
+    @Test
+    public void testCombineLastest() throws Exception {
+
+        Observable.combineLatest(Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Log.d("INFO", "hello~1111");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        subscriber.onNext(true);
+                        subscriber.onCompleted();
+                    }
+                }).start();
+
+            }
+        }), Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                Log.d("INFO", "hello~2222");
+                subscriber.onNext(false);
+                subscriber.onCompleted();
+            }
+        }), new Func2<Boolean, Boolean, Boolean>() {
+            @Override
+            public Boolean call(Boolean o, Boolean o2) {
+
+                Log.d("INFO", "combine : " + o + " , " + o2);
+
+
+                return o & o2;
+            }
+        }).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                Log.d("INFO", "Subscribe : " + aBoolean);
+            }
+        });
 
     }
 

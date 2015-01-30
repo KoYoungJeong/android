@@ -17,6 +17,11 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Action1;
+import rx.functions.Func2;
+
 /**
  * Created by justinygchoi on 14. 11. 6..
  * 크게 3가지 체크가 이루어진다.
@@ -72,24 +77,64 @@ public class IntroActivity extends Activity {
 
     @Background
     void refreshTokenAndGoNextActivity(long initTime) {
-        try {
-            introModel.refreshAccountInfo();
-            introModel.refreshEntityInfo();
-            introModel.sleep(initTime, MAX_DELAY_MS);
-            introViewModel.moveMainOrTeamSelectActivity();
-        } catch (JandiNetworkException e) {
-            if (e.httpStatusCode == 401) {
-                // 인증 에러시 재로그인 처리
-                introModel.clearTokenInfo();
-                introModel.clearAccountInfo();
 
-                introModel.sleep(initTime, MAX_DELAY_MS);
-                introViewModel.moveToIntroTutorialActivity();
-            } else {
-                introViewModel.showWarningToast(getString(R.string.err_network));
-                finishOnUiThread();
+        // like fork & join...but need to refactor
+
+        Observable.combineLatest(Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            introModel.refreshAccountInfo();
+                            subscriber.onNext(200);
+                        } catch (JandiNetworkException e) {
+                            subscriber.onNext(e.httpStatusCode);
+                        }
+
+                        subscriber.onCompleted();
+                    }
+                }).start();
             }
-        }
+        }), Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscriber.onNext(introModel.refreshEntityInfo() ? 1 : -1);
+                        subscriber.onCompleted();
+                    }
+                }).start();
+
+            }
+        }), new Func2<Integer, Integer, Integer>() {
+            @Override
+            public Integer call(Integer o, Integer o2) {
+
+                return o;
+            }
+        }).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer o) {
+                if (o == 200) {
+                    introModel.sleep(initTime, MAX_DELAY_MS);
+                    introViewModel.moveMainOrTeamSelectActivity();
+                } else if (o == 401) {
+                    introModel.clearTokenInfo();
+                    introModel.clearAccountInfo();
+
+                    introModel.sleep(initTime, MAX_DELAY_MS);
+                    introViewModel.moveToIntroTutorialActivity();
+                } else {
+                    introViewModel.showWarningToast(getString(R.string.err_network));
+                    finishOnUiThread();
+                }
+            }
+        });
+
     }
 
     @UiThread
