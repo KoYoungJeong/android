@@ -43,7 +43,8 @@ public class TopicMemberModel {
 
                         })
                         .toBlocking()
-                        .first())
+                        .firstOrDefault(new ChatChooseItem().entityId(-1)))
+                .filter(chatChooseItem -> chatChooseItem.getEntityId() != -1)
                 .toBlocking()
                 .getIterator();
 
