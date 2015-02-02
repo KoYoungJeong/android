@@ -125,7 +125,7 @@ public class FileListFragment extends Fragment {
         EventBus.getDefault().register(this);
         mSearchQuery.setToFirst();
         // 서치 시작
-        mAdapter.clearAdapterWithoutNotify();
+        mAdapter.clearAdapter();
         doSearch();
     }
 
