@@ -205,7 +205,13 @@ public class FileDetailPresenter {
                         } else if (TextUtils.equals(fileMessage.content.type, "application/x-hwp")) {
                             iconFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
                             imageViewPhotoFile.setImageResource(R.drawable.jandi_down_hwp);
-                        } else if (FormatConverter.isMsOfficeMimeType(fileMessage.content.type)) {
+                        } else if (FormatConverter.isSpreadSheetMimeType(fileMessage.content.type)) {
+                            iconFileType.setImageResource(R.drawable.jandi_fl_icon_exel);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
+                        } else if (FormatConverter.isPresentationMimeType(fileMessage.content.type)) {
+                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_ppt);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
+                        } else if (FormatConverter.isDocmentMimeType(fileMessage.content.type)) {
                             iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
                             imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
                         } else {

@@ -72,8 +72,12 @@ public class SearchedFileItemView extends RelativeLayout {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
             } else if (TextUtils.equals(fileType, "application/x-hwp")) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
-            } else if (FormatConverter.isMsOfficeMimeType(fileType)) {
+            } else if (FormatConverter.isDocmentMimeType(fileType)) {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
+            } else if (FormatConverter.isPresentationMimeType(fileType)) {
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_ppt);
+            } else if (FormatConverter.isSpreadSheetMimeType(fileType)) {
+                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_exel);
             } else {
                 imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_etc);
             }
