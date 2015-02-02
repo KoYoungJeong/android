@@ -66,7 +66,7 @@ public class ImageViewHolder implements BodyViewHolder {
                     .into(fileImageView);
 
             fileNameTextView.setText(fileMessage.content.name);
-            fileTypeTextView.setText(fileMessage.content.type);
+            fileTypeTextView.setText(fileMessage.content.ext);
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(link.message.writerId)));
 
