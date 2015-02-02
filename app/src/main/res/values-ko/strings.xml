@@ -298,4 +298,5 @@
     <string name="jandi_file_category_document">"워드/한글"</string>
     <string name="jandi_file_category_audio">"음악"</string>
     <string name="jandi_file_category_video">"동영상"</string>
+    <string name="jandi_deleted_file">"삭제된 파일"</string>
 </resources>

@@ -45,6 +45,7 @@
         android:src="@drawable/jandi_down_img" />
     <!-- 파일의 상세 정보 -->
     <LinearLayout
+        android:id="@+id/ly_file_detail_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="12dp"

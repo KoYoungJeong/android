@@ -57,27 +57,33 @@ public class FileViewHolder implements BodyViewHolder {
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
-            fileNameTextView.setText(fileMessage.content.name);
-            fileTypeTextView.setText(fileMessage.content.ext);
-
-            if (fileMessage.content.type.startsWith("audio")) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
-            } else if (fileMessage.content.type.startsWith("video")) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_video);
-            } else if (fileMessage.content.type.startsWith("application/pdf")) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_pdf);
-            } else if (fileMessage.content.type.startsWith("text")) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
-            } else if (TextUtils.equals(fileMessage.content.type, "application/x-hwp")) {
-                fileImageView.setImageResource(R.drawable.jandi_fl_icon_hwp);
-            } else if (FormatConverter.isSpreadSheetMimeType(fileMessage.content.type)) {
-                fileImageView.setImageResource(R.drawable.jandi_fl_icon_exel);
-            } else if (FormatConverter.isPresentationMimeType(fileMessage.content.type)) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_ppt);
-            } else if (FormatConverter.isDocmentMimeType(fileMessage.content.type)) {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
+            if (TextUtils.equals(link.message.status, "archived")) {
+                fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
+                fileTypeTextView.setText("");
             } else {
-                fileImageView.setImageResource(R.drawable.jandi_fview_icon_etc);
+                fileNameTextView.setText(fileMessage.content.name);
+                fileTypeTextView.setText(fileMessage.content.ext);
+
+                if (fileMessage.content.type.startsWith("audio")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
+                } else if (fileMessage.content.type.startsWith("video")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_video);
+                } else if (fileMessage.content.type.startsWith("application/pdf")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_pdf);
+                } else if (fileMessage.content.type.startsWith("text")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
+                } else if (TextUtils.equals(fileMessage.content.type, "application/x-hwp")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_hwp);
+                } else if (FormatConverter.isSpreadSheetMimeType(fileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_exel);
+                } else if (FormatConverter.isPresentationMimeType(fileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_ppt);
+                } else if (FormatConverter.isDocmentMimeType(fileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
+                } else {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_etc);
+                }
             }
         }
 

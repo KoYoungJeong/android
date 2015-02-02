@@ -17,6 +17,7 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
  */
+@Deprecated
 @EBean
 public class MessageListModel {
 

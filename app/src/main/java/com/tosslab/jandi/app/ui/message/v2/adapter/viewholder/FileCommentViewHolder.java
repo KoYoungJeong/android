@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
 
 import de.greenrobot.event.EventBus;
@@ -26,6 +27,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private TextView fileOwnerTextView;
     private TextView fileNameTextView;
     private TextView commentTextView;
+    private TextView fileOwnerPostfixTextView;
+    private ImageView fileImageView;
 
     @Override
     public void initView(View rootView) {
@@ -34,8 +37,11 @@ public class FileCommentViewHolder implements BodyViewHolder {
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
 
         fileOwnerTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_owner);
+        fileOwnerPostfixTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_postfix);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_file_name);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
+
+        fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
     }
 
     @Override
@@ -53,10 +59,42 @@ public class FileCommentViewHolder implements BodyViewHolder {
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         if (link.feedback instanceof ResMessages.FileMessage) {
-            ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
 
-            fileOwnerTextView.setText(feedbackFileMessage.writer.name);
-            fileNameTextView.setText(feedbackFileMessage.content.name);
+            ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
+            if (TextUtils.equals(link.feedback.status, "archived")) {
+                fileOwnerTextView.setVisibility(View.INVISIBLE);
+                fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
+
+                fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileImageView.setVisibility(View.VISIBLE);
+            } else {
+                fileOwnerTextView.setText(feedbackFileMessage.writer.name);
+                fileNameTextView.setText(feedbackFileMessage.content.name);
+
+                fileOwnerTextView.setVisibility(View.VISIBLE);
+                fileOwnerPostfixTextView.setVisibility(View.VISIBLE);
+
+                if (feedbackFileMessage.content.type.startsWith("audio")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
+                } else if (feedbackFileMessage.content.type.startsWith("video")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_video);
+                } else if (feedbackFileMessage.content.type.startsWith("application/pdf")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_pdf);
+                } else if (feedbackFileMessage.content.type.startsWith("text")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
+                } else if (TextUtils.equals(feedbackFileMessage.content.type, "application/x-hwp")) {
+                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_hwp);
+                } else if (FormatConverter.isSpreadSheetMimeType(feedbackFileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_exel);
+                } else if (FormatConverter.isPresentationMimeType(feedbackFileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_ppt);
+                } else if (FormatConverter.isDocmentMimeType(feedbackFileMessage.content.type)) {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
+                } else {
+                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_etc);
+                }
+            }
+
         }
 
         if (link.message instanceof ResMessages.CommentMessage) {

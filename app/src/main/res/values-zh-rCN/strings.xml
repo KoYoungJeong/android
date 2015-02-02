@@ -281,4 +281,5 @@
     <string name="jandi_file_category_spreadsheet">"表单"</string>
     <string name="jandi_file_category_audio">"音频"</string>
     <string name="jandi_file_category_video">"视频"</string>
+    <string name="jandi_deleted_file">"已删除档案"</string>
 </resources>

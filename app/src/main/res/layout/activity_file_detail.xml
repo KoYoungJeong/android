@@ -26,6 +26,7 @@
         android:background="@color/jandi_message_input_border" />
 
     <LinearLayout
+        android:id="@+id/ly_file_detail_input_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/jandi_messages_bottom_bg"
