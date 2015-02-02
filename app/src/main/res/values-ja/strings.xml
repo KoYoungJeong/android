@@ -284,4 +284,9 @@ JANDIへようこそ"</string>
     <string name="jandi_private_topic_tip_1">"プライベートトピックはそのトピックに招待されていないメンバーから見ることはできません"</string>
     <string name="jandi_private_topic_tip_2">"プライベートトピック内で共有されたファイルは、そのトピックを閲覧できるメンバーからしかアクセスできません"</string>
     <string name="jandi_private_topic_tip_3">"トピック作成後はプライベートトピックへの変更はできません。その逆もできません。"</string>
+    <string name="jandi_file_category_presentation">"プレゼンテーション"</string>
+    <string name="jandi_file_category_document">"文書"</string>
+    <string name="jandi_file_category_spreadsheet">"スプレッドシート"</string>
+    <string name="jandi_file_category_audio">"音声"</string>
+    <string name="jandi_file_category_video">"動画"</string>
 </resources>

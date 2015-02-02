@@ -184,8 +184,13 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_action_search">"Search"</string>
     <string name="jandi_file_search_keyword">"Keyword"</string>
     <string name="jandi_file_category_all">"All Files"</string>
-    <string name="jandi_file_category_image">"Images"</string>
+    <string name="jandi_file_category_document">"Documents"</string>
+    <string name="jandi_file_category_presentation">"Presentations"</string>
+    <string name="jandi_file_category_spreadsheet">"Spreadsheets"</string>
     <string name="jandi_file_category_pdf">"PDFs"</string>
+    <string name="jandi_file_category_image">"Images"</string>
+    <string name="jandi_file_category_video">"Videos"</string>
+    <string name="jandi_file_category_audio">"Audios"</string>
     <string name="jandi_file_category_everyone">"All Members"</string>
     <string name="jandi_file_category_everywhere">"All Rooms"</string>
     <string name="jandi_file_search_type">"Filter results by file type"</string>
@@ -278,4 +283,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_private_topic_tip_1">"Private topics are not available to non-invited members"</string>
     <string name="jandi_private_topic_tip_2">"Files shared in a private topic are only available to its participants"</string>
     <string name="jandi_private_topic_tip_3">"Topics designated as public or private cannot be converted to the other after creation"</string>
+    <string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
 </resources>

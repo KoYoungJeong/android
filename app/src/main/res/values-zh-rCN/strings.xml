@@ -276,4 +276,9 @@
     <string name="jandi_private_topic_tip_1">"私人群组对非邀请成员不开放"</string>
     <string name="jandi_private_topic_tip_2">"在私人群组内已分享档案仅开放给其参与者"</string>
     <string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
+    <string name="jandi_file_category_presentation">"简报"</string>
+    <string name="jandi_file_category_document">"文件"</string>
+    <string name="jandi_file_category_spreadsheet">"表单"</string>
+    <string name="jandi_file_category_audio">"音频"</string>
+    <string name="jandi_file_category_video">"视频"</string>
 </resources>

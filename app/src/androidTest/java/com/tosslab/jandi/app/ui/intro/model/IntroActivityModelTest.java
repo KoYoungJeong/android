@@ -77,6 +77,8 @@ public class IntroActivityModelTest {
     @Test
     public void testCombineLastest() throws Exception {
 
+        final boolean[] isFinish = {false};
+
         Observable.combineLatest(Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
@@ -117,6 +119,16 @@ public class IntroActivityModelTest {
             @Override
             public void call(Boolean aBoolean) {
                 Log.d("INFO", "Subscribe : " + aBoolean);
+
+                isFinish[0] = true;
+
+            }
+        });
+
+        await().until(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return isFinish[0];
             }
         });
 

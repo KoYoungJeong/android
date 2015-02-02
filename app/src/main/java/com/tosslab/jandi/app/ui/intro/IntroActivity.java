@@ -83,55 +83,40 @@ public class IntroActivity extends Activity {
         Observable.combineLatest(Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            introModel.refreshAccountInfo();
-                            subscriber.onNext(200);
-                        } catch (JandiNetworkException e) {
-                            subscriber.onNext(e.httpStatusCode);
-                        }
-
-                        subscriber.onCompleted();
+                new Thread(() -> {
+                    try {
+                        introModel.refreshAccountInfo();
+                        subscriber.onNext(200);
+                    } catch (JandiNetworkException e) {
+                        subscriber.onNext(e.httpStatusCode);
                     }
+
+                    subscriber.onCompleted();
                 }).start();
             }
         }), Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        subscriber.onNext(introModel.refreshEntityInfo() ? 1 : -1);
-                        subscriber.onCompleted();
-                    }
+                new Thread(() -> {
+                    subscriber.onNext(introModel.refreshEntityInfo() ? 1 : -1);
+                    subscriber.onCompleted();
                 }).start();
 
             }
-        }), new Func2<Integer, Integer, Integer>() {
-            @Override
-            public Integer call(Integer o, Integer o2) {
+        }), (o, o2) -> o).subscribe(o -> {
+            if (o == 200) {
+                introModel.sleep(initTime, MAX_DELAY_MS);
+                introViewModel.moveMainOrTeamSelectActivity();
+            } else if (o == 401) {
+                introModel.clearTokenInfo();
+                introModel.clearAccountInfo();
 
-                return o;
-            }
-        }).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer o) {
-                if (o == 200) {
-                    introModel.sleep(initTime, MAX_DELAY_MS);
-                    introViewModel.moveMainOrTeamSelectActivity();
-                } else if (o == 401) {
-                    introModel.clearTokenInfo();
-                    introModel.clearAccountInfo();
-
-                    introModel.sleep(initTime, MAX_DELAY_MS);
-                    introViewModel.moveToIntroTutorialActivity();
-                } else {
-                    introViewModel.showWarningToast(getString(R.string.err_network));
-                    finishOnUiThread();
-                }
+                introModel.sleep(initTime, MAX_DELAY_MS);
+                introViewModel.moveToIntroTutorialActivity();
+            } else {
+                introViewModel.showWarningToast(getString(R.string.err_network));
+                finishOnUiThread();
             }
         });
 
