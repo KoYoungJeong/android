@@ -3,6 +3,10 @@ package com.tosslab.jandi.app.ui.fileexplorer;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.tosslab.jandi.app.events.BackPressedEvent;
+
+import de.greenrobot.event.EventBus;
+
 public class FileExplorerActivity extends Activity {
 
     @Override
@@ -14,4 +18,9 @@ public class FileExplorerActivity extends Activity {
                 .commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        EventBus.getDefault().post(new BackPressedEvent());
+    }
 }
