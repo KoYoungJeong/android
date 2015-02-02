@@ -289,4 +289,7 @@ JANDIへようこそ"</string>
     <string name="jandi_file_category_spreadsheet">"スプレッドシート"</string>
     <string name="jandi_file_category_audio">"音声"</string>
     <string name="jandi_file_category_video">"動画"</string>
+    <string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
+    <string name="jandi_select_direct_messages">"送信相手を選択"</string>
+    <string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
 </resources>

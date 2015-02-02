@@ -267,15 +267,15 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_topic_public">"Public"</string>
     <string name="jandi_topic_private">"Private"</string>
     <string name="jandi_what_is_topic_type">"Topic type cannot be switched between public and private after creation"</string>
-    <string name="jandi_unstarred">"Unstar this topic"</string>
-    <string name="jandi_starred">"Star this topic"</string>
+    <string name="jandi_unstarred">"Unstar"</string>
+    <string name="jandi_starred">"Star"</string>
     <string name="jandi_message_leave_private_topic">"If you leave this private topic, you will only be able to rejoin if you receive another invitation. Are you sure you want to leave?"</string>
     <string name="jandi_switch_team">"Switch Teams"</string>
     <string name="jandi_choose_email">"Choose an email"</string>
     <string name="jandi_already_linked_email">"This email is already linked to your account"</string>
     <string name="jandi_add_an_email_address">"Add an Email Address"</string>
     <string name="jandi_messages">"Messages"</string>
-    <string name="jandi_topic_paricipants">"Topic Participants"</string>
+    <string name="jandi_topic_paricipants">"Participants"</string>
     <string name="jandi_new_team_name">"New Team Name"</string>
     <string name="jandi_start_direct_messages">"<b>All of your direct messages are currently hidden.</b>\n\n
 Click the button below to start or reopen a conversation."</string>
@@ -284,4 +284,6 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_private_topic_tip_2">"Files shared in a private topic are only available to its participants"</string>
     <string name="jandi_private_topic_tip_3">"Topics designated as public or private cannot be converted to the other after creation"</string>
     <string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
+    <string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
+    <string name="primary_email_info_msg">"All emails related to your JANDI account will be sent to the primary email address. You can add other email addresses to your account and assign them to specific teams (note email addresses must first be verified)."</string>
 </resources>

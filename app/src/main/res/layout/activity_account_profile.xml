@@ -120,6 +120,14 @@
             android:textSize="16sp" />
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="16dp"
+        android:text="@string/primary_email_info_msg"
+        android:paddingRight="16dp" />
+
     <Button
         android:id="@+id/btn_account_profile_sign_out"
         android:layout_width="match_parent"

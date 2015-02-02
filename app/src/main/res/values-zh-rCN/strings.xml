@@ -281,4 +281,7 @@
     <string name="jandi_file_category_spreadsheet">"表单"</string>
     <string name="jandi_file_category_audio">"音频"</string>
     <string name="jandi_file_category_video">"视频"</string>
+    <string name="jandi_success_update_account_profile">"帐号已经成功更新"</string>
+    <string name="jandi_select_direct_messages">"选择直接传讯。"</string>
+    <string name="primary_email_info_msg">"所有与您JANDI帐号相关的电子邮件将寄送到主要电子邮件地址。您可以增加其它电子邮件地址到您的帐号并且指定为某个团队专属电子邮件地址。 (请注意电子邮件地址皆需事先被确认)"</string>
 </resources>

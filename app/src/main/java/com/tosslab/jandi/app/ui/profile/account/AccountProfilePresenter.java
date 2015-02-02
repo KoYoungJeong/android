@@ -173,4 +173,10 @@ public class AccountProfilePresenter {
         }
 
     }
+
+    @UiThread
+    public void showSuccessToast(String message) {
+        ColoredToast.showError(context, message);
+
+    }
 }

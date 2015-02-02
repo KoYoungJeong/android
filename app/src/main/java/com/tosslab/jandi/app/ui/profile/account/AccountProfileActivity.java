@@ -160,6 +160,10 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
                         .trackSetAccount();
             }
 
+            if (!isNeedUploadImage && !isNeedUploadName) {
+                accountProfilePresenter.showSuccessToast(getString(R.string.jandi_success_update_account_profile));
+            }
+
             updateOptionMenu();
         } catch (Exception e) {
             accountProfilePresenter.showFailToModifyProfile();
