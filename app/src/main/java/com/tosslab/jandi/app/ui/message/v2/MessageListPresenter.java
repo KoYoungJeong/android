@@ -254,4 +254,13 @@ public class MessageListPresenter {
         clipboardManager.setPrimaryClip(clipData);
     }
 
+    public void changeToArchive(int messageId) {
+        int position = messageListAdapter.indexByMessageId(messageId);
+        if (position > 0) {
+            ResMessages.Link item = messageListAdapter.getItem(position);
+            item.message.status = "archived";
+
+            messageListAdapter.notifyDataSetChanged();
+        }
+    }
 }

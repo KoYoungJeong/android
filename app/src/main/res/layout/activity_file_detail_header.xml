@@ -40,6 +40,7 @@
         android:id="@+id/img_file_detail_photo"
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_file_detail_image_height"
+        android:layout_marginBottom="@dimen/jandi_file_detail_file_margin_top"
         android:layout_marginLeft="@dimen/jandi_file_detail_padding_sides"
         android:layout_marginRight="@dimen/jandi_file_detail_padding_sides"
         android:src="@drawable/jandi_down_img" />
@@ -56,7 +57,6 @@
             android:id="@+id/icon_file_detail_content_type"
             android:layout_width="@dimen/jandi_file_detail_file_icon_width"
             android:layout_height="@dimen/jandi_file_detail_file_icon_height"
-            android:layout_marginTop="@dimen/jandi_file_detail_file_margin_top"
             android:background="@drawable/jandi_fview_icon_etc" />
 
         <RelativeLayout
@@ -64,7 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="@dimen/jandi_file_detail_file_margin_top"
             android:layout_weight="1">
 
             <TextView

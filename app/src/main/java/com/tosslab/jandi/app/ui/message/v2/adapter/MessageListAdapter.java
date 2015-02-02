@@ -184,9 +184,19 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     }
 
     private int searchIndexOfMessages(List<ResMessages.Link> messageItems, int messageId) {
-        for (int i = 0; i < messageItems.size(); i++) {
+        int size = messageItems.size();
+        for (int i = 0; i < size; i++) {
             if (messageItems.get(i).messageId == messageId)
                 return i;
+        }
+        return -1;
+    }
+
+    public int indexByMessageId(int messageId) {
+        int count = getCount();
+        for (int idx = 0; idx < count; idx++) {
+            if (getItem(idx).messageId == messageId)
+                return idx;
         }
         return -1;
     }
