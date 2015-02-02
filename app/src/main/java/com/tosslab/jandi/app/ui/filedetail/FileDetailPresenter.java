@@ -144,7 +144,7 @@ public class FileDetailPresenter {
                 textViewFileCreateDate.setText(createTime);
                 activity.getActionBar().setTitle(fileMessage.content.title);
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.type);
+                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
 
                 // 공유 CDP 이름
                 drawFileSharedEntities(fileMessage);
