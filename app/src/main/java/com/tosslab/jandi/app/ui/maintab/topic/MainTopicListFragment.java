@@ -9,6 +9,7 @@ import android.widget.ExpandableListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -173,6 +174,9 @@ public class MainTopicListFragment extends Fragment {
         List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         mainTopicPresenter.setEntities(joinEntities, unjoinEntities);
+
+        boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
+        EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
     }
 
     public void onEvent(MessagePushEvent event) {

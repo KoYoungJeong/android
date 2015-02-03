@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.ChatBadgeEvent;
+import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -162,7 +164,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         trackSigningIn(mEntityManager);
         getActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
-        checkNewTabBadges(mEntityManager);
         postAllEvents();
     }
 
@@ -170,23 +171,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void getEntitiesFailed(String errMessage) {
         ColoredToast.showError(mContext, errMessage);
         returnToIntroStartActivity();
-    }
-
-    void checkNewTabBadges(EntityManager entityManager) {
-        if (entityManager == null) {
-            return;
-        }
-
-        if (entityManager.hasNewTopicMessage()) {
-            mMainTabPagerAdapter.showNewTopicBadge();
-        } else {
-            mMainTabPagerAdapter.hideNewTopicBadge();
-        }
-        if (entityManager.hasNewChatMessage()) {
-            mMainTabPagerAdapter.showNewChatBadge();
-        } else {
-            mMainTabPagerAdapter.hideNewChatBadge();
-        }
     }
 
     private void postAllEvents() {
@@ -206,6 +190,23 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void onEvent(MessagePushEvent event) {
         if (!TextUtils.equals(event.getEntityType(), "user")) {
             getEntities();
+        }
+    }
+
+    public void onEventMainThread(ChatBadgeEvent event) {
+        if (event.isBadge()) {
+            mMainTabPagerAdapter.showNewChatBadge();
+        } else {
+            mMainTabPagerAdapter.hideNewChatBadge();
+
+        }
+    }
+
+    public void onEventMainThread(TopicBadgeEvent event) {
+        if (event.isBadge()) {
+            mMainTabPagerAdapter.showNewTopicBadge();
+        } else {
+            mMainTabPagerAdapter.hideNewTopicBadge();
         }
     }
 }

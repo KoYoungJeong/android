@@ -59,4 +59,13 @@ public class MainTopicModel {
     public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
         jandiEntityClient.joinChannel(channel);
     }
+
+    public boolean hasAlarmCount(List<FormattedEntity> joinEntities) {
+        for (FormattedEntity joinEntity : joinEntities) {
+            if (joinEntity.alarmCount > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

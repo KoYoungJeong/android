@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
+import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
@@ -97,6 +98,10 @@ public class MainChatListFragment extends Fragment {
             List<ChatItem> chatItems = mainChatListModel.convertChatItem(teamId, chatList);
             mainChatListModel.saveChatList(teamId, chatItems);
             mainChatListPresenter.setChatItems(chatItems);
+
+            boolean hasAlarmCount = MainChatListModel.hasAlarmCount(chatItems);
+
+            EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();

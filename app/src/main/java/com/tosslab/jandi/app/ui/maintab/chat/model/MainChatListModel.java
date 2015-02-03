@@ -82,4 +82,16 @@ public class MainChatListModel {
     public void saveChatList(int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
     }
+
+    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
+
+        for (ChatItem chatItem : chatItems) {
+            if (chatItem.getUnread() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
 }
