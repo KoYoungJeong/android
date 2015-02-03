@@ -4,10 +4,8 @@ import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.Menu;
 
@@ -100,8 +98,10 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         String email = accountProfileModel.getAccountPrimaryEmail();
         accountProfilePresenter.setEmail(email);
 
-        String accountProfileImage = accountProfileModel.getAccountProfileImage();
-        accountProfilePresenter.setProfileImage(Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + accountProfileImage));
+        if (!isNeedUploadImage) {
+            String accountProfileImage = accountProfileModel.getAccountProfileImage();
+            accountProfilePresenter.setProfileImage(Uri.parse(JandiConstantsForFlavors.SERVICE_ROOT_URL + accountProfileImage));
+        }
     }
 
     @Override
@@ -242,14 +242,17 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.img_account_profile_photo)
     void chooseProfileImage() {
-        Intent intent = new Intent(
-                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+//        Intent intent = new Intent(
+//                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        intent.setType("image/*");              // 모든 이미지
+//        intent.putExtra("crop", "true");        // Crop기능 활성화
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri(AccountProfileActivity.this));
+//        intent.putExtra("outputFormat",         // 포맷방식
+//                Bitmap.CompressFormat.JPEG.toString());
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");              // 모든 이미지
-        intent.putExtra("crop", "true");        // Crop기능 활성화
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri());
-        intent.putExtra("outputFormat",         // 포맷방식
-                Bitmap.CompressFormat.PNG.toString());
 
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
     }
@@ -261,11 +264,16 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
-//        tempFile = new File(ImageFilePath.getTempPath());
+        if (data != null && data.getData() != null) {
+            tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
+        } else {
+            tempFile = new File(ImageFilePath.getTempPath(AccountProfileActivity.this));
+        }
+
         accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
         isNeedUploadImage = true;
         invalidateOptionsMenu();
+
 
     }
 

@@ -4,9 +4,7 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -299,16 +297,21 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
      */
     @Click(R.id.profile_photo)
     void getPicture() {
-        Intent intent = new Intent(
-                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+//        Intent intent = new Intent(
+//                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        intent.setType("image/*");              // 모든 이미지
+//        intent.putExtra("crop", "true");        // Crop기능 활성화
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri(MemberProfileActivity.this));
+//        intent.putExtra("outputFormat",         // 포맷방식
+//                Bitmap.CompressFormat.JPEG.toString());
+
+        Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");              // 모든 이미지
-        intent.putExtra("crop", "true");        // Crop기능 활성화
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri());
-        intent.putExtra("outputFormat",         // 포맷방식
-                Bitmap.CompressFormat.PNG.toString());
 
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
+
+
     }
 
     @OnActivityResult(REQ_CODE_PICK_IMAGE)
@@ -318,11 +321,16 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         if (imageData != null && imageData.getData() != null) {
-            attemptToUpdatePhoto = true;
             mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
-            memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
-            invalidateOptionsMenu();
+        } else {
+            mTempPhotoFile = new File(ImageFilePath.getTempPath(MemberProfileActivity.this));
         }
+
+        attemptToUpdatePhoto = true;
+        memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
+        invalidateOptionsMenu();
+
+
     }
 
     private String getDistictId() {

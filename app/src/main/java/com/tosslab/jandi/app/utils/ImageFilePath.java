@@ -16,19 +16,29 @@ import java.io.IOException;
 //import android.provider.DocumentsContract;
 
 public class ImageFilePath {
-    private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
+    private static final String TEMP_PHOTO_FILE = "temp.jpg";   // 임시 저장파일
 
-    /** 임시 저장 파일의 경로를 반환 */
-    public static Uri getTempUri() {
-        return Uri.fromFile(getTempFile());
+    /**
+     * 임시 저장 파일의 경로를 반환
+     */
+    public static Uri getTempUri(Context context) {
+        return Uri.fromFile(getTempFile(context));
     }
 
-    /** 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환  */
-    public static File getTempFile() {
+    /**
+     * 외장메모리에 임시 이미지 파일을 생성하여 그 파일의 경로를 반환
+     */
+    public static File getTempFile(Context context) {
         if (isSDCARDMOUNTED()) {
-            File f = new File(Environment.getExternalStorageDirectory(), // 외장메모리 경로
-                    TEMP_PHOTO_FILE);
+            String dirPath = getTempPath(context);
+
+            File f = new File(dirPath);
+            if (!f.getParentFile().exists()) {
+                f.getParentFile().mkdirs();
+            }
+
             try {
+                f.delete();
                 f.createNewFile();      // 외장메모리에 temp.png 파일 생성
             } catch (IOException e) {
             }
@@ -38,11 +48,13 @@ public class ImageFilePath {
             return null;
     }
 
-    public static String getTempPath() {
-        return Environment.getExternalStorageDirectory() + "/" + TEMP_PHOTO_FILE;
+    public static String getTempPath(Context context) {
+        return Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/data/" + context.getPackageName() + "/temp/" + TEMP_PHOTO_FILE;
     }
 
-    /** SD카드가 마운트 되어 있는지 확인 */
+    /**
+     * SD카드가 마운트 되어 있는지 확인
+     */
     private static boolean isSDCARDMOUNTED() {
         String status = Environment.getExternalStorageState();
         if (status.equals(Environment.MEDIA_MOUNTED))
