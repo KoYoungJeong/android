@@ -209,9 +209,9 @@ public class JandiEntityClient {
 
                 @Override
                 public ResCommon request() throws JandiNetworkException {
-                    ChannelApiClient channelApiClient = new ChannelApiClient_(context);
-                    channelApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                    return channelApiClient.leaveTopic(id, new ReqDeleteTopic(selectedTeamId));
+                    GroupApiClient groupApiClient = new GroupApiClient_(context);
+                    groupApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+                    return groupApiClient.leaveGroup(id, new ReqTeam(selectedTeamId));
                 }
             }).request();
         } catch (HttpStatusCodeException e) {

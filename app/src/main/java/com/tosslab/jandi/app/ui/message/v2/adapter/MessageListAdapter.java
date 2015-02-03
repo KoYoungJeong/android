@@ -100,10 +100,15 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     @Override
     public long getHeaderId(int position) {
-        long time = messageList.get(position).time.getTime();
-        long extraTime = time % (1000 * 60 * 60 * 24);
-        time -= extraTime;
-        return time;
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(messageList.get(position).time);
+
+        instance.set(Calendar.HOUR_OF_DAY, 0);
+        instance.set(Calendar.MINUTE, 0);
+        instance.set(Calendar.SECOND, 0);
+        instance.set(Calendar.MILLISECOND, 0);
+
+        return instance.getTimeInMillis();
     }
 
     @Override

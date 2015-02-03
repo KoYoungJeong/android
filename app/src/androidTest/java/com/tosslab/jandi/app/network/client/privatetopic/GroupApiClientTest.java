@@ -136,7 +136,7 @@ public class GroupApiClientTest {
         ResLeftSideMenu.PrivateGroup otherPrivateTopic = getOtherPrivateTopic();
         ResCommon resCommon = null;
         try {
-            resCommon = groupApiClient.leaveGroup(new ReqTeam(sideMenu.team.id), otherPrivateTopic.id);
+            resCommon = groupApiClient.leaveGroup(otherPrivateTopic.id, new ReqTeam(sideMenu.team.id));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

@@ -58,7 +58,7 @@ public interface GroupApiClient {
     // Private Group Leave
     @Put("/privateGroups/{groupId}/leave")
     @RequiresAuthentication
-    ResCommon leaveGroup(ReqTeam team, int groupId);
+    ResCommon leaveGroup(int groupId, ReqTeam team);
 
     // Private Group invite
     @Put("/privateGroups/{groupId}/invite")
