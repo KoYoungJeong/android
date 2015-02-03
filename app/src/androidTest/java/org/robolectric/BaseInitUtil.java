@@ -35,6 +35,7 @@ public class BaseInitUtil {
         JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
         JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
 
+
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
     }

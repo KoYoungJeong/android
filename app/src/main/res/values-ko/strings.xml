@@ -294,7 +294,7 @@
     <string name="jandi_private_topic_tip_1">"비공개 토픽은 초대를 받아야만 참여할 수 있으며 참여하지 않은 멤버들에게는 목록조차 노출되지 않습니다."</string>
     <string name="jandi_private_topic_tip_3">"비공개/공개 토픽은 생성 이후에 속성을 변경할 수 없습니다."</string>
     <string name="jandi_file_category_presentation">"파워포인트"</string>
-    <string name="jandi_file_category_spreadsheet">"워드/한글"</string>
+    <string name="jandi_file_category_spreadsheet">"엑셀"</string>
     <string name="jandi_file_category_document">"워드/한글"</string>
     <string name="jandi_file_category_audio">"음악"</string>
     <string name="jandi_file_category_video">"동영상"</string>

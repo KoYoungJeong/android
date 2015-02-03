@@ -172,7 +172,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         returnToIntroStartActivity();
     }
 
-    private void checkNewTabBadges(EntityManager entityManager) {
+    void checkNewTabBadges(EntityManager entityManager) {
         if (entityManager == null) {
             return;
         }

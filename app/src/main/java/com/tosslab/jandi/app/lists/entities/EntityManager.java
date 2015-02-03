@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public class EntityManager {
     private HashMap<Integer, FormattedEntity> mJoinedTopics;
     private HashMap<Integer, FormattedEntity> mUnjoinedTopics;
     private HashMap<Integer, FormattedEntity> mUsers;
+    private HashMap<Integer, FormattedEntity> mJoinedUsers;
     private HashMap<Integer, FormattedEntity> mGroups;
 
     private HashMap<Integer, FormattedEntity> mStarredJoinedTopics;
@@ -69,6 +71,7 @@ public class EntityManager {
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
         mGroups = new HashMap<Integer, FormattedEntity>();
         mUsers = new HashMap<Integer, FormattedEntity>();
+        mJoinedUsers = new HashMap<Integer, FormattedEntity>();
 
         mStarredJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mStarredGroups = new HashMap<Integer, FormattedEntity>();
@@ -197,6 +200,12 @@ public class EntityManager {
                 } else {
                     mGroups.put(entity.id, group);
                 }
+            } else if (entity instanceof ResLeftSideMenu.User) {
+
+                ResLeftSideMenu.User user = (ResLeftSideMenu.User) entity;
+
+                mJoinedUsers.put(user.id, new FormattedEntity(user));
+
             } else {
                 // DO NOTHING
             }
@@ -408,7 +417,21 @@ public class EntityManager {
     }
 
     public boolean hasNewChatMessage() {
-        return hasNewMessage(getFormattedUsersWithoutMe());
+        return hasNewMessage(getJoinedUsers());
+    }
+
+    List<FormattedEntity> getJoinedUsers() {
+
+        Iterator<FormattedEntity> iterator = mJoinedUsers.values().iterator();
+
+
+        List<FormattedEntity> joinedUserList = new ArrayList<FormattedEntity>();
+
+        while (iterator.hasNext()) {
+            joinedUserList.add(iterator.next());
+        }
+
+        return joinedUserList;
     }
 
     private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
