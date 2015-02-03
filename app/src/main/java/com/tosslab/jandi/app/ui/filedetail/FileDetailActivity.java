@@ -80,8 +80,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
 
-
-        getFileDetail();
+        getFileDetail(false);
     }
 
     @ItemLongClick(R.id.list_file_detail_comments)
@@ -110,7 +109,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.deleteComment(messageId, feedbackId);
-            getFileDetailInBackend(false);
+            getFileDetail(false);
         } catch (JandiNetworkException e) {
         } finally {
             fileDetailPresenter.dismissProgressWheel();
@@ -184,13 +183,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * 파일 상세 출력 관련
      * **********************************************************
      */
-    @UiThread
-    void getFileDetail() {
-        getFileDetailInBackend(false);
-    }
-
     @Background
-    void getFileDetailInBackend(boolean isSendAction) {
+    void getFileDetail(boolean isSendAction) {
         fileDetailPresenter.showProgressWheel();
         log.debug("try to get file detail having ID, " + fileId);
         try {
@@ -206,10 +200,16 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
+            finishOnMainThread();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
 
+    }
+
+    @UiThread
+    void finishOnMainThread() {
+        finish();
     }
 
     @UiThread
@@ -273,7 +273,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
         fileDetailPresenter.clearAdapter();
-        getFileDetail();
+        getFileDetail(false);
     }
 
     @UiThread
@@ -322,7 +322,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     mEntityManager.getEntityById(entityIdToBeUnshared).type,
                     mResFileDetail);
             fileDetailPresenter.unshareMessageSucceed(entityIdToBeUnshared);
-            getFileDetail();
+            getFileDetail(false);
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
@@ -385,7 +385,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         try {
             fileDetailModel.sendMessageComment(fileId, message);
 
-            getFileDetailInBackend(true);
+            getFileDetail(true);
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
