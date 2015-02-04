@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 11;
+    private static final int DB_VERSION = 12;
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
                     DatabaseConsts.Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -135,6 +135,14 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.TempMessages.teamId + " INTEGER NOT NULL, " +
                     DatabaseConsts.TempMessages.entityId + " INTEGER NOT NULL, " +
                     DatabaseConsts.TempMessages.text + " TEXT " +
+                    ");",
+
+            DatabaseConsts.Table.send_messages + " (" +
+                    DatabaseConsts.SendingMessages._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    DatabaseConsts.SendingMessages.teamId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.SendingMessages.entityId + " INTEGER NOT NULL, " +
+                    DatabaseConsts.SendingMessages.content + " TEXT, " +
+                    DatabaseConsts.SendingMessages.contentType + " TEXT " +
                     ");",
 
             DatabaseConsts.Table.files + " (" +

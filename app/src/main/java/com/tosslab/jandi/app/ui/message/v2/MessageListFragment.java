@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,6 +33,9 @@ import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
+import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
@@ -41,6 +45,7 @@ import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -343,15 +348,29 @@ public class MessageListFragment extends Fragment {
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText();
-        if (message.length() > 0) {
-            sendMessage(message);
+        if (!(TextUtils.isEmpty(message))) {
+            messageListPresenter.setSendEditText("");
+            // insert to db
+            long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
+
+            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+
+            // insert to ui
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
+
+            // networking...
+            messageListModel.sendMessage(localId, message);
         }
-        messageListPresenter.setSendEditText("");
 
     }
 
-    void sendMessage(String message) {
-        messageListModel.sendMessage(message);
+    public void onEventMainThread(SendCompleteEvent event) {
+        messageListModel.deleteSendingMessage(event.getLocalId());
+        messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
+    }
+
+    public void onEventMainThread(SendFailEvent event) {
+        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
     }
 
     public void onEvent(RequestFileUploadEvent event) {

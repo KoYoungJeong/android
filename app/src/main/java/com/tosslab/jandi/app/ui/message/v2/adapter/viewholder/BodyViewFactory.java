@@ -20,6 +20,8 @@ public class BodyViewFactory {
                 return new PureCommentViewHolder();
             case FileComment:
                 return new FileCommentViewHolder();
+            case Dummy:
+                return new DummyViewHolder();
             case Message:
             default:
                 return new MessageViewHolder();
@@ -38,6 +40,8 @@ public class BodyViewFactory {
                 return R.id.message_cmt_without_file;
             case FileComment:
                 return R.id.message_cmt_with_file;
+            case Dummy:
+                return R.id.message_dummy;
             case Message:
             default:
                 return R.id.message_msg;

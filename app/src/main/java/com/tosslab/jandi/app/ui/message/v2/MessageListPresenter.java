@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -254,4 +256,23 @@ public class MessageListPresenter {
         clipboardManager.setPrimaryClip(clipData);
     }
 
+    public void updateMessageIdAtSendingMessage(long localId, int id) {
+        messageListAdapter.updateMessageId(localId, id);
+    }
+
+    public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
+        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
+
+        dummyMessageLink.message.writer.name = name;
+        dummyMessageLink.message.writer.u_photoUrl = userLargeProfileUrl;
+
+
+        messageListAdapter.addDummyMessage(dummyMessageLink);
+        messageListAdapter.notifyDataSetChanged();
+    }
+
+    public void updateDummyMessageState(long localId, SendingState state) {
+        messageListAdapter.updateDummyMessageState(localId, state);
+        messageListAdapter.notifyDataSetChanged();
+    }
 }

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ly_message_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/message_list_selector"
+    android:orientation="horizontal"
+    android:paddingBottom="10dp"
+    android:paddingLeft="@dimen/jandi_messages_padding_left"
+    android:paddingRight="@dimen/jandi_messages_padding_right"
+    android:paddingTop="5dp"
+    android:visibility="visible">
+    <!-- 사용자 프로필 사진 -->
+    <ImageView
+        android:id="@+id/img_message_user_profile"
+        android:layout_width="@dimen/jandi_messages_profile_size"
+        android:layout_height="@dimen/jandi_messages_profile_size"
+        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+        android:background="@drawable/jandi_profile" />
+    <!-- 기본 표시 레이어 -->
+    <LinearLayout
+        android:id="@+id/ly_message_default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom"
+        android:layout_toRightOf="@+id/img_message_user_profile">
+
+        <TextView
+            android:id="@+id/txt_message_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:singleLine="true"
+            android:text="User name"
+            android:textColor="@color/jandi_messages_name"
+            android:textSize="@dimen/jandi_messages_user_name"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txt_message_create_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="4dp"
+            android:text="AM 10:23"
+            android:textColor="@color/jandi_messages_date"
+            android:textSize="@dimen/jandi_messages_date"
+            android:visibility="gone" />
+    </LinearLayout>
+    <!-- 실제 메시지 내용 -->
+
+    <ProgressBar
+        android:id="@+id/progress_message"
+        android:layout_width="@dimen/jandi_messages_padding_left"
+        android:layout_height="@dimen/jandi_messages_padding_left"
+        android:layout_alignRight="@+id/img_message_user_profile"
+        android:layout_alignTop="@+id/txt_message_content"
+        android:layout_below="@+id/img_message_user_profile" />
+
+    <TextView
+        android:id="@+id/txt_message_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ly_message_default"
+        android:layout_toRightOf="@+id/img_message_user_profile"
+        android:autoLink="web"
+        android:text="Text"
+        android:textColor="@color/jandi_messages_content"
+        android:textSize="@dimen/jandi_messages_content" />
+
+</RelativeLayout>

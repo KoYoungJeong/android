@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.Messages;
+import static com.tosslab.jandi.app.local.database.DatabaseConsts.SendingMessages;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.Table;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.TempMessages;
 
@@ -156,5 +157,40 @@ public class JandiMessageDatabaseManager {
         } finally {
             closeCursor(cursor);
         }
+    }
+
+    public long insertSendMessage(int teamId, int entityId, String message) {
+
+        SQLiteDatabase database = getWriteableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(SendingMessages.teamId.name(), entityId);
+        contentValues.put(SendingMessages.entityId.name(), entityId);
+        contentValues.put(SendingMessages.content.name(), message);
+        contentValues.put(SendingMessages.contentType.name(), "text");
+
+        return database.insert(Table.send_messages.name(), null, contentValues);
+    }
+
+    public long insertSendFile(int teamId, int entityId, String filePath) {
+
+        SQLiteDatabase database = getWriteableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(SendingMessages.teamId.name(), entityId);
+        contentValues.put(SendingMessages.entityId.name(), entityId);
+        contentValues.put(SendingMessages.content.name(), filePath);
+        contentValues.put(SendingMessages.contentType.name(), "file");
+
+        return database.insert(Table.send_messages.name(), null, contentValues);
+    }
+
+    public int deleteSendMessage(long localId) {
+        SQLiteDatabase database = getWriteableDatabase();
+        String where = SendingMessages._id + " = ?";
+        String[] whereArgs = {String.valueOf(localId)};
+        return database.delete(Table.send_messages.name(), where, whereArgs);
     }
 }
