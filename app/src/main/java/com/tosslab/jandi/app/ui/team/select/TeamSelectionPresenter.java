@@ -13,8 +13,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -22,7 +20,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -58,41 +55,6 @@ public class TeamSelectionPresenter {
         mProgressWheel.init();
 
         lastSelectedPosition = -1;
-    }
-
-    @ItemClick(R.id.lv_intro_team_list)
-    void teamItemClick(int position) {
-
-        Team selectedMyTeam = teamListAdapter.getItem(position);
-
-        Team.Status status = selectedMyTeam.getStatus();
-
-        switch (status) {
-            case JOINED:
-                selectedMyTeam.setSelected(true);
-                if (lastSelectedPosition != -1) {
-                    teamListAdapter.getItem(lastSelectedPosition).setSelected(false);
-                }
-                teamListAdapter.notifyDataSetChanged();
-                mSelectedTeamId = selectedMyTeam.getTeamId();
-                lastSelectedPosition = position != lastSelectedPosition ? position : -1;
-                log.debug(selectedMyTeam.getName() + ", id=" + mSelectedTeamId + ", is selected : " + selectedMyTeam.isSelected());
-
-                activity.invalidateOptionsMenu();
-
-                break;
-            case PENDING:
-                // nothing action
-                break;
-            case CREATE:
-                // create team action
-                TeamDomainInfoActivity_.intent(activity)
-                        .mode(TeamDomainInfoActivity.Mode.CREATE.name())
-                        .startForResult(TeamSelectionActivity.REQ_TEAM_CREATE);
-                break;
-        }
-
-
     }
 
     @UiThread
@@ -175,6 +137,10 @@ public class TeamSelectionPresenter {
         return lastSelectedPosition;
     }
 
+    public void setLastSelectedPosition(int lastSelectedPosition) {
+        this.lastSelectedPosition = lastSelectedPosition;
+    }
+
     public Team getLastSelectedItem() {
         return teamListAdapter.getItem(lastSelectedPosition);
     }
@@ -187,5 +153,13 @@ public class TeamSelectionPresenter {
                 .start();
         activity.finish();
 
+    }
+
+    public Team getItem(int position) {
+        return teamListAdapter.getItem(position);
+    }
+
+    public void notifyDataSetChanged() {
+        teamListAdapter.notifyDataSetChanged();
     }
 }

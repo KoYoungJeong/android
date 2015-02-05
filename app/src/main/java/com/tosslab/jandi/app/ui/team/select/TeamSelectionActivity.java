@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.view.Menu;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -27,8 +26,10 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +42,12 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_team_selection)
 public class TeamSelectionActivity extends Activity {
 
-    public final static int CALLED_MUST_SELECT_TEAM = 100;
+    public static final int CALLED_MUST_SELECT_TEAM = 100;
     @Extra
     int calledType = CALLED_MUST_SELECT_TEAM;
     public static final int CALLED_CHANGE_TEAM = 101;
     public static final int REQ_TEAM_CREATE = 2031;
+    private static final Logger logger = Logger.getLogger(TeamSelectionActivity.class);
     private static final int REQ_TEAM_JOIN = 2032;
     @Bean
     TeamSelectionPresenter teamSelectionPresenter;
@@ -140,23 +142,39 @@ public class TeamSelectionActivity extends Activity {
         movePreviousActivity();
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    @ItemClick(R.id.lv_intro_team_list)
+    void teamItemClick(int position) {
 
-        menu.clear();
+        Team selectedMyTeam = teamSelectionPresenter.getItem(position);
 
-        if (teamSelectionPresenter.getLastSelectedPosition() != -1) {
-            getMenuInflater().inflate(R.menu.team_select, menu);
+        Team.Status status = selectedMyTeam.getStatus();
+
+        switch (status) {
+            case JOINED:
+                selectedMyTeam.setSelected(true);
+                int lastSelectedPosition = teamSelectionPresenter.getLastSelectedPosition();
+                if (lastSelectedPosition != -1) {
+                    teamSelectionPresenter.getItem(lastSelectedPosition).setSelected(false);
+                }
+                teamSelectionPresenter.notifyDataSetChanged();
+                int mSelectedTeamId = selectedMyTeam.getTeamId();
+                lastSelectedPosition = position != teamSelectionPresenter.getLastSelectedPosition() ? position : -1;
+                teamSelectionPresenter.setLastSelectedPosition(lastSelectedPosition);
+                logger.debug(selectedMyTeam.getName() + ", id=" + mSelectedTeamId + ", is selected : " + selectedMyTeam.isSelected());
+
+                selectTeam();
+
+                break;
+            case PENDING:
+                // nothing action
+                break;
+            case CREATE:
+                // create team action
+                TeamDomainInfoActivity_.intent(TeamSelectionActivity.this)
+                        .mode(TeamDomainInfoActivity.Mode.CREATE.name())
+                        .startForResult(TeamSelectionActivity.REQ_TEAM_CREATE);
+                break;
         }
-
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @OptionsItem(R.id.action_confirm)
-    void onSelectTeam() {
-
-        selectTeam();
-
     }
 
     @Background

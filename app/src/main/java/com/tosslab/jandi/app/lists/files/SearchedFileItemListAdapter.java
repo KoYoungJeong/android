@@ -45,9 +45,9 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
 
     public void insert(List<ResMessages.OriginalMessage> files) {
         for (ResMessages.OriginalMessage message : files) {
-            if (message instanceof ResMessages.FileMessage && message.status.equals("created")) {
+//            if (message instanceof ResMessages.FileMessage && message.status.equals("created")) {
                 searedFiles.add((ResMessages.FileMessage) message);
-            }
+//            }
         }
     }
 
