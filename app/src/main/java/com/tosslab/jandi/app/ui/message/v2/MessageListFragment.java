@@ -220,9 +220,17 @@ public class MessageListFragment extends Fragment {
         // DirectMessage의 경우 확장 메뉴가 없음.
         if (!messageListModel.isDirectMessage(entityType)) {
             if (messageListModel.isMyTopic(entityId)) {
-                inflater.inflate(R.menu.manipulate_my_entity_menu, menu);
+                if (messageListModel.isDefaultTopic(entityId)) {
+                    inflater.inflate(R.menu.manipulate_my_entity_menu_default, menu);
+                } else {
+                    inflater.inflate(R.menu.manipulate_my_entity_menu, menu);
+                }
             } else {
-                inflater.inflate(R.menu.manipulate_entity_menu, menu);
+                if (messageListModel.isDefaultTopic(entityId)) {
+                    inflater.inflate(R.menu.manipulate_entity_menu_default, menu);
+                } else {
+                    inflater.inflate(R.menu.manipulate_entity_menu, menu);
+                }
             }
         } else {
             inflater.inflate(R.menu.manipulate_direct_message_menu, menu);

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--<item android:id="@+id/action_my_entity_starred"-->
+    <!--android:icon="@drawable/jandi_icon_actionbar_fav_off"-->
+    <!--android:title="@string/jandi_action_starred"-->
+    <!--android:showAsAction="always"/>-->
+    <!--<item android:id="@+id/action_my_entity_move_file_list"-->
+    <!--android:icon="@drawable/jandi_icon_actionbar_file"-->
+    <!--android:title="@string/jandi_tab_file"-->
+    <!--android:showAsAction="always"/>-->
+    <item
+        android:id="@+id/menu_manipulate_my_entity"
+        android:icon="@drawable/jandi_icon_actionbar_more"
+        android:showAsAction="always"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/action_my_entity_members"
+                android:title="@string/jandi_topic_paricipants" />
+        </menu>
+    </item>
+</menu>

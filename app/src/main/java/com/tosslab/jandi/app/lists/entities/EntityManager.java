@@ -311,6 +311,10 @@ public class EntityManager {
         return mMyTeam.name;
     }
 
+    public int getDefaultTopicId() {
+        return mMyTeam.t_defaultChannelId;
+    }
+
     public int getTeamId() {
         return mMyTeam.id;
     }

@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -335,5 +336,9 @@ public class MessageListModel {
 
     public void deleteDummyMessageAtDatabase(long localId) {
         JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+    }
+
+    public boolean isDefaultTopic(int entityId) {
+        return EntityManager.getInstance(activity).getDefaultTopicId() == entityId;
     }
 }

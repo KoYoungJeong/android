@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_manipulate_entity"
+        android:icon="@drawable/jandi_icon_actionbar_more"
+        android:showAsAction="always"
+        android:title="">
+        <menu>
+            <item
+                android:id="@+id/action_entity_members"
+                android:title="@string/jandi_topic_paricipants" />
+        </menu>
+    </item>
+</menu>
