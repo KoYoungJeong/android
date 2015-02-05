@@ -52,6 +52,8 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -222,6 +224,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     break;
                 }
             }
+
+            Collections.sort(resFileDetail.messageDetails, (lhs, rhs) -> lhs.updateTime.compareTo(rhs.updateTime));
+
             getFileDetailSucceed(resFileDetail, isSendAction);
 
         } catch (JandiNetworkException e) {

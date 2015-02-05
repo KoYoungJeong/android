@@ -139,12 +139,7 @@ public class FileDetailPresenter {
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 
-                imageViewUserProfile.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getFragmentManager(), "dialog");
-                    }
-                });
+                imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getFragmentManager(), "dialog"));
 
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
@@ -196,58 +191,23 @@ public class FileDetailPresenter {
                                     .into(imageViewPhotoFile);
                         }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
-                        imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                PhotoViewActivity_
-                                        .intent(activity)
-                                        .imageUrl(photoUrl)
-                                        .imageType(fileMessage.content.type)
-                                        .start();
-
-                            }
-                        });
+                        imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
+                                .intent(activity)
+                                .imageUrl(photoUrl)
+                                .imageType(fileMessage.content.type)
+                                .start());
                     } else {
-                        if (fileMessage.content.type.startsWith("audio")) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_audio);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_audio);
-                        } else if (fileMessage.content.type.startsWith("video")) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_video);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_video);
-                        } else if (fileMessage.content.type.startsWith("application/pdf")) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_pdf);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_pdf);
-                        } else if (fileMessage.content.type.startsWith("text")) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
-                        } else if (TextUtils.equals(fileMessage.content.type, "application/x-hwp")) {
-                            iconFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_hwp);
-                        } else if (FormatConverter.isSpreadSheetMimeType(fileMessage.content.type)) {
-                            iconFileType.setImageResource(R.drawable.jandi_fl_icon_exel);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
-                        } else if (FormatConverter.isPresentationMimeType(fileMessage.content.type)) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_ppt);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
-                        } else if (FormatConverter.isDocmentMimeType(fileMessage.content.type)) {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_txt);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_txt);
-                        } else {
-                            iconFileType.setImageResource(R.drawable.jandi_fview_icon_etc);
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_down_etc);
-                        }
+
+                        iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));
+                        imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
 
                         // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
-                        imageViewPhotoFile.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                String serverUrl = (fileMessage.content.serverUrl.equals("root"))
-                                        ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                                        : fileMessage.content.serverUrl;
-                                String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
-                                EventBus.getDefault().post(new FileDownloadStartEvent(serverUrl + fileName, fileMessage.content.name, fileMessage.content.type));
-                            }
+                        imageViewPhotoFile.setOnClickListener(view -> {
+                            String serverUrl1 = (fileMessage.content.serverUrl.equals("root"))
+                                    ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                                    : fileMessage.content.serverUrl;
+                            String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
+                            EventBus.getDefault().post(new FileDownloadStartEvent(serverUrl1 + fileName, fileMessage.content.name, fileMessage.content.type));
                         });
                     }
                 }
@@ -262,6 +222,51 @@ public class FileDetailPresenter {
 
         if (isSendAction) {
             listFileDetailComments.setSelection(fileDetailCommentListAdapter.getCount());
+        }
+    }
+
+    private int getDownloadIcon(String type) {
+        if (type.startsWith("audio")) {
+            return R.drawable.jandi_down_audio;
+        } else if (type.startsWith("video")) {
+            return R.drawable.jandi_down_video;
+        } else if (type.startsWith("application/pdf")) {
+            return R.drawable.jandi_down_pdf;
+        } else if (type.startsWith("text")) {
+            return R.drawable.jandi_down_txt;
+        } else if (TextUtils.equals(type, "application/x-hwp")) {
+            return R.drawable.jandi_down_hwp;
+        } else if (FormatConverter.isSpreadSheetMimeType(type)) {
+            return R.drawable.jandi_down_txt;
+        } else if (FormatConverter.isPresentationMimeType(type)) {
+            return R.drawable.jandi_down_txt;
+        } else if (FormatConverter.isDocmentMimeType(type)) {
+            return R.drawable.jandi_down_txt;
+        } else {
+            return R.drawable.jandi_down_etc;
+        }
+
+    }
+
+    private int getIconByFileType(String type) {
+        if (type.startsWith("audio")) {
+            return R.drawable.jandi_fview_icon_audio;
+        } else if (type.startsWith("video")) {
+            return R.drawable.jandi_fview_icon_video;
+        } else if (type.startsWith("application/pdf")) {
+            return R.drawable.jandi_fview_icon_pdf;
+        } else if (type.startsWith("text")) {
+            return R.drawable.jandi_fview_icon_txt;
+        } else if (TextUtils.equals(type, "application/x-hwp")) {
+            return R.drawable.jandi_fl_icon_hwp;
+        } else if (FormatConverter.isSpreadSheetMimeType(type)) {
+            return R.drawable.jandi_fl_icon_exel;
+        } else if (FormatConverter.isPresentationMimeType(type)) {
+            return R.drawable.jandi_fview_icon_ppt;
+        } else if (FormatConverter.isDocmentMimeType(type)) {
+            return R.drawable.jandi_fview_icon_txt;
+        } else {
+            return R.drawable.jandi_fview_icon_etc;
         }
     }
 
