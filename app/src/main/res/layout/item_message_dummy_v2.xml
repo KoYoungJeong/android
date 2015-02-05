@@ -50,7 +50,17 @@
             android:textSize="@dimen/jandi_messages_date"
             android:visibility="gone" />
     </LinearLayout>
-    <!-- 실제 메시지 내용 -->
+
+    <TextView
+        android:id="@+id/txt_message_fail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/img_message_user_profile"
+        android:layout_alignTop="@+id/txt_message_content"
+        android:text="!"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="@dimen/jandi_messages_content"
+        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progress_message"
@@ -60,6 +70,7 @@
         android:layout_alignTop="@+id/txt_message_content"
         android:layout_below="@+id/img_message_user_profile" />
 
+    <!-- 실제 메시지 내용 -->
     <TextView
         android:id="@+id/txt_message_content"
         android:layout_width="match_parent"

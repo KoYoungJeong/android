@@ -23,12 +23,14 @@ public class DummyViewHolder implements BodyViewHolder {
     private TextView nameTextView;
     private TextView messageTextView;
     private ProgressBar progressBar;
+    private TextView failAlertTextView;
 
     @Override
     public void initView(View rootView) {
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
+        failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
 
     }
@@ -56,11 +58,15 @@ public class DummyViewHolder implements BodyViewHolder {
 
         switch (dummyMessageLink.getSendingState()) {
             case Fail:
+                failAlertTextView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.GONE);
                 break;
             case Sending:
+                failAlertTextView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 break;
             case Complete:
+                failAlertTextView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 break;
         }

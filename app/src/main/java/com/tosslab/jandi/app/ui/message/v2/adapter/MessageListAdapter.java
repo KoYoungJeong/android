@@ -301,7 +301,9 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     }
 
     public void addDummyMessage(DummyMessageLink dummyMessageLink) {
-        messageList.add(dummyMessageLink);
+        synchronized (messageList) {
+            messageList.add(dummyMessageLink);
+        }
     }
 
     public void updateMessageId(long localId, int id) {
@@ -314,7 +316,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         }
     }
 
-    private int getDummeMessagePositionByLocalId(long localId) {
+    public int getDummeMessagePositionByLocalId(long localId) {
 
         int size = getCount();
 
@@ -358,6 +360,10 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         if (dummeMessagePositionByLocalId > 0) {
             ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setSendingState(state);
         }
+    }
+
+    public void remove(int position) {
+        messageList.remove(position);
     }
 
     private enum MoreState {

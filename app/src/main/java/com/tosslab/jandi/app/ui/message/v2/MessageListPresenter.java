@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -235,11 +236,14 @@ public class MessageListPresenter {
 
     }
 
-    public List<ResMessages.Link> getLastItems() {
+    public List<ResMessages.Link> getLastItemsWithoutDummy() {
         int count = messageListAdapter.getCount();
         int lastIdx = Math.max(count - 20, 0);
         List<ResMessages.Link> lastItems = new ArrayList<ResMessages.Link>();
         for (int idx = count - 1; idx >= lastIdx; --idx) {
+            if (messageListAdapter.getItem(idx) instanceof DummyMessageLink) {
+                continue;
+            }
             lastItems.add(messageListAdapter.getItem(idx));
         }
 
@@ -273,6 +277,31 @@ public class MessageListPresenter {
 
     public void updateDummyMessageState(long localId, SendingState state) {
         messageListAdapter.updateDummyMessageState(localId, state);
+        messageListAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread
+    public void addDummyMessages(List<ResMessages.Link> dummyMessages) {
+        for (ResMessages.Link dummyMessage : dummyMessages) {
+            messageListAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
+        }
+    }
+
+    public void showDummyMessageDialog(long localId) {
+        DummyMessageDialog_.builder()
+                .localId(localId)
+                .build()
+                .show(activity.getFragmentManager(), "dialog");
+    }
+
+    public DummyMessageLink getDummyMessage(long localId) {
+        int position = messageListAdapter.getDummeMessagePositionByLocalId(localId);
+        return ((DummyMessageLink) messageListAdapter.getItem(position));
+    }
+
+    public void deleteDummyMessageAtList(long localId) {
+        int position = messageListAdapter.getDummeMessagePositionByLocalId(localId);
+        messageListAdapter.remove(position);
         messageListAdapter.notifyDataSetChanged();
     }
 }

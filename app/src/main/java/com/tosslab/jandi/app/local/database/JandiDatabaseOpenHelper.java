@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.tosslab.jandi.app.ui.message.to.SendingState;
+
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
@@ -142,7 +144,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.SendingMessages.teamId + " INTEGER NOT NULL, " +
                     DatabaseConsts.SendingMessages.entityId + " INTEGER NOT NULL, " +
                     DatabaseConsts.SendingMessages.content + " TEXT, " +
-                    DatabaseConsts.SendingMessages.contentType + " TEXT " +
+                    DatabaseConsts.SendingMessages.state + " TEXT NOT NULL DEFAULT " + SendingState.Sending +
                     ");",
 
             DatabaseConsts.Table.files + " (" +

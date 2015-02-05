@@ -79,7 +79,7 @@ public class DatabaseConsts {
     }
 
     public enum SendingMessages {
-        _id, teamId, entityId, content, contentType
+        _id, teamId, entityId, content, state
     }
 
     public enum Files {

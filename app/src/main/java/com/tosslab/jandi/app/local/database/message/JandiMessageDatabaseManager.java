@@ -9,6 +9,8 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -165,26 +167,51 @@ public class JandiMessageDatabaseManager {
 
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(SendingMessages.teamId.name(), entityId);
+        contentValues.put(SendingMessages.teamId.name(), teamId);
         contentValues.put(SendingMessages.entityId.name(), entityId);
         contentValues.put(SendingMessages.content.name(), message);
-        contentValues.put(SendingMessages.contentType.name(), "text");
+        contentValues.put(SendingMessages.state.name(), SendingState.Sending.name());
 
         return database.insert(Table.send_messages.name(), null, contentValues);
     }
 
-    public long insertSendFile(int teamId, int entityId, String filePath) {
+    public List<ResMessages.Link> getSendMessage(int teamId, int entityId) {
+        SQLiteDatabase database = getReadableDatabase();
 
-        SQLiteDatabase database = getWriteableDatabase();
+        String selection = SendingMessages.teamId + " = ? AND " + SendingMessages.entityId + " = ? AND " + SendingMessages.state + " != ?";
+        String[] selectionArgs = {String.valueOf(teamId), String.valueOf(entityId), SendingState.Complete.name()};
 
-        ContentValues contentValues = new ContentValues();
+        Cursor cursor = database.query(Table.send_messages.name(), null, selection, selectionArgs, null, null, null);
 
-        contentValues.put(SendingMessages.teamId.name(), entityId);
-        contentValues.put(SendingMessages.entityId.name(), entityId);
-        contentValues.put(SendingMessages.content.name(), filePath);
-        contentValues.put(SendingMessages.contentType.name(), "file");
+        List<ResMessages.Link> dummyList = new ArrayList<ResMessages.Link>();
+        try {
 
-        return database.insert(Table.send_messages.name(), null, contentValues);
+            if (cursor == null || cursor.getCount() <= 0) {
+                return dummyList;
+            }
+
+            int localIdx = cursor.getColumnIndex(SendingMessages._id.name());
+            int contentIdx = cursor.getColumnIndex(SendingMessages.content.name());
+            int sendingStateIdx = cursor.getColumnIndex(SendingMessages.state.name());
+
+            long localId;
+            String content;
+            SendingState sendingState;
+
+            while (cursor.moveToNext()) {
+
+                localId = cursor.getLong(localIdx);
+                content = cursor.getString(contentIdx);
+                sendingState = SendingState.valueOf(cursor.getString(sendingStateIdx));
+
+                DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, content, sendingState);
+                dummyList.add(dummyMessageLink);
+            }
+
+        } finally {
+            closeCursor(cursor);
+        }
+        return dummyList;
     }
 
     public int deleteSendMessage(long localId) {
@@ -192,5 +219,15 @@ public class JandiMessageDatabaseManager {
         String where = SendingMessages._id + " = ?";
         String[] whereArgs = {String.valueOf(localId)};
         return database.delete(Table.send_messages.name(), where, whereArgs);
+    }
+
+    public int updateSendState(long localId, SendingState state) {
+        SQLiteDatabase database = getWriteableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(SendingMessages.state.name(), state.name());
+        String where = SendingMessages._id + " = ?";
+        String[] whereArgs = {String.valueOf(localId)};
+        return database.update(Table.send_messages.name(), values, where, whereArgs);
     }
 }
