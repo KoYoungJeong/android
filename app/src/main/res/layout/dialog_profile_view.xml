@@ -2,16 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rl_photo_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/background_dark">
+    android:layout_height="match_parent">
 
     <uk.co.senab.photoview.PhotoView
-        android:id="@+id/photo_photo_view"
+        android:id="@+id/photo_dialog_profile_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <ProgressBar
-        android:id="@+id/progress_photo_view"
+        android:id="@+id/progress_dialog_profile_view"
         android:layout_width="@dimen/jandi_file_detail_image_height"
         android:layout_height="@dimen/jandi_file_detail_image_height"
         android:layout_centerHorizontal="true"

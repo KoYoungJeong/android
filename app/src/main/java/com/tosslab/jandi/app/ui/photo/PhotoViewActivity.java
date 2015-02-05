@@ -5,8 +5,14 @@ import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 
@@ -34,6 +40,9 @@ public class PhotoViewActivity extends FragmentActivity {
     @ViewById(R.id.photo_photo_view)
     PhotoView photoView;
 
+    @ViewById(R.id.progress_photo_view)
+    ProgressBar progressBar;
+
     @AfterViews
     void initView() {
 
@@ -52,13 +61,31 @@ public class PhotoViewActivity extends FragmentActivity {
         Glide.with(this)
                 .load(imageUrl)
                 .crossFade()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .into(photoView);
     }
 
     private void loadGif() {
         Ion.with(this)
                 .load(imageUrl)
-                .intoImageView(photoView);
+                .intoImageView(photoView)
+                .setCallback(new FutureCallback<ImageView>() {
+                    @Override
+                    public void onCompleted(Exception e, ImageView result) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
     private boolean isGif() {

@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -17,9 +18,13 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -161,10 +166,12 @@ public class UserInfoDialogFragment extends DialogFragment {
                 public void onClick(View v) {
 
                     Dialog alertDialog = new Dialog(getActivity());
-                    PhotoView profileView = new PhotoView(getActivity());
-                    profileView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_profile_view, null);
+                    PhotoView profileView = (PhotoView) view.findViewById(R.id.photo_dialog_profile_view);
+                    ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_dialog_profile_view);
+
                     alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    alertDialog.setContentView(profileView);
+                    alertDialog.setContentView(view);
 
                     alertDialog.setCanceledOnTouchOutside(false);
                     Window alertWindow = alertDialog.getWindow();
@@ -177,11 +184,26 @@ public class UserInfoDialogFragment extends DialogFragment {
                     alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     alertDialog.show();
 
-                    Glide.with(getActivity())
-                            .load(userProfileUrl)
-                            .crossFade()
-                            .into(profileView);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.with(getActivity())
+                                    .load(userProfileUrl)
+                                    .listener(new RequestListener<String, GlideDrawable>() {
+                                        @Override
+                                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                                            return false;
+                                        }
 
+                                        @Override
+                                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                                            progressBar.setVisibility(View.GONE);
+                                            return false;
+                                        }
+                                    })
+                                    .into(profileView);
+                        }
+                    }, 500);
                 }
             });
         }
