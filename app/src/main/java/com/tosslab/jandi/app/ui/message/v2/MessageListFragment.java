@@ -73,6 +73,9 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 @EFragment(R.layout.fragment_message_list)
 public class MessageListFragment extends Fragment {
 
+    public static final String EXTRA_FILE_DELETE = "file_delete";
+    public static final String EXTRA_FILE_ID = "file_id";
+
     private static final Logger logger = Logger.getLogger(MessageListFragment.class);
 
     @FragmentArg
@@ -375,7 +378,7 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        logger.debug("onActivityResult : " + requestCode + " / " + resultCode);
+        logger.debug("onActivityResult : " + requestCode + " / " + resultCode + " / " + data);
         super.onActivityResult(requestCode, resultCode, data);
 
 
@@ -396,9 +399,6 @@ public class MessageListFragment extends Fragment {
                     realFilePath = data.getStringExtra("GetPath") + File.separator + data.getStringExtra("GetFileName");
                     showFileUploadDialog(realFilePath);
                 }
-                break;
-            case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
-                logger.info("onActivityResult : Come from FileDetailActivity");
                 break;
             default:
                 break;
@@ -435,9 +435,16 @@ public class MessageListFragment extends Fragment {
     }
 
     @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
-    void onFileDetailResult() {
+    void onFileDetailResult(Intent data) {
 //        getNewMessageList(messageState.getLastUpdateLinkId());
-        sendMessagePublisherEvent(LoadType.New);
+        if (data != null && data.getBooleanExtra(EXTRA_FILE_DELETE, false)) {
+            int fileId = data.getIntExtra(EXTRA_FILE_ID, -1);
+            if (fileId != -1) {
+                messageListPresenter.changeToArchive(fileId);
+            }
+        } else {
+            sendMessagePublisherEvent(LoadType.New);
+        }
     }
 
     void onMessageItemLonkClick(ResMessages.Link link) {

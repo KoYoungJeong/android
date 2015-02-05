@@ -298,6 +298,7 @@
     <string name="jandi_file_category_document">"워드/한글"</string>
     <string name="jandi_file_category_audio">"음악"</string>
     <string name="jandi_file_category_video">"동영상"</string>
+    <string name="jandi_deleted_file">"삭제된 파일"</string>
     <string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
     <string name="jandi_select_direct_messages">"대화 시작하기"</string>
     <string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>

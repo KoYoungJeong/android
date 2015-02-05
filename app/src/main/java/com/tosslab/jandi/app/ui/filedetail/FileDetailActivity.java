@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.text.Editable;
+import android.text.TextUtils;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -72,6 +74,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     private Context mContext;
     private EntityManager mEntityManager;
 
+    private boolean isMyFile;
+    private boolean isDeleted = true;
+
     @AfterViews
     public void initForm() {
         mContext = getApplicationContext();
@@ -81,6 +86,24 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
 
         getFileDetail(false);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        menu.clear();
+
+        if (isDeleted) {
+            return true;
+        }
+
+        if (isMyFile) {
+            getMenuInflater().inflate(R.menu.file_detail_activity_my_menu, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.file_detail_activity_menu, menu);
+        }
+
+        return true;
     }
 
     @ItemLongClick(R.id.list_file_detail_comments)
@@ -141,6 +164,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             case R.id.action_file_detail_unshare:
                 clickUnshareButton();
                 return true;
+            case R.id.action_file_detail_delete:
+                deleteFileInBackground();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -167,7 +193,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
-        setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+//        setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
@@ -214,6 +240,27 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void getFileDetailSucceed(ResFileDetail resFileDetail, boolean isSendAction) {
+
+        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
+            if (fileDetail instanceof ResMessages.FileMessage) {
+
+                if (TextUtils.equals(fileDetail.status, "archived")) {
+                    isDeleted = true;
+                } else {
+                    isDeleted = false;
+                }
+
+                if (fileDetail.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId()) {
+                    isMyFile = true;
+                } else {
+                    isMyFile = false;
+                }
+
+                invalidateOptionsMenu();
+                break;
+            }
+        }
+
         fileDetailPresenter.drawFileDetail(resFileDetail, isSendAction);
     }
 
@@ -356,6 +403,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     public void deleteFileDone(boolean isOk) {
         if (isOk) {
             ColoredToast.show(this, getString(R.string.jandi_delete_succeed));
+
+            Intent data = new Intent();
+            data.putExtra(MessageListFragment.EXTRA_FILE_DELETE, true);
+            data.putExtra(MessageListFragment.EXTRA_FILE_ID, fileId);
+            setResult(RESULT_OK, data);
             finish();
         } else {
             ColoredToast.showError(this, getString(R.string.err_delete_file));

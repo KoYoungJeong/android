@@ -148,20 +148,32 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             ResMessages.Link link;
             for (int idx = size - 1; idx >= 0; --idx) {
                 link = messages.get(idx);
-                if (link.status.equals("created") || link.status.equals("shared")) {
-                } else if (link.status.equals("edited")) {
+                if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared")) {
+                } else if (TextUtils.equals(link.status, "edited")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                     if (searchedPosition >= 0) {
                         messageList.set(searchedPosition, link);
                     }
                     messages.remove(link);
-                } else if (link.status.equals("archived")) {
+                } else if (TextUtils.equals(link.status, "archived")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-                    if (searchedPosition >= 0) {
-                        messageList.remove(searchedPosition);
+
+                    // if file type
+                    if (TextUtils.equals(link.message.contentType, "file")) {
+
+                        if (searchedPosition >= 0) {
+                            messageList.set(searchedPosition, link);
+                            messages.remove(link);
+                        }
+                        // if cannot find same object, will be add to list.
+
+                    } else {
+                        if (searchedPosition >= 0) {
+                            messageList.remove(searchedPosition);
+                        }
+                        messages.remove(link);
                     }
-                    messages.remove(link);
-                } else if (link.status.equals("unshared")) {
+                } else if (TextUtils.equals(link.status, "unshared")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                     if (searchedPosition >= 0) {
                         messageList.set(searchedPosition, link);
@@ -177,9 +189,19 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     }
 
     private int searchIndexOfMessages(List<ResMessages.Link> messageItems, int messageId) {
-        for (int i = 0; i < messageItems.size(); i++) {
+        int size = messageItems.size();
+        for (int i = 0; i < size; i++) {
             if (messageItems.get(i).messageId == messageId)
                 return i;
+        }
+        return -1;
+    }
+
+    public int indexByMessageId(int messageId) {
+        int count = getCount();
+        for (int idx = 0; idx < count; idx++) {
+            if (getItem(idx).messageId == messageId)
+                return idx;
         }
         return -1;
     }

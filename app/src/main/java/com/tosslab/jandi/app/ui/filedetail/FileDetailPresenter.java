@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -70,6 +71,9 @@ public class FileDetailPresenter {
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
     @ViewById(R.id.list_file_detail_comments)
     ListView listFileDetailComments;
+
+    @ViewById(R.id.ly_file_detail_input_comment)
+    LinearLayout inputCommentLayout;
     @ViewById(R.id.et_file_detail_comment)
     EditText editTextComment;
     @ViewById(R.id.btn_file_detail_send_comment)
@@ -86,6 +90,7 @@ public class FileDetailPresenter {
     ImageView iconFileType;
 
     private ProgressWheel mProgressWheel;
+    private LinearLayout fileInfoLayout;
 
 
     @AfterViews
@@ -106,6 +111,7 @@ public class FileDetailPresenter {
         textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
         textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
         imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
+        fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
@@ -121,6 +127,7 @@ public class FileDetailPresenter {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
                 final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+
                 // 사용자
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
                 String profileUrl = writer.getUserSmallProfileUrl();
@@ -142,6 +149,18 @@ public class FileDetailPresenter {
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
                 textViewFileCreateDate.setText(createTime);
+                // if Deleted File
+                if (TextUtils.equals(fileMessage.status, "archived")) {
+
+                    imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
+                    fileInfoLayout.setVisibility(View.GONE);
+                    inputCommentLayout.setVisibility(View.GONE);
+
+                    activity.getActionBar().setTitle(R.string.jandi_deleted_file);
+
+                    break;
+                }
+
                 activity.getActionBar().setTitle(fileMessage.content.title);
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
@@ -149,7 +168,7 @@ public class FileDetailPresenter {
                 // 공유 CDP 이름
                 drawFileSharedEntities(fileMessage);
 
-                if (fileMessage.content.type != null) {
+                if (!TextUtils.isEmpty(fileMessage.content.type)) {
                     String serverUrl = (fileMessage.content.serverUrl.equals("root"))
                             ? JandiConstantsForFlavors.SERVICE_ROOT_URL
                             : fileMessage.content.serverUrl;

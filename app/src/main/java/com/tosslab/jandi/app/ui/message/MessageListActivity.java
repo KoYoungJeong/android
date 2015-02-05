@@ -96,6 +96,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 2014. 8. 12..
  */
+@Deprecated
 @EActivity(R.layout.activity_message_list)
 public class MessageListActivity extends BaseAnalyticsActivity {
     private final Logger log = Logger.getLogger(MessageListActivity.class);

@@ -20,6 +20,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by justinygchoi on 2014. 5. 27..
  */
+@Deprecated
 @EBean
 public class MessageItemListAdapter extends BaseAdapter {
     private final Logger log = Logger.getLogger(MessageItemListAdapter.class);

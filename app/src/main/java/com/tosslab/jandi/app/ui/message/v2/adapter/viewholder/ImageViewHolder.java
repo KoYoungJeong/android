@@ -59,14 +59,23 @@ public class ImageViewHolder implements BodyViewHolder {
 
             String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
 
-            Glide.with(fileImageView.getContext())
-                    .load(imageUrl)
-                    .placeholder(R.drawable.jandi_fl_icon_img)
-                    .crossFade()
-                    .into(fileImageView);
 
-            fileNameTextView.setText(fileMessage.content.name);
-            fileTypeTextView.setText(fileMessage.content.ext);
+            if (TextUtils.equals(fileMessage.status, "archived")) {
+
+                fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
+            } else {
+
+                Glide.with(fileImageView.getContext())
+                        .load(imageUrl)
+                        .placeholder(R.drawable.jandi_fl_icon_img)
+                        .crossFade()
+                        .into(fileImageView);
+
+                fileNameTextView.setText(fileMessage.content.name);
+                fileTypeTextView.setText(fileMessage.content.ext);
+            }
+
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(link.message.writerId)));
 

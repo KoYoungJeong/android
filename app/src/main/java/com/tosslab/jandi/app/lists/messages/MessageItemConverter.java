@@ -17,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by justinygchoi on 2014. 8. 8..
  */
+@Deprecated
 public class MessageItemConverter {
     private final Logger log = Logger.getLogger(MessageItemConverter.class);
 

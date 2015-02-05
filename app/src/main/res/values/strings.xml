@@ -284,6 +284,7 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_private_topic_tip_2">"Files shared in a private topic are only available to its participants"</string>
     <string name="jandi_private_topic_tip_3">"Topics designated as public or private cannot be converted to the other after creation"</string>
     <string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
+    <string name="jandi_deleted_file">"Deleted File"</string>
     <string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
     <string name="primary_email_info_msg">"All emails related to your JANDI account will be sent to the primary email address. You can add other email addresses to your account and assign them to specific teams (note email addresses must first be verified)."</string>
 </resources>
