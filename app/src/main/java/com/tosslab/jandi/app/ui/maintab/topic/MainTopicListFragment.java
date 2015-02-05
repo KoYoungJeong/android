@@ -133,6 +133,10 @@ public class MainTopicListFragment extends Fragment {
                 TopicListAdapter expandableListAdapter = (TopicListAdapter) expandableListView.getExpandableListAdapter();
                 FormattedEntity child = expandableListAdapter.getChild(groupPosition, childPosition);
 
+                if (!child.isJoined) {
+                    return false;
+                }
+
                 EntityMenuDialogFragment_.builder().entityId(child.getId()).build().show(getFragmentManager(), "dialog");
 
                 return true;
