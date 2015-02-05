@@ -77,10 +77,6 @@ public class EntitySimpleListAdapter extends BaseAdapter {
                     .into(holder.imageView);
         } else {
             holder.imageView.setImageResource(entity.getIconImageResId());
-//            if (entity.isPublicTopic()) {
-//                holder.imageView.setColorFilter(entity.getMyColor(),
-//                        android.graphics.PorterDuff.Mode.MULTIPLY);
-//            }
         }
 
         return convertView;

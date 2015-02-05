@@ -15,12 +15,13 @@ import android.widget.Spinner;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityArrayAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
 
 import de.greenrobot.event.EventBus;
 
@@ -30,7 +31,7 @@ import de.greenrobot.event.EventBus;
 public class FileUploadDialogFragment extends DialogFragment {
     static private int selectedEntityIdToBeShared;    // Share 할 chat-room
     private final Logger log = Logger.getLogger(FileUploadDialogFragment.class);
-    private EntityArrayAdapter mEntityArrayAdapter;
+    private EntitySimpleListAdapter mEntityArrayAdapter;
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
         selectedEntityIdToBeShared = currentEntityId;
@@ -73,10 +74,20 @@ public class FileUploadDialogFragment extends DialogFragment {
         // CDP
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt(getString(R.string.jandi_action_share));
-        mEntityArrayAdapter = new EntityArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,
-                EntityManager.getInstance(getActivity()).retrieveAccessableEntities());
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        mEntityArrayAdapter = new EntitySimpleListAdapter(getActivity(), entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId())));
         spinner.setAdapter(mEntityArrayAdapter);
-        spinner.setSelection(mEntityArrayAdapter.getPosition(currentEntityId));
+
+        int size = mEntityArrayAdapter.getCount();
+        int currentIndex = 0;
+        for (int idx = 0; idx < size; ++idx) {
+            if (mEntityArrayAdapter.getItem(idx).getId() == currentEntityId) {
+                currentIndex = idx;
+                break;
+            }
+        }
+
+        spinner.setSelection(currentIndex);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
