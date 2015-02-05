@@ -81,6 +81,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
         mMainTabPagerAdapter = new MainTabPagerAdapter(getFragmentManager(), tabViews);
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
+        mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
 
         // Bind the tabs to the ViewPager
