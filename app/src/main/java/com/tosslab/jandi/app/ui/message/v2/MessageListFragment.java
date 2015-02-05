@@ -46,7 +46,9 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -483,6 +485,8 @@ public class MessageListFragment extends Fragment {
         } else {
             sendMessagePublisherEvent(LoadType.New);
         }
+    }
+
     void onFileDetailResult() {
         sendMessagePublisherEvent(LoadType.New);
     }
