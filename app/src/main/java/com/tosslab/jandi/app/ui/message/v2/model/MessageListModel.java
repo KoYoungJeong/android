@@ -16,12 +16,16 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
+import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -29,6 +33,9 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.SendingMessage;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -68,7 +75,7 @@ public class MessageListModel {
     MessageListTimer messageListTimer;
     @RootContext
     Activity activity;
-    private PublishSubject<String> publishSubject;
+    private PublishSubject<SendingMessage> publishSubject;
 
 
     @AfterInject
@@ -82,11 +89,15 @@ public class MessageListModel {
                 .map(message -> {
                     boolean isSuccess;
                     try {
-                        messageManipulator.sendMessage(message);
+                        ResCommon resCommon = messageManipulator.sendMessage(message.getMessage());
+                        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(message.getLocalId());
+                        EventBus.getDefault().post(new SendCompleteEvent(message.getLocalId(), resCommon.id));
                         isSuccess = true;
                     } catch (JandiNetworkException e) {
                         logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
                         isSuccess = false;
+                        JandiMessageDatabaseManager.getInstance(activity).updateSendState(message.getLocalId(), SendingState.Fail);
+                        EventBus.getDefault().post(new SendFailEvent(message.getLocalId()));
                     }
 
                     return isSuccess;
@@ -175,8 +186,13 @@ public class MessageListModel {
         return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
-    public void sendMessage(String message) {
-        publishSubject.onNext(message);
+    public void sendMessage(long localId, String message) {
+        SendingMessage sendingMessage = new SendingMessage(localId, message);
+        publishSubject.onNext(sendingMessage);
+    }
+
+    public long insertSendingMessage(int teamId, int entityId, String message) {
+        return JandiMessageDatabaseManager.getInstance(activity).insertSendMessage(teamId, entityId, message);
     }
 
     public boolean isMyMessage(int writerId) {
@@ -296,5 +312,28 @@ public class MessageListModel {
                     .trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
         } catch (JSONException e) {
         }
+    }
+
+    public void deleteSendingMessage(long localId) {
+        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+    }
+
+    public List<ResMessages.Link> getDummyMessages(int teamId, int entityId, String name, String userLargeProfileUrl) {
+        List<ResMessages.Link> sendMessage = JandiMessageDatabaseManager.getInstance(activity).getSendMessage(teamId, entityId);
+        for (ResMessages.Link link : sendMessage) {
+            link.message.writer = new ResLeftSideMenu.User();
+            link.message.writer.name = name;
+
+            link.message.writer.u_photoUrl = userLargeProfileUrl;
+        }
+        return sendMessage;
+    }
+
+    public boolean isFailedDummyMessage(DummyMessageLink dummyMessageLink) {
+        return dummyMessageLink.getSendingState() == SendingState.Fail;
+    }
+
+    public void deleteDummyMessageAtDatabase(long localId) {
+        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
     }
 }

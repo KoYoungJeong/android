@@ -11,7 +11,7 @@ public class DatabaseConsts {
         left_whole, left_team, left_user, left_starred_entity, left_message_marker, left_topic_entity, left_join_entity,
 
         chats,
-        messages, temp_messages,
+        messages, temp_messages, send_messages,
 
         files
     }
@@ -76,6 +76,10 @@ public class DatabaseConsts {
 
     public enum TempMessages {
         _id, teamId, entityId, text
+    }
+
+    public enum SendingMessages {
+        _id, teamId, entityId, content, state
     }
 
     public enum Files {

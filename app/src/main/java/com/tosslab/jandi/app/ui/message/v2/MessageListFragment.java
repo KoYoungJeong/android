@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,9 +30,14 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
+import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
+import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
@@ -129,6 +135,10 @@ public class MessageListFragment extends Fragment {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
         if (savedMessages != null) {
             messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
+            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+            List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());
+            messageListPresenter.addDummyMessages(dummyMessages);
+
             messageListPresenter.moveLastPage();
         } else {
             messageListPresenter.showProgressWheel();
@@ -246,7 +256,7 @@ public class MessageListFragment extends Fragment {
 
         messageListModel.stopRefreshTimer();
 
-        messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItems());
+        messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
         PushMonitor.getInstance().unregister(entityId);
     }
@@ -266,6 +276,11 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.clearMessages();
 
                 messageListPresenter.addAll(0, oldMessage.messages);
+
+                FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+                List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());
+                messageListPresenter.addDummyMessages(dummyMessages);
+
                 messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
                 messageListPresenter.moveLastPage();
 
@@ -346,15 +361,28 @@ public class MessageListFragment extends Fragment {
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText();
-        if (message.length() > 0) {
-            sendMessage(message);
+        if (!(TextUtils.isEmpty(message))) {
+            messageListPresenter.setSendEditText("");
+            // insert to db
+            long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
+
+            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
+
+            // insert to ui
+            messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
+
+            // networking...
+            messageListModel.sendMessage(localId, message);
         }
-        messageListPresenter.setSendEditText("");
 
     }
 
-    void sendMessage(String message) {
-        messageListModel.sendMessage(message);
+    public void onEventMainThread(SendCompleteEvent event) {
+        messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
+    }
+
+    public void onEventMainThread(SendFailEvent event) {
+        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -427,6 +455,16 @@ public class MessageListFragment extends Fragment {
 
     void onMessageItemClick(ResMessages.Link link) {
 
+        if (link instanceof DummyMessageLink) {
+            DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
+
+            if (messageListModel.isFailedDummyMessage(dummyMessageLink)) {
+                messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
+            }
+
+            return;
+        }
+
         if (messageListModel.isFileType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId);
         } else if (messageListModel.isCommentType(link.message)) {
@@ -445,9 +483,22 @@ public class MessageListFragment extends Fragment {
         } else {
             sendMessagePublisherEvent(LoadType.New);
         }
+    void onFileDetailResult() {
+        sendMessagePublisherEvent(LoadType.New);
     }
 
     void onMessageItemLonkClick(ResMessages.Link link) {
+
+        if (link instanceof DummyMessageLink) {
+            DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
+
+            if (messageListModel.isFailedDummyMessage(dummyMessageLink)) {
+                messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
+            }
+
+            return;
+        }
+
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
@@ -455,8 +506,18 @@ public class MessageListFragment extends Fragment {
         } else if (link.message instanceof ResMessages.CommentMessage) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         }
+    }
 
+    public void onEvent(DummyRetryEvent event) {
+        DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
+        dummyMessage.setSendingState(SendingState.Sending);
+        messageListModel.sendMessage(dummyMessage.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body);
+    }
 
+    public void onEvent(DummyDeleteEvent event) {
+        DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
+        messageListModel.deleteDummyMessageAtDatabase(dummyMessage.getLocalId());
+        messageListPresenter.deleteDummyMessageAtList(event.getLocalId());
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {

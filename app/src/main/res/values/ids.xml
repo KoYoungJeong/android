@@ -5,6 +5,7 @@
     <item name="message_msg" type="id" />
     <item name="message_file" type="id" />
     <item name="message_img" type="id" />
+    <item name="message_dummy" type="id" />
     <item name="message_cmt_with_file" type="id" />
     <item name="message_cmt_without_file" type="id" />
 

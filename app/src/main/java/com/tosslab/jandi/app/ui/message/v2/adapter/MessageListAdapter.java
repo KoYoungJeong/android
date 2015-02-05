@@ -11,6 +11,8 @@ import android.widget.BaseAdapter;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
@@ -101,7 +103,9 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     @Override
     public long getHeaderId(int position) {
         Calendar instance = Calendar.getInstance();
-        instance.setTime(messageList.get(position).time);
+        if (messageList.get(position).time != null) {
+            instance.setTime(messageList.get(position).time);
+        }
 
         instance.set(Calendar.HOUR_OF_DAY, 0);
         instance.set(Calendar.MINUTE, 0);
@@ -144,10 +148,22 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
         synchronized (messageList) {
 
+            // delete dummy message by same messageId
+            for (int idx = 0; idx < messages.size(); idx++) {
+                int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
+                if (dummyMessagePosition > 0) {
+                    messageList.remove(dummyMessagePosition);
+                } else {
+                    break;
+                }
+            }
+
+
             int size = messages.size();
             ResMessages.Link link;
             for (int idx = size - 1; idx >= 0; --idx) {
                 link = messages.get(idx);
+                
                 if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared")) {
                 } else if (TextUtils.equals(link.status, "edited")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
@@ -184,8 +200,25 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
                 }
             }
 
-            messageList.addAll(Math.min(position, getCount()), messages);
+            messageList.addAll(Math.min(position, messageList.size() - getDummyMessageCount()), messages);
         }
+    }
+
+    private int getDummyMessageCount() {
+
+        int total = 0;
+
+        int count = getCount();
+
+        for (int idx = count - 1; idx >= 0; --idx) {
+            if (messageList.get(idx) instanceof DummyMessageLink) {
+                ++total;
+            } else {
+                break;
+            }
+        }
+
+        return total;
     }
 
     private int searchIndexOfMessages(List<ResMessages.Link> messageItems, int messageId) {
@@ -207,6 +240,10 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     }
 
     private BodyViewHolder.Type getContentType(ResMessages.Link message, ResMessages.Link beforeMessage) {
+
+        if (message instanceof DummyMessageLink) {
+            return BodyViewHolder.Type.Dummy;
+        }
 
         if (message.message instanceof ResMessages.TextMessage) {
             return BodyViewHolder.Type.Message;
@@ -283,6 +320,72 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     public void clear() {
         messageList.clear();
+    }
+
+    public void addDummyMessage(DummyMessageLink dummyMessageLink) {
+        synchronized (messageList) {
+            messageList.add(dummyMessageLink);
+        }
+    }
+
+    public void updateMessageId(long localId, int id) {
+
+        int dummeMessagePosition = getDummeMessagePositionByLocalId(localId);
+
+        if (dummeMessagePosition > 0) {
+            ResMessages.Link item = getItem(dummeMessagePosition);
+            item.messageId = id;
+        }
+    }
+
+    public int getDummeMessagePositionByLocalId(long localId) {
+
+        int size = getCount();
+
+        for (int idx = size - 1; idx >= 0; --idx) {
+            ResMessages.Link link = getItem(idx);
+
+            if (link instanceof DummyMessageLink) {
+                DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
+                if (dummyMessageLink.getLocalId() == localId) {
+                    return idx;
+                }
+            } else {
+                return -1;
+            }
+        }
+        return -1;
+    }
+
+    private int getDummyMessagePositionByMessageId(int messageId) {
+
+        int size = getCount();
+
+        for (int idx = size - 1; idx >= 0; --idx) {
+            ResMessages.Link link = getItem(idx);
+
+            if (link instanceof DummyMessageLink) {
+                DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
+                if (dummyMessageLink.getMessageId() == messageId) {
+                    return idx;
+                }
+            } else {
+                return -1;
+            }
+        }
+        return -1;
+
+    }
+
+    public void updateDummyMessageState(long localId, SendingState state) {
+        int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
+        if (dummeMessagePositionByLocalId > 0) {
+            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setSendingState(state);
+        }
+    }
+
+    public void remove(int position) {
+        messageList.remove(position);
     }
 
     private enum MoreState {
