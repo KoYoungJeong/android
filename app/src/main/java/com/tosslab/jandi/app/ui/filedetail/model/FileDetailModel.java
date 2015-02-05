@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.ui.filedetail.model;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -63,8 +66,6 @@ public class FileDetailModel {
 
         logger.debug("downloadInBackground " + url);
 
-        progressDialog.dismiss();
-
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
@@ -79,5 +80,27 @@ public class FileDetailModel {
     public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {
         jandiEntityClient.deleteMessageComment(messageId, feedbackId);
 
+    }
+
+    public boolean isMediaFile(String fileType) {
+
+        if (TextUtils.isEmpty(fileType)) {
+            return false;
+        }
+
+        return fileType.startsWith("audio") || fileType.startsWith("video") || fileType.startsWith("image");
+    }
+
+    public android.net.Uri addGallery(File result, String fileType) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, result.getName());
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, result.getName());
+        values.put(MediaStore.Images.Media.DESCRIPTION, "");
+        values.put(MediaStore.Images.Media.MIME_TYPE, fileType);
+        values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        values.put(MediaStore.Images.Media.DATA, result.getAbsolutePath());
+
+        return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 }

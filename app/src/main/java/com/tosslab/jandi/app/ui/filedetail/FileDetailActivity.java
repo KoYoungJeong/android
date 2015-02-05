@@ -487,6 +487,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         try {
             File result = fileDetailModel.download(url, fileName, fileType, progressDialog);
             trackDownloadingFile(mEntityManager, mResFileDetail);
+
+            if (fileDetailModel.isMediaFile(fileType)) {
+                fileDetailModel.addGallery(result, fileType);
+            }
+
             fileDetailPresenter.downloadDone(result, fileType, progressDialog);
         } catch (Exception e) {
             log.error("Download failed", e);
