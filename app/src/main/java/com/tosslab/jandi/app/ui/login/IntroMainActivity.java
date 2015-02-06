@@ -47,6 +47,7 @@ public class IntroMainActivity extends Activity {
     private void setUpView() {
         buttonTutorialFirst.setSelected(true);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager.setOffscreenPageLimit(3);
         mAdapter = new IntroMainPagerAdapter(getFragmentManager());
         mViewPager.setAdapter(mAdapter);
         mViewPager.setCurrentItem(IntroTutorialFragment.FIRST_PAGE);
