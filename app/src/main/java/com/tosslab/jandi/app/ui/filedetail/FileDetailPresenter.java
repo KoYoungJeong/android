@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -186,6 +187,7 @@ public class FileDetailPresenter {
                         } else {
                             Glide.with(activity)
                                     .load(thumbnailPhotoUrl)
+                                    .priority(Priority.HIGH)
                                     .fitCenter()
                                     .crossFade()
                                     .into(imageViewPhotoFile);

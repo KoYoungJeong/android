@@ -119,13 +119,7 @@ public class FileUploadDialogFragment extends DialogFragment {
                             }
                         }
                 )
-                .setNegativeButton(R.string.jandi_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // Do Nothing
-                            }
-                        }
-                );
+                .setNegativeButton(R.string.jandi_cancel, null);
         return builder.create();
     }
 }

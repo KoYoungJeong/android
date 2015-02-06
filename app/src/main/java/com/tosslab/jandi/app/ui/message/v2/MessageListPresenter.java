@@ -34,6 +34,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -262,13 +263,28 @@ public class MessageListPresenter {
 
     public void changeToArchive(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
+        String archivedStatus = "archived";
         if (position > 0) {
             ResMessages.Link item = messageListAdapter.getItem(position);
-            item.message.status = "archived";
+            item.message.status = archivedStatus;
+            item.message.updateTime = new Date();
+        }
+
+        List<Integer> commentIndexes = messageListAdapter.indexByFeedbackId(messageId);
+
+        for (Integer commentIndex : commentIndexes) {
+            ResMessages.Link item = messageListAdapter.getItem(commentIndex);
+            item.feedback.status = archivedStatus;
+            item.feedback.updateTime = new Date();
+        }
+
+        if (position > 0 || commentIndexes.size() > 0) {
 
             messageListAdapter.notifyDataSetChanged();
         }
+
     }
+
     public void updateMessageIdAtSendingMessage(long localId, int id) {
         messageListAdapter.updateMessageId(localId, id);
     }

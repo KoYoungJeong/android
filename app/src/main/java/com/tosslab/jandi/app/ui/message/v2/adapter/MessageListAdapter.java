@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -163,7 +164,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             ResMessages.Link link;
             for (int idx = size - 1; idx >= 0; --idx) {
                 link = messages.get(idx);
-                
+
                 if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared")) {
                 } else if (TextUtils.equals(link.status, "edited")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
@@ -386,6 +387,24 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     public void remove(int position) {
         messageList.remove(position);
+    }
+
+    public List<Integer> indexByFeedbackId(int messageId) {
+
+        List<Integer> indexList = new ArrayList<Integer>();
+
+        int count = getCount();
+        for (int idx = 0; idx < count; idx++) {
+            int itemViewType = getItemViewType(idx);
+            if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
+                ResMessages.Link item = getItem(idx);
+                if (item.message.feedbackId == messageId) {
+                    indexList.add(messageId);
+                }
+            }
+        }
+
+        return indexList;
     }
 
     private enum MoreState {
