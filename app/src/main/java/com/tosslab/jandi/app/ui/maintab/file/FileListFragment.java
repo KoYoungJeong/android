@@ -75,10 +75,9 @@ public class FileListFragment extends Fragment {
     private Context mContext;
     private EntityManager mEntityManager;
     private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+
     /**
-     * *********************************************************
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
-     * **********************************************************
      */
     private int selectedTeamId;
 

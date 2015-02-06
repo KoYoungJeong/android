@@ -52,8 +52,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileOwnerName = searchedFile.writer.name;
         textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
-        String searchedFileType = searchedFile.content.type;
-        textViewSearchedFileType.setText(searchedFileType);
+        textViewSearchedFileType.setText(searchedFile.content.ext);
 
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         textViewSearchedFileDate.setText(searchedFileDate);
