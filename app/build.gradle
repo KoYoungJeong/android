@@ -92,8 +92,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 31
-        versionName '0.9.3'
+        versionCode 32
+        versionName '0.9.4'
     }
     buildTypes {
 
