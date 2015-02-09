@@ -8,14 +8,10 @@ import android.widget.AbsListView;
 
 import com.tosslab.jandi.app.views.listeners.SimpleListViewScrollListener;
 
-import org.apache.log4j.Logger;
-
 /**
  * Created by Steve SeongUg Jung on 15. 2. 9..
  */
 public class FAButtonUtil {
-
-    private static final Logger logger = Logger.getLogger(FAButtonUtil.class);
 
     public static void setFAButtonController(AbsListView listview, View faButton) {
 
@@ -70,8 +66,6 @@ public class FAButtonUtil {
 
             private void hide(View fab) {
 
-                logger.debug(fab.getVisibility() + " / isAnimating" + isAnimating);
-
                 if (fab.getVisibility() == View.GONE || isAnimating) {
                     return;
                 }
@@ -108,8 +102,6 @@ public class FAButtonUtil {
             }
 
             private void show(View fab) {
-
-                logger.debug(fab.getVisibility() + " / isAnimating" + isAnimating);
 
                 if (fab.getVisibility() == View.VISIBLE || isAnimating) {
                     return;

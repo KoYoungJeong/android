@@ -22,6 +22,8 @@ public class BodyViewFactory {
                 return new FileCommentViewHolder();
             case Dummy:
                 return new DummyViewHolder();
+            case Event:
+                return new EventViewHolder();
             case Message:
             default:
                 return new MessageViewHolder();
@@ -42,6 +44,8 @@ public class BodyViewFactory {
                 return R.id.message_cmt_with_file;
             case Dummy:
                 return R.id.message_dummy;
+            case Event:
+                return R.id.message_event;
             case Message:
             default:
                 return R.id.message_msg;

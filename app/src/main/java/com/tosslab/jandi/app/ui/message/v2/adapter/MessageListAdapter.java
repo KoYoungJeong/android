@@ -165,7 +165,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             for (int idx = size - 1; idx >= 0; --idx) {
                 link = messages.get(idx);
 
-                if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared")) {
+                if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
                 } else if (TextUtils.equals(link.status, "edited")) {
                     int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
                     if (searchedPosition >= 0) {
@@ -244,6 +244,10 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
         if (message instanceof DummyMessageLink) {
             return BodyViewHolder.Type.Dummy;
+        }
+
+        if (TextUtils.equals(message.status, "event")) {
+            return BodyViewHolder.Type.Event;
         }
 
         if (message.message instanceof ResMessages.TextMessage) {

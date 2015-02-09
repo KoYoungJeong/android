@@ -100,11 +100,11 @@ public class ResUpdateMessages {
                         ", fromEntity=" + fromEntity +
                         ", toEntity=" + toEntity +
                         ", status='" + status + '\'' +
-                        ", info=" + info +
+                        ", info=" + eventInfo +
                         '}';
             }
 
-            public ResMessages.Info info;
+            public ResMessages.EventInfo eventInfo;
         }
     }
 }
