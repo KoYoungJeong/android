@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.chat;
 import android.app.Fragment;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.widget.AbsListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -21,9 +22,11 @@ import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -46,6 +49,12 @@ public class MainChatListFragment extends Fragment {
 
     @Bean
     MainChatListModel mainChatListModel;
+
+    @AfterViews
+    void initViews() {
+        FAButtonUtil.setFAButtonController(((AbsListView) getView().findViewById(R.id.lv_main_chat_list)), getView().findViewById(R.id.btn_main_chat_fab));
+
+    }
 
 
     @Override
