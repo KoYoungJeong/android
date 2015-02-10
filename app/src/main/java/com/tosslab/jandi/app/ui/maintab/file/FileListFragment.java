@@ -106,7 +106,7 @@ public class FileListFragment extends Fragment {
         fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
-        View emptyView = LayoutInflater.from(getActivity()).inflate(R.layout.view_search_list_empty, null);
+        View emptyView = getView().findViewById(R.id.layout_file_list_empty);
         actualListView.setEmptyView(emptyView);
         actualListView.setAdapter(mAdapter);
 

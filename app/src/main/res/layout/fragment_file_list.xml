@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/layout_file_list_header"
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:background="@color/jandi_more_bg"
@@ -62,18 +63,26 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/view_file_list_divider"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
+        android:layout_below="@+id/layout_file_list_header"
         android:background="@color/jandi_file_search_item_divider" />
 
     <ListView
         android:id="@+id/list_searched_files"
         android:layout_width="match_parent"
-        android:layout_height="0px"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/view_file_list_divider"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
         android:fillViewport="true"
         android:smoothScrollbar="true" />
-</LinearLayout>
+
+    <include
+        android:id="@+id/layout_file_list_empty"
+        layout="@layout/view_search_list_empty" />
+
+</RelativeLayout>
