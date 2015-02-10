@@ -7,6 +7,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
+import android.text.TextUtils;
 
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
@@ -14,6 +15,8 @@ import com.parse.SaveCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
+import com.tosslab.jandi.app.ui.term.TermActivity;
+import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.Bean;
@@ -36,16 +39,25 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
-        if (preference.getKey().equals("setting_push_auto_alarm")) {
-            log.debug("setting_push_auto_alarm clicked");
+        if (TextUtils.equals(preference.getKey(), "setting_push_auto_alarm")) {
             CheckBoxPreference pref = (CheckBoxPreference) preference;
             if (pref.isChecked()) {
-                log.debug("checked");
                 onPushNotification();
             } else {
-                log.debug("canceled");
                 offPushNotification();
             }
+        } else if (TextUtils.equals(preference.getKey(), "setting_tos")) {
+
+            TermActivity_
+                    .intent(getActivity())
+                    .termMode(TermActivity.Mode.Agreement.name())
+                    .start();
+
+        } else if (TextUtils.equals(preference.getKey(), "setting_pp")) {
+            TermActivity_
+                    .intent(getActivity())
+                    .termMode(TermActivity.Mode.Privacy.name())
+                    .start();
         }
         return false;
     }

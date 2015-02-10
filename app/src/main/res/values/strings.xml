@@ -292,4 +292,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_created_this_topic">"%s created this topic"</string>
     <string name="jandi_left_topic">"%s has left"</string>
     <string name="jandi_invited_topic">"%1$s invited %2$s"</string>
+    <string name="jandi_tos_and_pp">이용 약관 및 개인정보 취급 방안</string>
 </resources>

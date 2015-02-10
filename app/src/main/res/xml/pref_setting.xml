@@ -11,13 +11,18 @@
             android:summaryOn="@string/jandi_setting_push_subscription_ok"
             android:defaultValue="true"/>
     </PreferenceCategory>
-    <!--<PreferenceCategory-->
-        <!--android:key="setting_general"-->
-        <!--android:title="@string/jandi_setting_general">-->
-        <!--<Preference-->
-            <!--android:key="setting_logout"-->
-            <!--android:title="@string/jandi_setting_sign_out"-->
-            <!--android:selectable="true" />-->
-    <!--</PreferenceCategory>-->
+
+    <PreferenceCategory
+        android:key="setting_tos_pp"
+        android:title="@string/jandi_tos_and_pp">
+        <Preference
+            android:key="setting_tos"
+            android:title="@string/jandi_term_of_service"
+            android:defaultValue="true"/>
+        <Preference
+            android:key="setting_pp"
+            android:title="@string/jandi_privacy_policy"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>
