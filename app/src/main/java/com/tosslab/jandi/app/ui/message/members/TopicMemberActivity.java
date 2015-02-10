@@ -20,6 +20,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenuItem;
 
 import java.util.List;
 
@@ -55,6 +57,11 @@ public class TopicMemberActivity extends Activity {
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
+    }
+
+    @OptionsItem(android.R.id.home)
+    void onHomeOptionSelect() {
+        finish();
     }
 
     @Background

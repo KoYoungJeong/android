@@ -27,14 +27,17 @@
             <EditText
                 android:id="@+id/et_team_detail_info_team_domain"
                 style="@style/JandiTeam.EditText"
-                android:layout_weight="1"
-                android:hint="@string/url" />
+                android:layout_width="wrap_content"
+                android:hint="@string/url"
+                android:minEms="5" />
 
             <TextView
                 style="@style/JandiTeam.EditText"
                 android:layout_width="wrap_content"
+                android:layout_weight="1"
                 android:enabled="false"
-                android:gravity="center"
+                android:gravity="left"
+                android:paddingLeft="3dp"
                 android:text=".jandi.com"
                 android:textColor="@color/jandi_text" />
 
@@ -62,8 +65,8 @@
             android:id="@+id/spinner_team_detail_info_member_email"
             style="@style/JandiTeam.EditText"
             android:layout_marginTop="1dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:prompt="@string/jandi_profile_email" />
 
         <TextView
