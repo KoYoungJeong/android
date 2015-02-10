@@ -76,4 +76,8 @@ public class EntityMenuDialogModel {
         } catch (JSONException e) {
         }
     }
+
+    public boolean isDefaultTopic(int entityId) {
+        return EntityManager.getInstance(context).getDefaultTopicId() == entityId;
+    }
 }

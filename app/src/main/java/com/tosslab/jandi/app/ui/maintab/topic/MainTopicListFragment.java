@@ -132,7 +132,7 @@ public class MainTopicListFragment extends Fragment {
                 TopicListAdapter expandableListAdapter = (TopicListAdapter) expandableListView.getExpandableListAdapter();
                 FormattedEntity child = expandableListAdapter.getChild(groupPosition, childPosition);
 
-                if (!child.isJoined) {
+                if (child.isPublicTopic() && !child.isJoined) {
                     return false;
                 }
 

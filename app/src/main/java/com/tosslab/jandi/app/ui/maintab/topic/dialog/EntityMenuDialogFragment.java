@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import com.tosslab.jandi.app.R;
@@ -58,6 +59,12 @@ public class EntityMenuDialogFragment extends DialogFragment {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
         getDialog().setTitle(entity.getName());
         setStarredButtonText(entity.isStarred);
+
+        if (entityMenuDialogModel.isDefaultTopic(entityId)) {
+            leaveButton.setVisibility(View.GONE);
+        } else {
+            leaveButton.setVisibility(View.VISIBLE);
+        }
 
         progressWheel = new ProgressWheel(getActivity());
         progressWheel.init();
