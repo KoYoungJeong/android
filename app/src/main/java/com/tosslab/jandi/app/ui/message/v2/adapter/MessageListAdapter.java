@@ -403,7 +403,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             if (itemViewType == BodyViewHolder.Type.FileComment.ordinal() || itemViewType == BodyViewHolder.Type.PureComment.ordinal()) {
                 ResMessages.Link item = getItem(idx);
                 if (item.message.feedbackId == messageId) {
-                    indexList.add(messageId);
+                    indexList.add(idx);
                 }
             }
         }

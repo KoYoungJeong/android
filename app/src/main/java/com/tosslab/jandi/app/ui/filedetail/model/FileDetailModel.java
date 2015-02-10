@@ -64,8 +64,6 @@ public class FileDetailModel {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
-        logger.debug("downloadInBackground " + url);
-
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)

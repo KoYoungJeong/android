@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -339,5 +340,22 @@ public class MessageListModel {
 
     public boolean isDefaultTopic(int entityId) {
         return EntityManager.getInstance(activity).getDefaultTopicId() == entityId;
+    }
+
+    public boolean isUrl(String realFilePath) {
+        return realFilePath.toLowerCase().startsWith("http://") || realFilePath.toLowerCase().startsWith("https://");
+    }
+
+    public File downloadFile(ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) throws Exception {
+
+        File dir = Environment.getExternalStoragePublicDirectory(downloadDir);
+        dir.mkdirs();
+
+        return Ion.with(activity)
+                .load(url)
+                .progressDialog(downloadProgress)
+                .write(new File(dir, downloadName))
+                .get();
+
     }
 }

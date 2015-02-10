@@ -330,4 +330,13 @@ public class MessageListPresenter {
         messageListAdapter.remove(position);
         messageListAdapter.notifyDataSetChanged();
     }
+
+    public ProgressDialog getDownloadProgress(String downloadDir, String downloadPath) {
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage(activity.getString(R.string.jandi_action_download) + " " + downloadDir + "/" + downloadPath);
+        progressDialog.show();
+
+        return progressDialog;
+    }
 }

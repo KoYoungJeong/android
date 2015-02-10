@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -432,7 +433,15 @@ public class MessageListFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
 
                     realFilePath = ImageFilePath.getPath(getActivity(), data.getData());
-                    showFileUploadDialog(realFilePath);
+                    if (messageListModel.isUrl(realFilePath)) {
+
+                        String downloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
+                        String downloadName = "web_image.jpg";
+                        ProgressDialog downloadProgress = messageListPresenter.getDownloadProgress(downloadDir, downloadName);
+                        downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
+                    } else {
+                        showFileUploadDialog(realFilePath);
+                    }
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
@@ -447,7 +456,20 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    @Background
+    void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
+
+        try {
+            File file = messageListModel.downloadFile(downloadProgress, realFilePath, downloadDir, downloadName);
+            messageListPresenter.dismissProgressDialog(downloadProgress);
+            showFileUploadDialog(file.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // File Upload 대화상자 보여주기
+    @UiThread
     void showFileUploadDialog(String realFilePath) {
         // 업로드 파일 용량 체크
 
