@@ -150,12 +150,12 @@ public class MemberProfilePresenter {
         return reqUpdateProfile;
     }
 
+    @UiThread
     public void updateLocalProfileImage(File mTempPhotoFile) {
         Glide.with(activity)
                 .load(mTempPhotoFile)
                 .placeholder(R.drawable.jandi_profile)
                 .transform(new GlideCircleTransform(activity))
-                .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                 .into(imageViewProfilePhoto);
 
     }

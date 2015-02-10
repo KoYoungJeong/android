@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.widget.Button;
@@ -331,12 +332,4 @@ public class MessageListPresenter {
         messageListAdapter.notifyDataSetChanged();
     }
 
-    public ProgressDialog getDownloadProgress(String downloadDir, String downloadPath) {
-        final ProgressDialog progressDialog = new ProgressDialog(activity);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(activity.getString(R.string.jandi_action_download) + " " + downloadDir + "/" + downloadPath);
-        progressDialog.show();
-
-        return progressDialog;
-    }
 }

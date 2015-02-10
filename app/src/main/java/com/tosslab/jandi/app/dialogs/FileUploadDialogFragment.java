@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -110,6 +112,10 @@ public class FileUploadDialogFragment extends DialogFragment {
                 .setPositiveButton(R.string.jandi_upload,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+
+                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(editTextInputName.getWindowToken(), 0);
+
                                 EventBus.getDefault().post(
                                         new ConfirmFileUploadEvent(
                                                 editTextInputName.getText().toString(),

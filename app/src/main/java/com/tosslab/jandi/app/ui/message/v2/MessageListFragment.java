@@ -7,7 +7,6 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +50,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -433,11 +433,11 @@ public class MessageListFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
 
                     realFilePath = ImageFilePath.getPath(getActivity(), data.getData());
-                    if (messageListModel.isUrl(realFilePath)) {
+                    if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 
-                        String downloadDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + Environment.DIRECTORY_DOWNLOADS + "/Jandi";
-                        String downloadName = "web_image.jpg";
-                        ProgressDialog downloadProgress = messageListPresenter.getDownloadProgress(downloadDir, downloadName);
+                        String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                        String downloadName = GoogleImagePickerUtil.getWebImageName();
+                        ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
                         downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
                     } else {
                         showFileUploadDialog(realFilePath);
@@ -460,7 +460,7 @@ public class MessageListFragment extends Fragment {
     void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
 
         try {
-            File file = messageListModel.downloadFile(downloadProgress, realFilePath, downloadDir, downloadName);
+            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, realFilePath, downloadDir, downloadName);
             messageListPresenter.dismissProgressDialog(downloadProgress);
             showFileUploadDialog(file.getAbsolutePath());
         } catch (Exception e) {

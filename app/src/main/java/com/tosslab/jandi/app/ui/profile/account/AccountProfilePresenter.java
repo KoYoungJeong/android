@@ -49,7 +49,7 @@ public class AccountProfilePresenter {
     TextView emailTextView;
     private ProgressWheel progressWheel;
 
-
+    @UiThread
     public void setProfileImage(Uri uri) {
         Glide.with(context)
                 .load(uri)
@@ -179,4 +179,5 @@ public class AccountProfilePresenter {
         ColoredToast.showError(context, message);
 
     }
+
 }

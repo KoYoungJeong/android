@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.account.model.AccountProfileModel;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 
 import org.androidannotations.annotations.AfterViews;
@@ -266,16 +268,47 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
         }
 
         if (data != null && data.getData() != null) {
-            tempFile = new File(ImageFilePath.getPath(AccountProfileActivity.this, data.getData()));
+            String path = ImageFilePath.getPath(AccountProfileActivity.this, data.getData());
+
+
+            if (GoogleImagePickerUtil.isUrl(path)) {
+
+                String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                String downloadName = GoogleImagePickerUtil.getWebImageName();
+                ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(AccountProfileActivity.this, downloadDir, downloadName);
+                downloadImage(downloadProgress, path, downloadDir, downloadName);
+            } else {
+                tempFile = new File(path);
+                accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
+
+            }
         } else {
             tempFile = new File(ImageFilePath.getTempPath(AccountProfileActivity.this));
+            accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
         }
 
-        accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
         isNeedUploadImage = true;
         invalidateOptionsMenu();
 
 
+    }
+
+    @Background
+    void downloadImage(ProgressDialog downloadProgress, String path, String downloadDir, String downloadName) {
+
+        try {
+            Log.d("INFO", "Download Path " + downloadDir + "/" + downloadName);
+
+            File file = GoogleImagePickerUtil.downloadFile(AccountProfileActivity.this, downloadProgress, path, downloadDir, downloadName);
+            Log.d("INFO", "Downloaded Path " + file.getAbsolutePath());
+            accountProfilePresenter.dismissIncrementProgressDialog(downloadProgress);
+            tempFile = file;
+            Log.d("INFO", "Upload Path " + tempFile.getAbsolutePath());
+
+            accountProfilePresenter.setProfileImage(Uri.fromFile(tempFile));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void onEvent(ProfileImageCompleteEvent e) {

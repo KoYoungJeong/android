@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -297,14 +299,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
      */
     @Click(R.id.profile_photo)
     void getPicture() {
-//        Intent intent = new Intent(
-//                Intent.ACTION_GET_CONTENT,      // 또는 ACTION_PICK
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        intent.setType("image/*");              // 모든 이미지
-//        intent.putExtra("crop", "true");        // Crop기능 활성화
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, ImageFilePath.getTempUri(MemberProfileActivity.this));
-//        intent.putExtra("outputFormat",         // 포맷방식
-//                Bitmap.CompressFormat.JPEG.toString());
 
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -322,16 +316,43 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         if (imageData != null && imageData.getData() != null) {
-            mTempPhotoFile = new File(ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData()));
+            String path = ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData());
+
+            if (GoogleImagePickerUtil.isUrl(path)) {
+
+                String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                String downloadName = GoogleImagePickerUtil.getWebImageName();
+                ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(MemberProfileActivity.this, downloadDir, downloadName);
+                downloadImage(downloadProgress, path, downloadDir, downloadName);
+            } else {
+                mTempPhotoFile = new File(path);
+                memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
+            }
         } else {
             mTempPhotoFile = new File(ImageFilePath.getTempPath(MemberProfileActivity.this));
+            memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
         }
 
         attemptToUpdatePhoto = true;
-        memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
         invalidateOptionsMenu();
 
 
+    }
+
+    @Background
+    void downloadImage(ProgressDialog downloadProgress, String path, String downloadDir, String downloadName) {
+
+        try {
+            Log.d("INFO", downloadDir + "/" + downloadName);
+            File file = GoogleImagePickerUtil.downloadFile(MemberProfileActivity.this, downloadProgress, path, downloadDir, downloadName);
+            Log.d("INFO", file.getAbsolutePath());
+            memberProfilePresenter.dismissProgressDialog(downloadProgress);
+            mTempPhotoFile = new File(file.getAbsolutePath());
+            memberProfilePresenter.updateLocalProfileImage(mTempPhotoFile);
+            Log.d("INFO", mTempPhotoFile.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getDistictId() {
