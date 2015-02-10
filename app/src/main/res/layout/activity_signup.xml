@@ -45,7 +45,8 @@
                 android:id="@+id/et_signup_email"
                 style="@style/JandiSignUp.EditText"
                 android:hint="@string/jandi_signup_input_email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textColor="@color/jandi_text" />
 
             <TextView
                 android:id="@+id/tv_signup_email_valid"
@@ -63,7 +64,8 @@
                 android:id="@+id/et_signup_password"
                 style="@style/JandiSignUp.EditText"
                 android:hint="@string/jandi_user_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/jandi_text" />
 
             <TextView
                 android:id="@+id/tv_signup_password_valid"
