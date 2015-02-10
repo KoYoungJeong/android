@@ -302,4 +302,8 @@
     <string name="jandi_success_update_account_profile">"계정 정보가 성공적으로 수정되었습니다"</string>
     <string name="jandi_select_direct_messages">"대화 시작하기"</string>
     <string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
+    <string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
+    <string name="jandi_created_this_topic">"%s님이 채널을 생성하였습니다"</string>
+    <string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
+    <string name="jandi_left_topic">"%s님이 떠났습니다"</string>
 </resources>

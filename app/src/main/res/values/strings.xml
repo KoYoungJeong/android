@@ -287,4 +287,9 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_deleted_file">"Deleted File"</string>
     <string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
     <string name="primary_email_info_msg">"All emails related to your JANDI account will be sent to the primary email address. You can add other email addresses to your account and assign them to specific teams (note email addresses must first be verified)."</string>
+
+    <string name="jandi_has_joined">"%s has joined"</string>
+    <string name="jandi_created_this_topic">"%s created this topic"</string>
+    <string name="jandi_left_topic">"%s has left"</string>
+    <string name="jandi_invited_topic">"%1$s invited %2$s"</string>
 </resources>

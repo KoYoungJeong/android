@@ -293,4 +293,8 @@ JANDIへようこそ"</string>
     <string name="jandi_success_update_account_profile">"アカウント情報が更新されました"</string>
     <string name="jandi_select_direct_messages">"送信相手を選択"</string>
     <string name="primary_email_info_msg">"あなたのJANDIのアカウントに登録されたプライマリメールアドレスにメールが送られます。メールアドレスは先に認証される必要があります。"</string>
+    <string name="jandi_has_joined">"%sさんが参加しました"</string>
+    <string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
+    <string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
+    <string name="jandi_left_topic">"%sが退出しました"</string>
 </resources>

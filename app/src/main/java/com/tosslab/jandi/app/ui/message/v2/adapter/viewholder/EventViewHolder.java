@@ -50,32 +50,14 @@ public class EventViewHolder implements BodyViewHolder {
                     ResMessages.PublicCreateInfo publicCreateInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
                     FormattedEntity creatorEntity = entityManager.getEntityById(publicCreateInfo.creatorId);
 
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(creatorEntity.getName()).append(" : 공개 토픽 개설\n");
-
-                    for (Integer member : publicCreateInfo.members) {
-                        creatorEntity = entityManager.getEntityById(publicCreateInfo.creatorId);
-                        buffer.append(creatorEntity.getName()).append(",");
-                    }
-
-                    buffer.append("참석");
-                    eventContentView.setText(buffer);
+                    eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
 
                 } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
                     ResMessages.PrivateCreateInfo privateCreateInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
 
                     FormattedEntity creatorEntity = entityManager.getEntityById(privateCreateInfo.creatorId);
 
-                    StringBuffer buffer = new StringBuffer();
-                    buffer.append(creatorEntity.getName()).append(" : 비공개 토픽 개설\n");
-
-                    for (Integer member : privateCreateInfo.members) {
-                        creatorEntity = entityManager.getEntityById(privateCreateInfo.creatorId);
-                        buffer.append(creatorEntity.getName()).append(",");
-                    }
-
-                    buffer.append("참석");
-                    eventContentView.setText(buffer);
+                    eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
 
                 }
 
@@ -83,28 +65,32 @@ public class EventViewHolder implements BodyViewHolder {
                 ResMessages.InviteEvent inviteEvent = (ResMessages.InviteEvent) eventInfo;
                 FormattedEntity invitorEntity = entityManager.getEntityById(inviteEvent.invitorId);
 
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(invitorEntity.getName()).append(" 님이 ");
+                String invitorName = invitorEntity.getName();
 
-                for (Integer inviteUser : inviteEvent.inviteUsers) {
-                    invitorEntity = entityManager.getEntityById(inviteUser);
-                    buffer.append(invitorEntity.getName()).append(",");
+                StringBuffer buffer = new StringBuffer();
+                FormattedEntity tempEntity;
+
+                int size = inviteEvent.inviteUsers.size();
+                for (int idx = 0; idx < size; idx++) {
+                    if (idx > 0) {
+                        buffer.append(", ");
+                    }
+                    tempEntity = entityManager.getEntityById(inviteEvent.inviteUsers.get(idx));
+                    buffer.append(tempEntity.getName());
                 }
-                buffer.append("을 초대하였습니다.");
-                eventContentView.setText(buffer);
+
+                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
 
             } else if (eventInfo instanceof ResMessages.JoinEvent) {
-                ResMessages.JoinEvent joinEvent = (ResMessages.JoinEvent) eventInfo;
 
                 String name = link.fromEntity.name;
-                eventContentView.setText(name + " 님이 참여하였습니다.");
+                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
 
 
             } else if (eventInfo instanceof ResMessages.LeaveEvent) {
-                ResMessages.LeaveEvent leaveEvent = (ResMessages.LeaveEvent) eventInfo;
 
                 String name = link.fromEntity.name;
-                eventContentView.setText(name + " 님이 떠났습니다.");
+                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
             }
 
         } catch (IOException e) {
