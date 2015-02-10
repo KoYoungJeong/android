@@ -241,7 +241,7 @@ JANDIへようこそ"</string>
     <string name="what_is_member_profile">"あなたのお名前、メールアドレスを入力してください。
 チームではこの名前、メールアドレスが表示されます。アカウント情報で登録した名前、メールアドレスと異なっても構いません"</string>
     <string name="what_is_team_domain">"チームドメインはログイン用URLに使われます。
-具体的には、abc.jandi.comの”abc"の部分を指し、2文字以上の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
+具体的には、abc.jandi.comの”abc"の部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
     <string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
     <string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
     <string name="jandi_signup_agree_all">"あなたの名前を入力してください。この名前は他のメンバーに公開されます。"</string>

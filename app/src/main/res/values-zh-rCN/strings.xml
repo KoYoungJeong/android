@@ -232,7 +232,7 @@
     <string name="what_is_member_profile">"请输入与这团队相关联的电子邮件地址及简介名字。
 请注意您的团队成员可以查看和使用这团队资料来提到、 搜寻或直接联系您。"</string>
     <string name="what_is_team_domain">"请选择您团队的网域（URL）以网页方式登入。
-您可以任意决定，只要它是三个字符以上并且只含有字母、 数字和连字符 (-)。"</string>
+您可以任意决定，只要它是<b>三个字符以上</b>并且只含有字母、 数字和连字符 (-)。"</string>
     <string name="jandi_duplicate_email">"这电子邮件已被注冊"</string>
     <string name="jandi_no_invite_email">"请提供您想邀请的团队成员的电子邮件地址"</string>
     <string name="jandi_signup_agree_all">"选择您的简介名称给其他团队成员看到"</string>

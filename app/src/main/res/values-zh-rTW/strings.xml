@@ -233,7 +233,7 @@
     <string name="what_is_member_profile">"請輸入與這團隊相關聯的電子郵件地址及簡介名字。
 請注意您的團隊成員可以查看和使用這資料來提到、 搜尋或直接聯係您。"</string>
     <string name="what_is_team_domain">"請選擇您團隊的網域（URL）以網頁方式登入。
-您可以任意決定，只要它是三個字符以上并且只含有字母、 數字和連字號 (-)。"</string>
+您可以任意決定，只要它是<b>三個字符以上</b>并且只含有字母、 數字和連字號 (-)。"</string>
     <string name="jandi_duplicate_email">"這電子郵件已被注冊"</string>
     <string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
     <string name="jandi_signup_agree_all">"選擇您的簡介名稱給其他團隊成員看到"</string>

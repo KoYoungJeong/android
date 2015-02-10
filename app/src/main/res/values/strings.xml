@@ -234,7 +234,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_team_select_create_a_team">"Create a Team"</string>
     <string name="team_info">"Team Information"</string>
     <string name="url">"URL"</string>
-    <string name="what_is_team_domain">"Choose your team's domain (URL) for signing in on the web. It's up to you as long as it is 3+ characters and includes only letters, numbers, and hyphens (-)."</string>
+    <string name="what_is_team_domain">"Choose your team's domain (URL) for signing in on the web. It's up to you as long as it is <b>3+ characters</b> and includes only letters, numbers, and hyphens (-)."</string>
     <string name="member_profile">"Profile"</string>
     <string name="what_is_member_profile">"Enter the email address and profile name you want associated with this team. Please note that your teammates may view and use this information to mention, search, or directly contact you."</string>
     <string name="team_create">@string/jandi_team_select_create_a_team</string>
