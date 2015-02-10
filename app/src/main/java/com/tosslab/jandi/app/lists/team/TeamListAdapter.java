@@ -93,7 +93,6 @@ public class TeamListAdapter extends BaseAdapter {
                 ignoreBtn = (Button) convertView.findViewById(R.id.btn_team_list_ignore);
                 acceptBtn.setTag(team);
                 ignoreBtn.setTag(team);
-                iconView.setImageResource(R.drawable.jandi_team_selector_icon);
                 nameView.setText(team.getName());
                 ignoreBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
