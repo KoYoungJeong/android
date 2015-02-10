@@ -112,6 +112,7 @@ public class FileUploadDialogFragment extends DialogFragment {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 EventBus.getDefault().post(
                                         new ConfirmFileUploadEvent(
+                                                editTextInputName.getText().toString(),
                                                 selectedEntityIdToBeShared,
                                                 realFilePath,
                                                 editTextFileComment.getText().toString()));

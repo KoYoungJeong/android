@@ -72,7 +72,7 @@ public class ImageViewHolder implements BodyViewHolder {
                         .crossFade()
                         .into(fileImageView);
 
-                fileNameTextView.setText(fileMessage.content.name);
+                fileNameTextView.setText(fileMessage.content.title);
                 fileTypeTextView.setText(fileMessage.content.ext);
             }
 

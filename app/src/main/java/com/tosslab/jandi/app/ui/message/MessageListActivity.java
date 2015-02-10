@@ -825,6 +825,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 // Gallery
                 intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
                 startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:

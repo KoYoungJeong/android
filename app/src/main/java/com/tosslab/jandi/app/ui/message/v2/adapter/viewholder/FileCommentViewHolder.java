@@ -69,7 +69,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileImageView.setVisibility(View.VISIBLE);
             } else {
                 fileOwnerTextView.setText(feedbackFileMessage.writer.name);
-                fileNameTextView.setText(feedbackFileMessage.content.name);
+                fileNameTextView.setText(feedbackFileMessage.content.title);
 
                 fileOwnerTextView.setVisibility(View.VISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.VISIBLE);

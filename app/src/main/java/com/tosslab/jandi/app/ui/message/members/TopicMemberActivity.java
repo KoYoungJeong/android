@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.message.members;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -42,6 +44,17 @@ public class TopicMemberActivity extends Activity {
     @AfterViews
     void initViews() {
         getTopicMembers();
+
+        setupActionbar();
+    }
+
+    private void setupActionbar() {
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
     }
 
     @Background

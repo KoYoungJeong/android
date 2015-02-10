@@ -174,6 +174,7 @@ public class MessageListPresenter {
     public void openAlbumForActivityResult(Fragment fragment) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
     }
 

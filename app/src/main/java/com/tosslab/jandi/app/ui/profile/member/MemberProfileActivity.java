@@ -308,6 +308,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
 
         startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
 

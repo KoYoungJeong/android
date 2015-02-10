@@ -129,6 +129,10 @@ public class MessageListFragment extends Fragment {
                             getNewMessageList(messageState.getLastUpdateLinkId());
                             break;
                     }
+                }, throwable -> {
+
+                }, () -> {
+
                 });
 
     }

@@ -12,7 +12,14 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 9..
@@ -33,72 +40,82 @@ public class EventViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link) {
 
-        Map<String, Object> info = link.info;
+        eventContentView.setText(" ");
+        eventDateView.setText(" ");
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        Observable.from(Arrays.asList(link.info))
+                .subscribeOn(Schedulers.io())
+                .map(stringObjectMap -> {
+                    Map<String, Object> info = link.info;
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    try {
 
-        EntityManager entityManager = EntityManager.getInstance(eventContentView.getContext());
+                        String s = objectMapper.writeValueAsString(info);
+                        return objectMapper.readValue(s, ResMessages.EventInfo.class);
 
-        try {
-            String s = objectMapper.writeValueAsString(info);
-            ResMessages.EventInfo eventInfo = objectMapper.readValue(s, ResMessages.EventInfo.class);
-
-            if (eventInfo instanceof ResMessages.CreateEvent) {
-                ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) eventInfo;
-
-                if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
-                    ResMessages.PublicCreateInfo publicCreateInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
-                    FormattedEntity creatorEntity = entityManager.getEntityById(publicCreateInfo.creatorId);
-
-                    eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
-
-                } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
-                    ResMessages.PrivateCreateInfo privateCreateInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
-
-                    FormattedEntity creatorEntity = entityManager.getEntityById(privateCreateInfo.creatorId);
-
-                    eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
-
-                }
-
-            } else if (eventInfo instanceof ResMessages.InviteEvent) {
-                ResMessages.InviteEvent inviteEvent = (ResMessages.InviteEvent) eventInfo;
-                FormattedEntity invitorEntity = entityManager.getEntityById(inviteEvent.invitorId);
-
-                String invitorName = invitorEntity.getName();
-
-                StringBuffer buffer = new StringBuffer();
-                FormattedEntity tempEntity;
-
-                int size = inviteEvent.inviteUsers.size();
-                for (int idx = 0; idx < size; idx++) {
-                    if (idx > 0) {
-                        buffer.append(", ");
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                    tempEntity = entityManager.getEntityById(inviteEvent.inviteUsers.get(idx));
-                    buffer.append(tempEntity.getName());
-                }
+                    return null;
+                })
+                .filter(eventInfo -> eventInfo != null)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(eventInfo -> {
 
-                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
+                    EntityManager entityManager = EntityManager.getInstance(eventContentView.getContext());
+                    if (eventInfo instanceof ResMessages.CreateEvent) {
+                        ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) eventInfo;
 
-            } else if (eventInfo instanceof ResMessages.JoinEvent) {
+                        if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
+                            ResMessages.PublicCreateInfo publicCreateInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
+                            FormattedEntity creatorEntity = entityManager.getEntityById(publicCreateInfo.creatorId);
 
-                String name = link.fromEntity.name;
-                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
+                            eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
+
+                        } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
+                            ResMessages.PrivateCreateInfo privateCreateInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
+
+                            FormattedEntity creatorEntity = entityManager.getEntityById(privateCreateInfo.creatorId);
+
+                            eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
+
+                        }
+
+                    } else if (eventInfo instanceof ResMessages.InviteEvent) {
+                        ResMessages.InviteEvent inviteEvent = (ResMessages.InviteEvent) eventInfo;
+                        FormattedEntity invitorEntity = entityManager.getEntityById(inviteEvent.invitorId);
+
+                        String invitorName = invitorEntity.getName();
+
+                        StringBuffer buffer = new StringBuffer();
+                        FormattedEntity tempEntity;
+
+                        int size = inviteEvent.inviteUsers.size();
+                        for (int idx = 0; idx < size; idx++) {
+                            if (idx > 0) {
+                                buffer.append(", ");
+                            }
+                            tempEntity = entityManager.getEntityById(inviteEvent.inviteUsers.get(idx));
+                            buffer.append(tempEntity.getName());
+                        }
+
+                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
+
+                    } else if (eventInfo instanceof ResMessages.JoinEvent) {
+
+                        String name = link.fromEntity.name;
+                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
 
 
-            } else if (eventInfo instanceof ResMessages.LeaveEvent) {
+                    } else if (eventInfo instanceof ResMessages.LeaveEvent) {
 
-                String name = link.fromEntity.name;
-                eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
-            }
+                        String name = link.fromEntity.name;
+                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
+                    }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                    eventDateView.setText(DateTransformator.getTimeStringForSimple(link.time));
+                });
 
-
-        eventDateView.setText(DateTransformator.getTimeStringForSimple(link.time));
     }
 
     @Override

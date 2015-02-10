@@ -62,7 +62,7 @@ public class FileViewHolder implements BodyViewHolder {
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileTypeTextView.setText("");
             } else {
-                fileNameTextView.setText(fileMessage.content.name);
+                fileNameTextView.setText(fileMessage.content.title);
                 fileTypeTextView.setText(fileMessage.content.ext);
 
                 if (fileMessage.content.type.startsWith("audio")) {
