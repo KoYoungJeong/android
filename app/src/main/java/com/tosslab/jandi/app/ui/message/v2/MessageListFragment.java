@@ -304,6 +304,7 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.clearMessages();
 
                 messageListPresenter.addAll(0, oldMessage.messages);
+                messageListPresenter.moveLastPage();
 
                 FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
                 List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());

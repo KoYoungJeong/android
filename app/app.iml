@@ -108,7 +108,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="library" exported="" scope="TEST" name="classworlds-1.1-alpha-2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="plexus-utils-1.5.15" level="project" />
     <orderEntry type="library" exported="" name="Parse-1.7.1" level="project" />
@@ -180,6 +179,7 @@
     <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.11" level="project" />
     <orderEntry type="library" exported="" name="android-gif-drawable-1.1.2" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="xercesMinimal-1.9.6.2" level="project" />
+    <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
   </component>
 </module>
 
