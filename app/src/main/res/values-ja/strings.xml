@@ -71,7 +71,7 @@ JANDIへようこそ"</string>
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"参加中のトピック"</string>
     <string name="jandi_entity_unjoined_topic">"未参加のトピック"</string>
-    <string name="jandi_entity_create_entity_name">"名称"</string>
+    <string name="jandi_entity_create_entity_name">"名前"</string>
     <string name="jandi_message_create_entity">"%1$s が作成されました"</string>
     <string name="jandi_message_invite_entity">"%1$d メンバーが追加されました"</string>
     <string name="jandi_create_channel">"新規トピックを作成する"</string>
