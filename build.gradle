@@ -3,6 +3,8 @@
 buildscript {
     repositories {
         mavenCentral()
+        // aarLinkSource
+        maven { url 'https://raw.github.com/xujiaao/mvn-repository/master/releases' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.0.0'
@@ -12,6 +14,9 @@ buildscript {
         classpath 'org.robolectric:robolectric-gradle-plugin:0.14.+'
         // RetroLambda
         classpath 'me.tatarka:gradle-retrolambda:2.5.0'
+
+        // aarLinkSource
+        classpath 'com.github.xujiaao:aarLinkSources:1.0.0'
     }
 }
 

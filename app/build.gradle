@@ -3,6 +3,7 @@ apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
 apply plugin: 'robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
+apply plugin: 'aar-link-sources'
 apply from: 'test.gradle'       // Android-Test Env Setting
 
 configurations {
@@ -43,6 +44,7 @@ checkstyle {
 
 dependencies {
     apt 'org.androidannotations:androidannotations:3.2'
+
     // Google
     compile 'com.google.android.gms:play-services-base:6.5.+'
     compile 'com.android.support:support-v4:19.1.0'
@@ -52,8 +54,11 @@ dependencies {
     // UI
     compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
     compile 'com.github.chrisbanes.photoview:library:1.2.+@aar'
+    aarLinkSources 'com.github.chrisbanes.photoview:library:1.2.+:sources@jar'
     compile 'se.emilsjolander:stickylistheaders:2.5.2@aar'
+    aarLinkSources 'se.emilsjolander:stickylistheaders:2.5.2:sources@jar'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+@aar'
+    aarLinkSources 'pl.droidsonroids.gif:android-gif-drawable:1.1.+:sources@jar'
 
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
