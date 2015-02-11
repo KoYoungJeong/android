@@ -19,11 +19,13 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
@@ -281,4 +283,13 @@ public class FileListPresenter {
         return headerView;
     }
 
+    @UiThread
+    public void showWarningToast(String message) {
+        ColoredToast.showWarning(context, message);
+    }
+
+    @UiThread
+    public void showErrorToast(String failMessage) {
+        ColoredToast.showError(context, failMessage);
+    }
 }

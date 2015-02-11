@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.apache.log4j.Logger;
@@ -92,9 +93,13 @@ public class EntityManager {
     public void refreshEntity(Context context) {
 
         logger.debug("Refresh Entity~!");
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-        ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
-        init(resLeftSideMenu);
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+
+        if (selectedTeamInfo != null) {
+            int teamId = selectedTeamInfo.getTeamId();
+            ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+            init(resLeftSideMenu);
+        }
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {

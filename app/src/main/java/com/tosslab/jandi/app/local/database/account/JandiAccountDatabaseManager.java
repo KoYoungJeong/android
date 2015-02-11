@@ -103,6 +103,10 @@ public class JandiAccountDatabaseManager {
 
     public long upsertAccountInfo(ResAccountInfo resAccountInfo) {
 
+        if (resAccountInfo == null) {
+            return 0;
+        }
+
         // 기존 데이터 삭제
         SQLiteDatabase database = getWriteableDatabase();
         database.delete(Table.account.name(), null, null);
@@ -140,6 +144,10 @@ public class JandiAccountDatabaseManager {
     }
 
     public int upsertAccountDevices(List<ResAccountInfo.UserDevice> devices) {
+
+        if (devices == null) {
+            return 0;
+        }
 
         SQLiteDatabase database = getWriteableDatabase();
         database.delete(Table.account_device.name(), null, null);
@@ -208,11 +216,14 @@ public class JandiAccountDatabaseManager {
 
     public int upsertAccountEmail(List<ResAccountInfo.UserEmail> userEmails) {
 
+        if (userEmails == null) {
+            return 0;
+        }
+
         SQLiteDatabase database = getWriteableDatabase();
         database.delete(Table.account_email.name(), null, null);
 
         List<ContentValues> contentValueses = new ArrayList<ContentValues>();
-
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             ContentValues contentValues = new ContentValues();
@@ -278,6 +289,10 @@ public class JandiAccountDatabaseManager {
     }
 
     public int upsertAccountTeams(List<ResAccountInfo.UserTeam> userTeams) {
+
+        if (userTeams == null) {
+            return 0;
+        }
 
         SQLiteDatabase database = getWriteableDatabase();
 

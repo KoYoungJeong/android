@@ -359,7 +359,6 @@ public class FileDetailPresenter {
 
     @UiThread
     public void showUserInfoDialog(FormattedEntity user) {
-        EntityManager entityManager = EntityManager.getInstance(activity);
         FragmentManager fragmentManager = activity.getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         Fragment prev = fragmentManager.findFragmentByTag("dialog");

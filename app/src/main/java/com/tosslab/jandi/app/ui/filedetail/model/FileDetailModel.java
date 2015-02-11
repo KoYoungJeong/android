@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -72,7 +73,13 @@ public class FileDetailModel {
     }
 
     public boolean isMyComment(int writerId) {
-        return EntityManager.getInstance(context).getMe().getId() == writerId;
+        EntityManager entityManager = EntityManager.getInstance(context);
+
+        if (entityManager == null) {
+            return false;
+        }
+        FormattedEntity me = entityManager.getMe();
+        return me != null && me.getId() == writerId;
     }
 
     public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {

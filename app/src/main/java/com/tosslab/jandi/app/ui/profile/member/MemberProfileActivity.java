@@ -33,6 +33,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -202,7 +203,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     public void onEvent(MemberEmailChangeEvent event) {
         memberProfilePresenter.updateEmailTextColor(event.getEmail());
         attemptToUpdateEmail = true;
-        invalidateOptionsMenu();
+        upateOptionMenu();
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
@@ -212,7 +213,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         } else {
             attemptToUpdateData = true;
         }
-        invalidateOptionsMenu();
+        upateOptionMenu();
     }
 
     public void onEvent(ErrorDialogFragmentEvent event) {
@@ -289,6 +290,11 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         memberProfilePresenter.dismissProgressWheel();
 
 
+        upateOptionMenu();
+    }
+
+    @UiThread
+    void upateOptionMenu() {
         invalidateOptionsMenu();
     }
 
@@ -334,7 +340,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         }
 
         attemptToUpdatePhoto = true;
-        invalidateOptionsMenu();
+        upateOptionMenu();
 
 
     }

@@ -7,6 +7,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -441,36 +442,38 @@ public class MessageListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        logger.debug("onActivityResult : " + requestCode + " / " + resultCode + " / " + data);
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
+        if (resultCode != Activity.RESULT_OK || intent == null) {
+            return;
+        }
 
         String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
-                if (resultCode == Activity.RESULT_OK) {
+                Uri data = intent.getData();
 
-                    realFilePath = ImageFilePath.getPath(getActivity(), data.getData());
-                    if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+                if (data == null) {
+                    return;
+                }
 
-                        String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                        String downloadName = GoogleImagePickerUtil.getWebImageName();
-                        ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-                        downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-                    } else {
-                        showFileUploadDialog(realFilePath);
-                    }
+                realFilePath = ImageFilePath.getPath(getActivity(), data);
+                if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+
+                    String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                    String downloadName = GoogleImagePickerUtil.getWebImageName();
+                    ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
+                    downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
+                } else {
+                    showFileUploadDialog(realFilePath);
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
-                if (resultCode == Activity.RESULT_OK) {
-                    realFilePath = data.getStringExtra("GetPath") + File.separator + data.getStringExtra("GetFileName");
-                    showFileUploadDialog(realFilePath);
-                }
+                realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
+                showFileUploadDialog(realFilePath);
                 break;
             default:
                 break;

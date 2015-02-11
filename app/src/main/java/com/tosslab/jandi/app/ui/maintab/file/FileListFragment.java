@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,6 +43,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -116,6 +117,47 @@ public class FileListFragment extends Fragment {
 
     public void onEvent(RefreshOldFileEvent event) {
         new GetPreviousFilesTask().execute();
+
+        getPreviousFile();
+    }
+
+    @Background
+    void getPreviousFile() {
+
+        int justGetFilesSize;
+
+        try {
+            ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
+            reqSearchFile.teamId = selectedTeamId;
+            ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+
+            justGetFilesSize = resSearchFile.fileCount;
+            if (justGetFilesSize > 0) {
+
+                mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
+                insertFiles(fileListModel.descSortByCreateTime(resSearchFile.files));
+            }
+
+            if (justGetFilesSize < ReqSearchFile.MAX) {
+
+                fileListPresenter.showWarningToast(getString(R.string.warn_no_more_files));
+                mAdapter.setNoMoreLoad();
+            } else {
+                mAdapter.setReadyMore();
+            }
+
+        } catch (JandiNetworkException e) {
+            log.error("fail to get searched files.", e);
+            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+        }
+
+    }
+
+    @UiThread
+    void insertFiles(List<ResMessages.OriginalMessage> files) {
+
+        mAdapter.insert(files);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -255,7 +297,8 @@ public class FileListFragment extends Fragment {
         }
     }
 
-    private void updateAdapter(ResSearchFile resSearchFile) {
+    @UiThread
+    void updateAdapter(ResSearchFile resSearchFile) {
         if (resSearchFile.fileCount > 0) {
             mAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
             mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
@@ -342,7 +385,6 @@ public class FileListFragment extends Fragment {
             } else {
                 ColoredToast.showError(mContext, errMessage);
             }
-            super.onPostExecute(errMessage);
         }
     }
 
