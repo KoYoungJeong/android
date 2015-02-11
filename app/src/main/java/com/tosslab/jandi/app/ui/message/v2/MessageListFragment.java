@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.views.listeners.SimpleListViewScrollListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -173,6 +175,17 @@ public class MessageListFragment extends Fragment {
             }
         });
 
+        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new SimpleListViewScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
+                    messageListPresenter.setPreviewVisibleGone();
+                }
+
+            }
+        });
+
         messageListModel.setEntityInfo(entityType, entityId);
 
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
@@ -199,8 +212,7 @@ public class MessageListFragment extends Fragment {
         final ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
         actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
     }
@@ -354,6 +366,10 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 updateMarker();
+
+                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
+                if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId))
+                    messageListPresenter.showPreviewIfNotLastItem();
             }
 
 
@@ -364,6 +380,11 @@ public class MessageListFragment extends Fragment {
                 messageListModel.startRefreshTimer();
             }
         }
+    }
+
+    @Click(R.id.layout_messages_preview_last_item)
+    void onPreviewClick() {
+        messageListPresenter.moveLastPage();
     }
 
     @Click(R.id.btn_upload_file)

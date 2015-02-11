@@ -6,13 +6,18 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -24,6 +29,7 @@ import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -60,6 +66,18 @@ public class MessageListPresenter {
 
     @SystemService
     ClipboardManager clipboardManager;
+
+    @ViewById(R.id.layout_messages_preview_last_item)
+    View previewLayout;
+
+    @ViewById(R.id.img_message_preview_user_profile)
+    ImageView previewProfileView;
+
+    @ViewById(R.id.txt_message_preview_user_name)
+    TextView previewNameView;
+
+    @ViewById(R.id.txt_message_preview_content)
+    TextView previewContent;
 
     private MessageListAdapter messageListAdapter;
 
@@ -332,4 +350,40 @@ public class MessageListPresenter {
         messageListAdapter.notifyDataSetChanged();
     }
 
+    private boolean isVisibleLastItem() {
+        return messageListView.getLastVisiblePosition() == messageListAdapter.getCount() - 1;
+    }
+
+    @UiThread
+    public void showPreviewIfNotLastItem() {
+
+        if (isVisibleLastItem()) {
+            return;
+        }
+
+        ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getCount() - 1);
+
+        previewNameView.setText(item.message.writer.name);
+        String url = item.message.writer.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl)) ? item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl : item.message.writer.u_photoUrl;
+        Glide.with(activity)
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url)
+                .transform(new GlideCircleTransform(activity))
+                .into(previewProfileView);
+
+        if (item.message instanceof ResMessages.FileMessage) {
+            previewContent.setText("(File)");
+        } else if (item.message instanceof ResMessages.CommentMessage) {
+            previewContent.setText(((ResMessages.CommentMessage) item.message).content.body);
+        } else if (item.message instanceof ResMessages.TextMessage) {
+            previewContent.setText(((ResMessages.TextMessage) item.message).content.body);
+        }
+
+        previewLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void setPreviewVisibleGone() {
+        if (previewLayout != null) {
+            previewLayout.setVisibility(View.GONE);
+        }
+    }
 }

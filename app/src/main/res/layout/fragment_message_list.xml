@@ -17,6 +17,52 @@
         android:smoothScrollbar="true"
         android:transcriptMode="normal" />
 
+    <RelativeLayout
+        android:id="@+id/layout_messages_preview_last_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/space_messages_divider"
+        android:background="@color/jandi_tab_indicator"
+        android:paddingLeft="@dimen/jandi_messages_padding_left"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="5dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/img_message_preview_user_profile"
+            android:layout_width="@dimen/jandi_messages_profile_size"
+            android:layout_height="@dimen/jandi_messages_profile_size"
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+            android:background="@drawable/jandi_profile" />
+        <!-- 기본 표시 레이어 -->
+
+        <TextView
+            android:id="@+id/txt_message_preview_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/jandi_messages_date_margin_left"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/img_message_preview_user_profile"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:singleLine="true"
+            android:text="User name"
+            android:textColor="@color/white"
+            android:textSize="@dimen/jandi_messages_user_name"
+            android:textStyle="bold" />
+        <!-- 실제 메시지 내용 -->
+        <TextView
+            android:id="@+id/txt_message_preview_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_message_preview_user_name"
+            android:layout_toRightOf="@+id/img_message_preview_user_profile"
+            android:singleLine="true"
+            android:text="Text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/jandi_messages_content" />
+    </RelativeLayout>
+
 
     <!-- Message Input Layout -->
     <View
