@@ -370,7 +370,7 @@ public class MessageListPresenter {
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
 
         if (item.message instanceof ResMessages.FileMessage) {
-            previewContent.setText("(File)");
+            previewContent.setText(((ResMessages.FileMessage) item.message).content.title);
         } else if (item.message instanceof ResMessages.CommentMessage) {
             previewContent.setText(((ResMessages.CommentMessage) item.message).content.body);
         } else if (item.message instanceof ResMessages.TextMessage) {
