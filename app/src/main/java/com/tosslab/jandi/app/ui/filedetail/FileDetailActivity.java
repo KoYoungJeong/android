@@ -53,7 +53,6 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -111,6 +110,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @ItemLongClick(R.id.list_file_detail_comments)
     void onCommentLongClick(ResMessages.CommentMessage item) {
+        if (item == null) {
+            return;
+        }
         boolean isMine = fileDetailModel.isMyComment(item.writerId);
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(item, isMine);
         newFragment.show(getFragmentManager(), "dioalog");

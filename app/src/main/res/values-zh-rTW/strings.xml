@@ -192,7 +192,7 @@
     <string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
     <string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
     <string name="jandi_forgot_password"><b><u>忘記您的密碼了？</u></b></string>
-    <string name="jandi_message_ask_about_deleting">"您確定您要刪除它？"</string>
+    <string name="jandi_message_ask_about_deleting">"您確定要刪除這檔案？ 請注意留言的部分不會被刪除。"</string>
     <string name="jandi_profile_phone_number_hint">"電話號碼"</string>
     <string name="jandi_profile_division_hint">"部門"</string>
     <string name="jandi_messages_pull">"下拉以載入較舊的訊息"</string>
@@ -290,4 +290,5 @@
     <string name="jandi_created_this_topic">"%s建立了這議題群組"</string>
     <string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
     <string name="jandi_left_topic">"%s已經離開"</string>
+    <string name="jandi_tos_and_pp">"使用條款 &amp; 隱私權條款"</string>
 </resources>
