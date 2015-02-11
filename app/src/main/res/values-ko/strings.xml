@@ -28,7 +28,7 @@
     <string name="jandi_question_team_create">"아직 잔디 사용자가 아니세요?"</string>
 
     <!-- Login -->
-    <string name="jandi_action_start">"시작하기"</string>
+    <string name="jandi_action_start">"가입하기"</string>
     <string name="jandi_action_login">"로그인"</string>
     <string name="jandi_select_team">"팀을 선택하세요"</string>
     <string name="jandi_user_id">"이메일 주소"</string>
@@ -49,7 +49,7 @@
     <string name="err_push_invalid_device">"Push 서비스를 사용할 수 없는 단말입니다"</string>
     <string name="jandi_tab_topic">"토픽"</string>
     <string name="jandi_tab_chat">"채팅"</string>
-    <string name="jandi_tab_private_group">"비공개 그룹"</string>
+    <string name="jandi_tab_private_group">"비공개 토픽"</string>
     <string name="jandi_tab_direct_message">"1:1"</string>
     <string name="jandi_tab_file">"파일"</string>
     <string name="jandi_tab_more">"더보기"</string>
@@ -65,17 +65,17 @@
 완전히 새로운 업무용 메신저입니다."</string>
 <string name="jandi_tutorial_topic">"토픽을 통한 좀 더 유연하고
 개방적인 커뮤니케이션"</string>
-<string name="jandi_tutorial_topic_message">"토픽이란 프로젝트나 주제에 따라
-자유롭게 생성 가능하며 누구나 참여할 수 있는
+<string name="jandi_tutorial_topic_message">"토픽이란 파일 공유가 가능한
+단체대화방이라고 할 수 있는
 새로운 개념의 업무 공간입니다.
 토픽을 이용해 업무의 개방성과 유연성을
-높이면서도 기존 메신저처럼 비공개 그룹 또는
+높이면서도 기존 메신저처럼 비공개 토픽 또는
 1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
 <string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을
 메신저에서 한 번에"</string>
 <string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 파워포인트, 엑셀, PDF 등
 다양한 포맷의 업무 파일을 직접 업로드하여
-채널이나 개인과 공유할 수 있습니다.
+토픽이나 개인과 공유할 수 있습니다.
 또한 업로드한 파일들은 계속 보관되며
 강력한 검색 기능 또한 지원하기 때문에
 굳이 클라우드 서비스를 사용할 필요가 없습니다."</string>
@@ -83,13 +83,13 @@
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"참여한 토픽"</string>
     <string name="jandi_entity_unjoined_topic">"참여하지 않은 토픽"</string>
-    <string name="jandi_entity_create_entity_name">"생성할 이름"</string>
+    <string name="jandi_entity_create_entity_name">"사용자 이름"</string>
     <string name="jandi_message_create_entity">"%1$s을 생성하였습니다"</string>
     <string name="jandi_message_invite_entity">"%1$d 명의 사용자를 초대했습니다"</string>
     <string name="jandi_create_channel">"토픽 생성"</string>
-    <string name="jandi_create_privategroup">"비공개 그룹 생성"</string>
-    <string name="jandi_modify_channel">"토픽 수정"</string>
-    <string name="jandi_modify_private_group">"비공개 그룹 수정"</string>
+    <string name="jandi_create_privategroup">"비공개 토픽 생성"</string>
+    <string name="jandi_modify_channel">"토픽 이름 수정"</string>
+    <string name="jandi_modify_private_group">"비공개 토픽 이름 수정"</string>
     <string name="warn_all_users_are_already_invited">"이미 모든 사용자가 가입되어 있습니다"</string>
     <string name="err_entity_create">"생성에 실패하였습니다"</string>
     <string name="err_entity_join">"해당 토픽 참여에 실패하였습니다"</string>
@@ -113,9 +113,9 @@
     <string name="jandi_profile_update">"완료"</string>
     <string name="err_profile_get_info">"프로필을 불러오지 못했습니다. 다시 시도해주세요"</string>
     <string name="err_profile_empty_info">"내용을 입력해주세요"</string>
-    <string name="err_profile_unmodified">"수정된 내역이 없습니다"</string>
+    <string name="err_profile_unmodified">"수정 사항이 없습니다"</string>
     <string name="jandi_profile_update_succeed">"프로필이 수정되었습니다"</string>
-    <string name="err_profile_update">"프로필이 수정이 실패하였습니다"</string>
+    <string name="err_profile_update">"프로필 수정에 실패하였습니다"</string>
     <string name="jandi_profile_photo_upload_succeed">"사진이 수정되었습니다"</string>
     <string name="err_profile_photo_upload">"사진 업로드가 실패하였습니다"</string>
 
@@ -123,24 +123,24 @@
     <string name="jandi_team_info">"팀 정보"</string>
     <string name="jandi_invitation">"팀으로 초대"</string>
     <string name="jandi_invitation_help">"또 다른 팀원을 초대할 수 있습니다."</string>
-    <string name="jandi_invitation_succeed">"팀원으로 초대하였습니다."</string>
-    <string name="err_invitation_failed">"팀원 초대에 실패하였습니다."</string>
+    <string name="jandi_invitation_succeed">"팀원으로 초대했습니다."</string>
+    <string name="err_invitation_failed">"팀원 초대에 실패했습니다."</string>
 
     <!-- Message List -->
     <string name="jandi_message_hint">"메시지"</string>
     <string name="jandi_message_send">"전송"</string>
-    <string name="jandi_messages_modify_succeed">"수정 성공"</string>
+    <string name="jandi_messages_modify_succeed">"수정을 성공하였습니다"</string>
     <string name="jandi_file_uploading">"업로드..."</string>
-    <string name="jandi_file_upload_succeed">"파일 업로드 성공"</string>
+    <string name="jandi_file_upload_succeed">"파일이 업로드 되었습니다"</string>
     <string name="warn_messages_empty">"등록된 메시지가 없습니다"</string>
     <string name="warn_no_more_messages">"더 이상 메시지가 없습니다"</string>
     <string name="warn_no_permission">"권한이 없습니다"</string>
-    <string name="err_messages_invaild_entity">"유효하지 않은 방입니다"</string>
+    <string name="err_messages_invaild_entity">"유효하지 않은 대화방입니다"</string>
     <string name="err_messages_get">"메시지를 불러오지 못했습니다. 다시 시도해 주세요"</string>
-    <string name="err_messages_send">"메시지 전송에 실패했습니다"</string>
-    <string name="err_messages_modify">"메시지 수정에 실패했습니다"</string>
-    <string name="err_messages_delete">"메시지 삭제에 실패했습니다"</string>
-    <string name="err_file_upload_failed">"파일 업로드에 실패했습니다"</string>
+    <string name="err_messages_send">"메시지를 전송하지 못했습니다. 다시 시도해 주세요"</string>
+    <string name="err_messages_modify">"메시지를 수정하지 못했습니다. 다시 시도해 주세요"</string>
+    <string name="err_messages_delete">"메시지를 삭제하지 못했습니다. 다시 시도해 주세요"</string>
+    <string name="err_file_upload_failed">"파일을 업로드하지 못했습니다. 다시 시도해 주세요"</string>
 
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"이름 수정"</string>
@@ -160,10 +160,10 @@
     <string name="jandi_unshare_succeed">"공유가 해제되었습니다"</string>
     <string name="jandi_delete_succeed">"파일이 삭제되었습니다"</string>
     <string name="err_file_detail">"파일 정보를 불러오지 못했습니다. 다시 시도해 주세요"</string>
-    <string name="err_download">"파일 다운로드에 실패했습니다"</string>
-    <string name="err_share">"공유에 실패했습니다"</string>
-    <string name="err_unshare">"공유 해제에 실패했습니다"</string>
-    <string name="err_delete_file">"파일 삭제에 실패했습니다"</string>
+    <string name="err_download">"파일 다운로드에 실패했습니다. 다시 시도해 주세요"</string>
+    <string name="err_share">"공유에 실패했습니다. 다시 시도해 주세요"</string>
+    <string name="err_unshare">"공유 해제에 실패했습니다. 다시 시도해 주세요"</string>
+    <string name="err_delete_file">"파일 삭제에 실패했습니다. 다시 시도해 주세요"</string>
 
     <!-- File Upload -->
     <string name="title_file_upload">"파일 업로드"</string>
@@ -176,8 +176,8 @@
     <string name="comment">"댓글"</string>
 
     <!-- Share & invite -->
-    <string name="jandi_title_cdp_to_be_shared">"공유할 곳을 선택하세요"</string>
-    <string name="jandi_title_cdp_to_be_unshared">"공유를 해제할 곳을 선택하세요"</string>
+    <string name="jandi_title_cdp_to_be_shared">"공유할 대화방을 선택하세요"</string>
+    <string name="jandi_title_cdp_to_be_unshared">"공유를 해제할 대화방을 선택하세요"</string>
     <string name="title_cdp_invite">"초대할 사용자를 선택하세요"</string>
 
     <!-- Search -->
@@ -187,7 +187,7 @@
     <string name="jandi_file_category_image">"Images"</string>
     <string name="jandi_file_category_pdf">"PDFs"</string>
     <string name="jandi_file_category_everyone">"모든 팀원"</string>
-    <string name="jandi_file_category_everywhere">"모든 장소"</string>
+    <string name="jandi_file_category_everywhere">"모든 대화방"</string>
     <string name="jandi_file_search_type">"어떤 타입의 파일을 검색할까요?"</string>
     <string name="jandi_file_search_user">"누가 올린 파일을 검색할까요?"</string>
     <string name="jandi_file_search_entity">"어디에 공유된 파일을 검색할까요?"</string>
@@ -199,10 +199,10 @@
     <string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>
     <string name="jandi_setting_general">"일반"</string>
     <string name="jandi_setting_sign_out">"로그아웃"</string>
-    <string name="jandi_message_logout">"로그아웃 되셨습니다"</string>
+    <string name="jandi_message_logout">"로그아웃 되었습니다"</string>
     <string name="jandi_empty">" "</string>
     <string name="jandi_message_starred">"즐겨찾기에 등록되었습니다"</string>
-    <string name="jandi_message_no_starred">"즐겨찾기에서 해제되었습니다."</string>
+    <string name="jandi_message_no_starred">"즐겨찾기가 해제되었습니다"</string>
     <string name="jandi_action_menu_message_copy">"복사"</string>
     <string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
     <string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
@@ -218,14 +218,14 @@
     <string name="jandi_file_list_refresh">"완료"</string>
     <string name="jandi_file_list_release">"놓아서 이전 파일"</string>
     <string name="jandi_have_an_account_already">"이미 계정이 있으신가요?"</string>
-    <string name="jandi_profile_position_hint">"직책명"</string>
+    <string name="jandi_profile_position_hint">"직책"</string>
     <string name="err_profile_exceed_length_of_topic_name">"토픽의 이름은 60자를 넘을 수 없습니다"</string>
     <string name="err_profile_exceed_length_of_status_message">"상태 메시지는 60자를 넘을 수 없습니다"</string>
     <string name="err_profile_exceed_length_of_phone">"전화번호는 20자를 넘을 수 없습니다"</string>
     <string name="err_profile_exceed_length_of_division">"부서명은 60자를 넘을 수 없습니다"</string>
     <string name="err_profile_exceed_length_of_position">"직책명은 60자를 넘을 수 없습니다"</string>
     <string name="what_is_team_domain">"팀 도메인은 팀에 쉽게 접속하실 수 있도록 잔디가 발급해드리는 고유 웹 주소입니다.
-팀 이름과는 달라도 되지만 기억하기 쉬운 이름이 좋습니다. 영어 알파벳 3자 이상으로 숫자 또는 빼기(-) 표시와 함께 구성하시면 됩니다."</string>
+팀 이름과는 달라도 되지만 기억하기 쉬운 이름이 좋습니다. <b>영어 알파벳 3자 이상</b>으로 숫자 또는 빼기(-) 표시와 함께 구성하시면 됩니다."</string>
     <string name="exclamation_mark">"!"</string>
     <string name="fail_to_create_team">"팀생성에 실패하였습니다"</string>
     <string name="jandi_account">"계정"</string>
@@ -303,7 +303,7 @@
     <string name="jandi_select_direct_messages">"대화 시작하기"</string>
     <string name="primary_email_info_msg">"기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아보실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다."</string>
     <string name="jandi_has_joined">"%s님이 참여하였습니다"</string>
-    <string name="jandi_created_this_topic">"%s님이 채널을 생성하였습니다"</string>
+    <string name="jandi_created_this_topic">"%s님이 토픽을 생성하였습니다"</string>
     <string name="jandi_invited_topic">"%1$s님이 %2$s님을 초대했습니다."</string>
     <string name="jandi_left_topic">"%s님이 떠났습니다"</string>
 </resources>

@@ -63,7 +63,7 @@ Welcome to JANDI"</string>
     <string name="err_push_invalid_device">"Push notifications are not supported on this device"</string>
     <string name="jandi_tab_topic">"Topics"</string>
     <string name="jandi_tab_chat">"Chats"</string>
-    <string name="jandi_tab_private_group">"Private Groups"</string>
+    <string name="jandi_tab_private_group">"Private Topics"</string>
     <string name="jandi_tab_direct_message">"Direct Messages"</string>
     <string name="jandi_tab_file">"Files"</string>
     <string name="jandi_tab_more">"More"</string>
@@ -73,11 +73,13 @@ Welcome to JANDI"</string>
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
     <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable.
-        We combined everything you love about messaging apps with the convenience of cloud storage and added powerful search functionality, and are putting it all in the palm of your hand."</string>
+        
+We combined everything you love about messaging apps with the convenience of cloud storage and added powerful search functionality, and are putting it all in the palm of your hand."</string>
     <string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
     <string name="jandi_tutorial_topic_message">"Instantly connect with all your colleagues using Public Topics. The subject matter is up to you, whether it's a cross-departmental project or just some casual conversation. If you need privacy, you can invite members to Private Topics or exchange Direct Messages."</string>
     <string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
     <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. You no longer need to use other storage services or send links to files.
+        
 All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
 
     <!-- Manipulate Entity -->
@@ -87,9 +89,9 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_message_create_entity">"%1$s has been created"</string>
     <string name="jandi_message_invite_entity">"%1$d user(s) have been added"</string>
     <string name="jandi_create_channel">"Create New Topic"</string>
-    <string name="jandi_create_privategroup">"Create New Private Group"</string>
-    <string name="jandi_modify_channel">"Rename Topic"</string>
-    <string name="jandi_modify_private_group">"Rename Private Group"</string>
+    <string name="jandi_create_privategroup">"Create New Private Topic"</string>
+    <string name="jandi_modify_channel">"Rename Public Topic"</string>
+    <string name="jandi_modify_private_group">"Rename Private Topic"</string>
     <string name="warn_all_users_are_already_invited">"All members are already invited"</string>
     <string name="err_entity_create">"Create unsuccessful"</string>
     <string name="err_entity_join">"Join unsuccessful"</string>
@@ -189,8 +191,8 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_file_category_spreadsheet">"Spreadsheets"</string>
     <string name="jandi_file_category_pdf">"PDFs"</string>
     <string name="jandi_file_category_image">"Images"</string>
-    <string name="jandi_file_category_video">"Videos"</string>
-    <string name="jandi_file_category_audio">"Audios"</string>
+    <string name="jandi_file_category_video">"Video"</string>
+    <string name="jandi_file_category_audio">"Audio"</string>
     <string name="jandi_file_category_everyone">"All Members"</string>
     <string name="jandi_file_category_everywhere">"All Rooms"</string>
     <string name="jandi_file_search_type">"Filter results by file type"</string>
@@ -239,7 +241,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="what_is_member_profile">"Enter the email address and profile name you want associated with this team. Please note that your teammates may view and use this information to mention, search, or directly contact you."</string>
     <string name="team_create">@string/jandi_team_select_create_a_team</string>
     <string name="fail_to_create_team">"Team creation not completed"</string>
-    <string name="jandi_team_member">"Team Member"</string>
+    <string name="jandi_team_member">"Team Members"</string>
     <string name="jandi_logout">"Sign In"</string>
     <string name="jandi_sign_out_message">"Are you sure you want to sign out?"</string>
     <string name="jandi_account">"Account"</string>
@@ -286,7 +288,7 @@ Click the button below to start or reopen a conversation."</string>
     <string name="sent_auth_email_short">"An email has been sent to your inbox. Please follow the link provided to verify your account and complete the registration process."</string>
     <string name="jandi_deleted_file">"Deleted File"</string>
     <string name="jandi_success_update_account_profile">"Account has bean updated successfully"</string>
-    <string name="primary_email_info_msg">"All emails related to your JANDI account will be sent to the primary email address. You can add other email addresses to your account and assign them to specific teams (note email addresses must first be verified)."</string>
+    <string name="primary_email_info_msg">"Choose an email address where we should send all of your JANDI related emails. To assign email addresses to specific teams, please refer to the Profile menu."</string>
 
     <string name="jandi_has_joined">"%s has joined"</string>
     <string name="jandi_created_this_topic">"%s created this topic"</string>
