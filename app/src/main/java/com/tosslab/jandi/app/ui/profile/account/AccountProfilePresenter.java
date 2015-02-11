@@ -54,6 +54,7 @@ public class AccountProfilePresenter {
         Glide.with(context)
                 .load(uri)
                 .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
                 .transform(new GlideCircleTransform(context))
                 .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
                 .into(profileImageView);

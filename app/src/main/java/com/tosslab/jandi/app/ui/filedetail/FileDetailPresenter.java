@@ -22,8 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -38,7 +36,7 @@ import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -132,11 +130,11 @@ public class FileDetailPresenter {
                 // 사용자
                 FormattedEntity writer = new FormattedEntity(fileMessage.writer);
                 String profileUrl = writer.getUserSmallProfileUrl();
-                Glide.with(activity)
-                        .load(profileUrl)
+                Ion.with(imageViewUserProfile)
                         .placeholder(R.drawable.jandi_profile)
-                        .transform(new GlideCircleTransform(activity))
-                        .into(imageViewUserProfile);
+                        .error(R.drawable.jandi_profile)
+                        .transform(new IonCircleTransform())
+                        .load(profileUrl);
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 
@@ -185,12 +183,10 @@ public class FileDetailPresenter {
                                     .load(thumbnailPhotoUrl)
                                     .intoImageView(imageViewPhotoFile);
                         } else {
-                            Glide.with(activity)
-                                    .load(thumbnailPhotoUrl)
-                                    .priority(Priority.HIGH)
+                            Ion.with(imageViewPhotoFile)
                                     .fitCenter()
-                                    .crossFade()
-                                    .into(imageViewPhotoFile);
+                                    .crossfade(true)
+                                    .load(thumbnailPhotoUrl);
                         }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
                         imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_

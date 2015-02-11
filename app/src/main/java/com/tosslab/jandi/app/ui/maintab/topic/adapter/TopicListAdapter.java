@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,11 +207,11 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
             } else if (formattedEntity.isPrivateGroup()) {
                 imageViewIcon.setImageResource(R.drawable.jandi_private_topic_icon);
             } else if (formattedEntity.isUser()) {
-                Glide.with(context)
-                        .load(formattedEntity.getUserSmallProfileUrl())
+                Ion.with(imageViewIcon)
                         .placeholder(R.drawable.jandi_profile)
-                        .transform(new GlideCircleTransform(context))
-                        .into(imageViewIcon);
+                        .error(R.drawable.jandi_profile)
+                        .transform(new IonCircleTransform())
+                        .load(formattedEntity.getUserSmallProfileUrl());
             }
             // 이름
             textViewName.setText(formattedEntity.getName());

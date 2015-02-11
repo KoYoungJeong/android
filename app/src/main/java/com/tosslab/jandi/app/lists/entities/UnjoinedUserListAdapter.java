@@ -10,10 +10,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,11 +72,11 @@ public class UnjoinedUserListAdapter extends BaseAdapter {
         FormattedEntity entity = getItem(i);
         if (entity.isUser()) {
             // 프로필 사진
-            Glide.with(this.context)
-                    .load(entity.getUserSmallProfileUrl())
+            Ion.with(holder.imageView)
                     .placeholder(R.drawable.jandi_profile)
-                    .transform(new GlideCircleTransform(this.context))
-                    .into(holder.imageView);
+                    .error(R.drawable.jandi_profile)
+                    .transform(new IonCircleTransform())
+                    .load(entity.getUserSmallProfileUrl());
             holder.textView.setText(entity.getName());
             holder.checkBox.setTag(entity);
             if (entity.isSelectedToBeJoined) {

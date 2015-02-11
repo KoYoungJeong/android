@@ -6,12 +6,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
@@ -42,12 +42,12 @@ public class DummyViewHolder implements BodyViewHolder {
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
         String profileUrl = ((dummyMessageLink.message.writer.u_photoThumbnailUrl != null) && TextUtils.isEmpty(dummyMessageLink.message.writer.u_photoThumbnailUrl.largeThumbnailUrl)) ? dummyMessageLink.message.writer.u_photoThumbnailUrl.largeThumbnailUrl : dummyMessageLink.message.writer.u_photoUrl;
-        Glide.with(profileImageView.getContext())
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl)
+        Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(profileImageView.getContext()))
-                .crossFade()
-                .into(profileImageView);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
         nameTextView.setText(dummyMessageLink.message.writer.name);
 

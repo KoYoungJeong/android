@@ -7,17 +7,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.JandiConstants;
@@ -138,22 +134,20 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         String writerProfile = messagePush.getWriterThumb();
         Log.d("Profile Url", JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile);
         if (writerProfile != null) {
-            Glide.with(context)
+            Ion.with(context)
                     .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile)
-                    .into(new SimpleTarget<GlideDrawable>(200, 200) {
+                    .asBitmap()
+                    .setCallback(new FutureCallback<Bitmap>() {
                         @Override
-                        public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> glideAnimation) {
-                            if (resource != null) {
-                                Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
-                                sendNotification(context, messagePush, bitmap);
+                        public void onCompleted(Exception e, Bitmap result) {
+
+                            if (e != null) {
+                                sendNotification(context, messagePush, null);
+                            } else if (result != null) {
+                                sendNotification(context, messagePush, result);
                             } else {
                                 sendNotification(context, messagePush, null);
                             }
-                        }
-
-                        @Override
-                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                            sendNotification(context, messagePush, null);
                         }
                     });
         }

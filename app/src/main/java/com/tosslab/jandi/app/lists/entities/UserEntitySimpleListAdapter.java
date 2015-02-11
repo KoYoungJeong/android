@@ -8,10 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.List;
 
@@ -60,11 +60,11 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
         FormattedEntity user = getItem(i);
 
         // 프로필 사진
-        Glide.with(this.mContext)
-                .load(user.getUserSmallProfileUrl())
+        Ion.with(holder.imageView)
                 .placeholder(R.drawable.jandi_icon_directmsg)
-                .transform(new GlideCircleTransform(mContext))
-                .into(holder.imageView);
+                .error(R.drawable.jandi_icon_directmsg)
+                .transform(new IonCircleTransform())
+                .load(user.getUserSmallProfileUrl());
 
         holder.textView.setText(user.getName());
 

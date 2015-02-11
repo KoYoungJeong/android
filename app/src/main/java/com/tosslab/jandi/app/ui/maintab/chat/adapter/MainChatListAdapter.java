@@ -8,11 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,11 +88,11 @@ public class MainChatListAdapter extends BaseAdapter {
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        Glide.with(context)
-                .load(item.getPhoto())
+        Ion.with(viewHolder.imageViewIcon)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(context))
-                .into(viewHolder.imageViewIcon);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getPhoto());
 
 
         return convertView;

@@ -8,11 +8,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
@@ -59,29 +54,22 @@ public class PhotoViewActivity extends FragmentActivity {
     }
 
     private void loadImage() {
-        Glide.with(this)
+        Ion.with(photoView)
+                .crossfade(true)
+                .deepZoom()
                 .load(imageUrl)
-                .crossFade()
-                .priority(Priority.IMMEDIATE)
-                .listener(new RequestListener<String, GlideDrawable>() {
+                .setCallback(new FutureCallback<ImageView>() {
                     @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    public void onCompleted(Exception e, ImageView result) {
                         progressBar.setVisibility(View.GONE);
-                        return false;
                     }
-                })
-                .into(photoView);
+                });
     }
 
     private void loadGif() {
-        Ion.with(this)
+        Ion.with(photoView)
+                .deepZoom()
                 .load(imageUrl)
-                .intoImageView(photoView)
                 .setCallback(new FutureCallback<ImageView>() {
                     @Override
                     public void onCompleted(Exception e, ImageView result) {

@@ -7,11 +7,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -129,11 +129,11 @@ public class MessageItemView extends LinearLayout {
 
         log.debug("User Profile Image : " + item.getUserProfileUrl());
 
-        Glide.with(mContext)
-                .load(item.getUserProfileUrl())
+        Ion.with(mUserProfileImage)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(mContext))
-                .into(mUserProfileImage);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getUserProfileUrl());
         mUserProfileImage.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,11 +175,11 @@ public class MessageItemView extends LinearLayout {
         if (item.getContentSmallThumbnailUrl() != null) {
             String imageUrl = item.getContentSmallThumbnailUrl();
             log.debug("load image thumnail : " + imageUrl);
-            Glide.with(mContext)
-                    .load(imageUrl)
+            Ion.with(mImagePhoto)
                     .placeholder(R.drawable.jandi_sicon_thumbnail)
+                    .error(R.drawable.jandi_sicon_thumbnail)
                     .fitCenter()
-                    .into(mImagePhoto);
+                    .load(imageUrl);
         }
     }
 

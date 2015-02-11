@@ -11,12 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -74,11 +74,11 @@ public class TeamMemberView extends LinearLayout {
     }
 
     private void drawTeamMemberLayout(FormattedEntity teamMember) {
-        Glide.with(mContext)
-                .load(teamMember.getUserSmallProfileUrl())
+        Ion.with(imageViewTeamMemberIcon)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(mContext))
-                .into(imageViewTeamMemberIcon);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(teamMember.getUserSmallProfileUrl());
         textViewTeamMemberName.setText(teamMember.getName());
         textViewTeamMemberEmail.setText(teamMember.getUserEmail());
         drawBackgroundAsActive();

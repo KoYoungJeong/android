@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -64,12 +66,11 @@ public class MainMoreFragment extends Fragment {
     private void showUserProfile() {
         if (mEntityManager != null) {
             FormattedEntity me = mEntityManager.getMe();
-            Glide.with(mContext)
-                    .load(me.getUserSmallProfileUrl())
+            Ion.with(profileIconView.getImageView())
                     .placeholder(R.drawable.jandi_profile)
-                    .skipMemoryCache(true)              // 메모리 캐시를 쓰지 않는다.
-                    .transform(new GlideCircleTransform(mContext))
-                    .into(profileIconView.getImageView());
+                    .error(R.drawable.jandi_profile)
+                    .transform(new IonCircleTransform())
+                    .load(me.getUserSmallProfileUrl());
         }
     }
 

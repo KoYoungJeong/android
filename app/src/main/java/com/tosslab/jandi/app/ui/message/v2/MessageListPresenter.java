@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -29,7 +29,7 @@ import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -365,10 +365,9 @@ public class MessageListPresenter {
 
         previewNameView.setText(item.message.writer.name);
         String url = item.message.writer.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl)) ? item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl : item.message.writer.u_photoUrl;
-        Glide.with(activity)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url)
-                .transform(new GlideCircleTransform(activity))
-                .into(previewProfileView);
+        Ion.with(previewProfileView)
+                .transform(new IonCircleTransform())
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
 
         if (item.message instanceof ResMessages.FileMessage) {
             previewContent.setText("(File)");

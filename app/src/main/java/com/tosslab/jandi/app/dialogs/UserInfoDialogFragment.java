@@ -21,10 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -32,7 +29,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Background;
@@ -154,11 +151,11 @@ public class UserInfoDialogFragment extends DialogFragment {
         txtUserNickname.setText(userNickname);
         txtUserDivision.setText(userDivision);
         txtUserPosition.setText(userPosition);
-        Glide.with(getActivity())
-                .load(userProfileUrl)
+        Ion.with(imgUserPhoto)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(getActivity()))
-                .into(imgUserPhoto);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(userProfileUrl);
 
         if (!TextUtils.isEmpty(userProfileUrl)) {
             imgUserPhoto.setOnClickListener(new View.OnClickListener() {
@@ -187,21 +184,10 @@ public class UserInfoDialogFragment extends DialogFragment {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Glide.with(getActivity())
+                            Ion.with(profileView)
+                                    .deepZoom()
                                     .load(userProfileUrl)
-                                    .listener(new RequestListener<String, GlideDrawable>() {
-                                        @Override
-                                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                                            return false;
-                                        }
-
-                                        @Override
-                                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                                            progressBar.setVisibility(View.GONE);
-                                            return false;
-                                        }
-                                    })
-                                    .into(profileView);
+                                    .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
                         }
                     }, 500);
                 }

@@ -6,12 +6,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
 
@@ -37,12 +39,12 @@ public class MessageViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link) {
 
         String profileUrl = ((link.message.writer.u_photoThumbnailUrl != null) && TextUtils.isEmpty(link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl)) ? link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl : link.message.writer.u_photoUrl;
-        Glide.with(profileImageView.getContext())
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl)
+        Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(profileImageView.getContext()))
-                .crossFade()
-                .into(profileImageView);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
         nameTextView.setText(link.message.writer.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));

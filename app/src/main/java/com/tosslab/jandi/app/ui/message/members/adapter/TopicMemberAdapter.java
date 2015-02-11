@@ -8,11 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,11 +84,11 @@ public class TopicMemberAdapter extends BaseAdapter {
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
 
-        Glide.with(context)
-                .load(item.getPhotoUrl())
+        Ion.with(viewHolder.imageViewIcon)
                 .placeholder(R.drawable.jandi_profile)
-                .transform(new GlideCircleTransform(context))
-                .into(viewHolder.imageViewIcon);
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getPhotoUrl());
 
 
         return convertView;
@@ -108,7 +108,6 @@ public class TopicMemberAdapter extends BaseAdapter {
     public void clear() {
         chatChooseItems.clear();
     }
-
 
 
     static class ViewHolder {
