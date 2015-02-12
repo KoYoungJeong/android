@@ -97,12 +97,6 @@
             android:textColor="#FF999999"
             android:textSize="12sp" />
 
-        <TextView
-            android:layout_marginTop="3dp"
-            android:text="-"
-            android:textColor="#FF999999"
-            android:textSize="12sp" />
-
     </GridLayout>
 
 </LinearLayout>
