@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.files.ConfirmDeleteFile;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -170,7 +171,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 clickUnshareButton();
                 return true;
             case R.id.action_file_detail_delete:
-                deleteFileInBackground();
+                fileDetailPresenter.showDeleteFileDialog(fileId);
                 return true;
         }
 
@@ -389,14 +390,18 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, getString(R.string.err_unshare));
     }
 
-    /**
-     * *********************************************************
-     * 파일 삭제
-     * **********************************************************
-     */
+    public void onEvent(ConfirmDeleteFile event) {
+        deleteFileInBackground(event.getFileId());
+    }
 
+    /**
+     * 파일 삭제
+     *
+     * @param fileId
+     */
     @Background
-    public void deleteFileInBackground() {
+    public void deleteFileInBackground(int fileId) {
+        fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.deleteFile(fileId);
             log.debug("success to delete file");
@@ -404,13 +409,20 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("delete file failed", e);
             deleteFileDone(false);
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
     }
 
     @UiThread
     public void deleteFileDone(boolean isOk) {
         if (isOk) {
-            ColoredToast.show(this, getString(R.string.jandi_delete_succeed));
+            CharSequence title = getActionBar().getTitle();
+            if (!TextUtils.isEmpty(title)) {
+                ColoredToast.show(this, getString(R.string.jandi_delete_succeed, title));
+            } else {
+                ColoredToast.show(this, getString(R.string.jandi_delete_succeed, ""));
+            }
 
             Intent data = new Intent();
             data.putExtra(MessageListFragment.EXTRA_FILE_DELETE, true);

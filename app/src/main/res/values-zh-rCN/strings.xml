@@ -141,7 +141,7 @@
     <string name="jandi_action_delete">"删除"</string>
     <string name="jandi_share_succeed">"已被分享"</string>
     <string name="jandi_unshare_succeed">"已被取消分享"</string>
-    <string name="jandi_delete_succeed">"已被删除"</string>
+    <string name="jandi_delete_succeed">"%s已被删除"</string>
     <string name="err_file_detail">"档案无法找到"</string>
     <string name="err_download">"档案无法下载"</string>
     <string name="err_share">"档案无法分享"</string>
@@ -191,7 +191,7 @@
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
     <string name="jandi_forgot_password"><b><u>忘记您的密码了？</u></b></string>
-    <string name="jandi_message_ask_about_deleting">"您确定要删除这档案？ 请注意留言的部分不会被删除。"</string>
+    <string name="jandi_message_ask_about_deleting">"您确定要永久删除这讯息吗？删除的讯息将无法回复。"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
     <string name="jandi_messages_pull">"下拉以载入较旧的讯息"</string>
@@ -290,4 +290,5 @@
     <string name="jandi_invited_topic">"%1$s邀请了%2$s</string>
     <string name="jandi_left_topic">"%s已经离开"</string>
     <string name="jandi_tos_and_pp">"使用条款 &amp; 隐私权条款"</string>
+    <string name="jandi_topic_ask_about_deleting">"您确定您要删除这个议题？"</string>
 </resources>

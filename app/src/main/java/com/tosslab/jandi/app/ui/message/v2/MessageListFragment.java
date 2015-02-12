@@ -624,12 +624,15 @@ public class MessageListFragment extends Fragment {
     @Background
     void deleteTopic() {
 
+        messageListPresenter.showProgressWheel();
         try {
             messageListModel.deleteTopic(entityId, entityType);
             messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
         } catch (JandiNetworkException e) {
             logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } finally {
+            messageListPresenter.dismissProgressWheel();
         }
 
     }

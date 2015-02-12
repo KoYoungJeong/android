@@ -24,7 +24,7 @@ public class DeleteTopicDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
-                .setMessage(R.string.jandi_message_ask_about_deleting)
+                .setMessage(R.string.jandi_topic_ask_about_deleting)
                 .setPositiveButton(R.string.jandi_action_delete,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
