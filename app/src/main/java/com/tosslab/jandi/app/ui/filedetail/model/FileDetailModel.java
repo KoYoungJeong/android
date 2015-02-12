@@ -21,6 +21,7 @@ import org.androidannotations.annotations.RootContext;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -107,5 +108,25 @@ public class FileDetailModel {
         values.put(MediaStore.Images.Media.DATA, result.getAbsolutePath());
 
         return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
+    public List<FormattedEntity> getUnsharedEntities(List<Integer> shareEntities) {
+
+        EntityManager entityManager = EntityManager.getInstance(context);
+
+        boolean include = false;
+        int myEntityId = entityManager.getMe().getId();
+        for (int idx = shareEntities.size() - 1; idx >= 0; idx--) {
+            if (shareEntities.get(idx) == myEntityId) {
+                include = true;
+                break;
+            }
+        }
+
+        if (!include) {
+            shareEntities.add(myEntityId);
+        }
+
+        return entityManager.retrieveExclusivedEntities(shareEntities);
     }
 }
