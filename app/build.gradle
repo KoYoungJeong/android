@@ -42,6 +42,11 @@ checkstyle {
     toolVersion = "6.2"
 }
 
+def getDate() {
+    def date = new Date();
+    return date.format("yyyyMMddHHss")
+}
+
 dependencies {
     apt 'org.androidannotations:androidannotations:3.2'
 
@@ -99,8 +104,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 19
-        versionCode 33
-        versionName '0.9.5'
+        versionCode 32
+        versionName '0.9.4'
     }
     buildTypes {
 
@@ -113,6 +118,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+
     }
     productFlavors {
         full {     // release version
@@ -121,6 +127,19 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev")
+        }
+
+        inhouse {
+            versionName(defaultConfig.versionName + "." + getDate())
+            buildTypes {
+            }
+        }
+
+    }
+
+    sourceSets {
+        inhouse {
+            java.srcDirs = ['src/full/java']
         }
     }
 
