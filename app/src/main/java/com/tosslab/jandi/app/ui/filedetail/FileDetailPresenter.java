@@ -12,7 +12,10 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -25,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.UserInfoDialogFragment_;
@@ -281,19 +285,44 @@ public class FileDetailPresenter {
             return;
         }
 
-        // 공유 CDP 이름
-        String sharedEntityNames = "";
+        int teamId = mEntityManager.getTeamId();
+
         if (!resFileDetail.shareEntities.isEmpty()) {
             int nSharedEntities = resFileDetail.shareEntities.size();
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+
             for (int i = 0; i < nSharedEntities; i++) {
-                String sharedEntityName = mEntityManager.getEntityNameById(resFileDetail.shareEntities.get(i));
-                if (!sharedEntityName.isEmpty()) {
-                    sharedEntityNames += sharedEntityName;
-                    sharedEntityNames += (i < nSharedEntities - 1) ? ", " : "";
+                FormattedEntity entityById = mEntityManager.getEntityById(resFileDetail.shareEntities.get(i));
+
+                int entityType;
+                if (entityById.isPrivateGroup()) {
+                    if (entityById.isPublicTopic()) {
+                        entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                    } else {
+                        entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+                    }
+                } else {
+                    if (entityById.isPublicTopic()) {
+                        entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                    } else {
+                        entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+                    }
                 }
+
+                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, entityById.getId(), entityType, entityById.isStarred);
+
+                int length = spannableStringBuilder.length();
+                spannableStringBuilder.append(entityById.getName());
+
+                spannableStringBuilder.setSpan(entitySpannable, length, length + entityById.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                if (i != nSharedEntities - 1) {
+                    spannableStringBuilder.append(", ");
+                }
+
             }
+            textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
+            textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
         }
-        textViewFileSharedCdp.setText(sharedEntityNames);
     }
 
 
