@@ -82,7 +82,12 @@
         android:smoothScrollbar="true" />
 
     <include
+        android:visibility="gone"
         android:id="@+id/layout_file_list_empty"
         layout="@layout/view_search_list_empty" />
+
+    <include
+        android:id="@+id/layout_file_list_loading"
+        layout="@layout/progress_wheel" />
 
 </RelativeLayout>

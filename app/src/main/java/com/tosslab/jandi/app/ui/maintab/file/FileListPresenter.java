@@ -57,6 +57,13 @@ public class FileListPresenter {
     LinearLayout linearLayoutFileListType;
     @ViewById(R.id.txt_file_list_type)
     TextView textViewFileListType;
+
+    @ViewById(R.id.layout_file_list_empty)
+    View emptyView;
+
+    @ViewById(R.id.layout_file_list_loading)
+    View initLoadingView;
+
     int entityIdForCategorizing = -1;
     String mCurrentEntityCategorizingAccodingBy = null;
     private String mCurrentUserNameCategorizingAccodingBy = null;
@@ -281,6 +288,16 @@ public class FileListPresenter {
         ImageView imageView = (ImageView) headerView.findViewById(R.id.img_select_cdp_icon);
         imageView.setImageResource(R.drawable.jandi_profile);
         return headerView;
+    }
+
+    @UiThread
+    public void setInitLoadingViewVisible(int visible) {
+        initLoadingView.setVisibility(visible);
+    }
+
+    @UiThread
+    public void setEmptyViewVisible(int visible) {
+        emptyView.setVisibility(visible);
     }
 
     @UiThread

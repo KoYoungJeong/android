@@ -58,7 +58,7 @@ public class FileListFragment extends Fragment {
     @ViewById(R.id.list_searched_files)
     ListView actualListView;
     @Bean
-    SearchedFileItemListAdapter mAdapter;
+    SearchedFileItemListAdapter searchedFileItemListAdapter;
     @FragmentArg
     int entityIdForCategorizing = -1;
     @FragmentArg
@@ -107,9 +107,7 @@ public class FileListFragment extends Fragment {
         fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
-        View emptyView = getView().findViewById(R.id.layout_file_list_empty);
-        actualListView.setEmptyView(emptyView);
-        actualListView.setAdapter(mAdapter);
+        actualListView.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
@@ -141,9 +139,9 @@ public class FileListFragment extends Fragment {
             if (justGetFilesSize < ReqSearchFile.MAX) {
 
                 fileListPresenter.showWarningToast(getString(R.string.warn_no_more_files));
-                mAdapter.setNoMoreLoad();
+                searchedFileItemListAdapter.setNoMoreLoad();
             } else {
-                mAdapter.setReadyMore();
+                searchedFileItemListAdapter.setReadyMore();
             }
 
         } catch (JandiNetworkException e) {
@@ -156,8 +154,8 @@ public class FileListFragment extends Fragment {
     @UiThread
     void insertFiles(List<ResMessages.OriginalMessage> files) {
 
-        mAdapter.insert(files);
-        mAdapter.notifyDataSetChanged();
+        searchedFileItemListAdapter.insert(files);
+        searchedFileItemListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -166,7 +164,7 @@ public class FileListFragment extends Fragment {
         EventBus.getDefault().register(this);
         mSearchQuery.setToFirst();
         // 서치 시작
-        mAdapter.clearAdapter();
+        searchedFileItemListAdapter.clearAdapter();
         doSearch();
     }
 
@@ -246,25 +244,25 @@ public class FileListFragment extends Fragment {
      */
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
-        mAdapter.clearAdapter();
+        searchedFileItemListAdapter.clearAdapter();
         doSearch();
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
         mSearchQuery.setFileType(event.getServerQuery());
-        mAdapter.clearAdapter();
+        searchedFileItemListAdapter.clearAdapter();
         doSearch();
     }
 
     public void onEvent(CategorizingAsOwner event) {
         mSearchQuery.setWriter(event.userId);
-        mAdapter.clearAdapter();
+        searchedFileItemListAdapter.clearAdapter();
         doSearch();
     }
 
     public void onEvent(CategorizingAsEntity event) {
         mSearchQuery.setSharedEntity(event.sharedEntityId);
-        mAdapter.clearAdapter();
+        searchedFileItemListAdapter.clearAdapter();
         doSearch();
     }
 
@@ -277,6 +275,8 @@ public class FileListFragment extends Fragment {
     @Background
     void doSearchInBackground() {
 
+        fileListPresenter.setInitLoadingViewVisible(View.VISIBLE);
+        fileListPresenter.setEmptyViewVisible(View.GONE);
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
@@ -285,8 +285,14 @@ public class FileListFragment extends Fragment {
 
             updateAdapter(resSearchFile);
 
-            if (fileListModel.isAllTypeFirstSearch(reqSearchFile)) {
+            fileListPresenter.setInitLoadingViewVisible(View.GONE);
+            if (resSearchFile.fileCount > 0) {
+                fileListPresenter.setEmptyViewVisible(View.GONE);
+            } else {
+                fileListPresenter.setEmptyViewVisible(View.VISIBLE);
+            }
 
+            if (fileListModel.isAllTypeFirstSearch(reqSearchFile)) {
                 fileListModel.saveOriginFirstItems(selectedTeamId, resSearchFile);
             }
 
@@ -300,7 +306,7 @@ public class FileListFragment extends Fragment {
     @UiThread
     void updateAdapter(ResSearchFile resSearchFile) {
         if (resSearchFile.fileCount > 0) {
-            mAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
+            searchedFileItemListAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
             mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
         }
 
@@ -310,13 +316,13 @@ public class FileListFragment extends Fragment {
     void searchSucceed(ResSearchFile resSearchFile) {
 
         if (resSearchFile.fileCount < ReqSearchFile.MAX) {
-            mAdapter.setNoMoreLoad();
+            searchedFileItemListAdapter.setNoMoreLoad();
         } else {
-            mAdapter.setReadyMore();
+            searchedFileItemListAdapter.setReadyMore();
         }
 
         log.debug("success to find " + resSearchFile.fileCount + " files.");
-        mAdapter.notifyDataSetChanged();
+        searchedFileItemListAdapter.notifyDataSetChanged();
     }
 
     @UiThread
@@ -357,7 +363,7 @@ public class FileListFragment extends Fragment {
 
                 justGetFilesSize = resSearchFile.fileCount;
                 if (justGetFilesSize > 0) {
-                    mAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
+                    searchedFileItemListAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
                     mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
                 }
                 return null;
@@ -374,14 +380,14 @@ public class FileListFragment extends Fragment {
         protected void onPostExecute(String errMessage) {
             if (justGetFilesSize < ReqSearchFile.MAX) {
                 ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_files));
-                mAdapter.setNoMoreLoad();
+                searchedFileItemListAdapter.setNoMoreLoad();
             } else {
-                mAdapter.setReadyMore();
+                searchedFileItemListAdapter.setReadyMore();
             }
 
             if (errMessage == null) {
                 // Success
-                mAdapter.notifyDataSetChanged();
+                searchedFileItemListAdapter.notifyDataSetChanged();
             } else {
                 ColoredToast.showError(mContext, errMessage);
             }
