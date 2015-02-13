@@ -311,6 +311,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Background
     public void shareMessageInBackground(int entityIdToBeShared) {
+        fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.shareMessage(fileId, entityIdToBeShared);
             log.debug("success to share message");
@@ -318,12 +319,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             shareMessageFailed();
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
     }
 
     @UiThread
     public void shareMessageSucceed(int entityIdToBeShared) {
-        ColoredToast.show(this, getString(R.string.jandi_share_succeed));
+        ColoredToast.show(this, getString(R.string.jandi_share_succeed, getActionBar().getTitle()));
         trackSharingFile(mEntityManager,
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
@@ -370,6 +373,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Background
     public void unshareMessageInBackground(int entityIdToBeUnshared) {
+        fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
             log.debug("success to unshare message");
@@ -381,6 +385,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
     }
 

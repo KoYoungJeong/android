@@ -144,8 +144,8 @@ JANDIへようこそ"</string>
     <string name="jandi_action_download">"ダウンロード"</string>
     <string name="jandi_action_unshare">"非共有"</string>
     <string name="jandi_action_delete">"削除"</string>
-    <string name="jandi_share_succeed">"が共有されました"</string>
-    <string name="jandi_unshare_succeed">"が非共有にされました"</string>
+    <string name="jandi_share_succeed">"%sが共有されました"</string>
+    <string name="jandi_unshare_succeed">"%sが非共有にされました"</string>
     <string name="jandi_delete_succeed">"%sが削除されました"</string>
     <string name="err_file_detail">"ファイルが見つかりません"</string>
     <string name="err_download">"ファイルがダウンロードできませんでした"</string>

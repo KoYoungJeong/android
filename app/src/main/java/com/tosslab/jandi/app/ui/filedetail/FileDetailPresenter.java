@@ -353,7 +353,7 @@ public class FileDetailPresenter {
 
     @UiThread
     public void unshareMessageSucceed(int entityIdToBeUnshared) {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_unshare_succeed));
+        ColoredToast.show(activity, activity.getString(R.string.jandi_unshare_succeed, activity.getActionBar().getTitle()));
         fileDetailCommentListAdapter.clear();
     }
 

@@ -139,8 +139,8 @@
     <string name="jandi_action_download">"下载"</string>
     <string name="jandi_action_unshare">"取消分享"</string>
     <string name="jandi_action_delete">"删除"</string>
-    <string name="jandi_share_succeed">"已被分享"</string>
-    <string name="jandi_unshare_succeed">"已被取消分享"</string>
+    <string name="jandi_share_succeed">"%s已被分享"</string>
+    <string name="jandi_unshare_succeed">"%s已被取消分享"</string>
     <string name="jandi_delete_succeed">"%s已被删除"</string>
     <string name="err_file_detail">"档案无法找到"</string>
     <string name="err_download">"档案无法下载"</string>
