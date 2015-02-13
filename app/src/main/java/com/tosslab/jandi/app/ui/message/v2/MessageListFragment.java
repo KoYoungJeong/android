@@ -275,6 +275,8 @@ public class MessageListFragment extends Fragment {
         EventBus.getDefault().register(this);
         messageListModel.startRefreshTimer();
         PushMonitor.getInstance().register(entityId);
+
+        messageListModel.removeNotificationSameEntityId(entityId);
     }
 
     @Override

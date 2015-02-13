@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Environment;
@@ -39,6 +40,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -343,4 +345,13 @@ public class MessageListModel {
         return EntityManager.getInstance(activity).getDefaultTopicId() == entityId;
     }
 
+    public void removeNotificationSameEntityId(int entityId) {
+
+        int chatIdFromPush = JandiPreference.getChatIdFromPush(activity);
+        if (chatIdFromPush == entityId) {
+            NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
+
+    }
 }
