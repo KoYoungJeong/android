@@ -64,6 +64,7 @@ dependencies {
     aarLinkSources 'se.emilsjolander:stickylistheaders:2.5.2:sources@jar'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+@aar'
     aarLinkSources 'pl.droidsonroids.gif:android-gif-drawable:1.1.+:sources@jar'
+    compile 'com.iangclifton.android:floatlabel:1.0.2'
 
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'

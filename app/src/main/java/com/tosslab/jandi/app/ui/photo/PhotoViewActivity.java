@@ -56,7 +56,6 @@ public class PhotoViewActivity extends FragmentActivity {
     private void loadImage() {
         Ion.with(photoView)
                 .crossfade(true)
-                .deepZoom()
                 .load(imageUrl)
                 .setCallback(new FutureCallback<ImageView>() {
                     @Override
@@ -68,7 +67,6 @@ public class PhotoViewActivity extends FragmentActivity {
 
     private void loadGif() {
         Ion.with(photoView)
-                .deepZoom()
                 .load(imageUrl)
                 .setCallback(new FutureCallback<ImageView>() {
                     @Override

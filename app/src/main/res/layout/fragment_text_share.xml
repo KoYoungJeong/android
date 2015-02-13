@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Spinner
+        android:id="@+id/spinner_share_text_entity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.iangclifton.android.floatlabel.FloatLabel
+        android:id="@+id/txt_share_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spinner_share_text_entity"
+        android:hint="메세지"
+        android:layout="@layout/view_custom_float_label" />
+
+    <Button
+        android:id="@+id/btn_share_text_send"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_share_text"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/jandi_btn_dynamic_selector_v2"
+        android:text="@string/jandi_message_send"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+</RelativeLayout>
