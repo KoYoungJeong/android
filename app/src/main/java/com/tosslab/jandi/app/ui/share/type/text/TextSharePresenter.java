@@ -5,14 +5,19 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.iangclifton.android.floatlabel.FloatLabel;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.type.adapter.ShareEntityAdapter;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
+import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -35,6 +40,7 @@ public class TextSharePresenter {
     private String text;
     private List<EntityInfo> entityInfos;
     private ShareEntityAdapter shareEntityAdapter;
+    private ProgressWheel progressWheel;
 
     public void setText(String text) {
 
@@ -47,6 +53,8 @@ public class TextSharePresenter {
     @AfterInject
     void initObject() {
         shareEntityAdapter = new ShareEntityAdapter(context);
+        progressWheel = new ProgressWheel(context);
+        progressWheel.init();
     }
 
     @AfterViews
@@ -72,5 +80,52 @@ public class TextSharePresenter {
 
     public EntityInfo getSelectedEntityInfo() {
         return shareEntityAdapter.getItem(entitySpinner.getSelectedItemPosition());
+    }
+
+    @UiThread
+    public void showProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
+        progressWheel.show();
+    }
+
+    @UiThread
+    public void dismissProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread
+    public void showErrorMessage(String message) {
+        ColoredToast.showError(context, message);
+    }
+
+    @UiThread
+    public void showSuccessMessage(String message) {
+        ColoredToast.show(context, message);
+    }
+
+    @UiThread
+    public void moveEntity(int teamId, EntityInfo entity, boolean starredEntity) {
+
+        int entityType;
+
+        if (entity.isPrivateTopic()) {
+            entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+        } else if (entity.isPublicTopic()) {
+            entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+        } else {
+            entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+        }
+
+        MessageListV2Activity_.intent(context)
+                .teamId(teamId)
+                .entityId(entity.getEntityId())
+                .entityType(entityType)
+                .isFavorite(starredEntity)
+                .start();
     }
 }

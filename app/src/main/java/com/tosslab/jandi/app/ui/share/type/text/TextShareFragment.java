@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.share.type.text;
 import android.app.Fragment;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.share.type.text.model.TextShareModel;
+import com.tosslab.jandi.app.ui.share.type.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -12,6 +13,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class TextShareFragment extends Fragment {
     TextSharePresenter textSharePresenter;
 
     @Bean
-    TextShareModel textShareModel;
+    ShareModel shareModel;
 
     @FragmentArg
     String text;
@@ -34,7 +36,7 @@ public class TextShareFragment extends Fragment {
     void initObject() {
         textSharePresenter.setText(text);
 
-        List<EntityInfo> entities = textShareModel.getEntityInfos();
+        List<EntityInfo> entities = shareModel.getEntityInfos();
 
         textSharePresenter.setEntityInfos(entities);
     }
@@ -48,6 +50,23 @@ public class TextShareFragment extends Fragment {
 
     @Background
     void sendMessage(EntityInfo entity, String messageText) {
-        textShareModel.sendMessage(entity, messageText);
+        textSharePresenter.showProgressWheel();
+        try {
+            shareModel.sendMessage(entity, messageText);
+            textSharePresenter.showSuccessMessage("");
+            int teamId = shareModel.getTeamId();
+            boolean starredEntity = shareModel.isStarredEntity(entity.getEntityId());
+            textSharePresenter.moveEntity(teamId, entity, starredEntity);
+            finishOnUiThread();
+        } catch (JandiNetworkException e) {
+            textSharePresenter.showErrorMessage("");
+        } finally {
+            textSharePresenter.dismissProgressWheel();
+        }
+    }
+
+    @UiThread
+    void finishOnUiThread() {
+        getActivity().finish();
     }
 }
