@@ -53,13 +53,12 @@ public class TextShareFragment extends Fragment {
         textSharePresenter.showProgressWheel();
         try {
             shareModel.sendMessage(entity, messageText);
-            textSharePresenter.showSuccessMessage("");
             int teamId = shareModel.getTeamId();
             boolean starredEntity = shareModel.isStarredEntity(entity.getEntityId());
             textSharePresenter.moveEntity(teamId, entity, starredEntity);
             finishOnUiThread();
         } catch (JandiNetworkException e) {
-            textSharePresenter.showErrorMessage("");
+            textSharePresenter.showErrorMessage(getString(R.string.err_network));
         } finally {
             textSharePresenter.dismissProgressWheel();
         }

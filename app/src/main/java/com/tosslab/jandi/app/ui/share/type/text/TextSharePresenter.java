@@ -7,6 +7,7 @@ import android.widget.Spinner;
 import com.iangclifton.android.floatlabel.FloatLabel;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.share.type.adapter.ShareEntityAdapter;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
@@ -120,6 +121,9 @@ public class TextSharePresenter {
         } else {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
+
+        MainTabActivity_.intent(context)
+                .start();
 
         MessageListV2Activity_.intent(context)
                 .teamId(teamId)
