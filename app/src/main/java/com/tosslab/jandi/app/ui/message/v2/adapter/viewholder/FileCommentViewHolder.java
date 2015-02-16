@@ -30,6 +30,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private TextView commentTextView;
     private TextView fileOwnerPostfixTextView;
     private ImageView fileImageView;
+    private View disableCoverView;
+    private View disableLineThroughView;
 
     @Override
     public void initView(View rootView) {
@@ -43,6 +45,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
 
         fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
+
+        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
+        disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
     }
 
     @Override
@@ -52,16 +58,23 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
         if (TextUtils.equals(entityManager.getEntityById(link.message.writerId).getUser().status, "enabled")) {
+            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
 
-            Ion.with(profileImageView)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
-                    .transform(new IonCircleTransform())
-                    .crossfade(true)
-                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
+            disableCoverView.setVisibility(View.GONE);
+            disableLineThroughView.setVisibility(View.GONE);
         } else {
-            profileImageView.setImageResource(R.drawable.jandi_ic_launcher);
+            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
+
+            disableCoverView.setVisibility(View.VISIBLE);
+            disableLineThroughView.setVisibility(View.VISIBLE);
         }
+
+        Ion.with(profileImageView)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
         nameTextView.setText(link.message.writer.name);
 
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));

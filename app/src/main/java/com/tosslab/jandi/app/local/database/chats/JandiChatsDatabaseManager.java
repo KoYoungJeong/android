@@ -118,7 +118,7 @@ public class JandiChatsDatabaseManager {
                         .unread(cursor.getInt(unreadIdx))
                         .entityId(cursor.getInt(entityIdIdx))
                         .lastMessage(cursor.getString(lastMessageIdx))
-                        .status(statusIdx == 1)
+                        .status(cursor.getInt(statusIdx) == 1)
                         .photo(cursor.getString(photoIdx));
 
                 chatItems.add(tempItem);

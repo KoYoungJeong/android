@@ -12,6 +12,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +34,6 @@ public class ChatChooseModel {
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
         Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -40,6 +41,7 @@ public class ChatChooseModel {
                             .email(formattedEntity.getUserEmail())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
+                            .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
@@ -51,8 +53,28 @@ public class ChatChooseModel {
             chatChooseItems.add(iterator.next());
         }
 
+        Collections.sort(chatChooseItems, getChatItemComparator());
+
 
         return chatChooseItems;
+    }
+
+    private Comparator<ChatChooseItem> getChatItemComparator() {
+        return (lhs, rhs) -> {
+            if (lhs.isEnabled()) {
+                if (rhs.isEnabled()) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                if (rhs.isEnabled()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        };
     }
 
     public List<ChatChooseItem> getChatListWithoutMe(String name) {
@@ -63,7 +85,6 @@ public class ChatChooseModel {
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
         Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
-                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .filter(formattedEntity -> !TextUtils.isEmpty(formattedEntity.getName()) && formattedEntity.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
@@ -72,6 +93,7 @@ public class ChatChooseModel {
                             .email(formattedEntity.getUserEmail())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
+                            .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
@@ -82,6 +104,8 @@ public class ChatChooseModel {
         while (iterator.hasNext()) {
             chatChooseItems.add(iterator.next());
         }
+
+        Collections.sort(chatChooseItems, getChatItemComparator());
 
 
         return chatChooseItems;

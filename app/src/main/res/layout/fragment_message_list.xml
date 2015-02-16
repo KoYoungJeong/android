@@ -56,9 +56,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_message_preview_user_name"
+            android:layout_marginBottom="2dp"
             android:layout_toRightOf="@+id/img_message_preview_user_profile"
             android:singleLine="true"
-            android:layout_marginBottom="2dp"
             android:text="Text"
             android:textColor="@color/white"
             android:textSize="@dimen/jandi_messages_content" />
@@ -71,6 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/ll_messages"
+        android:layout_alignWithParentIfMissing="true"
         android:background="@color/jandi_border_gray" />
 
     <LinearLayout

@@ -60,6 +60,9 @@ public class MainChatListAdapter extends BaseAdapter {
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
+            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
+            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
 
             convertView.setTag(viewHolder);
 
@@ -86,19 +89,28 @@ public class MainChatListAdapter extends BaseAdapter {
 
         viewHolder.textViewAdditional.setText(item.getLastMessage());
 
+
         if (item.getStatus()) {
 
-            viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+            viewHolder.disableLineThrouthView.setVisibility(View.GONE);
+            viewHolder.disableWarningView.setVisibility(View.GONE);
+            viewHolder.disableCoverView.setVisibility(View.GONE);
 
-            Ion.with(viewHolder.imageViewIcon)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
-                    .transform(new IonCircleTransform())
-                    .load(item.getPhoto());
         } else {
-            viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_ic_launcher);
+
+            viewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
+            viewHolder.disableWarningView.setVisibility(View.VISIBLE);
+            viewHolder.disableCoverView.setVisibility(View.VISIBLE);
+
         }
 
+        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
+        Ion.with(viewHolder.imageViewIcon)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getPhoto());
 
         return convertView;
     }
@@ -122,6 +134,10 @@ public class MainChatListAdapter extends BaseAdapter {
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
+        public View disableLineThrouthView;
+        public View disableWarningView;
+        public View disableCoverView;
+
 
     }
 }

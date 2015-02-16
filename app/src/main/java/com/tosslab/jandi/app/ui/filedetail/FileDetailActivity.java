@@ -232,6 +232,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
             getFileDetailSucceed(resFileDetail, isSendAction);
 
+            boolean enableUserFromUploder = fileDetailModel.isEnableUserFromUploder(resFileDetail);
+            fileDetailPresenter.drawFileWriterState(enableUserFromUploder);
+
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));

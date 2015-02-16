@@ -59,7 +59,10 @@ public class TopicMemberAdapter extends BaseAdapter {
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.viewMaskUnjoined = convertView.findViewById(R.id.view_entity_unjoined);
+            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
+            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+
 
             convertView.setTag(viewHolder);
 
@@ -68,7 +71,6 @@ public class TopicMemberAdapter extends BaseAdapter {
         }
 
         viewHolder.textViewBadgeCount.setVisibility(View.GONE);
-        viewHolder.viewMaskUnjoined.setVisibility(View.GONE);
 
         ChatChooseItem item = getItem(position);
 
@@ -82,17 +84,24 @@ public class TopicMemberAdapter extends BaseAdapter {
         }
 
 
-        if (item.isEnabled()) {
-            viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        Ion.with(viewHolder.imageViewIcon)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getPhotoUrl());
 
-            Ion.with(viewHolder.imageViewIcon)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
-                    .transform(new IonCircleTransform())
-                    .load(item.getPhotoUrl());
+        if (item.isEnabled()) {
+
+            viewHolder.disableLineThrouthView.setVisibility(View.GONE);
+            viewHolder.disableWarningView.setVisibility(View.GONE);
+            viewHolder.disableCoverView.setVisibility(View.GONE);
+
         } else {
-            viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_ic_launcher);
-            viewHolder.imageViewIcon.setOnClickListener(null);
+
+            viewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
+            viewHolder.disableWarningView.setVisibility(View.VISIBLE);
+            viewHolder.disableCoverView.setVisibility(View.VISIBLE);
         }
 
 
@@ -122,7 +131,9 @@ public class TopicMemberAdapter extends BaseAdapter {
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
-        public View viewMaskUnjoined;
+        public View disableLineThrouthView;
+        public View disableWarningView;
+        public View disableCoverView;
 
     }
 }

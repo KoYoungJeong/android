@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Bean;
@@ -128,5 +129,17 @@ public class FileDetailModel {
         }
 
         return entityManager.retrieveExclusivedEntities(shareEntities);
+    }
+
+    public boolean isEnableUserFromUploder(ResFileDetail resFileDetail) {
+
+        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
+            if (fileDetail instanceof ResMessages.FileMessage) {
+                final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
+
+                return TextUtils.equals(EntityManager.getInstance(context).getEntityById(fileMessage.writerId).getUser().status, "enabled");
+            }
+        }
+        return false;
     }
 }

@@ -9,11 +9,9 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
@@ -128,13 +126,17 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             viewHolder = new FormattedViewHolder();
             viewHolder.context = context;
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
             viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.viewMaskUnjoined = convertView.findViewById(R.id.view_entity_unjoined);
+            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
+            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (FormattedViewHolder) convertView.getTag();
@@ -167,12 +169,14 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
         public TextView textViewName;
         public TextView textViewAdditional;
         public TextView textViewBadgeCount;
-        public View viewMaskUnjoined;
+        public View disableLineThrouthView;
+        public View disableWarningView;
+        public View disableCoverView;
 
         private void init() {
             imageViewFavorite.setVisibility(View.INVISIBLE);
             textViewBadgeCount.setVisibility(View.INVISIBLE);
-            viewMaskUnjoined.setVisibility(View.INVISIBLE);
+            disableCoverView.setVisibility(View.INVISIBLE);
             imageViewIcon.setImageResource(R.drawable.jandi_topic_icon);
         }
 
@@ -199,11 +203,18 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
                 textViewBadgeCount.setText(formattedEntity.alarmCount + "");
             }
             // 아이콘
+
+            disableLineThrouthView.setVisibility(View.GONE);
+            disableWarningView.setVisibility(View.GONE);
+
+            if (formattedEntity.isJoined) {
+                disableCoverView.setVisibility(View.GONE);
+            } else {
+                disableCoverView.setVisibility(View.VISIBLE);
+                textViewBadgeCount.setVisibility(View.GONE);
+            }
+
             if (formattedEntity.isPublicTopic()) {
-                if (formattedEntity.isJoined == false) {
-                    viewMaskUnjoined.setVisibility(View.VISIBLE);
-                    textViewBadgeCount.setVisibility(View.INVISIBLE);
-                }
             } else if (formattedEntity.isPrivateGroup()) {
                 imageViewIcon.setImageResource(R.drawable.jandi_private_topic_icon);
             } else if (formattedEntity.isUser()) {

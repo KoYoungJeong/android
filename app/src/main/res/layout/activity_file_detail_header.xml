@@ -6,10 +6,9 @@
     android:background="@color/jandi_file_detail_bg"
     android:orientation="vertical">
     <!-- 파일 제목과 사용자 프로필 부분 -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_file_detail_uploder_layout_height"
-        android:gravity="center_vertical"
         android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
         android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
@@ -17,14 +16,17 @@
             android:id="@+id/img_file_detail_user_profile"
             android:layout_width="@dimen/jandi_file_detail_uploder_profile_size"
             android:layout_height="@dimen/jandi_file_detail_uploder_profile_size"
+            android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/jandi_file_detail_uploder_profile_margin_right"
             android:background="@drawable/jandi_profile" />
 
         <TextView
             android:id="@+id/txt_file_detail_user_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/img_file_detail_user_profile"
+            android:text="name"
             android:textSize="@dimen/jandi_file_detail_text_user_name"
             android:textStyle="bold" />
 
@@ -32,9 +34,37 @@
             android:id="@+id/txt_file_detail_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/txt_file_detail_user_name"
+            android:gravity="right"
+            android:text="asdlkjadklj"
             android:textColor="@color/jandi_file_detail_date"
             android:textSize="@dimen/jandi_file_detail_text_date" />
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_entity_listitem_line_through"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_file_detail_user_name"
+            android:layout_alignLeft="@+id/txt_file_detail_user_name"
+            android:layout_alignRight="@+id/txt_file_detail_user_name"
+            android:layout_alignTop="@+id/txt_file_detail_user_name"
+            android:src="@drawable/line_gray" />
+
+        <View
+            android:id="@+id/view_entity_listitem_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/img_file_detail_user_profile"
+            android:layout_alignLeft="@+id/img_file_detail_user_profile"
+            android:layout_alignRight="@+id/img_file_detail_user_profile"
+            android:layout_alignTop="@+id/img_file_detail_user_profile"
+            android:background="#99ffffff"
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
     <!-- 이미지나 파일 타입 출력 -->
     <ImageView
         android:id="@+id/img_file_detail_photo"

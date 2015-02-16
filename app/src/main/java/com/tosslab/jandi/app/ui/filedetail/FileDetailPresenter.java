@@ -91,6 +91,8 @@ public class FileDetailPresenter {
     TextView textViewFileCreateDate;
     TextView textViewFileContentInfo;
     TextView textViewFileSharedCdp;
+    View disableLineThroughView;
+    View disableCoverView;
 
     ImageView imageViewPhotoFile;
     ImageView iconFileType;
@@ -119,6 +121,9 @@ public class FileDetailPresenter {
         imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
         fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
         iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
+        disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
+        disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
+
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
     }
@@ -419,5 +424,17 @@ public class FileDetailPresenter {
                 })
                 .create().show();
 
+    }
+
+    @UiThread
+    public void drawFileWriterState(boolean isEnabled) {
+        if (isEnabled) {
+            disableCoverView.setVisibility(View.GONE);
+            disableLineThroughView.setVisibility(View.GONE);
+        } else {
+            disableCoverView.setVisibility(View.VISIBLE);
+            disableLineThroughView.setVisibility(View.VISIBLE);
+            textViewUserName.setTextColor(activity.getResources().getColor(R.color.deactivate_text_color));
+        }
     }
 }

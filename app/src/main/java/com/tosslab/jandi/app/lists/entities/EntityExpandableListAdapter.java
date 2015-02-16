@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 10. 2..
  */
+@Deprecated
 public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
     public static final int TYPE_PUBLIC_ENTITY_LIST = 0;
     public static final int TYPE_PRIVATE_ENTITY_LIST = 1;
@@ -148,8 +149,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
             viewHolder.textViewBadgeCount
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.viewMaskUnjoined
-                    = convertView.findViewById(R.id.view_entity_unjoined);
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (FormattedViewHolder) convertView.getTag();
