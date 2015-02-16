@@ -40,10 +40,10 @@ public class FileDetailCommentView extends LinearLayout {
     TextView textViewCommentContent;
 
     @ViewById(R.id.img_entity_listitem_line_through)
-    TextView disableLineThrougView;
+    View disableLineThrougView;
 
     @ViewById(R.id.view_entity_listitem_warning)
-    TextView disableCoverView;
+    View disableCoverView;
 
     Context mContext;
 

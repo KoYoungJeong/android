@@ -9,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,10 +83,14 @@ public class MessageListPresenter {
     @ViewById(R.id.ll_messages)
     View sendLayout;
 
+    @ViewById(R.id.ll_messages_disable_alert)
+    View disabledUser;
+
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
     private String tempMessage;
+    private boolean isDisabled;
 
     @AfterInject
     void initObject() {
@@ -97,10 +102,16 @@ public class MessageListPresenter {
 
     @AfterViews
     void initViews() {
-//        messageListView.setAreHeadersSticky(false);
+
         messageListView.setAdapter(messageListAdapter);
 
         setSendEditText(tempMessage);
+
+        if (isDisabled) {
+            sendLayout.setVisibility(View.GONE);
+            disabledUser.setVisibility(View.VISIBLE);
+            setPreviewVisibleGone();
+        }
 
     }
 
@@ -390,10 +401,6 @@ public class MessageListPresenter {
     }
 
     public void disableChat() {
-        if (sendLayout != null) {
-            sendLayout.setVisibility(View.GONE);
-        } else {
-            activity.findViewById(R.id.ll_messages).setVisibility(View.GONE);
-        }
+        isDisabled = true;
     }
 }

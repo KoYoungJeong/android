@@ -10,12 +10,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/space_messages_divider"
-        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/ll_messages_disable_alert"
         android:layout_weight="1"
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:smoothScrollbar="true"
         android:transcriptMode="normal" />
+
+    <LinearLayout
+        android:id="@+id/ll_messages_disable_alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:background="#CCEB6016"
+        android:gravity="center"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/alert_disabled_members" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="@string/jandi_disabled_user"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
 
     <RelativeLayout
         android:id="@+id/layout_messages_preview_last_item"

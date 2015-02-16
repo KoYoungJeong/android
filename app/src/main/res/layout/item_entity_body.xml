@@ -91,7 +91,7 @@
         android:layout_alignTop="@+id/img_entity_listitem_line_through"
         android:layout_toRightOf="@+id/img_entity_listitem_line_through"
         android:scaleType="centerInside"
-        android:src="@drawable/jandi_fl_icon_deleted" />
+        android:src="@drawable/alert_disabled_members" />
 
     <View
         android:id="@+id/view_entity_listitem_warning"

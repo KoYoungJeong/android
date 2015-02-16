@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,9 +62,7 @@ class InviteCommand implements MenuCommand {
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
 
         // 현재 채널에 가입된 사용자를 제외한 초대 대상 사용자 리스트를 획득한다.
-        List<FormattedEntity> unjoinedMembers = entityManager.getUnjoinedMembersOfEntity(
-                chattingInfomations.entityId,
-                chattingInfomations.entityType);
+        List<FormattedEntity> unjoinedMembers = getUnjoinedEntities();
 
         if (unjoinedMembers.size() <= 0) {
             ColoredToast.showWarning(activity, activity.getString(R.string.warn_all_users_are_already_invited));
@@ -90,6 +89,21 @@ class InviteCommand implements MenuCommand {
         dialog.show();
     }
 
+    private List<FormattedEntity> getUnjoinedEntities() {
+        List<FormattedEntity> unjoinedMembersOfEntity = entityManager.getUnjoinedMembersOfEntity(
+                chattingInfomations.entityId,
+                chattingInfomations.entityType);
+
+        for (int idx = unjoinedMembersOfEntity.size() - 1; idx >= 0; idx--) {
+            FormattedEntity formattedEntity = unjoinedMembersOfEntity.get(idx);
+            if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                unjoinedMembersOfEntity.remove(idx);
+            }
+        }
+
+        return unjoinedMembersOfEntity;
+    }
+
     @Background
     public void inviteInBackground(List<Integer> invitedUsers) {
         try {
@@ -112,7 +126,6 @@ class InviteCommand implements MenuCommand {
         String rawString = activity.getString(R.string.jandi_message_invite_entity);
         String formatString = String.format(rawString, memberSize);
 
-//        ((BaseAnalyticsActivity) activity).trackInvitingToEntity(entityManager, chattingInfomations.entityType);
         ColoredToast.show(activity, formatString);
     }
 

@@ -207,15 +207,16 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
             disableLineThrouthView.setVisibility(View.GONE);
             disableWarningView.setVisibility(View.GONE);
 
-            if (formattedEntity.isJoined) {
-                disableCoverView.setVisibility(View.GONE);
-            } else {
-                disableCoverView.setVisibility(View.VISIBLE);
-                textViewBadgeCount.setVisibility(View.GONE);
-            }
 
             if (formattedEntity.isPublicTopic()) {
+                if (formattedEntity.isJoined) {
+                    disableCoverView.setVisibility(View.GONE);
+                } else {
+                    disableCoverView.setVisibility(View.VISIBLE);
+                    textViewBadgeCount.setVisibility(View.GONE);
+                }
             } else if (formattedEntity.isPrivateGroup()) {
+                disableCoverView.setVisibility(View.GONE);
                 imageViewIcon.setImageResource(R.drawable.jandi_private_topic_icon);
             } else if (formattedEntity.isUser()) {
                 Ion.with(imageViewIcon)
