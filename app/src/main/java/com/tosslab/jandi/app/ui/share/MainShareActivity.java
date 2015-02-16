@@ -1,62 +1,64 @@
 package com.tosslab.jandi.app.ui.share;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Window;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
-import com.tosslab.jandi.app.ui.share.model.ShareModel;
-import com.tosslab.jandi.app.ui.share.type.image.ImageShareFragment_;
-import com.tosslab.jandi.app.ui.share.type.text.TextShareFragment_;
+import com.tosslab.jandi.app.ui.share.model.MainShareModel;
+import com.tosslab.jandi.app.ui.share.type.image.ImageShareDialogFragment_;
+import com.tosslab.jandi.app.ui.share.type.text.TextShareDialogFragment_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
-public class ShareActivity extends Activity {
+public class MainShareActivity extends Activity {
 
-    private ShareModel shareModel;
+    private MainShareModel mainShareModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        shareModel = new ShareModel(ShareActivity.this);
+        mainShareModel = new MainShareModel(MainShareActivity.this);
 
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
-        IntentType intentType = shareModel.getIntentType(action, type);
+        IntentType intentType = mainShareModel.getIntentType(action, type);
 
         if (intentType == null) {
             // Check Shared Info Type
-            ColoredToast.show(ShareActivity.this, "이미지와 텍스트를 공유해주세요.");
             startIntro();
             return;
         }
 
-        if (!shareModel.hasTeamInfo() || !shareModel.hasEntityInfo()) {
+        if (!mainShareModel.hasTeamInfo() || !mainShareModel.hasEntityInfo()) {
             // Check Login Info
-            ColoredToast.show(ShareActivity.this, getString(R.string.err_profile_get_info));
+            ColoredToast.show(MainShareActivity.this, getString(R.string.err_profile_get_info));
             startIntro();
             return;
         }
 
-        Fragment fragment;
+        DialogFragment fragment;
         switch (intentType) {
             case Image:
-                fragment = ImageShareFragment_
+                fragment = ImageShareDialogFragment_
                         .builder()
-                        .uriString(shareModel.handleSendImage(intent).toString())
+                        .uriString(mainShareModel.handleSendImage(intent).toString())
                         .build();
                 break;
             case Text:
-                fragment = TextShareFragment_
+                fragment = TextShareDialogFragment_
                         .builder()
-                        .text(shareModel.handleSendText(intent))
+                        .text(mainShareModel.handleSendText(intent))
                         .build();
                 break;
             default:
@@ -65,17 +67,14 @@ public class ShareActivity extends Activity {
         }
 
         if (fragment != null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(android.R.id.content, fragment)
-                    .commit();
+            fragment.show(getFragmentManager(), "dialog");
         } else {
             startIntro();
         }
     }
 
     private void startIntro() {
-        IntroActivity_.intent(ShareActivity.this)
+        IntroActivity_.intent(MainShareActivity.this)
                 .start();
     }
 

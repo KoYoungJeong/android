@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.share.type.image;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -151,4 +152,13 @@ public class ImageSharePresenter {
                 .start();
     }
 
+    public ProgressDialog getUploadProgress(Activity activity, String absolutePath, String name) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage(context.getString(R.string.jandi_upload) + " " + absolutePath + "/" + name);
+        progressDialog.show();
+
+        return progressDialog;
+
+    }
 }

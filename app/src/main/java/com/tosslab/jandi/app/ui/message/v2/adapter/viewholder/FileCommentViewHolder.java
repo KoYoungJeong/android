@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -13,7 +12,6 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import de.greenrobot.event.EventBus;
@@ -76,21 +74,29 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerTextView.setVisibility(View.VISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.VISIBLE);
 
-                if (feedbackFileMessage.content.type.startsWith("audio")) {
+                String fileType = feedbackFileMessage.content.type;
+                if (fileType.startsWith("image/")) {
+                    String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                    Ion.with(fileImageView)
+                            .placeholder(R.drawable.jandi_fl_icon_img)
+                            .error(R.drawable.jandi_fl_icon_img)
+                            .crossfade(true)
+                            .load(imageUrl);
+                } else if (fileType.startsWith("audio")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
-                } else if (feedbackFileMessage.content.type.startsWith("video")) {
+                } else if (fileType.startsWith("video")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_video);
-                } else if (feedbackFileMessage.content.type.startsWith("application/pdf")) {
+                } else if (fileType.startsWith("application/pdf")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_pdf);
-                } else if (feedbackFileMessage.content.type.startsWith("text")) {
+                } else if (fileType.startsWith("text")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
-                } else if (TextUtils.equals(feedbackFileMessage.content.type, "application/x-hwp")) {
+                } else if (TextUtils.equals(fileType, "application/x-hwp")) {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_hwp);
-                } else if (FormatConverter.isSpreadSheetMimeType(feedbackFileMessage.content.type)) {
+                } else if (FormatConverter.isSpreadSheetMimeType(fileType)) {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_exel);
-                } else if (FormatConverter.isPresentationMimeType(feedbackFileMessage.content.type)) {
+                } else if (FormatConverter.isPresentationMimeType(fileType)) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_ppt);
-                } else if (FormatConverter.isDocmentMimeType(feedbackFileMessage.content.type)) {
+                } else if (FormatConverter.isDocmentMimeType(fileType)) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_etc);

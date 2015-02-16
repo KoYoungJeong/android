@@ -1,9 +1,13 @@
 package com.tosslab.jandi.app.ui.share.type.image;
 
-import android.app.Fragment;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Window;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
@@ -28,10 +32,10 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
 @EFragment(R.layout.fragment_share_image)
-public class ImageShareFragment extends Fragment {
+public class ImageShareDialogFragment extends DialogFragment {
 
 
-    private static final Logger logger = Logger.getLogger(ImageShareFragment.class);
+    private static final Logger logger = Logger.getLogger(ImageShareDialogFragment.class);
 
     @FragmentArg
     String uriString;
@@ -73,6 +77,20 @@ public class ImageShareFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        getActivity().finish();
+    }
+
     @Background
     void downloadImage(ProgressDialog downloadProgress, String path, String downloadDir, String downloadName) {
 
@@ -93,7 +111,7 @@ public class ImageShareFragment extends Fragment {
 
         EntityInfo selectedEntity = imageSharePresenter.getSelectedEntity();
 
-        ProgressDialog uploadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
+        ProgressDialog uploadProgress = imageSharePresenter.getUploadProgress(getActivity(), imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
 
         String titleText = imageSharePresenter.getTitleText();
         String commentText = imageSharePresenter.getCommentText();
@@ -118,9 +136,6 @@ public class ImageShareFragment extends Fragment {
                 imageSharePresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
 
-            int teamId = shareModel.getTeamId();
-            boolean starredEntity = shareModel.isStarredEntity(selectedEntity.getEntityId());
-            imageSharePresenter.moveEntity(teamId, selectedEntity, starredEntity);
             finishOnUiThread();
         } catch (Exception e) {
             logger.error("Upload Error : ", e);

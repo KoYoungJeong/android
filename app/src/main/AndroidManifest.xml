@@ -104,7 +104,7 @@
             android:label="@string/menu_entity_invite"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.entityInfos.EntityChooseActivity_"
+            android:name=".ui.entities.EntityChooseActivity_"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
 
@@ -184,9 +184,10 @@
             android:theme="@style/JandiTheme.PushIntro" />
 
         <activity
-            android:name=".ui.share.ShareActivity"
+            android:name=".ui.share.MainShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Jandi.Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

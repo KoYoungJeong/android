@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <Spinner
+        android:layout_marginTop="12dp"
         android:id="@+id/spinner_share_text_entity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner_share_text_entity"
         android:hint="@string/jandi_message_hint"
-        android:layout="@layout/view_custom_float_label" />
+        android:imeOptions="normal" />
 
     <Button
         android:id="@+id/btn_share_text_send"

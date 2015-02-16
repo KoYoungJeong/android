@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.share.type.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,9 +74,12 @@ public class ShareEntityAdapter extends BaseAdapter {
             holder.imageView.setImageResource(R.drawable.jandi_private_topic_icon);
         } else {
 
+            holder.imageView.setImageResource(R.drawable.jandi_profile);
+
             Ion.with(holder.imageView)
                     .crossfade(true)
                     .placeholder(R.drawable.jandi_profile)
+                    .error(R.drawable.jandi_profile)
                     .fitCenter()
                     .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + item.getProfileImage());
         }

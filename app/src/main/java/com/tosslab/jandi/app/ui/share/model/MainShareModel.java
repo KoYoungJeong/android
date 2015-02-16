@@ -8,16 +8,16 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.share.ShareActivity;
+import com.tosslab.jandi.app.ui.share.MainShareActivity;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
  */
-public class ShareModel {
+public class MainShareModel {
 
     private final Context context;
 
-    public ShareModel(Context context) {
+    public MainShareModel(Context context) {
         this.context = context;
     }
 
@@ -30,16 +30,16 @@ public class ShareModel {
         return (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
     }
 
-    public ShareActivity.IntentType getIntentType(String action, String type) {
+    public MainShareActivity.IntentType getIntentType(String action, String type) {
 
         if (!TextUtils.equals(action, Intent.ACTION_SEND) || TextUtils.isEmpty(type)) {
             return null;
         }
 
         if (type.startsWith("image/")) {
-            return ShareActivity.IntentType.Image;
+            return MainShareActivity.IntentType.Image;
         } else if (TextUtils.equals(type, "text/plain")) {
-            return ShareActivity.IntentType.Text;
+            return MainShareActivity.IntentType.Text;
         }
 
         return null;
