@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
+import com.tosslab.jandi.app.ui.member.model.TeamInfoModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -56,6 +57,9 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @Bean
     JandiEntityClient mJandiEntityClient;
 
+    @Bean
+    TeamInfoModel teamInfoModel;
+
     private ProgressWheel mProgressWheel;
     private EntityManager mEntityManager;
 
@@ -66,7 +70,9 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         listViewInvitation.setAdapter(teamUserListAdapter);
 
         mEntityManager = EntityManager.getInstance(TeamInfoActivity.this);
-        retrieveTeamUserList(mEntityManager.getFormattedUsers());
+
+        List<FormattedEntity> entities = teamInfoModel.retrieveTeamUserList();
+        teamUserListAdapter.retrieveList(entities);
     }
 
     @SupposeUiThread
@@ -143,10 +149,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    void retrieveTeamUserList(List<FormattedEntity> users) {
-        teamUserListAdapter.retrieveList(users);
     }
 
     /**

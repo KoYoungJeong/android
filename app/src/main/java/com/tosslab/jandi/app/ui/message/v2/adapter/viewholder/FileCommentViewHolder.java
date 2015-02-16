@@ -9,6 +9,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -48,14 +49,21 @@ public class FileCommentViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link) {
 
         String profileUrl = ((link.message.writer.u_photoThumbnailUrl != null) && TextUtils.isEmpty(link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl)) ? link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl : link.message.writer.u_photoUrl;
-        Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
+        EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
+        if (TextUtils.equals(entityManager.getEntityById(link.message.writerId).getUser().status, "enabled")) {
+
+            Ion.with(profileImageView)
+                    .placeholder(R.drawable.jandi_profile)
+                    .error(R.drawable.jandi_profile)
+                    .transform(new IonCircleTransform())
+                    .crossfade(true)
+                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
+        } else {
+            profileImageView.setImageResource(R.drawable.jandi_ic_launcher);
+        }
         nameTextView.setText(link.message.writer.name);
+
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 
         if (link.feedback instanceof ResMessages.FileMessage) {

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.members.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -10,6 +11,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +42,7 @@ public class TopicMemberModel {
                                     .email(entity.getUserEmail())
                                     .photoUrl(entity.getUserLargeProfileUrl())
                                     .starred(entity.isStarred)
+                                    .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
                                     .name(entity.getName());
 
                         })
@@ -52,6 +56,25 @@ public class TopicMemberModel {
         while (iterator.hasNext()) {
             chatChooseItems.add(iterator.next());
         }
+
+        Collections.sort(chatChooseItems, new Comparator<ChatChooseItem>() {
+            @Override
+            public int compare(ChatChooseItem lhs, ChatChooseItem rhs) {
+                if (lhs.isEnabled()) {
+                    if (rhs.isEnabled()) {
+                        return 0;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    if (rhs.isEnabled()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        });
 
         return chatChooseItems;
 

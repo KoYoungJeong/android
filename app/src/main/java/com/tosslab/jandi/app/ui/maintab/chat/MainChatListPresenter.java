@@ -55,4 +55,8 @@ public class MainChatListPresenter {
     public void refreshListView() {
         mainChatListAdapter.notifyDataSetChanged();
     }
+
+    public boolean hasChatItems() {
+        return mainChatListAdapter != null && mainChatListAdapter.getCount() > 0;
+    }
 }

@@ -9,6 +9,7 @@ public class ChatChooseItem {
     private String email;
     private String photoUrl;
     private boolean isStarred;
+    private boolean isEnabled;
 
     public ChatChooseItem name(String name) {
         this.name = name;
@@ -55,5 +56,14 @@ public class ChatChooseItem {
 
     public String getPhotoUrl() {
         return photoUrl;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+
+    public ChatChooseItem enabled(boolean isEnabled) {
+        this.isEnabled = isEnabled;
+        return this;
     }
 }

@@ -79,6 +79,9 @@ public class MessageListPresenter {
     @ViewById(R.id.txt_message_preview_content)
     TextView previewContent;
 
+    @ViewById(R.id.ll_messages)
+    View sendLayout;
+
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
@@ -383,6 +386,14 @@ public class MessageListPresenter {
     public void setPreviewVisibleGone() {
         if (previewLayout != null) {
             previewLayout.setVisibility(View.GONE);
+        }
+    }
+
+    public void disableChat() {
+        if (sendLayout != null) {
+            sendLayout.setVisibility(View.GONE);
+        } else {
+            activity.findViewById(R.id.ll_messages).setVisibility(View.GONE);
         }
     }
 }

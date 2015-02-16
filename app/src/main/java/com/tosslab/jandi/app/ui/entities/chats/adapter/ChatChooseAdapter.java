@@ -83,7 +83,6 @@ public class ChatChooseAdapter extends BaseAdapter {
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-
         Ion.with(viewHolder.imageViewIcon)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)

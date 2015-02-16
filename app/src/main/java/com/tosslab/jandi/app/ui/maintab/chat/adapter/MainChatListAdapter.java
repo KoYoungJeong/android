@@ -86,13 +86,18 @@ public class MainChatListAdapter extends BaseAdapter {
 
         viewHolder.textViewAdditional.setText(item.getLastMessage());
 
-        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        if (item.getStatus()) {
 
-        Ion.with(viewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .load(item.getPhoto());
+            viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+
+            Ion.with(viewHolder.imageViewIcon)
+                    .placeholder(R.drawable.jandi_profile)
+                    .error(R.drawable.jandi_profile)
+                    .transform(new IonCircleTransform())
+                    .load(item.getPhoto());
+        } else {
+            viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_ic_launcher);
+        }
 
 
         return convertView;

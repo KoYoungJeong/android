@@ -64,6 +64,7 @@ public class JandiChatsDatabaseManager {
             tempValues.put(Chats.unread.name(), chatItem.getUnread());
             tempValues.put(Chats.entityId.name(), chatItem.getEntityId());
             tempValues.put(Chats.photo.name(), chatItem.getPhoto());
+            tempValues.put(Chats.status.name(), chatItem.getStatus() ? 1 : 0);
 
             contentValueses.add(tempValues);
         }
@@ -106,6 +107,7 @@ public class JandiChatsDatabaseManager {
                 int lastLinkIdIdx = cursor.getColumnIndex(Chats.lastLinkId.name());
                 int lastMessageIdx = cursor.getColumnIndex(Chats.lastMessage.name());
                 int photoIdx = cursor.getColumnIndex(Chats.photo.name());
+                int statusIdx = cursor.getColumnIndex(Chats.status.name());
 
                 tempItem = new ChatItem();
 
@@ -116,6 +118,7 @@ public class JandiChatsDatabaseManager {
                         .unread(cursor.getInt(unreadIdx))
                         .entityId(cursor.getInt(entityIdIdx))
                         .lastMessage(cursor.getString(lastMessageIdx))
+                        .status(statusIdx == 1)
                         .photo(cursor.getString(photoIdx));
 
                 chatItems.add(tempItem);

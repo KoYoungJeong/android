@@ -53,7 +53,6 @@ public class MainChatListFragment extends Fragment {
     @AfterViews
     void initViews() {
         FAButtonUtil.setFAButtonController(((AbsListView) getView().findViewById(R.id.lv_main_chat_list)), getView().findViewById(R.id.btn_main_chat_fab));
-
     }
 
 
@@ -100,8 +99,10 @@ public class MainChatListFragment extends Fragment {
     void getChatList() {
         int memberId = mainChatListModel.getMemberId();
         int teamId = mainChatListModel.getTeamId();
-        List<ChatItem> savedChatList = mainChatListModel.getSavedChatList(teamId);
-        mainChatListPresenter.setChatItems(savedChatList);
+        if (!mainChatListPresenter.hasChatItems()) {
+            List<ChatItem> savedChatList = mainChatListModel.getSavedChatList(teamId);
+            mainChatListPresenter.setChatItems(savedChatList);
+        }
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
             List<ChatItem> chatItems = mainChatListModel.convertChatItem(teamId, chatList);

@@ -289,6 +289,7 @@ public class JandiEntityDatabaseManager {
         values.put(LeftUser.authority.name(), user.u_authority);
         values.put(LeftUser.photoUrl.name(), user.u_photoUrl);
         values.put(LeftUser.statusMessage.name(), user.u_statusMessage);
+        values.put(LeftUser.status.name(), user.status);
         values.put(LeftUser.nickName.name(), user.u_nickname);
 
         if (user.u_extraData != null) {
@@ -467,6 +468,7 @@ public class JandiEntityDatabaseManager {
         int authorityIdx = myUserCursor.getColumnIndex(LeftUser.authority.name());
         int photoUrlIdx = myUserCursor.getColumnIndex(LeftUser.photoUrl.name());
         int statusMessageIdx = myUserCursor.getColumnIndex(LeftUser.statusMessage.name());
+        int statusIdx = myUserCursor.getColumnIndex(LeftUser.status.name());
         int nickNameIdx = myUserCursor.getColumnIndex(LeftUser.nickName.name());
         int phoneNumberIdx = myUserCursor.getColumnIndex(LeftUser.phoneNumber.name());
         int departmentIdx = myUserCursor.getColumnIndex(LeftUser.department.name());
@@ -484,6 +486,7 @@ public class JandiEntityDatabaseManager {
         user.u_authority = myUserCursor.getString(authorityIdx);
         user.u_photoUrl = myUserCursor.getString(photoUrlIdx);
         user.u_statusMessage = myUserCursor.getString(statusMessageIdx);
+        user.status = myUserCursor.getString(statusIdx);
         user.u_nickname = myUserCursor.getString(nickNameIdx);
 
         user.u_extraData = new ResLeftSideMenu.ExtraData();

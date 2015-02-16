@@ -32,6 +32,7 @@ public class ChatChooseModel {
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
         Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -62,6 +63,7 @@ public class ChatChooseModel {
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
         Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .filter(formattedEntity -> !TextUtils.isEmpty(formattedEntity.getName()) && formattedEntity.getName().toLowerCase().contains(name.toLowerCase()))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();

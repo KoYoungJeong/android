@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -60,6 +61,7 @@ public class MainChatListModel {
                             .name(userEntity.getName())
                             .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getEntityId()))
                             .unread(resChat.getUnread())
+                            .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
                             .photo(userEntity.getUserLargeProfileUrl());
 
                     return chatItem;

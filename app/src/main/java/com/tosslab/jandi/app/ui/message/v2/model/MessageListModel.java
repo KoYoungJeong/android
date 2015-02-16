@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -21,6 +20,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
@@ -351,6 +351,18 @@ public class MessageListModel {
         if (chatIdFromPush == entityId) {
             NotificationManager notificationManager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(JandiConstants.NOTIFICATION_ID);
+        }
+
+    }
+
+    public boolean isEnabledIfUser(int entityId) {
+
+        FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(entityId);
+
+        if (entityById.isUser()) {
+            return TextUtils.equals(entityById.getUser().status, "enabled");
+        } else {
+            return true;
         }
 
     }

@@ -81,14 +81,19 @@ public class TopicMemberAdapter extends BaseAdapter {
             viewHolder.imageViewFavorite.setVisibility(View.GONE);
         }
 
-        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
+        if (item.isEnabled()) {
+            viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
-        Ion.with(viewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .load(item.getPhotoUrl());
+            Ion.with(viewHolder.imageViewIcon)
+                    .placeholder(R.drawable.jandi_profile)
+                    .error(R.drawable.jandi_profile)
+                    .transform(new IonCircleTransform())
+                    .load(item.getPhotoUrl());
+        } else {
+            viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_ic_launcher);
+            viewHolder.imageViewIcon.setOnClickListener(null);
+        }
 
 
         return convertView;

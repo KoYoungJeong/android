@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.ui.message.to.SendingState;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 12;
+    private static final int DB_VERSION = 14;
     private static final String[] CREATE_TABLES = {
             DatabaseConsts.Table.account + " (" +
                     DatabaseConsts.Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -82,6 +82,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.LeftUser.lastName + " TEXT, " +
                     DatabaseConsts.LeftUser.photoUrl + " TEXT, " +
                     DatabaseConsts.LeftUser.statusMessage + " TEXT, " +
+                    DatabaseConsts.LeftUser.status + " TEXT NOT NULL DEFAULT enabled, " +
                     DatabaseConsts.LeftUser.nickName + " TEXT, " +
                     DatabaseConsts.LeftUser.phoneNumber + " TEXT, " +
                     DatabaseConsts.LeftUser.department + " TEXT, " +
@@ -162,6 +163,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.Chats.unread + " INTEGER NOT NULL, " +
                     DatabaseConsts.Chats.name + " TEXT ," +
                     DatabaseConsts.Chats.lastMessage + " TEXT ," +
+                    DatabaseConsts.Chats.status + " INTEGER NOT NULL DEFAULT 1," +
                     DatabaseConsts.Chats.photo + " TEXT " +
                     ");"
     };

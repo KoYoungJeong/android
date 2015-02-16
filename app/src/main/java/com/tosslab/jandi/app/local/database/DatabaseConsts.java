@@ -50,6 +50,8 @@ public class DatabaseConsts {
         /* u_photoThumbnailUrl*/
         thumbSmall, thumbMedium, thumbLarge,
 
+        status,
+
         isMe
     }
 
@@ -88,6 +90,6 @@ public class DatabaseConsts {
 
     public enum Chats {
         _id, teamId, name, isStarred, lastMessageId,
-        unread, entityId, lastLinkId, lastMessage, photo
+        unread, entityId, lastLinkId, lastMessage, photo, status
     }
 }

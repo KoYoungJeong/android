@@ -12,6 +12,7 @@ public class ChatItem {
     private int lastLinkId;
     private String lastMessage;
     private String photo;
+    private boolean status;
 
     public int getLastMessageId() {
         return lastMessageId;
@@ -82,6 +83,15 @@ public class ChatItem {
 
     public ChatItem photo(String photo) {
         this.photo = photo;
+        return this;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public ChatItem status(boolean status) {
+        this.status = status;
         return this;
     }
 }

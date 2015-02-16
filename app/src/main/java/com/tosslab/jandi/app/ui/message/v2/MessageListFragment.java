@@ -138,7 +138,6 @@ public class MessageListFragment extends Fragment {
                 }, () -> {
 
                 });
-
     }
 
     private void getSavedMessageList() {
@@ -189,12 +188,16 @@ public class MessageListFragment extends Fragment {
 
         messageListModel.setEntityInfo(entityType, entityId);
 
+
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
         sendMessagePublisherEvent(LoadType.Saved);
         sendMessagePublisherEvent(LoadType.Old);
 
+        if (!messageListModel.isEnabledIfUser(entityId)) {
+            messageListPresenter.disableChat();
+        }
     }
 
     private void sendMessagePublisherEvent(LoadType old) {
@@ -273,7 +276,9 @@ public class MessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        messageListModel.startRefreshTimer();
+        if (messageListModel.isEnabledIfUser(entityId)) {
+            messageListModel.startRefreshTimer();
+        }
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
