@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
@@ -49,6 +51,9 @@ public class ImageSharePresenter {
     @ViewById(R.id.txt_share_image_comment)
     FloatLabel commentText;
 
+    @ViewById(R.id.progress_share_image)
+    ProgressBar downloadingProgressBar;
+
 
     private ShareEntityAdapter shareEntityAdapter;
     private List<EntityInfo> entities;
@@ -85,13 +90,6 @@ public class ImageSharePresenter {
                 .centerCrop()
                 .crossFade()
                 .into(shareImageView);
-    }
-
-    @UiThread
-    public void dismissIncrementProgressDialog(ProgressDialog downloadProgress) {
-        if (downloadProgress != null && downloadProgress.isShowing()) {
-            downloadProgress.dismiss();
-        }
     }
 
     public EntityInfo getSelectedEntity() {
@@ -160,5 +158,15 @@ public class ImageSharePresenter {
 
         return progressDialog;
 
+    }
+
+    @UiThread
+    public void dismissPrgoressBar() {
+        downloadingProgressBar.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    public void showProgressBar() {
+        downloadingProgressBar.setVisibility(View.VISIBLE);
     }
 }

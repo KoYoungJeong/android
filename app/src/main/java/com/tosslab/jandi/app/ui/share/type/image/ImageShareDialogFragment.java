@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Window;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.R;
@@ -69,8 +68,7 @@ public class ImageShareDialogFragment extends DialogFragment {
         if (imagePath.startsWith("https://") || imagePath.startsWith("http://")) {
             String downloadDir = GoogleImagePickerUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
-            ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-            downloadImage(downloadProgress, imagePath, downloadDir, downloadName);
+            downloadImage(imagePath, downloadDir, downloadName);
         } else {
             this.imageFile = new File(imagePath);
             imageSharePresenter.bindImage(this.imageFile);
@@ -81,7 +79,7 @@ public class ImageShareDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle(R.string.jandi_share_to_jandi);
         return dialog;
     }
 
@@ -92,17 +90,19 @@ public class ImageShareDialogFragment extends DialogFragment {
     }
 
     @Background
-    void downloadImage(ProgressDialog downloadProgress, String path, String downloadDir, String downloadName) {
+    void downloadImage(String path, String downloadDir, String downloadName) {
 
+        imageSharePresenter.showProgressBar();
         try {
             Log.d("INFO", "Download Path " + downloadDir + "/" + downloadName);
 
-            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, path, downloadDir, downloadName);
+            File file = GoogleImagePickerUtil.downloadFile(getActivity(), null, path, downloadDir, downloadName);
             Log.d("INFO", "Downloaded Path " + file.getAbsolutePath());
-            imageSharePresenter.dismissIncrementProgressDialog(downloadProgress);
             imageFile = file;
             imageSharePresenter.bindImage(file);
         } catch (Exception e) {
+        } finally {
+            imageSharePresenter.dismissPrgoressBar();
         }
     }
 

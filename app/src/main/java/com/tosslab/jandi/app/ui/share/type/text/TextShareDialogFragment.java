@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.Window;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.type.model.ShareModel;
@@ -12,7 +11,6 @@ import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -35,12 +33,15 @@ public class TextShareDialogFragment extends DialogFragment {
     ShareModel shareModel;
 
     @FragmentArg
+    String subject;
+
+    @FragmentArg
     String text;
 
     @AfterInject
     void initObject() {
 
-        textSharePresenter.setText(text);
+        textSharePresenter.setText(subject, text);
 
         List<EntityInfo> entities = shareModel.getEntityInfos();
 
@@ -50,7 +51,7 @@ public class TextShareDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle(R.string.jandi_share_to_jandi);
         return dialog;
     }
 

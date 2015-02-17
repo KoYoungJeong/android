@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <Spinner
-        android:layout_marginTop="12dp"
         android:id="@+id/spinner_share_text_entity"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" />
 
     <com.iangclifton.android.floatlabel.FloatLabel
         android:id="@+id/txt_share_text"
@@ -16,7 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner_share_text_entity"
         android:hint="@string/jandi_message_hint"
-        android:imeOptions="normal" />
+        android:imeOptions="normal"
+        android:inputType="textMultiLine" />
 
     <Button
         android:id="@+id/btn_share_text_send"
@@ -29,4 +31,11 @@
         android:text="@string/jandi_message_send"
         android:textColor="@color/white"
         android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/btn_share_text_send"
+        android:layout_marginTop="12dp" />
+
 </RelativeLayout>

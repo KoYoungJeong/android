@@ -22,6 +22,10 @@ public class MainShareModel {
     }
 
 
+    public String handleSendSubject(Intent intent) {
+        return intent.getStringExtra(Intent.EXTRA_SUBJECT);
+    }
+
     public String handleSendText(Intent intent) {
         return intent.getStringExtra(Intent.EXTRA_TEXT);
     }
