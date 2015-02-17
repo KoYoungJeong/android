@@ -101,10 +101,7 @@ public class IntroActivityModel {
         RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
         ResAccountInfo resAccountInfo = requestManager.request();
 
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(resAccountInfo.getEmails());
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(resAccountInfo.getDevices());
+        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
 
     }
 

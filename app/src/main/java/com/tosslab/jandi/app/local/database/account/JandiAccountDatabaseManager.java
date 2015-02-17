@@ -101,6 +101,23 @@ public class JandiAccountDatabaseManager {
         return resAccountInfo;
     }
 
+    public void upsertAccountAllInfo(ResAccountInfo resAccountInfo) {
+        upsertAccountInfo(resAccountInfo);
+        upsertAccountEmail(resAccountInfo.getEmails());
+
+        List<ResAccountInfo.UserTeam> memberships = resAccountInfo.getMemberships();
+
+        for (int idx = memberships.size() - 1; idx >= 0; idx--) {
+            if (!TextUtils.equals(memberships.get(idx).getStatus(), "enabled")) {
+                memberships.remove(idx);
+            }
+        }
+
+        upsertAccountTeams(memberships);
+        upsertAccountDevices(resAccountInfo.getDevices());
+
+    }
+
     public long upsertAccountInfo(ResAccountInfo resAccountInfo) {
 
         if (resAccountInfo == null) {

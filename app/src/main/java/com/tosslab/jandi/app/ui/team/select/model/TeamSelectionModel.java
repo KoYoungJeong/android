@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -58,6 +59,12 @@ public class TeamSelectionModel {
             RequestManager<List<ResPendingTeamInfo>> pendingTeaListManager = RequestManager.newInstance(context, pendingTeamListRequest);
 
             List<ResPendingTeamInfo> pedingTeamInfo = pendingTeaListManager.request();
+
+            for (int idx = pedingTeamInfo.size() - 1; idx >= 0; idx--) {
+                if (!TextUtils.equals(pedingTeamInfo.get(idx).getStatus(), "pending")) {
+                    pedingTeamInfo.remove(idx);
+                }
+            }
 
             teams.addAll(convertPedingTeamList(pedingTeamInfo));
 
@@ -126,7 +133,7 @@ public class TeamSelectionModel {
         ResAccountInfo resAccountInfo = null;
         try {
             resAccountInfo = resAccountInfoRequestManager.request();
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(resAccountInfo.getMemberships());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
         } catch (JandiNetworkException e) {
 
 

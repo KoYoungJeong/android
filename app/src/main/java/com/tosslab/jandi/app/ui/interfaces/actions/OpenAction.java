@@ -76,10 +76,7 @@ public class OpenAction implements Action {
             ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
 
             TokenUtil.saveTokenInfoByRefresh(context, accessToken);
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
         } catch (HttpStatusCodeException e) {

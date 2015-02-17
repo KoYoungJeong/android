@@ -95,10 +95,7 @@ public class TeamDomainInfoModel {
             resAccountInfo = resAccountInfoRequestManager.request();
             JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(context);
 
-            databaseManager.upsertAccountTeams(resAccountInfo.getMemberships());
-            databaseManager.upsertAccountDevices(resAccountInfo.getDevices());
-            databaseManager.upsertAccountInfo(resAccountInfo);
-            databaseManager.upsertAccountEmail(resAccountInfo.getEmails());
+            databaseManager.upsertAccountAllInfo(resAccountInfo);
             databaseManager.updateSelectedTeam(teamId);
         } catch (JandiNetworkException e) {
 

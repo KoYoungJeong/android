@@ -221,6 +221,7 @@ public class ResAccountInfo {
         @JsonProperty("t_domain")
         private String teamDomain;
         private int unread;
+        private String status;
 
         public int getTeamId() {
             return teamId;
@@ -260,6 +261,14 @@ public class ResAccountInfo {
 
         public void setUnread(int unread) {
             this.unread = unread;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
 
         @Override

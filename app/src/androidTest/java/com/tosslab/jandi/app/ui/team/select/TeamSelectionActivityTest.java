@@ -24,7 +24,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-@Ignore
+//@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 public class TeamSelectionActivityTest {
 
