@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.share.type.text;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -38,13 +39,15 @@ public class TextSharePresenter {
     @RootContext
     Context context;
 
+    private String subject;
     private String text;
     private List<EntityInfo> entityInfos;
     private ShareEntityAdapter shareEntityAdapter;
     private ProgressWheel progressWheel;
 
-    public void setText(String text) {
+    public void setText(String subject, String text) {
 
+        this.subject = subject;
         this.text = text;
         if (floatLabel != null) {
             floatLabel.getEditText().setText(text);
@@ -61,6 +64,16 @@ public class TextSharePresenter {
     @AfterViews
     void initView() {
         EditText editText = floatLabel.getEditText();
+
+        StringBuffer buffer = new StringBuffer();
+        if (!TextUtils.isEmpty(subject)) {
+            buffer.append(subject).append("\n");
+        }
+
+        if (!TextUtils.isEmpty(text)) {
+            buffer.append(text);
+        }
+
         editText.setText(text);
 
         for (EntityInfo entityInfo : entityInfos) {

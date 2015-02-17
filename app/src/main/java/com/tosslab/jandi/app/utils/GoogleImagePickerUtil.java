@@ -23,11 +23,19 @@ public class GoogleImagePickerUtil {
         File dir = new File(downloadDir);
         dir.mkdirs();
 
-        return Ion.with(context)
-                .load(url)
-                .progressDialog(downloadProgress)
-                .write(new File(dir, downloadName))
-                .get();
+        if (downloadProgress != null) {
+
+            return Ion.with(context)
+                    .load(url)
+                    .progressDialog(downloadProgress)
+                    .write(new File(dir, downloadName))
+                    .get();
+        } else {
+            return Ion.with(context)
+                    .load(url)
+                    .write(new File(dir, downloadName))
+                    .get();
+        }
 
     }
 

@@ -58,6 +58,7 @@ public class MainShareActivity extends Activity {
             case Text:
                 fragment = TextShareDialogFragment_
                         .builder()
+                        .subject(mainShareModel.handleSendSubject(intent))
                         .text(mainShareModel.handleSendText(intent))
                         .build();
                 break;

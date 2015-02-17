@@ -7,8 +7,17 @@
     <ImageView
         android:id="@+id/img_share_image"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_marginTop="12dp" />
+        android:layout_height="120dp" />
+
+    <ProgressBar
+        android:id="@+id/progress_share_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/img_share_image"
+        android:layout_alignLeft="@+id/img_share_image"
+        android:layout_alignRight="@+id/img_share_image"
+        android:layout_alignTop="@+id/img_share_image"
+        android:visibility="gone" />
 
     <com.iangclifton.android.floatlabel.FloatLabel
         android:id="@+id/txt_share_image_title"
@@ -29,7 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner_share_image_entity"
-        android:hint="@string/file_upload_comment" />
+        android:hint="@string/file_upload_comment"
+        android:inputType="textMultiLine" />
 
 
     <Button
@@ -38,10 +48,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_share_image_comment"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="12dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/jandi_btn_dynamic_selector_v2"
         android:text="@string/jandi_message_send"
         android:textColor="@color/white"
         android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/btn_share_text_send"
+        android:layout_marginTop="12dp" />
+
 </RelativeLayout>
