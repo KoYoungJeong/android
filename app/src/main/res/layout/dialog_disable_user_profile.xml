@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/jandi_dialog_user_profile">
+
+    <ImageView
+        android:id="@+id/img_user_info_photo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/jandi_profile" />
+
+    <TextView
+        android:id="@+id/txt_user_info_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/img_user_info_photo"
+        android:layout_toRightOf="@+id/img_user_info_photo"
+        android:text="asdad"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/img_user_info_starred"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_user_info_name"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/txt_user_info_name"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:src="@drawable/profile_fav_on" />
+
+    <TextView
+        android:id="@+id/txt_user_info_division"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_user_info_name"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/img_user_info_photo"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/txt_user_info_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_user_info_division"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/img_user_info_photo"
+        android:textColor="@color/jandi_text_light"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/layout_user_info_warning"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@+id/img_user_info_photo"
+        android:layout_margin="20dp"
+        android:background="@drawable/bg_round_rect_light_gray"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/alert_disabled_members" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:gravity="center"
+            android:text="This member is no longer a member of your team. Please contact your team owner for further infocation"
+            android:textColor="@color/jandi_text_light" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/layout_user_info_warning" />
+
+</RelativeLayout>
+

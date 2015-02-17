@@ -34,11 +34,11 @@ public class PureCommentViewHolder implements BodyViewHolder {
         FormattedEntity entityById = entityManager.getEntityById(link.message.writerId);
         if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
 
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
             disableLineThroughView.setVisibility(View.GONE);
-        } else {
-            disableLineThroughView.setVisibility(View.VISIBLE);
             nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
+        } else {
+            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
+            disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
         nameTextView.setText(link.message.writer.name);

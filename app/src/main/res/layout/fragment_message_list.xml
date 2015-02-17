@@ -29,9 +29,9 @@
         android:visibility="gone">
 
         <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/alert_disabled_members" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_disabled_members_bar" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.dialogs;
+package com.tosslab.jandi.app.dialogs.profile;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -59,11 +59,19 @@ public class UserInfoDialogFragment extends DialogFragment {
     private ImageView imgStarred;
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        Bundle bundle = getArguments();
         final int userId = entityId;
 
         FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
 
+        if (TextUtils.equals(entity.getUser().status, "enabled")) {
+            return createEnabledUserDialog(userId, entity);
+        } else {
+            return createDisabledUserDialog(userId, entity);
+        }
+
+    }
+
+    private Dialog createEnabledUserDialog(int userId, FormattedEntity entity) {
         final String userName = entity.getName();
         final String userNickname = entity.getUserStatusMessage();
         final String userDivision = entity.getUserDivision();
@@ -96,25 +104,15 @@ public class UserInfoDialogFragment extends DialogFragment {
             imgStarred.setVisibility(View.GONE);
         }
 
-        imgStarred.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                onStarClick(userId);
-
-            }
-        });
+        imgStarred.setOnClickListener(v -> onStarClick(userId));
 
         if (isMe) {     // 본인의 정보면 1:1 대화 버튼을 보여주지 않는다.
             lyUserDirectMessage.setVisibility(View.GONE);
             borderUserDirectMessage.setVisibility(View.GONE);
         } else {
-            lyUserDirectMessage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    EventBus.getDefault().post(new RequestMoveDirectMessageEvent(userId));
-                    dismiss();
-                }
+            lyUserDirectMessage.setOnClickListener(view -> {
+                EventBus.getDefault().post(new RequestMoveDirectMessageEvent(userId));
+                dismiss();
             });
         }
 
@@ -123,13 +121,10 @@ public class UserInfoDialogFragment extends DialogFragment {
         } else {
             // Set OnClickListener for Phone Call
             txtUserPhone.setText(userPhoneNumber);
-            lyUserPhone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String uri = "tel:" + userPhoneNumber.replaceAll("[^0-9|\\+]", "");
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(uri));
-                    startActivity(intent);
-                }
+            lyUserPhone.setOnClickListener(view -> {
+                String uri = "tel:" + userPhoneNumber.replaceAll("[^0-9|\\+]", "");
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(uri));
+                startActivity(intent);
             });
         }
 
@@ -137,13 +132,10 @@ public class UserInfoDialogFragment extends DialogFragment {
             lyUserEmail.setVisibility(View.GONE);
         } else {
             txtUserEmail.setText(userEmail);
-            lyUserEmail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String uri = "mailto:" + userEmail;
-                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
-                    startActivity(intent);
-                }
+            lyUserEmail.setOnClickListener(view -> {
+                String uri = "mailto:" + userEmail;
+                Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse(uri));
+                startActivity(intent);
             });
         }
 
@@ -205,6 +197,46 @@ public class UserInfoDialogFragment extends DialogFragment {
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCanceledOnTouchOutside(true);
+        return dialog;
+    }
+
+    private Dialog createDisabledUserDialog(int userId, FormattedEntity entity) {
+
+        final String userName = entity.getName();
+        final String userDivision = entity.getUserDivision();
+        final String userPosition = entity.getUserPosition();
+        final String userProfileUrl = entity.getUserLargeProfileUrl();
+        final boolean isStarred = entity.isStarred;
+
+        View mainView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_disable_user_profile, null);
+
+        final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
+        imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
+        final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);
+        final TextView txtUserDivision = (TextView) mainView.findViewById(R.id.txt_user_info_division);
+        final TextView txtUserPosition = (TextView) mainView.findViewById(R.id.txt_user_info_position);
+
+        setProfileStarred(isStarred);
+        txtUserName.setText(userName);
+        txtUserDivision.setText(userDivision);
+        txtUserPosition.setText(userPosition);
+        Ion.with(imgUserPhoto)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(userProfileUrl);
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(mainView);
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(true);
+
         return dialog;
     }
 
