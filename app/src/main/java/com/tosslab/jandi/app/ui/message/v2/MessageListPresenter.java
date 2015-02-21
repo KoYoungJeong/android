@@ -319,8 +319,21 @@ public class MessageListPresenter {
 
     }
 
-    public void updateMessageIdAtSendingMessage(long localId, int id) {
-        messageListAdapter.updateMessageId(localId, id);
+    public void updateMessageIdAtSendingMessage(long localId, int messageId) {
+        if (!hasMessage(messageId)) {
+            messageListAdapter.updateMessageId(localId, messageId);
+        } else {
+            deleteLocalMessage(localId);
+        }
+    }
+
+    private void deleteLocalMessage(long localId) {
+        deleteDummyMessageAtList(localId);
+    }
+
+    private boolean hasMessage(int messageId) {
+        int idx = messageListAdapter.indexByMessageId(messageId);
+        return idx > 0;
     }
 
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {

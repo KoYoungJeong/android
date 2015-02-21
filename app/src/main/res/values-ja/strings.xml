@@ -28,7 +28,7 @@
     <string name="jandi_question_team_create">"JANDIにチームを作成していない方はこちら"</string>
 
     <!-- Login -->
-    <string name="jandi_action_start">"スタート"</string>
+    <string name="jandi_action_start">"新規アカウント作成"</string>
     <string name="jandi_action_login">"ログインする"</string>
     <string name="jandi_select_team">"チームを選択してください"</string>
     <string name="jandi_user_id">"メールアドレス"</string>
@@ -209,7 +209,7 @@ JANDIへようこそ"</string>
     <string name="jandi_file_list_pull">"引っ張ってさらにファイルを表示"</string>
     <string name="jandi_file_list_refresh">"更新しました"</string>
     <string name="jandi_file_list_release">"はなしてされあにファイルを表示"</string>
-    <string name="jandi_have_an_account_already">"すでにチームがある場合はこちら"</string>
+    <string name="jandi_have_an_account_already">"すでにJANDIに登録済みの方はこちら"</string>
     <string name="jandi_profile_position_hint">"役職"</string>
     <string name="err_profile_exceed_length_of_topic_name">"トピックの名称は最大60文字です"</string>
     <string name="err_profile_exceed_length_of_status_message">"ステータス文言は最大60文字です"</string>
@@ -244,7 +244,7 @@ JANDIへようこそ"</string>
 具体的には、abc.jandi.comの”abc"の部分を指し、<b>3文字以上</b>の英数字とハイフンが利用できます。覚えやすいドメイン名にすることをお勧めします"</string>
     <string name="jandi_duplicate_email">"そのメールアドレスは既に使用されています"</string>
     <string name="jandi_no_invite_email">"招待したいメンバーのメールアドレスを入力してください"</string>
-    <string name="jandi_signup_agree_all">"あなたの名前を入力してください。この名前は他のメンバーに公開されます。"</string>
+    <string name="jandi_signup_agree_all">"以下のサービス利用規約・プライバシーポリシーを全て読み、同意します"</string>
     <string name="jandi_password_strength_average">"普通"</string>
     <string name="jandi_password_strength_safe">"強い"</string>
     <string name="jandi_password_strength_strong">"非常に強い"</string>
