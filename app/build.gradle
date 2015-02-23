@@ -106,7 +106,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 19
         versionCode 33
-        versionName '0.9.4'
+        versionName '0.9.5'
     }
     buildTypes {
 
