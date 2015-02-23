@@ -334,9 +334,6 @@ public class MessageListFragment extends Fragment {
             if (!oldMessage.isFirst) {
                 messageListPresenter.setLoadingComplete();
             } else {
-                if (linkId != -1) {
-                    messageListPresenter.showNoMoreMessage();
-                }
                 messageListPresenter.setNoMoreLoading();
             }
 
