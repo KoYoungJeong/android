@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -10,7 +10,7 @@ import org.androidannotations.annotations.Extra;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EActivity
-public class MessageListV2Activity extends Activity {
+public class MessageListV2Activity extends ActionBarActivity {
 
     @Extra
     int entityType;
@@ -31,7 +31,7 @@ public class MessageListV2Activity extends Activity {
 
     void initViews() {
 
-        getFragmentManager()
+        getSupportFragmentManager()
                 .beginTransaction()
                 .add(
                         android.R.id.content,

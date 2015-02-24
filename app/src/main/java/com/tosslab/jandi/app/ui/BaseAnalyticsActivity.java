@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
-import android.app.Activity;
+import android.support.v7.app.ActionBarActivity;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -18,18 +18,15 @@ import org.json.JSONException;
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class BaseAnalyticsActivity extends Activity {
+public class BaseAnalyticsActivity extends ActionBarActivity {
+    public static String GA_PATH_CHANNEL = "Topic";
+    public static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
+    public static String GA_PATH_PRIVATE_GROUP = "Private Group";
     private static String GA_PATH_FILE_DETAIL = "File Detail";
     private static String GA_PATH_PROFILE = "Profile";
     private static String GA_PATH_TEAM_INFO = "Team Info";
     private static String GA_PATH_ACCOUNT_INFO = "Account Info";
     private static String GA_PATH_INVITE_MEMBER = "Invite Member";
-
-    public static String GA_PATH_CHANNEL = "Topic";
-    public static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
-    public static String GA_PATH_PRIVATE_GROUP = "Private Group";
-
-
     private static String GA_PATH_CHANNEL_PANEL = "Channel Panel";
     private static String GA_PATH_DIRECT_MESSAGE_PANEL = "Direct Message Panel";
     private static String GA_PATH_PRIVATE_GROUP_PANEL = "Private Group Panel";

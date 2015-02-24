@@ -1,13 +1,13 @@
 package com.tosslab.jandi.app.ui.fileexplorer;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 
 import com.tosslab.jandi.app.events.BackPressedEvent;
 
 import de.greenrobot.event.EventBus;
 
-public class FileExplorerActivity extends Activity {
+public class FileExplorerActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

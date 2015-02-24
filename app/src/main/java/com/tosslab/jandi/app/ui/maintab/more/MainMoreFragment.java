@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.more;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -20,7 +19,6 @@ import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity;
 import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
-import com.tosslab.jandi.app.utils.GlideCircleTransform;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;

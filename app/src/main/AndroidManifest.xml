@@ -30,8 +30,7 @@
         <activity
             android:name=".ui.intro.IntroActivity_"
             android:logo="@drawable/jandi_actionb_logo"
-            android:screenOrientation="portrait"
-            android:theme="@style/JandiTheme.Intro">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

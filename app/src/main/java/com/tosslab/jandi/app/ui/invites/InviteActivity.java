@@ -1,7 +1,8 @@
 package com.tosslab.jandi.app.ui.invites;
 
-import android.app.ActionBar;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -44,8 +45,12 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.entities;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 
 import com.tosslab.jandi.app.ui.entities.chats.ChatsChooseFragment;

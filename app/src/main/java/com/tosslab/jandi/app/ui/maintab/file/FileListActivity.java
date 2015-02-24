@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
@@ -15,7 +16,7 @@ import org.androidannotations.annotations.Extra;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EActivity(R.layout.activity_file_list)
-public class FileListActivity extends Activity {
+public class FileListActivity extends ActionBarActivity {
 
     @Extra
     int entityId;
@@ -27,10 +28,10 @@ public class FileListActivity extends Activity {
     void attatchFragment() {
         setUpActionBar();
 
-        getFragmentManager()
+        getSupportFragmentManager()
                 .beginTransaction()
                 .add(
-                        R.id.container_file_list,
+                        R.id.fl_content,
                         FileListFragment_
                                 .builder()
                                 .entityIdForCategorizing(entityId)
@@ -40,7 +41,11 @@ public class FileListActivity extends Activity {
     }
 
     private void setUpActionBar() {
-        final ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

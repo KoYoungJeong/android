@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -16,9 +16,9 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 11. 20..
  */
 public class DeleteMessageDialogFragment extends DialogFragment {
-    private static final String MESSAGE_ID  = "messageId";
-    private static final String MESSAGE_TYPE    = "messageType";
-    private static final String FEEDBACK_ID     = "feedbackId";
+    private static final String MESSAGE_ID = "messageId";
+    private static final String MESSAGE_TYPE = "messageType";
+    private static final String FEEDBACK_ID = "feedbackId";
 
     public static DeleteMessageDialogFragment newInstance(RequestDeleteMessageEvent req) {
         DeleteMessageDialogFragment frag = new DeleteMessageDialogFragment();

@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme. -->
-    <style name="JandiTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="JandiTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:actionBarStyle">@style/JandiActionBar</item>
         <item name="android:windowEnableSplitTouch">false</item>
         <item name="android:splitMotionEvents">false</item>
+
+        <item name="searchViewStyle">@style/JandiSearchView</item>
+        <item name="colorPrimary">@color/jandi_main</item>
+        <item name="colorPrimaryDark">@color/jandi_messages_button_bg_normal</item>
     </style>
 
     <!-- Intro 화면은 어둡기 때문에 -->
     <style name="JandiTheme.Intro" parent="android:Theme.DeviceDefault.NoActionBar.Fullscreen"></style>
 
-    <style name="JandiTheme.PushIntro" parent="android:Theme.DeviceDefault.NoActionBar"></style>
+    <style name="JandiTheme.PushIntro" parent="@style/Theme.AppCompat.Light.NoActionBar"></style>
     <!-- NoActionBar theme -->
     <style name="JandiTheme.NoActionBar" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen"></style>
 
@@ -24,5 +27,11 @@
 
     <style name="JandiTheme.ActionBarOverlay" parent="android:Theme.Holo.Light.DarkActionBar">
         <item name="android:windowActionBarOverlay">true</item>
+    </style>
+
+    <style name="JandiSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="layout">@layout/view_search_view</item>
+        <item name="closeIcon">@drawable/jandi_actionb_remove</item>
+        <item name="queryBackground">@drawable/jandi_textfield_activated_holo_dark</item>
     </style>
 </resources>

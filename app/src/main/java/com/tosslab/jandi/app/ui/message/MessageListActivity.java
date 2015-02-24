@@ -1,9 +1,5 @@
 package com.tosslab.jandi.app.ui.message;
 
-import android.app.ActionBar;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -13,6 +9,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -199,7 +198,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void setUpActionBar(String entityName) {
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
@@ -208,7 +207,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void showActionBarTitle(String entityName) {
-        getActionBar().setTitle(entityName);
+        getSupportActionBar().setTitle(entityName);
     }
 
     private void initProgressWheel() {
@@ -736,14 +735,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     void showDialog(MessageItem item) {
-        DialogFragment newFragment;
+        android.support.v4.app.DialogFragment newFragment;
         if (mEntityManager.getMe().getUser().id == item.getUserId()) {
             // 내가 만든 메시지라면...
             newFragment = ManipulateMessageDialogFragment.newInstanceForMyMessage(item);
         } else {
             newFragment = ManipulateMessageDialogFragment.newInstance(item);
         }
-        newFragment.show(getFragmentManager(), DIALOG_TAG);
+        newFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
     /**
@@ -766,8 +765,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     // 정말 삭제할 건지 다시 물어본다.
     public void onEvent(RequestDeleteMessageEvent event) {
-        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
-        newFragment.show(getFragmentManager(), DIALOG_TAG);
+        android.support.v4.app.DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        newFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
     // 삭제 확인
@@ -813,8 +812,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
     @Click(R.id.btn_upload_file)
     void uploadFile() {
-        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(getFragmentManager(), DIALOG_TAG);
+        android.support.v4.app.DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+        fileUploadTypeDialog.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -879,9 +878,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath,
+        android.support.v4.app.DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath,
                 mChattingInformations.entityId);
-        newFragment.show(getFragmentManager(), DIALOG_TAG);
+        newFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 
     // File Upload 확인 이벤트 획득
@@ -996,7 +995,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void modifyEntitySucceed(String changedEntityName) {
         trackChangingEntityName(mEntityManager, mChattingInformations.entityType);
         mChattingInformations.entityName = changedEntityName;
-        getActionBar().setTitle(changedEntityName);
+        getSupportActionBar().setTitle(changedEntityName);
     }
 
     @UiThread
@@ -1011,8 +1010,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
     @SupposeUiThread
     void requestToDeleteTopic() {
-        DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
-        newFragment.show(getFragmentManager(), "dialog");
+        android.support.v4.app.DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
@@ -1102,13 +1101,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     private void showUserInfoDialog(FormattedEntity user) {
 
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
         if (prev != null) {
             ft.remove(prev);
         }
 
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(getSupportFragmentManager(), "dialog");
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {

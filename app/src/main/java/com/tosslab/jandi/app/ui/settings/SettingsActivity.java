@@ -1,34 +1,38 @@
 package com.tosslab.jandi.app.ui.settings;
 
-import android.app.ActionBar;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.preference.PreferenceActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.tosslab.jandi.app.R;
+
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
-import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 2014. 7. 18..
  */
-@EActivity
-public class SettingsActivity extends PreferenceActivity {
-    private final Logger log = Logger.getLogger(SettingsActivity.class);
+@EActivity(R.layout.activity_setting)
+public class SettingsActivity extends ActionBarActivity {
 
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @AfterViews
+    void initView() {
         setUpActionBar();
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
+        getFragmentManager().beginTransaction().replace(R.id.fl_content,
                 new SettingsFragment_()).commit();
     }
 
     private void setUpActionBar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

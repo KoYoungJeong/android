@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.team.info;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -26,7 +27,7 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_team_domain_info)
 @OptionsMenu(R.menu.teamdomain_info)
-public class TeamDomainInfoActivity extends Activity {
+public class TeamDomainInfoActivity extends ActionBarActivity {
 
     @Extra
     String mode = "CREATE";
@@ -167,8 +168,12 @@ public class TeamDomainInfoActivity extends Activity {
     }
 
     private void setUpActionBar(Mode mode) {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

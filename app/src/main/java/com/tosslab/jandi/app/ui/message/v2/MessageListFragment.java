@@ -1,13 +1,15 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -213,7 +215,12 @@ public class MessageListFragment extends Fragment {
     }
 
     private void setUpActionbar() {
-        final ActionBar actionBar = getActivity().getActionBar();
+
+        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.my_toolbar);
+        activity.setSupportActionBar(toolbar);
+
+        ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -729,7 +736,7 @@ public class MessageListFragment extends Fragment {
 
     @UiThread
     void modifyEntitySucceed(String changedEntityName) {
-        getActivity().getActionBar().setTitle(changedEntityName);
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
     private enum LoadType {

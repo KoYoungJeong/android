@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.signup;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  * Created by justinygchoi on 14. 12. 11..
  */
 @EActivity(R.layout.activity_signup)
-public class SignUpActivity extends Activity {
+public class SignUpActivity extends ActionBarActivity {
 
     private final static Logger logger = Logger.getLogger(SignUpActivity.class);
 
@@ -54,8 +55,12 @@ public class SignUpActivity extends Activity {
     }
 
     private void setUpActionBar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

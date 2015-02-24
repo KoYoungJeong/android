@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.term;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
@@ -20,7 +21,7 @@ import java.util.Locale;
  * Created by Steve SeongUg Jung on 14. 12. 30..
  */
 @EActivity(R.layout.activity_term)
-public class TermActivity extends Activity {
+public class TermActivity extends ActionBarActivity {
 
     @ViewById(R.id.web_term)
     WebView webView;
@@ -40,8 +41,12 @@ public class TermActivity extends Activity {
     }
 
     private void setActionbarSetting(Mode mode) {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

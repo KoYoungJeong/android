@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -116,12 +117,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         }
         boolean isMine = fileDetailModel.isMyComment(item.writerId);
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(item, isMine);
-        newFragment.show(getFragmentManager(), "dioalog");
+        newFragment.show(getSupportFragmentManager(), "dioalog");
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
         DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
-        newFragment.show(getFragmentManager(), "dialog");
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     // 삭제 확인
@@ -148,7 +149,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     private void setUpActionBar() {
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = ((Toolbar) findViewById(R.id.my_toolbar));
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
@@ -329,7 +334,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void shareMessageSucceed(int entityIdToBeShared) {
-        ColoredToast.show(this, getString(R.string.jandi_share_succeed, getActionBar().getTitle()));
+        ColoredToast.show(this, getString(R.string.jandi_share_succeed, getSupportActionBar().getTitle()));
         trackSharingFile(mEntityManager,
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
@@ -425,7 +430,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @UiThread
     public void deleteFileDone(boolean isOk) {
         if (isOk) {
-            CharSequence title = getActionBar().getTitle();
+            CharSequence title = getSupportActionBar().getTitle();
             if (!TextUtils.isEmpty(title)) {
                 ColoredToast.show(this, getString(R.string.jandi_delete_succeed, title));
             } else {

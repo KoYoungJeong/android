@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -12,6 +11,7 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -65,7 +65,7 @@ import de.greenrobot.event.EventBus;
 public class FileDetailPresenter {
 
     @RootContext
-    Activity activity;
+    ActionBarActivity activity;
 
     @SystemService
     InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
@@ -150,7 +150,7 @@ public class FileDetailPresenter {
                 String userName = writer.getName();
                 textViewUserName.setText(userName);
 
-                imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getFragmentManager(), "dialog"));
+                imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
                 // 파일
                 String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
@@ -162,12 +162,12 @@ public class FileDetailPresenter {
                     fileInfoLayout.setVisibility(View.GONE);
                     inputCommentLayout.setVisibility(View.GONE);
 
-                    activity.getActionBar().setTitle(R.string.jandi_deleted_file);
+                    activity.getSupportActionBar().setTitle(R.string.jandi_deleted_file);
 
                     break;
                 }
 
-                activity.getActionBar().setTitle(fileMessage.content.title);
+                activity.getSupportActionBar().setTitle(fileMessage.content.title);
                 String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
                 textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
 
@@ -358,7 +358,7 @@ public class FileDetailPresenter {
 
     @UiThread
     public void unshareMessageSucceed(int entityIdToBeUnshared) {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_unshare_succeed, activity.getActionBar().getTitle()));
+        ColoredToast.show(activity, activity.getString(R.string.jandi_unshare_succeed, activity.getSupportActionBar().getTitle()));
         fileDetailCommentListAdapter.clear();
     }
 
@@ -398,7 +398,7 @@ public class FileDetailPresenter {
         if (prev != null) {
             ft.remove(prev);
         }
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(activity.getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(activity.getSupportFragmentManager(), "dialog");
 
     }
 

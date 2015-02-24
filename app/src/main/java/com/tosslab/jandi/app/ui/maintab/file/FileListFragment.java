@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,7 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -70,7 +71,7 @@ public class FileListFragment extends Fragment {
     @Bean
     FileListPresenter fileListPresenter;
 
-    private MenuItem mSearch;   // ActionBar의 검색뷰
+    private MenuItem searchMenu;   // ActionBar의 검색뷰
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
     private Context mContext;
@@ -179,17 +180,19 @@ public class FileListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.file_list_actionbar_menu, menu);
 
-        mSearch = menu.findItem(R.id.action_file_list_search);
-        final SearchView sv = (SearchView) mSearch.getActionView();
+        searchMenu = menu.findItem(R.id.action_file_list_search);
+//        SearchView sv = (SearchView) MenuItemCompat.getActionView(searchMenu);
+        SearchView sv = ((SearchView) searchMenu.getActionView());
 
-        mSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
+
             @Override
-            public boolean onMenuItemActionExpand(MenuItem menuItem) {
+            public boolean onMenuItemActionExpand(MenuItem item) {
                 return true;
             }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+            public boolean onMenuItemActionCollapse(MenuItem item) {
                 imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
                 doKeywordSearch("");
                 return true;
@@ -210,14 +213,14 @@ public class FileListFragment extends Fragment {
             }
         });
 
-        setSearchViewStyle(sv);
+//        setSearchViewStyle(sv);
     }
 
     private void setSearchViewStyle(SearchView searchView) {
         // TODO Style 에서 설정이 안되서 코드에서 수정토록...
         // 글씨 색
         int searchSrcTextId
-                = getResources().getIdentifier("android:id/search_src_text", null, null);
+                = getResources().getIdentifier("id/search_src_text", null, null);
         AutoCompleteTextView searchEditText
                 = (AutoCompleteTextView) searchView.findViewById(searchSrcTextId);
         searchEditText.setTextColor(Color.WHITE);
@@ -225,13 +228,13 @@ public class FileListFragment extends Fragment {
 
         // 닫기 버튼
         int closeButtonId
-                = getResources().getIdentifier("android:id/search_close_btn", null, null);
+                = getResources().getIdentifier("id/search_close_btn", null, null);
         ImageView closeButtonImage = (ImageView) searchView.findViewById(closeButtonId);
         closeButtonImage.setImageResource(R.drawable.jandi_actionb_remove);
 
         // 검색 Editbox 라인
         int searchEditId
-                = getResources().getIdentifier("android:id/search_plate", null, null);
+                = getResources().getIdentifier("id/search_plate", null, null);
         View searchEditView = searchView.findViewById(searchEditId);
         searchEditView.setBackgroundResource(R.drawable.jandi_textfield_activated_holo_dark);
     }

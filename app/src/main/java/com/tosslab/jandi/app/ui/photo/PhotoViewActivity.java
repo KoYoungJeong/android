@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.photo;
 
-import android.app.ActionBar;
 import android.os.Build;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,7 +26,7 @@ import uk.co.senab.photoview.PhotoView;
  * Created by Steve SeongUg Jung on 14. 12. 9..
  */
 @EActivity(R.layout.activity_photo_view)
-public class PhotoViewActivity extends FragmentActivity {
+public class PhotoViewActivity extends ActionBarActivity {
 
     @Extra
     String imageUrl;
@@ -42,6 +43,8 @@ public class PhotoViewActivity extends FragmentActivity {
     @AfterViews
     void initView() {
 
+        setupActionBar();
+
         photoView.setOnPhotoTapListener((view, v, v2) -> toggleActionbar());
 
         if (isGif()) {
@@ -51,6 +54,11 @@ public class PhotoViewActivity extends FragmentActivity {
         }
 
         autoHideActionBar();
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void loadImage() {
@@ -85,7 +93,7 @@ public class PhotoViewActivity extends FragmentActivity {
      */
     @Background(delay = 3000)
     void autoHideActionBar() {
-        if (getActionBar().isShowing()) {
+        if (getSupportActionBar().isShowing()) {
             // if Actionbar show, then hide actionbar
             toggleActionbar();
         }
@@ -93,7 +101,7 @@ public class PhotoViewActivity extends FragmentActivity {
 
     @UiThread
     void toggleActionbar() {
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         boolean showing = actionBar.isShowing();
 
         int newUiOptions = getWindow().getDecorView().getSystemUiVisibility();

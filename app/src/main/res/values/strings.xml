@@ -299,4 +299,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_disabled_user">현재 비활성화된 멤버입니다.</string>
     <string name="jandi_disable_user_profile_explain">This member is no longer a member of your team. Please contact your team owner for further infocation</string>
     <string name="jandi_share_to_jandi">Share to Jandi</string>
+    <string name="jandi_create">Create</string>
 </resources>

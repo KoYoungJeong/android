@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.profile.account;
 
-import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -78,7 +79,11 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
     }
 
     private void setActionBarSetting() {
-        ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

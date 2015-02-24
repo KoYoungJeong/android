@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.team.select;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInviteAcceptEvent;
@@ -40,7 +41,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 11. 14..
  */
 @EActivity(R.layout.activity_team_selection)
-public class TeamSelectionActivity extends Activity {
+public class TeamSelectionActivity extends ActionBarActivity {
 
     public static final int CALLED_MUST_SELECT_TEAM = 100;
     @Extra
@@ -263,8 +264,12 @@ public class TeamSelectionActivity extends Activity {
     }
 
     private void setUpActionBar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

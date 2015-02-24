@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_file_list_search"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_file_list_search"
+        android:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/jandi_actionb_search"
-        android:title="@string/jandi_action_search"
         android:showAsAction="always|collapseActionView"
-        android:actionViewClass="android.widget.SearchView"/>
+        android:title="@string/jandi_action_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always|collapseActionView" />
 </menu>

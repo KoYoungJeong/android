@@ -1,8 +1,9 @@
 package com.tosslab.jandi.app.ui.member;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -78,7 +79,11 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @SupposeUiThread
     void setUpActionBar() {
         // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
@@ -108,7 +113,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     }
 
     public void onEventMainThread(ProfileDetailEvent event) {
-        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getSupportFragmentManager(), "dialog");
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {

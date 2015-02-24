@@ -1,11 +1,13 @@
 package com.tosslab.jandi.app.ui.fileexplorer;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Environment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
@@ -57,7 +59,12 @@ public class FileExplorerFragment extends Fragment {
     }
 
     private void setupActionbar(String absolutePath) {
-        ActionBar actionBar = getActivity().getActionBar();
+
+        Toolbar toolbar = ((Toolbar) getActivity().findViewById(R.id.my_toolbar));
+        ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
+
+
+        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(absolutePath);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);

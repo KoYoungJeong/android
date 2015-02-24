@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -67,7 +68,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
-        final ActionBar actionBar = getActionBar();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
@@ -79,7 +83,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabViews[1] = getLayoutInflater().inflate(R.layout.tab_chat, null);
         tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
         tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
-        mMainTabPagerAdapter = new MainTabPagerAdapter(getFragmentManager(), tabViews);
+        mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews);
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
@@ -163,7 +167,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mEntityManager = EntityManager.getInstance(MainTabActivity.this);
         mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
-        getActionBar().setTitle(mEntityManager.getTeamName());
+        getSupportActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());
         postAllEvents();
     }

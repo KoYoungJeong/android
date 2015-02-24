@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/jandi_profile_bg"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp">
+    android:paddingBottom="16dp">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:visibility="visible"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginBottom="12dp"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="20dp">
 
         <ImageView
             android:id="@+id/profile_photo"

@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.message.members;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -30,7 +31,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EActivity(R.layout.activity_topic_member)
-public class TopicMemberActivity extends Activity {
+public class TopicMemberActivity extends ActionBarActivity {
 
     @Bean
     TopicMemberPresenter topicMemberPresenter;
@@ -50,7 +51,11 @@ public class TopicMemberActivity extends Activity {
     }
 
     private void setupActionbar() {
-        ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
@@ -84,7 +89,7 @@ public class TopicMemberActivity extends Activity {
 
     public void onEvent(ProfileDetailEvent event) {
         int entityId = event.getEntityId();
-        UserInfoDialogFragment_.builder().entityId(entityId).build().show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(entityId).build().show(getSupportFragmentManager(), "dialog");
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {

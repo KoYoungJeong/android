@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.profile.email;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
@@ -35,7 +36,7 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_email_choose)
 @OptionsMenu(R.menu.email_choose)
-public class EmailChooseActivity extends Activity {
+public class EmailChooseActivity extends ActionBarActivity {
 
     private static final Logger logger = Logger.getLogger(EmailChooseActivity.class);
 
@@ -117,7 +118,10 @@ public class EmailChooseActivity extends Activity {
 
     private void setUpActionBar() {
 
-        ActionBar actionBar = getActionBar();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(

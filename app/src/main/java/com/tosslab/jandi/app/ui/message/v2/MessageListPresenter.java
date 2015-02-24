@@ -1,15 +1,14 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,7 +62,7 @@ public class MessageListPresenter {
     EditText messageEditText;
 
     @RootContext
-    Activity activity;
+    ActionBarActivity activity;
 
     @SystemService
     ClipboardManager clipboardManager;
@@ -235,12 +234,12 @@ public class MessageListPresenter {
 
     public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, myMessage);
-        newFragment.show(activity.getFragmentManager(), "dioalog");
+        newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
     public void showMessageMenuDialog(ResMessages.CommentMessage commentMessage) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, false);
-        newFragment.show(activity.getFragmentManager(), "dioalog");
+        newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
     public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {

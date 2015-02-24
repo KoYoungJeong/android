@@ -21,11 +21,9 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
-import org.apache.log4j.Logger;
 
 @EFragment
 public class SettingsFragment extends PreferenceFragment {
-    private final Logger log = Logger.getLogger(SettingsFragment.class);
 
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;

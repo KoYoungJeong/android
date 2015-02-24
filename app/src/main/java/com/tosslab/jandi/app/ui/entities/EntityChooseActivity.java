@@ -1,9 +1,10 @@
 package com.tosslab.jandi.app.ui.entities;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
@@ -17,7 +18,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 @EActivity(R.layout.activity_entity_choose)
-public class EntityChooseActivity extends Activity {
+public class EntityChooseActivity extends ActionBarActivity {
 
     @Extra
     String type = Type.ALL.name();
@@ -33,7 +34,7 @@ public class EntityChooseActivity extends Activity {
         View[] titleView = getTitleView();
 
         Type activityType = Type.valueOf(type);
-        EntityPagerAdapter entityPagerAdapter = new EntityPagerAdapter(getFragmentManager(), titleView, activityType);
+        EntityPagerAdapter entityPagerAdapter = new EntityPagerAdapter(getSupportFragmentManager(), titleView, activityType);
         viewPager.setAdapter(entityPagerAdapter);
         viewPager.setOnPageChangeListener(getPageChangeListener(activityType));
 
@@ -64,23 +65,27 @@ public class EntityChooseActivity extends Activity {
 
             case ALL:
                 if (position == 0) {
-                    getActionBar().setTitle(R.string.jandi_tab_topic);
+                    getSupportActionBar().setTitle(R.string.jandi_tab_topic);
                 } else {
-                    getActionBar().setTitle(R.string.jandi_team_member);
+                    getSupportActionBar().setTitle(R.string.jandi_team_member);
                 }
                 break;
             case TOPIC:
-                getActionBar().setTitle(R.string.jandi_tab_topic);
+                getSupportActionBar().setTitle(R.string.jandi_tab_topic);
                 break;
             case MESSAGES:
-                getActionBar().setTitle(R.string.jandi_team_member);
+                getSupportActionBar().setTitle(R.string.jandi_team_member);
                 break;
         }
     }
 
     private void setUpActionBar() {
 
-        ActionBar actionBar = getActionBar();
+
+        Toolbar toolbar = ((Toolbar) findViewById(R.id.my_toolbar));
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
