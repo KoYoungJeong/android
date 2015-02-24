@@ -132,6 +132,20 @@
             android:label="@string/jandi_topic_paricipants"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.web.InternalWebActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="jandi-internal-web" />
+            </intent-filter>
+        </activity>
+
         <service android:name="com.parse.PushService" />
 
         <receiver android:name="com.parse.ParseBroadcastReceiver">

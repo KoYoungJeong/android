@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +17,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -73,7 +77,14 @@ public class MessageViewHolder implements BodyViewHolder {
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            messageTextView.setText(textMessage.content.body);
+
+            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            spannableStringBuilder.append(textMessage.content.body);
+
+            LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+
+            messageTextView.setText(spannableStringBuilder);
+            messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(link.message.writerId)));
 

@@ -76,7 +76,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_message_user_name"
         android:layout_toRightOf="@+id/img_message_user_profile"
-        android:autoLink="web"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
         android:textSize="@dimen/jandi_messages_content" />
