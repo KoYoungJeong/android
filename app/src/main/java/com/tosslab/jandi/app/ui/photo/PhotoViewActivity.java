@@ -1,15 +1,14 @@
 package com.tosslab.jandi.app.ui.photo;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 
@@ -17,8 +16,10 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.api.BackgroundExecutor;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -28,11 +29,15 @@ import uk.co.senab.photoview.PhotoView;
 @EActivity(R.layout.activity_photo_view)
 public class PhotoViewActivity extends ActionBarActivity {
 
+    public static final String TASK_ID_ACTIONBAR_HIDE = "actionbar_hide";
     @Extra
     String imageUrl;
 
     @Extra
     String imageType;
+
+    @Extra
+    String imageName;
 
     @ViewById(R.id.photo_photo_view)
     PhotoView photoView;
@@ -57,31 +62,34 @@ public class PhotoViewActivity extends ActionBarActivity {
     }
 
     private void setupActionBar() {
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
+        actionBar.setTitle(imageName);
+    }
+
+    @OptionsItem(android.R.id.home)
+    void onHomeOptionMenuClick() {
+        finish();
     }
 
     private void loadImage() {
         Ion.with(photoView)
                 .crossfade(true)
                 .load(imageUrl)
-                .setCallback(new FutureCallback<ImageView>() {
-                    @Override
-                    public void onCompleted(Exception e, ImageView result) {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
+                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
     }
 
     private void loadGif() {
         Ion.with(photoView)
                 .load(imageUrl)
-                .setCallback(new FutureCallback<ImageView>() {
-                    @Override
-                    public void onCompleted(Exception e, ImageView result) {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                });
+                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
     }
 
     private boolean isGif() {
@@ -91,7 +99,7 @@ public class PhotoViewActivity extends ActionBarActivity {
     /**
      * After 3sec, hide actionbar
      */
-    @Background(delay = 3000)
+    @Background(id = TASK_ID_ACTIONBAR_HIDE, delay = 3000)
     void autoHideActionBar() {
         if (getSupportActionBar().isShowing()) {
             // if Actionbar show, then hide actionbar
@@ -119,6 +127,7 @@ public class PhotoViewActivity extends ActionBarActivity {
             }
 
             actionBar.show();
+            BackgroundExecutor.cancelAll(TASK_ID_ACTIONBAR_HIDE, false);
             autoHideActionBar();
         }
 

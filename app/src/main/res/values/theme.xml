@@ -25,8 +25,11 @@
         <item name="android:backgroundSplit">@color/jandi_main</item>
     </style>
 
-    <style name="JandiTheme.ActionBarOverlay" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="JandiTheme.ActionBarOverlay" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="colorPrimary">@color/backgournd_photo_actionbar</item>
+        <item name="colorPrimaryDark">@color/backgournd_photo_actionbar</item>
     </style>
 
     <style name="JandiSearchView" parent="Widget.AppCompat.SearchView">

@@ -204,6 +204,7 @@ public class FileDetailPresenter {
                         imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(activity)
                                 .imageUrl(photoUrl)
+                                .imageName(fileMessage.content.name)
                                 .imageType(fileMessage.content.type)
                                 .start());
                     } else {

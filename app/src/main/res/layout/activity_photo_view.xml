@@ -6,21 +6,11 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_dark">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:visibility="visible"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-
     <uk.co.senab.photoview.PhotoView
         android:id="@+id/photo_photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_below="@+id/my_toolbar" />
+        android:layout_alignWithParentIfMissing="true" />
 
     <ProgressBar
         android:id="@+id/progress_photo_view"
@@ -28,6 +18,14 @@
         android:layout_height="@dimen/jandi_file_detail_image_height"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:visibility="visible"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 
 </RelativeLayout>

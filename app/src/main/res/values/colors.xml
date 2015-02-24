@@ -131,4 +131,6 @@
     <color name="dialog_button_separator">#25000000</color>
     <!-- 7% opacity -->
     <color name="background">#FFA500</color>
+
+    <color name="backgournd_photo_actionbar">#222222</color>
 </resources>

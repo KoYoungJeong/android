@@ -11,6 +11,7 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class TopicMemberPresenter {
     }
 
 
+    @UiThread
     public void setTopicMembers(List<ChatChooseItem> topicMembers) {
         topicMemberAdapter.addAll(topicMembers);
         topicMemberAdapter.notifyDataSetChanged();
