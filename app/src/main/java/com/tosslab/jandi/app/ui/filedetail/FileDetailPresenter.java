@@ -287,34 +287,33 @@ public class FileDetailPresenter {
 
         int teamId = mEntityManager.getTeamId();
 
-        if (!resFileDetail.shareEntities.isEmpty()) {
+        if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
             int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
             for (int i = 0; i < nSharedEntities; i++) {
-                FormattedEntity entityById = mEntityManager.getEntityById(resFileDetail.shareEntities.get(i));
+                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(i));
 
-                int entityType;
-                if (entityById.isPrivateGroup()) {
-                    if (entityById.isPublicTopic()) {
-                        entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                    } else {
-                        entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                    }
-                } else {
-                    if (entityById.isPublicTopic()) {
-                        entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                    } else {
-                        entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-                    }
+                if (sharedEntity == null) {
+                    continue;
                 }
 
-                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, entityById.getId(), entityType, entityById.isStarred);
+                int entityType;
+                if (sharedEntity.isPrivateGroup()) {
+                    entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
+                } else if (sharedEntity.isPublicTopic()) {
+                    entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+                } else {
+                    entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
+
+                }
+
+                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, sharedEntity.getId(), entityType, sharedEntity.isStarred);
 
                 int length = spannableStringBuilder.length();
-                spannableStringBuilder.append(entityById.getName());
+                spannableStringBuilder.append(sharedEntity.getName());
 
-                spannableStringBuilder.setSpan(entitySpannable, length, length + entityById.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannableStringBuilder.setSpan(entitySpannable, length, length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 if (i != nSharedEntities - 1) {
                     spannableStringBuilder.append(", ");
                 }
