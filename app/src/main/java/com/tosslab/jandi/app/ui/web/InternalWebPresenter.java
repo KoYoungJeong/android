@@ -49,6 +49,7 @@ public class InternalWebPresenter {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setJavaScriptEnabled(true);
         webSettings.setSupportZoom(true);
+        webSettings.setBuiltInZoomControls(true);
         webSettings.setUserAgentString(webSettings.getUserAgentString() + " Jandi-Android-App");
 
         webView.loadUrl(url);
@@ -90,5 +91,13 @@ public class InternalWebPresenter {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public boolean hasBackHistory() {
+        return webView.canGoBack();
+    }
+
+    public void moveBack() {
+        webView.goBack();
     }
 }

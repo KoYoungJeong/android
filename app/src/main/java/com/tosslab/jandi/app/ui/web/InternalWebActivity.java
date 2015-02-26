@@ -33,12 +33,16 @@ public class InternalWebActivity extends ActionBarActivity {
     @AfterInject
     void initObject() {
 
-        internalWebPresenter.setWebViewClient(new WebViewClient());
+        internalWebPresenter.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                getActionBar().setTitle(view.getTitle());
+            }
+        });
 
         internalWebPresenter.setWebCromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
-                super.onProgressChanged(view, newProgress);
                 internalWebPresenter.setProgress(newProgress);
             }
         });
@@ -59,6 +63,15 @@ public class InternalWebActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.jandi_actionb_remove);
         actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (internalWebPresenter.hasBackHistory()) {
+            internalWebPresenter.moveBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @OptionsItem(android.R.id.home)

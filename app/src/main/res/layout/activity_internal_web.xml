@@ -18,10 +18,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/my_toolbar" />
+
     <com.tosslab.jandi.app.views.listeners.WebLoadingBar
         android:id="@+id/loading_internal_web"
-        android:layout_alignTop="@+id/web_internal_web"
         android:layout_width="match_parent"
-        android:layout_height="2dp" />
+        android:layout_height="2dp"
+        android:layout_alignBottom="@+id/my_toolbar" />
 
 </RelativeLayout>
