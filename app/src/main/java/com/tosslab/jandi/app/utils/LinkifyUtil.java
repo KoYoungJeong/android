@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Spannable;
@@ -7,6 +8,7 @@ import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.view.View;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 import java.util.regex.Matcher;
@@ -36,6 +38,11 @@ public class LinkifyUtil {
                                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                                 .url(url)
                                 .start();
+
+                        if (context instanceof Activity) {
+                            Activity activity = ((Activity) context);
+                            activity.overridePendingTransition(R.anim.abc_slide_in_bottom, R.anim.ready);
+                        }
 
                     }
                 };

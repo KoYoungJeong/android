@@ -23,7 +23,7 @@ public class WebLoadingBar extends View {
         super(context, attrs);
         paint = new Paint();
 
-        paint.setColor(getResources().getColor(R.color.file_name));
+        paint.setColor(getResources().getColor(R.color.dialog_title_text));
     }
 
     @Override

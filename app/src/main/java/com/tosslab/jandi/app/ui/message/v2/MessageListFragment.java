@@ -410,7 +410,7 @@ public class MessageListFragment extends Fragment {
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText();
-        if (!(TextUtils.isEmpty(message))) {
+        if (!TextUtils.isEmpty(message)) {
             messageListPresenter.setSendEditText("");
             // insert to db
             long localId = messageListModel.insertSendingMessage(teamId, entityId, message);

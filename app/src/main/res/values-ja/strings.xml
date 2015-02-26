@@ -299,4 +299,10 @@ JANDIへようこそ"</string>
     <string name="jandi_left_topic">"%sが退出しました"</string>
     <string name="jandi_tos_and_pp">"サービス利用規約 &amp; プライバシーポリシー"</string>
     <string name="jandi_topic_ask_about_deleting">"本当にこのトピックを削除しますか？"</string>
+    <string name="jandi_create">"作成"</string>
+    <string name="jandi_copy_link">"リンクをコピー"</string>
+    <string name="jandi_disabled_user">"このメンバーは現在無効化されています"</string>
+    <string name="jandi_open_browser">"ブラウザで開く"</string>
+    <string name="jandi_share_externally">"ページをシェアする"</string>
+    <string name="jandi_share_a_topic">"トピックにシェアする"</string>
 </resources>

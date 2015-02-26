@@ -291,4 +291,10 @@
     <string name="jandi_left_topic">"%s已经离开"</string>
     <string name="jandi_tos_and_pp">"使用条款 &amp; 隐私权条款"</string>
     <string name="jandi_topic_ask_about_deleting">"您确定您要删除这个议题？"</string>
+    <string name="jandi_create">"建立"</string>
+    <string name="jandi_copy_link">"复制链接"</string>
+    <string name="jandi_disabled_user">"这成员已经被暂时关闭"</string>
+    <string name="jandi_open_browser">"开启一个浏览器"</string>
+    <string name="jandi_share_a_topic">"分享在一个议题群组内"</string>
+    <string name="jandi_share_externally">"分享頁面"</string>
 </resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_overflow"
+        android:icon="@drawable/jandi_icon_moremenu"
+        android:showAsAction="always"
+        android:title="@string/jandi_tab_more"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_share_to_topic"
+                android:title="@string/jandi_share_a_topic" />
+            <item
+                android:id="@+id/action_copy_link"
+                android:title="@string/jandi_copy_link" />
+            <item
+                android:id="@+id/action_open_to_browser"
+                android:title="@string/jandi_open_browser" />
+            <item
+                android:id="@+id/action_share_to_app"
+                android:title="@string/jandi_share_externally" />
+        </menu>
+    </item>
+
+</menu>
