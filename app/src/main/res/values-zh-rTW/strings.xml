@@ -166,11 +166,11 @@
     <!-- Search -->
     <string name="jandi_action_search">"搜尋"</string>
     <string name="jandi_file_search_keyword">"關鍵字"</string>
-    <string name="jandi_file_category_all">"所有檔案"</string>
+    <string name="jandi_file_category_all">"<b>所有檔案</b>"</string>
     <string name="jandi_file_category_image">"圖像"</string>
     <string name="jandi_file_category_pdf">"PDF"</string>
-    <string name="jandi_file_category_everyone">"所有成員"</string>
-    <string name="jandi_file_category_everywhere">"所有群組"</string>
+    <string name="jandi_file_category_everyone">"<b>所有成員</b>"</string>
+    <string name="jandi_file_category_everywhere">"<b>所有群組</b>"</string>
     <string name="jandi_file_search_type">"按檔案類型過濾結果"</string>
     <string name="jandi_file_search_user">"按成員過濾結果"</string>
     <string name="jandi_file_search_entity">"按群組過濾結果"</string>
@@ -298,4 +298,5 @@
     <string name="jandi_open_browser">"開啓一個瀏覽器"</string>
     <string name="jandi_share_a_topic">"分享在一個議題群組内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
+    <string name="jandi_my_files">"<b>我的檔案</b>"</string>
 </resources>

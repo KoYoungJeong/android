@@ -171,11 +171,11 @@ JANDIへようこそ"</string>
     <!-- Search -->
     <string name="jandi_action_search">"検索"</string>
     <string name="jandi_file_search_keyword">"キーワード"</string>
-    <string name="jandi_file_category_all">"全ての種類"</string>
+    <string name="jandi_file_category_all">"<b>全ての種類</b>"</string>
     <string name="jandi_file_category_image">"画像"</string>
     <string name="jandi_file_category_pdf">"PDF"</string>
-    <string name="jandi_file_category_everyone">"全員"</string>
-    <string name="jandi_file_category_everywhere">"全ての範囲"</string>
+    <string name="jandi_file_category_everyone">"<b>全員</b>"</string>
+    <string name="jandi_file_category_everywhere">"<b>全トピック</b>"</string>
     <string name="jandi_file_search_type">"ファイルの種類を選択してください"</string>
     <string name="jandi_file_search_user">"メンバーを選択してください"</string>
     <string name="jandi_file_search_entity">"トピックを選択してください"</string>
@@ -305,4 +305,5 @@ JANDIへようこそ"</string>
     <string name="jandi_open_browser">"ブラウザで開く"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
+    <string name="jandi_my_files">"<b>自分</b>"</string>
 </resources>

@@ -197,10 +197,15 @@ public class FileListPresenter {
             // TODO : Everyone 용으로 0번째 item을 추가할 수 있음. 그럼 아래 note 로 적힌 인덱스가 밀리는 현상 해결됨.
             // TODO : 뭐가 더 나은지는 모르겠네잉
 
+            FormattedEntity me = entityManager.getMe();
+
             List<FormattedEntity> teamMember = entityManager.getFormattedUsers();
             for (int idx = teamMember.size() - 1; idx >= 0; idx--) {
-                if (!TextUtils.equals(teamMember.get(idx).getUser().status, "enabled")) {
+                FormattedEntity formattedEntity = teamMember.get(idx);
+                if (formattedEntity.getId() == me.getId()) {
                     teamMember.remove(idx);
+                    teamMember.add(0, formattedEntity);
+                    break;
                 }
             }
             final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, teamMember);
@@ -217,9 +222,13 @@ public class FileListPresenter {
                         mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everyone);
                         textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                         EventBus.getDefault().post(new CategorizingAsOwner(CategorizingAsOwner.EVERYONE));
+                    } else if (i == 1) {
+                        FormattedEntity owner = teamMember.get(i - 1);
+                        mCurrentUserNameCategorizingAccodingBy = context.getString(R.string.jandi_my_files);
+                        textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
+                        EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
                     } else {
                         FormattedEntity owner = teamMember.get(i - 1);
-                        logger.debug(owner.getId() + " is selected");
                         mCurrentUserNameCategorizingAccodingBy = owner.getName();
                         textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                         EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
@@ -256,13 +265,17 @@ public class FileListPresenter {
             View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
             ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
             List<FormattedEntity> categorizableEntities = entityManager.getCategorizableEntities();
+            FormattedEntity me = entityManager.getMe();
 
             for (int idx = categorizableEntities.size() - 1; idx >= 0; idx--) {
                 FormattedEntity formattedEntity = categorizableEntities.get(idx);
-                if (formattedEntity.isUser())
+                if (formattedEntity.isUser()) {
                     if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
                         categorizableEntities.remove(idx);
+                    } else if (formattedEntity.getId() == me.getId()) {
+                        categorizableEntities.remove(idx);
                     }
+                }
             }
 
             final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, categorizableEntities);

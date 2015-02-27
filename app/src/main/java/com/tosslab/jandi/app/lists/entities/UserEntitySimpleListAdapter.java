@@ -45,7 +45,7 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View convertView, ViewGroup viewGroup) {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
         final ViewHolder holder;
         if (convertView == null) {
             convertView = mLayoutInflater.inflate(R.layout.item_select_cdp, null);
@@ -57,7 +57,7 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        FormattedEntity user = getItem(i);
+        FormattedEntity user = getItem(position);
 
         // 프로필 사진
         Ion.with(holder.imageView)
@@ -66,7 +66,11 @@ public class UserEntitySimpleListAdapter extends BaseAdapter {
                 .transform(new IonCircleTransform())
                 .load(user.getUserSmallProfileUrl());
 
-        holder.textView.setText(user.getName());
+        if (position != 0) {
+            holder.textView.setText(user.getName());
+        } else {
+            holder.textView.setText(R.string.jandi_my_files);
+        }
 
         return convertView;
     }

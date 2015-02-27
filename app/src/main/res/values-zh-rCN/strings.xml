@@ -166,11 +166,11 @@
     <!-- Search -->
     <string name="jandi_action_search">"搜寻"</string>
     <string name="jandi_file_search_keyword">"关键词"</string>
-    <string name="jandi_file_category_all">"所有档案"</string>
+    <string name="jandi_file_category_all">"<b>所有档案</b>"</string>
     <string name="jandi_file_category_image">"图像"</string>
     <string name="jandi_file_category_pdf">"PDF"</string>
-    <string name="jandi_file_category_everyone">"所有成员"</string>
-    <string name="jandi_file_category_everywhere">"所有群组"</string>
+    <string name="jandi_file_category_everyone">"<b>所有成员</b>"</string>
+    <string name="jandi_file_category_everywhere">"<b>所有群组</b>"</string>
     <string name="jandi_file_search_type">"按档案类型过滤结果"</string>
     <string name="jandi_file_search_user">"按成员过滤结果"</string>
     <string name="jandi_file_search_entity">"按群组过滤结果"</string>
@@ -297,4 +297,5 @@
     <string name="jandi_open_browser">"开启一个浏览器"</string>
     <string name="jandi_share_a_topic">"分享在一个议题群组内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
+    <string name="jandi_my_files">"<b>我的档案</b>"</string>
 </resources>

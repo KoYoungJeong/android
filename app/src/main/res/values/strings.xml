@@ -185,7 +185,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <!-- Search -->
     <string name="jandi_action_search">"Search"</string>
     <string name="jandi_file_search_keyword">"Keyword"</string>
-    <string name="jandi_file_category_all">"All Files"</string>
+    <string name="jandi_file_category_all">"<b>All Files</b>"</string>
     <string name="jandi_file_category_document">"Documents"</string>
     <string name="jandi_file_category_presentation">"Presentations"</string>
     <string name="jandi_file_category_spreadsheet">"Spreadsheets"</string>
@@ -193,8 +193,8 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_file_category_image">"Images"</string>
     <string name="jandi_file_category_video">"Video"</string>
     <string name="jandi_file_category_audio">"Audio"</string>
-    <string name="jandi_file_category_everyone">"All Members"</string>
-    <string name="jandi_file_category_everywhere">"All Rooms"</string>
+    <string name="jandi_file_category_everyone">"<b>All Members</b>"</string>
+    <string name="jandi_file_category_everywhere">"<b>All Rooms</b>"</string>
     <string name="jandi_file_search_type">"Filter results by file type"</string>
     <string name="jandi_file_search_user">"Filter results by member"</string>
     <string name="jandi_file_search_entity">"Filter results by room"</string>
@@ -304,4 +304,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_share_a_topic">Share to a Topic</string>
     <string name="jandi_open_browser">Open in a Browser</string>
     <string name="jandi_share_externally">Share Externally</string>
+    <string name="jandi_my_files">"<b>My Files</b>"</string>
 </resources>

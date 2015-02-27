@@ -183,11 +183,11 @@
     <!-- Search -->
     <string name="jandi_action_search">"검색"</string>
     <string name="jandi_file_search_keyword">"검색어"</string>
-    <string name="jandi_file_category_all">"모든 타입"</string>
+    <string name="jandi_file_category_all">"<b>모든 타입</b>"</string>
     <string name="jandi_file_category_image">"Images"</string>
     <string name="jandi_file_category_pdf">"PDFs"</string>
-    <string name="jandi_file_category_everyone">"모든 팀원"</string>
-    <string name="jandi_file_category_everywhere">"모든 대화방"</string>
+    <string name="jandi_file_category_everyone">"<b>모든 팀원</b>"</string>
+    <string name="jandi_file_category_everywhere">"<b>모든 대화방</b>"</string>
     <string name="jandi_file_search_type">"어떤 타입의 파일을 검색할까요?"</string>
     <string name="jandi_file_search_user">"누가 올린 파일을 검색할까요?"</string>
     <string name="jandi_file_search_entity">"어디에 공유된 파일을 검색할까요?"</string>
@@ -314,4 +314,5 @@
     <string name="jandi_open_browser">"브라우저에서 열기"</string>
     <string name="jandi_share_a_topic">"토픽에 공유하기"</string>
     <string name="jandi_share_externally">"공유하기"</string>
+    <string name="jandi_my_files">"<b>내 파일</b>"</string>
 </resources>
