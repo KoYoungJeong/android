@@ -2,7 +2,10 @@ package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +19,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -82,6 +86,12 @@ public class FileDetailCommentView extends LinearLayout {
         String createTime = DateTransformator.getTimeDifference(commentMessage.updateTime);
         textViewCommentFileCreateDate.setText(createTime);
         // 댓글 내용
-        textViewCommentContent.setText(commentMessage.content.body);
+        SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+        spannableStringBuilder.append(commentMessage.content.body);
+
+        LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+
+        textViewCommentContent.setText(spannableStringBuilder);
+        textViewCommentContent.setMovementMethod(LinkMovementMethod.getInstance());
     }
 }
