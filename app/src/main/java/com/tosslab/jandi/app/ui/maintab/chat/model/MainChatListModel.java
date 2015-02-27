@@ -31,6 +31,18 @@ public class MainChatListModel {
     @RootContext
     Context context;
 
+    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
+
+        for (ChatItem chatItem : chatItems) {
+            if (chatItem.getUnread() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
     public int getMemberId() {
         return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
     }
@@ -48,10 +60,10 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Iterator<ChatItem> iterator = Observable.from(chatList)
-                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getEntityId()) != null)
+                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getCompanionId()) != null)
                 .map(resChat -> {
 
-                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getEntityId());
+                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getCompanionId());
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
@@ -59,7 +71,7 @@ public class MainChatListModel {
                             .lastMessage(resChat.getLastMessage())
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getEntityId()))
+                            .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
                             .unread(resChat.getUnread())
                             .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
                             .photo(userEntity.getUserLargeProfileUrl());
@@ -83,17 +95,5 @@ public class MainChatListModel {
 
     public void saveChatList(int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
-    }
-
-    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
-
-        for (ChatItem chatItem : chatItems) {
-            if (chatItem.getUnread() > 0) {
-                return true;
-            }
-        }
-
-        return false;
-
     }
 }
