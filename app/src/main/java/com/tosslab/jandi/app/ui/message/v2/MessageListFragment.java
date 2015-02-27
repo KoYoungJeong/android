@@ -262,6 +262,13 @@ public class MessageListFragment extends Fragment {
             }
         } else {
             inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
+
+            FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            if (entityById != null) {
+                if (!TextUtils.equals(entityById.getUser().status, "enabled")) {
+                    menu.removeItem(item.getItemId());
+                }
+            }
         }
     }
 

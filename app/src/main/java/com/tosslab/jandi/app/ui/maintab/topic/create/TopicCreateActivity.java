@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.topic.create;
 
-import android.app.Activity;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -11,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -26,7 +30,7 @@ import org.json.JSONException;
  */
 @EActivity(R.layout.activity_topic_create)
 @OptionsMenu(R.menu.add_topic_text)
-public class TopicCreateActivity extends Activity {
+public class TopicCreateActivity extends ActionBarActivity {
 
     private static final Logger logger = Logger.getLogger(TopicCreateActivity.class);
 
@@ -35,6 +39,22 @@ public class TopicCreateActivity extends Activity {
 
     @Bean
     TopicCreatePresenter topicCreatePresenter;
+
+    @AfterViews
+    void initViews() {
+        setupActionBar();
+    }
+
+    private void setupActionBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
+    }
 
     @OptionsItem(R.id.action_add_topic)
     void onAddOptionClick() {

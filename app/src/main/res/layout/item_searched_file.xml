@@ -81,6 +81,16 @@
             android:textSize="@dimen/jandi_file_search_item_owner_text" />
         />
 
+        <ImageView
+            android:id="@+id/img_searched_file_name_line_through"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_searched_file_owner_name"
+            android:layout_alignLeft="@+id/txt_searched_file_owner_name"
+            android:layout_alignRight="@+id/txt_searched_file_owner_name"
+            android:layout_alignTop="@+id/txt_searched_file_owner_name"
+            android:src="@drawable/line_gray" />
+
         <TextView
             android:id="@+id/txt_searched_file_date"
             android:layout_width="wrap_content"

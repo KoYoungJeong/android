@@ -8,6 +8,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -32,6 +34,8 @@ public class SearchedFileItemView extends RelativeLayout {
     TextView textViewSearchedFileDate;
     @ViewById(R.id.img_searched_file_type)
     ImageView imageViewSearchedFileType;
+    @ViewById(R.id.img_searched_file_name_line_through)
+    View imageViewLineThrough;
 
     @ViewById(R.id.txt_searched_file_type_comment)
     TextView commentTextView;
@@ -90,6 +94,19 @@ public class SearchedFileItemView extends RelativeLayout {
         } else {
             commentImageView.setVisibility(View.INVISIBLE);
             commentTextView.setVisibility(View.INVISIBLE);
+        }
+
+        EntityManager entityManager = EntityManager.getInstance(getContext());
+        FormattedEntity entityById = entityManager.getEntityById(searchedFile.writerId);
+
+        if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
+            textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.jandi_file_search_item_owner_text));
+            imageViewLineThrough.setVisibility(View.GONE);
+        } else {
+            textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.deactivate_text_color));
+            imageViewLineThrough.setVisibility(View.VISIBLE);
+
+
         }
     }
 }

@@ -181,7 +181,6 @@ public class FileListFragment extends Fragment {
         inflater.inflate(R.menu.file_list_actionbar_menu, menu);
 
         searchMenu = menu.findItem(R.id.action_file_list_search);
-//        SearchView sv = (SearchView) MenuItemCompat.getActionView(searchMenu);
         SearchView sv = ((SearchView) searchMenu.getActionView());
 
         MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
@@ -213,32 +212,7 @@ public class FileListFragment extends Fragment {
             }
         });
 
-//        setSearchViewStyle(sv);
     }
-
-    private void setSearchViewStyle(SearchView searchView) {
-        // TODO Style 에서 설정이 안되서 코드에서 수정토록...
-        // 글씨 색
-        int searchSrcTextId
-                = getResources().getIdentifier("id/search_src_text", null, null);
-        AutoCompleteTextView searchEditText
-                = (AutoCompleteTextView) searchView.findViewById(searchSrcTextId);
-        searchEditText.setTextColor(Color.WHITE);
-        searchEditText.setHintTextColor(Color.WHITE);
-
-        // 닫기 버튼
-        int closeButtonId
-                = getResources().getIdentifier("id/search_close_btn", null, null);
-        ImageView closeButtonImage = (ImageView) searchView.findViewById(closeButtonId);
-        closeButtonImage.setImageResource(R.drawable.jandi_actionb_remove);
-
-        // 검색 Editbox 라인
-        int searchEditId
-                = getResources().getIdentifier("id/search_plate", null, null);
-        View searchEditView = searchView.findViewById(searchEditId);
-        searchEditView.setBackgroundResource(R.drawable.jandi_textfield_activated_holo_dark);
-    }
-
 
     /**
      * *********************************************************

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
@@ -58,6 +59,13 @@ public class EntityMenuDialogFragment extends DialogFragment {
     void initView() {
         FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
         getDialog().setTitle(entity.getName());
+
+        if (entity.isUser()) {
+            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
+                starredButton.setVisibility(View.GONE);
+            }
+        }
+
         setStarredButtonText(entity.isStarred);
 
         if (entityMenuDialogModel.isDefaultTopic(entityId)) {

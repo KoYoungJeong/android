@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -196,14 +197,20 @@ public class FileListPresenter {
             // TODO : Everyone 용으로 0번째 item을 추가할 수 있음. 그럼 아래 note 로 적힌 인덱스가 밀리는 현상 해결됨.
             // TODO : 뭐가 더 나은지는 모르겠네잉
 
-            final List<FormattedEntity> teamMember = entityManager.getFormattedUsers();
-            final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, entityManager.getFormattedUsers());
+            List<FormattedEntity> teamMember = entityManager.getFormattedUsers();
+            for (int idx = teamMember.size() - 1; idx >= 0; idx--) {
+                if (!TextUtils.equals(teamMember.get(idx).getUser().status, "enabled")) {
+                    teamMember.remove(idx);
+                }
+            }
+            final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, teamMember);
 
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if (mUserSelectDialog != null)
                         mUserSelectDialog.dismiss();
+
                     // NOTE : index 0 이 Everyone 으로 올라가면서
                     // teamMember[0]은 Adapter[1]과 같다. Adapter[0]은 모든 유저.
                     if (i == 0) {
@@ -248,7 +255,17 @@ public class FileListPresenter {
 
             View view = LayoutInflater.from(context).inflate(R.layout.dialog_select_cdp, null);
             ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
-            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, entityManager.getCategorizableEntities());
+            List<FormattedEntity> categorizableEntities = entityManager.getCategorizableEntities();
+
+            for (int idx = categorizableEntities.size() - 1; idx >= 0; idx--) {
+                FormattedEntity formattedEntity = categorizableEntities.get(idx);
+                if (formattedEntity.isUser())
+                    if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                        categorizableEntities.remove(idx);
+                    }
+            }
+
+            final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, categorizableEntities);
             lv.setAdapter(adapter);
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
