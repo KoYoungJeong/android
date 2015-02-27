@@ -70,6 +70,8 @@ public class MainTopicListFragment extends Fragment {
         TopicCreateActivity_
                 .intent(MainTopicListFragment.this)
                 .start();
+
+        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
     }
 
     @AfterInject

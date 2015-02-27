@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 /**
@@ -61,22 +62,36 @@ public class EntityChooseActivity extends ActionBarActivity {
     }
 
     private void initActionBarTitle(Type type, int position) {
-        switch (type) {
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
+        switch (type) {
             case ALL:
                 if (position == 0) {
-                    getSupportActionBar().setTitle(R.string.jandi_tab_topic);
+                    actionBar.setTitle(R.string.jandi_tab_topic);
                 } else {
-                    getSupportActionBar().setTitle(R.string.jandi_team_member);
+                    actionBar.setTitle(R.string.jandi_team_member);
                 }
                 break;
             case TOPIC:
-                getSupportActionBar().setTitle(R.string.jandi_tab_topic);
+                actionBar.setTitle(R.string.jandi_tab_topic);
                 break;
             case MESSAGES:
-                getSupportActionBar().setTitle(R.string.jandi_team_member);
+                actionBar.setTitle(R.string.jandi_team_member);
                 break;
         }
+    }
+
+    @OptionsItem(android.R.id.home)
+    void onHomeOptionClick() {
+        finish();
     }
 
     private void setUpActionBar() {

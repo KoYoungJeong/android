@@ -150,6 +150,7 @@ public class MainChatListFragment extends Fragment {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())
                 .start();
+        getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.ready);
     }
 
 }

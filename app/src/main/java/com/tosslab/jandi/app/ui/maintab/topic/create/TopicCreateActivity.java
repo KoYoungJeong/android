@@ -69,6 +69,11 @@ public class TopicCreateActivity extends ActionBarActivity {
         createTopic(topicTitle, publicSelected);
     }
 
+    @OptionsItem(android.R.id.home)
+    void onHomeOptionClick() {
+        finish();
+    }
+
     @TextChange(R.id.et_topic_create_title)
     void onTitleTextChange(TextView textView, CharSequence text) {
 
@@ -76,7 +81,6 @@ public class TopicCreateActivity extends ActionBarActivity {
 
             textView.setText(text.subSequence(0, TopicCreateModel.TITLE_MAX_LENGTH));
         }
-
     }
 
     @Background

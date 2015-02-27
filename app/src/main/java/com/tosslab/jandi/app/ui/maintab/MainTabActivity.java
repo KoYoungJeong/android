@@ -68,14 +68,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(selectedTeamInfo.getName());
+        setupActionBar(selectedTeamInfo);
 
         // ViewPager
         View[] tabViews = new View[4];
@@ -108,6 +101,17 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         });
 
+    }
+
+    private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(
+                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        actionBar.setTitle(selectedTeamInfo.getName());
     }
 
     @Override
