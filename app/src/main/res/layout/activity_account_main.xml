@@ -15,9 +15,91 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/jandi_entity_item_height">
+        android:layout_height="@dimen/jandi_entity_item_height"
+        android:paddingLeft="72dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/txt_account_main_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/img_account_main_edit"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="asdad"
+            android:textColor="#FF404040"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_account_main_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/account_edit" />
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="144dp"
+        android:paddingLeft="72dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/txt_account_main_id_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="18dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Sign-in ID(s)"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt_account_main_id_explain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/txt_account_main_id_title"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="6dp"
+            android:text="@string/jandi_sign_in_ids_explain"
+            android:textColor="#FF9A9A9A"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txt_account_main_id_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/txt_account_main_id_explain"
+            android:layout_toLeftOf="@+id/img_account_main_id_down_arrow"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="asdad@tosslab.com"
+            android:textColor="#FF404040"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+
+        <ImageView
+            android:id="@+id/img_account_main_id_down_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/txt_account_main_id_email"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/txt_account_main_id_email"
+            android:src="@drawable/account_arrow_more" />
+
+    </RelativeLayout>
 
 </LinearLayout>
