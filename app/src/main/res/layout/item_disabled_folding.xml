@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+    android:background="#FFF2F2F2">
+
+    <ImageView
+        android:id="@+id/img_disabled_folding_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="18.5dp"
+        android:layout_marginRight="17dp"
+        android:src="@drawable/icon_disabled_members" />
+
+    <TextView
+        android:id="@+id/txt_disabled_folding_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/img_disabled_folding_icon"
+        android:text="Disabled members"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:id="@+id/txt_disabled_folding_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
+        android:layout_toLeftOf="@+id/img_disabled_folding_arrow"
+        android:layout_toRightOf="@+id/txt_disabled_folding_title"
+        android:text="(3)"
+        android:textColor="#FF999999" />
+
+    <ImageView
+        android:id="@+id/img_disabled_folding_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="25dp"
+        android:src="@drawable/arrow_disabled_members" />
+
+</RelativeLayout>

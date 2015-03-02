@@ -28,7 +28,7 @@ import java.util.List;
 import static junit.framework.Assert.assertNotNull;
 
 @RunWith(RobolectricGradleTestRunner.class)
-public class JandiBodyViewHolderDatabaseManagerTest {
+public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
 
     @Before
     public void setUp() throws Exception {

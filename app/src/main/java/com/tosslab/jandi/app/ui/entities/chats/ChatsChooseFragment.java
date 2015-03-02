@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import org.androidannotations.annotations.AfterViews;
@@ -48,13 +49,14 @@ public class ChatsChooseFragment extends Fragment {
 
     @AfterViews
     void initViews() {
-        List<ChatChooseItem> chatListWithoutMe = chatChooseModel.getChatListWithoutMe();
-
         chatChooseAdapter = new ChatChooseAdapter(getActivity());
         chatListView.setAdapter(chatChooseAdapter);
 
         chatChooseAdapter.clear();
-        chatChooseAdapter.addAll(chatListWithoutMe);
+
+        List<ChatChooseItem> users = chatChooseModel.getUsers();
+        chatChooseAdapter.addAll(users);
+
         chatChooseAdapter.notifyDataSetChanged();
 
         initSearchTextObserver();
@@ -69,7 +71,7 @@ public class ChatsChooseFragment extends Fragment {
                     if (!TextUtils.isEmpty(name)) {
                         return chatChooseModel.getChatListWithoutMe(name);
                     } else {
-                        return chatChooseModel.getChatListWithoutMe();
+                        return chatChooseModel.getUsers();
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,17 +112,26 @@ public class ChatsChooseFragment extends Fragment {
     }
 
     @ItemClick(R.id.list_chat_choose)
-    void onEntitySelect(ChatChooseItem chatChooseItem) {
+    void onEntitySelect(int position) {
+        ChatChooseItem chatChooseItem = chatChooseAdapter.getItem(position);
+        if (chatChooseItem instanceof DisableDummyItem) {
+            chatChooseAdapter.remove(chatChooseItem);
+            chatChooseAdapter.notifyDataSetChanged();
 
-        getActivity().finish();
+            chatListView.smoothScrollToPositionFromTop(position, chatListView.getChildAt(0).getHeight() / 2);
 
-        int entityId = chatChooseItem.getEntityId();
-        MessageListV2Activity_.intent(getActivity())
-                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
-                .entityId(entityId)
-                .teamId(chatChooseModel.getTeamId())
-                .isFavorite(chatChooseItem.isStarred())
-                .start();
+        } else {
+
+            getActivity().finish();
+
+            int entityId = chatChooseItem.getEntityId();
+            MessageListV2Activity_.intent(getActivity())
+                    .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                    .entityId(entityId)
+                    .teamId(chatChooseModel.getTeamId())
+                    .isFavorite(chatChooseItem.isStarred())
+                    .start();
+        }
     }
 
     @TextChange(R.id.et_chat_choose_search)

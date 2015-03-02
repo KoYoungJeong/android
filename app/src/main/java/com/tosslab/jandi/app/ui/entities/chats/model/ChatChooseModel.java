@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -28,12 +29,13 @@ public class ChatChooseModel {
     @RootContext
     Context context;
 
-    public List<ChatChooseItem> getChatListWithoutMe() {
+    public List<ChatChooseItem> getEnableUsers() {
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
 
         Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(formattedEntity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
 
@@ -41,7 +43,7 @@ public class ChatChooseModel {
                             .email(formattedEntity.getUserEmail())
                             .name(formattedEntity.getName())
                             .starred(formattedEntity.isStarred)
-                            .enabled(TextUtils.equals(formattedEntity.getUser().status, "enabled"))
+                            .enabled(true)
                             .photoUrl(formattedEntity.getUserLargeProfileUrl());
 
                     return chatChooseItem;
@@ -119,4 +121,69 @@ public class ChatChooseModel {
     public boolean isStarred(int entityId) {
         return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
     }
+
+    public boolean hasDisabledUsers() {
+
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+
+        Boolean hasDisabled = Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
+                .map(entity -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
+
+
+        return hasDisabled;
+    }
+
+    public List<ChatChooseItem> getDisableUsers() {
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+
+        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
+
+        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsersWithoutMe)
+                .filter(entity -> !TextUtils.equals(entity.getUser().status, "enabled"))
+                .map(formattedEntity -> {
+                    ChatChooseItem chatChooseItem = new ChatChooseItem();
+
+                    chatChooseItem.entityId(formattedEntity.getId())
+                            .email(formattedEntity.getUserEmail())
+                            .name(formattedEntity.getName())
+                            .starred(formattedEntity.isStarred)
+                            .enabled(false)
+                            .photoUrl(formattedEntity.getUserLargeProfileUrl());
+
+                    return chatChooseItem;
+                })
+                .toBlocking()
+                .getIterator();
+
+        while (iterator.hasNext()) {
+            chatChooseItems.add(iterator.next());
+        }
+
+        Collections.sort(chatChooseItems, getChatItemComparator());
+
+
+        return chatChooseItems;
+    }
+
+    public List<ChatChooseItem> getUsers() {
+
+        List<ChatChooseItem> users = new ArrayList<ChatChooseItem>();
+
+        List<ChatChooseItem> enableUsers = getEnableUsers();
+        boolean hasDisabledUsers = hasDisabledUsers();
+        users.addAll(enableUsers);
+
+        if (hasDisabledUsers) {
+            List<ChatChooseItem> disableUsers = getDisableUsers();
+            users.add(new DisableDummyItem(false, disableUsers.size()));
+            users.addAll(disableUsers);
+        }
+
+        return users;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.entities.chats.adapter;
 
 import android.content.Context;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
+import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
@@ -34,7 +36,36 @@ public class ChatChooseAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return chatChooseItems.size();
+
+        Pair<Integer, DisableDummyItem> item = getDisabledInfo();
+
+        if (item.first > 0 && item.second != null && !item.second.isExpand()) {
+            return chatChooseItems.size() - item.first;
+        } else {
+            return chatChooseItems.size();
+        }
+
+    }
+
+    private Pair<Integer, DisableDummyItem> getDisabledInfo() {
+
+        DisableDummyItem disableDummyItem = null;
+        int disableCount = 0;
+
+        for (int idx = chatChooseItems.size() - 1; idx >= 0; idx--) {
+            ChatChooseItem chatChooseItem = chatChooseItems.get(idx);
+            if (chatChooseItem.isEnabled()) {
+                break;
+            } else if (!(chatChooseItem instanceof DisableDummyItem)) {
+                ++disableCount;
+            }
+
+            if (chatChooseItem instanceof DisableDummyItem) {
+                disableDummyItem = (DisableDummyItem) chatChooseItem;
+            }
+        }
+
+        return new Pair<Integer, DisableDummyItem>(disableCount, disableDummyItem);
     }
 
     @Override
@@ -50,64 +81,101 @@ public class ChatChooseAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
-            viewHolder = new ViewHolder();
-            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
-            viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
-            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+        int itemViewType = getItemViewType(position);
 
-
-            convertView.setTag(viewHolder);
-
+        if (itemViewType == 0) {
+            convertView = setChatChooseView(position, convertView, parent);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            convertView = setDisableFoldingView(position, convertView, parent);
         }
 
-        viewHolder.textViewBadgeCount.setVisibility(View.GONE);
+        return convertView;
+    }
+
+    private View setDisableFoldingView(int position, View convertView, ViewGroup parent) {
+
+        DisableFoldingViewHolder disableFoldingViewHolder;
+
+        if (convertView == null) {
+            disableFoldingViewHolder = new DisableFoldingViewHolder();
+
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_disabled_folding, parent, false);
+
+            disableFoldingViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_disabled_folding_icon);
+            disableFoldingViewHolder.imageViewArrow = (ImageView) convertView.findViewById(R.id.img_disabled_folding_arrow);
+            disableFoldingViewHolder.textViewTitle = (TextView) convertView.findViewById(R.id.txt_disabled_folding_title);
+            disableFoldingViewHolder.textViewCount = (TextView) convertView.findViewById(R.id.txt_disabled_folding_count);
+
+            convertView.setTag(R.id.chatchoose_disable_folding, disableFoldingViewHolder);
+
+        } else {
+            disableFoldingViewHolder = (DisableFoldingViewHolder) convertView.getTag(R.id.chatchoose_disable_folding);
+        }
+
+        DisableDummyItem item = ((DisableDummyItem) getItem(position));
+
+        disableFoldingViewHolder.textViewCount.setText(context.getString(R.string.jandi_count_with_brace, item.getDisabledCount()));
+
+        return convertView;
+    }
+
+    private View setChatChooseView(int position, View convertView, ViewGroup parent) {
+        ChatCHooseViewHolder chatCHooseViewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+            chatCHooseViewHolder = new ChatCHooseViewHolder();
+            chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
+            chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
+            chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
+            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
+            chatCHooseViewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
+            chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+            chatCHooseViewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
+            chatCHooseViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+
+
+            convertView.setTag(R.id.chatchoose_item, chatCHooseViewHolder);
+
+        } else {
+            chatCHooseViewHolder = (ChatCHooseViewHolder) convertView.getTag(R.id.chatchoose_item);
+        }
+
+        chatCHooseViewHolder.textViewBadgeCount.setVisibility(View.GONE);
 
         ChatChooseItem item = getItem(position);
 
-        viewHolder.textViewName.setText(item.getName());
-        viewHolder.textViewAdditional.setText(item.getEmail());
+        chatCHooseViewHolder.textViewName.setText(item.getName());
+        chatCHooseViewHolder.textViewAdditional.setText(item.getEmail());
 
         if (item.isStarred()) {
-            viewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
         } else {
-            viewHolder.imageViewFavorite.setVisibility(View.GONE);
+            chatCHooseViewHolder.imageViewFavorite.setVisibility(View.GONE);
         }
 
 
         if (item.isEnabled()) {
 
-            viewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            viewHolder.disableWarningView.setVisibility(View.GONE);
-            viewHolder.disableCoverView.setVisibility(View.GONE);
+            chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.GONE);
+            chatCHooseViewHolder.disableWarningView.setVisibility(View.GONE);
+            chatCHooseViewHolder.disableCoverView.setVisibility(View.GONE);
 
         } else {
 
-            viewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            viewHolder.disableWarningView.setVisibility(View.VISIBLE);
-            viewHolder.disableCoverView.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.disableWarningView.setVisibility(View.VISIBLE);
+            chatCHooseViewHolder.disableCoverView.setVisibility(View.VISIBLE);
 
         }
 
-        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
-        viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
+        chatCHooseViewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
+        chatCHooseViewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
 
-        Ion.with(viewHolder.imageViewIcon)
+        Ion.with(chatCHooseViewHolder.imageViewIcon)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .load(item.getPhotoUrl());
-
-
         return convertView;
     }
 
@@ -117,16 +185,33 @@ public class ChatChooseAdapter extends BaseAdapter {
         };
     }
 
+    public void add(ChatChooseItem chatChooseItem) {
+        chatChooseItems.add(chatChooseItem);
+    }
 
     public void addAll(List<ChatChooseItem> chatListWithoutMe) {
         chatChooseItems.addAll(chatListWithoutMe);
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return getItem(position) instanceof DisableDummyItem ? 1 : 0;
     }
 
     public void clear() {
         chatChooseItems.clear();
     }
 
-    static class ViewHolder {
+    public void remove(ChatChooseItem chatChooseItem) {
+        chatChooseItems.remove(chatChooseItem);
+    }
+
+    static class ChatCHooseViewHolder {
         public Context context;
         public ImageView imageViewIcon;
         public ImageView imageViewFavorite;
@@ -136,7 +221,12 @@ public class ChatChooseAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
+    }
 
-
+    static class DisableFoldingViewHolder {
+        public TextView textViewTitle;
+        public ImageView imageViewIcon;
+        public ImageView imageViewArrow;
+        public TextView textViewCount;
     }
 }

@@ -10,4 +10,7 @@
     <item name="message_cmt_without_file" type="id" />
     <item name="message_event" type="id" />
 
+    <item name="chatchoose_item" type="id" />
+    <item name="chatchoose_disable_folding" type="id" />
+
 </resources>
