@@ -10,6 +10,8 @@ import java.util.Locale;
  */
 public class LanguageUtil {
 
+    private static final String[] LANGS = {"en", "ja", "ko", "zh-cn", "zh-tw"};
+
     public static String getLanguage(Context context) {
 
         if (context == null) {
@@ -39,6 +41,28 @@ public class LanguageUtil {
         StringBuffer buffer = new StringBuffer();
         buffer.append(language);//.append("-").append(country);
 
-        return buffer.toString();
+        if (language.startsWith("zh")) {
+            buffer.append("-").append(country);
+        }
+
+        String langCode = buffer.toString();
+
+        if (includeLangCode(langCode)) {
+            return langCode;
+        } else {
+            return "en";
+        }
+
+    }
+
+    private static boolean includeLangCode(String langCode) {
+
+        for (String lang : LANGS) {
+            if (TextUtils.equals(lang, langCode)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
