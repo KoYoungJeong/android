@@ -73,7 +73,7 @@ public class UserInfoDialogFragment extends DialogFragment {
 
     private Dialog createEnabledUserDialog(int userId, FormattedEntity entity) {
         final String userName = entity.getName();
-        final String userNickname = entity.getUserStatusMessage();
+        final String userStatusMessage = entity.getUserStatusMessage();
         final String userDivision = entity.getUserDivision();
         final String userPosition = entity.getUserPosition();
         final String userPhoneNumber = entity.getUserPhoneNumber();
@@ -88,7 +88,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
         imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
         final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);
-        final TextView txtUserNickname = (TextView) mainView.findViewById(R.id.txt_user_info_nickname);
+        final TextView txtUserStatusMessage = (TextView) mainView.findViewById(R.id.txt_user_info_statusmessage);
         final TextView txtUserDivision = (TextView) mainView.findViewById(R.id.txt_user_info_division);
         final TextView txtUserPosition = (TextView) mainView.findViewById(R.id.txt_user_info_position);
         final TextView txtUserEmail = (TextView) mainView.findViewById(R.id.txt_user_info_email);
@@ -140,7 +140,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         }
 
         txtUserName.setText(userName);
-        txtUserNickname.setText(userNickname);
+        txtUserStatusMessage.setText(userStatusMessage);
         txtUserDivision.setText(userDivision);
         txtUserPosition.setText(userPosition);
         Ion.with(imgUserPhoto)
