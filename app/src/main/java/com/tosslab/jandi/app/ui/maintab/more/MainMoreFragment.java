@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.maintab.more;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.widget.TextView;
 
@@ -14,11 +13,9 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.member.TeamInfoActivity_;
-import com.tosslab.jandi.app.ui.profile.account.AccountProfileActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
+import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
@@ -34,8 +31,8 @@ import org.apache.log4j.Logger;
 @EFragment(R.layout.fragment_main_more)
 public class MainMoreFragment extends Fragment {
 
+    public static final String SUPPORT_URL = "http://support.jandi.com";
     private final static Logger logger = Logger.getLogger(MainMoreFragment.class);
-
     protected Context mContext;
 
     IconWithTextView profileIconView;
@@ -83,34 +80,10 @@ public class MainMoreFragment extends Fragment {
         }
     }
 
-    @Click(R.id.ly_more_account)
-    public void moveToAccountInfoActivity() {
-        logger.debug("Move to Account Info");
-
-        AccountProfileActivity_.intent(mContext)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
-    }
-
     @Click(R.id.ly_more_profile)
     public void moveToProfileActivity() {
         MemberProfileActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
-    }
-
-    @Click(R.id.ly_more_setting)
-    public void moveToSettingActivity() {
-        SettingsActivity_.intent(mContext)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
-    }
-
-    @Click(R.id.ly_more_team)
-    public void moveToTeamSelectActivity() {
-        TeamSelectionActivity_.intent(mContext)
-                .calledType(TeamSelectionActivity.CALLED_CHANGE_TEAM)
-                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
     }
 
@@ -129,10 +102,25 @@ public class MainMoreFragment extends Fragment {
 
     }
 
+    @Click(R.id.ly_more_go_to_main)
+    public void moveToAccountActivity() {
+
+    }
+
+    @Click(R.id.ly_more_setting)
+    public void moveToSettingActivity() {
+        SettingsActivity_.intent(mContext)
+                .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .start();
+    }
+
     @Click(R.id.ly_more_help)
     public void launchHelpPageOnBrowser() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://support.jandi.com"));
-        startActivity(browserIntent);
+
+        InternalWebActivity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .url(SUPPORT_URL)
+                .start();
+
     }
 }

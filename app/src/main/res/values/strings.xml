@@ -306,4 +306,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_share_externally">Share Externally</string>
     <string name="jandi_my_files">"<b>My Files</b>"</string>
     <string name="jandi_count_with_brace">(%d)</string>
+    <string name="jandi_go_to_main">Go to Main</string>
 </resources>
