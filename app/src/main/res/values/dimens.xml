@@ -96,4 +96,5 @@
     <dimen name="jandi_file_search_item_owner_text">13sp</dimen>
     <dimen name="jandi_file_search_item_date_text">13sp</dimen>
     <dimen name="jandi_tab_text_size">9sp</dimen>
+    <dimen name="jandi_account_home_layout_margin">16dp</dimen>
 </resources>

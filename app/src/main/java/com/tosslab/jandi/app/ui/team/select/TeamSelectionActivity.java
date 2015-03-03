@@ -48,8 +48,8 @@ public class TeamSelectionActivity extends ActionBarActivity {
     int calledType = CALLED_MUST_SELECT_TEAM;
     public static final int CALLED_CHANGE_TEAM = 101;
     public static final int REQ_TEAM_CREATE = 2031;
-    private static final Logger logger = Logger.getLogger(TeamSelectionActivity.class);
     private static final int REQ_TEAM_JOIN = 2032;
+    private static final Logger logger = Logger.getLogger(TeamSelectionActivity.class);
     @Bean
     TeamSelectionPresenter teamSelectionPresenter;
 
