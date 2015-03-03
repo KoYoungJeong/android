@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -66,7 +68,10 @@ public class ImageSharePresenter {
     @AfterViews
     void initViews() {
 
-        titleText.getEditText().setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        EditText titleEditText = titleText.getEditText();
+        titleEditText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+        titleEditText.setEnabled(false);
+        titleEditText.setTextColor(Color.BLACK);
 
         for (EntityInfo entity : entities) {
             shareEntityAdapter.add(entity);
