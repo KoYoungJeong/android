@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.account.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -59,13 +60,20 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Background
     @Override
     public void onChangeName(String newName) {
+        view.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(context, newName);
             MixpanelAccountAnalyticsClient
                     .getInstance(context, resAccountInfo.getId())
                     .trackSetAccount();
+
+            JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+            view.setAccountName(newName);
+            view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } finally {
+            view.dismissProgressWheel();
         }
     }
 

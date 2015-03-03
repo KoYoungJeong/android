@@ -28,5 +28,13 @@ public interface AccountHomePresenter {
         void loadTeamCreateActivity();
 
         void showNameEditDialog(String oldName);
+
+        void showSuccessToast(String message);
+
+        void setAccountName(String newName);
+
+        void dismissProgressWheel();
+
+        void showProgressWheel();
     }
 }

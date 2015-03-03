@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
 
@@ -53,6 +54,8 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     @ViewById(R.id.ll_account_main_team_choose)
     LinearLayout teamLayout;
 
+    ProgressWheel progressWheel;
+
     @AfterInject
     void initObject() {
         accountHomePresenter.setView(this);
@@ -60,6 +63,8 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @AfterViews
     void initView() {
+        progressWheel = new ProgressWheel(AccountHomeActivity.this);
+        progressWheel.init();
         setUpActionBar();
     }
 
@@ -152,6 +157,38 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         DialogFragment newFragment = EditTextDialogFragment.newInstance(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_ACCOUNT_NAME, oldName);
         newFragment.show(getFragmentManager(), "dialog");
+    }
+
+    @UiThread
+    @Override
+    public void showSuccessToast(String message) {
+        ColoredToast.show(AccountHomeActivity.this, message);
+    }
+
+    @UiThread
+    @Override
+    public void setAccountName(String newName) {
+        accountNameTextView.setText(newName);
+    }
+
+    @UiThread
+    @Override
+    public void dismissProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread
+    @Override
+    public void showProgressWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
+        }
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
