@@ -9,6 +9,8 @@
         android:id="@+id/et_file_name_to_be_uploaded"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:enabled="false"
+        android:textColor="@color/black"
         android:layout_marginBottom="@dimen/edittext_vertical_margin"/>
     <Spinner
         android:id="@+id/spinner_cdps"
