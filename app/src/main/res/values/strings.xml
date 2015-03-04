@@ -309,5 +309,7 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_go_to_main">Go to Main</string>
     <string name="jandi_sign_in_ids_explain">기본 주소를 통해 잔디 계정에 관련된 이메일들을 받아소실 수 있습니다. 이메일 주소를 기본 주소 또는 팀에 사용하기 위해서는 이메일 승인 절차를 거쳐야 합니다.</string>
     <string name="jandi_account_home_help">하나의 메일 주소로 복수개의 팀을 생성하거나 합류할 수 있습니다.\n\n복수 개의 메일 주소를 추가하여 업무 용도와 개인 용도의 팀을 분리해서 사용할 수 있습니다.\n\n특정 팀과의 연동된 메일 주소는 언제든 바꿀 수 있습니다.</string>
+    <string name="jandi_primary_email">Primary Email</string>
+    <string name="jadi_account_home">Account Home</string>
 
 </resources>

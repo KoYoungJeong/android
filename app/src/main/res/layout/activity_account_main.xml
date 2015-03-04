@@ -47,7 +47,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:textColor="#FF404040"
-                    android:textSize="30sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -82,7 +82,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="Sign-in ID(s)"
+                    android:text="@string/jandi_primary_email"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -115,7 +115,7 @@
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textColor="#FF404040"
-                        android:textSize="30sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
 
@@ -124,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/account_arrow_more" />
-                    
+
                 </LinearLayout>
 
             </RelativeLayout>

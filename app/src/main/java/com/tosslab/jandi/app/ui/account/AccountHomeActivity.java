@@ -81,7 +81,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.jandi_account);
+        actionBar.setTitle(R.string.jadi_account_home);
 
     }
 
