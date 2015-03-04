@@ -306,5 +306,9 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
-    <string name="jandi_account_home_help">하나의 메일 주소로 복수개의 팀을 생성하거나 합류할 수 있습니다.\n\n복수 개의 메일 주소를 추가하여 업무 용도와 개인 용도의 팀을 분리해서 사용할 수 있습니다.\n\n특정 팀과의 연동된 메일 주소는 언제든 바꿀 수 있습니다.</string>
+    <string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을생성하거나 참여할 수 있습니다.
+
+여러 개의 메일 주소를 추가하여 업무 용도와개인 용도의 팀을 분리해서 사용할 수 있습니다.
+
+특정 팀과 연동된 메일 주소는언제든 바꿀 수 있습니다."</string>
 </resources>
