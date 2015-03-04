@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@color/account_home_help_dialog_background"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp"
+        android:src="@drawable/help_diagram" />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/account_home_help_dialog_background"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="24dp"
-            android:src="@drawable/help_diagram" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/jandi_account_home_help"
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="14sp" />
+</LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/jandi_account_home_help"
-            android:textColor="@color/account_home_help_dialog_text"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-</ScrollView>

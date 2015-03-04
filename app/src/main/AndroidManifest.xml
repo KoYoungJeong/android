@@ -90,11 +90,6 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".ui.profile.account.AccountProfileActivity_"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/jandi_account"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.member.TeamInfoActivity_"
             android:label="@string/jandi_team_member"
             android:screenOrientation="portrait" />

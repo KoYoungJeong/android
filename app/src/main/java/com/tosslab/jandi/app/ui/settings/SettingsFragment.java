@@ -1,7 +1,7 @@
-package com.tosslab.jandi.app.ui.settings;/**
- * Created by justinygchoi on 2014. 7. 18..
- */
+package com.tosslab.jandi.app.ui.settings;
 
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -14,14 +14,27 @@ import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.SignOutEvent;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 
+import de.greenrobot.event.EventBus;
+
+/**
+ * Created by justinygchoi on 2014. 7. 18..
+ */
 @EFragment
 public class SettingsFragment extends PreferenceFragment {
 
@@ -33,6 +46,18 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.pref_setting);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -56,8 +81,58 @@ public class SettingsFragment extends PreferenceFragment {
                     .intent(getActivity())
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
+        } else if (preference.getKey().equals("setting_logout")) {
+            settingFragmentViewModel.showSignoutDialog();
         }
         return false;
+    }
+
+    public void onEvent(SignOutEvent event) {
+        startSignOut();
+    }
+
+    @Background
+    void startSignOut() {
+        settingFragmentViewModel.showProgressDialog();
+        try {
+
+            removeSignData();
+
+            Activity activity = getActivity();
+
+            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
+            MixpanelAccountAnalyticsClient
+                    .getInstance(activity, accountInfo.getId())
+                    .trackAccountSigningOut()
+                    .flush()
+                    .clear();
+
+            EntityManager entityManager = EntityManager.getInstance(activity);
+
+            MixpanelMemberAnalyticsClient
+                    .getInstance(activity, entityManager.getDistictId())
+                    .trackSignOut()
+                    .flush()
+                    .clear();
+
+            ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
+
+        } catch (Exception e) {
+        } finally {
+            settingFragmentViewModel.dismissProgressDialog();
+        }
+
+        settingFragmentViewModel.returnToLoginActivity();
+    }
+
+    private void removeSignData() {
+        JandiPreference.signOut(getActivity());
+
+        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
+        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        parseInstallation.saveInBackground();
+
+        JandiAccountDatabaseManager.getInstance(getActivity()).clearAllData();
     }
 
     void onPushNotification() {

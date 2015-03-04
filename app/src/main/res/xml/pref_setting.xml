@@ -5,24 +5,33 @@
         android:key="setting_push"
         android:title="@string/jandi_setting_push">
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="setting_push_auto_alarm"
-            android:title="@string/jandi_setting_push_subscription"
             android:summaryOff="@string/jandi_setting_push_subscription_cancel"
             android:summaryOn="@string/jandi_setting_push_subscription_ok"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_setting_push_subscription" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="setting_tos_pp"
         android:title="@string/jandi_tos_and_pp">
         <Preference
+            android:defaultValue="true"
             android:key="setting_tos"
-            android:title="@string/jandi_term_of_service"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_term_of_service" />
         <Preference
+            android:defaultValue="true"
             android:key="setting_pp"
-            android:title="@string/jandi_privacy_policy"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_privacy_policy" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="setting_general"
+        android:title="@string/jandi_setting_general">
+        <Preference
+            android:key="setting_logout"
+            android:selectable="true"
+            android:title="@string/jandi_setting_sign_out" />
     </PreferenceCategory>
 
 </PreferenceScreen>

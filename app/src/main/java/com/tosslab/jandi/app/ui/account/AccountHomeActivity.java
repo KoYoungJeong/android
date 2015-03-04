@@ -134,7 +134,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                     accountTeamRowView.setBadgeCount(team.getUnread());
                     accountTeamRowView.setTeamName(team.getName());
 
-                    if (team.getTeamId() == selectedTeamInfo.getTeamId()) {
+                    if (selectedTeamInfo != null && team.getTeamId() == selectedTeamInfo.getTeamId()) {
                         accountTeamRowView.setSelected(true);
                     }
 
@@ -164,6 +164,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                     AccountTeamRowView accountTeamRowView1 = new AccountTeamRowView(AccountHomeActivity.this);
                     accountTeamRowView1.setTeamName(getString(R.string.jandi_team_select_create_a_team));
                     accountTeamRowView1.setIcon(R.drawable.jandi_icon_teamlist_add);
+                    accountTeamRowView1.setBadgeCount(0);
                     accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.text_color_green));
                     accountTeamRowView1.setOnClickListener(v -> accountHomePresenter.onCreateTeamSelect());
 
@@ -269,9 +270,17 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     @Override
     public void showHeloDialog() {
         MaterialDialog.Builder builder = new MaterialDialog.Builder(AccountHomeActivity.this);
-        builder.customView(R.layout.dialog_account_home_help, true)
+        MaterialDialog materialDialog = builder.customView(R.layout.dialog_account_home_help, true)
                 .positiveText(R.string.jandi_confirm)
-                .show();
+                .backgroundColor(getResources().getColor(R.color.white))
+                .build();
+
+        View customView = materialDialog.getCustomView();
+        if (customView.getParent() != null) {
+            ((View) customView.getParent()).setPadding(0, 0, 0, 0);
+        }
+        customView.setPadding(0, 0, 0, 0);
+        materialDialog.show();
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="72dp"
+    android:background="@drawable/btn_rect_white_light"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="@drawable/btn_rect_white"
     android:paddingLeft="24dp"
     android:paddingRight="@dimen/jandi_account_home_layout_margin">
 
@@ -21,7 +21,7 @@
         android:layout_marginLeft="27dp"
         android:layout_weight="1"
         android:text="팀 이름"
-        android:textColor="#FF404040"
+        android:textColor="@color/account_home_team_text"
         android:textSize="@dimen/jandi_entity_item_title_font" />
 
     <TextView
