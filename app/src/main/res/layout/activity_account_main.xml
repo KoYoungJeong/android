@@ -14,6 +14,10 @@
         android:visibility="visible"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/account_home_divide_line" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -28,6 +32,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/jandi_entity_item_height"
+                android:background="@color/white"
                 android:paddingLeft="72dp"
                 android:paddingRight="@dimen/jandi_account_home_layout_margin">
 
@@ -55,18 +60,25 @@
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="144dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingBottom="18dp"
                 android:paddingLeft="72dp"
-                android:paddingRight="@dimen/jandi_account_home_layout_margin">
+                android:paddingRight="@dimen/jandi_account_home_layout_margin"
+                android:paddingTop="18dp">
 
                 <TextView
                     android:id="@+id/txt_account_main_id_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:layout_marginTop="18dp"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
@@ -91,6 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/txt_account_main_id_explain"
+                    android:layout_marginTop="20dp"
                     android:gravity="center_vertical">
 
                     <TextView
@@ -111,28 +124,50 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/account_arrow_more" />
+                    
                 </LinearLayout>
 
             </RelativeLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="@dimen/jandi_account_home_layout_margin"
                 android:layout_marginRight="@dimen/jandi_account_home_layout_margin"
+                android:layout_marginTop="28dp"
                 android:text="팀 선택"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_account_main_team_choose"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:background="@color/white"
                 android:orientation="vertical">
 
+                <ProgressBar
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_gravity="center" />
+
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line" />
 
         </LinearLayout>
     </ScrollView>

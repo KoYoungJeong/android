@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
@@ -54,16 +55,12 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @Bean(AccountHomePresenterImpl.class)
     AccountHomePresenter accountHomePresenter;
-
     @ViewById(R.id.txt_account_main_name)
     TextView accountNameTextView;
-
     @ViewById(R.id.txt_account_main_id_email)
     TextView emailTextView;
-
     @ViewById(R.id.ll_account_main_team_choose)
     LinearLayout teamLayout;
-
     ProgressWheel progressWheel;
 
     @AfterInject
@@ -102,7 +99,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @OptionsItem(R.id.action_help)
     void onHelpOptionSelect() {
-        // TODO show Help Dailog
+        accountHomePresenter.onHelpOptionSelect();
     }
 
     @Click(R.id.img_account_main_edit)
@@ -124,6 +121,8 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     @UiThread
     @Override
     public void setTeamInfo(ArrayList<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
+
+        teamLayout.removeAllViews();
 
         for (Team team : allTeamInfos) {
             View view = null;
@@ -256,8 +255,23 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     }
 
     @Override
-    public void removeTeamView(Team selectedTeam) {
+    public void removePendingTeamView(Team selectedTeam) {
 
+        for (int idx = teamLayout.getChildCount() - 2; idx >= 0; --idx) {
+            Team team = (Team) teamLayout.getChildAt(idx).getTag();
+            if (team.getStatus() == Team.Status.PENDING && team.getTeamId() == selectedTeam.getTeamId()) {
+                teamLayout.removeViewAt(idx);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void showHeloDialog() {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(AccountHomeActivity.this);
+        builder.customView(R.layout.dialog_account_home_help, true)
+                .positiveText(R.string.jandi_confirm)
+                .show();
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

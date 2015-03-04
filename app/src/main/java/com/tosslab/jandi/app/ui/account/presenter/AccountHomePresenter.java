@@ -30,6 +30,8 @@ public interface AccountHomePresenter {
 
     void onRequestIgnore(Team selectedTeam);
 
+    void onHelpOptionSelect();
+
     public interface View {
 
         void showErrorToast(String message);
@@ -56,6 +58,8 @@ public interface AccountHomePresenter {
 
         void moveCreatedTeamDomain(Team selectedTeam);
 
-        void removeTeamView(Team selectedTeam);
+        void removePendingTeamView(Team selectedTeam);
+
+        void showHeloDialog();
     }
 }

@@ -4,6 +4,7 @@
     android:layout_height="72dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:background="@drawable/btn_rect_white"
     android:paddingLeft="24dp"
     android:paddingRight="@dimen/jandi_account_home_layout_margin">
 

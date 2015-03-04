@@ -48,6 +48,12 @@ def getDate() {
 }
 
 dependencies {
+
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
     apt 'org.androidannotations:androidannotations:3.2'
 
     // Google
@@ -65,6 +71,9 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+@aar'
     aarLinkSources 'pl.droidsonroids.gif:android-gif-drawable:1.1.+:sources@jar'
     compile 'com.iangclifton.android:floatlabel:1.0.2'
+    compile ('com.afollestad:material-dialogs:0.6.3.4') {
+        exclude group: 'com.android.support'
+    }
 
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'

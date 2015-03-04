@@ -141,8 +141,13 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         } catch (JandiNetworkException e) {
         } finally {
             view.dismissProgressWheel();
-            view.removeTeamView(selectedTeam);
+            view.removePendingTeamView(selectedTeam);
         }
+    }
+
+    @Override
+    public void onHelpOptionSelect() {
+        view.showHeloDialog();
     }
 
     @Background
