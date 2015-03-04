@@ -38,6 +38,9 @@ public class InternalWebActivity extends ActionBarActivity {
     @Extra
     String url;
 
+    @Extra
+    boolean hideActionBar;
+
     @Bean
     InternalWebPresenter internalWebPresenter;
 
@@ -89,6 +92,10 @@ public class InternalWebActivity extends ActionBarActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.jandi_actionb_remove);
         actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
+
+        if (hideActionBar) {
+            actionBar.hide();
+        }
     }
 
     @Override
