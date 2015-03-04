@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -95,7 +95,7 @@ public class IntroLoginViewModel {
 
     @SupposeUiThread
     void moveToTeamSelectionActivity(String myEmailId) {
-        TeamSelectionActivity_.intent(activity)
+        AccountHomeActivity_.intent(activity)
                 .start();
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         activity.finish();

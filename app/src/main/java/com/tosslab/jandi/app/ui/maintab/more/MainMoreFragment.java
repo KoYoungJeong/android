@@ -10,6 +10,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.member.TeamInfoActivity_;
@@ -104,7 +105,8 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_go_to_main)
     public void moveToAccountActivity() {
-
+        AccountHomeActivity_.intent(mContext)
+                .start();
     }
 
     @Click(R.id.ly_more_setting)

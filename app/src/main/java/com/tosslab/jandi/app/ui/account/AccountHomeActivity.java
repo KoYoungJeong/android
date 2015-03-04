@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.account;
 
+import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,8 +13,12 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
+import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -25,6 +31,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -41,7 +48,10 @@ import de.greenrobot.event.EventBus;
 @OptionsMenu(R.menu.account_home)
 public class AccountHomeActivity extends ActionBarActivity implements AccountHomePresenter.View {
 
-    public static final int REQ_TEAM_CREATE = 101;
+    private static final int REQ_TEAM_CREATE = 101;
+    private static final int REQ_EMAIL_CHOOSE = 201;
+    private static final int REQ_TEAM_JOIN = 301;
+
     @Bean(AccountHomePresenterImpl.class)
     AccountHomePresenter accountHomePresenter;
 
@@ -100,6 +110,11 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         accountHomePresenter.onAccountNameEditClick(accountNameTextView.getText().toString());
     }
 
+    @Click(R.id.ll_account_main_email)
+    void onEmailEditClick() {
+        accountHomePresenter.onAccountEmailEditClick();
+    }
+
     @UiThread
     @Override
     public void showErrorToast(String message) {
@@ -108,29 +123,47 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @UiThread
     @Override
-    public void setTeamInfo(ArrayList<Team> result) {
+    public void setTeamInfo(ArrayList<Team> allTeamInfos, ResAccountInfo.UserTeam selectedTeamInfo) {
 
-        for (Team team : result) {
+        for (Team team : allTeamInfos) {
             View view = null;
 
             switch (team.getStatus()) {
                 case JOINED:
+
                     AccountTeamRowView accountTeamRowView = new AccountTeamRowView(AccountHomeActivity.this);
                     accountTeamRowView.setBadgeCount(team.getUnread());
                     accountTeamRowView.setTeamName(team.getName());
+
+                    if (team.getTeamId() == selectedTeamInfo.getTeamId()) {
+                        accountTeamRowView.setSelected(true);
+                    }
+
                     accountTeamRowView.setOnClickListener(v -> {
                         Team clickedTeam = (Team) v.getTag();
-                        accountHomePresenter.onJoinedTeamSelect(clickedTeam);
+                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId());
                     });
                     view = accountTeamRowView;
                     break;
                 case PENDING:
                     AccountPendingTeamRowView accountPendingTeamRowView = new AccountPendingTeamRowView(AccountHomeActivity.this);
+                    accountPendingTeamRowView.setTeamName(team.getName());
+                    accountPendingTeamRowView.setOnJoinClickListener(new AccountPendingTeamRowView.OnJoinClickListener() {
+                        @Override
+                        public void onJoinClick(View view, boolean join) {
+                            Team selectedTeam = (Team) view.getTag();
+                            if (join) {
+                                accountHomePresenter.onRequestJoin(selectedTeam);
+                            } else {
+                                accountHomePresenter.onRequestIgnore(selectedTeam);
+                            }
+                        }
+                    });
                     view = accountPendingTeamRowView;
                     break;
                 case CREATE:
                     AccountTeamRowView accountTeamRowView1 = new AccountTeamRowView(AccountHomeActivity.this);
-                    accountTeamRowView1.setTeamName(getString(R.string.team_create));
+                    accountTeamRowView1.setTeamName(getString(R.string.jandi_team_select_create_a_team));
                     accountTeamRowView1.setIcon(R.drawable.jandi_icon_teamlist_add);
                     accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.text_color_green));
                     accountTeamRowView1.setOnClickListener(v -> accountHomePresenter.onCreateTeamSelect());
@@ -191,7 +224,58 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         }
     }
 
+    @UiThread
+    @Override
+    public void moveSelectedTeam() {
+        MainTabActivity_.intent(AccountHomeActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
+        finish();
+    }
+
+    @Override
+    public void moveEmailEditClick() {
+        EmailChooseActivity_.intent(AccountHomeActivity.this)
+                .startForResult(REQ_EMAIL_CHOOSE);
+    }
+
+    @Override
+    public void setUserEmailText(String email) {
+        emailTextView.setText(email);
+    }
+
+    @Override
+    public void moveCreatedTeamDomain(Team selectedTeam) {
+        TeamDomainInfoActivity_.intent(AccountHomeActivity.this)
+                .mode(TeamDomainInfoActivity.Mode.JOIN.name())
+                .teamId(selectedTeam.getTeamId())
+                .teamName(selectedTeam.getName())
+                .domain(selectedTeam.getTeamDomain())
+                .token(selectedTeam.getToken())
+                .startForResult(REQ_TEAM_JOIN);
+    }
+
+    @Override
+    public void removeTeamView(Team selectedTeam) {
+
+    }
+
     public void onEvent(ConfirmModifyProfileEvent event) {
         accountHomePresenter.onChangeName(event.inputMessage);
     }
+
+    @OnActivityResult(REQ_TEAM_CREATE)
+    void onTeamCreateResult(int resultCode) {
+        if (resultCode == Activity.RESULT_OK) {
+            accountHomePresenter.onTeamCreateResult();
+        }
+    }
+
+    @OnActivityResult(REQ_EMAIL_CHOOSE)
+    void onEmailChooseeResult(int resultCode) {
+        if (resultCode == Activity.RESULT_OK) {
+            accountHomePresenter.onEmailChooseResult();
+        }
+    }
+
 }

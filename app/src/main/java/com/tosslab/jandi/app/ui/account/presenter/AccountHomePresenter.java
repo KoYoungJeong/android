@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public interface AccountHomePresenter {
 
     void setView(View view);
 
-    void onJoinedTeamSelect(Team clickedTeam);
+    void onJoinedTeamSelect(int teamId);
 
     void onCreateTeamSelect();
 
@@ -19,11 +20,21 @@ public interface AccountHomePresenter {
 
     void onChangeName(String inputMessage);
 
+    void onTeamCreateResult();
+
+    void onAccountEmailEditClick();
+
+    void onEmailChooseResult();
+
+    void onRequestJoin(Team selectedTeam);
+
+    void onRequestIgnore(Team selectedTeam);
+
     public interface View {
 
         void showErrorToast(String message);
 
-        void setTeamInfo(ArrayList<Team> result);
+        void setTeamInfo(ArrayList<Team> result, ResAccountInfo.UserTeam selectedTeamInfo);
 
         void loadTeamCreateActivity();
 
@@ -36,5 +47,15 @@ public interface AccountHomePresenter {
         void dismissProgressWheel();
 
         void showProgressWheel();
+
+        void moveSelectedTeam();
+
+        void moveEmailEditClick();
+
+        void setUserEmailText(String email);
+
+        void moveCreatedTeamDomain(Team selectedTeam);
+
+        void removeTeamView(Team selectedTeam);
     }
 }

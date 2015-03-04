@@ -53,7 +53,11 @@ public class AccountPendingTeamRowView extends RelativeLayout {
         });
     }
 
-    public void setJoinClickListener(OnJoinClickListener joinClickListener) {
+    public void setTeamName(String teamName) {
+        nameTextView.setText(teamName);
+    }
+
+    public void setOnJoinClickListener(OnJoinClickListener joinClickListener) {
         this.joinClickListener = joinClickListener;
     }
 

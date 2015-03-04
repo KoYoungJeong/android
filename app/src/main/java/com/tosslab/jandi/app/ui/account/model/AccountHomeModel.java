@@ -3,15 +3,24 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
+import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.profile.account.model.AccountNameChangeRequest;
+import com.tosslab.jandi.app.ui.team.select.model.IgnoreInviteRequest;
 import com.tosslab.jandi.app.ui.team.select.model.PendingTeamListRequest;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -92,5 +101,54 @@ public class AccountHomeModel {
 
     public ResAccountInfo updateAccountName(Context context, String newName) throws JandiNetworkException {
         return RequestManager.newInstance(context, AccountNameChangeRequest.create(context, newName)).request();
+    }
+
+    public void updateSelectTeam(Context context, int teamId) {
+        JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+    }
+
+    public ResLeftSideMenu getEntityInfo(final Context context, int teamId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, () -> {
+            JandiRestClient mJandiRestClient = new JandiRestClient_(context);
+            mJandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+            return mJandiRestClient.getInfosForSideMenu(teamId);
+        }).request();
+
+    }
+
+    public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
+
+        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entityInfo);
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
+        JandiPreference.setBadgeCount(context, totalUnreadCount);
+        BadgeUtils.setBadge(context, totalUnreadCount);
+
+        EntityManager entityManager = EntityManager.getInstance(context);
+        entityManager.refreshEntity(context);
+        return entityManager;
+    }
+
+    public ResAccountInfo.UserTeam getSelectedTeamInfo(Context context) {
+        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+    }
+
+    public ResAccountInfo.UserEmail getSelectedEmailInfo(Context context) {
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        for (ResAccountInfo.UserEmail userEmail : userEmails) {
+            if (userEmail.isPrimary()) {
+                return userEmail;
+            }
+        }
+        return null;
+    }
+
+    public String getAccountName(Context context) {
+        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
+    }
+
+    public List<ResPendingTeamInfo> ignorePendingTeam(Context context, Team team) throws JandiNetworkException {
+        IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, team);
+        RequestManager<List<ResPendingTeamInfo>> requestManager = RequestManager.newInstance(context, ignoreInviteRequest);
+        return requestManager.request();
     }
 }
