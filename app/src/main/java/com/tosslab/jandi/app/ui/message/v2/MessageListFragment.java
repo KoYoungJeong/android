@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.queue.LoadType;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
@@ -129,7 +130,6 @@ public class MessageListFragment extends Fragment {
                         case Old:
                             getOldMessageList(messageState.getFirstItemId());
                             messageListModel.trackGetOldMessage(entityType);
-
                             break;
                         case New:
                             getNewMessageList(messageState.getLastUpdateLinkId());
@@ -746,9 +746,6 @@ public class MessageListFragment extends Fragment {
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
-    private enum LoadType {
-        Saved, Old, New
-    }
 }
 
 
