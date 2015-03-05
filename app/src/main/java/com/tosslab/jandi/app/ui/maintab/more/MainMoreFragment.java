@@ -122,7 +122,7 @@ public class MainMoreFragment extends Fragment {
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .url(SUPPORT_URL)
-                .hasActionBar(false)
+                .hideActionBar(true)
                 .start();
 
     }
