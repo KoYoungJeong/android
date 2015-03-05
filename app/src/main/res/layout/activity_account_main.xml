@@ -82,7 +82,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="@string/jandi_primary_email"
+                    android:text="@string/jandi_user_default_email"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 
@@ -141,7 +141,7 @@
                 android:layout_marginLeft="@dimen/jandi_account_home_layout_margin"
                 android:layout_marginRight="@dimen/jandi_account_home_layout_margin"
                 android:layout_marginTop="28dp"
-                android:text="팀 선택"
+                android:text="@string/jandi_select_team"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 

@@ -304,5 +304,8 @@
 
 给每个团队指定一个电子邮件好使其他团队成员知道如何联系您。"</string>
     <string name="jadi_account_home">"账号首页"</string>
-    <string name="jandi_primary_email">"账号首页"</string>
+    <string name="jandi_go_to_main">"回到首页"</string>
+    <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
+    <string name="jandi_disable_user_profile_explain">"這成員已經被暫時關閉。欲知更多細節，請聯係團隊管理者。"</string>
+    <string name="jandi_share_to_jandi">"分享到JANDI"</string>
 </resources>
