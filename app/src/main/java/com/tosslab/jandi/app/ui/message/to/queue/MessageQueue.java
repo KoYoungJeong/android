@@ -7,4 +7,6 @@ public interface MessageQueue {
 
     public LoadType getQueueType();
 
+    public Object getData();
+
 }
