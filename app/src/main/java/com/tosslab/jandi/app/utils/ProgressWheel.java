@@ -12,7 +12,7 @@ public class ProgressWheel extends ProgressDialog {
     Context mContext;
 
     public ProgressWheel(Context context) {
-        super(context);
+        super(context, R.style.Jandi_Transparent);
         mContext = context;
     }
 

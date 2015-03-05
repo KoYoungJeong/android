@@ -11,7 +11,6 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
@@ -43,7 +42,6 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -56,11 +54,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -79,41 +74,7 @@ public class MessageListModel {
     MessageListTimer messageListTimer;
     @RootContext
     Activity activity;
-    private PublishSubject<SendingMessage> publishSubject;
 
-
-    @AfterInject
-    void initObject() {
-
-
-        publishSubject = PublishSubject.create();
-
-
-        publishSubject.observeOn(Schedulers.io())
-                .map(message -> {
-                    boolean isSuccess;
-                    try {
-                        ResCommon resCommon = messageManipulator.sendMessage(message.getMessage());
-                        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(message.getLocalId());
-                        EventBus.getDefault().post(new SendCompleteEvent(message.getLocalId(), resCommon.id));
-                        isSuccess = true;
-                    } catch (JandiNetworkException e) {
-                        logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
-                        isSuccess = false;
-                        JandiMessageDatabaseManager.getInstance(activity).updateSendState(message.getLocalId(), SendingState.Fail);
-                        EventBus.getDefault().post(new SendFailEvent(message.getLocalId()));
-                    }
-
-                    return isSuccess;
-                })
-                .skip(500, TimeUnit.MILLISECONDS)
-                .subscribe(isSuccess -> {
-                    if (isSuccess) {
-                        EventBus.getDefault().post(new RefreshNewMessageEvent());
-                    }
-                })
-        ;
-    }
 
     public void setEntityInfo(int entityType, int entityId) {
         messageManipulator.initEntity(entityType, entityId);
@@ -192,7 +153,16 @@ public class MessageListModel {
 
     public void sendMessage(long localId, String message) {
         SendingMessage sendingMessage = new SendingMessage(localId, message);
-        publishSubject.onNext(sendingMessage);
+        try {
+            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
+            JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
+            EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        } catch (JandiNetworkException e) {
+            logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+        }
     }
 
     public long insertSendingMessage(int teamId, int entityId, String message) {
@@ -212,13 +182,7 @@ public class MessageListModel {
                 .with(activity)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .progress(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long downloaded, long total) {
-
-                        progressDialog.setProgress((int) (downloaded / total));
-                    }
-                })
+                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(activity).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", event.title)

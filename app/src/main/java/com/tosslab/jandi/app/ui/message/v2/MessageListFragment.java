@@ -52,7 +52,13 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
+import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.SavedMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
@@ -110,7 +116,7 @@ public class MessageListFragment extends Fragment {
     MessageListModel messageListModel;
 
     private MessageState messageState;
-    private PublishSubject<LoadType> messagePublishSubject;
+    private PublishSubject<MessageQueue> messagePublishSubject;
     private Subscription messageSubscription;
 
     @AfterInject
@@ -120,19 +126,22 @@ public class MessageListFragment extends Fragment {
         messagePublishSubject = PublishSubject.create();
 
         messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
-                .subscribe(loadType -> {
+                .subscribe(messageQueue -> {
 
-                    switch (loadType) {
+                    switch (messageQueue.getQueueType()) {
                         case Saved:
                             getSavedMessageList();
                             break;
                         case Old:
-                            getOldMessageList(messageState.getFirstItemId());
+                            getOldMessageList(((MessageState) messageQueue.getData()).getFirstItemId());
                             messageListModel.trackGetOldMessage(entityType);
-
                             break;
                         case New:
-                            getNewMessageList(messageState.getLastUpdateLinkId());
+                            getNewMessageList(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                            break;
+                        case Send:
+                            SendingMessage data = (SendingMessage) messageQueue.getData();
+                            messageListModel.sendMessage(data.getLocalId(), data.getMessage());
                             break;
                     }
                 }, throwable -> {
@@ -194,17 +203,17 @@ public class MessageListFragment extends Fragment {
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
-        sendMessagePublisherEvent(LoadType.Saved);
-        sendMessagePublisherEvent(LoadType.Old);
+        sendMessagePublisherEvent(new SavedMessageQueue());
+        sendMessagePublisherEvent(new OldMessageQueue(messageState));
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
         }
     }
 
-    private void sendMessagePublisherEvent(LoadType old) {
+    private void sendMessagePublisherEvent(MessageQueue messageQueue) {
         if (!messageSubscription.isUnsubscribed()) {
-            messagePublishSubject.onNext(old);
+            messagePublishSubject.onNext(messageQueue);
         }
     }
 
@@ -428,7 +437,8 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
 
             // networking...
-            messageListModel.sendMessage(localId, message);
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, message)));
+
         }
 
     }
@@ -560,12 +570,12 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.changeToArchive(fileId);
             }
         } else {
-            sendMessagePublisherEvent(LoadType.New);
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
     }
 
     void onFileDetailResult() {
-        sendMessagePublisherEvent(LoadType.New);
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     void onMessageItemLonkClick(ResMessages.Link link) {
@@ -672,7 +682,7 @@ public class MessageListFragment extends Fragment {
             }
 
 
-            sendMessagePublisherEvent(LoadType.New);
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
             messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
@@ -698,14 +708,14 @@ public class MessageListFragment extends Fragment {
     public void onEvent(RefreshOldMessageEvent event) {
 
         if (!messageState.isFirstMessage()) {
-            sendMessagePublisherEvent(LoadType.Old);
+            sendMessagePublisherEvent(new OldMessageQueue(messageState));
 //            getOldMessageList(messageState.getFirstItemId());
         }
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
 //        getNewMessageList(messageState.getLastUpdateLinkId());
-        sendMessagePublisherEvent(LoadType.New);
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     public void onEvent(RequestUserInfoEvent event) {
@@ -746,9 +756,6 @@ public class MessageListFragment extends Fragment {
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
-    private enum LoadType {
-        Saved, Old, New
-    }
 }
 
 
