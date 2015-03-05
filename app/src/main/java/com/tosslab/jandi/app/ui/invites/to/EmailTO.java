@@ -5,7 +5,6 @@ package com.tosslab.jandi.app.ui.invites.to;
  */
 public class EmailTO {
     private final String email;
-    private boolean isSelected;
 
     private EmailTO(String email) {
         this.email = email;
@@ -15,15 +14,8 @@ public class EmailTO {
         return new EmailTO(email);
     }
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean isSelected) {
-        this.isSelected = isSelected;
-    }
-
     public String getEmail() {
         return email;
     }
+
 }

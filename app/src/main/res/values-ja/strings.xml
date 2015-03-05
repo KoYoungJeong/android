@@ -306,4 +306,5 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
+    <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
 </resources>

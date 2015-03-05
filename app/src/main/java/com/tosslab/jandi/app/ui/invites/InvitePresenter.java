@@ -65,11 +65,13 @@ public class InvitePresenter {
         inviteButton.setEnabled(invalidEmail);
     }
 
+    @UiThread
     public void addEmailAtFirst(EmailTO emailTO) {
         adapter.add(0, emailTO);
         adapter.notifyDataSetChanged();
     }
 
+    @UiThread
     public void clearEmailTextView() {
         emailTextView.setText("");
 
@@ -81,34 +83,11 @@ public class InvitePresenter {
 
     }
 
-    public InviteListAdapter.MenuStatus getMenuStatus() {
-        return adapter.getMenuStatus();
-    }
-
-    public void setMenuStatus(InviteListAdapter.MenuStatus menuStatus) {
-        adapter.setMenuStatus(menuStatus);
-    }
-
-    public void deleteSelectedEmail() {
-        for (int index = adapter.getCount() - 1; index >= 0; --index) {
-            if (adapter.getItem(index).isSelected()) {
-                adapter.remove(index);
-            }
-        }
-
-        notifyDatasetChanged();
-    }
-
-    public void setUnselectedAll() {
-        for (int index = adapter.getCount() - 1; index >= 0; --index) {
-            adapter.getItem(index).setSelected(false);
-        }
-        notifyDatasetChanged();
-    }
-
     @UiThread
     public void showProgressWheel() {
-        dismissProgressWheel();
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
         progressWheel.show();
     }
 

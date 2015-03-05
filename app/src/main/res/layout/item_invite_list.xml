@@ -31,10 +31,4 @@
         android:textColor="@color/jandi_team_selector_text"
         android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/img_invite_select"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:src="@drawable/btn_check_off_holo_light" />
 </LinearLayout>

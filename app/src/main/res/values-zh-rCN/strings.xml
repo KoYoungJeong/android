@@ -298,4 +298,5 @@
     <string name="jandi_share_a_topic">"分享在一个议题群组内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
     <string name="jandi_my_files">"<b>我的档案</b>"</string>
+    <string name="jandi_no_message_in_topic_dm">"输入讯息以开始对话"</string>
 </resources>

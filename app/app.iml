@@ -117,9 +117,8 @@
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="objenesis-2.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="hamcrest-library-1.3" level="project"/>
-    <orderEntry type="library" exported="" name="android-agent-4.244.0" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-repository-metadata-2.2.1" level="project"/>
-    <orderEntry type="library" exported="" name="androidasync-2.0.8" level="project"/>
+    <orderEntry type="library" exported="" name="androidasync-2.0.9" level="project"/>
     <orderEntry type="library" exported="" name="glide-3.5.1" level="project"/>
     <orderEntry type="library" exported="" name="mixpanel-android-4.5.0" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="commons-codec-1.3" level="project"/>
@@ -153,6 +152,7 @@
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-artifact-manager-2.2.1" level="project"/>
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project"/>
+    <orderEntry type="library" exported="" name="android-agent-4.265.0" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="cglib-nodep-3.1" level="project"/>
     <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="ant-1.8.0" level="project"/>
@@ -160,8 +160,8 @@
     <orderEntry type="library" exported="" scope="TEST" name="sqlite4java-0.282" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-ant-tasks-2.1.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-error-diagnostics-2.2.1" level="project"/>
+    <orderEntry type="library" exported="" name="ion-2.0.9" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="wagon-http-lightweight-1.0-beta-6" level="project"/>
-    <orderEntry type="library" exported="" name="ion-2.0.8" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="backport-util-concurrent-3.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="plexus-container-default-1.0-alpha-9-stable-1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-plugin-registry-2.2.1" level="project"/>

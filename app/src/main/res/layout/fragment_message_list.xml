@@ -27,6 +27,10 @@
         android:smoothScrollbar="true"
         android:transcriptMode="normal" />
 
+    <include
+        android:id="@+id/layout_messages_empty"
+        layout="@layout/view_message_list_empty"/>
+
     <LinearLayout
         android:id="@+id/ll_messages_disable_alert"
         android:layout_width="match_parent"

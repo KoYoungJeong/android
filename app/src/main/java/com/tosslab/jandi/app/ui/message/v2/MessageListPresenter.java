@@ -85,6 +85,9 @@ public class MessageListPresenter {
     @ViewById(R.id.ll_messages_disable_alert)
     View disabledUser;
 
+    @ViewById(R.id.layout_messages_empty)
+    View emptyMessageView;
+
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
@@ -111,6 +114,8 @@ public class MessageListPresenter {
             disabledUser.setVisibility(View.VISIBLE);
             setPreviewVisibleGone();
         }
+
+        messageListView.setEmptyView(emptyMessageView);
 
     }
 
