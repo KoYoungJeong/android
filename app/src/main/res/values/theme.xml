@@ -7,8 +7,8 @@
         <item name="android:splitMotionEvents">false</item>
 
         <item name="searchViewStyle">@style/JandiSearchView</item>
-        <item name="colorPrimary">@color/jandi_main</item>
-        <item name="colorPrimaryDark">@color/jandi_messages_button_bg_normal</item>
+        <item name="colorPrimary">@color/jandi_messages_button_bg_normal</item>
+        <item name="colorPrimaryDark">@color/jandi_main</item>
     </style>
 
     <!-- Intro 화면은 어둡기 때문에 -->
