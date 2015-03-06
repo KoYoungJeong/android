@@ -5,12 +5,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.view.Menu;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.invites.adapter.InviteListAdapter;
 import com.tosslab.jandi.app.ui.invites.model.InviteModel;
 import com.tosslab.jandi.app.ui.invites.to.EmailTO;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -21,12 +19,10 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.apache.log4j.Logger;
 
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 27..
@@ -65,66 +61,9 @@ public class InviteActivity extends BaseAnalyticsActivity {
         trackGaInviteMember(entityManager.getDistictId());
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        menu.clear();
-
-        switch (invitePresenter.getMenuStatus()) {
-            case ADD:
-                getMenuInflater().inflate(R.menu.invite_add, menu);
-                break;
-            case DELETE:
-                getMenuInflater().inflate(R.menu.invite_delete, menu);
-                break;
-        }
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @OptionsItem(R.id.action_invitation)
-    void onInviteOptionSelected() {
-        List<String> invites = invitePresenter.getInvites();
-        if (invites != null && !invites.isEmpty()) {
-            invite(invites);
-        } else {
-            // No Item Dialog
-            invitePresenter.showNoEmailDialog();
-        }
-    }
-
     @OptionsItem(android.R.id.home)
     void onHomeOptionSelected() {
         finish();
-    }
-
-    @Background
-    void invite(List<String> invites) {
-        invitePresenter.showProgressWheel();
-
-        try {
-            inviteModel.inviteMembers(invites);
-            invitePresenter.clearItems();
-            invitePresenter.showSuccessDialog();
-        } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " : " + e.httpBody);
-            invitePresenter.showErrorToast(getString(R.string.err_team_creation_failed));
-        } finally {
-            // invite success dialog
-            invitePresenter.dismissProgressWheel();
-
-        }
-
-    }
-
-    @OptionsItem(R.id.action_delete)
-    void onDeleteOptionSelected() {
-        invitePresenter.deleteSelectedEmail();
-
-        invitePresenter.setMenuStatus(InviteListAdapter.MenuStatus.ADD);
-        invitePresenter.setUnselectedAll();
-        invalidateOptionsMenu();
     }
 
     @AfterTextChange(R.id.et_invitation_email)
@@ -141,46 +80,25 @@ public class InviteActivity extends BaseAnalyticsActivity {
         invitePresenter.setEnableAddButton(isValidEmail);
     }
 
+    @Background
     @Click(R.id.btn_invitation_confirm)
     void onInviteListAddClick() {
         String emailText = invitePresenter.getEmailText();
         if (!invitePresenter.getInvites().contains(emailText) && inviteModel.isNotMyEmail(emailText)) {
-            invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+            invitePresenter.showProgressWheel();
+            try {
+                inviteModel.inviteMembers(Arrays.asList(emailText));
+                invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+            } catch (JandiNetworkException e) {
+                logger.debug(e.getErrorInfo() + " : " + e.httpBody);
+                invitePresenter.showErrorToast(getString(R.string.err_team_creation_failed));
+            } finally {
+                invitePresenter.dismissProgressWheel();
+
+            }
         }
         invitePresenter.clearEmailTextView();
 
     }
 
-    @ItemClick(R.id.lv_invite)
-    void onEmailItemClick(EmailTO emailTO) {
-        if (invitePresenter.getMenuStatus() == InviteListAdapter.MenuStatus.DELETE) {
-            emailTO.setSelected(!emailTO.isSelected());
-            invitePresenter.notifyDatasetChanged();
-        }
-    }
-
-    @ItemLongClick(R.id.lv_invite)
-    void onEmailItemLongClick(EmailTO emailTO) {
-        InviteListAdapter.MenuStatus menuStatus = invitePresenter.getMenuStatus();
-
-        if (menuStatus == InviteListAdapter.MenuStatus.ADD) {
-            invitePresenter.setMenuStatus(InviteListAdapter.MenuStatus.DELETE);
-            emailTO.setSelected(!emailTO.isSelected());
-            invalidateOptionsMenu();
-        } else {
-            emailTO.setSelected(!emailTO.isSelected());
-        }
-        invitePresenter.notifyDatasetChanged();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (invitePresenter.getMenuStatus() == InviteListAdapter.MenuStatus.DELETE) {
-            invitePresenter.setMenuStatus(InviteListAdapter.MenuStatus.ADD);
-            invitePresenter.setUnselectedAll();
-            invalidateOptionsMenu();
-        } else {
-            super.onBackPressed();
-        }
-    }
 }

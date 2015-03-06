@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -21,19 +20,10 @@ public class InviteListAdapter extends BaseAdapter {
 
     private Context context;
     private List<EmailTO> inviteList;
-    private MenuStatus menuStatus = MenuStatus.ADD;
 
     public InviteListAdapter(Context context) {
         this.context = context;
         this.inviteList = new ArrayList<EmailTO>();
-    }
-
-    public MenuStatus getMenuStatus() {
-        return menuStatus;
-    }
-
-    public void setMenuStatus(MenuStatus menuStatus) {
-        this.menuStatus = menuStatus;
     }
 
     @Override
@@ -59,7 +49,6 @@ public class InviteListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.item_invite_list, parent, false);
             viewHolder.emailView = (TextView) convertView.findViewById(R.id.txt_invite_email);
-            viewHolder.checkView = (ImageView) convertView.findViewById(R.id.img_invite_select);
 
             convertView.setTag(viewHolder);
         } else {
@@ -69,16 +58,6 @@ public class InviteListAdapter extends BaseAdapter {
         EmailTO item = getItem(position);
 
         viewHolder.emailView.setText(item.getEmail());
-        if (menuStatus == MenuStatus.DELETE) {
-            viewHolder.checkView.setVisibility(View.VISIBLE);
-            if (item.isSelected()) {
-                viewHolder.checkView.setImageResource(R.drawable.btn_check_on_holo_light);
-            } else {
-                viewHolder.checkView.setImageResource(R.drawable.btn_check_off_holo_light);
-            }
-        } else {
-            viewHolder.checkView.setVisibility(View.GONE);
-        }
 
         return convertView;
     }
@@ -95,12 +74,7 @@ public class InviteListAdapter extends BaseAdapter {
         inviteList.clear();
     }
 
-    public enum MenuStatus {
-        ADD, DELETE
-    }
-
     private static class ViewHolder {
         TextView emailView;
-        ImageView checkView;
     }
 }

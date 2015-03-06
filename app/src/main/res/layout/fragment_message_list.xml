@@ -27,6 +27,16 @@
         android:smoothScrollbar="true"
         android:transcriptMode="normal" />
 
+
+    <include
+        android:id="@+id/layout_messages_loading"
+        layout="@layout/progress_wheel" />
+
+    <include
+        android:id="@+id/layout_messages_empty"
+        layout="@layout/view_message_list_empty"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/ll_messages_disable_alert"
         android:layout_width="match_parent"

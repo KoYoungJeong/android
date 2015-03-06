@@ -153,15 +153,16 @@ public class MessageListFragment extends Fragment {
 
     private void getSavedMessageList() {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
-        if (savedMessages != null) {
+        if (savedMessages != null && !savedMessages.isEmpty()) {
             messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
             List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());
             messageListPresenter.addDummyMessages(dummyMessages);
 
             messageListPresenter.moveLastPage();
+            messageListPresenter.setEmptyView();
         } else {
-            messageListPresenter.showProgressWheel();
+            messageListPresenter.showMessageLoading();
         }
     }
 
@@ -331,6 +332,7 @@ public class MessageListFragment extends Fragment {
 
             if (linkId == -1) {
 
+                messageListPresenter.setEmptyView();
                 messageListPresenter.clearMessages();
 
                 messageListPresenter.addAll(0, oldMessage.messages);

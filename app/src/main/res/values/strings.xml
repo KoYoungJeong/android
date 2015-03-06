@@ -306,13 +306,5 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_share_externally">Share Externally</string>
     <string name="jandi_my_files">"<b>My Files</b>"</string>
     <string name="jandi_count_with_brace">(%d)</string>
-    <string name="jandi_go_to_main">"Account Home"</string>
-    <string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
-    <string name="jandi_account_home_help">"You can join multiple teams using one account.
-
-An account can also hold multiple email addresses. You can use any of them to sign in.
-
-Assign one email to each team to let other members know how to contact you."</string>
-    <string name="jadi_account_home">Account Home</string>
-
+    <string name="jandi_no_message_in_topic_dm">Enter a message to start the conversation.</string>
 </resources>

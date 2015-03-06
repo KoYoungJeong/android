@@ -85,6 +85,12 @@ public class MessageListPresenter {
     @ViewById(R.id.ll_messages_disable_alert)
     View disabledUser;
 
+    @ViewById(R.id.layout_messages_empty)
+    View emptyMessageView;
+
+    @ViewById(R.id.layout_messages_loading)
+    View loadingMessageView;
+
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
@@ -332,7 +338,7 @@ public class MessageListPresenter {
 
     private boolean hasMessage(int messageId) {
         int idx = messageListAdapter.indexByMessageId(messageId);
-        return idx > 0;
+        return idx >= 0;
     }
 
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
@@ -356,6 +362,7 @@ public class MessageListPresenter {
         for (ResMessages.Link dummyMessage : dummyMessages) {
             messageListAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
         }
+        messageListAdapter.notifyDataSetChanged();
     }
 
     public void showDummyMessageDialog(long localId) {
@@ -414,5 +421,17 @@ public class MessageListPresenter {
 
     public void disableChat() {
         isDisabled = true;
+    }
+
+    @UiThread
+    public void showMessageLoading() {
+        loadingMessageView.setVisibility(View.VISIBLE);
+        emptyMessageView.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    public void setEmptyView() {
+        loadingMessageView.setVisibility(View.GONE);
+        messageListView.setEmptyView(emptyMessageView);
     }
 }

@@ -152,7 +152,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             // delete dummy message by same messageId
             for (int idx = 0; idx < messages.size(); idx++) {
                 int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
-                if (dummyMessagePosition > 0) {
+                if (dummyMessagePosition >= 0) {
                     messageList.remove(dummyMessagePosition);
                 } else {
                     break;
@@ -337,7 +337,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
         int dummeMessagePosition = getDummeMessagePositionByLocalId(localId);
 
-        if (dummeMessagePosition > 0) {
+        if (dummeMessagePosition >= 0) {
             ResMessages.Link item = getItem(dummeMessagePosition);
             item.messageId = id;
         }
@@ -384,7 +384,7 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     public void updateDummyMessageState(long localId, SendingState state) {
         int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
-        if (dummeMessagePositionByLocalId > 0) {
+        if (dummeMessagePositionByLocalId >= 0) {
             ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setSendingState(state);
         }
     }
