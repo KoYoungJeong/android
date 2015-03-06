@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -13,11 +14,6 @@
         android:background="?attr/colorPrimary"
         android:visibility="visible"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/account_home_divide_line" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -32,43 +28,49 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/jandi_entity_item_height"
-                android:background="@color/white"
+                android:background="@color/jandi_main"
                 android:paddingLeft="72dp"
                 android:paddingRight="@dimen/jandi_account_home_layout_margin">
 
                 <TextView
-                    android:id="@+id/txt_account_main_name"
+                    android:id="@+id/txt_account_main_name_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/jandi_name_in_jandi"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/txt_account_main_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/txt_account_main_name_title"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/img_account_main_edit"
+                    android:background="@drawable/bg_account_home_name"
                     android:ellipsize="end"
+                    android:gravity="center_vertical"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="#FF404040"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
                 <ImageView
                     android:id="@+id/img_account_main_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignBottom="@+id/txt_account_main_name"
+                    android:layout_alignRight="@+id/txt_account_main_name"
+                    android:layout_alignTop="@+id/txt_account_main_name"
                     android:layout_centerVertical="true"
+                    android:scaleType="centerInside"
                     android:src="@drawable/account_edit" />
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/account_home_divide_line" />
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:background="@color/jandi_main"
                 android:paddingBottom="18dp"
                 android:paddingLeft="72dp"
                 android:paddingRight="@dimen/jandi_account_home_layout_margin"
@@ -83,7 +85,7 @@
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/jandi_user_default_email"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
                 <TextView
@@ -95,10 +97,10 @@
                     android:layout_centerVertical="true"
                     android:layout_marginTop="6dp"
                     android:text="@string/jandi_sign_in_ids_explain"
-                    android:textColor="#FF9A9A9A"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/ll_account_main_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -110,29 +112,26 @@
                         android:id="@+id/txt_account_main_id_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:background="@drawable/bg_account_home_name"
                         android:ellipsize="end"
+                        android:gravity="center_vertical"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textColor="#FF404040"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
 
 
                     <ImageView
                         android:id="@+id/img_account_main_id_down_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignRight="@+id/txt_account_main_id_email"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/account_arrow_more" />
 
-                </LinearLayout>
+                </RelativeLayout>
 
             </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/account_home_divide_line" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -142,13 +141,8 @@
                 android:layout_marginRight="@dimen/jandi_account_home_layout_margin"
                 android:layout_marginTop="28dp"
                 android:text="@string/jandi_select_team"
-                android:textColor="@color/black"
+                android:textColor="#FF9A9A9A"
                 android:textSize="16sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/account_home_divide_line" />
 
             <LinearLayout
                 android:id="@+id/ll_account_main_team_choose"
@@ -163,11 +157,6 @@
                     android:layout_gravity="center" />
 
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/account_home_divide_line" />
 
         </LinearLayout>
     </ScrollView>

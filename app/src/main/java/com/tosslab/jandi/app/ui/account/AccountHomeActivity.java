@@ -102,7 +102,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         accountHomePresenter.onHelpOptionSelect();
     }
 
-    @Click(R.id.img_account_main_edit)
+    @Click(R.id.txt_account_main_name)
     void onNameEditClick() {
         accountHomePresenter.onAccountNameEditClick(accountNameTextView.getText().toString());
     }
