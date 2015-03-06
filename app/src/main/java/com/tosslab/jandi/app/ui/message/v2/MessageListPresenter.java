@@ -337,7 +337,7 @@ public class MessageListPresenter {
 
     private boolean hasMessage(int messageId) {
         int idx = messageListAdapter.indexByMessageId(messageId);
-        return idx > 0;
+        return idx >= 0;
     }
 
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
