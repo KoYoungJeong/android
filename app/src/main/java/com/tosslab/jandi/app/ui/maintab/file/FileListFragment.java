@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -40,8 +41,8 @@ import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -112,7 +113,7 @@ public class FileListFragment extends Fragment {
     }
 
     public void onEvent(RefreshOldFileEvent event) {
-        new GetPreviousFilesTask().execute();
+        new GetPreviousFilesTask(getActivity()).execute();
 
         getPreviousFile();
     }
@@ -317,53 +318,77 @@ public class FileListFragment extends Fragment {
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
     }
 
+    private static class OldFileResult {
+        private final int fileCount;
+        private final List<ResMessages.OriginalMessage> files;
+        private final String resultMessage;
+
+        private OldFileResult(int fileCount, List<ResMessages.OriginalMessage> files, String resultMessage) {
+            this.fileCount = fileCount;
+            this.files = files;
+            this.resultMessage = resultMessage;
+        }
+    }
+
     /**
      * Full To Refresh 전용
      * TODO 위에 거랑 합치기.
      */
-    private class GetPreviousFilesTask extends AsyncTask<Void, Void, String> {
-        private int justGetFilesSize;
+    private class GetPreviousFilesTask extends AsyncTask<Void, Void, OldFileResult> {
+        private final Context context;
+
+        private GetPreviousFilesTask(Context context) {
+            this.context = context;
+        }
 
         @Override
         protected void onPreExecute() {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected OldFileResult doInBackground(Void... voids) {
             try {
                 ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
                 reqSearchFile.teamId = selectedTeamId;
                 ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
 
-                justGetFilesSize = resSearchFile.fileCount;
-                if (justGetFilesSize > 0) {
-                    searchedFileItemListAdapter.insert(fileListModel.descSortByCreateTime(resSearchFile.files));
+                List<ResMessages.OriginalMessage> files;
+                if (resSearchFile.fileCount > 0) {
+                    files = fileListModel.descSortByCreateTime(resSearchFile.files);
                     mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
+                } else {
+                    files = new ArrayList<ResMessages.OriginalMessage>();
                 }
-                return null;
+                return new OldFileResult(resSearchFile.fileCount, files, null);
             } catch (JandiNetworkException e) {
                 log.error("fail to get searched files.", e);
-                return getString(R.string.err_file_search);
-            } catch (HttpMessageNotReadableException e) {
+                return new OldFileResult(0, new ArrayList<ResMessages.OriginalMessage>(), context.getString(R.string.err_file_search));
+            } catch (Exception e) {
                 log.error("fail to get searched files.", e);
-                return getString(R.string.err_file_search);
+                return new OldFileResult(0, new ArrayList<ResMessages.OriginalMessage>(), context.getString(R.string.err_file_search));
             }
         }
 
         @Override
-        protected void onPostExecute(String errMessage) {
-            if (justGetFilesSize < ReqSearchFile.MAX) {
-                ColoredToast.showWarning(mContext, getString(R.string.warn_no_more_files));
+        protected void onPostExecute(OldFileResult oldFileResult) {
+
+            if (oldFileResult.fileCount > 0) {
+                searchedFileItemListAdapter.insert(oldFileResult.files);
+            }
+
+
+            if (oldFileResult.fileCount < ReqSearchFile.MAX) {
+                ColoredToast.showWarning(mContext, context.getString(R.string.warn_no_more_files));
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
                 searchedFileItemListAdapter.setReadyMore();
             }
 
-            if (errMessage == null) {
+            if (TextUtils.isEmpty(oldFileResult.resultMessage)) {
                 // Success
                 searchedFileItemListAdapter.notifyDataSetChanged();
             } else {
-                ColoredToast.showError(mContext, errMessage);
+                ColoredToast.showError(mContext, oldFileResult.resultMessage);
             }
         }
     }
