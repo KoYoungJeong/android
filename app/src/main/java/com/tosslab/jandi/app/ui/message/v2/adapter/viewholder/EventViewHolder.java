@@ -17,8 +17,6 @@ import java.util.Map;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -92,11 +90,14 @@ public class EventViewHolder implements BodyViewHolder {
 
                         int size = inviteEvent.inviteUsers.size();
                         for (int idx = 0; idx < size; idx++) {
-                            if (idx > 0) {
-                                buffer.append(", ");
-                            }
+
                             tempEntity = entityManager.getEntityById(inviteEvent.inviteUsers.get(idx));
-                            buffer.append(tempEntity.getName());
+                            if (tempEntity != null) {
+                                if (idx > 0) {
+                                    buffer.append(", ");
+                                }
+                                buffer.append(tempEntity.getName());
+                            }
                         }
 
                         eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
