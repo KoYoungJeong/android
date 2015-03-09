@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -11,8 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;

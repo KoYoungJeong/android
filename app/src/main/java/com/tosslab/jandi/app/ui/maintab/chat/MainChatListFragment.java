@@ -99,6 +99,11 @@ public class MainChatListFragment extends Fragment {
     void getChatList() {
         int memberId = mainChatListModel.getMemberId();
         int teamId = mainChatListModel.getTeamId();
+
+        if (memberId < 0 || teamId < 0) {
+            return;
+        }
+
         if (!mainChatListPresenter.hasChatItems()) {
             List<ChatItem> savedChatList = mainChatListModel.getSavedChatList(teamId);
             mainChatListPresenter.setChatItems(savedChatList);

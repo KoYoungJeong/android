@@ -159,6 +159,7 @@ public class ImageSharePresenter {
         final ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage(context.getString(R.string.jandi_upload) + " " + absolutePath + "/" + name);
+        progressDialog.setCancelable(false);
         progressDialog.show();
 
         return progressDialog;

@@ -7,7 +7,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -47,7 +46,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
+                .load(profileUrl);
 
         nameTextView.setText(dummyMessageLink.message.writer.name);
 

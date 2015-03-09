@@ -32,6 +32,9 @@ public class FAButtonUtil {
                 }
 
                 View firstView = view.getChildAt(0);
+                if (firstView == null) {
+                    return;
+                }
                 int firstItemTop = firstView.getTop();
 
                 if (lastItemPosition == firstVisibleItem) {

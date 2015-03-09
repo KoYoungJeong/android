@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -31,12 +32,26 @@ public class MainChatListModel {
     @RootContext
     Context context;
 
+    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
+
+        for (ChatItem chatItem : chatItems) {
+            if (chatItem.getUnread() > 0) {
+                return true;
+            }
+        }
+
+        return false;
+
+    }
+
     public int getMemberId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
     public int getTeamId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
     }
 
     public List<ResChat> getChatList(int memberId) throws JandiNetworkException {
@@ -83,17 +98,5 @@ public class MainChatListModel {
 
     public void saveChatList(int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
-    }
-
-    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
-
-        for (ChatItem chatItem : chatItems) {
-            if (chatItem.getUnread() > 0) {
-                return true;
-            }
-        }
-
-        return false;
-
     }
 }
