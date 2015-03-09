@@ -90,6 +90,7 @@ public class EventViewHolder implements BodyViewHolder {
 
                         int size = inviteEvent.inviteUsers.size();
                         for (int idx = 0; idx < size; idx++) {
+
                             tempEntity = entityManager.getEntityById(inviteEvent.inviteUsers.get(idx));
                             if (tempEntity != null) {
                                 if (idx > 0) {
