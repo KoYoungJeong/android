@@ -5,7 +5,7 @@
     <string name="app_name">"JANDI"</string>
     <string name="jandi_settings">"設定"</string>
     <string name="jandi_confirm">"確認"</string>
-    <string name="jandi_cancel">"キャンセル"</string>
+    <string name="jandi_cancel">"戻る"</string>
     <string name="jandi_upload">"アップロード"</string>
     <string name="jandi_action_share">"共有する"</string>
     <string name="jandi_action_invite">"招待する"</string>
@@ -307,4 +307,5 @@ JANDIへようこそ"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
     <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
+    <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
 </resources>

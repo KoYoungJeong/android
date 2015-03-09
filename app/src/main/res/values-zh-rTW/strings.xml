@@ -300,4 +300,5 @@
     <string name="jandi_share_externally">"分享頁面"</string>
     <string name="jandi_my_files">"<b>我的檔案</b>"</string>
     <string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
+    <string name="jandi_share_to_jandi">"分享到JANDI"</string>
 </resources>
