@@ -169,6 +169,6 @@ public class InternalWebActivity extends ActionBarActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.ready, R.anim.abc_slide_out_bottom);
+        overridePendingTransition(R.anim.origin_activity_close_enter, R.anim.origin_activity_close_exit);
     }
 }

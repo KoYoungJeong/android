@@ -41,7 +41,7 @@ public class LinkifyUtil {
 
                         if (context instanceof Activity) {
                             Activity activity = ((Activity) context);
-                            activity.overridePendingTransition(R.anim.abc_slide_in_bottom, R.anim.ready);
+                            activity.overridePendingTransition(R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
                         }
 
                     }
