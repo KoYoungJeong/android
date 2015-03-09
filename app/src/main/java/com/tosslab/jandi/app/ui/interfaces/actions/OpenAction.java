@@ -24,7 +24,6 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpStatusCodeException;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
@@ -79,11 +78,11 @@ public class OpenAction implements Action {
             JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
-        } catch (HttpStatusCodeException e) {
+        } catch (Exception e) {
             TokenUtil.clearTokenInfo(context);
             JandiAccountDatabaseManager.getInstance(context).clearAllData();
             failAccessToken();
-            logger.debug(e.getStatusCode() + " : " + e.getMessage());
+            logger.debug(e.getMessage());
         } finally {
             startIntroActivity();
             dismissProgress();

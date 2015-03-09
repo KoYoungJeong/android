@@ -10,6 +10,8 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 /**
@@ -35,6 +37,8 @@ public class JandiAuthClient {
             return jandiRestClient.getConfig();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 

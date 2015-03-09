@@ -146,7 +146,7 @@ public class IntroLoginFragment extends Fragment {
         try {
             introLoginModel.requestPasswordReset(email);
             introLoginViewModel.showSuccessPasswordResetToast();
-        } catch (HttpStatusCodeException e) {
+        } catch (Exception e) {
             introLoginViewModel.showFailPasswordResetToast();
         }
     }

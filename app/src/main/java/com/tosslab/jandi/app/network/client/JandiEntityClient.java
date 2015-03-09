@@ -52,6 +52,8 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.Arrays;
@@ -98,6 +100,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -121,6 +125,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -141,6 +147,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -163,6 +171,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -182,6 +192,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -200,6 +212,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -216,6 +230,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -236,6 +252,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -257,6 +275,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -275,6 +295,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -291,6 +313,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -307,6 +331,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -325,6 +351,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -348,6 +376,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -366,6 +396,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -387,6 +419,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -404,6 +438,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -421,6 +457,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -450,6 +488,8 @@ public class JandiEntityClient {
             return accountDevicesApiClient.registerNotificationToken(req);
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -461,6 +501,8 @@ public class JandiEntityClient {
             return accountDevicesApiClient.deleteNotificationToken(new ReqDeviceToken(regId));
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -478,6 +520,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -498,6 +542,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -516,6 +562,8 @@ public class JandiEntityClient {
             }).request();
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -536,6 +584,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -553,6 +603,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -576,6 +628,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -593,6 +647,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 
@@ -611,6 +667,8 @@ public class JandiEntityClient {
 
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
+        } catch (Exception e) {
+            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
     }
 }
