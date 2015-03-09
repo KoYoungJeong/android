@@ -76,15 +76,18 @@
         android:layout_below="@+id/view_file_list_divider"
         android:layout_weight="1"
         android:choiceMode="singleChoice"
+        android:background="@color/white"
+        android:clipToPadding="false"
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
         android:fillViewport="true"
+        android:paddingBottom="@dimen/jandi_file_search_item_height_half"
         android:smoothScrollbar="true" />
 
     <include
-        android:visibility="gone"
         android:id="@+id/layout_file_list_empty"
-        layout="@layout/view_search_list_empty" />
+        layout="@layout/view_search_list_empty"
+        android:visibility="gone" />
 
     <include
         android:id="@+id/layout_file_list_loading"
