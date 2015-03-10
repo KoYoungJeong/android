@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.ui.team.select.model.AcceptInviteRequest;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
@@ -37,23 +36,13 @@ public class TeamDomainInfoModel {
 
     private Callback callback;
 
-    @Background
-    public void createNewTeam(String name, String teamDomain, String myName, String myEmail) {
+    public ResTeamDetailInfo createNewTeam(String name, String teamDomain, String myName, String myEmail) throws JandiNetworkException {
 
         ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain, myName, myEmail);
         TeamCreateRequest teamCreateRequest = TeamCreateRequest.create(context, reqCreateNewTeam);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, teamCreateRequest);
 
-        try {
-            ResTeamDetailInfo resTeamDetailInfo = requestManager.request();
-            if (callback != null) {
-                callback.onTeamCreateSuccess(name, resTeamDetailInfo.getInviteTeamMember().getId(), resTeamDetailInfo.getInviteTeam().getTeamId());
-            }
-        } catch (JandiNetworkException e) {
-            if (callback != null) {
-                callback.onTeamCreateFail(e.httpStatusCode);
-            }
-        }
+        return requestManager.request();
 
     }
 

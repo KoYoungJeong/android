@@ -308,4 +308,5 @@ JANDIへようこそ"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
     <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
+    <string name="err_invalid_team_domain">"不適切なドメイン名"</string>
 </resources>

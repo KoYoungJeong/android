@@ -300,4 +300,5 @@
     <string name="jandi_my_files">"<b>我的档案</b>"</string>
     <string name="jandi_no_message_in_topic_dm">"输入讯息以开始对话"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
+    <string name="err_invalid_team_domain">"网域名称无效"</string>
 </resources>

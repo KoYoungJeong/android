@@ -145,4 +145,9 @@ public class TeamDomainInfoPresenter {
     public void setDefaultName(String name) {
         myNameView.setText(name);
     }
+
+    @UiThread
+    public void showFailToast(String message) {
+        ColoredToast.showWarning(activity, message);
+    }
 }
