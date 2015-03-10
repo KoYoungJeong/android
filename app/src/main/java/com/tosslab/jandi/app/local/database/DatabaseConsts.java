@@ -13,7 +13,9 @@ public class DatabaseConsts {
         chats,
         messages, temp_messages, send_messages,
 
-        files
+        files,
+
+        search_keyword
     }
 
     public enum Account {
@@ -91,5 +93,9 @@ public class DatabaseConsts {
     public enum Chats {
         _id, teamId, name, isStarred, lastMessageId,
         unread, entityId, lastLinkId, lastMessage, photo, status
+    }
+
+    public enum SearchKeyword {
+        _id, type, keyword, initSound
     }
 }

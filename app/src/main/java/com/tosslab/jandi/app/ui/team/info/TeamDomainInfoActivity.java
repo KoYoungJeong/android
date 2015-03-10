@@ -187,7 +187,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
     private void setUpActionBar(Mode mode) {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         // Set up the action bar.

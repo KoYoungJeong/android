@@ -133,6 +133,12 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.search.main.view.SearchActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/jandi_topic_paricipants"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.web.InternalWebActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait">

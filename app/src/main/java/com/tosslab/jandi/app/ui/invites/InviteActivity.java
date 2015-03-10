@@ -41,7 +41,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @AfterViews
     void initView() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
 

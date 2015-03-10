@@ -104,7 +104,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

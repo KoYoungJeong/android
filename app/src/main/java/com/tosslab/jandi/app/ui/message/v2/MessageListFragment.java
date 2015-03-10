@@ -227,7 +227,7 @@ public class MessageListFragment extends Fragment {
     private void setUpActionbar() {
 
         ActionBarActivity activity = (ActionBarActivity) getActivity();
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
         activity.setSupportActionBar(toolbar);
 
         ActionBar actionBar = activity.getSupportActionBar();

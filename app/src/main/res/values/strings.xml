@@ -307,4 +307,6 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_no_message_in_topic_dm">Enter a message to start the conversation.</string>
     <string name="err_invalid_team_domain">"Invalid domain"</string>
+    <string name="jadi_messages">MESSAGES</string>
+    <string name="jandi_files">FILES</string>
 </resources>
