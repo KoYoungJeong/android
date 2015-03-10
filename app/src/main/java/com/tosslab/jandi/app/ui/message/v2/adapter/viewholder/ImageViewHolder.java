@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -48,9 +49,11 @@ public class ImageViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link) {
 
-        String profileUrl = ((link.message.writer.u_photoThumbnailUrl != null) && TextUtils.isEmpty(link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl)) ? link.message.writer.u_photoThumbnailUrl.largeThumbnailUrl : link.message.writer.u_photoUrl;
+        ResLeftSideMenu.User fromEntity = (ResLeftSideMenu.User) link.fromEntity;
+
+        String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
         EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
-        FormattedEntity entityById = entityManager.getEntityById(link.message.writerId);
+        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
 
             nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
@@ -72,9 +75,9 @@ public class ImageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
-        nameTextView.setText(link.message.writer.name);
+        nameTextView.setText(fromEntity.name);
 
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
@@ -99,7 +102,7 @@ public class ImageViewHolder implements BodyViewHolder {
             }
 
         }
-        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(link.message.writerId)));
+        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
 
     }
 

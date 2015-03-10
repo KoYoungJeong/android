@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -34,8 +35,11 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link) {
+
+        ResLeftSideMenu.User fromEntity = (ResLeftSideMenu.User) link.fromEntity;
+
         EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
-        FormattedEntity entityById = entityManager.getEntityById(link.message.writerId);
+        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
 
             disableLineThroughView.setVisibility(View.GONE);
@@ -45,8 +49,8 @@ public class PureCommentViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        nameTextView.setText(link.message.writer.name);
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
+        nameTextView.setText(fromEntity.name);
+        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
             commentTextView.setText(commentMessage.content.body);
