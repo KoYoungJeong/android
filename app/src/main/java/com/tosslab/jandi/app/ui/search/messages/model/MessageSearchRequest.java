@@ -32,6 +32,40 @@ public class MessageSearchRequest implements Request<ResMessageSearch> {
     @Override
     public ResMessageSearch request() throws JandiNetworkException {
         messageSearchApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-        return messageSearchApiClient.searchMessages(reqMessageSearchQeury.getTeamId(), reqMessageSearchQeury.getQ(), reqMessageSearchQeury.getPage(), reqMessageSearchQeury.getPerPage(), reqMessageSearchQeury.getWriterId(), reqMessageSearchQeury.getEntityId());
+
+        int searchType = getSearchType(reqMessageSearchQeury);
+
+        int teamId = reqMessageSearchQeury.getTeamId();
+        String query = reqMessageSearchQeury.getQuery();
+        int page = reqMessageSearchQeury.getPage();
+        int perPage = reqMessageSearchQeury.getPerPage();
+        int writerId = reqMessageSearchQeury.getWriterId();
+        int entityId = reqMessageSearchQeury.getEntityId();
+        switch (searchType) {
+            case 0x11:  // condition with writer & entity
+                return messageSearchApiClient.searchMessages(teamId, query, page, perPage, writerId, entityId);
+            case 0x10:  // condition with entity
+                return messageSearchApiClient.searchMessagesByEntityId(teamId, query, page, perPage, entityId);
+            case 0x01:  // condition with writer
+                return messageSearchApiClient.searchMessagesByWriterId(teamId, query, page, perPage, writerId);
+            default:
+            case 0x00:  // all type
+                return messageSearchApiClient.searchMessages(teamId, query, page, perPage);
+        }
+
+    }
+
+    private int getSearchType(ReqMessageSearchQeury reqMessageSearchQeury) {
+        // Calc Bit.
+        int type = 0;    // 0000
+        if (reqMessageSearchQeury.getWriterId() > 0) {
+            type |= 0x01;   // 0001
+        }
+
+        if (reqMessageSearchQeury.getEntityId() > 0) {
+            type |= 0x10;  // 0010
+        }
+
+        return type;
     }
 }

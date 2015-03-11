@@ -66,6 +66,14 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         records.add(searchRecord);
     }
 
+    public void clear() {
+        records.clear();
+    }
+
+    public void addAll(List<ResMessageSearch.SearchRecord> searchRecords) {
+        records.addAll(searchRecords);
+    }
+
     private static class MessageSearchViewHolder extends RecyclerView.ViewHolder {
 
         TextView topicNameTextView;

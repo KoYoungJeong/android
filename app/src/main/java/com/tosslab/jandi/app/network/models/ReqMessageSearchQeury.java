@@ -5,27 +5,29 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqMessageSearchQeury {
     private final int teamId;
-    private final String q;
-    private final int page;
+    private final String query;
     private final int perPage;
-    private final int writerId;
-    private final int entityId;
+    private int page;
+    private int writerId;
+    private int entityId;
 
-    public ReqMessageSearchQeury(int teamId, String q, int page, int perPage, int writerId, int entityId) {
+    public ReqMessageSearchQeury(int teamId, String query, int page, int perPage) {
         this.teamId = teamId;
-        this.q = q;
+        this.query = query;
         this.page = page;
         this.perPage = perPage;
-        this.writerId = writerId;
-        this.entityId = entityId;
     }
 
-    public String getQ() {
-        return q;
+    public String getQuery() {
+        return query;
     }
 
     public int getPage() {
         return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public int getPerPage() {
@@ -36,8 +38,18 @@ public class ReqMessageSearchQeury {
         return writerId;
     }
 
+    public ReqMessageSearchQeury writerId(int writerId) {
+        this.writerId = writerId;
+        return this;
+    }
+
     public int getEntityId() {
         return entityId;
+    }
+
+    public ReqMessageSearchQeury entityId(int entityId) {
+        this.entityId = entityId;
+        return this;
     }
 
     public int getTeamId() {
