@@ -13,6 +13,7 @@ public class ResChat {
     private int lastMessageId;
     private int unread;
     private int entityId;
+    private int companionId;
     private int lastLinkId;
     private String lastMessage;
 
@@ -54,5 +55,14 @@ public class ResChat {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public int getCompanionId() {
+        return companionId;
+    }
+
+    public ResChat companionId(int companionId) {
+        this.companionId = companionId;
+        return this;
     }
 }
