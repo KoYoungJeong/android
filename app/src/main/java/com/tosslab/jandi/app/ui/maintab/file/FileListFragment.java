@@ -3,11 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.file;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -38,6 +34,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -51,6 +48,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EFragment(R.layout.fragment_file_list)
+@OptionsMenu(R.menu.main_activity_menu)
 public class FileListFragment extends Fragment {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
@@ -171,45 +169,6 @@ public class FileListFragment extends Fragment {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.file_list_actionbar_menu, menu);
-
-        searchMenu = menu.findItem(R.id.action_file_list_search);
-        SearchView sv = ((SearchView) searchMenu.getActionView());
-
-        MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
-
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
-                doKeywordSearch("");
-                return true;
-            }
-        });
-
-        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                imm.hideSoftInputFromWindow(sv.getWindowToken(), 0);
-                doKeywordSearch(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
     }
 
     /**

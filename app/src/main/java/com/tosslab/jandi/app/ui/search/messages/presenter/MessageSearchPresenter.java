@@ -19,6 +19,10 @@ public interface MessageSearchPresenter {
 
     void onMemberClick();
 
+    void onSelectEntity(int entityId, String name);
+
+    void onSelectMember(int memberId, String name);
+
     public interface View {
 
         void clearSearchResult();
@@ -28,5 +32,9 @@ public interface MessageSearchPresenter {
         void showEntityDialog();
 
         void showMemberDialog();
+
+        void setEntityName(String name);
+
+        void setMemberName(String name);
     }
 }

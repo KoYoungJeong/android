@@ -30,6 +30,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
@@ -41,6 +42,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 6..
  */
 @EFragment(R.layout.fragment_topic_list)
+@OptionsMenu(R.menu.main_activity_menu)
 public class MainTopicListFragment extends Fragment {
 
     private static final Logger logger = Logger.getLogger(MainTopicListFragment.class);

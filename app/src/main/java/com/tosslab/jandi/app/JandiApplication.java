@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 /**
  * Created by justinygchoi on 2014. 6. 19..
  */
-public class JandiApplication extends Application {
+public class JandiApplication extends MultiDexApplication {
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
     /**
      * Application의 모든 Activities 가 사용하는 전역 변수

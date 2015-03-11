@@ -33,6 +33,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
+import org.androidannotations.annotations.OptionsMenu;
 
 import java.util.List;
 
@@ -42,6 +43,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 6..
  */
 @EFragment(R.layout.fragment_main_chat_list)
+@OptionsMenu(R.menu.main_activity_menu)
 public class MainChatListFragment extends Fragment {
 
     @Bean

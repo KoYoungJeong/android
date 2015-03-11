@@ -85,6 +85,16 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         view.showMemberDialog();
     }
 
+    @Override
+    public void onSelectEntity(int entityId, String name) {
+        view.setEntityName(name);
+    }
+
+    @Override
+    public void onSelectMember(int memberId, String name) {
+        view.setMemberName(name);
+    }
+
     private ResMessageSearch searchMessage() throws JandiNetworkException {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());

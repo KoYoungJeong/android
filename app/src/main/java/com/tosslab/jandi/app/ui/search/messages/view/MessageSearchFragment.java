@@ -3,12 +3,12 @@ package com.tosslab.jandi.app.ui.search.messages.view;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -49,6 +49,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @ViewById(R.id.list_search_messages)
     RecyclerView searchListView;
+
+    @ViewById(R.id.txt_search_scope_where)
+    TextView entityTextView;
+
+    @ViewById(R.id.txt_search_scope_who)
+    TextView memberTextView;
 
     private Dialog memberSelectDialog;
     private Dialog entitySelectDialog;
@@ -97,11 +103,11 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     public void onEvent(SelectEntityEvent event) {
-
+        messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName());
     }
 
     public void onEvent(SelectMemberEvent event) {
-
+        messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName());
     }
 
     @UiThread
@@ -133,17 +139,18 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             dialog.setTitle(R.string.jandi_file_search_entity);
 
             EntitySelectDialogAdatper adapter = new EntitySelectDialogAdatper(context);
-            dialog.setAdapter(adapter, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    EntitySelectDialogAdatper.SimpleEntityInfo item = ((EntitySelectDialogAdatper) ((AlertDialog) dialog).getListView().getAdapter()).getItem(which);
-                }
+            dialog.setAdapter(adapter, (dialog1, which) -> {
+                EntitySelectDialogAdatper.SimpleEntityInfo item = ((EntitySelectDialogAdatper) ((AlertDialog) dialog1).getListView().getAdapter()).getItem(which);
+                EventBus.getDefault().post(new SelectEntityEvent(item.getId(), item.getName()));
             });
 
             List<FormattedEntity> categorizableEntities = entityManager.getCategorizableEntities();
 
+            FormattedEntity me = entityManager.getMe();
+
             Iterable<EntitySelectDialogAdatper.SimpleEntityInfo> entityInfoIterable = Observable.from(categorizableEntities)
                     .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                    .filter(entity -> entity.getId() != me.getId())
                     .map(entity -> {
 
                         int id = entity.getId();
@@ -166,46 +173,11 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                     }).toBlocking()
                     .toIterable();
 
+            adapter.add(new EntitySelectDialogAdatper.SimpleEntityInfo(-1, context.getString(R.string.jandi_file_category_everywhere), -1, ""));
+
             for (EntitySelectDialogAdatper.SimpleEntityInfo simpleEntityInfo : entityInfoIterable) {
                 adapter.add(simpleEntityInfo);
             }
-
-            FormattedEntity me = entityManager.getMe();
-
-            for (int idx = categorizableEntities.size() - 1; idx >= 0; idx--) {
-                FormattedEntity formattedEntity = categorizableEntities.get(idx);
-                if (formattedEntity.isUser()) {
-                    if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
-                        categorizableEntities.remove(idx);
-                    } else if (formattedEntity.getId() == me.getId()) {
-                        categorizableEntities.remove(idx);
-                    }
-                }
-            }
-
-//            final EntitySimpleListAdapter adapterasdasd = new EntitySimpleListAdapter(context, categorizableEntities);
-//            lv.setAdapter(adapterasdasd);
-//            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                    if (entitySelectDialog != null)
-//                        entitySelectDialog.dismiss();
-//
-//                    int sharedEntityId = CategorizingAsEntity.EVERYWHERE;
-//
-//                    if (i <= 0) {
-//                        // 첫번째는 "Everywhere"인 더미 entity
-//                        mCurrentEntityCategorizingAccodingBy = context.getString(R.string.jandi_file_category_everywhere);
-//                    } else {
-//                        FormattedEntity sharedEntity = adapterasdasd.getItem(i);
-//                        sharedEntityId = sharedEntity.getId();
-//                        mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
-//                    }
-//                    textVew.setText(mCurrentEntityCategorizingAccodingBy);
-//                    EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
-//                }
-//            });
-
 
             entitySelectDialog = dialog.create();
         }
@@ -256,5 +228,15 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             memberSelectDialog = dialogBuilder.create();
         }
         memberSelectDialog.show();
+    }
+
+    @Override
+    public void setEntityName(String name) {
+        entityTextView.setText(name);
+    }
+
+    @Override
+    public void setMemberName(String name) {
+        memberTextView.setText(name);
     }
 }
