@@ -7,6 +7,8 @@ public interface MessageSearchPresenter {
 
     public void setView(View view);
 
+    void onSearchRequest(String query);
+
     public interface View {
 
     }
