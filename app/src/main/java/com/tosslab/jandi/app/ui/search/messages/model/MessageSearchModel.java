@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
@@ -26,6 +27,6 @@ public class MessageSearchModel {
     }
 
     public int getCurrentTeamId() {
-        return 0;
+        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
     }
 }

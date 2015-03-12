@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingLeft="64dp"
+    android:paddingRight="16dp">
+
+    <TextView
+        android:id="@+id/txt_searched_old_query"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/jandi_message_search_item_topic_txt_color"
+        android:textSize="16sp" />
+
+</LinearLayout>

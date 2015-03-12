@@ -139,7 +139,8 @@ public class ResMessageSearch {
         private int memberId;
         private int messageId;
         private String text;
-        private Date date;
+        @JsonProperty("time")
+        private Date lastDate;
 
 
         public String getType() {
@@ -182,12 +183,13 @@ public class ResMessageSearch {
             this.text = text;
         }
 
-        public Date getDate() {
-            return date;
+
+        public Date getLastDate() {
+            return lastDate;
         }
 
-        public void setDate(Date date) {
-            this.date = date;
+        public void setLastDate(Date lastDate) {
+            this.lastDate = lastDate;
         }
     }
 

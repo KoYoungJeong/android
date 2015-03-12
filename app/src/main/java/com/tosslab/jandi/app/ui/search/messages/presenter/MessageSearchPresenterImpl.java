@@ -54,6 +54,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         try {
             ResMessageSearch resMessageSearch = searchMessage();
             view.clearSearchResult();
+            view.setQueryWord(query);
             view.addSearchResult(resMessageSearch.getSearchRecords());
         } catch (JandiNetworkException e) {
             e.printStackTrace();

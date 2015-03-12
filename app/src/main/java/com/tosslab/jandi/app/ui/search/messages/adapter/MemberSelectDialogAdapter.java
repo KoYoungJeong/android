@@ -65,13 +65,13 @@ public class MemberSelectDialogAdapter extends BaseAdapter {
                 .transform(new IonCircleTransform())
                 .load(user.getPhoto());
 
-        if (position != 0) {
-            holder.textView.setText(user.getName());
-        } else {
-            holder.textView.setText(R.string.jandi_my_files);
-        }
+        holder.textView.setText(user.getName());
 
         return convertView;
+    }
+
+    public void addAll(List<SimpleMemberInfo> simpleMemberInfos) {
+        memberInfos.addAll(simpleMemberInfos);
     }
 
     static class ViewHolder {

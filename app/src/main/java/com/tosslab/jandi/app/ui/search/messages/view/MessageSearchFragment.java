@@ -110,14 +110,14 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName());
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void clearSearchResult() {
         messageSearchResultAdapter.clear();
         messageSearchResultAdapter.notifyDataSetChanged();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void addSearchResult(List<ResMessageSearch.SearchRecord> searchRecords) {
         messageSearchResultAdapter.addAll(searchRecords);
@@ -217,6 +217,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             simpleMemberInfos.add(0, new MemberSelectDialogAdapter.SimpleMemberInfo(me.getId(), me.getName(), me.getUserSmallProfileUrl()));
             simpleMemberInfos.add(0, new MemberSelectDialogAdapter.SimpleMemberInfo(0, context.getString(R.string.jandi_file_category_everyone), ""));
 
+            adapter.addAll(simpleMemberInfos);
+
             dialogBuilder.setAdapter(adapter, (dialog, which) -> {
 
                 MemberSelectDialogAdapter dialogAdapter = (MemberSelectDialogAdapter) ((AlertDialog) dialog).getListView().getAdapter();
@@ -238,5 +240,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Override
     public void setMemberName(String name) {
         memberTextView.setText(name);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void setQueryWord(String query) {
+        messageSearchResultAdapter.setQueryKeyword(query);
+        messageSearchResultAdapter.notifyDataSetChanged();
     }
 }

@@ -1,9 +1,17 @@
 package com.tosslab.jandi.app.ui.search.messages.adapter;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,11 +46,47 @@ public class EntitySelectDialogAdatper extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        final ViewHolder holder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_select_cdp, null);
+            holder = new ViewHolder();
+            holder.textView = (TextView) convertView.findViewById(R.id.txt_select_cdp_name);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.img_select_cdp_icon);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+
+        SimpleEntityInfo entity = getItem(position);
+
+        // dummy entity는 이름이 없다. 지정된 string resource id 만 가져옴.
+        holder.textView.setText(entity.getName());
+
+        // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
+        if (entity.getType() == JandiConstants.TYPE_DIRECT_MESSAGE) {
+            // 프로필 사진
+            Ion.with(holder.imageView)
+                    .placeholder(R.drawable.jandi_icon_directmsg)
+                    .error(R.drawable.jandi_icon_directmsg)
+                    .transform(new IonCircleTransform())
+                    .load(entity.getPhoto());
+        } else if (entity.getType() == JandiConstants.TYPE_PUBLIC_TOPIC) {
+            holder.imageView.setImageResource(R.drawable.jandi_icon_topic);
+        } else if (entity.getType() == JandiConstants.TYPE_PRIVATE_TOPIC) {
+            holder.imageView.setImageResource(R.drawable.jandi_icon_privategroup);
+        } else {
+            holder.imageView.setImageResource(R.drawable.jandi_icon_channel);
+        }
+        return convertView;
     }
 
     public void add(SimpleEntityInfo simpleEntityInfo) {
         entityInfoList.add(simpleEntityInfo);
+    }
+
+    static class ViewHolder {
+        TextView textView;
+        ImageView imageView;
     }
 
     public static class SimpleEntityInfo {

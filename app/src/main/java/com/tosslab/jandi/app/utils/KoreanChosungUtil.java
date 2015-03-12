@@ -14,6 +14,9 @@ public class KoreanChosungUtil {
     private static final char HANGUL_BEGIN_UNICODE = 44032; // 가
     private static final char HANGUL_END_UNICODE = 55203; // 힣
 
+    private static final char[] CHOSUNG = {'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ',
+            'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'};
+
     /**
      * @param word : target word
      * @return : target word 의 초성 index
@@ -31,10 +34,9 @@ public class KoreanChosungUtil {
      * @return : target word가 초성인지 판단 /true : 초성 o false : 초성x
      */
     private static int isChoSung(char word) {
-        char[] samp = {'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ',
-                'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'};
-        for (int i = 0; i < samp.length; i++) {
-            if (word == samp[i])
+
+        for (int i = 0; i < CHOSUNG.length; i++) {
+            if (word == CHOSUNG[i])
                 return i;
         }
         return -1;
@@ -168,7 +170,7 @@ public class KoreanChosungUtil {
                 .map(character -> {
                     char charValue = character.charValue();
                     if (isHangul(charValue)) {
-                        return String.valueOf(getChoSungOfWord(charValue));
+                        return String.valueOf(CHOSUNG[getChoSungOfWord(charValue)]);
                     } else {
                         return String.valueOf(charValue);
                     }

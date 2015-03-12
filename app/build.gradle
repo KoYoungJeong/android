@@ -1,10 +1,10 @@
 apply plugin: 'android'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
-apply plugin: 'robolectric'     // Android-Test
+apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
-apply from: 'test.gradle'       // Android-Test Env Setting
+//apply from: 'test.gradle'       // Android-Test Env Setting
 
 configurations {
     apt
@@ -94,10 +94,10 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.24.+'
 
     // Test : Robolectric, Junit4
-    androidTestCompile 'org.robolectric:robolectric:2.3'
-    androidTestCompile 'com.jayway.awaitility:awaitility:1.6.+'
-    androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.mockito:mockito-all:1.10.+'
+    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.10.+'
 
 }
 
@@ -113,6 +113,7 @@ android {
         versionName '0.9.8'
 
         // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
 
@@ -120,12 +121,13 @@ android {
             debuggable true
             testCoverageEnabled = true
 
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+//            zipAlignEnabled true
         }
 
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
 

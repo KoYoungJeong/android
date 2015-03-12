@@ -85,13 +85,13 @@ public class JandiSearchDatabaseManager {
         String tableName = DatabaseConsts.Table.search_keyword.name();
         if (KoreanChosungUtil.hasHangul(keyword)) {
 
-            String selection = DatabaseConsts.SearchKeyword.keyword + "\"%?%\" OR " + DatabaseConsts.SearchKeyword.initSound + "\"%?%\"";
-            String[] selectionArgs = {KoreanChosungUtil.replaceChosung(keyword, "%"), KoreanChosungUtil.getInitSound(keyword)};
+            String selection = DatabaseConsts.SearchKeyword.keyword + " LIKE ? OR " + DatabaseConsts.SearchKeyword.initSound + " LIKE ?";
+            String[] selectionArgs = {String.format("%s%s%s", "%", KoreanChosungUtil.replaceChosung(keyword, "%"), "%"), String.format("%s%s%s", "%", KoreanChosungUtil.getInitSound(keyword), "%")};
             cursor = database.query(tableName, null, selection, selectionArgs, null, null, null);
 
         } else {
-            String selection = DatabaseConsts.SearchKeyword.keyword + "\"%?%\"";
-            String[] selectionArgs = {keyword};
+            String selection = DatabaseConsts.SearchKeyword.keyword + " LIKE ?";
+            String[] selectionArgs = {String.format("%s%s%s", "%", keyword, "%")};
             cursor = database.query(tableName, null, selection, selectionArgs, null, null, null);
 
         }

@@ -10,8 +10,8 @@ public class SearchKeyword {
     private final String keyword;
     private final String initSound;
 
-    public SearchKeyword(int type, String keyword, String initSound) {
-        this(-1, type, keyword, initSound);
+    public SearchKeyword(int type, String keyword) {
+        this(-1, type, keyword, "");
     }
 
     public SearchKeyword(long _id, int type, String keyword, String initSound) {

@@ -19,6 +19,7 @@ import java.util.List;
 public class MessageSearchResultAdapter extends RecyclerView.Adapter {
     private final Context context;
     private List<ResMessageSearch.SearchRecord> records;
+    private String query;
 
     public MessageSearchResultAdapter(Context context) {
         this.context = context;
@@ -40,12 +41,28 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         ResMessageSearch.SearchRecord item = getItem(position);
 
         MessageSearchViewHolder viewHolder = (MessageSearchViewHolder) holder;
-        viewHolder.topicNameTextView.setText(item.getSearchEntityInfo().getName());
-        viewHolder.dateTextView.setText(item.getCurrentRecord().getDate().toString());
 
-        viewHolder.prevTextView.setText(item.getPrevRecord().getText());
-        viewHolder.currentTextView.setText(item.getCurrentRecord().getText());
-        viewHolder.nextTextView.setText(item.getNextRecord().getText());
+        ResMessageSearch.SearchEntityInfo searchEntityInfo = item.getSearchEntityInfo();
+        ResMessageSearch.Record currentRecord = item.getCurrentRecord();
+        ResMessageSearch.Record prevRecord = item.getPrevRecord();
+        ResMessageSearch.Record nextRecord = item.getNextRecord();
+
+        if (searchEntityInfo != null) {
+            viewHolder.topicNameTextView.setText(searchEntityInfo.getName());
+        }
+
+        if (prevRecord != null) {
+            viewHolder.prevTextView.setText(prevRecord.getText());
+        }
+
+        if (currentRecord != null) {
+            viewHolder.dateTextView.setText(currentRecord.getLastDate().toString());
+            viewHolder.currentTextView.setText(currentRecord.getText());
+        }
+
+        if (nextRecord != null) {
+            viewHolder.nextTextView.setText(nextRecord.getText());
+        }
     }
 
     @Override
@@ -72,6 +89,10 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
     public void addAll(List<ResMessageSearch.SearchRecord> searchRecords) {
         records.addAll(searchRecords);
+    }
+
+    public void setQueryKeyword(String query) {
+        this.query = query;
     }
 
     private static class MessageSearchViewHolder extends RecyclerView.ViewHolder {
