@@ -32,8 +32,6 @@ public class PushTOTest {
             "  }\n" +
             "}";
 
-    "{\"action\":\"com.tosslab.jandi.app.Push\",\"type\":\"push\",\"info\":{\"alert\":\"오늘 점심엔 뭐 먹으러 갈까요?\",\"contentType\":\"text\",\"chatId\":287,\"chatName\":\"점심\",\"chatType\":\"channel\",\"writerId\":6098,\"writerName\":\"Steve Jung\",\"writerThumb\":\"uploads/photo/0134465a171b1727568071c9f3108cdc\",\"teamId\":279,\"teamName\":\"Toss Lab, Inc.\"}}"
-
     @Test
     public void testParsing() throws Exception {
 
