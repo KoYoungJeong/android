@@ -7,8 +7,8 @@ import android.text.style.TextAppearanceSpan;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 12..
  */
-public class SubNameSpannable extends TextAppearanceSpan {
-    public SubNameSpannable(int textSize) {
-        super(null, Typeface.NORMAL, textSize, ColorStateList.valueOf(0xFF9A9A9A), ColorStateList.valueOf(0xFF9A9A9A));
+public class NameSpannable extends TextAppearanceSpan {
+    public NameSpannable(int textSize) {
+        super(null, Typeface.NORMAL, textSize, ColorStateList.valueOf(0xFF404040), ColorStateList.valueOf(0xFF404040));
     }
 }
