@@ -144,7 +144,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 EventBus.getDefault().post(new SelectEntityEvent(item.getId(), item.getName()));
             });
 
-            List<FormattedEntity> categorizableEntities = entityManager.getCategorizableEntities();
+            List<FormattedEntity> categorizableEntities = entityManager.retrieveAccessableEntities();
 
             FormattedEntity me = entityManager.getMe();
 

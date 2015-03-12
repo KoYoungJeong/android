@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
+import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -30,6 +31,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -149,6 +151,11 @@ public class MainTopicListFragment extends Fragment {
         FAButtonUtil.setFAButtonController(topicListView, getView().findViewById(R.id.btn_main_topic_fab));
     }
 
+    @OptionsItem(R.id.action_main_search)
+    void onSearchOptionSelect() {
+        SearchActivity_.intent(getActivity())
+                .start();
+    }
 
     @Background
     public void joinChannelInBackground(final FormattedEntity entity) {

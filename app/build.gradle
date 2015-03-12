@@ -113,7 +113,6 @@ android {
         versionName '0.9.8'
 
         // Enabling multidex support.
-        multiDexEnabled true
     }
     buildTypes {
 
@@ -121,10 +120,12 @@ android {
             debuggable true
             testCoverageEnabled = true
 
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
 
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
 
@@ -137,7 +138,6 @@ android {
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev")
 
-            minSdkVersion 21
         }
 
         inhouse {

@@ -2,14 +2,14 @@ package com.tosslab.jandi.app.ui.search.main.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
-public class SearchAdapter extends FragmentStatePagerAdapter {
+public class SearchAdapter extends FragmentPagerAdapter {
 
     public SearchAdapter(FragmentManager fm) {
         super(fm);

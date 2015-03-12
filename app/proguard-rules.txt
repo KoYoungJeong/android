@@ -123,9 +123,14 @@
 -dontwarn org.apache.commons.httpclient.**
 -dontwarn org.simpleframework.xml.**
 
+-keepclassmembers public class org.springframework {
+    public *;
+}
+
 # Jackson 1.xx
 -dontwarn org.joda.time.**
 -dontwarn org.w3c.dom.bootstrap.**
+-keepnames class org.codehaus.jackson.** { *; }
 
 # log4j
 -dontwarn org.apache.log4j.**
@@ -137,7 +142,7 @@
 
 # Default
 
--keepattributes *Annotation*
+-keepattributes *Annotation*, EnclosingMethod
 -keep public class com.google.vending.licensing.ILicensingService
 -keep public class com.android.vending.licensing.ILicensingService
 
@@ -174,3 +179,7 @@
 -keepclassmembers public class org.springframework {
     public *;
 }
+
+-keep class com.tosslab.jandi.app.** {*;}
+#-keep class com.tosslab.jandi.app.**$*
+#-keep interface com.tosslab.jandi.app.**

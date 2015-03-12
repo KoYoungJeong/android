@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -31,7 +32,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     SearchAdapter searchAdapter;
 
-    @AfterInject
+    @AfterViews
     void initObject() {
 
         searchAdapter = new SearchAdapter(getSupportFragmentManager());
