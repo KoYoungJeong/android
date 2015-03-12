@@ -301,4 +301,11 @@
     <string name="jandi_no_message_in_topic_dm">"输入讯息以开始对话"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="err_invalid_team_domain">"网域名称无效"</string>
+    <string name="jandi_off">"关闭"</string>
+    <string name="jandi_on">"打开"</string>
+    <string name="jandi_phone_led">"锁屏通知"</string>
+    <string name="jandi_setting_summary_vibrate">"收到通知时振动"</string>
+    <string name="jandi_setting_summary_led">"收到通知时闪烁 LED 灯"</string>
+    <string name="jandi_sounds">"声音"</string>
+    <string name="jandi_vibrate">"振动"</string>
 </resources>

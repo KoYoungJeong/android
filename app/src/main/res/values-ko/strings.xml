@@ -194,7 +194,7 @@
     <string name="warn_no_more_files">"더 이상 검색된 파일이 없습니다"</string>
     <string name="err_file_search">"파일 검색에 실패했습니다"</string>
     <string name="jandi_setting_push">"알림 설정"</string>
-    <string name="jandi_setting_push_subscription">"자동알림"</string>
+    <string name="jandi_setting_push_subscription">"알림"</string>
     <string name="jandi_setting_push_subscription_ok">"푸쉬 알림을 받습니다."</string>
     <string name="jandi_setting_push_subscription_cancel">"푸쉬 알림을 받지 않습니다."</string>
     <string name="jandi_setting_general">"일반"</string>
@@ -319,4 +319,11 @@
 메세지를 입력하셔서 대화를 시작해보세요."</string>
     <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="err_invalid_team_domain">"사용할 수 없는 도메인 입니다"</string>
+    <string name="jandi_off">"끄기"</string>
+    <string name="jandi_on">"켜기"</string>
+    <string name="jandi_phone_led">"휴대전화 LED"</string>
+    <string name="jandi_setting_summary_vibrate">"알림을 수신할 경우 진동이 발생됩니다."</string>
+    <string name="jandi_setting_summary_led">"알림을 수신하면 LED가 켜집니다."</string>
+    <string name="jandi_sounds">"소리"</string>
+    <string name="jandi_vibrate">"진동"</string>
 </resources>

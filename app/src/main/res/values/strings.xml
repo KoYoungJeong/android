@@ -307,4 +307,11 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_no_message_in_topic_dm">Enter a message to start the conversation.</string>
     <string name="err_invalid_team_domain">"Invalid domain"</string>
+    <string name="jandi_sounds">"Sounds"</string>
+    <string name="jandi_vibrate">"Vibrate"</string>
+    <string name="jandi_phone_led">"Phone LED"</string>
+    <string name="jandi_off">"Off"</string>
+    <string name="jandi_on">"On"</string>
+    <string name="jandi_setting_summary_vibrate">"Vibrate on incoming notifications"</string>
+    <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
 </resources>
