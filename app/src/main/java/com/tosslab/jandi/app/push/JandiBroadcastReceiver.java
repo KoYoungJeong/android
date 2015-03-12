@@ -186,13 +186,13 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
         int sound = 0;
 
-        if (JandiPreference.isAlarmLED(context)) {
+        if (JandiPreference.isAlarmSound(context)) {
             sound = Notification.DEFAULT_SOUND;
         }
 
         int vibrate = 0;
 
-        if (JandiPreference.isAlarmLED(context)) {
+        if (JandiPreference.isAlarmVibrate(context)) {
             vibrate = Notification.DEFAULT_VIBRATE;
 
         }
