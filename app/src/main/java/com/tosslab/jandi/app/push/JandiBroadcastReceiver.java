@@ -194,7 +194,6 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
         if (JandiPreference.isAlarmVibrate(context)) {
             vibrate = Notification.DEFAULT_VIBRATE;
-
         }
 
         builder.setDefaults(led | sound | vibrate);

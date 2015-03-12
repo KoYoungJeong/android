@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 /**
  * Created by justinygchoi on 2014. 7. 8..
@@ -141,15 +142,15 @@ public class JandiPreference {
 
 
     public static boolean isAlarmLED(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_ALARM_LED, true);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_LED, true);
     }
 
     public static boolean isAlarmVibrate(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_ALARM_VIBRATE, true);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_VIBRATE, true);
     }
 
     public static boolean isAlarmSound(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_ALARM_SOUND, true);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_SOUND, true);
     }
 
 }
