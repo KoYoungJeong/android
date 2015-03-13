@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.view;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.AutoCompleteTextView;
@@ -49,6 +51,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
         adapter = new SearchQueryAdapter(SearchActivity.this);
         searchEditText.setAdapter(adapter);
+        searchEditText.setDropDownBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
     }
 

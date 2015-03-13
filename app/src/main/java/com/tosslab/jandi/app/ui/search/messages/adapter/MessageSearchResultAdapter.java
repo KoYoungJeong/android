@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,16 +53,22 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         }
 
         if (prevRecord != null) {
-            viewHolder.prevTextView.setText(prevRecord.getText());
+            viewHolder.prevTextView.setVisibility(View.VISIBLE);
+            viewHolder.prevTextView.setText(TextStrategy.getSubSearchString(context, prevRecord));
+        } else {
+            viewHolder.prevTextView.setVisibility(View.GONE);
         }
 
         if (currentRecord != null) {
             viewHolder.dateTextView.setText(currentRecord.getLastDate().toString());
-            viewHolder.currentTextView.setText(currentRecord.getText());
+            viewHolder.currentTextView.setText(TextStrategy.getCurrentSearchString(context, currentRecord));
         }
 
         if (nextRecord != null) {
-            viewHolder.nextTextView.setText(nextRecord.getText());
+            viewHolder.nextTextView.setVisibility(View.VISIBLE);
+            viewHolder.nextTextView.setText(TextStrategy.getSubSearchString(context, nextRecord));
+        } else {
+            viewHolder.nextTextView.setVisibility(View.GONE);
         }
     }
 

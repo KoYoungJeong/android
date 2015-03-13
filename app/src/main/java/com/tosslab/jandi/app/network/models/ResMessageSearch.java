@@ -141,6 +141,9 @@ public class ResMessageSearch {
         private String text;
         @JsonProperty("time")
         private Date lastDate;
+        private String status;
+        @JsonProperty("file")
+        private FileInfo fileInfo;
 
 
         public String getType() {
@@ -191,6 +194,22 @@ public class ResMessageSearch {
         public void setLastDate(Date lastDate) {
             this.lastDate = lastDate;
         }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public FileInfo getFileInfo() {
+            return fileInfo;
+        }
+
+        public void setFileInfo(FileInfo fileInfo) {
+            this.fileInfo = fileInfo;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -214,6 +233,39 @@ public class ResMessageSearch {
 
         public void setId(int id) {
             this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class FileInfo {
+        private int writerId;
+        private String title;
+        private String name;
+
+        public int getWriterId() {
+            return writerId;
+        }
+
+        public void setWriterId(int writerId) {
+            this.writerId = writerId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
         }
 
         public String getName() {
