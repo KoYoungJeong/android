@@ -8,6 +8,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -15,6 +18,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.NewSearchRequestEvent;
+import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -56,10 +60,15 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @ViewById(R.id.txt_search_scope_who)
     TextView memberTextView;
 
+    @ViewById(R.id.layout_search_scope)
+    View scopeView;
+
     private Dialog memberSelectDialog;
     private Dialog entitySelectDialog;
 
     private MessageSearchResultAdapter messageSearchResultAdapter;
+    private int scropMaxY;
+    private int scropMinY;
 
     @AfterViews
     void initObject() {
@@ -70,6 +79,30 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         messageSearchResultAdapter = new MessageSearchResultAdapter(parentActivity);
         searchListView.setAdapter(messageSearchResultAdapter);
 
+        scropMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        scropMinY = 0;
+
+        searchListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                final int offset = (int) (dy * .66f);
+
+                final float futureScropViewPosY = scopeView.getY() - offset;
+
+                if (futureScropViewPosY <= scropMinY) {
+                    scopeView.setY(scropMinY);
+                } else if (futureScropViewPosY >= scropMaxY) {
+                    scopeView.setY(scropMaxY);
+                } else {
+                    scopeView.setY(futureScropViewPosY);
+                }
+
+                EventBus.getDefault().post(new SearchResultScrollEvent(offset));
+
+            }
+        });
     }
 
     @Override

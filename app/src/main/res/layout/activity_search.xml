@@ -7,8 +7,7 @@
         android:id="@+id/pager_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/layout_search_category"
-        android:paddingTop="64dp" />
+        android:layout_above="@+id/layout_search_category" />
 
     <RelativeLayout
         android:id="@+id/layout_search_bar"

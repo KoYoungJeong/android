@@ -59,11 +59,11 @@ public class TextStrategy {
         return textDecorator;
     }
 
-    public static SpannableStringBuilder getCurrentSearchString(Context context, ResMessageSearch.Record record) {
+    public static SpannableStringBuilder getCurrentSearchString(Context context, ResMessageSearch.Record record, String query) {
 
         int textColor = context.getResources().getColor(R.color.jandi_message_search_item_topic_txt_color);
 
-        SpannableStringBuilder stringBuilder = getSearchString(context, record, textColor);
+        SpannableStringBuilder stringBuilder = getSearchString(context, record, textColor, query);
 
         return stringBuilder;
     }
@@ -72,23 +72,27 @@ public class TextStrategy {
 
         int textColor = context.getResources().getColor(R.color.jandi_message_search_item_topic_txt_color_sub);
 
-        SpannableStringBuilder stringBuilder = getSearchString(context, record, textColor);
+        SpannableStringBuilder stringBuilder = getSearchString(context, record, textColor, null);
 
         return stringBuilder;
     }
 
-    private static SpannableStringBuilder getSearchString(Context context, ResMessageSearch.Record record, int textColor) {
+    private static SpannableStringBuilder getSearchString(Context context, ResMessageSearch.Record record, int textColor, String query) {
         List<TextVisitor> textVisitors = new ArrayList<TextVisitor>();
 
         textVisitors.add(new WriterTextVisitor(context, textColor));
         textVisitors.add(new TypeTextVisitor(context));
         textVisitors.add(new FileInfoTextVisitor(context, textColor));
-        textVisitors.add(new ContentTextVisitor(context, textColor));
+        textVisitors.add(new ContentTextVisitor(context, textColor, query));
 
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
 
-        for (TextVisitor textVisitor : textVisitors) {
-            textVisitor.visit(stringBuilder, record);
+        int size = textVisitors.size();
+        for (int idx = 0; idx < size; idx++) {
+            if (idx > 0) {
+                stringBuilder.append(" ");
+            }
+            textVisitors.get(idx).visit(stringBuilder, record);
         }
         return stringBuilder;
     }

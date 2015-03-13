@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingTop="48dp"
+        android:paddingTop="112dp"
         android:scrollbars="vertical" />
 
     <LinearLayout
@@ -16,6 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
+        android:layout_marginTop="64dp"
         android:weightSum="2">
 
         <LinearLayout

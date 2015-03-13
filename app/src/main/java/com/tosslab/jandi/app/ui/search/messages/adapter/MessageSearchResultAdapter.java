@@ -61,7 +61,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
         if (currentRecord != null) {
             viewHolder.dateTextView.setText(currentRecord.getLastDate().toString());
-            viewHolder.currentTextView.setText(TextStrategy.getCurrentSearchString(context, currentRecord));
+            viewHolder.currentTextView.setText(TextStrategy.getCurrentSearchString(context, currentRecord, query));
         }
 
         if (nextRecord != null) {
