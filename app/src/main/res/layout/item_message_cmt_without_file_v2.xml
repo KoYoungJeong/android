@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:paddingBottom="10dp"
     android:paddingLeft="@dimen/jandi_messages_padding_left"
@@ -44,6 +45,7 @@
             android:layout_alignRight="@+id/txt_message_nested_comment_user_name"
             android:layout_alignTop="@+id/txt_message_nested_comment_user_name"
             android:src="@drawable/line_gray" />
+
         <TextView
             android:id="@+id/txt_message_commented_create_date"
             android:layout_width="wrap_content"
@@ -61,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/txt_message_nested_comment_user_name"
             android:layout_marginTop="8dp"
-            android:autoLink="web"
+            android:focusable="false"
             android:text="Nested comment"
             android:textColor="@color/jandi_messages_content"
             android:textSize="@dimen/jandi_messages_comment" />
