@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_message_input_panel">
 
+    <!--<ListView-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_search_messages"
         android:layout_width="match_parent"
@@ -15,8 +17,8 @@
         android:id="@+id/layout_search_scope"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
         android:layout_marginTop="64dp"
+        android:background="?attr/colorPrimary"
         android:weightSum="2">
 
         <LinearLayout
@@ -30,7 +32,7 @@
                 android:id="@+id/txt_search_scope_where"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="EVERYWHERE"
+                android:text="@string/jandi_file_category_everywhere"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size" />
 
@@ -53,7 +55,7 @@
                 android:id="@+id/txt_search_scope_who"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All MEMBERS"
+                android:text="@string/jandi_file_category_everyone"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size" />
 
@@ -65,5 +67,6 @@
 
         </LinearLayout>
     </LinearLayout>
+
 
 </RelativeLayout>

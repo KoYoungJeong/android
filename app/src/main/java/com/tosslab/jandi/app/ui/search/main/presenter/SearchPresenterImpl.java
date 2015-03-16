@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
-import com.tosslab.jandi.app.events.search.NewSearchRequestEvent;
 import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
@@ -11,7 +10,6 @@ import org.androidannotations.annotations.EBean;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import de.greenrobot.event.EventBus;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
@@ -57,7 +55,19 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
-    public void onSearchAction(CharSequence text) {
-        EventBus.getDefault().post(new NewSearchRequestEvent(text.toString()));
+    public void onSearchVoice() {
+        view.startVoiceActivity();
+    }
+
+    @Override
+    public void onVoiceSearchResult(List<String> voiceSearchResults) {
+        if (voiceSearchResults != null && !voiceSearchResults.isEmpty()) {
+            String searchText = voiceSearchResults.get(0);
+            view.setSearchText(searchText);
+            view.sendNewQuery(searchText);
+        } else {
+            view.showNoVoiceSearchItem();
+        }
+
     }
 }

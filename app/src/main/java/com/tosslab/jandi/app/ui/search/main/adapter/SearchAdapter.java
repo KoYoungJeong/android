@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 
 /**
@@ -11,23 +12,30 @@ import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
  */
 public class SearchAdapter extends FragmentPagerAdapter {
 
+    private Fragment[] fragments;
+
     public SearchAdapter(FragmentManager fm) {
         super(fm);
+        fragments = new Fragment[2];
     }
 
     @Override
     public Fragment getItem(int position) {
 
-        Fragment fragment;
+        Fragment fragment = fragments[position];
 
-        switch (position) {
-            case 1:
-                fragment = MessageSearchFragment_.builder().build();
-                break;
-            default:
-            case 0:
-                fragment = MessageSearchFragment_.builder().build();
-                break;
+        if (fragment == null) {
+            switch (position) {
+                default:
+                case 0:
+                    fragment = MessageSearchFragment_.builder().build();
+                    break;
+                case 1:
+                    fragment = FileListFragment_.builder().build();
+                    break;
+            }
+
+            fragments[position] = fragment;
         }
 
         return fragment;
@@ -35,6 +43,6 @@ public class SearchAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return fragments.length;
     }
 }

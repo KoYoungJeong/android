@@ -36,4 +36,9 @@ public class SearchKeyword {
     public String getInitSound() {
         return initSound;
     }
+
+    @Override
+    public String toString() {
+        return getKeyword();
+    }
 }

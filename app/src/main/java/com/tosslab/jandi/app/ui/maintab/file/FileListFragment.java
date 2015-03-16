@@ -3,11 +3,17 @@ package com.tosslab.jandi.app.ui.maintab.file;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -15,6 +21,7 @@ import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
+import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -23,6 +30,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
+import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -34,7 +42,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -51,11 +58,15 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment(R.layout.fragment_file_list)
 @OptionsMenu(R.menu.main_activity_menu)
-public class FileListFragment extends Fragment {
+public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
     @ViewById(R.id.list_searched_files)
-    ListView actualListView;
+    RecyclerView actualListView;
+
+    @ViewById(R.id.layout_file_list_header)
+    View headerView;
+
     @Bean
     SearchedFileItemListAdapter searchedFileItemListAdapter;
     @FragmentArg
@@ -80,6 +91,7 @@ public class FileListFragment extends Fragment {
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
      */
     private int selectedTeamId;
+    private boolean isSearchLayoutFirst = true;
 
     @AfterInject
     void init() {
@@ -106,9 +118,12 @@ public class FileListFragment extends Fragment {
         fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
+        actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         actualListView.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+
+        searchedFileItemListAdapter.setOnItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
     }
 
@@ -272,17 +287,105 @@ public class FileListFragment extends Fragment {
         ColoredToast.showError(mContext, getString(errMessageRes));
     }
 
-    @ItemClick(R.id.list_searched_files)
-    void list_searched_messagesItemClicked(ResMessages.FileMessage searchedFile) {
-        moveToFileDetailActivity(searchedFile.id);
-    }
-
     private void moveToFileDetailActivity(int fileId) {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+    }
+
+    @Override
+    public void onNewQuery(String query) {
+        doKeywordSearch(query);
+    }
+
+    @Override
+    public void onSearchHeaderReset() {
+        headerView.setY((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics()));
+    }
+
+    @Override
+    public void initSearchLayoutIfFirst() {
+
+        if (!isSearchLayoutFirst) {
+            return;
+        }
+
+        isSearchLayoutFirst = false;
+
+        RelativeLayout.LayoutParams headerViewLayoutParams = ((RelativeLayout.LayoutParams) headerView.getLayoutParams());
+        headerViewLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
+//        headerViewLayoutParams.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        headerView.setBackgroundColor(getResources().getColor(R.color.jandi_main));
+
+        setHeaderTextViewColor(((ViewGroup) headerView), getResources().getColor(R.color.white));
+        setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.jandi_arrow_down);
+
+        final int headerMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        final int headerMinY = 0;
+
+        actualListView.setPadding(actualListView.getPaddingLeft(), (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics()), actualListView.getPaddingRight(), actualListView.getPaddingBottom());
+        actualListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                final int offset = (int) (dy * .66f);
+
+                final float futureScropViewPosY = headerView.getY() - offset;
+
+                if (futureScropViewPosY <= headerMinY) {
+                    headerView.setY(headerMinY);
+                } else if (futureScropViewPosY >= headerMaxY) {
+                    headerView.setY(headerMaxY);
+                } else {
+                    headerView.setY(futureScropViewPosY);
+                }
+
+                EventBus.getDefault().post(new SearchResultScrollEvent(offset));
+
+            }
+        });
+    }
+
+    private void setHeaderImageViewImage(ViewGroup parentView, int imageResourceId) {
+
+        if (parentView == null) {
+            return;
+        }
+
+        int childCount = parentView.getChildCount();
+
+        for (int idx = 0; idx < childCount; ++idx) {
+            View child = parentView.getChildAt(idx);
+
+            if (child instanceof ViewGroup) {
+                setHeaderImageViewImage(((ViewGroup) child), imageResourceId);
+            } else if (child instanceof ImageView) {
+                ((ImageView) child).setImageResource(imageResourceId);
+            }
+        }
+
+    }
+
+    private void setHeaderTextViewColor(ViewGroup parentView, int color) {
+        if (parentView == null) {
+            return;
+        }
+
+        int childCount = parentView.getChildCount();
+
+        for (int idx = 0; idx < childCount; ++idx) {
+            View child = parentView.getChildAt(idx);
+
+            if (child instanceof ViewGroup) {
+                setHeaderTextViewColor(((ViewGroup) child), color);
+            } else if (child instanceof TextView) {
+                ((TextView) child).setTextColor(color);
+            }
+        }
+
     }
 
     private static class OldFileResult {

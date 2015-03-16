@@ -316,4 +316,7 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
     <string name="jadi_messages">MESSAGES</string>
     <string name="jandi_files">FILES</string>
+    <string name="jandi_search_result_summary">"<![CDATA[\"<font color="#404040">%1$s</font>\"에 대한 <font color="#404040">%2$d</font>개의 검색 결과가 있습니다.]]>"</string>
+    <string name="jandi_search_ing">"<![CDATA[\"<font color="#404040">%s</font>\"]]>검색 중..."</string>
+    <string name="jandi_retry_voice_search">음성 검색을 다시 시도해주십시요.</string>
 </resources>

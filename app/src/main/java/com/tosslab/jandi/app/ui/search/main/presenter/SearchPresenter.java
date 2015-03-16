@@ -13,10 +13,20 @@ public interface SearchPresenter {
 
     void onSearchTextChange(String s);
 
-    void onSearchAction(CharSequence text);
+    void onSearchVoice();
+
+    void onVoiceSearchResult(List<String> voiceSearchResults);
 
     public interface View {
 
         void setOldQueries(List<SearchKeyword> searchKeywords);
+
+        void startVoiceActivity();
+
+        void setSearchText(String searchText);
+
+        void showNoVoiceSearchItem();
+
+        void sendNewQuery(String searchText);
     }
 }

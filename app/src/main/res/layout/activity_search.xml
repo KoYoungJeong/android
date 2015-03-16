@@ -37,7 +37,7 @@
             android:paddingLeft="13.5dp"
             android:paddingRight="13.5dp"
             android:scaleType="centerInside"
-            android:src="?attr/homeAsUpIndicator" />
+            android:src="@drawable/btn_search_back" />
 
         <ImageView
             android:id="@+id/img_search_mic"
@@ -48,7 +48,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:scaleType="centerInside"
-            android:src="@drawable/account_mic" />
+            android:src="@drawable/btn_search_voice" />
 
     </RelativeLayout>
 

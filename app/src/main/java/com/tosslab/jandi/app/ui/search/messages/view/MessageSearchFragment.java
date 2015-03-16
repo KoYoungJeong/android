@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
@@ -17,12 +16,12 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
-import com.tosslab.jandi.app.events.search.NewSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MemberSelectDialogAdapter;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
@@ -46,7 +45,7 @@ import rx.Observable;
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
 @EFragment(R.layout.fragment_message_search)
-public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View {
+public class MessageSearchFragment extends Fragment implements MessageSearchPresenter.View, SearchActivity.SearchSelectView {
 
     @Bean(MessageSearchPresenterImpl.class)
     MessageSearchPresenter messageSearchPresenter;
@@ -89,6 +88,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
                 final int offset = (int) (dy * .66f);
 
+
                 final float futureScropViewPosY = scopeView.getY() - offset;
 
                 if (futureScropViewPosY <= scropMinY) {
@@ -125,10 +125,6 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Click(R.id.layout_search_scope_who)
     void onMemberClick() {
         messageSearchPresenter.onMemberClick();
-    }
-
-    public void onEvent(NewSearchRequestEvent event) {
-        messageSearchPresenter.onSearchRequest(event.getQuery());
     }
 
     public void onEvent(MoreSearchRequestEvent event) {
@@ -277,8 +273,31 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void setQueryWord(String query) {
-        messageSearchResultAdapter.setQueryKeyword(query);
+    public void setQueryResult(String query, int totalCount) {
+        messageSearchResultAdapter.setQueryKeyword(query, totalCount, true);
         messageSearchResultAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    @Override
+    public void showLoading(String query) {
+        messageSearchResultAdapter.addHeader(query);
+        messageSearchResultAdapter.setQueryKeyword(query, -1, false);
+        messageSearchResultAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onNewQuery(String query) {
+        messageSearchPresenter.onSearchRequest(query);
+    }
+
+    @Override
+    public void onSearchHeaderReset() {
+        scopeView.setY(scropMaxY);
+    }
+
+    @Override
+    public void initSearchLayoutIfFirst() {
+
     }
 }

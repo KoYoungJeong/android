@@ -46,6 +46,8 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
         BackgroundExecutor.cancelAll(MORE_SEARCH_TASK, true);
 
+        view.showLoading(query);
+
         ReqMessageSearchQeury tempSearchInfo = new ReqMessageSearchQeury(messageSearchModel.getCurrentTeamId(), query, START_PAGE, ITEM_PER_PAGE);
         tempSearchInfo.writerId(searchQeuryInfo.getWriterId()).entityId(searchQeuryInfo.getEntityId());
 
@@ -54,7 +56,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         try {
             ResMessageSearch resMessageSearch = searchMessage();
             view.clearSearchResult();
-            view.setQueryWord(query);
+            view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
             view.addSearchResult(resMessageSearch.getSearchRecords());
         } catch (JandiNetworkException e) {
             e.printStackTrace();

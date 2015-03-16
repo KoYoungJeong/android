@@ -37,6 +37,8 @@ public interface MessageSearchPresenter {
 
         void setMemberName(String name);
 
-        void setQueryWord(String query);
+        void setQueryResult(String query, int totalCount);
+
+        void showLoading(String query);
     }
 }

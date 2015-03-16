@@ -2,6 +2,9 @@ package com.tosslab.jandi.app.ui.search.messages.adapter.strategy;
 
 import android.content.Context;
 import android.text.SpannableStringBuilder;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -68,9 +71,26 @@ public class TextStrategy {
         return stringBuilder;
     }
 
-    public static SpannableStringBuilder getSubSearchString(Context context, ResMessageSearch.Record record) {
+    public static SpannableStringBuilder getSubSearchString(Context context, ResMessageSearch.Record record, TextView textView) {
 
         int textColor = context.getResources().getColor(R.color.jandi_message_search_item_topic_txt_color_sub);
+
+        int maxWidth = textView.getMeasuredWidth() * 2;
+        TextPaint paint = textView.getPaint();
+
+        if (maxWidth <= 0) {
+            maxWidth = textView.getContext().getResources().getDisplayMetrics().widthPixels * 9 / 10;
+        }
+
+        String tempText = record.getText();
+        int tempLength = !TextUtils.isEmpty(tempText) ? tempText.length() : 0;
+        if (maxWidth > 0 && !TextUtils.isEmpty(tempText) && paint.measureText(tempText) > maxWidth) {
+            while (paint.measureText(tempText, 0, tempLength) > maxWidth) {
+                --tempLength;
+            }
+
+            record.setText(tempText.substring(0, tempLength));
+        }
 
         SpannableStringBuilder stringBuilder = getSearchString(context, record, textColor, null);
 

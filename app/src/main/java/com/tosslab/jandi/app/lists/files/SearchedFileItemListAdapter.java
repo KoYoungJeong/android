@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -21,13 +21,18 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 7. 5..
  */
 @EBean
-public class SearchedFileItemListAdapter extends BaseAdapter {
+public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
     List<ResMessages.FileMessage> searedFiles;
 
     @RootContext
     Context mContext;
 
     MoreState moreState = MoreState.Idle;
+    OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
 
     @AfterInject
     void initAdapter() {
@@ -49,41 +54,6 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
         }
     }
 
-    @Override
-    public int getCount() {
-        return searedFiles.size();
-    }
-
-    @Override
-    public ResMessages.FileMessage getItem(int position) {
-        return searedFiles.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        SearchedFileItemView searchedFileItemView;
-        if (convertView == null) {
-            searchedFileItemView = SearchedFileItemView_.build(mContext);
-        } else {
-            searchedFileItemView = (SearchedFileItemView) convertView;
-        }
-
-        searchedFileItemView.bind(getItem(position));
-
-        if (position == getCount() - 1 && moreState == MoreState.Idle) {
-            moreState = MoreState.Loading;
-
-            EventBus.getDefault().post(new RefreshOldFileEvent());
-        }
-
-        return searchedFileItemView;
-    }
-
     public void setNoMoreLoad() {
         moreState = MoreState.NoMore;
     }
@@ -93,7 +63,51 @@ public class SearchedFileItemListAdapter extends BaseAdapter {
 
     }
 
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new ViewHolder(SearchedFileItemView_.build(mContext));
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        SearchedFileItemView searchedFileItemView = (SearchedFileItemView) holder.itemView;
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(v, SearchedFileItemListAdapter.this, position);
+            }
+        });
+
+        searchedFileItemView.bind(getItem(position));
+
+        if (position == getItemCount() - 1 && moreState == MoreState.Idle) {
+            moreState = MoreState.Loading;
+
+            EventBus.getDefault().post(new RefreshOldFileEvent());
+        }
+    }
+
+    public ResMessages.FileMessage getItem(int position) {
+        return searedFiles.get(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return searedFiles.size();
+    }
+
     private enum MoreState {
         Idle, Loading, NoMore
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, RecyclerView.Adapter adapter, int position);
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 }
