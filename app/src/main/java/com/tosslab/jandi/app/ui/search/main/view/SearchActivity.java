@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.speech.RecognizerIntent;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
@@ -15,10 +15,13 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.ui.search.main.adapter.SearchAdapter;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
+import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
+import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment;
+import com.tosslab.jandi.app.ui.search.messages.view.MessageSearchFragment_;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
@@ -45,28 +48,31 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     @Bean(SearchPresenterImpl.class)
     SearchPresenter searchPresenter;
 
-    @ViewById(R.id.pager_search)
-    ViewPager searchViewPager;
-
     @ViewById(R.id.txt_search_keyword)
     AutoCompleteTextView searchEditText;
 
     @ViewById(R.id.layout_search_bar)
     View searchLayout;
 
-    SearchAdapter searchAdapter;
+    @ViewById(R.id.txt_search_category_messages)
+    View messageTabView;
+
+    @ViewById(R.id.txt_search_category_files)
+    View filesTabView;
+
     private SearchQueryAdapter adapter;
 
     private int searchMaxY = 0;
     private int searchMinY;
 
     private SearchSelectView searchSelectView;
+    private MessageSearchFragment messageSearchFragment;
+    private FileListFragment fileListFragment;
+
+    private String[] searchQueries;
 
     @AfterViews
     void initObject() {
-
-        searchAdapter = new SearchAdapter(getSupportFragmentManager());
-        searchViewPager.setAdapter(searchAdapter);
 
         searchPresenter.setView(this);
 
@@ -74,28 +80,86 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
         searchEditText.setAdapter(adapter);
         searchEditText.setDropDownBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
-        searchSelectView = (SearchSelectView) searchAdapter.getItem(0);
-
         searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
 
-        searchViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        searchQueries = new String[]{"", ""};
+        addFragments();
+        onMessageTabClick();
 
-            @Override
-            public void onPageSelected(int position) {
-                searchSelectView.onSearchHeaderReset();
-                searchLayout.setY(searchMaxY);
+        initSearchSelectView();
 
-                Fragment item = searchAdapter.getItem(position);
+    }
 
-                if (item instanceof SearchSelectView) {
-                    searchSelectView = ((SearchSelectView) item);
-                    searchSelectView.onSearchHeaderReset();
+    private void addFragments() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-                    searchSelectView.initSearchLayoutIfFirst();
-                }
+        fileListFragment = FileListFragment_.builder().build();
+        fragmentTransaction.add(R.id.layout_search_content, fileListFragment);
+
+        messageSearchFragment = MessageSearchFragment_.builder().build();
+        fragmentTransaction.add(R.id.layout_search_content, messageSearchFragment);
+
+        fragmentTransaction.commit();
+    }
+
+    private void initSearchSelectView() {
+        searchLayout.setY(searchMaxY);
+        searchSelectView.onSearchHeaderReset();
+        searchSelectView.initSearchLayoutIfFirst();
+    }
+
+    private void setSelectTab(View selectView, View unselectView) {
+        selectView.setSelected(true);
+        unselectView.setSelected(false);
+    }
+
+    @Click(R.id.txt_search_category_messages)
+    void onMessageTabClick() {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (messageSearchFragment == null) {
+            messageSearchFragment = MessageSearchFragment_.builder().build();
+            fragmentTransaction.add(R.id.layout_search_content, messageSearchFragment);
+        } else {
+            if (fileListFragment != null) {
+                fragmentTransaction.hide(fileListFragment);
             }
-        });
+            fragmentTransaction.show(messageSearchFragment);
+        }
+        fragmentTransaction.commit();
 
+        searchSelectView = messageSearchFragment;
+
+        setSelectTab(messageTabView, filesTabView);
+        setSearchText(searchQueries[0]);
+        initSearchSelectView();
+    }
+
+    @Click(R.id.txt_search_category_files)
+    void onFileTabClick() {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (fileListFragment == null) {
+
+            fileListFragment = FileListFragment_.builder().build();
+            fragmentTransaction.add(R.id.layout_search_content, fileListFragment);
+        } else {
+            if (messageSearchFragment != null) {
+                fragmentTransaction.hide(messageSearchFragment);
+            }
+            fragmentTransaction.show(fileListFragment);
+        }
+        fragmentTransaction.commit();
+
+        searchSelectView = fileListFragment;
+
+        setSelectTab(filesTabView, messageTabView);
+        setSearchText(searchQueries[1]);
+        initSearchSelectView();
     }
 
     @Override
@@ -111,6 +175,11 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     }
 
     public void onEvent(SearchResultScrollEvent event) {
+
+        if (event.getFrom() != searchSelectView.getClass()) {
+            return;
+        }
+
         int offset = event.getOffset();
 
         float futureLayoutY = searchLayout.getY() - offset;
@@ -171,6 +240,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     public void setSearchText(String searchText) {
         searchEditText.setText(searchText);
         searchEditText.setSelection(searchText.length());
+        searchEditText.dismissDropDown();
     }
 
     @Override
@@ -180,6 +250,13 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @Override
     public void sendNewQuery(String searchText) {
+
+        if (searchSelectView == messageSearchFragment) {
+            searchQueries[0] = searchText;
+        } else {
+            searchQueries[1] = searchText;
+        }
+
         searchSelectView.onNewQuery(searchText);
     }
 

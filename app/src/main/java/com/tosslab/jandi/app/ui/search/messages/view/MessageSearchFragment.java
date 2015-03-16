@@ -99,7 +99,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                     scopeView.setY(futureScropViewPosY);
                 }
 
-                EventBus.getDefault().post(new SearchResultScrollEvent(offset));
+                EventBus.getDefault().post(new SearchResultScrollEvent(MessageSearchFragment.this.getClass(), offset));
 
             }
         });
@@ -293,7 +293,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @Override
     public void onSearchHeaderReset() {
-        scopeView.setY(scropMaxY);
+        if (scopeView != null) {
+            scopeView.setY(scropMaxY);
+        }
     }
 
     @Override

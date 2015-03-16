@@ -302,13 +302,15 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onSearchHeaderReset() {
-        headerView.setY((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics()));
+        if (headerView != null) {
+            headerView.setY((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics()));
+        }
     }
 
     @Override
     public void initSearchLayoutIfFirst() {
 
-        if (!isSearchLayoutFirst) {
+        if (!isSearchLayoutFirst || headerView == null || actualListView == null) {
             return;
         }
 
@@ -343,7 +345,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                     headerView.setY(futureScropViewPosY);
                 }
 
-                EventBus.getDefault().post(new SearchResultScrollEvent(offset));
+                EventBus.getDefault().post(new SearchResultScrollEvent(FileListFragment.this.getClass(),
+                        offset));
 
             }
         });
