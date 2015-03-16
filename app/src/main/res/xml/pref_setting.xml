@@ -5,24 +5,42 @@
         android:key="setting_push"
         android:title="@string/jandi_setting_push">
         <CheckBoxPreference
+            android:defaultValue="true"
             android:key="setting_push_auto_alarm"
-            android:title="@string/jandi_setting_push_subscription"
             android:summaryOff="@string/jandi_setting_push_subscription_cancel"
             android:summaryOn="@string/jandi_setting_push_subscription_ok"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_setting_push_subscription" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="setting_push_alarm_sound"
+            android:summaryOff="@string/jandi_off"
+            android:summaryOn="@string/jandi_on"
+            android:title="@string/jandi_sounds" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="setting_push_alarm_vibration"
+            android:summaryOn="@string/jandi_setting_summary_vibrate"
+            android:summaryOff=""
+            android:title="@string/jandi_vibrate" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="setting_push_alarm_led"
+            android:summaryOn="@string/jandi_setting_summary_led"
+            android:summaryOff=""
+            android:title="@string/jandi_phone_led" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="setting_tos_pp"
         android:title="@string/jandi_tos_and_pp">
         <Preference
+            android:defaultValue="true"
             android:key="setting_tos"
-            android:title="@string/jandi_term_of_service"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_term_of_service" />
         <Preference
+            android:defaultValue="true"
             android:key="setting_pp"
-            android:title="@string/jandi_privacy_policy"
-            android:defaultValue="true"/>
+            android:title="@string/jandi_privacy_policy" />
     </PreferenceCategory>
 
 </PreferenceScreen>

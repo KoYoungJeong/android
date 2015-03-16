@@ -33,17 +33,28 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.pref_setting);
+
+        boolean isPush = ((CheckBoxPreference) getPreferenceManager().findPreference("setting_push_auto_alarm")).isChecked();
+        setPushSubState(isPush);
     }
 
     @Override
     public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
         if (TextUtils.equals(preference.getKey(), "setting_push_auto_alarm")) {
             CheckBoxPreference pref = (CheckBoxPreference) preference;
+
+
+            boolean isEnabled;
+
             if (pref.isChecked()) {
                 onPushNotification();
+                isEnabled = true;
             } else {
                 offPushNotification();
+                isEnabled = false;
             }
+
+            setPushSubState(isEnabled);
         } else if (TextUtils.equals(preference.getKey(), "setting_tos")) {
 
             TermActivity_
@@ -58,6 +69,16 @@ public class SettingsFragment extends PreferenceFragment {
                     .start();
         }
         return false;
+    }
+
+    private void setPushSubState(boolean isEnabled) {
+        Preference soundPref = getPreferenceManager().findPreference("setting_push_alarm_sound");
+        Preference ledPref = getPreferenceManager().findPreference("setting_push_alarm_led");
+        Preference vibratePref = getPreferenceManager().findPreference("setting_push_alarm_vibration");
+
+        soundPref.setEnabled(isEnabled);
+        ledPref.setEnabled(isEnabled);
+        vibratePref.setEnabled(isEnabled);
     }
 
     void onPushNotification() {

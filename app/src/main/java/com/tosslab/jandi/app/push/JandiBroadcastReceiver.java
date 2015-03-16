@@ -177,7 +177,26 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             chatName = context.getString(R.string.jandi_tab_direct_message);
         }
         builder.setStyle(getBigTextStyle(writerName, message, chatName));
-        builder.setDefaults(Notification.DEFAULT_ALL);
+
+        int led = 0;
+
+        if (JandiPreference.isAlarmLED(context)) {
+            led = Notification.DEFAULT_LIGHTS;
+        }
+
+        int sound = 0;
+
+        if (JandiPreference.isAlarmSound(context)) {
+            sound = Notification.DEFAULT_SOUND;
+        }
+
+        int vibrate = 0;
+
+        if (JandiPreference.isAlarmVibrate(context)) {
+            vibrate = Notification.DEFAULT_VIBRATE;
+        }
+
+        builder.setDefaults(led | sound | vibrate);
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
         builder.setPriority(Notification.PRIORITY_MAX);
         builder.setAutoCancel(true);

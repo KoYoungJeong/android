@@ -302,4 +302,11 @@
     <string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="err_invalid_team_domain">"網域名稱無效"</string>
+    <string name="jandi_off">"關閉"</string>
+    <string name="jandi_on">"打開"</string>
+    <string name="jandi_phone_led">"鎖屏通知"</string>
+    <string name="jandi_setting_summary_vibrate">"收到通知時振動"</string>
+    <string name="jandi_setting_summary_led">"收到通知時閃爍 LED 燈"</string>
+    <string name="jandi_sounds">"聲音"</string>
+    <string name="jandi_vibrate">"振動"</string>
 </resources>
