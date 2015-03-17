@@ -57,8 +57,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/jandi_search_default_size"
         android:layout_alignParentBottom="true"
-        android:gravity="center_vertical"
         android:background="@drawable/bg_search_tab"
+        android:gravity="center_vertical"
         android:weightSum="2">
 
         <TextView
@@ -67,7 +67,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/jadi_messages"
+            android:text="@string/jandi_messages"
             android:textColor="@color/text_color_search_category"
             android:textSize="@dimen/jadi_search_scope_txt_size" />
 
@@ -77,7 +77,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="@string/jandi_files"
+            android:text="@string/jandi_tab_file"
             android:textColor="@color/text_color_search_category"
             android:textSize="@dimen/jadi_search_scope_txt_size" />
     </LinearLayout>
