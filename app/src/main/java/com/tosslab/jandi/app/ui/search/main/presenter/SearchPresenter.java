@@ -28,5 +28,12 @@ public interface SearchPresenter {
         void showNoVoiceSearchItem();
 
         void sendNewQuery(String searchText);
+
+        void setMicToClearImage();
+
+        void setClearToMicImage();
+
+        CharSequence getSearchText();
+
     }
 }

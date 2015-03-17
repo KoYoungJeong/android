@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -59,6 +60,9 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @ViewById(R.id.txt_search_category_files)
     View filesTabView;
+
+    @ViewById(R.id.img_search_mic)
+    ImageView micImageView;
 
     private SearchQueryAdapter adapter;
 
@@ -237,13 +241,6 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     }
 
     @Override
-    public void setSearchText(String searchText) {
-        searchEditText.setText(searchText);
-        searchEditText.setSelection(searchText.length());
-        searchEditText.dismissDropDown();
-    }
-
-    @Override
     public void showNoVoiceSearchItem() {
         ColoredToast.showWarning(SearchActivity.this, getString(R.string.jandi_retry_voice_search));
     }
@@ -258,6 +255,28 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
         }
 
         searchSelectView.onNewQuery(searchText);
+    }
+
+    @Override
+    public void setMicToClearImage() {
+        micImageView.setImageResource(R.drawable.jandi_account_close);
+    }
+
+    @Override
+    public void setClearToMicImage() {
+        micImageView.setImageResource(R.drawable.account_mic);
+    }
+
+    @Override
+    public CharSequence getSearchText() {
+        return searchEditText.getText();
+    }
+
+    @Override
+    public void setSearchText(String searchText) {
+        searchEditText.setText(searchText);
+        searchEditText.setSelection(searchText.length());
+        searchEditText.dismissDropDown();
     }
 
     @OnActivityResult(SPEECH_REQUEST_CODE)

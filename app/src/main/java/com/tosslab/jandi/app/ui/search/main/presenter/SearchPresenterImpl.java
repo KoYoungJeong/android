@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.search.main.presenter;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.ui.search.main.model.SearchModel;
 import com.tosslab.jandi.app.ui.search.to.SearchKeyword;
 
@@ -50,13 +52,22 @@ public class SearchPresenterImpl implements SearchPresenter {
     }
 
     @Override
-    public void onSearchTextChange(String s) {
-        objectPublishSubject.onNext(s);
+    public void onSearchTextChange(String text) {
+        if (!TextUtils.isEmpty(text)) {
+            objectPublishSubject.onNext(text);
+            view.setMicToClearImage();
+        } else {
+            view.setClearToMicImage();
+        }
     }
 
     @Override
     public void onSearchVoice() {
-        view.startVoiceActivity();
+        if (TextUtils.isEmpty(view.getSearchText())) {
+            view.startVoiceActivity();
+        } else {
+            view.setSearchText("");
+        }
     }
 
     @Override
