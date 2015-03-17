@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -75,13 +74,26 @@ public class MessageManipulator {
                 switch (mEntityType) {
                     case JandiConstants.TYPE_PUBLIC_TOPIC:
                         channelMessageApiClient.setAuthentication(requestAuthentication);
-                        return channelMessageApiClient.getPublicTopicMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                        if (firstItemId > 0) {
+                            return channelMessageApiClient.getPublicTopicMessages(selectedTeamId, mEntityId, firstItemId);
+                        } else {
+                            return channelMessageApiClient.getPublicTopicMessages(selectedTeamId, mEntityId);
+
+                        }
                     case JandiConstants.TYPE_DIRECT_MESSAGE:
                         directMessageApiClient.setAuthentication(requestAuthentication);
-                        return directMessageApiClient.getDirectMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                        if (firstItemId > 0) {
+                            return directMessageApiClient.getDirectMessages(selectedTeamId, mEntityId, firstItemId);
+                        } else {
+                            return directMessageApiClient.getDirectMessages(selectedTeamId, mEntityId);
+                        }
                     case JandiConstants.TYPE_PRIVATE_TOPIC:
                         groupMessageApiClient.setAuthentication(requestAuthentication);
-                        return groupMessageApiClient.getGroupMessages(selectedTeamId, mEntityId, firstItemId, NUMBER_OF_MESSAGES);
+                        if (firstItemId > 0) {
+                            return groupMessageApiClient.getGroupMessages(selectedTeamId, mEntityId, firstItemId);
+                        } else {
+                            return groupMessageApiClient.getGroupMessages(selectedTeamId, mEntityId);
+                        }
                     default:
                         return null;
 
@@ -91,10 +103,10 @@ public class MessageManipulator {
 
     }
 
-    public ResUpdateMessages updateMessages(final int fromCurrentId) throws JandiNetworkException {
-        return RequestManager.newInstance(context, new Request<ResUpdateMessages>() {
+    public ResMessages updateMessages(final int fromCurrentId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, new Request<ResMessages>() {
             @Override
-            public ResUpdateMessages request() throws JandiNetworkException {
+            public ResMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
 
                 switch (mEntityType) {
@@ -189,6 +201,32 @@ public class MessageManipulator {
                         return groupMessageApiClient.deletePrivateGroupMessage(selectedTeamId, mEntityId, messageId);
                     default:
                         return null;
+                }
+            }
+        }).request();
+
+    }
+
+    public ResMessages getMarkerMessage(int linkId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, new Request<ResMessages>() {
+            @Override
+            public ResMessages request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                switch (mEntityType) {
+                    case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
+                        return channelMessageApiClient.getPublicTopicMarkerMessages(selectedTeamId, mEntityId, linkId);
+
+                    case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
+                        return directMessageApiClient.getDirectMarkerMessages(selectedTeamId, mEntityId, linkId);
+                    case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
+                        return groupMessageApiClient.getGroupMarkerMessages(selectedTeamId, mEntityId, linkId);
+                    default:
+                        return null;
+
                 }
             }
         }).request();

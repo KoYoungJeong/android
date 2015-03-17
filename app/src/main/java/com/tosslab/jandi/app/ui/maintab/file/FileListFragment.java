@@ -123,7 +123,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
-        searchedFileItemListAdapter.setOnItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
+        searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
     }
 

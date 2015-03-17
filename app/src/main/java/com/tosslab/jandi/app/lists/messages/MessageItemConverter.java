@@ -65,7 +65,7 @@ public class MessageItemConverter {
     }
 
     public void insertMessageItem(ResMessages messages) {
-        patchMessageItem(messages.messages, true);
+        patchMessageItem(messages.records, true);
     }
 
     public void insertMessageItem(List<ResMessages.Link> messages) {

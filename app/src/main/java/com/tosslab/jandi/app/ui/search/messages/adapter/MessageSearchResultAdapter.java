@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +25,15 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
     private final Context context;
     private List<ResMessageSearch.SearchRecord> records;
     private HeaderItem headerItem;
+    private OnRecyclerItemClickListener onRecyclerItemClickListener;
 
     public MessageSearchResultAdapter(Context context) {
         this.context = context;
         records = new ArrayList<ResMessageSearch.SearchRecord>();
+    }
+
+    public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
+        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
     @Override
@@ -100,6 +106,12 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
                 searchHeaderViewHolder.progressBar.setVisibility(View.GONE);
             }
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onRecyclerItemClickListener != null) {
+                onRecyclerItemClickListener.onItemClick(v, MessageSearchResultAdapter.this, position);
+            }
+        });
     }
 
     @Override

@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -99,7 +98,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getNewMessage(int linkId) throws JandiNetworkException {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -329,5 +328,20 @@ public class MessageListModel {
             return true;
         }
 
+    }
+
+    @Deprecated
+    public int getLatestMessageId(List<ResMessages.Link> messages) {
+
+        for (ResMessages.Link message : messages) {
+
+        }
+
+        return 0;
+    }
+
+    public ResMessages getMarkerMessage(int linkId) throws JandiNetworkException {
+
+        return messageManipulator.getMarkerMessage(linkId);
     }
 }

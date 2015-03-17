@@ -174,7 +174,11 @@ public class MessageListPresenter {
     }
 
     public int getFirstVisibleItemLinkId() {
-        return messageListAdapter.getItem(messageListView.getFirstVisiblePosition()).messageId;
+        if (messageListAdapter.getCount() > 0) {
+            return messageListAdapter.getItem(messageListView.getFirstVisiblePosition()).messageId;
+        } else {
+            return -1;
+        }
     }
 
     public int getFirstVisibleItemTop() {

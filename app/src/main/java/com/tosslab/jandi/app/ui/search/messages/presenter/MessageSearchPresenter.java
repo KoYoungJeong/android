@@ -23,6 +23,8 @@ public interface MessageSearchPresenter {
 
     void onSelectMember(int memberId, String name);
 
+    void onRecordClick(ResMessageSearch.SearchRecord searchRecord);
+
     public interface View {
 
         void clearSearchResult();
@@ -40,5 +42,7 @@ public interface MessageSearchPresenter {
         void setQueryResult(String query, int totalCount);
 
         void showLoading(String query);
+
+        void startMessageListActivity(int currentTeamId, int entityId, int entityType, boolean isStarred, int linkId);
     }
 }

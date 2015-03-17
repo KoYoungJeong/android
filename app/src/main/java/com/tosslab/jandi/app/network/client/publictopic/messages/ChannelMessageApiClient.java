@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.network.client.publictopic.messages;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -42,14 +41,23 @@ public interface ChannelMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // 채널에서 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
+    @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={fromId}&type=old")
     @RequiresAuthentication
-    ResMessages getPublicTopicMessages(int teamId, int channelId, int fromId, int numOfPost);
+    ResMessages getPublicTopicMessages(int teamId, int channelId, int fromId);
+
+    @Get("/channels/{channelId}/messages?teamId={teamId}&type=old")
+    @RequiresAuthentication
+    ResMessages getPublicTopicMessages(int teamId, int channelId);
 
     // 채널의 업데이트 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages/update/{currentLinkId}?teamId={teamId}")
+    @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
     @RequiresAuthentication
-    ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
+    ResMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
+
+    // 채널의 업데이트 Message 리스트 정보 획득
+    @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={currentLinkId}")
+    @RequiresAuthentication
+    ResMessages getPublicTopicMarkerMessages(int teamId, int channelId, int currentLinkId);
 
     // 채널에서 Message 생성
     @Post("/channels/{channelId}/message")

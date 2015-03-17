@@ -99,7 +99,7 @@ public class CommentsApiClientTest {
     }
 
     private ResMessages.FileMessage getMyFileMessage(ResLeftSideMenu.Channel defaultChannel) {
-        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1, 20);
+        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1);
 
         ResMessages.FileMessage fileMessage = null;
         for (ResMessages.Link message : publicTopicMessages.messages) {

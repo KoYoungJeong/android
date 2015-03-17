@@ -502,6 +502,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         }
     }
 
+
+    @Deprecated
     @Background
     public void getMessagesInBackground() {
         try {
@@ -522,18 +524,18 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
                 // 업데이트를 위해 가장 최신의 Link ID를 저장한다.
                 messageState.setLastUpdateLinkId(restResMessages.lastLinkId);
-                if (restResMessages.messageCount <= 0) {
+                if (restResMessages.records == null || restResMessages.records.size() <= 0) {
                     showWarningEmpty();
                     return;
                 }
                 setMarker();
             }
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            messageState.setFirstMessage(restResMessages.isFirst);
-            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
-            log.debug("getMessagesInBackground : " + restResMessages.messageCount
-                    + " messages from " + messageState.getFirstItemId());
+//            messageState.setFirstMessage(restResMessages.isFirst);
+//            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
+//            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
+//            log.debug("getMessagesInBackground : " + restResMessages.messageCount
+//                    + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
         } catch (JandiNetworkException e) {
             log.error("getMessagesInBackground : FAILED" + e.httpBody, e);
@@ -624,8 +626,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getUpdateMessagesInBackground(boolean doWithResumingUpdateTimer) {
         try {
             if (messageState.getLastUpdateLinkId() >= 0) {
-                ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
-                int nMessages = resUpdateMessages.updateInfo.messageCount;
+                ResMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
+                int nMessages = resUpdateMessages.records.size();
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
                         + " messages updated at ID, " + messageState.getLastUpdateLinkId());
@@ -635,7 +637,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 if (nMessages > 0) {
                     isEmpty = false;
                     // Update 된 메시지만 부분 삽입한다.
-                    mMessageItemConverter.updatedMessageItem(resUpdateMessages);
+//                    mMessageItemConverter.updatedMessageItem(resUpdateMessages);
                     messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
                     setMarker();
                 }

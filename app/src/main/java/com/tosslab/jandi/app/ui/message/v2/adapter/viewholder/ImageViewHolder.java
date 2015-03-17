@@ -49,7 +49,10 @@ public class ImageViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link) {
 
-        ResLeftSideMenu.User fromEntity = (ResLeftSideMenu.User) link.fromEntity;
+        int fromEntityId = link.fromEntity;
+
+        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
         EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());

@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.ViewById;
 
@@ -64,7 +66,10 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     @ViewById(R.id.img_search_mic)
     ImageView micImageView;
 
-    private SearchQueryAdapter adapter;
+    @SystemService
+    InputMethodManager inputMethodManager;
+
+    private SearchQueryAdapter searchQueryAdapter;
 
     private int searchMaxY = 0;
     private int searchMinY;
@@ -80,8 +85,8 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
         searchPresenter.setView(this);
 
-        adapter = new SearchQueryAdapter(SearchActivity.this);
-        searchEditText.setAdapter(adapter);
+        searchQueryAdapter = new SearchQueryAdapter(SearchActivity.this);
+        searchEditText.setAdapter(searchQueryAdapter);
         searchEditText.setDropDownBackgroundDrawable(new ColorDrawable(Color.WHITE));
 
         searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
@@ -214,21 +219,27 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @EditorAction(R.id.txt_search_keyword)
     void onSearchTextAction(TextView textView) {
+        searchEditText.dismissDropDown();
+        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
         sendNewQuery(textView.getText().toString());
     }
 
     @Override
     public void setOldQueries(List<SearchKeyword> searchKeywords) {
-        adapter.clear();
+        searchQueryAdapter.clear();
 
         for (SearchKeyword searchKeyword : searchKeywords) {
-            adapter.add(searchKeyword);
+            searchQueryAdapter.add(searchKeyword);
         }
-        adapter.notifyDataSetChanged();
+        searchQueryAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void startVoiceActivity() {
+
+        searchEditText.dismissDropDown();
+        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);

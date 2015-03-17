@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -28,10 +29,10 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
     Context mContext;
 
     MoreState moreState = MoreState.Idle;
-    OnItemClickListener onItemClickListener;
+    OnRecyclerItemClickListener onRecyclerItemClickListener;
 
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
+        this.onRecyclerItemClickListener = onRecyclerItemClickListener;
     }
 
     @AfterInject
@@ -73,8 +74,8 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
         SearchedFileItemView searchedFileItemView = (SearchedFileItemView) holder.itemView;
 
         holder.itemView.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(v, SearchedFileItemListAdapter.this, position);
+            if (onRecyclerItemClickListener != null) {
+                onRecyclerItemClickListener.onItemClick(v, SearchedFileItemListAdapter.this, position);
             }
         });
 
@@ -98,10 +99,6 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
 
     private enum MoreState {
         Idle, Loading, NoMore
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, RecyclerView.Adapter adapter, int position);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

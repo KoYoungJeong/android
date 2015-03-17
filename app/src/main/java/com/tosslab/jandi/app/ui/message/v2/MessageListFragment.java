@@ -57,8 +57,13 @@ import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.SavedMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
@@ -108,12 +113,19 @@ public class MessageListFragment extends Fragment {
     boolean isFromPush = false;
     @FragmentArg
     int teamId;
+    @FragmentArg
+    boolean isFromSearch = false;
+    @FragmentArg
+    int lastMarker = -1;
 
     @Bean
     MessageListPresenter messageListPresenter;
 
     @Bean
     MessageListModel messageListModel;
+
+    private OldMessageLoader oldMessageLoader;
+    private NewsMessageLoader newsMessageLoader;
 
     private MessageState messageState;
     private PublishSubject<MessageQueue> messagePublishSubject;
@@ -122,6 +134,7 @@ public class MessageListFragment extends Fragment {
     @AfterInject
     void initObject() {
         messageState = new MessageState();
+        messageState.setFirstItemId(lastMarker);
 
         messagePublishSubject = PublishSubject.create();
 
@@ -133,11 +146,15 @@ public class MessageListFragment extends Fragment {
                             getSavedMessageList();
                             break;
                         case Old:
-                            getOldMessageList(((MessageState) messageQueue.getData()).getFirstItemId());
+                            if (oldMessageLoader != null) {
+                                oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+                            }
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
-                            getNewMessageList(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                            if (newsMessageLoader != null) {
+                                newsMessageLoader.load(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                            }
                             break;
                         case Send:
                             SendingMessage data = (SendingMessage) messageQueue.getData();
@@ -145,10 +162,42 @@ public class MessageListFragment extends Fragment {
                             break;
                     }
                 }, throwable -> {
-
+                    logger.error("Message Publish Fail!!", throwable);
                 }, () -> {
 
                 });
+
+        if (isFromSearch) {
+            MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+            newsMessageLoader.setMessageSubscription(messageSubscription);
+
+            MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+        } else {
+            NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+            newsMessageLoader.setMessageSubscription(messageSubscription);
+
+            NormalOldMessageLoader oldMessageLoader = new NormalOldMessageLoader(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+            oldMessageLoader.setEntityId(entityId);
+            oldMessageLoader.setTeamId(teamId);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+        }
     }
 
     private void getSavedMessageList() {
@@ -204,8 +253,8 @@ public class MessageListFragment extends Fragment {
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
-        sendMessagePublisherEvent(new SavedMessageQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
@@ -286,7 +335,12 @@ public class MessageListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        boolean isStarred = entityById != null ? entityById.isStarred : false;
+        boolean isStarred;
+        if (entityById != null ? entityById.isStarred : false) {
+            isStarred = true;
+        } else {
+            isStarred = false;
+        }
         MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
@@ -326,17 +380,24 @@ public class MessageListFragment extends Fragment {
 
             ResMessages oldMessage = messageListModel.getOldMessage(linkId);
 
-            Collections.sort(oldMessage.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+            if (oldMessage.records == null || oldMessage.records.isEmpty()) {
+                return;
+            }
 
-            messageState.setFirstItemId(oldMessage.firstIdOfReceivedList);
-            messageState.setFirstMessage(oldMessage.isFirst);
+            int firstMessageId = oldMessage.records.get(0).messageId;
+            messageState.setFirstItemId(firstMessageId);
+            boolean isFirstMessage = oldMessage.firstLinkId == firstMessageId;
+            messageState.setFirstMessage(isFirstMessage);
+
+            Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+
 
             if (linkId == -1) {
 
                 messageListPresenter.setEmptyView();
                 messageListPresenter.clearMessages();
 
-                messageListPresenter.addAll(0, oldMessage.messages);
+                messageListPresenter.addAll(0, oldMessage.records);
                 messageListPresenter.moveLastPage();
 
                 FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
@@ -347,17 +408,35 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.moveLastPage();
 
                 updateMarker();
+            } else if (isFromSearch) {
+                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
+                int firstVisibleItemTop = 0;
+                if (latestVisibleLinkId > 0) {
+                    firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
+                } else {
+                    // if has no first item...
+                    messageState.setLastUpdateLinkId(messageListModel.getLatestMessageId(oldMessage.records));
+                }
 
+                messageListPresenter.addAll(0, oldMessage.records);
+
+                if (latestVisibleLinkId > 0) {
+                    messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+                } else {
+                    // if has no first item...
+                    messageListPresenter.moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
+                }
             } else {
 
-                int lastVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
+                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
                 int firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
-                messageListPresenter.addAll(0, oldMessage.messages);
-                messageListPresenter.moveToMessage(lastVisibleLinkId, firstVisibleItemTop);
 
+                messageListPresenter.addAll(0, oldMessage.records);
+
+                messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
             }
 
-            if (!oldMessage.isFirst) {
+            if (!isFirstMessage) {
                 messageListPresenter.setLoadingComplete();
             } else {
                 messageListPresenter.setNoMoreLoading();
@@ -391,15 +470,15 @@ public class MessageListFragment extends Fragment {
         messageListModel.stopRefreshTimer();
 
         try {
-            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            if (newMessage.updateInfo.messageCount > 0) {
+            if (newMessage.records != null && newMessage.records.size() > 0) {
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
-                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
+                messageListPresenter.addAll(lastItemPosition, newMessage.records);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 updateMarker();
 
-                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
+                ResMessages.Link lastUpdatedMessage = newMessage.records.get(newMessage.records.size() - 1);
                 if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId))
                     messageListPresenter.showPreviewIfNotLastItem();
             }

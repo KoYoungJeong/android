@@ -98,6 +98,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         view.setMemberName(name);
     }
 
+    @Override
+    public void onRecordClick(ResMessageSearch.SearchRecord searchRecord) {
+        int currentTeamId = messageSearchModel.getCurrentTeamId();
+        int entityId = searchRecord.getSearchEntityInfo().getId();
+        int entityType = messageSearchModel.getEntityType(entityId);
+        boolean isStarred = messageSearchModel.isStarredEntity(entityId);
+        int linkId = searchRecord.getCurrentRecord().getLinkId();
+
+        view.startMessageListActivity(currentTeamId, entityId, entityType, isStarred, linkId);
+    }
+
     private ResMessageSearch searchMessage() throws JandiNetworkException {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());

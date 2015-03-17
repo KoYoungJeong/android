@@ -21,12 +21,14 @@ import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MemberSelectDialogAdapter;
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
+import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -76,6 +78,16 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         FragmentActivity parentActivity = getActivity();
         searchListView.setLayoutManager(new LinearLayoutManager(parentActivity));
         messageSearchResultAdapter = new MessageSearchResultAdapter(parentActivity);
+        messageSearchResultAdapter.setOnRecyclerItemClickListener(new OnRecyclerItemClickListener() {
+            @Override
+            public void onItemClick(View view, RecyclerView.Adapter adapter, int position) {
+                if (position > 0) {
+
+                    ResMessageSearch.SearchRecord searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
+                    messageSearchPresenter.onRecordClick(searchRecord);
+                }
+            }
+        });
         searchListView.setAdapter(messageSearchResultAdapter);
 
         scropMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
@@ -284,6 +296,18 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         messageSearchResultAdapter.addHeader(query);
         messageSearchResultAdapter.setQueryKeyword(query, -1, false);
         messageSearchResultAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void startMessageListActivity(int currentTeamId, int entityId, int entityType, boolean isStarred, int linkId) {
+        MessageListV2Activity_.intent(getActivity())
+                .teamId(currentTeamId)
+                .entityId(entityId)
+                .entityType(entityType)
+                .isFavorite(isStarred)
+                .isFromSearch(true)
+                .lastMarker(linkId)
+                .start();
     }
 
     @Override

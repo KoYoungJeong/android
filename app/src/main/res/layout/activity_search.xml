@@ -58,6 +58,7 @@
         android:layout_height="@dimen/jandi_search_default_size"
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
+        android:background="@drawable/bg_search_tab"
         android:weightSum="2">
 
         <TextView

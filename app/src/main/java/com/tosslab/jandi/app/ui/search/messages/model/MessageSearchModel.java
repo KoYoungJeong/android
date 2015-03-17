@@ -2,6 +2,9 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
@@ -28,5 +31,20 @@ public class MessageSearchModel {
 
     public int getCurrentTeamId() {
         return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+    }
+
+    public int getEntityType(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        if (entity.isPublicTopic()) {
+            return JandiConstants.TYPE_PUBLIC_TOPIC;
+        } else if (entity.isPrivateGroup()) {
+            return JandiConstants.TYPE_PRIVATE_TOPIC;
+        } else {
+            return JandiConstants.TYPE_DIRECT_MESSAGE;
+        }
+    }
+
+    public boolean isStarredEntity(int entityId) {
+        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
     }
 }

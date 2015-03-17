@@ -1,13 +1,12 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -42,14 +41,23 @@ public interface GroupMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Private Group의 Message 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
+    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={fromId}&type=old")
     @RequiresAuthentication
-    ResMessages getGroupMessages(int teamId, int groupId, int fromId, int numOfPost);
+    ResMessages getGroupMessages(int teamId, int groupId, int fromId);
+
+    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&type=old")
+    @RequiresAuthentication
+    ResMessages getGroupMessages(int teamId, int groupId);
 
     // Updated 된 Private Group의 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages/update/{timeAfter}?teamId={teamId}")
+    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
     @RequiresAuthentication
-    ResUpdateMessages getGroupMessagesUpdated(int teamId, int groupId, long timeAfter);
+    ResMessages getGroupMessagesUpdated(int teamId, int groupId, int currentLinkId);
+
+    // Updated 된 Private Group의 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={currentLinkId}")
+    @RequiresAuthentication
+    ResMessages getGroupMarkerMessages(int teamId, int groupId, int currentLinkId);
 
     // Private Group에서의 Message 생성
     @Post("/privateGroups/{groupId}/message")
