@@ -118,8 +118,8 @@
     <orderEntry type="library" exported="" name="multidex-1.0.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
-    <orderEntry type="library" exported="" name="androidasync-2.1.2" level="project" />
     <orderEntry type="library" exported="" name="android-agent-4.265.0" level="project" />
+    <orderEntry type="library" exported="" name="androidasync-2.1.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project" />
     <orderEntry type="library" exported="" name="ion-2.1.2" level="project" />

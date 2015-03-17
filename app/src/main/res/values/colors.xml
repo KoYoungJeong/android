@@ -116,6 +116,7 @@
     <color name="message_date_text">#999999</color>
     <color name="file_name">#3388C1</color>
     <color name="file_type">#777777</color>
+    <color name="message_marker_highlight">#FFFFF9C4</color>
 
 
     <!-- custom light theme: -->

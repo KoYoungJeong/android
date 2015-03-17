@@ -438,4 +438,10 @@ public class MessageListPresenter {
         loadingMessageView.setVisibility(View.GONE);
         messageListView.setEmptyView(emptyMessageView);
     }
+
+    public void setMarker(int lastMarker) {
+        if (messageListAdapter != null) {
+            messageListAdapter.setMarker(lastMarker);
+        }
+    }
 }

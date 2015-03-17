@@ -181,6 +181,8 @@ public class MessageListFragment extends Fragment {
 
             this.newsMessageLoader = newsMessageLoader;
             this.oldMessageLoader = oldMessageLoader;
+
+            messageListPresenter.setMarker(lastMarker);
         } else {
             NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader(getActivity());
             newsMessageLoader.setMessageListModel(messageListModel);

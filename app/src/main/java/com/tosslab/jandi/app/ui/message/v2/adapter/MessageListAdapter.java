@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -17,6 +20,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,6 +40,8 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     private List<ResMessages.Link> messageList;
 
     private MoreState moreState;
+    private int lastMarker = -1;
+    private AnimState markerAnimState = AnimState.Idle;
 
     public MessageListAdapter(Context context) {
         this.context = context;
@@ -92,6 +98,31 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
         ResMessages.Link item = getItem(position);
         viewHolder.bindData(item);
+
+        if (item.id == lastMarker) {
+            if (markerAnimState == AnimState.Idle) {
+                final View view = convertView;
+                Integer colorFrom = context.getResources().getColor(R.color.message_marker_highlight);
+                Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
+                final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+                colorAnimation.addUpdateListener(animator -> view.setBackgroundColor((Integer) animator.getAnimatedValue()));
+
+                colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        markerAnimState = AnimState.End;
+                        view.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
+                    }
+                });
+                colorAnimation.start();
+                markerAnimState = AnimState.Loading;
+            } else {
+                convertView.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
+            }
+        } else {
+            convertView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+        }
 
         if (position == 0 && moreState == MoreState.Idle) {
             EventBus.getDefault().post(new RefreshOldMessageEvent());
@@ -411,7 +442,15 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return indexList;
     }
 
+    public void setMarker(int lastMarker) {
+        this.lastMarker = lastMarker;
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
+    }
+
+    private enum AnimState {
+        Idle, Loading, End
     }
 }
