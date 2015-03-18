@@ -102,7 +102,7 @@ public class CommentsApiClientTest {
         ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1);
 
         ResMessages.FileMessage fileMessage = null;
-        for (ResMessages.Link message : publicTopicMessages.messages) {
+        for (ResMessages.Link message : publicTopicMessages.records) {
             if (message.message instanceof ResMessages.FileMessage && message.message.writerId == sideMenu.user.id) {
                 fileMessage = (ResMessages.FileMessage) message.message;
                 break;

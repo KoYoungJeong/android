@@ -45,6 +45,15 @@ public class AndroidManifestExt extends AndroidManifest {
     }
 
     @Override
+    public String getApplicationName() {
+        String applicationName = ".TestJandiApplication";
+        System.out.println("===============================");
+        System.out.println(applicationName);
+        System.out.println("===============================");
+        return applicationName;
+    }
+
+    @Override
     public void initMetaData(ResourceLoader resLoader) {
         super.initMetaData(resLoader);
 

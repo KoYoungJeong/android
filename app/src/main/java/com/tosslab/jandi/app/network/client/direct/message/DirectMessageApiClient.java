@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
@@ -49,10 +50,15 @@ public interface DirectMessageApiClient {
     @RequiresAuthentication
     ResMessages getDirectMessages(int teamId, int userId);
 
+    @Get("/users/{userId}/messages/update/{timeAfter}?teamId={teamId}")
+    @RequiresAuthentication
+    ResUpdateMessages getDirectMessagesUpdated(int teamId, int userId, int timeAfter);
+
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
     @RequiresAuthentication
-    ResMessages getDirectMessagesUpdated(int teamId, int userId, int currentLinkId);
+    ResMessages getDirectMessagesUpdatedForMarker(int teamId, int userId, int currentLinkId);
+
 
     // Updated 된 Direct Message 리스트 정보 획득
     @Get("/users/{userId}/messages?teamId={teamId}&linkId={currentLinkId}")

@@ -63,7 +63,6 @@
 
     </LinearLayout>
 
-
     <RelativeLayout
         android:id="@+id/layout_messages_preview_last_item"
         android:layout_width="match_parent"
@@ -73,7 +72,7 @@
         android:paddingLeft="@dimen/jandi_messages_padding_left"
         android:paddingRight="@dimen/jandi_messages_padding_right"
         android:paddingTop="5dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/img_message_preview_user_profile"
@@ -81,8 +80,8 @@
             android:layout_height="@dimen/jandi_messages_profile_size"
             android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
             android:background="@drawable/jandi_profile" />
-        <!-- 기본 표시 레이어 -->
 
+        <!-- 기본 표시 레이어 -->
         <TextView
             android:id="@+id/txt_message_preview_user_name"
             android:layout_width="wrap_content"
@@ -154,6 +153,35 @@
             android:enabled="false"
             android:text="@string/jandi_message_send" />
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_messages_go_to_latest"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignTop="@+id/ll_messages"
+        android:layout_alignBottom="@+id/ll_messages"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="#FF696969"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/jandi_go_to_latest"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/jandi_account_arrow_more" />
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

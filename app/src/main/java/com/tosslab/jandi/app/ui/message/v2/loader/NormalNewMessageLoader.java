@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 import android.content.Context;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -54,17 +55,18 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         messageListModel.stopRefreshTimer();
 
         try {
-            ResMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            if (newMessage.records != null && newMessage.records.size() > 0) {
+            if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
-                messageListPresenter.addAll(lastItemPosition, newMessage.records);
+                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 updateMarker();
 
-                ResMessages.Link lastUpdatedMessage = newMessage.records.get(newMessage.records.size() - 1);
-                if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId))
+                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
+                if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId)) {
                     messageListPresenter.showPreviewIfNotLastItem();
+                }
             }
 
 

@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
@@ -49,10 +50,13 @@ public interface GroupMessageApiClient {
     @RequiresAuthentication
     ResMessages getGroupMessages(int teamId, int groupId);
 
-    // Updated 된 Private Group의 리스트 정보 획득
+    @Get("/privateGroups/{groupId}/messages/update/{lastLinkId}?teamId={teamId}")
+    @RequiresAuthentication
+    ResUpdateMessages getGroupMessagesUpdated(int teamId, int groupId, int lastLinkId);
+
     @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
     @RequiresAuthentication
-    ResMessages getGroupMessagesUpdated(int teamId, int groupId, int currentLinkId);
+    ResMessages getGroupMessagesUpdatedForMarker(int teamId, int groupId, int currentLinkId);
 
     // Updated 된 Private Group의 리스트 정보 획득
     @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={currentLinkId}")

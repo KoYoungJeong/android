@@ -100,9 +100,9 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
 
             if (!isFirstMessage) {
-                messageListPresenter.setLoadingComplete();
+                messageListPresenter.setOldLoadingComplete();
             } else {
-                messageListPresenter.setNoMoreLoading();
+                messageListPresenter.setOldNoMoreLoading();
             }
 
         } catch (JandiNetworkException e) {

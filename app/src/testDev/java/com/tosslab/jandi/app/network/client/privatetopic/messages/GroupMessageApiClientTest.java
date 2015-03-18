@@ -78,9 +78,9 @@ public class GroupMessageApiClientTest {
     }
 
     private ResMessages.TextMessage getMyTextMessage(ResLeftSideMenu.PrivateGroup privateTopic) {
-        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id, -1, 20);
+        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id);
         ResMessages.TextMessage textMessage = null;
-        for (ResMessages.Link message : groupMessages.messages) {
+        for (ResMessages.Link message : groupMessages.records) {
             if (message.message instanceof ResMessages.TextMessage && message.message.writerId == sideMenu.user.id) {
                 textMessage = (ResMessages.TextMessage) message.message;
                 break;
@@ -94,7 +94,7 @@ public class GroupMessageApiClientTest {
 
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
 
-        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id, -1, 20);
+        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id);
 
         assertThat(groupMessages, is(notNullValue()));
 

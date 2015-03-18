@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
@@ -50,11 +51,15 @@ public interface ChannelMessageApiClient {
     ResMessages getPublicTopicMessages(int teamId, int channelId);
 
     // 채널의 업데이트 Message 리스트 정보 획득
+    @Get("/channels/{channelId}/messages/update/{currentLinkId}?teamId={teamId}")
+    @RequiresAuthentication
+    ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
+
     @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
     @RequiresAuthentication
-    ResMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
+    ResMessages getPublicTopicUpdatedMessagesForMarker(int teamId, int channelId, int currentLinkId);
 
-    // 채널의 업데이트 Message 리스트 정보 획득
+
     @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={currentLinkId}")
     @RequiresAuthentication
     ResMessages getPublicTopicMarkerMessages(int teamId, int channelId, int currentLinkId);

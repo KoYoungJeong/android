@@ -14,9 +14,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -183,6 +181,8 @@ public class MessageListFragment extends Fragment {
             this.oldMessageLoader = oldMessageLoader;
 
             messageListPresenter.setMarker(lastMarker);
+            messageListPresenter.setMoreNewFromAdapter(true);
+            messageListPresenter.setGotoLatestLayoutVisible();
         } else {
             NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader(getActivity());
             newsMessageLoader.setMessageListModel(messageListModel);
@@ -223,18 +223,14 @@ public class MessageListFragment extends Fragment {
         setUpActionbar();
         setHasOptionsMenu(true);
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onMessageItemClick(messageListPresenter.getItem(position));
-            }
-        });
+        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener((parent, view, position, id) -> onMessageItemClick(messageListPresenter.getItem(position)));
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                onMessageItemLonkClick(messageListPresenter.getItem(position));
+        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemLongClickListener((parent, view, position, id) -> {
+            if (!isFromSearch) {
+                onMessageItemLongClick(messageListPresenter.getItem(position));
                 return true;
+            } else {
+                return false;
             }
         });
 
@@ -357,7 +353,7 @@ public class MessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        if (messageListModel.isEnabledIfUser(entityId)) {
+        if (messageListModel.isEnabledIfUser(entityId) && !isFromSearch) {
             messageListModel.startRefreshTimer();
         }
         PushMonitor.getInstance().register(entityId);
@@ -370,7 +366,9 @@ public class MessageListFragment extends Fragment {
         super.onPause();
         EventBus.getDefault().unregister(this);
 
-        messageListModel.stopRefreshTimer();
+        if (!isFromSearch) {
+            messageListModel.stopRefreshTimer();
+        }
 
         messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
@@ -439,9 +437,9 @@ public class MessageListFragment extends Fragment {
             }
 
             if (!isFirstMessage) {
-                messageListPresenter.setLoadingComplete();
+                messageListPresenter.setOldLoadingComplete();
             } else {
-                messageListPresenter.setNoMoreLoading();
+                messageListPresenter.setOldNoMoreLoading();
             }
 
         } catch (JandiNetworkException e) {
@@ -469,18 +467,20 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        messageListModel.stopRefreshTimer();
+        if (!isFromSearch) {
+            messageListModel.stopRefreshTimer();
+        }
 
         try {
-            ResMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            if (newMessage.records != null && newMessage.records.size() > 0) {
+            if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
-                messageListPresenter.addAll(lastItemPosition, newMessage.records);
+                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 updateMarker();
 
-                ResMessages.Link lastUpdatedMessage = newMessage.records.get(newMessage.records.size() - 1);
+                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
                 if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId))
                     messageListPresenter.showPreviewIfNotLastItem();
             }
@@ -489,10 +489,15 @@ public class MessageListFragment extends Fragment {
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
-            if (!messageSubscription.isUnsubscribed()) {
+            if (!messageSubscription.isUnsubscribed() && !isFromSearch) {
                 messageListModel.startRefreshTimer();
             }
         }
+    }
+
+    @Click(R.id.ll_messages_go_to_latest)
+    void onGotoLatestClick() {
+        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
     @Click(R.id.layout_messages_preview_last_item)
@@ -662,7 +667,7 @@ public class MessageListFragment extends Fragment {
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
-    void onMessageItemLonkClick(ResMessages.Link link) {
+    void onMessageItemLongClick(ResMessages.Link link) {
 
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;

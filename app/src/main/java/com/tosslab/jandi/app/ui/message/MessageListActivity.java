@@ -626,8 +626,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getUpdateMessagesInBackground(boolean doWithResumingUpdateTimer) {
         try {
             if (messageState.getLastUpdateLinkId() >= 0) {
-                ResMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
-                int nMessages = resUpdateMessages.records.size();
+                ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
+                int nMessages = resUpdateMessages.updateInfo.messages.size();
                 boolean isEmpty = true;
                 log.info("getUpdateMessagesInBackground : " + nMessages
                         + " messages updated at ID, " + messageState.getLastUpdateLinkId());

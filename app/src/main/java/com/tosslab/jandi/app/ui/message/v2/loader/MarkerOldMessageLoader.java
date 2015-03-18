@@ -49,7 +49,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             if (messageListPresenter.getFirstVisibleItemLinkId() > 0) {
                 oldMessage = messageListModel.getOldMessage(linkId);
             } else {
-                oldMessage = messageListModel.getMarkerMessage(linkId);
+                oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
             }
 
 
@@ -66,9 +66,9 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
-            int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
+            int latestVisibleMessageId = messageListPresenter.getFirstVisibleItemLinkId();
             int firstVisibleItemTop = 0;
-            if (latestVisibleLinkId > 0) {
+            if (latestVisibleMessageId > 0) {
                 firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
             } else {
                 // if has no first item...
@@ -79,8 +79,8 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             messageListPresenter.addAll(0, oldMessage.records);
 
-            if (latestVisibleLinkId > 0) {
-                messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+            if (latestVisibleMessageId > 0) {
+                messageListPresenter.moveToMessage(latestVisibleMessageId, firstVisibleItemTop);
             } else {
                 // if has no first item...
 
@@ -98,9 +98,9 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             }
 
             if (!isFirstMessage) {
-                messageListPresenter.setLoadingComplete();
+                messageListPresenter.setOldLoadingComplete();
             } else {
-                messageListPresenter.setNoMoreLoading();
+                messageListPresenter.setOldNoMoreLoading();
             }
 
         } catch (JandiNetworkException e) {

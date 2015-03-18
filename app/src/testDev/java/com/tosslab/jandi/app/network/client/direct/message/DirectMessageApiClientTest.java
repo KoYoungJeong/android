@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -11,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import static junit.framework.Assert.fail;
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
@@ -83,7 +83,7 @@ public class DirectMessageApiClientTest {
     }
 
     private ResMessages.TextMessage getMyTextMessage(ResMessages directMessages) {
-        List<ResMessages.Link> messages = directMessages.messages;
+        List<ResMessages.Link> messages = directMessages.records;
         ResMessages.TextMessage textMessage = null;
         for (ResMessages.Link message : messages) {
             if (message.message instanceof ResMessages.TextMessage && message.message.writerId == sideMenu.user.id) {
@@ -102,7 +102,7 @@ public class DirectMessageApiClientTest {
 
         ResMessages directMessages = null;
         try {
-            directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id, -1, 20);
+            directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
 
@@ -155,7 +155,7 @@ public class DirectMessageApiClientTest {
 
         ResLeftSideMenu.User user = getUser();
 
-        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id, -1, 100);
+        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
 
         ResMessages.TextMessage textMessage = getMyTextMessage(directMessages);
 
@@ -178,7 +178,7 @@ public class DirectMessageApiClientTest {
 
         ResLeftSideMenu.User user = getUser();
 
-        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id, -1, 100);
+        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
 
         ResMessages.TextMessage textMessage = getMyTextMessage(directMessages);
 

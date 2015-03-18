@@ -82,6 +82,9 @@ public class MessageListPresenter {
     @ViewById(R.id.ll_messages)
     View sendLayout;
 
+    @ViewById(R.id.ll_messages_go_to_latest)
+    View moveRealChatView;
+
     @ViewById(R.id.ll_messages_disable_alert)
     View disabledUser;
 
@@ -96,6 +99,8 @@ public class MessageListPresenter {
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
+    private boolean sendLayoutVisible;
+    private boolean gotoLatestLayoutVisible;
 
     @AfterInject
     void initObject() {
@@ -113,14 +118,28 @@ public class MessageListPresenter {
         setSendEditText(tempMessage);
 
         if (isDisabled) {
-            sendLayout.setVisibility(View.GONE);
+            sendLayoutVisibleGone();
             disabledUser.setVisibility(View.VISIBLE);
             setPreviewVisibleGone();
         }
 
+        if (sendLayoutVisible) {
+            sendLayoutVisibleGone();
+        }
+
+        if (gotoLatestLayoutVisible) {
+            setGotoLatestLayoutVisible();
+        }
     }
 
-    @UiThread
+    public void sendLayoutVisibleGone() {
+        sendLayoutVisible = true;
+        if (sendLayout != null) {
+            sendLayout.setVisibility(View.GONE);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
         messageListAdapter.addAll(position, messages);
         messageListAdapter.notifyDataSetChanged();
@@ -159,15 +178,15 @@ public class MessageListPresenter {
         }
     }
 
-    public void setLoadingComplete() {
-        messageListAdapter.setLoadingComplete();
+    public void setOldLoadingComplete() {
+        messageListAdapter.setOldLoadingComplete();
     }
 
-    public void setNoMoreLoading() {
-        messageListAdapter.setNoMoreLoading();
+    public void setOldNoMoreLoading() {
+        messageListAdapter.setOldNoMoreLoading();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
         int itemPosition = messageListAdapter.getItemPositionByLinkId(linkId);
         messageListView.setSelectionFromTop(itemPosition, firstVisibleItemTop);
@@ -182,7 +201,7 @@ public class MessageListPresenter {
     }
 
     public int getFirstVisibleItemTop() {
-        return messageListView.getChildAt(0).getTop();
+        return messageListView.getWrappedList().getChildAt(0).getTop();
     }
 
     @UiThread
@@ -443,5 +462,52 @@ public class MessageListPresenter {
         if (messageListAdapter != null) {
             messageListAdapter.setMarker(lastMarker);
         }
+    }
+
+
+    public void setMoreNewFromAdapter(boolean isMoreNew) {
+        messageListAdapter.setMoreFromNew(isMoreNew);
+    }
+
+    public void setNewLoadingComplete() {
+        messageListAdapter.setNewLoadingComplete();
+    }
+
+    public void setNewNoMoreLoading() {
+        messageListAdapter.setNewNoMoreLoading();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void addAndMove(List<ResMessages.Link> records) {
+        int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
+        int firstVisibleItemTop = getFirstVisibleItemTop();
+        int lastItemPosition = getLastItemPosition();
+
+        if (lastItemPosition > 0) {
+            messageListView.setSelection(lastItemPosition - 1);
+        }
+        messageListView.getWrappedList().setStackFromBottom(true);
+        addAll(lastItemPosition, records);
+        if (firstVisibleItemLinkId > 0) {
+            moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
+        }
+        messageListView.getWrappedList().setStackFromBottom(false);
+
+    }
+
+    public void setGotoLatestLayoutVisible() {
+        gotoLatestLayoutVisible = true;
+        if (moveRealChatView != null) {
+            moveRealChatView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void restartMessageApp(int entityId, int entityType, boolean isFavorite, int teamId) {
+        MessageListV2Activity_.intent(activity)
+                .entityId(entityId)
+                .entityType(entityType)
+                .teamId(teamId)
+                .isFavorite(isFavorite)
+                .start();
     }
 }

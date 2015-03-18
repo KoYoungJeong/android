@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -103,10 +104,10 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages updateMessages(final int fromCurrentId) throws JandiNetworkException {
-        return RequestManager.newInstance(context, new Request<ResMessages>() {
+    public ResUpdateMessages updateMessages(final int fromCurrentId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, new Request<ResUpdateMessages>() {
             @Override
-            public ResMessages request() throws JandiNetworkException {
+            public ResUpdateMessages request() throws JandiNetworkException {
                 JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
 
                 switch (mEntityType) {
@@ -207,7 +208,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getBeforeMarkerMessage(int linkId) throws JandiNetworkException {
         return RequestManager.newInstance(context, new Request<ResMessages>() {
             @Override
             public ResMessages request() throws JandiNetworkException {
@@ -231,5 +232,30 @@ public class MessageManipulator {
             }
         }).request();
 
+    }
+
+    public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
+        return RequestManager.newInstance(context, new Request<ResMessages>() {
+            @Override
+            public ResMessages request() throws JandiNetworkException {
+                JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+                switch (mEntityType) {
+                    case JandiConstants.TYPE_PUBLIC_TOPIC:
+                        channelMessageApiClient.setAuthentication(requestAuthentication);
+                        return channelMessageApiClient.getPublicTopicUpdatedMessagesForMarker(selectedTeamId, mEntityId, linkId);
+
+                    case JandiConstants.TYPE_DIRECT_MESSAGE:
+                        directMessageApiClient.setAuthentication(requestAuthentication);
+                        return directMessageApiClient.getDirectMessagesUpdatedForMarker(selectedTeamId, mEntityId, linkId);
+                    case JandiConstants.TYPE_PRIVATE_TOPIC:
+                        groupMessageApiClient.setAuthentication(requestAuthentication);
+                        return groupMessageApiClient.getGroupMessagesUpdatedForMarker(selectedTeamId, mEntityId, linkId);
+                    default:
+                        return null;
+
+                }
+            }
+        }).request();
     }
 }

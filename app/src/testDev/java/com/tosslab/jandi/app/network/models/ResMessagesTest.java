@@ -147,7 +147,7 @@ public class ResMessagesTest {
 
         assertThat(resMessages, is(notNullValue()));
 
-        for (ResMessages.Link message : resMessages.messages) {
+        for (ResMessages.Link message : resMessages.records) {
             String s = objectMapper.writeValueAsString(message.info);
             ResMessages.EventInfo eventInfo = objectMapper.readValue(s, ResMessages.EventInfo.class);
             assertThat(eventInfo, is(notNullValue()));

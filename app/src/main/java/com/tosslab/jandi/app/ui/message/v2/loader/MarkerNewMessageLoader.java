@@ -52,25 +52,29 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
             return;
         }
 
-        messageListModel.stopRefreshTimer();
-
         try {
-            ResMessages newMessage = messageListModel.getNewMessage(linkId);
+            ResMessages newMessage = messageListModel.getAfterMarkerMessage(linkId);
+
+            boolean isLastLinkId = false;
 
             if (newMessage.records != null && newMessage.records.size() > 0) {
-                int lastItemPosition = messageListPresenter.getLastItemPosition();
-                messageListPresenter.addAll(lastItemPosition, newMessage.records);
+                isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
+
+                messageListPresenter.addAndMove(newMessage.records);
+
                 int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
                 messageState.setLastUpdateLinkId(lastLinkId);
+            }
 
+            if (!isLastLinkId) {
+                messageListPresenter.setNewLoadingComplete();
+            } else {
+                messageListPresenter.setNewNoMoreLoading();
             }
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
-            if (!messageSubscription.isUnsubscribed()) {
-                messageListModel.startRefreshTimer();
-            }
         }
     }
 

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -39,14 +40,16 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     private List<ResMessages.Link> messageList;
 
-    private MoreState moreState;
     private int lastMarker = -1;
     private AnimState markerAnimState = AnimState.Idle;
+    private boolean moreFromNew;
+    private MoreState oldMoreState;
+    private MoreState newMoreState;
 
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new CopyOnWriteArrayList<ResMessages.Link>();
-        moreState = MoreState.Idle;
+        oldMoreState = MoreState.Idle;
     }
 
     @Override
@@ -106,6 +109,8 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
                 Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+                colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+                colorAnimation.setRepeatCount(1);
                 colorAnimation.addUpdateListener(animator -> view.setBackgroundColor((Integer) animator.getAnimatedValue()));
 
                 colorAnimation.addListener(new SimpleEndAnimatorListener() {
@@ -124,9 +129,12 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             convertView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
         }
 
-        if (position == 0 && moreState == MoreState.Idle) {
+        if (position == 0 && oldMoreState == MoreState.Idle) {
+            oldMoreState = MoreState.Loading;
             EventBus.getDefault().post(new RefreshOldMessageEvent());
-            moreState = MoreState.Loading;
+        } else if (moreFromNew && position == getCount() - 1 && newMoreState == MoreState.Idle) {
+            newMoreState = MoreState.Loading;
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
         return convertView;
@@ -325,12 +333,12 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return (messageDay == beforeMessageDay);
     }
 
-    public void setNoMoreLoading() {
-        moreState = MoreState.Nope;
+    public void setOldNoMoreLoading() {
+        oldMoreState = MoreState.Nope;
     }
 
-    public void setLoadingComplete() {
-        moreState = MoreState.Idle;
+    public void setOldLoadingComplete() {
+        oldMoreState = MoreState.Idle;
     }
 
     public ResMessages.Link getItemByLinkId(int linkId) {
@@ -444,6 +452,18 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
 
     public void setMarker(int lastMarker) {
         this.lastMarker = lastMarker;
+    }
+
+    public void setMoreFromNew(boolean moreFromNew) {
+        this.moreFromNew = moreFromNew;
+    }
+
+    public void setNewLoadingComplete() {
+        newMoreState = MoreState.Idle;
+    }
+
+    public void setNewNoMoreLoading() {
+        newMoreState = MoreState.Nope;
     }
 
     private enum MoreState {
