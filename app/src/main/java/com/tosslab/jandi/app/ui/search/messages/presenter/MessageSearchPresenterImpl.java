@@ -101,11 +101,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     @Override
     public void onSelectEntity(int entityId, String name) {
         view.setEntityName(name);
+        searchQeuryInfo.entityId(entityId);
+        view.clearSearchResult();
+        onSearchRequest(searchQeuryInfo.getQuery());
     }
 
     @Override
     public void onSelectMember(int memberId, String name) {
         view.setMemberName(name);
+        searchQeuryInfo.writerId(memberId);
+        view.clearSearchResult();
+        onSearchRequest(searchQeuryInfo.getQuery());
     }
 
     @Override

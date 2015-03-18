@@ -125,6 +125,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @Click(R.id.txt_search_category_messages)
     void onMessageTabClick() {
+        hideSoftInput();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -148,6 +149,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @Click(R.id.txt_search_category_files)
     void onFileTabClick() {
+        hideSoftInput();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
