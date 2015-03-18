@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -17,6 +18,8 @@ import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -26,6 +29,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
     private List<ResMessageSearch.SearchRecord> records;
     private HeaderItem headerItem;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
+    private MoreState moreState = MoreState.Idle;
 
     public MessageSearchResultAdapter(Context context) {
         this.context = context;
@@ -112,6 +116,11 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
                 onRecyclerItemClickListener.onItemClick(v, MessageSearchResultAdapter.this, position);
             }
         });
+
+        if (position == getItemCount() - 1 && moreState == MoreState.Idle) {
+            moreState = MoreState.Loading;
+            EventBus.getDefault().post(new MoreSearchRequestEvent());
+        }
     }
 
     @Override
@@ -170,6 +179,19 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         }
 
         add(0, headerItem);
+    }
+
+    public void setOnLoadingReady() {
+
+        moreState = MoreState.Idle;
+    }
+
+    public void setOnLoadingEnd() {
+        moreState = MoreState.End;
+    }
+
+    private enum MoreState {
+        Idle, Loading, End
     }
 
     private static class MessageSearchViewHolder extends RecyclerView.ViewHolder {

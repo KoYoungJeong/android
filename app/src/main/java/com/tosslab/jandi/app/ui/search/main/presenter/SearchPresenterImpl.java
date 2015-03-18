@@ -38,7 +38,6 @@ public class SearchPresenterImpl implements SearchPresenter {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String text) {
-                        searchModel.upsertQuery(0, text);
                         List<SearchKeyword> searchKeywords = searchModel.searchOldQuery(text);
                         view.setOldQueries(searchKeywords);
                     }
@@ -64,9 +63,12 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void onSearchVoice() {
         if (TextUtils.isEmpty(view.getSearchText())) {
+            view.dismissDropDown();
+            view.hideSoftInput();
             view.startVoiceActivity();
         } else {
             view.setSearchText("");
+            view.showSoftInput();
         }
     }
 
@@ -74,11 +76,19 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void onVoiceSearchResult(List<String> voiceSearchResults) {
         if (voiceSearchResults != null && !voiceSearchResults.isEmpty()) {
             String searchText = voiceSearchResults.get(0);
+            searchModel.upsertQuery(0, searchText);
             view.setSearchText(searchText);
             view.sendNewQuery(searchText);
         } else {
             view.showNoVoiceSearchItem();
         }
 
+    }
+
+    @Override
+    public void onSearchAction(String text) {
+        view.dismissDropDown();
+        view.hideSoftInput();
+        searchModel.upsertQuery(0, text);
     }
 }

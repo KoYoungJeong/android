@@ -58,6 +58,11 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             view.clearSearchResult();
             view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
             view.addSearchResult(resMessageSearch.getSearchRecords());
+            if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
+                view.setOnLoadingReady();
+            } else {
+                view.setOnLoadingEnd();
+            }
         } catch (JandiNetworkException e) {
             e.printStackTrace();
         }
@@ -73,6 +78,11 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         try {
             ResMessageSearch resMessageSearch = searchMessage();
             view.addSearchResult(resMessageSearch.getSearchRecords());
+            if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
+                view.setOnLoadingReady();
+            } else {
+                view.setOnLoadingEnd();
+            }
         } catch (JandiNetworkException e) {
             e.printStackTrace();
         }

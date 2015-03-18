@@ -311,6 +311,17 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     @Override
+    public void setOnLoadingReady() {
+        messageSearchResultAdapter.setOnLoadingReady();
+    }
+
+    @Override
+    public void setOnLoadingEnd() {
+        messageSearchResultAdapter.setOnLoadingEnd();
+
+    }
+
+    @Override
     public void onNewQuery(String query) {
         messageSearchPresenter.onSearchRequest(query);
     }

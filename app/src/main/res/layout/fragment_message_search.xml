@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
+        android:paddingBottom="24dp"
         android:paddingTop="112dp"
         android:scrollbars="vertical" />
 
@@ -67,6 +68,5 @@
 
         </LinearLayout>
     </LinearLayout>
-
 
 </RelativeLayout>

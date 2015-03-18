@@ -17,6 +17,8 @@ public interface SearchPresenter {
 
     void onVoiceSearchResult(List<String> voiceSearchResults);
 
+    void onSearchAction(String text);
+
     public interface View {
 
         void setOldQueries(List<SearchKeyword> searchKeywords);
@@ -35,5 +37,10 @@ public interface SearchPresenter {
 
         CharSequence getSearchText();
 
+        void dismissDropDown();
+
+        void hideSoftInput();
+
+        void showSoftInput();
     }
 }

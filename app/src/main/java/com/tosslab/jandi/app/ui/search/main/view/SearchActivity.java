@@ -219,8 +219,8 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @EditorAction(R.id.txt_search_keyword)
     void onSearchTextAction(TextView textView) {
-        searchEditText.dismissDropDown();
-        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+        searchPresenter.onSearchAction(textView.getText().toString());
+
         sendNewQuery(textView.getText().toString());
     }
 
@@ -236,9 +236,6 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
     @Override
     public void startVoiceActivity() {
-
-        searchEditText.dismissDropDown();
-        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
 
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -288,6 +285,22 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
         searchEditText.setText(searchText);
         searchEditText.setSelection(searchText.length());
         searchEditText.dismissDropDown();
+    }
+
+    @Override
+    public void dismissDropDown() {
+        searchEditText.dismissDropDown();
+    }
+
+    @Override
+    public void hideSoftInput() {
+        inputMethodManager.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+    }
+
+    @Override
+    public void showSoftInput() {
+        searchEditText.requestFocus();
+        inputMethodManager.showSoftInput(searchEditText, 0);
     }
 
     @OnActivityResult(SPEECH_REQUEST_CODE)
