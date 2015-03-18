@@ -78,6 +78,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
         mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews);
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
+        mViewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
 
