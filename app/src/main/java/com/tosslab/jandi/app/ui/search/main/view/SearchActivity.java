@@ -32,6 +32,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.EditorAction;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.TextChange;
@@ -50,6 +51,9 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
     private static final int SPEECH_REQUEST_CODE = 201;
     @Bean(SearchPresenterImpl.class)
     SearchPresenter searchPresenter;
+
+    @Extra
+    boolean isFromFiles;
 
     @ViewById(R.id.txt_search_keyword)
     AutoCompleteTextView searchEditText;
@@ -93,9 +97,12 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
 
         searchQueries = new String[]{"", ""};
         addFragments();
-        onMessageTabClick();
 
-        initSearchSelectView();
+        if (!isFromFiles) {
+            onMessageTabClick();
+        } else {
+            onFileTabClick();
+        }
 
     }
 

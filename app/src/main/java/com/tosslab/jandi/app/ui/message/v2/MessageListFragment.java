@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
@@ -292,6 +293,10 @@ public class MessageListFragment extends Fragment {
 
         menu.clear();
 
+        if (isFromSearch) {
+            return;
+        }
+
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
@@ -497,7 +502,8 @@ public class MessageListFragment extends Fragment {
 
     @Click(R.id.ll_messages_go_to_latest)
     void onGotoLatestClick() {
-        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
+        EventBus.getDefault().post(new ChatModeChangeEvent());
+//        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
     @Click(R.id.layout_messages_preview_last_item)
@@ -538,6 +544,31 @@ public class MessageListFragment extends Fragment {
 
     public void onEventMainThread(SendFailEvent event) {
         messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
+    }
+
+    public void onEventMainThread(ChatModeChangeEvent event) {
+        isFromSearch = false;
+        messageListPresenter.setMarker(-1);
+        NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader(getActivity());
+        normalNewMessageLoader.setMessageSubscription(messageSubscription);
+        normalNewMessageLoader.setMessageState(messageState);
+        normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
+        normalNewMessageLoader.setMessageListModel(messageListModel);
+        newsMessageLoader = normalNewMessageLoader;
+
+        NormalOldMessageLoader normalOldMessageLoader = new NormalOldMessageLoader(getActivity());
+        normalOldMessageLoader.setMessageListModel(messageListModel);
+        normalOldMessageLoader.setTeamId(teamId);
+        normalOldMessageLoader.setEntityId(entityId);
+        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
+        normalOldMessageLoader.setMessageState(messageState);
+        oldMessageLoader = normalOldMessageLoader;
+
+        messageListModel.startRefreshTimer();
+        messageListPresenter.setMoreNewFromAdapter(false);
+        messageListPresenter.setGotoLatestLayoutVisibleGone();
+
+        ((ActionBarActivity) getActivity()).getSupportActionBar().invalidateOptionsMenu();
     }
 
     public void onEvent(RequestFileUploadEvent event) {

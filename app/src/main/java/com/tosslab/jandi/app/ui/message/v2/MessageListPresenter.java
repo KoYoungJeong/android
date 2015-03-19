@@ -510,4 +510,11 @@ public class MessageListPresenter {
                 .isFavorite(isFavorite)
                 .start();
     }
+
+    public void setGotoLatestLayoutVisibleGone() {
+        gotoLatestLayoutVisible = false;
+        if (moveRealChatView != null) {
+            moveRealChatView.setVisibility(View.GONE);
+        }
+    }
 }

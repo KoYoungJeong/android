@@ -70,6 +70,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private MessageSearchResultAdapter messageSearchResultAdapter;
     private int scropMaxY;
     private int scropMinY;
+    private boolean isFirstLayout = true;
 
     @AfterViews
     void initObject() {
@@ -88,6 +89,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 }
             }
         });
+
         searchListView.setAdapter(messageSearchResultAdapter);
 
         scropMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
@@ -115,6 +117,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
             }
         });
+
     }
 
     @Override
@@ -328,13 +331,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @Override
     public void onSearchHeaderReset() {
-        if (scopeView != null) {
+        if (scopeView != null && !isFirstLayout) {
             scopeView.setY(scropMaxY);
         }
     }
 
     @Override
     public void initSearchLayoutIfFirst() {
-
+        isFirstLayout = false;
     }
 }

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
@@ -10,6 +11,7 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.apache.log4j.Logger;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
 
 /**
@@ -70,6 +72,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                 messageListPresenter.setNewLoadingComplete();
             } else {
                 messageListPresenter.setNewNoMoreLoading();
+                EventBus.getDefault().post(new ChatModeChangeEvent());
             }
 
         } catch (JandiNetworkException e) {

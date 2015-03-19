@@ -125,11 +125,18 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
+
+        if (getActivity() instanceof SearchActivity && isSearchLayoutFirst) {
+            onSearchHeaderReset();
+            initSearchLayoutIfFirst();
+        }
+
     }
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
         SearchActivity_.intent(getActivity())
+                .isFromFiles(true)
                 .start();
     }
 
@@ -323,6 +330,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         setHeaderTextViewColor(((ViewGroup) headerView), getResources().getColor(R.color.white));
         setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.jandi_arrow_down);
+
+        ((ViewGroup) ((ViewGroup) headerView).getChildAt(0)).getChildAt(1).setVisibility(View.INVISIBLE);
+        ((ViewGroup) ((ViewGroup) headerView).getChildAt(0)).getChildAt(3).setVisibility(View.INVISIBLE);
 
         final int headerMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         final int headerMinY = 0;
