@@ -14,18 +14,15 @@
         android:visibility="visible"
         app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <se.emilsjolander.stickylistheaders.StickyListHeadersListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/list_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/space_messages_divider"
         android:layout_alignWithParentIfMissing="true"
+        android:scrollbars="vertical"
         android:layout_below="@+id/ll_messages_disable_alert"
-        android:layout_weight="1"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:smoothScrollbar="true"
-        android:transcriptMode="normal" />
+        android:dividerHeight="0dp" />
 
 
     <include
@@ -158,8 +155,8 @@
         android:id="@+id/ll_messages_go_to_latest"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_alignTop="@+id/ll_messages"
         android:layout_alignBottom="@+id/ll_messages"
+        android:layout_alignTop="@+id/ll_messages"
         android:layout_alignWithParentIfMissing="true"
         android:background="#FF696969"
         android:paddingLeft="24dp"

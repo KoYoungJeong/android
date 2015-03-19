@@ -1,5 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.tosslab.jandi.app.R;
 
 /**
@@ -52,4 +56,29 @@ public class BodyViewFactory {
         }
     }
 
+    public static View createItemView(Context context, ViewGroup parent, int viewType) {
+
+        BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
+
+        int layoutId = 0;
+
+        switch (type) {
+            case Message:
+                break;
+            case File:
+                break;
+            case Image:
+                break;
+            case PureComment:
+                break;
+            case FileComment:
+                break;
+            case Dummy:
+                break;
+            case Event:
+                break;
+        }
+
+        return null;
+    }
 }

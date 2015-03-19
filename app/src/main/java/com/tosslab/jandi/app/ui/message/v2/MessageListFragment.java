@@ -9,12 +9,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.AbsListView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -57,6 +58,7 @@ import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
@@ -67,7 +69,6 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.views.listeners.SimpleListViewScrollListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -89,7 +90,6 @@ import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -224,25 +224,35 @@ public class MessageListFragment extends Fragment {
         setUpActionbar();
         setHasOptionsMenu(true);
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener((parent, view, position, id) -> onMessageItemClick(messageListPresenter.getItem(position)));
+        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView.Adapter adapter, int position) {
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemLongClickListener((parent, view, position, id) -> {
-            if (!isFromSearch) {
-                onMessageItemLongClick(messageListPresenter.getItem(position));
-                return true;
-            } else {
-                return false;
+                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem(position));
             }
         });
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new SimpleListViewScrollListener() {
+        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
             @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                    messageListPresenter.setPreviewVisibleGone();
+            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
+                if (!isFromSearch) {
+                    MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
+                    return true;
+                } else {
+                    return false;
                 }
+            }
+        });
 
+        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getCount() - 1) {
+                    messageListPresenter.setPreviewVisibleGone();
+
+                }
             }
         });
 

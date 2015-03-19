@@ -4,12 +4,11 @@ import android.animation.Animator;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
@@ -19,8 +18,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
-import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHodler;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
@@ -29,12 +27,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
-public class MessageListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
+public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHodler> {
 
     private Context context;
 
@@ -46,65 +43,48 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     private MoreState oldMoreState;
     private MoreState newMoreState;
 
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
+
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new CopyOnWriteArrayList<ResMessages.Link>();
         oldMoreState = MoreState.Idle;
     }
 
+    public int getCount() {
+        return messageList.size();
+    }
+
+    public int getViewTypeCount() {
+        return BodyViewHolder.Type.values().length;
+    }
+
+
     @Override
-    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+    public RecyclerBodyViewHodler onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        HeaderViewHolder viewHolder;
 
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_message_header, parent, false);
-            viewHolder = new HeaderViewHolder();
-            viewHolder.dateTextView = (android.widget.TextView) convertView.findViewById(R.id.txt_message_date_devider);
+        BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
+        View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
 
-            convertView.setTag(R.id.message_header, viewHolder);
-        } else {
-            viewHolder = (HeaderViewHolder) convertView.getTag(R.id.message_header);
-        }
+        viewHolder.initView(convertView);
 
-        long headerId = getHeaderId(position);
 
-        if (DateUtils.isToday(headerId)) {
-            viewHolder.dateTextView.setText(R.string.today);
-        } else {
-            viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
-        }
+        RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);
 
-        return convertView;
+        return recyclerBodyViewHodler;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        int itemViewType = getItemViewType(position);
-
-        BodyViewHolder viewHolder;
-
-        int viewHolderId = BodyViewFactory.getViewHolderId(itemViewType);
-
-        if (convertView == null) {
-
-            viewHolder = BodyViewFactory.createViewHolder(itemViewType);
-            convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
-
-            viewHolder.initView(convertView);
-
-            convertView.setTag(viewHolderId, viewHolder);
-        } else {
-            viewHolder = (BodyViewHolder) convertView.getTag(viewHolderId);
-        }
+    public void onBindViewHolder(RecyclerBodyViewHodler viewHolder, int position) {
 
         ResMessages.Link item = getItem(position);
-        viewHolder.bindData(item);
+        viewHolder.getViewHolder().bindData(item);
 
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {
-                final View view = convertView;
+                final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.message_marker_highlight);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
@@ -123,10 +103,10 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
                 colorAnimation.start();
                 markerAnimState = AnimState.Loading;
             } else {
-                convertView.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
+                viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
             }
         } else {
-            convertView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+            viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {
@@ -137,32 +117,25 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
             EventBus.getDefault().post(new RefreshNewMessageEvent());
         }
 
-        return convertView;
-    }
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(MessageListAdapter.this, position);
+                }
+            }
+        });
 
-    @Override
-    public long getHeaderId(int position) {
-        Calendar instance = Calendar.getInstance();
-        if (messageList.get(position).time != null) {
-            instance.setTime(messageList.get(position).time);
-        }
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (onItemLongClickListener != null) {
+                    return onItemLongClickListener.onItemLongClick(MessageListAdapter.this, position);
+                }
+                return false;
+            }
+        });
 
-        instance.set(Calendar.HOUR_OF_DAY, 0);
-        instance.set(Calendar.MINUTE, 0);
-        instance.set(Calendar.SECOND, 0);
-        instance.set(Calendar.MILLISECOND, 0);
-
-        return instance.getTimeInMillis();
-    }
-
-    @Override
-    public int getCount() {
-        return messageList.size();
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return BodyViewHolder.Type.values().length;
     }
 
     @Override
@@ -174,7 +147,6 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         }
     }
 
-    @Override
     public ResMessages.Link getItem(int position) {
         return messageList.get(position);
     }
@@ -182,6 +154,11 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return messageList.size();
     }
 
     public void addAll(int position, List<ResMessages.Link> messages) {
@@ -466,6 +443,14 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         newMoreState = MoreState.Nope;
     }
 
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
     }
@@ -473,4 +458,13 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     private enum AnimState {
         Idle, Loading, End
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(RecyclerView.Adapter adapter, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onItemLongClick(RecyclerView.Adapter adapter, int position);
+    }
+
 }
