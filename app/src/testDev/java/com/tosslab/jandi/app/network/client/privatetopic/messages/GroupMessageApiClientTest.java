@@ -106,7 +106,7 @@ public class GroupMessageApiClientTest {
     public void testGetGroupMessagesUpdated() throws Exception {
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
 
-        ResUpdateMessages groupMessagesUpdated = groupMessageApiClient.getGroupMessagesUpdated(sideMenu.team.id, privateTopic.id, System.currentTimeMillis());
+        ResUpdateMessages groupMessagesUpdated = groupMessageApiClient.getGroupMessagesUpdated(sideMenu.team.id, privateTopic.id, 10);
 
         assertThat(groupMessagesUpdated, is(notNullValue()));
 

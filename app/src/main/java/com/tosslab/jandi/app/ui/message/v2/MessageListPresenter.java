@@ -419,6 +419,10 @@ public class MessageListPresenter {
 
         ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getCount() - 1);
 
+        if (TextUtils.equals(item.status, "event")) {
+            return;
+        }
+
         previewNameView.setText(item.message.writer.name);
         String url = item.message.writer.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl)) ? item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl : item.message.writer.u_photoUrl;
         Ion.with(previewProfileView)

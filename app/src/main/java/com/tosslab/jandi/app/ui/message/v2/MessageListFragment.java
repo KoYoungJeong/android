@@ -568,7 +568,9 @@ public class MessageListFragment extends Fragment {
         messageListPresenter.setMoreNewFromAdapter(false);
         messageListPresenter.setGotoLatestLayoutVisibleGone();
 
-        ((ActionBarActivity) getActivity()).getSupportActionBar().invalidateOptionsMenu();
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     public void onEvent(RequestFileUploadEvent event) {

@@ -121,7 +121,7 @@ public class DirectMessageApiClientTest {
 
         ResUpdateMessages directMessagesUpdated = null;
         try {
-            directMessagesUpdated = directMessageApiClient.getDirectMessagesUpdated(sideMenu.team.id, user.id, System.currentTimeMillis());
+            directMessagesUpdated = directMessageApiClient.getDirectMessagesUpdated(sideMenu.team.id, user.id, 10);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

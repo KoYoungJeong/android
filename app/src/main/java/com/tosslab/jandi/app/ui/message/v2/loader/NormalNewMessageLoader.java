@@ -64,7 +64,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 updateMarker();
 
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId)) {
+                if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 }
             }
