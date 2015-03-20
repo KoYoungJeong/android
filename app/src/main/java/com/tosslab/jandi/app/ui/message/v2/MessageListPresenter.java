@@ -124,11 +124,13 @@ public class MessageListPresenter {
 
         MessageListHeaderAdapter messageListHeaderAdapter = new MessageListHeaderAdapter(activity, messageListAdapter);
 
-        StickyHeadersItemDecoration decoration = new StickyHeadersBuilder()
+        StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(messageListAdapter)
                 .setRecyclerView(messageListView)
                 .setStickyHeadersAdapter(messageListHeaderAdapter, true)
                 .build();
+        messageListView.addItemDecoration(stickyHeadersItemDecoration);
+
 
         setSendEditText(tempMessage);
 

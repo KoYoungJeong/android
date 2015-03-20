@@ -17,6 +17,7 @@
         android:fillViewport="true"
         android:paddingBottom="@dimen/jandi_file_search_item_height_half"
         android:paddingTop="36.5dp"
+        android:scrollbars="vertical"
         android:smoothScrollbar="true" />
 
     <LinearLayout

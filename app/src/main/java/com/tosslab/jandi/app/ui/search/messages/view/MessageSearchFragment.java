@@ -77,7 +77,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         messageSearchPresenter.setView(this);
 
         FragmentActivity parentActivity = getActivity();
-        searchListView.setLayoutManager(new LinearLayoutManager(parentActivity));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(parentActivity);
+        linearLayoutManager.setSmoothScrollbarEnabled(true);
+        searchListView.setLayoutManager(linearLayoutManager);
         messageSearchResultAdapter = new MessageSearchResultAdapter(parentActivity);
         messageSearchResultAdapter.setOnRecyclerItemClickListener(new OnRecyclerItemClickListener() {
             @Override

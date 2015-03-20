@@ -120,6 +120,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         // Empty View를 가진 ListView 설정
         actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         actualListView.setAdapter(searchedFileItemListAdapter);
+        actualListView.setVerticalScrollBarEnabled(true);
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
