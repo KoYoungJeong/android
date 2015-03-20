@@ -127,7 +127,7 @@ public class MessageListPresenter {
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(messageListAdapter)
                 .setRecyclerView(messageListView)
-                .setStickyHeadersAdapter(messageListHeaderAdapter, true)
+                .setStickyHeadersAdapter(messageListHeaderAdapter, false)
                 .build();
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 

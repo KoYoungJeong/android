@@ -11,6 +11,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -92,6 +93,7 @@ public class SearchActivity extends ActionBarActivity implements SearchPresenter
         searchQueryAdapter = new SearchQueryAdapter(SearchActivity.this);
         searchEditText.setAdapter(searchQueryAdapter);
         searchEditText.setDropDownBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        searchEditText.setOnItemClickListener((parent, view, position, id) -> onSearchTextAction(searchEditText));
 
         searchMinY = -(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
 

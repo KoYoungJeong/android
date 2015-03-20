@@ -142,8 +142,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(RefreshOldFileEvent event) {
-        new GetPreviousFilesTask(getActivity()).execute();
-
         getPreviousFile();
     }
 
@@ -151,6 +149,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void getPreviousFile() {
 
         int justGetFilesSize;
+
+        fileListPresenter.showMoreProgressBar();
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
@@ -175,6 +175,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         } catch (JandiNetworkException e) {
             log.error("fail to get searched files.", e);
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+        } catch (Exception e) {
+            fileListPresenter.showErrorToast(getString(R.string.err_file_search));
+        } finally {
+            fileListPresenter.dismissProgressBar();
         }
 
     }

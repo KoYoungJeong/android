@@ -309,4 +309,8 @@
     <string name="jandi_setting_summary_led">"收到通知時閃爍 LED 燈"</string>
     <string name="jandi_sounds">"聲音"</string>
     <string name="jandi_vibrate">"振動"</string>
+    <string name="jandi_go_to_latest">"去到最近的訊息"</string>
+    <string name="jandi_retry_voice_search">"沒有接收清楚您剛才説的，麻煩再說一次"</string>
+    <string name="jandi_search_ing">"<![CDATA[搜尋 <b><font color="#404040">%s</font></b>...]]>"</string>
+    <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%1$s</font></b>與 <b><font color="#404040">%2$d</font></b>符合]]>"</string>
 </resources>

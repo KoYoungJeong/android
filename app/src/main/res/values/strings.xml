@@ -314,8 +314,8 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_on">"On"</string>
     <string name="jandi_setting_summary_vibrate">"Vibrate on incoming notifications"</string>
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
-    <string name="jandi_search_result_summary">"<![CDATA[<font color="#404040">%2$d</font> matches for \"<font color="#404040">%1$s</font>\"]]>"</string>
-    <string name="jandi_search_ing">"<![CDATA[Searching \"<font color="#404040">%s</font>\"...]]>"</string>
+    <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%2$d</font></b> matches for <b><font color="#404040">%1$s</font></b>]]>"</string>
+    <string name="jandi_search_ing">"<![CDATA[Searching <b><font color="#404040">%s</font></b>...]]>"</string>
     <string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
-    <string name="jandi_go_to_latest">"Go to the latest"</string>
+    <string name="jandi_go_to_latest">"Go to the most recent messages"</string>
 </resources>

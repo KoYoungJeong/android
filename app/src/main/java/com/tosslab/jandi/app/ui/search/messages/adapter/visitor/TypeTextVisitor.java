@@ -24,17 +24,10 @@ public class TypeTextVisitor implements TextVisitor {
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
         String type = record.getType();
-        String status = record.getStatus();
 
         ImageSpan imageSpan = null;
         if (TextUtils.equals(type, "file")) {
-            if (TextUtils.equals(status, "shared")) {
-                imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_share);
-            } else if (TextUtils.equals(status, "unsahred")) {
-                imageSpan = new TypeImageSpannable(context, R.drawable.icon_light_info);
-            } else {
-                imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_upload);
-            }
+            imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_upload);
         } else if (TextUtils.equals(type, "text")) {
         } else if (TextUtils.equals(type, "comment")) {
             imageSpan = new TypeImageSpannable(context, R.drawable.jandi_account_comment);

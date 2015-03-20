@@ -10,6 +10,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -29,6 +32,7 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapt
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -63,6 +67,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @ViewById(R.id.layout_search_scope)
     View scopeView;
+
+    @ViewById(R.id.progress_message_search)
+    ProgressBar progressBar;
 
     private Dialog memberSelectDialog;
     private Dialog entitySelectDialog;
@@ -324,6 +331,32 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     public void setOnLoadingEnd() {
         messageSearchResultAdapter.setOnLoadingEnd();
 
+    }
+
+    @UiThread
+    @Override
+    public void showMoreLoadingProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_in_bottom);
+        progressBar.setAnimation(animation);
+        animation.startNow();
+    }
+
+    @UiThread
+    @Override
+    public void dismissMoreLoadingProgressBar() {
+
+        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.slide_out_bottom);
+        progressBar.setAnimation(animation);
+        animation.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
+        animation.startNow();
     }
 
     @Override

@@ -100,4 +100,15 @@
         android:id="@+id/layout_file_list_loading"
         layout="@layout/progress_wheel" />
 
+    <ProgressBar
+        android:id="@+id/progress_file_list"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
 </RelativeLayout>

@@ -48,5 +48,9 @@ public interface MessageSearchPresenter {
         void setOnLoadingReady();
 
         void setOnLoadingEnd();
+
+        void showMoreLoadingProgressBar();
+
+        void dismissMoreLoadingProgressBar();
     }
 }
