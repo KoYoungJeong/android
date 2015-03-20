@@ -66,6 +66,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
                 if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
+                } else {
+                    messageListPresenter.moveToMessage(lastUpdatedMessage.messageId, 0);
                 }
             }
 
