@@ -7,10 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,7 +21,6 @@ import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -43,7 +41,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -57,7 +54,6 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EFragment(R.layout.fragment_file_list)
-@OptionsMenu(R.menu.main_activity_menu)
 public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
     private final Logger log = Logger.getLogger(FileListFragment.class);
 
@@ -80,12 +76,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @Bean
     FileListPresenter fileListPresenter;
 
-    private MenuItem searchMenu;   // ActionBar의 검색뷰
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
     private Context mContext;
-    private EntityManager mEntityManager;
-    private InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
@@ -113,8 +106,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mProgressWheel = new ProgressWheel(mContext);
         mProgressWheel.init();
 
-        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
         fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
@@ -130,6 +121,16 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (getActivity() instanceof SearchActivity && isSearchLayoutFirst) {
             onSearchHeaderReset();
             initSearchLayoutIfFirst();
+        }
+
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if (!(getActivity() instanceof FileListActivity)) {
+            getActivity().getMenuInflater().inflate(R.menu.main_activity_menu, menu);
         }
 
     }
