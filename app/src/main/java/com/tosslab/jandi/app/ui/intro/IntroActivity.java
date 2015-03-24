@@ -60,7 +60,7 @@ public class IntroActivity extends Activity {
             int installedAppVersion = introModel.getInstalledAppVersion(IntroActivity.this);
             if (config.maintenance != null && config.maintenance.status) {
                 introViewModel.showMaintenanceDialog();
-            } else if (installedAppVersion >= config.versions.android) {
+            } else if (installedAppVersion < config.versions.android) {
                 introModel.sleep(initTime, MAX_DELAY_MS);
                 introViewModel.showUpdateDialog();
             } else {
