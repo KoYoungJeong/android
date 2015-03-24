@@ -73,6 +73,8 @@ public class ImageSharePresenter {
         titleEditText.setEnabled(false);
         titleEditText.setTextColor(Color.BLACK);
 
+        commentText.getEditText().setMaxLines(4);
+
         for (EntityInfo entity : entities) {
             shareEntityAdapter.add(entity);
         }
