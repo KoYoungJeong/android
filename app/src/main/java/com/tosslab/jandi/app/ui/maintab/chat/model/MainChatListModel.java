@@ -63,10 +63,10 @@ public class MainChatListModel {
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
         Iterator<ChatItem> iterator = Observable.from(chatList)
-                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getEntityId()) != null)
+                .filter(resChat -> EntityManager.getInstance(context).getEntityById(resChat.getCompanionId()) != null)
                 .map(resChat -> {
 
-                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getEntityId());
+                    FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getCompanionId());
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
@@ -74,7 +74,7 @@ public class MainChatListModel {
                             .lastMessage(resChat.getLastMessage())
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
-                            .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getEntityId()))
+                            .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
                             .unread(resChat.getUnread())
                             .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
                             .photo(userEntity.getUserLargeProfileUrl());

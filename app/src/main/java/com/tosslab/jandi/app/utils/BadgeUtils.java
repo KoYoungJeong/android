@@ -29,8 +29,7 @@ public class BadgeUtils {
         Iterator<ResLeftSideMenu.AlarmInfo> alarmInfos = Observable.from(resLeftSideMenu.alarmInfos)
                 .filter(alarmInfo -> {
 
-                    if (TextUtils.equals(alarmInfo.entityType, "user")) {
-
+                    if (TextUtils.equals(alarmInfo.entityType, "chat")) {
                         return true;
                     } else {
 
