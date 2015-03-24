@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.settings;/**
  * Created by justinygchoi on 2014. 7. 18..
  */
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;

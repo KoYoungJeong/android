@@ -327,7 +327,6 @@
     <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.
 메세지를 입력하셔서 대화를 시작해보세요."</string>
-    <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="err_invalid_team_domain">"사용할 수 없는 도메인 입니다"</string>
     <string name="jandi_off">"끄기"</string>
     <string name="jandi_on">"켜기"</string>

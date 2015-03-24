@@ -105,14 +105,15 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols"/>
       <excludeFolder url="file://$MODULE_DIR$/build/outputs"/>
       <excludeFolder url="file://$MODULE_DIR$/build/retrolambda"/>
+      <excludeFolder url="file://$MODULE_DIR$/build/test-classes"/>
       <excludeFolder url="file://$MODULE_DIR$/build/tmp"/>
     </content>
     <orderEntry type="sourceFolder" forTests="false"/>
     <orderEntry type="library" exported="" scope="TEST" name="classworlds-1.1-alpha-2" level="project"/>
     <orderEntry type="library" exported="" name="floatlabel-1.0.2" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="plexus-utils-1.5.15" level="project"/>
-    <orderEntry type="library" exported="" name="Parse-1.7.1" level="project"/>
     <orderEntry type="library" exported="" name="rxjava-1.0.4" level="project"/>
+    <orderEntry type="library" exported="" name="Parse-1.8.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="nekohtml-1.9.6.2" level="project"/>
     <orderEntry type="library" exported="" name="androidasync-2.1.2" level="project"/>
     <orderEntry type="library" exported="" name="appcompat-v7-21.0.3" level="project"/>
@@ -141,9 +142,8 @@
     <orderEntry type="library" exported="" scope="TEST" name="plexus-interpolation-1.11" level="project"/>
     <orderEntry type="library" exported="" name="androidannotations-api-3.2" level="project"/>
     <orderEntry type="library" exported="" name="spring-android-core-1.0.1.RELEASE" level="project"/>
-    <orderEntry type="library" exported="" name="bolts-android-1.1.3" level="project"/>
-    <orderEntry type="library" exported="" name="1_bolts-android-1.1.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-project-2.2.1" level="project"/>
+    <orderEntry type="library" exported="" name="bolts-android-1.1.4" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="asm-util-5.0.1" level="project"/>
     <orderEntry type="library" exported="" name="gson-2.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="awaitility-1.6.3" level="project"/>
@@ -154,9 +154,10 @@
     <orderEntry type="library" exported="" scope="TEST" name="maven-artifact-manager-2.2.1" level="project"/>
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project"/>
     <orderEntry type="library" exported="" name="android-agent-4.265.0" level="project"/>
+    <orderEntry type="library" exported="" name="jackson-core-asl-1.9.13" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="cglib-nodep-3.1" level="project"/>
-    <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="ant-1.8.0" level="project"/>
+    <orderEntry type="library" exported="" name="material-dialogs-0.6.3.4" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="mockito-all-1.10.19" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="sqlite4java-0.282" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-ant-tasks-2.1.3" level="project"/>
@@ -166,7 +167,6 @@
     <orderEntry type="library" exported="" scope="TEST" name="plexus-container-default-1.0-alpha-9-stable-1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-plugin-registry-2.2.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="maven-settings-2.2.1" level="project"/>
-    <orderEntry type="library" exported="" name="jsoup-1.7.3" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="asm-commons-5.0.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="vtd-xml-2.11" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="support-v4-19.0.1" level="project"/>
@@ -175,9 +175,9 @@
     <orderEntry type="library" exported="" scope="TEST" name="maven-model-2.2.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="fest-util-1.2.5" level="project"/>
     <orderEntry type="library" exported="" name="support-annotations-21.0.3" level="project"/>
+    <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.13" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="fest-reflect-1.4.1" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="wagon-provider-api-1.0-beta-6" level="project"/>
-    <orderEntry type="library" exported="" name="jackson-mapper-asl-1.9.11" level="project"/>
     <orderEntry type="library" exported="" name="android-gif-drawable-1.1.2" level="project"/>
     <orderEntry type="library" exported="" scope="TEST" name="xercesMinimal-1.9.6.2" level="project"/>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK"/>

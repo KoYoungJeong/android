@@ -316,4 +316,12 @@ Click the button below to start or reopen a conversation."</string>
     <string name="jandi_setting_summary_vibrate">"Vibrate on incoming notifications"</string>
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
     <string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
+    <string name="jadi_account_home">"Account Home"</string>
+    <string name="jandi_account_home_help">"You can join multiple teams using one account.
+
+An account can also hold multiple email addresses.\nYou can use any of them to sign in.
+
+Assign one email to each team to let other members know how to contact you."</string>
+    <string name="jandi_go_to_main">"Go to\nAccount Home"</string>
+    <string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
 </resources>

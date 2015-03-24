@@ -317,7 +317,6 @@ JANDIへようこそ"</string>
     <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
     <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
-    <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
     <string name="err_invalid_team_domain">"不適切なドメイン名"</string>
     <string name="jandi_off">"オフ"</string>
     <string name="jandi_on">"オン"</string>
