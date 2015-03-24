@@ -299,6 +299,16 @@
     <string name="jandi_share_a_topic">"分享在一個議題群組内"</string>
     <string name="jandi_share_externally">"分享頁面"</string>
     <string name="jandi_my_files">"<b>我的檔案</b>"</string>
+    <string name="jandi_account_home_help">"您可以憑一個帳號加入多個團隊
+
+一個帳號可以同時連接多個電子郵件地址。您可以使用其中任何一個登入。
+
+給每個團隊指定一個電子郵件好使其他團隊成員知道如何聯係您。"</string>
+    <string name="jadi_account_home">"帳號首頁"</string>
+    <string name="jandi_go_to_main">"回到首頁"</string>
+    <string name="jandi_sign_in_ids_explain">"請選擇一個電子郵件地址讓我們將全部與JANDI相關的電子郵件寄給您。增加其它電子郵件地址以指定給特定團隊。"</string>
+    <string name="jandi_disable_user_profile_explain">"这成员已经被暂时关闭。欲知更多细节，请联系团队管理者。"</string>
+    <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="jandi_no_message_in_topic_dm">"輸入訊息以開始對話"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
     <string name="err_invalid_team_domain">"網域名稱無效"</string>

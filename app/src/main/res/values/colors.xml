@@ -133,4 +133,9 @@
     <color name="background">#FFA500</color>
 
     <color name="backgournd_photo_actionbar">#222222</color>
+
+    <color name="account_home_divide_line">#FFD1D1D1</color>
+    <color name="account_home_help_dialog_background">#FF31C08A</color>
+    <color name="account_home_team_text">@color/jandi_team_selector_text_black</color>
+    <color name="account_home_help_dialog_text">#FF404040</color>
 </resources>
