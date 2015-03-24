@@ -205,7 +205,8 @@ public class FileListPresenter {
                 if (formattedEntity.getId() == me.getId()) {
                     teamMember.remove(idx);
                     teamMember.add(0, formattedEntity);
-                    break;
+                } else if (!TextUtils.equals(formattedEntity.getUser().status, "enabled")) {
+                    teamMember.remove(idx);
                 }
             }
             final UserEntitySimpleListAdapter adapter = new UserEntitySimpleListAdapter(context, teamMember);
