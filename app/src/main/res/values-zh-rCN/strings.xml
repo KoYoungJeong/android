@@ -308,4 +308,5 @@
     <string name="jandi_setting_summary_led">"收到通知时闪烁 LED 灯"</string>
     <string name="jandi_sounds">"声音"</string>
     <string name="jandi_vibrate">"振动"</string>
+    <string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
 </resources>

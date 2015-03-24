@@ -326,4 +326,5 @@
     <string name="jandi_setting_summary_led">"알림을 수신하면 LED가 켜집니다."</string>
     <string name="jandi_sounds">"소리"</string>
     <string name="jandi_vibrate">"진동"</string>
+    <string name="jandi_service_maintenance">"현재 잔디는 정기 점검 중입니다. 1~2시간 내에 점검이 완료될 예정이니 조금만 기다려주세요. "</string>
 </resources>

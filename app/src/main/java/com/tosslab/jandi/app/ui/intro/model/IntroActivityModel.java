@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
@@ -54,7 +53,7 @@ public class IntroActivityModel {
         boolean isLatestVersion = true;
         try {
             // get current app version
-            int thisVersion = retrieveThisAppVersion(context);
+            int thisVersion = getInstalledAppVersion(context);
 
             // get stored app version at server
             int latestVersion = getLatestVersionInBackground();
@@ -70,7 +69,7 @@ public class IntroActivityModel {
     }
 
 
-    protected int retrieveThisAppVersion(Context context) {
+    public int getInstalledAppVersion(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
             String packageName = context.getPackageName();
@@ -83,7 +82,6 @@ public class IntroActivityModel {
         }
     }
 
-    @SupposeBackground
     int getLatestVersionInBackground() throws JandiNetworkException {
         ResConfig resConfig = jandiAuthClient.getConfig();
         return resConfig.versions.android;
@@ -171,5 +169,9 @@ public class IntroActivityModel {
         }
 
 
+    }
+
+    public ResConfig getConfigInfo() throws JandiNetworkException {
+        return jandiAuthClient.getConfig();
     }
 }

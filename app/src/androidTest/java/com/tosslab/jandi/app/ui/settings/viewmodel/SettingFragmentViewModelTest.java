@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowPreferenceActivity;
 
@@ -65,7 +66,7 @@ public class SettingFragmentViewModelTest {
 
 
         // Then : next Activity is IntroActivity
-        ShadowPreferenceActivity shadowPreferenceActivity = Robolectric.shadowOf(settingsActivity_);
+        ShadowActivity shadowPreferenceActivity = Robolectric.shadowOf(settingsActivity_);
         Intent nextStartedActivity = shadowPreferenceActivity.getNextStartedActivity();
 
         assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(IntroActivity_.class.getName())));

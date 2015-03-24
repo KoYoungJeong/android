@@ -316,4 +316,5 @@ JANDIへようこそ"</string>
     <string name="jandi_setting_summary_led">"お知らせ受信時にライト点灯"</string>
     <string name="jandi_setting_summary_vibrate">"お知らせ受信時にバイブレート"</string>
     <string name="jandi_vibrate">"バイブレート"</string>
+    <string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
 </resources>

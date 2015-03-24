@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.newrelic.agent.android.NewRelic;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -19,8 +20,6 @@ import org.androidannotations.annotations.UiThread;
 
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action1;
-import rx.functions.Func2;
 
 /**
  * Created by justinygchoi on 14. 11. 6..
@@ -55,22 +54,33 @@ public class IntroActivity extends Activity {
     @Background
     void checkNewVersion() {
         long initTime = System.currentTimeMillis();
-        boolean isNewVersion = introModel.checkNewVersion();
-        if (!isNewVersion) {
+        try {
+            ResConfig config = introModel.getConfigInfo();
+
+            int installedAppVersion = introModel.getInstalledAppVersion(IntroActivity.this);
+            if (config.maintenance != null && config.maintenance.status) {
+                introViewModel.showMaintenanceDialog();
+            } else if (installedAppVersion >= config.versions.android) {
+                introModel.sleep(initTime, MAX_DELAY_MS);
+                introViewModel.showUpdateDialog();
+            } else {
+                if (introModel.hasOldToken()) {
+                    introModel.removeOldToken();
+                }
+
+                if (!introModel.isNeedLogin()) {
+                    refreshTokenAndGoNextActivity(initTime);
+                } else {
+                    introModel.sleep(initTime, MAX_DELAY_MS);
+                    introViewModel.moveToIntroTutorialActivity();
+                }
+            }
+
+        } catch (JandiNetworkException e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
             introViewModel.showUpdateDialog();
-        } else {
-
-            if (introModel.hasOldToken()) {
-                introModel.removeOldToken();
-            }
-
-            if (!introModel.isNeedLogin()) {
-                refreshTokenAndGoNextActivity(initTime);
-            } else {
-                introModel.sleep(initTime, MAX_DELAY_MS);
-                introViewModel.moveToIntroTutorialActivity();
-            }
+        } catch (Exception e) {
+            introViewModel.showMaintenanceDialog();
         }
 
     }

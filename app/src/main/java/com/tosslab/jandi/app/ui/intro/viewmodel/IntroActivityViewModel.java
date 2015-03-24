@@ -99,4 +99,12 @@ public class IntroActivityViewModel {
 
     }
 
+    @UiThread
+    public void showMaintenanceDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage(R.string.jandi_service_maintenance)
+                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> activity.finish())
+                .setCancelable(false)
+                .create().show();
+    }
 }

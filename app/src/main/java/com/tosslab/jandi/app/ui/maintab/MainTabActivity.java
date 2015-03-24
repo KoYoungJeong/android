@@ -10,6 +10,7 @@ import android.view.View;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
+import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -20,6 +21,8 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
+import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -157,6 +160,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             log.error(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
                 getEntitiesFailed(getString(R.string.err_expired_session));
+            } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()){
+                EventBus.getDefault().post(new ServiceMaintenanceEvent());
             } else {
                 getEntitiesFailed(getString(R.string.err_service_connection));
             }
@@ -218,5 +223,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         } else {
             mMainTabPagerAdapter.hideNewTopicBadge();
         }
+    }
+
+    public void onEventMainThread(ServiceMaintenanceEvent event) {
+        IntroActivityViewModel introViewModel = IntroActivityViewModel_.getInstance_(MainTabActivity.this);
+        introViewModel.showMaintenanceDialog();
     }
 }
