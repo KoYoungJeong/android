@@ -120,8 +120,8 @@
     <orderEntry type="library" exported="" name="ion-2.1.2" level="project" />
     <orderEntry type="library" exported="" name="glide-3.5.1" level="project" />
     <orderEntry type="library" exported="" name="mixpanel-android-4.5.0" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="robolectric-annotations-2.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="commons-codec-1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="robolectric-annotations-2.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="robolectric-2.4" level="project" />
     <orderEntry type="library" exported="" name="library-1.2.3" level="project" />
     <orderEntry type="library" exported="" name="eventbus-2.4.0" level="project" />
@@ -133,12 +133,12 @@
     <orderEntry type="library" exported="" scope="TEST" name="ant-launcher-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="supertoasts-1.3.4" level="project" />
     <orderEntry type="library" exported="" name="android-logging-log4j-1.0.3" level="project" />
-    <orderEntry type="library" exported="" name="spring-android-core-1.0.1.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-3.2" level="project" />
+    <orderEntry type="library" exported="" name="spring-android-core-1.0.1.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="bolts-android-1.1.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-util-5.0.1" level="project" />
-    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="awaitility-1.6.3" level="project" />
+    <orderEntry type="library" exported="" name="gson-2.3" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-0.24.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-5.0.1" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.3" level="project" />
@@ -146,12 +146,12 @@
     <orderEntry type="library" exported="" name="log4j-1.2.17" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="android-agent-4.265.0" level="project" />
-    <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="cglib-nodep-3.1" level="project" />
+    <orderEntry type="library" exported="" name="jackson-core-asl-1.9.11" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="ant-1.8.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockito-all-1.10.19" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="maven-ant-tasks-2.1.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="sqlite4java-0.282" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="maven-ant-tasks-2.1.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockable-android-21" level="project" />
     <orderEntry type="library" exported="" name="jsoup-1.7.3" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-commons-5.0.1" level="project" />

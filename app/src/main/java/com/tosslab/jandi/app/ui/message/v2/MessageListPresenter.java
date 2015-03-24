@@ -159,7 +159,7 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
         messageListAdapter.addAll(position, messages);
-        messageListAdapter.notifyDataSetChanged();
+        messageListAdapter.notifyItemRangeChanged(position, messages.size());
     }
 
     @UiThread

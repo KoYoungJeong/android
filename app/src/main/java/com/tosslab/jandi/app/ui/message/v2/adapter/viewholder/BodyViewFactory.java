@@ -17,7 +17,7 @@ public class BodyViewFactory {
 
         switch (type) {
             case File:
-                return new FileViewHolder();
+                return FileViewHolder.createFileViewHolder();
             case Image:
                 return new ImageViewHolder();
             case PureComment:

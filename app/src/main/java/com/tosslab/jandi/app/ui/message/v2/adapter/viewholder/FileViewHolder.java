@@ -33,6 +33,13 @@ public class FileViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
 
+    private FileViewHolder() {
+    }
+
+    public static FileViewHolder createFileViewHolder() {
+        return new FileViewHolder();
+    }
+
 
     @Override
     public void initView(View rootView) {
