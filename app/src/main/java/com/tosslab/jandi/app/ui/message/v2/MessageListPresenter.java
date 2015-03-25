@@ -159,7 +159,7 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
         messageListAdapter.addAll(position, messages);
-        messageListAdapter.notifyItemRangeChanged(position, messages.size());
+        messageListAdapter.notifyItemRangeInserted(position, messages.size());
     }
 
     @UiThread
@@ -517,13 +517,10 @@ public class MessageListPresenter {
         if (lastItemPosition > 0) {
             messageListView.getLayoutManager().scrollToPosition(lastItemPosition - 1);
         }
-//        messageListView.getWrappedList().setStackFromBottom(true);
         addAll(lastItemPosition, records);
         if (firstVisibleItemLinkId > 0) {
             moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
         }
-//        messageListView.getWrappedList().setStackFromBottom(false);
-
     }
 
     public void setGotoLatestLayoutVisible() {

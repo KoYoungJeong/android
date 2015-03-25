@@ -85,7 +85,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {
                 final View view = viewHolder.itemView;
-                Integer colorFrom = context.getResources().getColor(R.color.message_marker_highlight);
+                Integer colorFrom = context.getResources().getColor(R.color.white);
                 Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
@@ -97,16 +97,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         markerAnimState = AnimState.End;
-                        view.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
                     }
                 });
                 colorAnimation.start();
                 markerAnimState = AnimState.Loading;
-            } else {
-                viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.message_marker_highlight));
             }
         } else {
-            viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
+            viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {
