@@ -243,7 +243,8 @@
     <string name="jandi_user_default_email">"主要电子邮件地址"</string>
     <string name="sent_auth_email">"一封电子邮件已经送出到您的信箱。
 请点击提供的连结来验證您的帐户及登入。"</string>
-    <string name="jandi_cannot_find_search_result">"没有找到档案"</string>
+    <string name="jandi_cannot_find_search_result_1">"您的档案库是空的。"</string>
+    <string name="jandi_cannot_find_search_result_2">"直接上传及分享档案到任何对话当中。"</string>
     <string name="jandi_team_join_fail">"处理您的邀请与团队加入时出了问题。请再试一次。 "</string>
     <string name="jandi_sent_password_reset_mail">"密码重设指示已经成功寄送到您的电子邮件 "</string>
     <string name="jandi_error_web_token">"登入時遇到問題。請再試一次。"</string>
@@ -271,8 +272,8 @@
     <string name="jandi_messages">"私信"</string>
     <string name="jandi_topic_paricipants">"议题参与成员"</string>
     <string name="jandi_new_team_name">"新团队名称"</string>
-    <string name="jandi_start_direct_messages">"<b>您所有直接传讯的讯息现在是隐藏的。</b>\n\n
-点击以下按键以开始或重新打开一个对话。"</string>
+    <string name="jandi_start_direct_messages_1">"<b>您所有直接传讯的讯息现在是隐藏的。</b>"</string>
+    <string name="jandi_start_direct_messages_2">"点击以下按键以开始或重新打开一个对话。"</string>
     <string name="jandi_private_topic_tip_1">"私人群组对非邀请成员不开放"</string>
     <string name="jandi_private_topic_tip_2">"在私人群组内已分享档案仅开放给其参与者"</string>
     <string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
@@ -318,4 +319,9 @@
     <string name="jandi_sounds">"声音"</string>
     <string name="jandi_vibrate">"振动"</string>
     <string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
+    <string name="jandi_upload_a_file">"上传档案"</string>
+    <string name="jandi_member_invite_popup_1">"有了JANDI，您可以想要多少团队及成员就有多少，而且完全免费！"</string>
+    <string name="jandi_member_invite_popup_2">"现在就建立一个团队来看看JANDI可以如何变化您在工作场合上的沟通及协作方式。"</string>
+    <string name="jandi_later">"之后"</string>
+    <string name="jandi_send_invitation">"送出邀请"</string>
 </resources>

@@ -522,7 +522,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             fileDetailPresenter.downloadDone(result, fileType, progressDialog);
         } catch (Exception e) {
             log.error("Download failed", e);
-            ColoredToast.showError(mContext, getString(R.string.err_download));
+            fileDetailPresenter.showFailToast(getString(R.string.err_download));
         }
     }
 

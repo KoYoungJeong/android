@@ -65,7 +65,7 @@ public class MessageListModel {
 
     private static final Logger logger = Logger.getLogger(MessageListModel.class);
 
-    private static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
+    public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
     @Bean
     MessageManipulator messageManipulator;
     @Bean

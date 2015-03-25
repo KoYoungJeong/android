@@ -257,7 +257,8 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
     <string name="jandi_success_web_token">"Sign-in was successful"</string>
     <string name="jandi_fail_web_token">"We were unable to sign you in automatically. Please try the process manually."</string>
-    <string name="jandi_cannot_find_search_result">"No files found"</string>
+    <string name="jandi_cannot_find_search_result_1">"Your file drawer is empty."</string>
+    <string name="jandi_cannot_find_search_result_2">"Upload and share files directly into any conversation."</string>
     <string name="jandi_team_join_fail">"There was an issue processing your invitation and joining the team. Please try again."</string>
     <string name="jandi_sent_password_reset_mail">Instructions to reset your password were sent to your email</string>
     <string name="jandi_fail_send_password_reset_email">Your password reset email could not be sent</string>
@@ -279,8 +280,8 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_messages">"Messages"</string>
     <string name="jandi_topic_paricipants">"Participants"</string>
     <string name="jandi_new_team_name">"New Team Name"</string>
-    <string name="jandi_start_direct_messages">"<b>All of your direct messages are currently hidden.</b>\n\n
-Click the button below to start or reopen a conversation."</string>
+    <string name="jandi_start_direct_messages_1">"<b>All of your direct messages are currently hidden.</b>"</string>
+    <string name="jandi_start_direct_messages_2">"Click the button below to start or reopen a conversation."</string>
     <string name="jandi_select_direct_messages">"Select Direct Message"</string>
     <string name="jandi_private_topic_tip_1">"Private topics are not available to non-invited members"</string>
     <string name="jandi_private_topic_tip_2">"Files shared in a private topic are only available to its participants"</string>
@@ -324,4 +325,9 @@ An account can also hold multiple email addresses.\nYou can use any of them to s
 Assign one email to each team to let other members know how to contact you."</string>
     <string name="jandi_go_to_main">"Go to\nAccount Home"</string>
     <string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
+    <string name="jandi_upload_a_file">"Upload a File"</string>
+    <string name="jandi_member_invite_popup_1">"Invite all of your team members now!"</string>
+    <string name="jandi_member_invite_popup_2">"JANDI is a group-oriented platform, so you\'ll find the best experience with your whole team in the flow."</string>
+    <string name="jandi_send_invitation">"Send Invitations"</string>
+    <string name="jandi_later">"Later"</string>
 </resources>

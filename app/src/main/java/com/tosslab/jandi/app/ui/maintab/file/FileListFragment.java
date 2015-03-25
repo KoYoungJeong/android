@@ -1,7 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -15,10 +20,13 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
+import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
+import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -28,6 +36,8 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -35,13 +45,16 @@ import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,7 +177,7 @@ public class FileListFragment extends Fragment {
         mSearchQuery.setToFirst();
         // 서치 시작
         searchedFileItemListAdapter.clearAdapter();
-        doSearch();
+        doSearchInBackground();
     }
 
     @Override
@@ -220,30 +233,24 @@ public class FileListFragment extends Fragment {
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
         searchedFileItemListAdapter.clearAdapter();
-        doSearch();
+        doSearchInBackground();
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
         mSearchQuery.setFileType(event.getServerQuery());
         searchedFileItemListAdapter.clearAdapter();
-        doSearch();
+        doSearchInBackground();
     }
 
     public void onEvent(CategorizingAsOwner event) {
         mSearchQuery.setWriter(event.userId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearch();
+        doSearchInBackground();
     }
 
     public void onEvent(CategorizingAsEntity event) {
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearch();
-    }
-
-    @UiThread
-    void doSearch() {
-
         doSearchInBackground();
     }
 
@@ -276,6 +283,102 @@ public class FileListFragment extends Fragment {
             log.error("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         }
+    }
+
+    @Click(R.id.btn_file_empty_upload)
+    void onUploadClick() {
+        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
+        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(RequestFileUploadEvent event) {
+        switch (event.type) {
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
+                fileListPresenter.openAlbumForActivityResult(FileListFragment.this);
+                break;
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                fileListPresenter.openCameraForActivityResult(FileListFragment.this);
+                break;
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+                fileListPresenter.openExplorerForActivityResult(FileListFragment.this);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
+    void onGalleryActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        String realFilePath;
+        Uri data = intent.getData();
+
+        if (data == null) {
+            return;
+        }
+
+        realFilePath = ImageFilePath.getPath(getActivity(), data);
+        if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+
+            String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+            String downloadName = GoogleImagePickerUtil.getWebImageName();
+            ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
+            downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
+        } else {
+            showFileUploadDialog(realFilePath);
+        }
+    }
+
+    @UiThread
+    void showFileUploadDialog(String realFilePath) {
+        if (fileListModel.isOverSize(realFilePath)) {
+            fileListPresenter.exceedMaxFileSizeError();
+        } else {
+            DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, mSearchQuery.mSearchEntity);
+            newFragment.show(getFragmentManager(), "dialog");
+
+        }
+    }
+
+    @Background
+    void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
+
+        try {
+            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, realFilePath, downloadDir, downloadName);
+            fileListPresenter.dismissProgressDialog(downloadProgress);
+            showFileUploadDialog(file.getAbsolutePath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnActivityResult(JandiConstants.TYPE_UPLOAD_TAKE_PHOTO)
+    void onCameraActivityResult(int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        Uri data = intent.getData();
+
+        if (data == null) {
+            return;
+        }
+        String realFilePath = ImageFilePath.getPath(getActivity(), data);
+        showFileUploadDialog(realFilePath);
+
+    }
+
+    @OnActivityResult(JandiConstants.TYPE_UPLOAD_EXPLORER)
+    void onExplorerActivityResult(int resultCode, Intent intent) {
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        String realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
+        showFileUploadDialog(realFilePath);
     }
 
     @UiThread
