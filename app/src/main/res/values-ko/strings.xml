@@ -315,9 +315,18 @@
     <string name="jandi_share_a_topic">"토픽에 공유하기"</string>
     <string name="jandi_share_externally">"공유하기"</string>
     <string name="jandi_my_files">"<b>내 파일</b>"</string>
+    <string name="jandi_sign_in_ids_explain">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
+    <string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을생성하거나 참여할 수 있습니다.
+
+여러 개의 메일 주소를 추가하여 업무 용도와개인 용도의 팀을 분리해서 사용할 수 있습니다.
+
+특정 팀과 연동된 메일 주소는언제든 바꿀 수 있습니다."</string>
+    <string name="jadi_account_home">"잔디 메인"</string>
+    <string name="jandi_go_to_main">"잔디 메인으로"</string>
+    <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
+    <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="jandi_no_message_in_topic_dm">"아직 메세지가 없습니다.
 메세지를 입력하셔서 대화를 시작해보세요."</string>
-    <string name="jandi_share_to_jandi">"JANDI에 공유하기"</string>
     <string name="err_invalid_team_domain">"사용할 수 없는 도메인 입니다"</string>
     <string name="jandi_off">"끄기"</string>
     <string name="jandi_on">"켜기"</string>
@@ -326,6 +335,7 @@
     <string name="jandi_setting_summary_led">"알림을 수신하면 LED가 켜집니다."</string>
     <string name="jandi_sounds">"소리"</string>
     <string name="jandi_vibrate">"진동"</string>
+    <string name="jandi_service_maintenance">"현재 잔디는 정기 점검 중입니다. 1~2시간 내에 점검이 완료될 예정이니 조금만 기다려주세요. "</string>
     <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%1$s</font></b>에 대한 <b><font color="#404040">%2$d</font></b>개의 검색 결과가 있습니다.]]>"</string>
     <string name="jandi_search_ing">"<![CDATA[<b><font color="#404040">%s</font></b>]]>검색 중..."</string>
     <string name="jandi_retry_voice_search">음성 검색을 다시 시도해주십시요.</string>

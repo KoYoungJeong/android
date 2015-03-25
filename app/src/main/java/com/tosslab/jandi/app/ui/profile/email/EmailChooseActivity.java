@@ -77,7 +77,7 @@ public class EmailChooseActivity extends ActionBarActivity {
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
-            emailChoosePresenter.finish();
+            emailChoosePresenter.finishWithResultOK();
         } catch (JandiNetworkException e) {
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
             logger.error("Request Choose Email Fail : " + e.getErrorInfo(), e);

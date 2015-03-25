@@ -67,7 +67,7 @@ public class IntroActivityModelTest {
     public void testRetrieveThisAppVersion() throws Exception {
 
         // When : Get app version
-        int versionCode = introActivityModel.retrieveThisAppVersion(Robolectric.application);
+        int versionCode = introActivityModel.getInstalledAppVersion(Robolectric.application);
 
         // Then : Maybe....show update dialog..Because AndroidManifest.xml is not defined.
         assertThat(versionCode > 0, is(true));

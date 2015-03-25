@@ -43,4 +43,13 @@
             android:title="@string/jandi_privacy_policy" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="setting_general"
+        android:title="@string/jandi_setting_general">
+        <Preference
+            android:key="setting_logout"
+            android:selectable="true"
+            android:title="@string/jandi_setting_sign_out" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

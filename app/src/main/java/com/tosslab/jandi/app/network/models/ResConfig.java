@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResConfig {
     public Version versions;
+    public Maintenance maintenance;
 
     @Override
     public String toString() {
@@ -29,6 +30,21 @@ public class ResConfig {
             return "Version{" +
                     "ios='" + ios + '\'' +
                     ", android=" + android +
+                    '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Maintenance {
+        public boolean status;
+        public String msg;
+
+        @Override
+        public String toString() {
+            return "Maintenance{" +
+                    "status=" + status +
+                    ", msg='" + msg + '\'' +
                     '}';
         }
     }

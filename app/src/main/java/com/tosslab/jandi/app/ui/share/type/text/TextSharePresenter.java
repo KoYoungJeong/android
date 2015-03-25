@@ -64,6 +64,7 @@ public class TextSharePresenter {
     @AfterViews
     void initView() {
         EditText editText = floatLabel.getEditText();
+        editText.setMaxLines(4);
 
         StringBuffer buffer = new StringBuffer();
         if (!TextUtils.isEmpty(subject)) {

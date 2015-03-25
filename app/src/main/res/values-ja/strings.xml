@@ -306,8 +306,17 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
-    <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
+    <string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます
+
+1つのアカウントで複数のメールアドレスを持つことができ、いずれのメールアドレスでもログイン可能です
+
+チームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
+    <string name="jadi_account_home">"ホームに戻る"</string>
+    <string name="jandi_go_to_main">"ホームに戻る"</string>
+    <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
+    <string name="jandi_disable_user_profile_explain">"このメンバーは現在無効化されています。詳細はチーム管理者にお問い合わせ下さい"</string>
     <string name="jandi_share_to_jandi">"JANDIにシェア"</string>
+    <string name="jandi_no_message_in_topic_dm">"メッセージを書いて会話を始めましょう"</string>
     <string name="err_invalid_team_domain">"不適切なドメイン名"</string>
     <string name="jandi_off">"オフ"</string>
     <string name="jandi_on">"オン"</string>
@@ -316,6 +325,7 @@ JANDIへようこそ"</string>
     <string name="jandi_setting_summary_led">"お知らせ受信時にライト点灯"</string>
     <string name="jandi_setting_summary_vibrate">"お知らせ受信時にバイブレート"</string>
     <string name="jandi_vibrate">"バイブレート"</string>
+    <string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
     <string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
     <string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
     <string name="jandi_search_ing">""<![CDATA[<b><font color="#404040">%s</font></b>を検索しています]]>""</string>

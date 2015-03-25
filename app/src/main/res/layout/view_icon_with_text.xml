@@ -15,6 +15,7 @@
         android:id="@+id/tv_icon_with_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:textColor="@color/jandi_text_medium" />
 
 </LinearLayout>

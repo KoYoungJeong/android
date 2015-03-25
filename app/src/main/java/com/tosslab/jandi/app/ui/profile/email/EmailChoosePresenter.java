@@ -171,7 +171,8 @@ public class EmailChoosePresenter {
     }
 
     @UiThread
-    public void finish() {
+    public void finishWithResultOK() {
+        activity.setResult(Activity.RESULT_OK);
         activity.finish();
     }
 }

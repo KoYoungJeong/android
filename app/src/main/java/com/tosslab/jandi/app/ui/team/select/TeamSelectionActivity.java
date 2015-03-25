@@ -265,7 +265,7 @@ public class TeamSelectionActivity extends ActionBarActivity {
 
     private void setUpActionBar() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
         // Set up the action bar.

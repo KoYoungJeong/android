@@ -1,5 +1,12 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.res.ColorStateList;
+import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.CharacterStyle;
+import android.text.style.TextAppearanceSpan;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,13 +32,11 @@ import rx.schedulers.Schedulers;
 public class EventViewHolder implements BodyViewHolder {
 
     private TextView eventContentView;
-    private TextView eventDateView;
 
     @Override
     public void initView(View rootView) {
 
         eventContentView = ((TextView) rootView.findViewById(R.id.txt_message_event_title));
-        eventDateView = ((TextView) rootView.findViewById(R.id.txt_message_event_date));
 
     }
 
@@ -39,7 +44,6 @@ public class EventViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link) {
 
         eventContentView.setText(" ");
-        eventDateView.setText(" ");
 
         Observable.from(Arrays.asList(link.info))
                 .subscribeOn(Schedulers.io())
@@ -60,6 +64,8 @@ public class EventViewHolder implements BodyViewHolder {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(eventInfo -> {
 
+                    SpannableStringBuilder builder = new SpannableStringBuilder();
+
                     EntityManager entityManager = EntityManager.getInstance(eventContentView.getContext());
                     if (eventInfo instanceof ResMessages.CreateEvent) {
                         ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) eventInfo;
@@ -68,14 +74,14 @@ public class EventViewHolder implements BodyViewHolder {
                             ResMessages.PublicCreateInfo publicCreateInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
                             FormattedEntity creatorEntity = entityManager.getEntityById(publicCreateInfo.creatorId);
 
-                            eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
+                            builder.append(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
 
                         } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
                             ResMessages.PrivateCreateInfo privateCreateInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
 
                             FormattedEntity creatorEntity = entityManager.getEntityById(privateCreateInfo.creatorId);
 
-                            eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
+                            builder.append(eventContentView.getContext().getString(R.string.jandi_created_this_topic, creatorEntity.getName()));
 
                         }
 
@@ -100,24 +106,34 @@ public class EventViewHolder implements BodyViewHolder {
                             }
                         }
 
-                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
+                        builder.append(eventContentView.getContext().getString(R.string.jandi_invited_topic, invitorName, buffer.toString()));
 
                     } else if (eventInfo instanceof ResMessages.JoinEvent) {
 
                         FormattedEntity entity = EntityManager.getInstance(eventContentView.getContext()).getEntityById(link.fromEntity);
 
                         String name = entity.getName();
-                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
+                        builder.append(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
 
 
                     } else if (eventInfo instanceof ResMessages.LeaveEvent) {
+
                         FormattedEntity entity = EntityManager.getInstance(eventContentView.getContext()).getEntityById(link.fromEntity);
 
                         String name = entity.getName();
-                        eventContentView.setText(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
+                        builder.append(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
                     }
 
-                    eventDateView.setText(DateTransformator.getTimeStringForSimple(link.time));
+
+                    int eventTextSize = eventContentView.getResources().getDimensionPixelSize(R.dimen.jandi_messages_content);
+                    ColorStateList eventTextColor = ColorStateList.valueOf(eventContentView.getResources().getColor(R.color.jandi_messages_date));
+                    int eventLength = builder.length();
+                    builder.setSpan(new TextAppearanceSpan(null, Typeface.NORMAL, eventTextSize, eventTextColor, eventTextColor), 0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    int dateTextSize = eventContentView.getResources().getDimensionPixelSize(R.dimen.jandi_messages_date);
+                    builder.append(" ").append(DateTransformator.getTimeStringForSimple(link.time));
+                    builder.setSpan(new TextAppearanceSpan(null, Typeface.NORMAL, dateTextSize, eventTextColor, eventTextColor), eventLength, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    eventContentView.setText(builder);
                 });
 
     }

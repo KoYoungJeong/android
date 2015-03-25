@@ -80,7 +80,7 @@ public class AccountProfileActivity extends BaseAnalyticsActivity {
 
     private void setActionBarSetting() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
