@@ -297,11 +297,15 @@ public class FileDetailPresenter {
             int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
 
-            for (int i = 0; i < nSharedEntities; i++) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(i));
+            for (int idx = 0; idx < nSharedEntities; idx++) {
+                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));
 
                 if (sharedEntity == null) {
                     continue;
+                }
+
+                if (spannableStringBuilder.length() > 0) {
+                    spannableStringBuilder.append(", ");
                 }
 
                 int entityType;
@@ -320,9 +324,7 @@ public class FileDetailPresenter {
                 spannableStringBuilder.append(sharedEntity.getName());
 
                 spannableStringBuilder.setSpan(entitySpannable, length, length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                if (i != nSharedEntities - 1) {
-                    spannableStringBuilder.append(", ");
-                }
+
 
             }
             textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
