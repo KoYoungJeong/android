@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentArg;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -22,6 +23,11 @@ public class MessageListV2Activity extends ActionBarActivity {
     boolean isFromPush = false;
     @Extra
     int teamId;
+    @Extra
+    boolean isFromSearch = false;
+    @Extra
+    int lastMarker = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,8 @@ public class MessageListV2Activity extends ActionBarActivity {
                                 .isFavorite(isFavorite)
                                 .isFromPush(isFromPush)
                                 .teamId(teamId)
+                                .lastMarker(lastMarker)
+                                .isFromSearch(isFromSearch)
                                 .build(),
                         MessageListFragment.class.getName()
 

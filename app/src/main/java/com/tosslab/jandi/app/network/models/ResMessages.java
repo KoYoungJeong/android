@@ -18,21 +18,15 @@ import java.util.Map;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResMessages {
     public int lastLinkId;
-    public int numOfPage;
-    public int firstIdOfReceivedList;
-    public boolean isFirst;
-    public int messageCount;
-    public List<Link> messages;
+    public int firstLinkId;
+    public List<Link> records;
 
     @Override
     public String toString() {
         return "ResMessages{" +
                 "lastLinkId=" + lastLinkId +
-                ", numOfPage=" + numOfPage +
-                ", firstIdOfReceivedList=" + firstIdOfReceivedList +
-                ", isFirst=" + isFirst +
-                ", messageCount=" + messageCount +
-                ", messages=" + messages +
+                ", firstLinkId=" + firstLinkId +
+                ", records=" + records +
                 '}';
     }
 
@@ -41,7 +35,7 @@ public class ResMessages {
     public static class Link {
         public int id;
         public int teamId;
-        public ResLeftSideMenu.Entity fromEntity;
+        public int fromEntity;
         public Date time;
         public int messageId;
         public String status;

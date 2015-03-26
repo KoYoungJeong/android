@@ -1,10 +1,10 @@
 apply plugin: 'android'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
-apply plugin: 'robolectric'     // Android-Test
+apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
-apply from: 'test.gradle'       // Android-Test Env Setting
+//apply from: 'test.gradle'       // Android-Test Env Setting
 
 configurations {
     apt
@@ -63,21 +63,19 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.+'
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.android.support:support-v13:21.0.+'
-//    compile 'com.android.support:support-annotations:21.0.+'
-//    compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.android.support:recyclerview-v7:21.0.+'
+    compile 'com.android.support:cardview-v7:21.0.+'
 
     // UI
     compile 'com.github.johnpersano:supertoasts:1.3.4@aar'
     compile 'com.github.chrisbanes.photoview:library:1.2.+@aar'
     aarLinkSources 'com.github.chrisbanes.photoview:library:1.2.+:sources@jar'
-    compile 'se.emilsjolander:stickylistheaders:2.5.2@aar'
-    aarLinkSources 'se.emilsjolander:stickylistheaders:2.5.2:sources@jar'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+@aar'
     aarLinkSources 'pl.droidsonroids.gif:android-gif-drawable:1.1.+:sources@jar'
     compile 'com.iangclifton.android:floatlabel:1.0.2'
-    compile ('com.afollestad:material-dialogs:0.6.3.4@aar') {
-//        exclude group: 'com.android.support'
-    }
+    compile 'com.eowise:recyclerview-stickyheaders:0.5.2@aar'
+    aarLinkSources 'com.eowise:recyclerview-stickyheaders:0.5.2:sources@jar'
+    compile 'com.afollestad:material-dialogs:0.6.3.4@aar'
     aarLinkSources 'com.afollestad:material-dialogs:0.6.3.4:sources@jar'
 
     // Boilerplate
@@ -87,7 +85,7 @@ dependencies {
     compile 'org.springframework.android:spring-android-core:1.0.+'
     compile 'org.springframework.android:spring-android-rest-template:1.0.+'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
-//    compile 'org.jsoup:jsoup:1.7.3'
+
     // Cache
     compile 'com.github.bumptech.glide:glide:3.5.1'
     compile 'com.koushikdutta.ion:ion:2.+'
@@ -103,10 +101,10 @@ dependencies {
     compile 'io.reactivex:rxandroid:0.24.+'
 
     // Test : Robolectric, Junit4
-    androidTestCompile 'org.robolectric:robolectric:2.3'
-    androidTestCompile 'com.jayway.awaitility:awaitility:1.6.+'
-    androidTestCompile 'junit:junit:4.10'
-    androidTestCompile 'org.mockito:mockito-all:1.10.+'
+    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-all:1.10.+'
 
 }
 
@@ -120,6 +118,9 @@ android {
         targetSdkVersion 21
         versionCode 41
         versionName '0.9.11'
+
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
 
@@ -198,6 +199,10 @@ android {
 
     jacoco {
         version = '0.7.2.201409121644'
+    }
+
+    dexOptions {
+        javaMaxHeapSize "2048M"
     }
 }
 

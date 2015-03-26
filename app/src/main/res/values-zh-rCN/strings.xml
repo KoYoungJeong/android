@@ -319,6 +319,10 @@
     <string name="jandi_sounds">"声音"</string>
     <string name="jandi_vibrate">"振动"</string>
     <string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
+    <string name="jandi_go_to_latest">"去到最近的讯息"</string>
+    <string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
+    <string name="jandi_search_ing">"<![CDATA[搜寻 <b><font color="#404040">%s</font></b>...]]>"</string>
+    <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%1$s</font></b>与 <b><font color="#404040">%2$d</font></b>符合]]>"</string>
     <string name="jandi_upload_a_file">"上传档案"</string>
     <string name="jandi_member_invite_popup_1">"有了JANDI，您可以想要多少团队及成员就有多少，而且完全免费！"</string>
     <string name="jandi_member_invite_popup_2">"现在就建立一个团队来看看JANDI可以如何变化您在工作场合上的沟通及协作方式。"</string>

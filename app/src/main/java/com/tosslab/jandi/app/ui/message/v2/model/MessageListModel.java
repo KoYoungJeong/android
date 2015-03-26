@@ -330,4 +330,24 @@ public class MessageListModel {
         }
 
     }
+
+    @Deprecated
+    public int getLatestMessageId(List<ResMessages.Link> messages) {
+
+        for (ResMessages.Link message : messages) {
+
+        }
+
+        return 0;
+    }
+
+    public ResMessages getBeforeMarkerMessage(int linkId) throws JandiNetworkException {
+
+        return messageManipulator.getBeforeMarkerMessage(linkId);
+    }
+
+
+    public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
+        return messageManipulator.getAfterMarkerMessage(linkId);
+    }
 }

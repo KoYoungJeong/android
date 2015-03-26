@@ -12,6 +12,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -59,7 +60,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link) {
 
-        ResLeftSideMenu.User fromEntity = (ResLeftSideMenu.User) link.fromEntity;
+        int fromEntityId = link.fromEntity;
+
+        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
 

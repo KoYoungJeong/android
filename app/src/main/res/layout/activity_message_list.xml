@@ -15,7 +15,7 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="0dp"
         android:smoothScrollbar="true"
-        android:transcriptMode="alwaysScroll" />
+        android:transcriptMode="normal" />
 
     <!-- Message Input Layout -->
     <View

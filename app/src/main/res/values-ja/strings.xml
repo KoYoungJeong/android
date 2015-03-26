@@ -327,6 +327,10 @@ JANDIへようこそ"</string>
     <string name="jandi_setting_summary_vibrate">"お知らせ受信時にバイブレート"</string>
     <string name="jandi_vibrate">"バイブレート"</string>
     <string name="jandi_service_maintenance">"JANDIは現在定期メンテナンス中のためご利用できません。定期メンテナンスは数時間で終了の予定です。ご不便をお掛けし申し訳ありません。"</string>
+    <string name="jandi_go_to_latest">"最新のメッセージに移動"</string>
+    <string name="jandi_retry_voice_search">"言葉を認識できませんでした。もう一度お試し下さい"</string>
+    <string name="jandi_search_ing">""<![CDATA[<b><font color="#404040">%s</font></b>を検索しています]]>""</string>
+    <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%1$s</font></b>の検索結果が<b><font color="#404040">%2$d</font></b>件あります]]>"</string>
     <string name="jandi_upload_a_file">"ファイルをアップロード"</string>
     <string name="jandi_member_invite_popup_1">"JANDIなら、無料で好きなだけチームを作ったり、メンバーを招待することができます。"</string>
     <string name="jandi_member_invite_popup_2">"今すぐチームを作って、仕事のやりとりがどれだけ劇的に改善できるかご自身の目で確かめてみましょう"</string>

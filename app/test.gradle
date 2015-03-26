@@ -33,15 +33,15 @@ task initGradleTest << {
 
 tasks.preBuild.dependsOn initGradleTest
 
-android.applicationVariants.all { variant ->
-
-    if (variant.buildType.name == 'debug') {
-
-        def capitalizedFlavorName = variant.name.capitalize()
-
-        def originCompileTestTask = tasks.getByName("compile${capitalizedFlavorName}TestJava")
-        def robolectricCompileTask = tasks.getByName("compileTest${capitalizedFlavorName}Java")
-
-        originCompileTestTask.dependsOn robolectricCompileTask
-    }
-}
+//android.applicationVariants.all { variant ->
+//
+//    if (variant.buildType.name == 'debug') {
+//
+//        def capitalizedFlavorName = variant.name.capitalize()
+//
+//        def originCompileTestTask = tasks.getByName("compile${capitalizedFlavorName}TestJava")
+//        def robolectricCompileTask = tasks.getByName("compileTest${capitalizedFlavorName}Java")
+//
+//        originCompileTestTask.dependsOn robolectricCompileTask
+//    }
+//}

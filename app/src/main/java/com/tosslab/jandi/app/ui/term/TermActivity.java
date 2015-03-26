@@ -42,7 +42,7 @@ public class TermActivity extends ActionBarActivity {
 
     private void setActionbarSetting(Mode mode) {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
         // Set up the action bar.

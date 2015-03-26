@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_message_input_panel">
+
+    <!--<ListView-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list_search_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp"
+        android:paddingTop="112dp"
+        android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:id="@+id/layout_search_scope"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:background="?attr/colorPrimary"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:id="@+id/layout_search_scope_where"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/jandi_search_default_size"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txt_search_scope_where"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/jandi_file_category_everywhere"
+                android:textColor="@color/white"
+                android:textSize="@dimen/jadi_search_scope_txt_size" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/jandi_arrow_down" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_search_scope_who"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/jandi_search_default_size"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/txt_search_scope_who"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/jandi_file_category_everyone"
+                android:textColor="@color/white"
+                android:textSize="@dimen/jadi_search_scope_txt_size" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/jandi_arrow_down" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_message_search"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

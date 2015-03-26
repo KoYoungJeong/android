@@ -15,3 +15,171 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+#RetroLambda
+-dontwarn java.lang.invoke.*
+
+# OkHttp
+-keepattributes Signature
+-keepattributes *Annotation*
+-keep class com.squareup.okhttp.** { *; }
+-keep interface com.squareup.okhttp.** { *; }
+-dontwarn com.squareup.okhttp.**
+
+## GreenRobot EventBus specific rules ##
+# https://github.com/greenrobot/EventBus/blob/master/HOWTO.md#proguard-configuration
+
+-keepclassmembers class ** {
+    public void onEvent*(**);
+}
+
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends de.greenrobot.event.util.ThrowableFailureEvent {
+    public <init>(java.lang.Throwable);
+}
+
+## Google Analytics 3.0 specific rules ##
+
+-keep class com.google.analytics.** { *; }
+
+## Google Play Services 4.3.23 specific rules ##
+## https://developer.android.com/google/play-services/setup.html#Proguard ##
+
+-keep class * extends java.util.ListResourceBundle {
+    protected Object[][] getContents();
+}
+
+-keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
+    public static final *** NULL;
+}
+
+-keepnames @com.google.android.gms.common.annotation.KeepName class *
+-keepclassmembernames class * {
+    @com.google.android.gms.common.annotation.KeepName *;
+}
+
+-keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
+
+## GSON 2.2.4 specific rules ##
+
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+-keepattributes EnclosingMethod
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+
+# Parse
+-dontwarn com.parse.**
+-keep class com.parse.** { *; }
+
+# Facebook
+-keep class com.facebook.** { *; }
+-keepattributes Signature
+
+
+# Keep the BuildConfig
+-keep class com.example.BuildConfig { *; }
+
+# Keep the support library
+-keep class android.support.v4.** { *; }
+-keep interface android.support.v4.** { *; }
+
+
+# RxJava
+
+-keep class rx.schedulers.Schedulers {
+    public static <methods>;
+}
+-keep class rx.schedulers.ImmediateScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.TestScheduler {
+    public <methods>;
+}
+-keep class rx.schedulers.Schedulers {
+    public static ** test();
+}
+-dontwarn sun.misc.Unsafe
+
+# Proguard configuration for New Relic 3.+
+# https://docs.newrelic.com/docs/mobile-monitoring/mobile-monitoring-installation/android/installing-android-apps-gradle-android-studio
+
+-keep class com.newrelic.** { *; }
+-dontwarn com.newrelic.**
+-keepattributes Exceptions, Signature, InnerClasses
+
+# Spring-Android
+-dontwarn com.fasterxml.jackson.**
+-dontwarn com.google.code.rome.android.repackaged.com.sun.syndication.**
+-dontwarn org.apache.commons.httpclient.**
+-dontwarn org.simpleframework.xml.**
+
+-keepclassmembers public class org.springframework {
+    public *;
+}
+
+# Jackson 1.xx
+-dontwarn org.joda.time.**
+-dontwarn org.w3c.dom.bootstrap.**
+-keepnames class org.codehaus.jackson.** { *; }
+
+# log4j
+-dontwarn org.apache.log4j.**
+
+# Joda-Time
+-keep class org.joda.time.** { *; }
+-keep interface org.joda.time.** { *; }
+
+
+# Default
+
+-keepattributes *Annotation*, EnclosingMethod
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembers class * {
+    native <methods>;
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+-keepclassmembers public class org.springframework {
+    public *;
+}
+
+-keep class com.tosslab.jandi.app.** {*;}
+#-keep class com.tosslab.jandi.app.**$*
+#-keep interface com.tosslab.jandi.app.**

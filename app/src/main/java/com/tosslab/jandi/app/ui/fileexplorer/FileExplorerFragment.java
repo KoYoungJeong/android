@@ -60,7 +60,7 @@ public class FileExplorerFragment extends Fragment {
 
     private void setupActionbar(String absolutePath) {
 
-        Toolbar toolbar = ((Toolbar) getActivity().findViewById(R.id.my_toolbar));
+        Toolbar toolbar = ((Toolbar) getActivity().findViewById(R.id.layout_search_bar));
         ((ActionBarActivity) getActivity()).setSupportActionBar(toolbar);
 
 

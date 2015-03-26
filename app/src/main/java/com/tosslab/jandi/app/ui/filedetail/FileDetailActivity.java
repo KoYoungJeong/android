@@ -150,7 +150,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     private void setUpActionBar() {
         // Set up the action bar.
 
-        Toolbar toolbar = ((Toolbar) findViewById(R.id.my_toolbar));
+        Toolbar toolbar = ((Toolbar) findViewById(R.id.layout_search_bar));
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();

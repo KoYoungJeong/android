@@ -1,13 +1,13 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -42,14 +42,28 @@ public interface DirectMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages/{fromId}/{numOfPost}?teamId={teamId}")
+    @Get("/users/{userId}/messages?teamId={teamId}&linkId={fromId}&type=old")
     @RequiresAuthentication
-    ResMessages getDirectMessages(int teamId, int userId, int fromId, int numOfPost);
+    ResMessages getDirectMessages(int teamId, int userId, int fromId);
 
-    // Updated 된 Direct Message 리스트 정보 획득
+    @Get("/users/{userId}/messages?teamId={teamId}&type=old")
+    @RequiresAuthentication
+    ResMessages getDirectMessages(int teamId, int userId);
+
     @Get("/users/{userId}/messages/update/{timeAfter}?teamId={teamId}")
     @RequiresAuthentication
-    ResUpdateMessages getDirectMessagesUpdated(int teamId, int userId, long timeAfter);
+    ResUpdateMessages getDirectMessagesUpdated(int teamId, int userId, int timeAfter);
+
+    // Updated 된 Direct Message 리스트 정보 획득
+    @Get("/users/{userId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
+    @RequiresAuthentication
+    ResMessages getDirectMessagesUpdatedForMarker(int teamId, int userId, int currentLinkId);
+
+
+    // Updated 된 Direct Message 리스트 정보 획득
+    @Get("/users/{userId}/messages?teamId={teamId}&linkId={currentLinkId}")
+    @RequiresAuthentication
+    ResMessages getDirectMarkerMessages(int teamId, int userId, int currentLinkId);
 
     // Direct Message 생성
     @Post("/users/{userId}/message")

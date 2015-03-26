@@ -110,13 +110,17 @@ public class EventViewHolder implements BodyViewHolder {
 
                     } else if (eventInfo instanceof ResMessages.JoinEvent) {
 
-                        String name = link.fromEntity.name;
+                        FormattedEntity entity = EntityManager.getInstance(eventContentView.getContext()).getEntityById(link.fromEntity);
+
+                        String name = entity.getName();
                         builder.append(eventContentView.getContext().getString(R.string.jandi_has_joined, name));
 
 
                     } else if (eventInfo instanceof ResMessages.LeaveEvent) {
 
-                        String name = link.fromEntity.name;
+                        FormattedEntity entity = EntityManager.getInstance(eventContentView.getContext()).getEntityById(link.fromEntity);
+
+                        String name = entity.getName();
                         builder.append(eventContentView.getContext().getString(R.string.jandi_left_topic, name));
                     }
 
@@ -138,6 +142,5 @@ public class EventViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_event_v2;
     }
-
 
 }

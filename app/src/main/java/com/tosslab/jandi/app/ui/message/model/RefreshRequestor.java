@@ -42,12 +42,12 @@ public class RefreshRequestor {
             mMessageItemConverter.insertMessageItem(restResMessages);
             messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
             // 만일 지금 받은 메시지가 끝이라면 이를 저장함.
-            messageState.setFirstMessage(restResMessages.isFirst);
+//            messageState.setFirstMessage(restResMessages.isFirst);
             // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
-            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
+//            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
 
-            log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
-                    + " messages from " + messageState.getFirstItemId());
+//            log.debug("GetFutherMessagesTask : " + restResMessages.messageCount
+//                    + " messages from " + messageState.getFirstItemId());
             return null;
         } catch (JandiNetworkException e) {
             log.error("GetFutherMessagesTask : FAILED", e);

@@ -36,7 +36,10 @@ public class PureCommentViewHolder implements BodyViewHolder {
     @Override
     public void bindData(ResMessages.Link link) {
 
-        ResLeftSideMenu.User fromEntity = (ResLeftSideMenu.User) link.fromEntity;
+        int fromEntityId = link.fromEntity;
+
+        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        ResLeftSideMenu.User fromEntity = entity.getUser();
 
         EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);

@@ -1,22 +1,25 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
-import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHodler;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,106 +27,112 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
-public class MessageListAdapter extends BaseAdapter implements StickyListHeadersAdapter {
+public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHodler> {
 
     private Context context;
 
     private List<ResMessages.Link> messageList;
 
-    private MoreState moreState;
+    private int lastMarker = -1;
+    private AnimState markerAnimState = AnimState.Idle;
+    private boolean moreFromNew;
+    private MoreState oldMoreState;
+    private MoreState newMoreState;
+
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
 
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new CopyOnWriteArrayList<ResMessages.Link>();
-        moreState = MoreState.Idle;
+        oldMoreState = MoreState.Idle;
     }
 
-    @Override
-    public View getHeaderView(int position, View convertView, ViewGroup parent) {
-
-        HeaderViewHolder viewHolder;
-
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_message_header, parent, false);
-            viewHolder = new HeaderViewHolder();
-            viewHolder.dateTextView = (android.widget.TextView) convertView.findViewById(R.id.txt_message_date_devider);
-
-            convertView.setTag(R.id.message_header, viewHolder);
-        } else {
-            viewHolder = (HeaderViewHolder) convertView.getTag(R.id.message_header);
-        }
-
-        long headerId = getHeaderId(position);
-
-        if (DateUtils.isToday(headerId)) {
-            viewHolder.dateTextView.setText(R.string.today);
-        } else {
-            viewHolder.dateTextView.setText(DateTransformator.getTimeStringForDivider(headerId));
-        }
-
-        return convertView;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        int itemViewType = getItemViewType(position);
-
-        BodyViewHolder viewHolder;
-
-        int viewHolderId = BodyViewFactory.getViewHolderId(itemViewType);
-
-        if (convertView == null) {
-
-            viewHolder = BodyViewFactory.createViewHolder(itemViewType);
-            convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
-
-            viewHolder.initView(convertView);
-
-            convertView.setTag(viewHolderId, viewHolder);
-        } else {
-            viewHolder = (BodyViewHolder) convertView.getTag(viewHolderId);
-        }
-
-        ResMessages.Link item = getItem(position);
-        viewHolder.bindData(item);
-
-        if (position == 0 && moreState == MoreState.Idle) {
-            EventBus.getDefault().post(new RefreshOldMessageEvent());
-            moreState = MoreState.Loading;
-        }
-
-        return convertView;
-    }
-
-    @Override
-    public long getHeaderId(int position) {
-        Calendar instance = Calendar.getInstance();
-        if (messageList.get(position).time != null) {
-            instance.setTime(messageList.get(position).time);
-        }
-
-        instance.set(Calendar.HOUR_OF_DAY, 0);
-        instance.set(Calendar.MINUTE, 0);
-        instance.set(Calendar.SECOND, 0);
-        instance.set(Calendar.MILLISECOND, 0);
-
-        return instance.getTimeInMillis();
-    }
-
-    @Override
     public int getCount() {
         return messageList.size();
     }
 
-    @Override
     public int getViewTypeCount() {
         return BodyViewHolder.Type.values().length;
+    }
+
+
+    @Override
+    public RecyclerBodyViewHodler onCreateViewHolder(ViewGroup parent, int viewType) {
+
+
+        BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
+        View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
+
+        viewHolder.initView(convertView);
+
+
+        RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);
+
+        return recyclerBodyViewHodler;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerBodyViewHodler viewHolder, int position) {
+
+        ResMessages.Link item = getItem(position);
+        viewHolder.getViewHolder().bindData(item);
+
+        if (item.id == lastMarker) {
+            if (markerAnimState == AnimState.Idle) {
+                final View view = viewHolder.itemView;
+                Integer colorFrom = context.getResources().getColor(R.color.white);
+                Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
+                final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+                colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+                colorAnimation.setRepeatCount(1);
+                colorAnimation.addUpdateListener(animator -> view.setBackgroundColor((Integer) animator.getAnimatedValue()));
+
+                colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        markerAnimState = AnimState.End;
+                    }
+                });
+                colorAnimation.start();
+                markerAnimState = AnimState.Loading;
+            }
+        } else {
+            viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
+        }
+
+        if (position == 0 && oldMoreState == MoreState.Idle) {
+            oldMoreState = MoreState.Loading;
+            EventBus.getDefault().post(new RefreshOldMessageEvent());
+        } else if (moreFromNew && position == getCount() - 1 && newMoreState == MoreState.Idle) {
+            newMoreState = MoreState.Loading;
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        }
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onItemClickListener != null) {
+                    onItemClickListener.onItemClick(MessageListAdapter.this, position);
+                }
+            }
+        });
+
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (onItemLongClickListener != null) {
+                    return onItemLongClickListener.onItemLongClick(MessageListAdapter.this, position);
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -135,7 +144,6 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         }
     }
 
-    @Override
     public ResMessages.Link getItem(int position) {
         return messageList.get(position);
     }
@@ -143,6 +151,11 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return messageList.size();
     }
 
     public void addAll(int position, List<ResMessages.Link> messages) {
@@ -294,12 +307,12 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return (messageDay == beforeMessageDay);
     }
 
-    public void setNoMoreLoading() {
-        moreState = MoreState.Nope;
+    public void setOldNoMoreLoading() {
+        oldMoreState = MoreState.Nope;
     }
 
-    public void setLoadingComplete() {
-        moreState = MoreState.Idle;
+    public void setOldLoadingComplete() {
+        oldMoreState = MoreState.Idle;
     }
 
     public ResMessages.Link getItemByLinkId(int linkId) {
@@ -411,7 +424,44 @@ public class MessageListAdapter extends BaseAdapter implements StickyListHeaders
         return indexList;
     }
 
+    public void setMarker(int lastMarker) {
+        this.lastMarker = lastMarker;
+    }
+
+    public void setMoreFromNew(boolean moreFromNew) {
+        this.moreFromNew = moreFromNew;
+    }
+
+    public void setNewLoadingComplete() {
+        newMoreState = MoreState.Idle;
+    }
+
+    public void setNewNoMoreLoading() {
+        newMoreState = MoreState.Nope;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
     }
+
+    private enum AnimState {
+        Idle, Loading, End
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(RecyclerView.Adapter adapter, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        boolean onItemLongClick(RecyclerView.Adapter adapter, int position);
+    }
+
 }

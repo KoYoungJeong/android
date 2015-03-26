@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
+import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -27,6 +31,7 @@ import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -44,8 +49,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
-
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
@@ -53,7 +56,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 public class MessageListPresenter {
 
     @ViewById(R.id.list_messages)
-    StickyListHeadersListView messageListView;
+    RecyclerView messageListView;
 
     @ViewById(R.id.btn_send_message)
     Button sendButton;
@@ -82,6 +85,9 @@ public class MessageListPresenter {
     @ViewById(R.id.ll_messages)
     View sendLayout;
 
+    @ViewById(R.id.ll_messages_go_to_latest)
+    View moveRealChatView;
+
     @ViewById(R.id.ll_messages_disable_alert)
     View disabledUser;
 
@@ -96,10 +102,13 @@ public class MessageListPresenter {
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
+    private boolean sendLayoutVisible;
+    private boolean gotoLatestLayoutVisible;
 
     @AfterInject
     void initObject() {
         messageListAdapter = new MessageListAdapter(activity);
+        messageListAdapter.setHasStableIds(true);
 
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
@@ -109,21 +118,48 @@ public class MessageListPresenter {
     void initViews() {
 
         messageListView.setAdapter(messageListAdapter);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setSmoothScrollbarEnabled(true);
+        messageListView.setLayoutManager(layoutManager);
+
+        MessageListHeaderAdapter messageListHeaderAdapter = new MessageListHeaderAdapter(activity, messageListAdapter);
+
+        StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
+                .setAdapter(messageListAdapter)
+                .setRecyclerView(messageListView)
+                .setStickyHeadersAdapter(messageListHeaderAdapter, false)
+                .build();
+        messageListView.addItemDecoration(stickyHeadersItemDecoration);
+
 
         setSendEditText(tempMessage);
 
         if (isDisabled) {
-            sendLayout.setVisibility(View.GONE);
+            sendLayoutVisibleGone();
             disabledUser.setVisibility(View.VISIBLE);
             setPreviewVisibleGone();
         }
 
+        if (sendLayoutVisible) {
+            sendLayoutVisibleGone();
+        }
+
+        if (gotoLatestLayoutVisible) {
+            setGotoLatestLayoutVisible();
+        }
     }
 
-    @UiThread
+    public void sendLayoutVisibleGone() {
+        sendLayoutVisible = true;
+        if (sendLayout != null) {
+            sendLayout.setVisibility(View.GONE);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
         messageListAdapter.addAll(position, messages);
-        messageListAdapter.notifyDataSetChanged();
+        messageListAdapter.notifyItemRangeInserted(position, messages.size());
     }
 
     @UiThread
@@ -155,30 +191,34 @@ public class MessageListPresenter {
     @UiThread
     public void moveLastPage() {
         if (messageListView != null) {
-            messageListView.setSelection(messageListAdapter.getCount() - 1);
+            messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getCount() - 1);
         }
     }
 
-    public void setLoadingComplete() {
-        messageListAdapter.setLoadingComplete();
+    public void setOldLoadingComplete() {
+        messageListAdapter.setOldLoadingComplete();
     }
 
-    public void setNoMoreLoading() {
-        messageListAdapter.setNoMoreLoading();
+    public void setOldNoMoreLoading() {
+        messageListAdapter.setOldNoMoreLoading();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
         int itemPosition = messageListAdapter.getItemPositionByLinkId(linkId);
-        messageListView.setSelectionFromTop(itemPosition, firstVisibleItemTop);
+        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     public int getFirstVisibleItemLinkId() {
-        return messageListAdapter.getItem(messageListView.getFirstVisiblePosition()).messageId;
+        if (messageListAdapter.getCount() > 0) {
+            return messageListAdapter.getItem(((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition()).messageId;
+        } else {
+            return -1;
+        }
     }
 
     public int getFirstVisibleItemTop() {
-        return messageListView.getChildAt(0).getTop();
+        return messageListView.getLayoutManager().getChildAt(0).getTop();
     }
 
     @UiThread
@@ -384,7 +424,7 @@ public class MessageListPresenter {
     }
 
     private boolean isVisibleLastItem() {
-        return messageListView.getLastVisiblePosition() == messageListAdapter.getCount() - 1;
+        return ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition() == messageListAdapter.getCount() - 1;
     }
 
     @UiThread
@@ -395,6 +435,10 @@ public class MessageListPresenter {
         }
 
         ResMessages.Link item = messageListAdapter.getItem(messageListAdapter.getCount() - 1);
+
+        if (TextUtils.equals(item.status, "event")) {
+            return;
+        }
 
         previewNameView.setText(item.message.writer.name);
         String url = item.message.writer.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl)) ? item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl : item.message.writer.u_photoUrl;
@@ -432,6 +476,82 @@ public class MessageListPresenter {
     @UiThread
     public void setEmptyView() {
         loadingMessageView.setVisibility(View.GONE);
-        messageListView.setEmptyView(emptyMessageView);
+        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (messageListAdapter.getItemCount() == 0) {
+                    emptyMessageView.setVisibility(View.VISIBLE);
+                } else {
+                    emptyMessageView.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    public void setMarker(int lastMarker) {
+        if (messageListAdapter != null) {
+            messageListAdapter.setMarker(lastMarker);
+        }
+    }
+
+
+    public void setMoreNewFromAdapter(boolean isMoreNew) {
+        messageListAdapter.setMoreFromNew(isMoreNew);
+    }
+
+    public void setNewLoadingComplete() {
+        messageListAdapter.setNewLoadingComplete();
+    }
+
+    public void setNewNoMoreLoading() {
+        messageListAdapter.setNewNoMoreLoading();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void addAndMove(List<ResMessages.Link> records) {
+        int firstVisibleItemLinkId = getFirstVisibleItemLinkId();
+        int firstVisibleItemTop = getFirstVisibleItemTop();
+        int lastItemPosition = getLastItemPosition();
+
+        if (lastItemPosition > 0) {
+            messageListView.getLayoutManager().scrollToPosition(lastItemPosition - 1);
+        }
+        addAll(lastItemPosition, records);
+        if (firstVisibleItemLinkId > 0) {
+            moveToMessage(firstVisibleItemLinkId, firstVisibleItemTop);
+        }
+    }
+
+    public void setGotoLatestLayoutVisible() {
+        gotoLatestLayoutVisible = true;
+        if (moveRealChatView != null) {
+            moveRealChatView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void restartMessageApp(int entityId, int entityType, boolean isFavorite, int teamId) {
+        MessageListV2Activity_.intent(activity)
+                .entityId(entityId)
+                .entityType(entityType)
+                .teamId(teamId)
+                .isFavorite(isFavorite)
+                .start();
+    }
+
+    public void setGotoLatestLayoutVisibleGone() {
+        gotoLatestLayoutVisible = false;
+        if (moveRealChatView != null) {
+            moveRealChatView.setVisibility(View.GONE);
+        }
+    }
+
+
+    public void setOnItemClickListener(MessageListAdapter.OnItemClickListener onItemClickListener) {
+        messageListAdapter.setOnItemClickListener(onItemClickListener);
+    }
+
+    public void setOnItemLongClickListener(MessageListAdapter.OnItemLongClickListener onItemLongClickListener) {
+        messageListAdapter.setOnItemLongClickListener(onItemLongClickListener);
     }
 }

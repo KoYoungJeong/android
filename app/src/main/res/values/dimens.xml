@@ -98,6 +98,12 @@
     <dimen name="jandi_file_search_item_date_text">13sp</dimen>
     <dimen name="jandi_tab_text_size">9sp</dimen>
     <dimen name="jandi_account_home_layout_margin">16dp</dimen>
+    <dimen name="jadi_search_scope_txt_size">14sp</dimen>
+    <dimen name="jandi_search_default_size">48dp</dimen>
+
+    <dimen name="jandi_message_search_item_large_txt_size">16sp</dimen>
+    <dimen name="jandi_message_search_item_medium_txt_size">14sp</dimen>
+    <dimen name="jandi_message_search_item_small_txt_size">12sp</dimen>
 
 
     <dimen name="jandi_text_size_large">16sp</dimen>

@@ -5,84 +5,91 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/layout_file_list_header"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/jandi_more_bg"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:id="@+id/ly_file_list_where"
-            style="@style/JandiFileListCategoryTab.Layout">
-
-            <TextView
-                android:id="@+id/txt_file_list_where"
-                style="@style/JandiFileListCategoryTab.Text" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/jandi_arrow_down_gray" />
-        </LinearLayout>
-
-        <View style="@style/JandiFileListCategoryTab.Border" />
-
-        <LinearLayout
-            android:id="@+id/ly_file_list_whom"
-            style="@style/JandiFileListCategoryTab.Layout">
-
-            <TextView
-                android:id="@+id/txt_file_list_whom"
-                style="@style/JandiFileListCategoryTab.Text" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/jandi_arrow_down_gray" />
-        </LinearLayout>
-
-        <View style="@style/JandiFileListCategoryTab.Border" />
-
-        <LinearLayout
-            android:id="@+id/ly_file_list_type"
-            style="@style/JandiFileListCategoryTab.Layout">
-
-            <TextView
-                android:id="@+id/txt_file_list_type"
-                style="@style/JandiFileListCategoryTab.Text" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:src="@drawable/jandi_arrow_down_gray" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <View
-        android:id="@+id/view_file_list_divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:layout_below="@+id/layout_file_list_header"
-        android:background="@color/jandi_file_search_item_divider" />
-
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/list_searched_files"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/view_file_list_divider"
-        android:layout_weight="1"
-        android:choiceMode="singleChoice"
         android:background="@color/white"
+        android:choiceMode="singleChoice"
         android:clipToPadding="false"
         android:divider="@color/jandi_file_search_item_divider"
         android:dividerHeight="0.5dp"
         android:fillViewport="true"
         android:paddingBottom="@dimen/jandi_file_search_item_height_half"
+        android:paddingTop="36.5dp"
+        android:scrollbars="vertical"
         android:smoothScrollbar="true" />
+
+    <LinearLayout
+        android:id="@+id/layout_file_list_header"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:background="@color/jandi_more_bg"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ly_file_list_where"
+                style="@style/JandiFileListCategoryTab.Layout">
+
+                <TextView
+                    android:id="@+id/txt_file_list_where"
+                    style="@style/JandiFileListCategoryTab.Text" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/jandi_arrow_down_gray" />
+            </LinearLayout>
+
+            <View style="@style/JandiFileListCategoryTab.Border" />
+
+            <LinearLayout
+                android:id="@+id/ly_file_list_whom"
+                style="@style/JandiFileListCategoryTab.Layout">
+
+                <TextView
+                    android:id="@+id/txt_file_list_whom"
+                    style="@style/JandiFileListCategoryTab.Text" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/jandi_arrow_down_gray" />
+            </LinearLayout>
+
+            <View style="@style/JandiFileListCategoryTab.Border" />
+
+            <LinearLayout
+                android:id="@+id/ly_file_list_type"
+                style="@style/JandiFileListCategoryTab.Layout">
+
+                <TextView
+                    android:id="@+id/txt_file_list_type"
+                    style="@style/JandiFileListCategoryTab.Text" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:src="@drawable/jandi_arrow_down_gray" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/view_file_list_divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/layout_file_list_header"
+            android:background="@color/jandi_file_search_item_divider" />
+    </LinearLayout>
 
     <include
         android:id="@+id/layout_file_list_empty"
@@ -92,5 +99,16 @@
     <include
         android:id="@+id/layout_file_list_loading"
         layout="@layout/progress_wheel" />
+
+    <ProgressBar
+        android:id="@+id/progress_file_list"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

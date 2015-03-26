@@ -9,14 +9,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -32,6 +31,7 @@ import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.DummyDeleteEvent;
@@ -57,13 +57,18 @@ import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
-import com.tosslab.jandi.app.ui.message.to.queue.SavedMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
+import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.views.listeners.SimpleListViewScrollListener;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -85,7 +90,6 @@ import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
-import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -108,12 +112,19 @@ public class MessageListFragment extends Fragment {
     boolean isFromPush = false;
     @FragmentArg
     int teamId;
+    @FragmentArg
+    boolean isFromSearch = false;
+    @FragmentArg
+    int lastMarker = -1;
 
     @Bean
     MessageListPresenter messageListPresenter;
 
     @Bean
     MessageListModel messageListModel;
+
+    private OldMessageLoader oldMessageLoader;
+    private NewsMessageLoader newsMessageLoader;
 
     private MessageState messageState;
     private PublishSubject<MessageQueue> messagePublishSubject;
@@ -122,6 +133,7 @@ public class MessageListFragment extends Fragment {
     @AfterInject
     void initObject() {
         messageState = new MessageState();
+        messageState.setFirstItemId(lastMarker);
 
         messagePublishSubject = PublishSubject.create();
 
@@ -133,11 +145,15 @@ public class MessageListFragment extends Fragment {
                             getSavedMessageList();
                             break;
                         case Old:
-                            getOldMessageList(((MessageState) messageQueue.getData()).getFirstItemId());
+                            if (oldMessageLoader != null) {
+                                oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+                            }
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
-                            getNewMessageList(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                            if (newsMessageLoader != null) {
+                                newsMessageLoader.load(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                            }
                             break;
                         case Send:
                             SendingMessage data = (SendingMessage) messageQueue.getData();
@@ -145,10 +161,46 @@ public class MessageListFragment extends Fragment {
                             break;
                     }
                 }, throwable -> {
-
+                    logger.error("Message Publish Fail!!", throwable);
                 }, () -> {
 
                 });
+
+        if (isFromSearch) {
+            MarkerNewMessageLoader newsMessageLoader = new MarkerNewMessageLoader(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+            newsMessageLoader.setMessageSubscription(messageSubscription);
+
+            MarkerOldMessageLoader oldMessageLoader = new MarkerOldMessageLoader(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+
+            messageListPresenter.setMarker(lastMarker);
+            messageListPresenter.setMoreNewFromAdapter(true);
+            messageListPresenter.setGotoLatestLayoutVisible();
+        } else {
+            NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader(getActivity());
+            newsMessageLoader.setMessageListModel(messageListModel);
+            newsMessageLoader.setMessageListPresenter(messageListPresenter);
+            newsMessageLoader.setMessageState(messageState);
+            newsMessageLoader.setMessageSubscription(messageSubscription);
+
+            NormalOldMessageLoader oldMessageLoader = new NormalOldMessageLoader(getActivity());
+            oldMessageLoader.setMessageListModel(messageListModel);
+            oldMessageLoader.setMessageListPresenter(messageListPresenter);
+            oldMessageLoader.setMessageState(messageState);
+            oldMessageLoader.setEntityId(entityId);
+            oldMessageLoader.setTeamId(teamId);
+
+            this.newsMessageLoader = newsMessageLoader;
+            this.oldMessageLoader = oldMessageLoader;
+        }
     }
 
     private void getSavedMessageList() {
@@ -172,29 +224,35 @@ public class MessageListFragment extends Fragment {
         setUpActionbar();
         setHasOptionsMenu(true);
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onMessageItemClick(messageListPresenter.getItem(position));
+            public void onItemClick(RecyclerView.Adapter adapter, int position) {
+
+                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem(position));
             }
         });
 
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                onMessageItemLonkClick(messageListPresenter.getItem(position));
-                return true;
-            }
-        });
-
-        ((StickyListHeadersListView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new SimpleListViewScrollListener() {
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                if ((firstVisibleItem + visibleItemCount) == totalItemCount) {
-                    messageListPresenter.setPreviewVisibleGone();
+            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
+                if (!isFromSearch) {
+                    MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
+                    return true;
+                } else {
+                    return false;
                 }
+            }
+        });
 
+        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getCount() - 1) {
+                    messageListPresenter.setPreviewVisibleGone();
+
+                }
             }
         });
 
@@ -204,8 +262,8 @@ public class MessageListFragment extends Fragment {
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
 
-        sendMessagePublisherEvent(new SavedMessageQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
@@ -227,7 +285,7 @@ public class MessageListFragment extends Fragment {
     private void setUpActionbar() {
 
         ActionBarActivity activity = (ActionBarActivity) getActivity();
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.my_toolbar);
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
         activity.setSupportActionBar(toolbar);
 
         ActionBar actionBar = activity.getSupportActionBar();
@@ -244,6 +302,10 @@ public class MessageListFragment extends Fragment {
         final int FAVORITE_MENU_ITEM = 0;
 
         menu.clear();
+
+        if (isFromSearch) {
+            return;
+        }
 
         MenuInflater inflater = getActivity().getMenuInflater();
 
@@ -286,7 +348,12 @@ public class MessageListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        boolean isStarred = entityById != null ? entityById.isStarred : false;
+        boolean isStarred;
+        if (entityById != null ? entityById.isStarred : false) {
+            isStarred = true;
+        } else {
+            isStarred = false;
+        }
         MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
@@ -301,7 +368,7 @@ public class MessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        if (messageListModel.isEnabledIfUser(entityId)) {
+        if (messageListModel.isEnabledIfUser(entityId) && !isFromSearch) {
             messageListModel.startRefreshTimer();
         }
         PushMonitor.getInstance().register(entityId);
@@ -314,7 +381,9 @@ public class MessageListFragment extends Fragment {
         super.onPause();
         EventBus.getDefault().unregister(this);
 
-        messageListModel.stopRefreshTimer();
+        if (!isFromSearch) {
+            messageListModel.stopRefreshTimer();
+        }
 
         messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
@@ -326,17 +395,24 @@ public class MessageListFragment extends Fragment {
 
             ResMessages oldMessage = messageListModel.getOldMessage(linkId);
 
-            Collections.sort(oldMessage.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+            if (oldMessage.records == null || oldMessage.records.isEmpty()) {
+                return;
+            }
 
-            messageState.setFirstItemId(oldMessage.firstIdOfReceivedList);
-            messageState.setFirstMessage(oldMessage.isFirst);
+            int firstMessageId = oldMessage.records.get(0).messageId;
+            messageState.setFirstItemId(firstMessageId);
+            boolean isFirstMessage = oldMessage.firstLinkId == firstMessageId;
+            messageState.setFirstMessage(isFirstMessage);
+
+            Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+
 
             if (linkId == -1) {
 
                 messageListPresenter.setEmptyView();
                 messageListPresenter.clearMessages();
 
-                messageListPresenter.addAll(0, oldMessage.messages);
+                messageListPresenter.addAll(0, oldMessage.records);
                 messageListPresenter.moveLastPage();
 
                 FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
@@ -347,20 +423,38 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.moveLastPage();
 
                 updateMarker();
+            } else if (isFromSearch) {
+                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
+                int firstVisibleItemTop = 0;
+                if (latestVisibleLinkId > 0) {
+                    firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
+                } else {
+                    // if has no first item...
+                    messageState.setLastUpdateLinkId(messageListModel.getLatestMessageId(oldMessage.records));
+                }
 
+                messageListPresenter.addAll(0, oldMessage.records);
+
+                if (latestVisibleLinkId > 0) {
+                    messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+                } else {
+                    // if has no first item...
+                    messageListPresenter.moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
+                }
             } else {
 
-                int lastVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
+                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
                 int firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
-                messageListPresenter.addAll(0, oldMessage.messages);
-                messageListPresenter.moveToMessage(lastVisibleLinkId, firstVisibleItemTop);
 
+                messageListPresenter.addAll(0, oldMessage.records);
+
+                messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
             }
 
-            if (!oldMessage.isFirst) {
-                messageListPresenter.setLoadingComplete();
+            if (!isFirstMessage) {
+                messageListPresenter.setOldLoadingComplete();
             } else {
-                messageListPresenter.setNoMoreLoading();
+                messageListPresenter.setOldNoMoreLoading();
             }
 
         } catch (JandiNetworkException e) {
@@ -388,12 +482,14 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        messageListModel.stopRefreshTimer();
+        if (!isFromSearch) {
+            messageListModel.stopRefreshTimer();
+        }
 
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            if (newMessage.updateInfo.messageCount > 0) {
+            if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
@@ -408,10 +504,16 @@ public class MessageListFragment extends Fragment {
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
-            if (!messageSubscription.isUnsubscribed()) {
+            if (!messageSubscription.isUnsubscribed() && !isFromSearch) {
                 messageListModel.startRefreshTimer();
             }
         }
+    }
+
+    @Click(R.id.ll_messages_go_to_latest)
+    void onGotoLatestClick() {
+        EventBus.getDefault().post(new ChatModeChangeEvent());
+//        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
     @Click(R.id.layout_messages_preview_last_item)
@@ -452,6 +554,33 @@ public class MessageListFragment extends Fragment {
 
     public void onEventMainThread(SendFailEvent event) {
         messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
+    }
+
+    public void onEventMainThread(ChatModeChangeEvent event) {
+        isFromSearch = false;
+        messageListPresenter.setMarker(-1);
+        NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader(getActivity());
+        normalNewMessageLoader.setMessageSubscription(messageSubscription);
+        normalNewMessageLoader.setMessageState(messageState);
+        normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
+        normalNewMessageLoader.setMessageListModel(messageListModel);
+        newsMessageLoader = normalNewMessageLoader;
+
+        NormalOldMessageLoader normalOldMessageLoader = new NormalOldMessageLoader(getActivity());
+        normalOldMessageLoader.setMessageListModel(messageListModel);
+        normalOldMessageLoader.setTeamId(teamId);
+        normalOldMessageLoader.setEntityId(entityId);
+        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
+        normalOldMessageLoader.setMessageState(messageState);
+        oldMessageLoader = normalOldMessageLoader;
+
+        messageListModel.startRefreshTimer();
+        messageListPresenter.setMoreNewFromAdapter(false);
+        messageListPresenter.setGotoLatestLayoutVisibleGone();
+
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     public void onEvent(RequestFileUploadEvent event) {
@@ -581,7 +710,7 @@ public class MessageListFragment extends Fragment {
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
-    void onMessageItemLonkClick(ResMessages.Link link) {
+    void onMessageItemLongClick(ResMessages.Link link) {
 
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
