@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -52,6 +53,7 @@ public interface GroupMessageApiClient {
 
     @Get("/privateGroups/{groupId}/messages/update/{lastLinkId}?teamId={teamId}")
     @RequiresAuthentication
+    @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResUpdateMessages getGroupMessagesUpdated(int teamId, int groupId, int lastLinkId);
 
     @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")

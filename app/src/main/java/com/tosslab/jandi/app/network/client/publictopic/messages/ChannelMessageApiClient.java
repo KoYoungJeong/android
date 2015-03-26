@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -53,6 +54,7 @@ public interface ChannelMessageApiClient {
     // 채널의 업데이트 Message 리스트 정보 획득
     @Get("/channels/{channelId}/messages/update/{currentLinkId}?teamId={teamId}")
     @RequiresAuthentication
+    @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResUpdateMessages getPublicTopicUpdatedMessages(int teamId, int channelId, int currentLinkId);
 
     @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={currentLinkId}&type=new")
