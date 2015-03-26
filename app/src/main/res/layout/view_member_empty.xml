@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,36 +8,32 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:src="@drawable/help_share_a_file" />
+        android:layout_marginTop="108dp"
+        android:src="@drawable/help_send_invitations" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="@string/jandi_cannot_find_search_result_1"
+        android:lineSpacingExtra="4dp"
+        android:text="No other members have joined your team. Invite them now to start collaborating"
         android:textColor="@color/account_home_help_dialog_text"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="@string/jandi_cannot_find_search_result_2"
-        android:textColor="@color/account_home_help_dialog_text"
-        android:textSize="@dimen/jandi_text_size_medium" />
-
     <Button
-        android:id="@+id/btn_file_empty_upload"
+        android:id="@+id/btn_chat_choose_member_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:background="@android:color/transparent"
-        android:text="@string/jandi_upload_a_file"
+        android:background="@color/transparent"
+        android:text="@string/jandi_send_invitation"
         android:textColor="@color/jandi_border_green"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
+
+
 </LinearLayout>
