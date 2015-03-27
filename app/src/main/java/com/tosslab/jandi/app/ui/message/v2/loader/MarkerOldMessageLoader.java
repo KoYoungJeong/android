@@ -91,7 +91,8 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                     }
                 }
                 if (messageId > 0) {
-                    messageListPresenter.moveToMessage(messageId, firstVisibleItemTop);
+                    int yPosition = context.getResources().getDisplayMetrics().heightPixels * 2 / 5;
+                    messageListPresenter.moveToMessage(messageId, yPosition);
                 } else {
                     messageListPresenter.moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
                 }

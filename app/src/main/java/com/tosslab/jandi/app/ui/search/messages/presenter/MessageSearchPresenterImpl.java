@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.messages.presenter;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
+import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
@@ -10,6 +11,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.api.BackgroundExecutor;
+
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -54,9 +57,10 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         searchQeuryInfo = tempSearchInfo;
 
         try {
-            ResMessageSearch resMessageSearch = searchMessage();
+            ResMessageSearch resMessageSearch = searchMessage(searchQeuryInfo);
+            List<SearchResult> searchResults = messageSearchModel.convertSearchResult(resMessageSearch.getSearchRecords(), searchQeuryInfo.getQuery());
             view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
-            view.addSearchResult(resMessageSearch.getSearchRecords());
+            view.addSearchResult(searchResults);
             if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
                 view.setOnLoadingReady();
             } else {
@@ -77,8 +81,9 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         searchQeuryInfo.setPage(searchQeuryInfo.getPage() + 1);
 
         try {
-            ResMessageSearch resMessageSearch = searchMessage();
-            view.addSearchResult(resMessageSearch.getSearchRecords());
+            ResMessageSearch resMessageSearch = searchMessage(searchQeuryInfo);
+            List<SearchResult> searchResults = messageSearchModel.convertSearchResult(resMessageSearch.getSearchRecords(), searchQeuryInfo.getQuery());
+            view.addSearchResult(searchResults);
             if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
                 view.setOnLoadingReady();
             } else {
@@ -120,17 +125,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     }
 
     @Override
-    public void onRecordClick(ResMessageSearch.SearchRecord searchRecord) {
+    public void onRecordClick(SearchResult searchRecord) {
         int currentTeamId = messageSearchModel.getCurrentTeamId();
-        int entityId = searchRecord.getSearchEntityInfo().getId();
+        int entityId = searchRecord.getEntityId();
         int entityType = messageSearchModel.getEntityType(entityId);
         boolean isStarred = messageSearchModel.isStarredEntity(entityId);
-        int linkId = searchRecord.getCurrentRecord().getLinkId();
+        int linkId = searchRecord.getLinkId();
 
         view.startMessageListActivity(currentTeamId, entityId, entityType, isStarred, linkId);
     }
 
-    private ResMessageSearch searchMessage() throws JandiNetworkException {
+    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws JandiNetworkException {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());
     }

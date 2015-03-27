@@ -72,7 +72,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                 messageListPresenter.setNewLoadingComplete();
             } else {
                 messageListPresenter.setNewNoMoreLoading();
-                EventBus.getDefault().post(new ChatModeChangeEvent());
+                EventBus.getDefault().post(new ChatModeChangeEvent(false));
             }
 
         } catch (JandiNetworkException e) {

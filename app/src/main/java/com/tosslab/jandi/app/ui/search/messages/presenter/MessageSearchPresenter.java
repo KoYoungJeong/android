@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.search.messages.presenter;
 
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
+import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 
 import java.util.List;
 
@@ -23,13 +24,13 @@ public interface MessageSearchPresenter {
 
     void onSelectMember(int memberId, String name);
 
-    void onRecordClick(ResMessageSearch.SearchRecord searchRecord);
+    void onRecordClick(SearchResult searchRecord);
 
     public interface View {
 
         void clearSearchResult();
 
-        void addSearchResult(List<ResMessageSearch.SearchRecord> searchRecords);
+        void addSearchResult(List<SearchResult> searchRecords);
 
         void showEntityDialog();
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.search.messages.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
-import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
+import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 
@@ -26,14 +27,14 @@ import de.greenrobot.event.EventBus;
  */
 public class MessageSearchResultAdapter extends RecyclerView.Adapter {
     private final Context context;
-    private List<ResMessageSearch.SearchRecord> records;
+    private List<SearchResult> records;
     private HeaderItem headerItem;
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private MoreState moreState = MoreState.Idle;
 
     public MessageSearchResultAdapter(Context context) {
         this.context = context;
-        records = new ArrayList<ResMessageSearch.SearchRecord>();
+        records = new ArrayList<SearchResult>();
     }
 
     public void setOnRecyclerItemClickListener(OnRecyclerItemClickListener onRecyclerItemClickListener) {
@@ -69,33 +70,28 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
         if (position > 0) {
 
-            ResMessageSearch.SearchRecord item = getItem(position);
+            SearchResult item = getItem(position);
             MessageSearchViewHolder viewHolder = (MessageSearchViewHolder) holder;
 
-            ResMessageSearch.SearchEntityInfo searchEntityInfo = item.getSearchEntityInfo();
-            ResMessageSearch.Record currentRecord = item.getCurrentRecord();
-            ResMessageSearch.Record prevRecord = item.getPrevRecord();
-            ResMessageSearch.Record nextRecord = item.getNextRecord();
-
-            if (searchEntityInfo != null) {
-                viewHolder.topicNameTextView.setText(searchEntityInfo.getName());
+            if (!TextUtils.isEmpty(item.getTopicName())) {
+                viewHolder.topicNameTextView.setText(item.getTopicName());
             }
 
-            if (prevRecord != null) {
+            if (!TextUtils.isEmpty(item.getPreviewText())) {
                 viewHolder.prevTextView.setVisibility(View.VISIBLE);
-                viewHolder.prevTextView.setText(TextStrategy.getSubSearchString(context, prevRecord, viewHolder.prevTextView));
+                viewHolder.prevTextView.setText(item.getPreviewText());
             } else {
                 viewHolder.prevTextView.setVisibility(View.GONE);
             }
 
-            if (currentRecord != null) {
-                viewHolder.dateTextView.setText(DateTransformator.getTimeString(currentRecord.getLastDate()));
-                viewHolder.currentTextView.setText(TextStrategy.getCurrentSearchString(context, currentRecord, ((HeaderItem) getItem(0)).getQuery()));
+            if (!(TextUtils.isEmpty(item.getCurrentText()))) {
+                viewHolder.dateTextView.setText(DateTransformator.getTimeString(item.getDate()));
+                viewHolder.currentTextView.setText(item.getCurrentText());
             }
 
-            if (nextRecord != null) {
+            if (!TextUtils.isEmpty(item.getNextText())) {
                 viewHolder.nextTextView.setVisibility(View.VISIBLE);
-                viewHolder.nextTextView.setText(TextStrategy.getSubSearchString(context, nextRecord, viewHolder.nextTextView));
+                viewHolder.nextTextView.setText(item.getNextText());
             } else {
                 viewHolder.nextTextView.setVisibility(View.GONE);
             }
@@ -128,7 +124,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         return records.size();
     }
 
-    public ResMessageSearch.SearchRecord getItem(int position) {
+    public SearchResult getItem(int position) {
         return records.get(position);
     }
 
@@ -137,20 +133,16 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         return position;
     }
 
-    public void add(ResMessageSearch.SearchRecord searchRecord) {
-        records.add(searchRecord);
-    }
-
     public void clear() {
         records.clear();
     }
 
-    public void addAll(List<ResMessageSearch.SearchRecord> searchRecords) {
+    public void addAll(List<SearchResult> searchRecords) {
         records.addAll(searchRecords);
     }
 
     public void setQueryKeyword(String query, int totalCount, boolean isFinish) {
-        ResMessageSearch.SearchRecord item1 = getItemCount() > 0 ? getItem(0) : null;
+        SearchResult item1 = getItemCount() > 0 ? getItem(0) : null;
 
         if (!(item1 instanceof HeaderItem)) {
             item1 = new HeaderItem();
@@ -164,7 +156,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
 
     }
 
-    private void add(int index, ResMessageSearch.SearchRecord headerItem) {
+    private void add(int index, SearchResult headerItem) {
         records.add(index, headerItem);
     }
 
@@ -214,7 +206,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
         }
     }
 
-    private static class HeaderItem extends ResMessageSearch.SearchRecord {
+    private static class HeaderItem extends SearchResult {
         private String query;
         private int count;
         private boolean isLoading = true;

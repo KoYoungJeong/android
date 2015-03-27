@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.MemberSelectDialogAdapte
 import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
+import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
@@ -93,7 +94,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             public void onItemClick(View view, RecyclerView.Adapter adapter, int position) {
                 if (position > 0) {
 
-                    ResMessageSearch.SearchRecord searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
+                    SearchResult searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
                     messageSearchPresenter.onRecordClick(searchRecord);
                 }
             }
@@ -172,7 +173,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void addSearchResult(List<ResMessageSearch.SearchRecord> searchRecords) {
+    public void addSearchResult(List<SearchResult> searchRecords) {
         messageSearchResultAdapter.addAll(searchRecords);
         messageSearchResultAdapter.notifyDataSetChanged();
     }

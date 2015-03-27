@@ -46,7 +46,6 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -83,7 +82,6 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -405,7 +403,7 @@ public class MessageListFragment extends Fragment {
 
     @Click(R.id.ll_messages_go_to_latest)
     void onGotoLatestClick() {
-        EventBus.getDefault().post(new ChatModeChangeEvent());
+        EventBus.getDefault().post(new ChatModeChangeEvent(true));
 //        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
@@ -467,13 +465,24 @@ public class MessageListFragment extends Fragment {
         normalOldMessageLoader.setMessageState(messageState);
         oldMessageLoader = normalOldMessageLoader;
 
-        messageListModel.startRefreshTimer();
         messageListPresenter.setMoreNewFromAdapter(false);
         messageListPresenter.setGotoLatestLayoutVisibleGone();
 
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
-
         getActivity().supportInvalidateOptionsMenu();
+
+        if (event.isClicked()) {
+            loadLastMessage();
+        } else {
+            messageListModel.startRefreshTimer();
+        }
+    }
+
+    @Background
+    void loadLastMessage() {
+        newsMessageLoader.load(messageState.getLastUpdateLinkId());
+        messageListPresenter.moveLastPage();
+        messageListModel.startRefreshTimer();
+
     }
 
     public void onEvent(RequestFileUploadEvent event) {
