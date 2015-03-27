@@ -195,11 +195,7 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
             // 뱃지 카운트
             if (formattedEntity.alarmCount > 0) {
                 textViewBadgeCount.setVisibility(View.VISIBLE);
-                if (formattedEntity.isStarred) {
-                    textViewBadgeCount.setBackgroundResource(R.drawable.jandi_badge_starred);
-                } else {
-                    textViewBadgeCount.setBackgroundResource(R.drawable.jandi_badge_common);
-                }
+                textViewBadgeCount.setBackgroundResource(R.drawable.jandi_badge_starred);
                 textViewBadgeCount.setText(formattedEntity.alarmCount + "");
             }
             // 아이콘
