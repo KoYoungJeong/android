@@ -255,6 +255,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                 .startForResult(REQ_TEAM_JOIN);
     }
 
+    @UiThread
     @Override
     public void removePendingTeamView(Team selectedTeam) {
 
@@ -289,6 +290,13 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @OnActivityResult(REQ_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
+        if (resultCode == Activity.RESULT_OK) {
+            accountHomePresenter.onTeamCreateResult();
+        }
+    }
+
+    @OnActivityResult(REQ_TEAM_JOIN)
+    void onTeamJoinResult(int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
             accountHomePresenter.onTeamCreateResult();
         }
