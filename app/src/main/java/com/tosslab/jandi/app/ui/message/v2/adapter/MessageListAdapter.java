@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,7 +47,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
 
     public MessageListAdapter(Context context) {
         this.context = context;
-        this.messageList = new CopyOnWriteArrayList<ResMessages.Link>();
+        this.messageList = new ArrayList<ResMessages.Link>();
         oldMoreState = MoreState.Idle;
     }
 
@@ -160,62 +159,59 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
 
     public void addAll(int position, List<ResMessages.Link> messages) {
 
-        synchronized (messageList) {
-
-            // delete dummy message by same messageId
-            for (int idx = 0; idx < messages.size(); idx++) {
-                int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
-                if (dummyMessagePosition >= 0) {
-                    messageList.remove(dummyMessagePosition);
-                } else {
-                    break;
-                }
+        // delete dummy message by same messageId
+        for (int idx = 0; idx < messages.size(); idx++) {
+            int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
+            if (dummyMessagePosition >= 0) {
+                messageList.remove(dummyMessagePosition);
+            } else {
+                break;
             }
+        }
 
 
-            int size = messages.size();
-            ResMessages.Link link;
-            for (int idx = size - 1; idx >= 0; --idx) {
-                link = messages.get(idx);
+        int size = messages.size();
+        ResMessages.Link link;
+        for (int idx = size - 1; idx >= 0; --idx) {
+            link = messages.get(idx);
 
-                if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
-                } else if (TextUtils.equals(link.status, "edited")) {
-                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+            if (TextUtils.equals(link.status, "created") || TextUtils.equals(link.status, "shared") || TextUtils.equals(link.status, "event")) {
+            } else if (TextUtils.equals(link.status, "edited")) {
+                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                if (searchedPosition >= 0) {
+                    messageList.set(searchedPosition, link);
+                }
+                messages.remove(link);
+            } else if (TextUtils.equals(link.status, "archived")) {
+                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+
+                // if file type
+                if (TextUtils.equals(link.message.contentType, "file")) {
+
                     if (searchedPosition >= 0) {
                         messageList.set(searchedPosition, link);
-                    }
-                    messages.remove(link);
-                } else if (TextUtils.equals(link.status, "archived")) {
-                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
-
-                    // if file type
-                    if (TextUtils.equals(link.message.contentType, "file")) {
-
-                        if (searchedPosition >= 0) {
-                            messageList.set(searchedPosition, link);
-                            messages.remove(link);
-                        }
-                        // if cannot find same object, will be add to list.
-
-                    } else {
-                        if (searchedPosition >= 0) {
-                            messageList.remove(searchedPosition);
-                        }
                         messages.remove(link);
                     }
-                } else if (TextUtils.equals(link.status, "unshared")) {
-                    int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                    // if cannot find same object, will be add to list.
+
+                } else {
                     if (searchedPosition >= 0) {
-                        messageList.set(searchedPosition, link);
+                        messageList.remove(searchedPosition);
                     }
                     messages.remove(link);
-                } else {
-                    messages.remove(link);
                 }
+            } else if (TextUtils.equals(link.status, "unshared")) {
+                int searchedPosition = searchIndexOfMessages(messageList, link.messageId);
+                if (searchedPosition >= 0) {
+                    messageList.set(searchedPosition, link);
+                }
+                messages.remove(link);
+            } else {
+                messages.remove(link);
             }
-
-            messageList.addAll(Math.min(position, messageList.size() - getDummyMessageCount()), messages);
         }
+
+        messageList.addAll(Math.min(position, messageList.size() - getDummyMessageCount()), messages);
     }
 
     private int getDummyMessageCount() {

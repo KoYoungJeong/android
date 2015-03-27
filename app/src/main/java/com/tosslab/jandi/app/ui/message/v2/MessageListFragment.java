@@ -390,80 +390,6 @@ public class MessageListFragment extends Fragment {
         PushMonitor.getInstance().unregister(entityId);
     }
 
-    void getOldMessageList(int linkId) {
-        try {
-
-            ResMessages oldMessage = messageListModel.getOldMessage(linkId);
-
-            if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                return;
-            }
-
-            int firstMessageId = oldMessage.records.get(0).messageId;
-            messageState.setFirstItemId(firstMessageId);
-            boolean isFirstMessage = oldMessage.firstLinkId == firstMessageId;
-            messageState.setFirstMessage(isFirstMessage);
-
-            Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-
-
-            if (linkId == -1) {
-
-                messageListPresenter.setEmptyView();
-                messageListPresenter.clearMessages();
-
-                messageListPresenter.addAll(0, oldMessage.records);
-                messageListPresenter.moveLastPage();
-
-                FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
-                List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());
-                messageListPresenter.addDummyMessages(dummyMessages);
-
-                messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
-                messageListPresenter.moveLastPage();
-
-                updateMarker();
-            } else if (isFromSearch) {
-                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
-                int firstVisibleItemTop = 0;
-                if (latestVisibleLinkId > 0) {
-                    firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
-                } else {
-                    // if has no first item...
-                    messageState.setLastUpdateLinkId(messageListModel.getLatestMessageId(oldMessage.records));
-                }
-
-                messageListPresenter.addAll(0, oldMessage.records);
-
-                if (latestVisibleLinkId > 0) {
-                    messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
-                } else {
-                    // if has no first item...
-                    messageListPresenter.moveToMessage(oldMessage.records.get(oldMessage.records.size() - 1).messageId, firstVisibleItemTop);
-                }
-            } else {
-
-                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
-                int firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
-
-                messageListPresenter.addAll(0, oldMessage.records);
-
-                messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
-            }
-
-            if (!isFirstMessage) {
-                messageListPresenter.setOldLoadingComplete();
-            } else {
-                messageListPresenter.setOldNoMoreLoading();
-            }
-
-        } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
-        } finally {
-            messageListPresenter.dismissProgressWheel();
-        }
-    }
-
     @Background
     public void updateMarker() {
         try {
@@ -474,39 +400,6 @@ public class MessageListFragment extends Fragment {
             logger.error("set marker failed", e);
         } catch (Exception e) {
             logger.error("set marker failed", e);
-        }
-    }
-
-    void getNewMessageList(int linkId) {
-        if (linkId <= 0) {
-            return;
-        }
-
-        if (!isFromSearch) {
-            messageListModel.stopRefreshTimer();
-        }
-
-        try {
-            ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
-
-            if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
-                int lastItemPosition = messageListPresenter.getLastItemPosition();
-                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
-                messageState.setLastUpdateLinkId(newMessage.lastLinkId);
-                updateMarker();
-
-                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (!messageListModel.isMyMessage(lastUpdatedMessage.message.writerId))
-                    messageListPresenter.showPreviewIfNotLastItem();
-            }
-
-
-        } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
-        } finally {
-            if (!messageSubscription.isUnsubscribed() && !isFromSearch) {
-                messageListModel.startRefreshTimer();
-            }
         }
     }
 
@@ -695,7 +588,6 @@ public class MessageListFragment extends Fragment {
 
     @OnActivityResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH)
     void onFileDetailResult(Intent data) {
-//        getNewMessageList(messageState.getLastUpdateLinkId());
         if (data != null && data.getBooleanExtra(EXTRA_FILE_DELETE, false)) {
             int fileId = data.getIntExtra(EXTRA_FILE_ID, -1);
             if (fileId != -1) {
@@ -704,10 +596,6 @@ public class MessageListFragment extends Fragment {
         } else {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
-    }
-
-    void onFileDetailResult() {
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     void onMessageItemLongClick(ResMessages.Link link) {
@@ -841,12 +729,10 @@ public class MessageListFragment extends Fragment {
 
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(new OldMessageQueue(messageState));
-//            getOldMessageList(messageState.getFirstItemId());
         }
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
-//        getNewMessageList(messageState.getLastUpdateLinkId());
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 

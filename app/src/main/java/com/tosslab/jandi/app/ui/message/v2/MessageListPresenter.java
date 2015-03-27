@@ -118,7 +118,9 @@ public class MessageListPresenter {
     void initViews() {
 
         messageListView.setAdapter(messageListAdapter);
+        messageListView.setItemAnimator(null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
         layoutManager.setSmoothScrollbarEnabled(true);
         messageListView.setLayoutManager(layoutManager);
 
@@ -159,7 +161,7 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addAll(int position, List<ResMessages.Link> messages) {
         messageListAdapter.addAll(position, messages);
-        messageListAdapter.notifyItemRangeInserted(position, messages.size());
+        messageListAdapter.notifyDataSetChanged();
     }
 
     @UiThread
