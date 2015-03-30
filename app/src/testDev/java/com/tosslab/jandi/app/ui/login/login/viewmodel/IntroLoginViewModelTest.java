@@ -4,11 +4,11 @@ import android.app.FragmentManager;
 import android.content.Intent;
 
 import com.tosslab.jandi.app.network.models.ResMyTeam;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment_;
-import com.tosslab.jandi.app.ui.team.select.TeamSelectionActivity_;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -91,7 +91,7 @@ public class IntroLoginViewModelTest {
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
         Intent nextStartedActivity = shadowActivity.getNextStartedActivity();
-        assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(TeamSelectionActivity_.class.getName())));
+        assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(AccountHomeActivity_.class.getName())));
 
     }
 
@@ -116,7 +116,7 @@ public class IntroLoginViewModelTest {
         // then : started TeamSelectionActivity
         ShadowActivity shadowActivity = Robolectric.shadowOf(introLoginFragment.getActivity());
         Intent nextStartedActivity = shadowActivity.getNextStartedActivity();
-        assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(TeamSelectionActivity_.class.getName())));
+        assertThat(nextStartedActivity.getComponent().getClassName(), is(equalTo(AccountHomeActivity_.class.getName())));
 
     }
 
