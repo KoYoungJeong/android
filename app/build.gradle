@@ -88,7 +88,7 @@ dependencies {
 
     // Cache
     compile 'com.github.bumptech.glide:glide:3.5.1'
-    compile 'com.koushikdutta.ion:ion:2.+'
+    compile 'com.koushikdutta.ion:ion:2.1.+'
     // Etc
     compile 'log4j:log4j:1.2.+'
     compile 'de.mindpipe.android:android-logging-log4j:1.0.+'
@@ -145,7 +145,7 @@ android {
         }
 
         inhouse {
-            versionName(defaultConfig.versionName + "." + 1)
+            versionName(defaultConfig.versionName + "." + 2)
             buildTypes {
             }
         }
