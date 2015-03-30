@@ -321,10 +321,10 @@ public class MessageListModel {
 
     public boolean isEnabledIfUser(int entityId) {
 
-        FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(entityId);
+        FormattedEntity entity = EntityManager.getInstance(activity).getEntityById(entityId);
 
-        if (entityById.isUser()) {
-            return TextUtils.equals(entityById.getUser().status, "enabled");
+        if (entity != null && entity.isUser()) {
+            return TextUtils.equals(entity.getUser().status, "enabled");
         } else {
             return true;
         }
