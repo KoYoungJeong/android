@@ -336,4 +336,5 @@ JANDIへようこそ"</string>
     <string name="jandi_member_invite_popup_2">"今すぐチームを作って、仕事のやりとりがどれだけ劇的に改善できるかご自身の目で確かめてみましょう"</string>
     <string name="jandi_later">"後で"</string>
     <string name="jandi_send_invitation">"招待メールを送信"</string>
+    <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
 </resources>

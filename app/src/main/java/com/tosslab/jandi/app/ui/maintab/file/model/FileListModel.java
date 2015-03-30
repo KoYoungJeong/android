@@ -88,4 +88,12 @@ public class FileListModel {
         File uploadFile = new File(realFilePath);
         return uploadFile.exists() && uploadFile.length() > MessageListModel.MAX_FILE_SIZE;
     }
+
+    public boolean isDefaultSearchQuery(ReqSearchFile searchFile) {
+        return searchFile.sharedEntityId == -1 &&
+                searchFile.startMessageId == -1 &&
+                TextUtils.isEmpty(searchFile.keyword) &&
+                TextUtils.equals(searchFile.fileType, "all") &&
+                TextUtils.equals(searchFile.writerId, "all");
+    }
 }

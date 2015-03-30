@@ -27,9 +27,8 @@ import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
-import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -52,9 +51,8 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -255,6 +253,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         fileListPresenter.setInitLoadingViewVisible(View.VISIBLE);
         fileListPresenter.setEmptyViewVisible(View.GONE);
+        fileListPresenter.setSearchEmptryViewVisible(View.GONE);
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
@@ -264,10 +263,20 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             updateAdapter(resSearchFile);
 
             fileListPresenter.setInitLoadingViewVisible(View.GONE);
-            if (resSearchFile.fileCount > 0) {
-                fileListPresenter.setEmptyViewVisible(View.GONE);
+            if (fileListModel.isDefaultSearchQuery(mSearchQuery.getRequestQuery())) {
+                if (resSearchFile.fileCount > 0) {
+                    fileListPresenter.setEmptyViewVisible(View.GONE);
+                } else {
+                    fileListPresenter.setEmptyViewVisible(View.VISIBLE);
+                }
+                fileListPresenter.setSearchEmptryViewVisible(View.GONE);
             } else {
-                fileListPresenter.setEmptyViewVisible(View.VISIBLE);
+                if (resSearchFile.fileCount > 0) {
+                    fileListPresenter.setSearchEmptryViewVisible(View.GONE);
+                } else {
+                    fileListPresenter.setSearchEmptryViewVisible(View.VISIBLE);
+                }
+                fileListPresenter.setEmptyViewVisible(View.GONE);
             }
 
             if (fileListModel.isAllTypeFirstSearch(reqSearchFile)) {
@@ -524,6 +533,72 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     /**
+     * *********************************************************
+     * 파일 검색을 담당하는 쿼리 클래스
+     * **********************************************************
+     */
+    private static class SearchQuery {
+        private final String CATEGORY_ALL = "all";
+        private final int LATEST_MESSAGE = -1;
+
+        private String mSearchFileType;
+        private String mSearchUser;
+        private String mKeyword;
+        private int mSearchEntity;
+        private int mStartMessageId;
+
+        public SearchQuery() {
+            mSearchEntity = ReqSearchFile.ALL_ENTITIES;
+            mStartMessageId = LATEST_MESSAGE;
+            mKeyword = "";
+            mSearchFileType = CATEGORY_ALL;    // 서치 모드.   ALL || Images || PDFs
+            mSearchUser = CATEGORY_ALL;        // 사용자.     ALL || Mine || UserID
+        }
+
+        public void setToFirst() {
+            mStartMessageId = LATEST_MESSAGE;
+        }
+
+        public void setKeyword(String keyword) {
+            setToFirst();
+            mKeyword = keyword;
+        }
+
+        public void setFileType(String fileType) {
+            setToFirst();
+            mSearchFileType = fileType;
+        }
+
+        public void setWriter(String userEntityId) {
+            setToFirst();
+            mSearchUser = userEntityId;
+        }
+
+        public void setSharedEntity(int entityId) {
+            setToFirst();
+            mSearchEntity = entityId;
+        }
+
+        public void setNext(int startMessageId) {
+            mStartMessageId = startMessageId;
+        }
+
+        public ReqSearchFile getRequestQuery() {
+            ReqSearchFile reqSearchFile = new ReqSearchFile();
+            reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
+            reqSearchFile.listCount = ReqSearchFile.MAX;
+
+            reqSearchFile.fileType = mSearchFileType;
+            reqSearchFile.writerId = mSearchUser;
+            reqSearchFile.sharedEntityId = mSearchEntity;
+
+            reqSearchFile.startMessageId = mStartMessageId;
+            reqSearchFile.keyword = mKeyword;
+            return reqSearchFile;
+        }
+    }
+
+    /**
      * Full To Refresh 전용
      * TODO 위에 거랑 합치기.
      */
@@ -583,72 +658,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             } else {
                 ColoredToast.showError(mContext, oldFileResult.resultMessage);
             }
-        }
-    }
-
-    /**
-     * *********************************************************
-     * 파일 검색을 담당하는 쿼리 클래스
-     * **********************************************************
-     */
-    private class SearchQuery {
-        private final String CATEGORY_ALL = "all";
-        private final int LATEST_MESSAGE = -1;
-
-        private String mSearchFileType;
-        private String mSearchUser;
-        private String mKeyword;
-        private int mSearchEntity;
-        private int mStartMessageId;
-
-        public SearchQuery() {
-            mSearchEntity = ReqSearchFile.ALL_ENTITIES;
-            mStartMessageId = LATEST_MESSAGE;
-            mKeyword = "";
-            mSearchFileType = CATEGORY_ALL;    // 서치 모드.   ALL || Images || PDFs
-            mSearchUser = CATEGORY_ALL;        // 사용자.     ALL || Mine || UserID
-        }
-
-        public void setToFirst() {
-            mStartMessageId = LATEST_MESSAGE;
-        }
-
-        public void setKeyword(String keyword) {
-            setToFirst();
-            mKeyword = keyword;
-        }
-
-        public void setFileType(String fileType) {
-            setToFirst();
-            mSearchFileType = fileType;
-        }
-
-        public void setWriter(String userEntityId) {
-            setToFirst();
-            mSearchUser = userEntityId;
-        }
-
-        public void setSharedEntity(int entityId) {
-            setToFirst();
-            mSearchEntity = entityId;
-        }
-
-        public void setNext(int startMessageId) {
-            mStartMessageId = startMessageId;
-        }
-
-        public ReqSearchFile getRequestQuery() {
-            ReqSearchFile reqSearchFile = new ReqSearchFile();
-            reqSearchFile.searchType = ReqSearchFile.SEARCH_TYPE_FILE;
-            reqSearchFile.listCount = ReqSearchFile.MAX;
-
-            reqSearchFile.fileType = mSearchFileType;
-            reqSearchFile.writerId = mSearchUser;
-            reqSearchFile.sharedEntityId = mSearchEntity;
-
-            reqSearchFile.startMessageId = mStartMessageId;
-            reqSearchFile.keyword = mKeyword;
-            return reqSearchFile;
         }
     }
 }

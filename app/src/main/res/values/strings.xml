@@ -334,4 +334,5 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_member_invite_popup_2">"JANDI is a group-oriented platform, so you\'ll find the best experience with your whole team in the flow."</string>
     <string name="jandi_send_invitation">"Send Invitations"</string>
     <string name="jandi_later">"Later"</string>
+    <string name="jandi_cannot_find_search_result_old">"No files found"</string>
 </resources>

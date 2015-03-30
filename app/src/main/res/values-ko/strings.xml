@@ -346,4 +346,5 @@
     <string name="jandi_member_invite_popup_2">"메시지 검색이 가능한 업무용 메신저 잔디는 팀원 모두와 함께 사용해야 그 진가가 발휘됩니다. 지금 바로 멤버들을 초대하세요."</string>
     <string name="jandi_later">"나중에 하기"</string>
     <string name="jandi_send_invitation">"멤버 초대하기"</string>
+    <string name="jandi_cannot_find_search_result_old">"파일 검색에 실패했습니다"</string>
 </resources>

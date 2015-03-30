@@ -97,6 +97,11 @@
         android:visibility="gone" />
 
     <include
+        android:id="@+id/layout_file_list_search_empty"
+        layout="@layout/view_search_list_search_empty"
+        android:visibility="gone" />
+
+    <include
         android:id="@+id/layout_file_list_loading"
         layout="@layout/progress_wheel" />
 

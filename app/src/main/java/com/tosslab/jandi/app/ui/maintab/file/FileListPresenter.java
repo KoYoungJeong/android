@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
@@ -71,7 +70,10 @@ public class FileListPresenter {
     TextView textViewFileListType;
 
     @ViewById(R.id.layout_file_list_empty)
-    View emptyView;
+    View uploadEmptyView;
+
+    @ViewById(R.id.layout_file_list_search_empty)
+    View searchEmptyView;
 
     @ViewById(R.id.layout_file_list_loading)
     View initLoadingView;
@@ -342,7 +344,7 @@ public class FileListPresenter {
 
     @UiThread
     public void setEmptyViewVisible(int visible) {
-        emptyView.setVisibility(visible);
+        uploadEmptyView.setVisibility(visible);
     }
 
     @UiThread
@@ -406,5 +408,10 @@ public class FileListPresenter {
     public void exceedMaxFileSizeError() {
         ColoredToast.showError(context, context.getString(R.string.err_file_upload_failed));
 
+    }
+
+    @UiThread
+    public void setSearchEmptryViewVisible(int visible) {
+        searchEmptyView.setVisibility(visible);
     }
 }
