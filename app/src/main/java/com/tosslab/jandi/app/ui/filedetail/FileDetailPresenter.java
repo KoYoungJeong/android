@@ -439,4 +439,9 @@ public class FileDetailPresenter {
             textViewUserName.setTextColor(activity.getResources().getColor(R.color.deactivate_text_color));
         }
     }
+
+    @UiThread
+    public void showFailToast(String message) {
+        ColoredToast.showError(activity, message);
+    }
 }

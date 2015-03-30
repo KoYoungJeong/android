@@ -1,7 +1,12 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +19,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -23,6 +29,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
+import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
@@ -369,6 +376,35 @@ public class FileListPresenter {
         });
 
         animation.startNow();
+
+    }
+
+    public void openAlbumForActivityResult(Fragment fragment) {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+    }
+
+    public void openCameraForActivityResult(Fragment fragment) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+    }
+
+    public void openExplorerForActivityResult(Fragment fragment) {
+        Intent intent = new Intent(context, FileExplorerActivity.class);
+        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+    }
+
+    @UiThread
+    public void dismissProgressDialog(Dialog dialog) {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        }
+    }
+
+    public void exceedMaxFileSizeError() {
+        ColoredToast.showError(context, context.getString(R.string.err_file_upload_failed));
 
     }
 }

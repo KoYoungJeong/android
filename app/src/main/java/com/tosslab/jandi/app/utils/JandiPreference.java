@@ -25,6 +25,7 @@ public class JandiPreference {
     private static final String PREF_ALARM_SOUND = "setting_push_alarm_sound";
     private static final String PREF_ALARM_VIBRATE = "setting_push_alarm_vibration";
     private static final String PREF_ALARM_LED = "setting_push_alarm_led";
+    private static final String PREF_FIRST_ACCESS = "first_access";
 
     public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -151,6 +152,14 @@ public class JandiPreference {
 
     public static boolean isAlarmSound(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_SOUND, true);
+    }
+
+    public static boolean isFirstAccess(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_FIRST_ACCESS, true);
+    }
+
+    public static void setFirstAccess(Context context) {
+        getSharedPreferences(context).edit().putBoolean(PREF_FIRST_ACCESS, false).commit();
     }
 
 }

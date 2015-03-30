@@ -13,11 +13,13 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -80,5 +82,10 @@ public class FileListModel {
         };
         Collections.sort(ret, sort);
         return ret;
+    }
+
+    public boolean isOverSize(String realFilePath) {
+        File uploadFile = new File(realFilePath);
+        return uploadFile.exists() && uploadFile.length() > MessageListModel.MAX_FILE_SIZE;
     }
 }

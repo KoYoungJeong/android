@@ -6,14 +6,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -23,6 +26,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -38,6 +42,8 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.ResourceAccessException;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -105,6 +111,42 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         });
 
+
+        if (needInvitePopup()) {
+            JandiPreference.setFirstAccess(MainTabActivity.this);
+            showInvitePopup();
+        }
+    }
+
+    private void showInvitePopup() {
+
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainTabActivity.this);
+        View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
+
+        final MaterialDialog materialDialog = builder.customView(view, true)
+                .backgroundColor(getResources().getColor(R.color.white))
+                .show();
+
+        view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialDialog.dismiss();
+                InviteActivity_.intent(MainTabActivity.this).start();
+            }
+        });
+
+        view.findViewById(R.id.btn_invitation_popup_later).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                materialDialog.dismiss();
+            }
+        });
+
+    }
+
+    private boolean needInvitePopup() {
+        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(MainTabActivity.this).getFormattedUsersWithoutMe();
+        return JandiPreference.isFirstAccess(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
     }
 
     private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
@@ -160,7 +202,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             log.error(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
                 getEntitiesFailed(getString(R.string.err_expired_session));
-            } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()){
+            } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()) {
                 EventBus.getDefault().post(new ServiceMaintenanceEvent());
             } else {
                 getEntitiesFailed(getString(R.string.err_service_connection));

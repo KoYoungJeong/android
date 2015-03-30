@@ -9,14 +9,16 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/icon_emtpy_messages" />
+        android:src="@drawable/help_enter_a_message" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="24dp"
         android:gravity="center"
+        android:lineSpacingExtra="4dp"
         android:text="@string/jandi_no_message_in_topic_dm"
-        android:textColor="@color/jandi_text_light"
-        android:textSize="18sp" />
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
 </LinearLayout>

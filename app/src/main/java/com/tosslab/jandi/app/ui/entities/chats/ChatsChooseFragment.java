@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.ui.entities.chats;
 
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -41,6 +43,9 @@ public class ChatsChooseFragment extends Fragment {
     @ViewById(R.id.list_chat_choose)
     ListView chatListView;
 
+    @ViewById(R.id.layout_member_empty)
+    View emptyMemberView;
+
     @Bean
     ChatChooseModel chatChooseModel;
 
@@ -50,6 +55,19 @@ public class ChatsChooseFragment extends Fragment {
     @AfterViews
     void initViews() {
         chatChooseAdapter = new ChatChooseAdapter(getActivity());
+        chatChooseAdapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                List<ChatChooseItem> tempUsers = chatChooseModel.getUsers();
+
+                if (tempUsers == null || tempUsers.isEmpty()) {
+                    emptyMemberView.setVisibility(View.VISIBLE);
+                } else {
+                    emptyMemberView.setVisibility(View.GONE);
+                }
+            }
+        });
+
         chatListView.setAdapter(chatChooseAdapter);
 
         chatChooseAdapter.clear();
@@ -60,6 +78,7 @@ public class ChatsChooseFragment extends Fragment {
         chatChooseAdapter.notifyDataSetChanged();
 
         initSearchTextObserver();
+
     }
 
     private void initSearchTextObserver() {
