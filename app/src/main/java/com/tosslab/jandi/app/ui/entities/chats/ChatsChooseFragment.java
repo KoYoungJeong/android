@@ -17,10 +17,12 @@ import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.TextChange;
@@ -158,4 +160,9 @@ public class ChatsChooseFragment extends Fragment {
         publishSubject.onNext(text.toString());
     }
 
+    @Click(R.id.layout_member_empty)
+    void onEmptyClick() {
+        InviteActivity_.intent(getActivity())
+                .start();
+    }
 }

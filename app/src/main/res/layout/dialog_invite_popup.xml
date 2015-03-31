@@ -36,25 +36,29 @@
         android:layout_marginTop="34dp"
         android:weightSum="2">
 
-        <Button
+        <TextView
             android:id="@+id/btn_invitation_popup_invite"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/transparent"
             android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:text="@string/jandi_send_invitation"
             android:textColor="@color/jandi_border_green"
             android:textSize="@dimen/jandi_text_size_medium"
             android:textStyle="bold" />
 
-        <Button
+        <TextView
             android:id="@+id/btn_invitation_popup_later"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/transparent"
             android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:text="@string/jandi_later"
             android:textColor="@color/jandi_border_green"
             android:textSize="@dimen/jandi_text_size_medium"

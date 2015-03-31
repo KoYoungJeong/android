@@ -97,6 +97,12 @@ public class MessageListPresenter {
     @ViewById(R.id.layout_messages_loading)
     View loadingMessageView;
 
+    @ViewById(R.id.img_go_to_latest)
+    View arrowGoToLatestView;
+
+    @ViewById(R.id.progress_go_to_latest)
+    View progressGoToLatestView;
+
     private MessageListAdapter messageListAdapter;
 
     private ProgressWheel progressWheel;
@@ -525,6 +531,7 @@ public class MessageListPresenter {
         }
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setGotoLatestLayoutVisible() {
         gotoLatestLayoutVisible = true;
         if (moveRealChatView != null) {
@@ -541,6 +548,7 @@ public class MessageListPresenter {
                 .start();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setGotoLatestLayoutVisibleGone() {
         gotoLatestLayoutVisible = false;
         if (moveRealChatView != null) {
@@ -555,5 +563,11 @@ public class MessageListPresenter {
 
     public void setOnItemLongClickListener(MessageListAdapter.OnItemLongClickListener onItemLongClickListener) {
         messageListAdapter.setOnItemLongClickListener(onItemLongClickListener);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setGotoLatestLayoutShowProgress() {
+        arrowGoToLatestView.setVisibility(View.GONE);
+        progressGoToLatestView.setVisibility(View.VISIBLE);
     }
 }

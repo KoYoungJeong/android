@@ -31,11 +31,12 @@
         android:textColor="@color/account_home_help_dialog_text"
         android:textSize="@dimen/jandi_text_size_medium" />
 
-    <Button
+    <TextView
         android:id="@+id/btn_file_empty_upload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
+        android:padding="20dp"
         android:background="@android:color/transparent"
         android:text="@string/jandi_upload_a_file"
         android:textColor="@color/jandi_border_green"

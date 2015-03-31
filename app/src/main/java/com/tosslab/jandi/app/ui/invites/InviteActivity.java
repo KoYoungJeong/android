@@ -89,9 +89,10 @@ public class InviteActivity extends BaseAnalyticsActivity {
             try {
                 inviteModel.inviteMembers(Arrays.asList(emailText));
                 invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+                invitePresenter.showSuccessToast(getString(R.string.jandi_invitation_succeed));
             } catch (JandiNetworkException e) {
                 logger.debug(e.getErrorInfo() + " : " + e.httpBody);
-                invitePresenter.showErrorToast(getString(R.string.err_team_creation_failed));
+                invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
             } finally {
                 invitePresenter.dismissProgressWheel();
 

@@ -8,6 +8,7 @@
     android:descendantFocusability="blocksDescendants"
     android:orientation="horizontal"
     android:paddingBottom="10dp"
+    android:foreground="?android:attr/selectableItemBackground"
     android:paddingLeft="@dimen/jandi_messages_padding_left"
     android:paddingRight="@dimen/jandi_messages_padding_right"
     android:paddingTop="5dp"

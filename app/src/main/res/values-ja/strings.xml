@@ -309,7 +309,11 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
-    <string name="jandi_account_home_help">"1つのアカウントで複数のメールアドレスを登録することができます"</string>
+    <string name="jandi_account_home_help">"1つのアカウントで複数のメールアドレスを登録することができます
+
+1つのアカウントで複数のメールアドレスを登録することができます
+
+チームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
     <string name="jadi_account_home">"ホームに戻る"</string>
     <string name="jandi_go_to_main">"ホームに戻る"</string>
     <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
@@ -335,5 +339,5 @@ JANDIへようこそ"</string>
     <string name="jandi_later">"後で"</string>
     <string name="jandi_send_invitation">"招待メールを送信"</string>
     <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
-    <string name="jandi_input_search_keyword">"キーワードを入力して検索してください"</string>
+    <string name="jandi_input_search_keyword">"キーワードで検索"</string>
 </resources>

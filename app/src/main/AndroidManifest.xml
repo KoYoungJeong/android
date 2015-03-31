@@ -75,7 +75,7 @@
             android:name=".ui.filedetail.FileDetailActivity_"
             android:label="@string/title_file_detail"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
         <activity
             android:name=".ui.fileexplorer.FileExplorerActivity"
             android:label="@string/jandi_title_activity_file_explorer"

@@ -76,7 +76,7 @@
                     style="@style/JandiTutorial.EditText"
                     android:layout_width="match_parent"
                     android:hint="@string/jandi_user_password"
-                    android:inputType="textPassword" />
+                    android:inputType="textWebPassword" />
 
                 <Button
                     android:id="@+id/btn_intro_action_signin_start"

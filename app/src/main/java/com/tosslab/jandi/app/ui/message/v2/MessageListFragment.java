@@ -403,7 +403,9 @@ public class MessageListFragment extends Fragment {
 
     @Click(R.id.ll_messages_go_to_latest)
     void onGotoLatestClick() {
-        EventBus.getDefault().post(new ChatModeChangeEvent(true));
+        if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
+            EventBus.getDefault().post(new ChatModeChangeEvent(true));
+        }
 //        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
@@ -466,20 +468,22 @@ public class MessageListFragment extends Fragment {
         oldMessageLoader = normalOldMessageLoader;
 
         messageListPresenter.setMoreNewFromAdapter(false);
-        messageListPresenter.setGotoLatestLayoutVisibleGone();
 
         getActivity().supportInvalidateOptionsMenu();
 
         if (event.isClicked()) {
+            messageListPresenter.setGotoLatestLayoutShowProgress();
             loadLastMessage();
         } else {
             messageListModel.startRefreshTimer();
+            messageListPresenter.setGotoLatestLayoutVisibleGone();
         }
     }
 
     @Background
     void loadLastMessage() {
         newsMessageLoader.load(messageState.getLastUpdateLinkId());
+        messageListPresenter.setGotoLatestLayoutVisibleGone();
         messageListPresenter.moveLastPage();
         messageListModel.startRefreshTimer();
 

@@ -46,7 +46,8 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
         try {
 
             ResMessages oldMessage;
-            if (messageListPresenter.getFirstVisibleItemLinkId() > 0) {
+            boolean isCallByMarker = messageListPresenter.getFirstVisibleItemLinkId() > 0;
+            if (isCallByMarker) {
                 oldMessage = messageListModel.getOldMessage(linkId);
             } else {
                 oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
@@ -56,6 +57,12 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 messageListPresenter.setEmptyView();
                 return;
+            }
+
+            if (!isCallByMarker) {
+                if (oldMessage.lastLinkId == oldMessage.records.get(oldMessage.records.size() - 1).id) {
+                    messageListPresenter.setGotoLatestLayoutVisibleGone();
+                }
             }
 
             int firstLinkId = oldMessage.records.get(0).id;
@@ -68,7 +75,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             int latestVisibleMessageId = messageListPresenter.getFirstVisibleItemLinkId();
             int firstVisibleItemTop = 0;
-            if (latestVisibleMessageId > 0) {
+            if (isCallByMarker) {
                 firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
             } else {
                 // if has no first item...

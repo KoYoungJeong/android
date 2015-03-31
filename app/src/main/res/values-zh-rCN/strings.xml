@@ -329,5 +329,5 @@
     <string name="jandi_later">"之后"</string>
     <string name="jandi_send_invitation">"送出邀请"</string>
     <string name="jandi_cannot_find_search_result_old">"找不到档案"</string>
-    <string name="jandi_input_search_keyword">"按照关键词搜寻您的信息"</string>
+    <string name="jandi_input_search_keyword">"关键词搜寻"</string>
 </resources>

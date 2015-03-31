@@ -87,10 +87,12 @@ public class MessageViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(textMessage.content.body);
 
-            LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
 
             messageTextView.setText(spannableStringBuilder);
-            messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            if (hasLink) {
+                messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            }
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
 

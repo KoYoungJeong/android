@@ -207,7 +207,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         int justGetFilesSize;
 
         fileListPresenter.showMoreProgressBar();
-
+        fileListPresenter.dismissProgressBarDelay();
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             reqSearchFile.teamId = selectedTeamId;
@@ -333,7 +333,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    @Click(R.id.btn_file_empty_upload)
+    @Click(R.id.layout_file_list_empty)
     void onUploadClick() {
         DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
         fileUploadTypeDialog.show(getFragmentManager(), "dialog");

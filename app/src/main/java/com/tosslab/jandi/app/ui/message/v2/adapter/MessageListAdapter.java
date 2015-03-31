@@ -101,8 +101,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
                 colorAnimation.start();
                 markerAnimState = AnimState.Loading;
             }
-        } else {
-            viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {

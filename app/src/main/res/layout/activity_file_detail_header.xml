@@ -79,7 +79,7 @@
         android:id="@+id/ly_file_detail_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="12dp"
+        android:layout_marginBottom="12dp"
         android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
         android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
@@ -90,11 +90,10 @@
             android:background="@drawable/jandi_fview_icon_etc" />
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1">
+            android:layout_marginRight="10dp">
 
             <TextView
                 android:id="@+id/txt_file_detail_file_info"
@@ -104,23 +103,11 @@
                 android:textSize="@dimen/jandi_file_detail_file_type_text" />
 
             <TextView
-                android:id="@+id/txt_file_detail_shared"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/txt_file_detail_file_info"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/jandi_file_detail_share_text"
-                android:textSize="@dimen/jandi_file_detail_file_share_text" />
-
-            <TextView
                 android:id="@+id/txt_file_detail_shared_cdp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/txt_file_detail_shared"
-                android:layout_marginTop="8dp"
-                android:layout_toRightOf="@id/txt_file_detail_shared"
-                android:ellipsize="end"
-                android:maxLines="1"
+                android:layout_below="@id/txt_file_detail_file_info"
+                android:layout_marginTop="2dp"
                 android:textColor="@color/jandi_file_detail_share_text"
                 android:textSize="@dimen/jandi_file_detail_file_share_text" />
         </RelativeLayout>

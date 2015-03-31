@@ -119,6 +119,8 @@ class InviteCommand implements MenuCommand {
 
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(resLeftSideMenu);
+            EntityManager.getInstance(activity).refreshEntity(resLeftSideMenu);
+
 
             inviteSucceed(invitedUsers.size());
         } catch (JandiNetworkException e) {
