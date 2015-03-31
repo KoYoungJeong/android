@@ -8,13 +8,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,6 +57,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
@@ -88,6 +93,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Bean
     FileListPresenter fileListPresenter;
+
+    @SystemService
+    InputMethodManager inputMethodManager;
 
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
@@ -143,6 +151,41 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         if (!(getActivity() instanceof FileListActivity)) {
             getActivity().getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        } else {
+            getActivity().getMenuInflater().inflate(R.menu.file_list_actionbar_menu, menu);
+
+            MenuItem searchMenu = menu.findItem(R.id.action_file_list_search);
+            SearchView sv = ((SearchView) searchMenu.getActionView());
+
+            MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
+
+                @Override
+                public boolean onMenuItemActionExpand(MenuItem item) {
+                    return true;
+                }
+
+                @Override
+                public boolean onMenuItemActionCollapse(MenuItem item) {
+                    inputMethodManager.hideSoftInputFromWindow(sv.getWindowToken(), 0);
+                    onNewQuery("");
+                    return true;
+                }
+            });
+
+            sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    inputMethodManager.hideSoftInputFromWindow(sv.getWindowToken(), 0);
+                    onNewQuery(s);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    return false;
+                }
+            });
+
         }
 
     }
@@ -456,7 +499,23 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         final int headerMaxY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
         final int headerMinY = 0;
 
-        actualListView.setPadding(actualListView.getPaddingLeft(), (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics()), actualListView.getPaddingRight(), actualListView.getPaddingBottom());
+        int paddingTop = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48 + 64.5f, getResources().getDisplayMetrics());
+        actualListView.setPadding(actualListView.getPaddingLeft(), paddingTop, actualListView.getPaddingRight(), actualListView.getPaddingBottom());
+
+        View uploadEmptyView = getActivity().findViewById(R.id.layout_file_list_empty);
+        View searchEmptyView = getActivity().findViewById(R.id.layout_file_list_search_empty);
+        View loadingView = getActivity().findViewById(R.id.layout_file_list_loading);
+
+        RelativeLayout.LayoutParams uploadLayoutParams = (RelativeLayout.LayoutParams) uploadEmptyView.getLayoutParams();
+        uploadLayoutParams.topMargin = paddingTop;
+        uploadEmptyView.setLayoutParams(uploadLayoutParams);
+        RelativeLayout.LayoutParams searchLayoutParams = (RelativeLayout.LayoutParams) searchEmptyView.getLayoutParams();
+        searchLayoutParams.topMargin = paddingTop;
+        searchEmptyView.setLayoutParams(searchLayoutParams);
+        RelativeLayout.LayoutParams loadingLayoutParams = (RelativeLayout.LayoutParams) loadingView.getLayoutParams();
+        loadingLayoutParams.topMargin = paddingTop;
+        loadingView.setLayoutParams(loadingLayoutParams);
+
         actualListView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

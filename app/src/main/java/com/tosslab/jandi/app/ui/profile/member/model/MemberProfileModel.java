@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.profile.member.model;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -25,8 +26,12 @@ import org.apache.http.client.methods.HttpPut;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 31..
@@ -81,14 +86,28 @@ public class MemberProfileModel {
     public String[] getAccountEmails() {
         List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
 
-        int size = userEmails.size();
-        String[] emails = new String[size];
+        Iterator<String> confirmedEmails = Observable.from(userEmails)
+                .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
+                .map(userEmail -> userEmail.getId())
+                .toBlocking()
+                .getIterator();
 
-        for (int idx = 0; idx < size; ++idx) {
-            emails[idx] = userEmails.get(idx).getId();
+
+        List<String> emails = new ArrayList<String>();
+
+        while (confirmedEmails.hasNext()) {
+            emails.add(confirmedEmails.next());
         }
 
-        return emails;
+        int size = emails.size();
+        String[] emailArray = new String[size];
+
+        for (int idx = 0; idx < size; idx++) {
+            emailArray[idx] = emails.get(idx);
+        }
+
+        return emailArray;
+
 
     }
 
