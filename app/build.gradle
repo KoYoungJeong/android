@@ -217,7 +217,6 @@ apt {
 robolectric {
     // configure the set of classes for JUnit tests
     include '**/*Test.class'
-    exclude '**/espresso/**/*.class'
 
     // configure max heap size of the test JVM
     maxHeapSize = "2048m"
