@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.network.socket;
 
 import com.jayway.awaitility.Awaitility;
-import com.koushikdutta.async.http.AsyncHttpClient;
-import com.koushikdutta.async.http.WebSocket;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,18 +32,7 @@ public class JandiSocketManagerTest {
         final boolean[] success = new boolean[1];
 
 
-        socketManager.connect(new AsyncHttpClient.WebSocketConnectCallback() {
-            @Override
-            public void onCompleted(Exception ex, WebSocket webSocket) {
-                ok[0] = true;
-
-                success[0] = ex == null && webSocket != null;
-
-                if (ex != null) {
-                    ex.printStackTrace();
-                }
-            }
-        });
+        socketManager.connect();
 
         Awaitility.setDefaultTimeout(15000, TimeUnit.MILLISECONDS);
         Awaitility.await().until(new Callable<Boolean>() {

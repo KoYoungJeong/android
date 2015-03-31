@@ -1,13 +1,17 @@
 package com.tosslab.jandi.app.network.socket;
 
+import android.util.Log;
+
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.koushikdutta.async.http.AsyncHttpClient;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
@@ -16,11 +20,13 @@ import rx.functions.Action1;
  */
 public class JandiSocketManager {
     private static JandiSocketManager jandiSocketManager;
-    private ConnectState connectState = ConnectState.Disconnected;
     private Socket socket;
+
+    private Map<String, Subscription> eventSubscriber;
 
 
     private JandiSocketManager() {
+        eventSubscriber = new HashMap<String, Subscription>();
     }
 
     public static JandiSocketManager getInstance() {
@@ -31,9 +37,9 @@ public class JandiSocketManager {
         return jandiSocketManager;
     }
 
-    synchronized public ConnectState connect(AsyncHttpClient.WebSocketConnectCallback connectCallback) {
-        if (connectState != ConnectState.Disconnected) {
-            return connectState;
+    synchronized public boolean connect() {
+        if (socket != null && socket.connected()) {
+            return true;
         }
 
         if (socket == null) {
@@ -44,25 +50,19 @@ public class JandiSocketManager {
                 socket = IO.socket(JandiConstantsForFlavors.SERVICE_ROOT_URL, options);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-                connectState = ConnectState.Disconnected;
-                return connectState;
+                return false;
             }
         }
 
         if (socket != null) {
 
-            register(Socket.EVENT_CONNECT, o -> connectState = ConnectState.Connected);
-            register(Socket.EVENT_CONNECT_ERROR, o -> connectState = ConnectState.Disconnected);
-            register(Socket.EVENT_CONNECT_TIMEOUT, o -> connectState = ConnectState.Disconnected);
-            register(Socket.EVENT_DISCONNECT, o -> connectState = ConnectState.Disconnected);
-            register("hello", o -> connectState = ConnectState.Connected);
+            register("hello", o -> Log.d("INFO", String.valueOf(o)));
 
-            connectState = ConnectState.Connecting;
             socket.connect();
 
         }
 
-        return connectState;
+        return true;
     }
 
     synchronized public void disconnect() {
@@ -74,7 +74,11 @@ public class JandiSocketManager {
 
     public void register(String event, final Action1<Object> onNext, final Action1<Throwable> onError) {
         if (socket != null && !socket.hasListeners(event)) {
-            socket.on(event, args -> Observable.from(args).observeOn(AndroidSchedulers.mainThread()).subscribe(onNext, onError));
+            socket.on(event, args -> {
+                removeSubscription(event);
+                Subscription subscribe = Observable.from(args).observeOn(AndroidSchedulers.mainThread()).subscribe(onNext, onError);
+                eventSubscriber.put(event, subscribe);
+            });
         }
     }
 
@@ -85,11 +89,16 @@ public class JandiSocketManager {
 
     public void unregister(String event) {
         if (socket.hasListeners(event)) {
+            removeSubscription(event);
             socket.off(event);
         }
     }
 
-    private enum ConnectState {
-        Connecting, Disconnected, Connected
+    private void removeSubscription(String event) {
+        if (eventSubscriber.containsKey(event)) {
+            eventSubscriber.get(event).unsubscribe();
+            eventSubscriber.remove(event);
+        }
     }
+
 }
