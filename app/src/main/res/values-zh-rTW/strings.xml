@@ -48,7 +48,7 @@
     <string name="err_push_invalid_device">"這裝置不支援推播通知服務"</string>
     <string name="jandi_tab_topic">"議題"</string>
     <string name="jandi_tab_chat">"對話"</string>
-    <string name="jandi_tab_private_group">"私人群組"</string>
+    <string name="jandi_tab_private_group">"私人議題"</string>
     <string name="jandi_tab_direct_message">"直接傳訊"</string>
     <string name="jandi_tab_file">"檔案"</string>
     <string name="jandi_tab_more">"更多"</string>
@@ -59,20 +59,20 @@
     <string name="jandi_tutorial_welcome">"歡迎使用JANDI"</string>
     <string name="jandi_tutorial_welcome_message">"我們的使命是讓您的工作日更簡單、更高效、更愉快。我們將所有您對通訊軟體的喜愛與雲端存儲的便利性及增加的強大搜尋功能做了結合，然後都這全部都放置在您的手掌心上。"</string>
     <string name="jandi_tutorial_topic">"將您的整體團隊聚集在一處"</string>
-    <string name="jandi_tutorial_topic_message">"在您選擇的議題群組裏跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人群組及直接傳訊裏面繼續對話。"</string>
+    <string name="jandi_tutorial_topic_message">"在您選擇的議題跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題及直接傳訊裏面繼續對話。"</string>
     <string name="jandi_tutorial_file">"簡單的幾個點擊來上傳檔案"</string>
     <string name="jandi_tutorial_file_message">"您可以從您的手機或JANDI的檔案資料庫分享文件、簡報、視頻及任何其它檔案給您的團隊。我們自動將您所有的内容儲存並排序好讓您之後好找。"</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_topic">"我的議題群組"</string>
-    <string name="jandi_entity_unjoined_topic">"可選擇的議題群組"</string>
+    <string name="jandi_entity_joined_topic">"我的議題"</string>
+    <string name="jandi_entity_unjoined_topic">"其他議題"</string>
     <string name="jandi_entity_create_entity_name">"名字"</string>
     <string name="jandi_message_create_entity">"已建立 %1$s"</string>
     <string name="jandi_message_invite_entity">"%1$d 使用者已被加入"</string>
-    <string name="jandi_create_channel">"建立新的議題群組"</string>
-    <string name="jandi_create_privategroup">"建立新的私人群組"</string>
-    <string name="jandi_modify_channel">"重新命名議題群組"</string>
-    <string name="jandi_modify_private_group">"重新命名私人群組"</string>
+    <string name="jandi_create_channel">"建立新議題"</string>
+    <string name="jandi_create_privategroup">"建立新私人議題"</string>
+    <string name="jandi_modify_channel">"重新命名議題"</string>
+    <string name="jandi_modify_private_group">"重新命名私人議題"</string>
     <string name="warn_all_users_are_already_invited">"全部使用者已被邀請"</string>
     <string name="err_entity_create">"建立不成功"</string>
     <string name="err_entity_join">"加入不成功"</string>
@@ -192,10 +192,10 @@
     <string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
     <string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
     <string name="jandi_forgot_password"><b><u>忘記您的密碼了？</u></b></string>
-    <string name="jandi_message_ask_about_deleting">"您確定要永久刪除這訊息嗎？刪除的訊息將無法回復。"</string>
+    <string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
     <string name="jandi_profile_phone_number_hint">"電話號碼"</string>
     <string name="jandi_profile_division_hint">"部門"</string>
-    <string name="jandi_messages_pull">"下拉以載入較舊的訊息"</string>
+    <string name="jandi_messages_pull">"下拉以載入歷史訊息"</string>
     <string name="jandi_messages_refresh">"完成"</string>
     <string name="jandi_messages_release">"放掉以載入較舊的訊息"</string>
     <string name="jandi_file_list_pull">"下拉以載入更多檔案"</string>
@@ -203,7 +203,7 @@
     <string name="jandi_file_list_release">"放掉以檢視更多檔案"</string>
     <string name="jandi_have_an_account_already">"已經有團隊註冊了嗎?"</string>
     <string name="jandi_profile_position_hint">"職稱"</string>
-    <string name="err_profile_exceed_length_of_topic_name">"議題群組名稱不能長於六十個以上字符"</string>
+    <string name="err_profile_exceed_length_of_topic_name">"議題名稱不能長於六十個以上字符"</string>
     <string name="err_profile_exceed_length_of_status_message">"狀態訊息不能長於六十個以上字符"</string>
     <string name="err_profile_exceed_length_of_phone">"行動電話號碼不能長於二十個以上字符"</string>
     <string name="err_profile_exceed_length_of_division">"部門名稱不能長於六十個以上字符"</string>
@@ -222,8 +222,8 @@
     <string name="jandi_sign_out_message">"您確定您要登出？"</string>
     <string name="jandi_signup_agree_pp">我已經看過并且同意這<u><b>隱私權</b></u>條款</string>
     <string name="jandi_signup_agree_tos">我已經看過并且同意這<u><b>服務條款</b></u></string>
-    <string name="jandi_signup_title">"注冊"</string>
-    <string name="jandi_signup_confirm">"現在就注冊！"</string>
+    <string name="jandi_signup_title">"註冊"</string>
+    <string name="jandi_signup_confirm">"現在就註冊！"</string>
     <string name="jandi_signup_required">"必須"</string>
     <string name="jandi_team_member">"團隊成員"</string>
     <string name="jandi_team_select_accept">"接受"</string>
@@ -234,7 +234,7 @@
 請注意您的團隊成員可以查看和使用這資料來提到、 搜尋或直接聯係您。"</string>
     <string name="what_is_team_domain">"請選擇您團隊的網域（URL）以網頁方式登入。
 您可以任意決定，只要它是<b>三個字符以上</b>并且只含有字母、 數字和連字號 (-)。"</string>
-    <string name="jandi_duplicate_email">"這電子郵件已被注冊"</string>
+    <string name="jandi_duplicate_email">"這電子郵件已被註冊"</string>
     <string name="jandi_no_invite_email">"請提供您想邀請的團隊成員的電子郵件地址"</string>
     <string name="jandi_signup_agree_all">"選擇您的簡介名稱給其他團隊成員看到"</string>
     <string name="jandi_password_strength_average">"普通"</string>
@@ -260,7 +260,7 @@
     <string name="jandi_topic_private">"非公開"</string>
     <string name="jandi_unstarred">"取消標記"</string>
     <string name="jandi_starred">"取消標記"</string>
-    <string name="jandi_message_leave_private_topic">"您如果離開這個私人議題群組，未來希望能夠重新加入，必須先取得其它人的邀請。您確定您想要離開？"</string>
+    <string name="jandi_message_leave_private_topic">"離開私人議題後，未來希望能夠重新加入，必須先取得其它人的邀請。您確定要離開嗎？"</string>
     <string name="jandi_topic_title_hint">"議題"</string>
     <string name="jandi_topic_title">"議題"</string>
     <string name="jandi_fail_web_token">"登入時遇到問題。請再試一次。"</string>
@@ -275,9 +275,9 @@
     <string name="jandi_new_team_name">"新團隊名稱"</string>
     <string name="jandi_start_direct_messages_1">"<b>您所有直接傳訊的訊息現在是隱藏的。</b>"</string>
     <string name="jandi_start_direct_messages_2">"點擊以下按鍵以開始或重新打開一個對話。"</string>
-    <string name="jandi_private_topic_tip_1">"私人群組對非邀請成員不開放"</string>
-    <string name="jandi_private_topic_tip_2">"在私人群組内已分享檔案僅開放給其參與者"</string>
-    <string name="jandi_private_topic_tip_3">"已設定爲公開或私人的議題群組在建立之後不能被轉換成另一個"</string>
+    <string name="jandi_private_topic_tip_1">"私人議題不開放給未受邀成員"</string>
+    <string name="jandi_private_topic_tip_2">"私人議題裏的檔案僅開放給其受邀成員"</string>
+    <string name="jandi_private_topic_tip_3">"已設定爲公開或私人的議題在建立之後不能被轉換成另一個"</string>
     <string name="jandi_file_category_presentation">"簡報"</string>
     <string name="jandi_file_category_document">"文件"</string>
     <string name="jandi_file_category_spreadsheet">"表單"</string>
@@ -288,11 +288,11 @@
     <string name="jandi_select_direct_messages">"選擇直接傳訊。"</string>
     <string name="primary_email_info_msg">"所有與您JANDI帳號相關的電子郵件將寄送到主要電子郵件地址。您可以增加其它電子郵件地址到您的帳號并且指定爲某個團隊專屬電子郵件地址。(請注意電子郵件地址皆需事先被確認)"</string>
     <string name="jandi_has_joined">"%s已加入"</string>
-    <string name="jandi_created_this_topic">"%s建立了這議題群組"</string>
+    <string name="jandi_created_this_topic">%"s建立了這議題"</string>
     <string name="jandi_invited_topic">"%1$s邀請了%2$s"</string>
     <string name="jandi_left_topic">"%s已經離開"</string>
     <string name="jandi_tos_and_pp">"使用條款 &amp; 隱私權條款"</string>
-    <string name="jandi_topic_ask_about_deleting">"您確定您要刪除這個議題？"</string>
+    <string name="jandi_topic_ask_about_deleting">"您確定要刪除這個議題？"</string>
     <string name="jandi_create">"建立"</string>
     <string name="jandi_copy_link">"複製連結"</string>
     <string name="jandi_disabled_user">"這成員已經被暫時關閉"</string>
@@ -330,4 +330,5 @@
     <string name="jandi_later">"之後"</string>
     <string name="jandi_send_invitation">"送出邀請"</string>
     <string name="jandi_cannot_find_search_result_old">"找不到檔案"</string>
+    <string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
 </resources>

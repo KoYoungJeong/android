@@ -48,7 +48,7 @@
     <string name="err_push_invalid_device">"这装置不支持推播通知服务"</string>
     <string name="jandi_tab_topic">"议题"</string>
     <string name="jandi_tab_chat">"对话"</string>
-    <string name="jandi_tab_private_group">"私人群组"</string>
+    <string name="jandi_tab_private_group">"私人议题"</string>
     <string name="jandi_tab_direct_message">"直接传讯"</string>
     <string name="jandi_tab_file">"档案"</string>
     <string name="jandi_tab_more">"更多"</string>
@@ -59,20 +59,20 @@
     <string name="jandi_tutorial_welcome">"欢迎使用JANDI"</string>
     <string name="jandi_tutorial_welcome_message">"我们的使命是让您的工作日更简单、更高效、更愉快。我们将所有您对通讯软件的喜爱与云端存储的便利性及增加的强大搜寻功能做了结合，然后都这全部都放置在您的手掌心上。"</string>
     <string name="jandi_tutorial_topic">"将您的整体团队聚集在一处"</string>
-    <string name="jandi_tutorial_topic_message">"在您选择的议题群组里跟组织里的同仁联络，无论是专案上的协作或仅是闲谈。当您需要更多隐私，就邀请特定成员到私人群组及直接传讯里面继续对话。"</string>
+    <string name="jandi_tutorial_topic_message">"在您选择的议题跟组织里的同仁联络，无论是专案上的协作或仅是闲谈。当您需要更多隐私，就邀请特定成员到私人议题及直接传讯里面继续对话。"</string>
     <string name="jandi_tutorial_file">"简单的几个点击来上传档案"</string>
     <string name="jandi_tutorial_file_message">"您可以从您的手机或JANDI的档案数据库分享文件、简报、视频及任何其它档案给您的团队。我们自动将您所有的内容储存并排序好让您之后好找。"</string>
 
     <!-- Manipulate Entity -->
-    <string name="jandi_entity_joined_topic">"我的议题群组"</string>
-    <string name="jandi_entity_unjoined_topic">"可选择的议题群组"</string>
+    <string name="jandi_entity_joined_topic">"我的议题"</string>
+    <string name="jandi_entity_unjoined_topic">"其他议题"</string>
     <string name="jandi_entity_create_entity_name">"名字"</string>
     <string name="jandi_message_create_entity">"已建立 %1$s"</string>
     <string name="jandi_message_invite_entity">"%1$d 用户已被加入"</string>
-    <string name="jandi_create_channel">"建立新的议题群组"</string>
-    <string name="jandi_create_privategroup">"建立新的私人群组"</string>
-    <string name="jandi_modify_channel">"重新命名议题群组"</string>
-    <string name="jandi_modify_private_group">"重新命名私人群组"</string>
+    <string name="jandi_create_channel">"建立新议题"</string>
+    <string name="jandi_create_privategroup">"建立新私人议题"</string>
+    <string name="jandi_modify_channel">"重新命名议题"</string>
+    <string name="jandi_modify_private_group">"重新命名私人议题"</string>
     <string name="warn_all_users_are_already_invited">"全部用户已被邀请"</string>
     <string name="err_entity_create">"建立不成功"</string>
     <string name="err_entity_join">"加入不成功"</string>
@@ -110,19 +110,19 @@
     <string name="err_invitation_failed">"邀请无法送出"</string>
 
     <!-- Message List -->
-    <string name="jandi_message_hint">"讯息"</string>
+    <string name="jandi_message_hint">"信息"</string>
     <string name="jandi_message_send">"送出"</string>
     <string name="jandi_messages_modify_succeed">"编辑成功"</string>
     <string name="jandi_file_uploading">"上传"</string>
     <string name="jandi_file_upload_succeed">"档案上传成功"</string>
-    <string name="warn_messages_empty">"现在没有讯息"</string>
-    <string name="warn_no_more_messages">"现在没有新讯息"</string>
+    <string name="warn_messages_empty">"现在没有信息"</string>
+    <string name="warn_no_more_messages">"现在没有新信息"</string>
     <string name="warn_no_permission">"无使用权限"</string>
     <string name="err_messages_invaild_entity">"议题无效"</string>
-    <string name="err_messages_get">"讯息无法找到"</string>
-    <string name="err_messages_send">"讯息无法送出"</string>
-    <string name="err_messages_modify">"讯息无法编辑"</string>
-    <string name="err_messages_delete">"讯息无法删除"</string>
+    <string name="err_messages_get">"信息无法找到"</string>
+    <string name="err_messages_send">"信息无法送出"</string>
+    <string name="err_messages_modify">"信息无法编辑"</string>
+    <string name="err_messages_delete">"信息无法删除"</string>
     <string name="err_file_upload_failed">"档案无法上传"</string>
 
     <!-- Manipulate CDP -->
@@ -132,7 +132,7 @@
     <string name="menu_entity_leave">"离开"</string>
 
     <!-- Message -->
-    <string name="modify_message">"编辑讯息"</string>
+    <string name="modify_message">"编辑信息"</string>
     <string name="today">"今天"</string>
 
     <!-- File Detail Activity -->
@@ -191,18 +191,18 @@
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
     <string name="jandi_forgot_password"><b><u>忘记您的密码了？</u></b></string>
-    <string name="jandi_message_ask_about_deleting">"您确定要永久删除这讯息吗？删除的讯息将无法回复。"</string>
+    <string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
-    <string name="jandi_messages_pull">"下拉以载入较旧的讯息"</string>
+    <string name="jandi_messages_pull">"下拉以载入历史信息"</string>
     <string name="jandi_messages_refresh">"完成"</string>
-    <string name="jandi_messages_release">"放掉以载入较旧的讯息"</string>
+    <string name="jandi_messages_release">"放掉以载入较旧的信息"</string>
     <string name="jandi_file_list_pull">"下拉以载入更多档案"</string>
     <string name="jandi_file_list_refresh">"完成"</string>
     <string name="jandi_file_list_release">"放掉以检视更多档案"</string>
     <string name="jandi_have_an_account_already">"已经有团队注册了吗?"</string>
     <string name="jandi_profile_position_hint">"职称"</string>
-    <string name="err_profile_exceed_length_of_topic_name">"议题群组名称不能长于六十个以上字符"</string>
+    <string name="err_profile_exceed_length_of_topic_name">"议题名称不能长于六十个以上字符"</string>
     <string name="err_profile_exceed_length_of_status_message">"状态讯息不能长于六十个以上字符"</string>
     <string name="err_profile_exceed_length_of_phone">"行动电话号码不能长于二十个以上字符"</string>
     <string name="err_profile_exceed_length_of_division">"部门名称不能长于六十个以上字符"</string>
@@ -259,13 +259,13 @@
     <string name="jandi_topic_public">"公开"</string>
     <string name="jandi_unstarred">"取消标记"</string>
     <string name="jandi_starred">"取消标记"</string>
-    <string name="jandi_message_leave_private_topic">"您如果离开这个私人议题群组，未来希望能够重新加入，必须先取得其它人的邀请。您确定您想要离开？"</string>
+    <string name="jandi_message_leave_private_topic">"离开私人议题后，未来希望能够重新加入，必须先取得其它人的邀请。您确定要离开吗？"</string>
     <string name="jandi_topic_title_hint">"议题"</string>
     <string name="jandi_topic_title">"议题"</string>
     <string name="jandi_fail_web_token">"登入时遇到问题。请再试一次。"</string>
     <string name="sent_auth_email_short">"电子邮件已经成功寄出。 请查看您的邮箱"</string>
     <string name="jandi_switch_team">"更换团队"</string>
-    <string name="jandi_what_is_topic_type">"议题群组一经建立将无法在公开或私人两种类别之间自由转换"</string>
+    <string name="jandi_what_is_topic_type">"議題一旦建立將無法在公開或私人兩種類別之間自由轉換"</string>
     <string name="jandi_choose_email">"选择一个电子邮件"</string>
     <string name="jandi_already_linked_email">"这电子邮件已经连结到您的帐号"</string>
     <string name="jandi_add_an_email_address">"增加一个电子邮件地址"</string>
@@ -274,8 +274,8 @@
     <string name="jandi_new_team_name">"新团队名称"</string>
     <string name="jandi_start_direct_messages_1">"<b>您所有直接传讯的讯息现在是隐藏的。</b>"</string>
     <string name="jandi_start_direct_messages_2">"点击以下按键以开始或重新打开一个对话。"</string>
-    <string name="jandi_private_topic_tip_1">"私人群组对非邀请成员不开放"</string>
-    <string name="jandi_private_topic_tip_2">"在私人群组内已分享档案仅开放给其参与者"</string>
+    <string name="jandi_private_topic_tip_1">"私人议题不开放给未受邀成员"</string>
+    <string name="jandi_private_topic_tip_2">"已设定为公开或私人的议题在建立之后不能被转换成另一个"</string>
     <string name="jandi_private_topic_tip_3">"已设定为公开或私人的议题群组在建立之后不能被转换成另一个"</string>
     <string name="jandi_file_category_presentation">"简报"</string>
     <string name="jandi_file_category_document">"文件"</string>
@@ -287,11 +287,11 @@
     <string name="jandi_select_direct_messages">"选择直接传讯。"</string>
     <string name="primary_email_info_msg">"所有与您JANDI帐号相关的电子邮件将寄送到主要电子邮件地址。您可以增加其它电子邮件地址到您的帐号并且指定为某个团队专属电子邮件地址。 (请注意电子邮件地址皆需事先被确认)"</string>
     <string name="jandi_has_joined">"%s已加入"</string>
-    <string name="jandi_created_this_topic">"%s建立了这议题群组"</string>
+    <string name="jandi_created_this_topic">"%s建立了这议题"</string>
     <string name="jandi_invited_topic">"%1$s邀请了%2$s</string>
     <string name="jandi_left_topic">"%s已经离开"</string>
     <string name="jandi_tos_and_pp">"使用条款 &amp; 隐私权条款"</string>
-    <string name="jandi_topic_ask_about_deleting">"您确定您要删除这个议题？"</string>
+    <string name="jandi_topic_ask_about_deleting">"您确定要删除这个议题？"</string>
     <string name="jandi_create">"建立"</string>
     <string name="jandi_copy_link">"复制链接"</string>
     <string name="jandi_disabled_user">"这成员已经被暂时关闭"</string>
@@ -309,7 +309,7 @@
     <string name="jandi_sign_in_ids_explain">"请选择一个电子邮件地址让我们将全部与JANDI相关的电子邮件寄给您。增加其它电子邮件地址以指定给特定团队。"</string>
     <string name="jandi_disable_user_profile_explain">"這成員已經被暫時關閉。欲知更多細節，請聯係團隊管理者。"</string>
     <string name="jandi_share_to_jandi">"分享到JANDI"</string>
-    <string name="jandi_no_message_in_topic_dm">"输入讯息以开始对话"</string>
+    <string name="jandi_no_message_in_topic_dm">"输入信息以开始对话"</string>
     <string name="err_invalid_team_domain">"网域名称无效"</string>
     <string name="jandi_off">"关闭"</string>
     <string name="jandi_on">"打开"</string>
@@ -319,7 +319,7 @@
     <string name="jandi_sounds">"声音"</string>
     <string name="jandi_vibrate">"振动"</string>
     <string name="jandi_service_maintenance">"JANDI现在基于定期维护而无法使用。我们预计几个小时内就可以恢复运作。感谢您的耐心等候。"</string>
-    <string name="jandi_go_to_latest">"去到最近的讯息"</string>
+    <string name="jandi_go_to_latest">"回到账号首页"</string>
     <string name="jandi_retry_voice_search">"没有接收清楚您刚才说的，麻烦再说一次"</string>
     <string name="jandi_search_ing">"<![CDATA[搜寻 <b><font color="#404040">%s</font></b>...]]>"</string>
     <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%1$s</font></b>与 <b><font color="#404040">%2$d</font></b>符合]]>"</string>
@@ -329,4 +329,5 @@
     <string name="jandi_later">"之后"</string>
     <string name="jandi_send_invitation">"送出邀请"</string>
     <string name="jandi_cannot_find_search_result_old">"找不到档案"</string>
+    <string name="jandi_input_search_keyword">"按照关键词搜寻您的信息"</string>
 </resources>

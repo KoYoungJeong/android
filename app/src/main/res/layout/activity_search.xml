@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_round_rect_white"
             android:gravity="center_vertical"
-            android:hint="@string/jandi_action_search"
+            android:hint="@string/jandi_input_search_keyword"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingLeft="64dp"

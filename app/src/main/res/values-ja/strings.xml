@@ -60,10 +60,12 @@ JANDIへようこそ"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"JANDIへようこそ"</string>
-    <string name="jandi_tutorial_welcome_message">"ファイルを共有するときに、クラウドサービス上のファイルのURLをコピーして、プライベート用のメッセージアプリなどに貼り付けて共有していませんか？JANDIを使えば、プライベートのメッセンジャーやアプリを使わずに、メッセージやファイルのやりとりができます"</string>
+    <string name="jandi_tutorial_welcome_message">"私達のミッションは、皆様のワークライフをもっとシンプルに、生産的に、そして楽しくすることです。
+
+私達は、メッセージアプリやクラウドストレージの強力で優れた機能を融合し、一つのコミュニケーションツールとして提供しています。"</string>
 
     <!-- Reduced # of words -->
-    <string name="jandi_tutorial_topic">"トピックごとに必要なメンバーを招待して情報共有"</string>
+    <string name="jandi_tutorial_topic">"チームワークの真の力を"</string>
     <string name="jandi_tutorial_topic_message">"話したいテーマごとにトピックを作り、必要なメンバーを招待できます。自分から参加することもできます。必要な情報を必要な人が見ることで、コミュニケーションの生産性がアップします。デリケートな話題をしたい場合はプライベートグループを使いましょう"</string>
     <string name="jandi_tutorial_file">"たった数回のタップでファイルを共有"</string>
     <string name="jandi_tutorial_file_message">"PPT、XLS、PDFなどどのようなファイル形式でもJANDIにアップロードし共有することができます。アップロードされたファイルはいつでも利用可能で、簡単に検索して探すことができます"</string>
@@ -183,8 +185,8 @@ JANDIへようこそ"</string>
     <string name="err_file_search">"検索に失敗しました"</string>
     <string name="jandi_setting_push">"プッシュ"</string>
     <string name="jandi_setting_push_subscription">"プッシュ通知"</string>
-    <string name="jandi_setting_push_subscription_ok">"通知をオンにする"</string>
-    <string name="jandi_setting_push_subscription_cancel">"通知をオフにする"</string>
+    <string name="jandi_setting_push_subscription_ok">"通知がオンになっています"</string>
+    <string name="jandi_setting_push_subscription_cancel">"通知をオフになっています"</string>
     <string name="jandi_setting_general">"一般"</string>
     <string name="jandi_setting_sign_out">"ログアウトする"</string>
     <string name="jandi_message_logout">"ログアウトしました"</string>
@@ -307,11 +309,7 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
-    <string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます
-
-1つのアカウントで複数のメールアドレスを持つことができ、いずれのメールアドレスでもログイン可能です
-
-チームごとに自分のメールアドレスを1つ選んでください。プロファイルに表示されます"</string>
+    <string name="jandi_account_home_help">"1つのアカウントで複数のメールアドレスを登録することができます"</string>
     <string name="jadi_account_home">"ホームに戻る"</string>
     <string name="jandi_go_to_main">"ホームに戻る"</string>
     <string name="jandi_sign_in_ids_explain">"JANDIからのメールを受信するメールアドレスを一つ選択してください。メールアドレスを追加しチームごとに使い分けられます"</string>
@@ -337,4 +335,5 @@ JANDIへようこそ"</string>
     <string name="jandi_later">"後で"</string>
     <string name="jandi_send_invitation">"招待メールを送信"</string>
     <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
+    <string name="jandi_input_search_keyword">"キーワードを入力して検索してください"</string>
 </resources>
