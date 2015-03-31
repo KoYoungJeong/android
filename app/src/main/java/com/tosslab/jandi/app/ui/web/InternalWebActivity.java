@@ -65,7 +65,7 @@ public class InternalWebActivity extends ActionBarActivity {
         });
 
 
-        if (!url.startsWith("http://") && url.startsWith("https://")) {
+        if (!url.startsWith("http")) {
             url = "http://" + url;
         }
 
