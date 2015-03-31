@@ -73,11 +73,11 @@ Welcome to JANDI"</string>
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
     <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable.
-        
-We combined everything you love about messaging apps with the convenience of cloud storage and added powerful search functionality, and are putting it all in the palm of your hand."</string>
+
+We combined everything you love about messaging apps and cloud storage with powerful search functionality, and are putting it all in the palm of your hand."</string>
     <string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
     <string name="jandi_tutorial_topic_message">"Instantly connect with all your colleagues using Public Topics. The subject matter is up to you, whether it's a cross-departmental project or just some casual conversation. If you need privacy, you can invite members to Private Topics or exchange Direct Messages."</string>
-    <string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
+    <string name="jandi_tutorial_file">"Upload Files with a Few Taps"</string>
     <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. You no longer need to use other storage services or send links to files.
         
 All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
@@ -318,11 +318,7 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
     <string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
     <string name="jadi_account_home">"Account Home"</string>
-    <string name="jandi_account_home_help">"You can join multiple teams using one account.
-
-An account can also hold multiple email addresses.\nYou can use any of them to sign in.
-
-Assign one email to each team to let other members know how to contact you."</string>
+    <string name="jandi_account_home_help">"An account can also hold multiple email addresses."</string>
     <string name="jandi_go_to_main">"Go to\nAccount Home"</string>
     <string name="jandi_sign_in_ids_explain">"Choose an email address where we should send all of your JANDI related emails. Add other email addresses to assign to specific teams."</string>
     <string name="jandi_search_result_summary">"<![CDATA[<b><font color="#404040">%2$d</font></b> matches for <b><font color="#404040">%1$s</font></b>]]>"</string>
@@ -330,9 +326,10 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_retry_voice_search">"Didn\'t catch that, try speaking again"</string>
     <string name="jandi_go_to_latest">"Go to the most recent messages"</string>
     <string name="jandi_upload_a_file">"Upload a File"</string>
-    <string name="jandi_member_invite_popup_1">"Invite all of your team members now!"</string>
-    <string name="jandi_member_invite_popup_2">"JANDI is a group-oriented platform, so you\'ll find the best experience with your whole team in the flow."</string>
+    <string name="jandi_member_invite_popup_1">"Invite your team members now!"</string>
+    <string name="jandi_member_invite_popup_2">"JANDI is a group-oriented platform, so you'll find the best experience with your whole team in the flow."</string>
     <string name="jandi_send_invitation">"Send Invitations"</string>
     <string name="jandi_later">"Later"</string>
     <string name="jandi_cannot_find_search_result_old">"No files found"</string>
+    <string name="jandi_input_search_keyword">"Search your messages by keyword(s)"</string>
 </resources>

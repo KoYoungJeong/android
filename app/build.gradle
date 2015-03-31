@@ -146,7 +146,7 @@ android {
         }
 
         inhouse {
-            versionName(defaultConfig.versionName + "." + 2)
+            versionName(defaultConfig.versionName + "." + 3)
             buildTypes {
             }
         }

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.team.info.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
@@ -18,7 +19,11 @@ import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
@@ -51,7 +56,20 @@ public class TeamDomainInfoModel {
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
-        return JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+
+        Iterator<ResAccountInfo.UserEmail> confirmed = Observable.from(userEmails)
+                .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
+                .toBlocking()
+                .getIterator();
+
+        List<ResAccountInfo.UserEmail> filteredUserEmails = new ArrayList<ResAccountInfo.UserEmail>();
+
+        while (confirmed.hasNext()) {
+            filteredUserEmails.add(confirmed.next());
+        }
+
+        return filteredUserEmails;
     }
 
     @SupposeBackground

@@ -48,7 +48,6 @@
             android:id="@+id/ly_more_invite"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginBottom="1dp"
             android:layout_weight="1"
             android:background="@color/white"
             android:gravity="center"
@@ -84,7 +83,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:layout_weight="1"
+
             android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
@@ -97,21 +99,13 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginRight="1dp"
             android:layout_weight="1"
             android:background="@color/white"
             android:gravity="center"
+
             android:orientation="vertical"
             android:text="@string/jandi_help"
             app:img="@drawable/jandi_icon_more_help" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="1dp"
-            android:layout_weight="1"
-            android:background="@color/white" />
 
     </LinearLayout>
 
