@@ -55,7 +55,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                messageListPresenter.setEmptyView();
+                messageListPresenter.dismissLoadingView();
                 return;
             }
 
@@ -79,7 +79,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
             } else {
                 // if has no first item...
-                messageListPresenter.setEmptyView();
+                messageListPresenter.dismissLoadingView();
                 messageState.setLastUpdateLinkId(lastLinkId);
             }
 

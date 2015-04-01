@@ -75,7 +75,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
             if (linkId == -1) {
 
-                messageListPresenter.setEmptyView();
+                messageListPresenter.dismissLoadingView();
                 messageListPresenter.clearMessages();
 
                 messageListPresenter.addAll(0, oldMessage.records);
@@ -119,7 +119,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     private void checkItemCountIfException() {
         boolean hasItem = messageListPresenter.getFirstVisibleItemLinkId() > 0;
         if (!hasItem) {
-            messageListPresenter.setEmptyView();
+            messageListPresenter.dismissLoadingView();
+            messageListPresenter.showEmptyView();
         }
     }
 

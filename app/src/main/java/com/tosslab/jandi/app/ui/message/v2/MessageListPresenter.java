@@ -115,6 +115,17 @@ public class MessageListPresenter {
     void initObject() {
         messageListAdapter = new MessageListAdapter(activity);
         messageListAdapter.setHasStableIds(true);
+        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (messageListAdapter.getItemCount() == 0) {
+                    emptyMessageView.setVisibility(View.VISIBLE);
+                } else {
+                    emptyMessageView.setVisibility(View.GONE);
+                }
+            }
+        });
 
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
@@ -482,23 +493,8 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setEmptyView() {
+    public void dismissLoadingView() {
         loadingMessageView.setVisibility(View.GONE);
-        if (messageListAdapter.getItemCount() > 0) {
-            messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onChanged() {
-                    super.onChanged();
-                    if (messageListAdapter.getItemCount() == 0) {
-                        emptyMessageView.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyMessageView.setVisibility(View.GONE);
-                    }
-                }
-            });
-        } else {
-            emptyMessageView.setVisibility(View.VISIBLE);
-        }
     }
 
     public void setMarker(int lastMarker) {
@@ -573,5 +569,10 @@ public class MessageListPresenter {
     public void setGotoLatestLayoutShowProgress() {
         arrowGoToLatestView.setVisibility(View.GONE);
         progressGoToLatestView.setVisibility(View.VISIBLE);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showEmptyView() {
+        emptyMessageView.setVisibility(View.VISIBLE);
     }
 }

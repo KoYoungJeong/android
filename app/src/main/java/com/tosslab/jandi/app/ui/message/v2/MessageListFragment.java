@@ -210,7 +210,7 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.addDummyMessages(dummyMessages);
 
             messageListPresenter.moveLastPage();
-            messageListPresenter.setEmptyView();
+            messageListPresenter.dismissLoadingView();
         } else {
             messageListPresenter.showMessageLoading();
         }
