@@ -61,7 +61,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             ResMessages oldMessage = messageListModel.getOldMessage(linkId);
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                messageListPresenter.setEmptyView();
+                checkItemCountIfException();
                 return;
             }
 
@@ -107,11 +107,20 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+            checkItemCountIfException();
         } catch (Exception e) {
+            checkItemCountIfException();
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
 
+    }
+
+    private void checkItemCountIfException() {
+        boolean hasItem = messageListPresenter.getFirstVisibleItemLinkId() > 0;
+        if (!hasItem) {
+            messageListPresenter.setEmptyView();
+        }
     }
 
     private void updateMarker() {

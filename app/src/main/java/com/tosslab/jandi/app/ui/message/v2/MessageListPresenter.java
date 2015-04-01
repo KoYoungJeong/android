@@ -484,17 +484,21 @@ public class MessageListPresenter {
     @UiThread
     public void setEmptyView() {
         loadingMessageView.setVisibility(View.GONE);
-        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                if (messageListAdapter.getItemCount() == 0) {
-                    emptyMessageView.setVisibility(View.VISIBLE);
-                } else {
-                    emptyMessageView.setVisibility(View.GONE);
+        if (messageListAdapter.getItemCount() > 0) {
+            messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    if (messageListAdapter.getItemCount() == 0) {
+                        emptyMessageView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyMessageView.setVisibility(View.GONE);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            emptyMessageView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void setMarker(int lastMarker) {
