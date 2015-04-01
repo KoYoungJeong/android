@@ -348,4 +348,5 @@
     <string name="jandi_send_invitation">"멤버 초대하기"</string>
     <string name="jandi_cannot_find_search_result_old">"파일 검색에 실패했습니다"</string>
     <string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
+    <string name="jandi_count_with_brace">(%d)</string>
 </resources>

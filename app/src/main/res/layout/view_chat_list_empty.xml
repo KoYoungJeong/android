@@ -15,6 +15,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/jandi_start_direct_messages_1"
         android:textColor="@color/account_home_help_dialog_text"
         android:textSize="@dimen/jandi_text_size_large"
@@ -25,18 +27,19 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text="@string/jandi_start_direct_messages_2"
         android:textColor="@color/account_home_help_dialog_text"
         android:textSize="@dimen/jandi_text_size_medium" />
 
-    <Button
+    <TextView
         android:id="@+id/btn_chat_list_no_messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:background="@android:color/transparent"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="20dp"
         android:text="@string/jandi_select_direct_messages"
         android:textColor="@color/jandi_border_green"
         android:textSize="@dimen/jandi_text_size_large"

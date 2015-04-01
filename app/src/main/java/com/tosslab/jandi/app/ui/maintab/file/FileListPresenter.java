@@ -357,7 +357,7 @@ public class FileListPresenter {
         ColoredToast.showError(context, failMessage);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void showMoreProgressBar() {
         moreLoadingProgressBar.setVisibility(View.VISIBLE);
 
@@ -366,7 +366,7 @@ public class FileListPresenter {
         animation.startNow();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissProgressBar() {
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
         moreLoadingProgressBar.setAnimation(animation);
@@ -379,6 +379,11 @@ public class FileListPresenter {
 
         animation.startNow();
 
+    }
+
+    @UiThread(delay = 10000)
+    public void dismissProgressBarDelay() {
+        dismissProgressBar();
     }
 
     public void openAlbumForActivityResult(Fragment fragment) {

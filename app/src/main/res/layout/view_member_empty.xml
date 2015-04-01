@@ -24,7 +24,7 @@
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
 
-    <Button
+    <TextView
         android:id="@+id/btn_chat_choose_member_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -46,10 +46,7 @@ public class AndroidManifestExt extends AndroidManifest {
 
     @Override
     public String getApplicationName() {
-        String applicationName = ".TestJandiApplication";
-        System.out.println("===============================");
-        System.out.println(applicationName);
-        System.out.println("===============================");
+        String applicationName = "com.tosslab.jandi.app.TestJandiApplication";
         return applicationName;
     }
 

@@ -23,35 +23,36 @@ public class LinkifyUtil {
 
         Matcher m = pattern.matcher(text);
 
+
+        boolean hasLink = false;
+
         while (m.find()) {
             int start = m.start();
             int end = m.end();
-            boolean allowed = true;
 
-            if (allowed) {
-                String url = m.group(0);
+            hasLink = true;
+            String url = m.group(0);
 
-                URLSpan span = new URLSpan(url) {
-                    @Override
-                    public void onClick(View widget) {
-                        InternalWebActivity_.intent(context)
-                                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                                .url(url)
-                                .start();
+            URLSpan span = new URLSpan(url) {
+                @Override
+                public void onClick(View widget) {
+                    InternalWebActivity_.intent(context)
+                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            .url(url)
+                            .start();
 
-                        if (context instanceof Activity) {
-                            Activity activity = ((Activity) context);
-                            activity.overridePendingTransition(R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
-                        }
-
+                    if (context instanceof Activity) {
+                        Activity activity = ((Activity) context);
+                        activity.overridePendingTransition(R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
                     }
-                };
 
-                text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
+                }
+            };
+
+            text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        return true;
+        return hasLink;
     }
 
 }

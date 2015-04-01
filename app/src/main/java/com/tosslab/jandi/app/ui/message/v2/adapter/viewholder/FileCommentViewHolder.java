@@ -143,10 +143,12 @@ public class FileCommentViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(commentMessage.content.body);
 
-            LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+            boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
 
             commentTextView.setText(spannableStringBuilder);
-            commentTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            if (hasLink) {
+                commentTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            }
         }
 
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));

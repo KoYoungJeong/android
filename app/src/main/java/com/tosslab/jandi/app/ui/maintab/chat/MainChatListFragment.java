@@ -160,7 +160,7 @@ public class MainChatListFragment extends Fragment {
                 .show(getFragmentManager(), "dialog");
     }
 
-    @Click({R.id.btn_main_chat_fab, R.id.btn_chat_list_no_messages})
+    @Click({R.id.btn_main_chat_fab, R.id.layout_main_chat_list_empty})
     void onAddClick() {
         EntityChooseActivity_.intent(getActivity())
                 .type(EntityChooseActivity.Type.MESSAGES.name())

@@ -64,6 +64,11 @@ public class InternalWebActivity extends ActionBarActivity {
             }
         });
 
+
+        if (!url.startsWith("http")) {
+            url = "http://" + url;
+        }
+
         internalWebPresenter.setUrl(url);
     }
 

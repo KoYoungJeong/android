@@ -89,9 +89,11 @@ public class FileDetailCommentView extends LinearLayout {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
 
-        LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+        boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder, Patterns.WEB_URL);
 
         textViewCommentContent.setText(spannableStringBuilder);
-        textViewCommentContent.setMovementMethod(LinkMovementMethod.getInstance());
+        if (hasLink) {
+            textViewCommentContent.setMovementMethod(LinkMovementMethod.getInstance());
+        }
     }
 }
