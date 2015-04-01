@@ -5,6 +5,7 @@ import android.util.Log;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.socket.connector.SocketConnector;
 
 import java.net.URISyntaxException;
 
@@ -15,8 +16,10 @@ import rx.functions.Action1;
  */
 public class JandiSocketManager {
     private static JandiSocketManager jandiSocketManager;
-    private Socket socket;
 
+    private SocketConnector socketConnector;
+
+    private Socket socket;
 
     private JandiSocketManager() {
     }
