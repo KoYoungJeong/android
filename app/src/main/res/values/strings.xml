@@ -318,7 +318,7 @@ Please follow the link provided to verify your account and sign in."</string>
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
     <string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
     <string name="jadi_account_home">"Account Home"</string>
-    <string name="jandi_account_home_help">"An account can also hold multiple email addresses.
+    <string name="jandi_account_home_help">"You can join multiple teams using one account.
 
 An account can also hold multiple email addresses.
 

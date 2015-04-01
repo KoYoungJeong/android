@@ -340,4 +340,5 @@ JANDIへようこそ"</string>
     <string name="jandi_send_invitation">"招待メールを送信"</string>
     <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
     <string name="jandi_input_search_keyword">"キーワードで検索"</string>
+    <string name="jandi_count_with_brace">(%d)</string>
 </resources>

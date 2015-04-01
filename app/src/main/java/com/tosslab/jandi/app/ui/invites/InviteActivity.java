@@ -84,19 +84,25 @@ public class InviteActivity extends BaseAnalyticsActivity {
     @Click(R.id.btn_invitation_confirm)
     void onInviteListAddClick() {
         String emailText = invitePresenter.getEmailText();
-        if (!invitePresenter.getInvites().contains(emailText) && inviteModel.isNotMyEmail(emailText)) {
-            invitePresenter.showProgressWheel();
-            try {
-                inviteModel.inviteMembers(Arrays.asList(emailText));
-                invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
-                invitePresenter.showSuccessToast(getString(R.string.jandi_invitation_succeed));
-            } catch (JandiNetworkException e) {
-                logger.debug(e.getErrorInfo() + " : " + e.httpBody);
-                invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
-            } finally {
-                invitePresenter.dismissProgressWheel();
+        if (!invitePresenter.getInvites().contains(emailText)) {
+            if (!inviteModel.isInvitedEmail(emailText)) {
+                invitePresenter.showProgressWheel();
+                try {
+                    inviteModel.inviteMembers(Arrays.asList(emailText));
+                    invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+                    invitePresenter.showSuccessToast(getString(R.string.jandi_invite_success));
+                } catch (JandiNetworkException e) {
+                    logger.debug(e.getErrorInfo() + " : " + e.httpBody);
+                    invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
+                } finally {
+                    invitePresenter.dismissProgressWheel();
 
+                }
+            } else {
+                invitePresenter.showWarnToast(getString(R.string.jandi_duplicate_email));
             }
+        } else {
+            invitePresenter.showWarnToast(getString(R.string.jandi_invitation_succeed));
         }
         invitePresenter.clearEmailTextView();
 

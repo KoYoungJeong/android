@@ -148,4 +148,9 @@ public class InvitePresenter {
     public void showSuccessToast(String message) {
         ColoredToast.show(activity, message);
     }
+
+    @UiThread
+    public void showWarnToast(String message) {
+        ColoredToast.showWarning(activity, message);
+    }
 }
