@@ -7,12 +7,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 
 /**
@@ -22,11 +17,8 @@ public class JandiSocketManager {
     private static JandiSocketManager jandiSocketManager;
     private Socket socket;
 
-    private Map<String, Subscription> eventSubscriber;
-
 
     private JandiSocketManager() {
-        eventSubscriber = new HashMap<String, Subscription>();
     }
 
     public static JandiSocketManager getInstance() {
@@ -56,6 +48,8 @@ public class JandiSocketManager {
 
         if (socket != null) {
 
+            register(Socket.EVENT_CONNECT, o -> Log.d("INFO", String.valueOf(o)));
+            register(Socket.EVENT_DISCONNECT, o -> Log.d("INFO", String.valueOf(o)));
             register("hello", o -> Log.d("INFO", String.valueOf(o)));
 
             socket.connect();
@@ -75,9 +69,7 @@ public class JandiSocketManager {
     public void register(String event, final Action1<Object> onNext, final Action1<Throwable> onError) {
         if (socket != null && !socket.hasListeners(event)) {
             socket.on(event, args -> {
-                removeSubscription(event);
-                Subscription subscribe = Observable.from(args).observeOn(AndroidSchedulers.mainThread()).subscribe(onNext, onError);
-                eventSubscriber.put(event, subscribe);
+
             });
         }
     }
@@ -89,16 +81,9 @@ public class JandiSocketManager {
 
     public void unregister(String event) {
         if (socket.hasListeners(event)) {
-            removeSubscription(event);
             socket.off(event);
         }
     }
 
-    private void removeSubscription(String event) {
-        if (eventSubscriber.containsKey(event)) {
-            eventSubscriber.get(event).unsubscribe();
-            eventSubscriber.remove(event);
-        }
-    }
 
 }
