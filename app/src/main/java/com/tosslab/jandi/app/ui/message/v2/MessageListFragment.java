@@ -366,9 +366,9 @@ public class MessageListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
-        if (messageListModel.isEnabledIfUser(entityId) && !isFromSearch) {
-            messageListModel.startRefreshTimer();
-        }
+
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
@@ -692,6 +692,7 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.finish();
         } catch (JandiNetworkException e) {
             logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
@@ -733,6 +734,8 @@ public class MessageListFragment extends Fragment {
                 logger.debug("deleteMessageInBackground : succeed");
             }
         } catch (JandiNetworkException e) {
+            logger.error("deleteMessageInBackground : FAILED", e);
+        } catch (Exception e) {
             logger.error("deleteMessageInBackground : FAILED", e);
         }
         messageListPresenter.dismissProgressWheel();
@@ -777,6 +780,8 @@ public class MessageListFragment extends Fragment {
             } else {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
             }
+        } catch (Exception e) {
+            messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
         } finally {
             messageListPresenter.dismissProgressWheel();
         }

@@ -63,9 +63,8 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class MessageListModel {
 
-    private static final Logger logger = Logger.getLogger(MessageListModel.class);
-
     public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
+    private static final Logger logger = Logger.getLogger(MessageListModel.class);
     @Bean
     MessageManipulator messageManipulator;
     @Bean
@@ -160,6 +159,9 @@ public class MessageListModel {
             EventBus.getDefault().post(new RefreshNewMessageEvent());
         } catch (JandiNetworkException e) {
             logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+        } catch (Exception e) {
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
         }

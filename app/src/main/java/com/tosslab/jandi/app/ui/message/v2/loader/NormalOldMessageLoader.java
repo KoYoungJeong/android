@@ -107,6 +107,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
         }

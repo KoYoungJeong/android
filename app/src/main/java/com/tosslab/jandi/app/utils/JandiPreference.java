@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
  */
 public class JandiPreference {
     public static final int NOT_SET_YET = -1;
-
+    public static final String PREF_SEARCH_POPUP = "search_popup";
     // SharedPreference Key 값
     private static final String PREF_NAME = "JandiPref";
     private static final String PREF_TOKEN = "token";
@@ -25,7 +25,7 @@ public class JandiPreference {
     private static final String PREF_ALARM_SOUND = "setting_push_alarm_sound";
     private static final String PREF_ALARM_VIBRATE = "setting_push_alarm_vibration";
     private static final String PREF_ALARM_LED = "setting_push_alarm_led";
-    private static final String PREF_FIRST_ACCESS = "first_access";
+    private static final String PREF_INVITE_POPUP = "invite_popup";
 
     public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -154,12 +154,19 @@ public class JandiPreference {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_SOUND, true);
     }
 
-    public static boolean isFirstAccess(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_FIRST_ACCESS, true);
+    public static boolean isInvitePopup(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_INVITE_POPUP, true);
     }
 
-    public static void setFirstAccess(Context context) {
-        getSharedPreferences(context).edit().putBoolean(PREF_FIRST_ACCESS, false).commit();
+    public static void setInvitePopup(Context context) {
+        getSharedPreferences(context).edit().putBoolean(PREF_INVITE_POPUP, false).commit();
     }
 
+    public static boolean isSearchPopup(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_SEARCH_POPUP, true);
+    }
+
+    public static void setSearchPopup(Context context) {
+        getSharedPreferences(context).edit().putBoolean(PREF_SEARCH_POPUP, false).commit();
+    }
 }

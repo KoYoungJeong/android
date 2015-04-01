@@ -113,6 +113,8 @@ public class TopicCreateActivity extends ActionBarActivity {
             } else {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
             }
+        } catch (Exception e) {
+            topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
         } finally {
             topicCreatePresenter.dismissProgressWheel();
         }

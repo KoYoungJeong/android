@@ -94,6 +94,8 @@ public class InviteActivity extends BaseAnalyticsActivity {
                 } catch (JandiNetworkException e) {
                     logger.debug(e.getErrorInfo() + " : " + e.httpBody);
                     invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
+                } catch (Exception e) {
+                    invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
                 } finally {
                     invitePresenter.dismissProgressWheel();
 

@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -20,7 +19,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 3..
@@ -69,6 +67,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.updateEntityInfo(context, entityInfo);
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
 
@@ -100,6 +100,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
@@ -137,8 +139,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            List<ResPendingTeamInfo> resPendingTeamInfos = accountHomeModel.ignorePendingTeam(context, selectedTeam);
+            accountHomeModel.ignorePendingTeam(context, selectedTeam);
         } catch (JandiNetworkException e) {
+        } catch (Exception e) {
         } finally {
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);

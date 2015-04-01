@@ -123,6 +123,8 @@ public class JandiInterfaceModel {
         } catch (JandiNetworkException e) {
             logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             return false;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

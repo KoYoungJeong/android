@@ -141,6 +141,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             fileDetailModel.deleteComment(messageId, feedbackId);
             getFileDetail(false);
         } catch (JandiNetworkException e) {
+        } catch (Exception e) {
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -244,6 +245,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             log.error("fail to get file detail.", e);
             getFileDetailFailed(getString(R.string.err_file_detail));
             finishOnMainThread();
+        } catch (Exception e) {
+            getFileDetailFailed(getString(R.string.err_file_detail));
+            finishOnMainThread();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -327,6 +331,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             shareMessageFailed();
+        } catch (Exception e) {
+            log.error("fail to send message", e);
+            shareMessageFailed();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -393,6 +400,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
+        } catch (Exception e) {
+            log.error("fail to send message", e);
+            unshareMessageFailed();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -421,6 +431,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             deleteFileDone(true);
         } catch (JandiNetworkException e) {
             log.error("delete file failed", e);
+            deleteFileDone(false);
+        } catch (Exception e) {
             deleteFileDone(false);
         } finally {
             fileDetailPresenter.dismissProgressWheel();
@@ -473,6 +485,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             getFileDetail(true);
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
+            log.error("fail to send message", e);
+        } catch (Exception e) {
             log.error("fail to send message", e);
         } finally {
             fileDetailPresenter.dismissProgressWheel();

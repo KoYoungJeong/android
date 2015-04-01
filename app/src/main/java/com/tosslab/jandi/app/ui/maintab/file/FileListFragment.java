@@ -330,6 +330,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         } catch (JandiNetworkException e) {
             log.error("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
+        } catch (Exception e) {
+            searchFailed(R.string.err_file_search);
         }
     }
 

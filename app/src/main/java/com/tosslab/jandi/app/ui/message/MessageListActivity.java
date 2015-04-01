@@ -541,6 +541,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             log.error("getMessagesInBackground : FAILED" + e.httpBody, e);
             log.error(e.getErrorInfo(), e);
             getMessagesFailed(getString(R.string.err_messages_get));
+        } catch (Exception e) {
+            getMessagesFailed(getString(R.string.err_messages_get));
         } finally {
             dismissProgressWheel();
         }
@@ -647,6 +649,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
         } catch (JandiNetworkException e) {
             log.error("fail to get updated messages", e);
+        } catch (Exception e) {
+            log.error("fail to get updated messages", e);
         }
 
     }
@@ -690,6 +694,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             sendMessageSucceed();
         } catch (JandiNetworkException e) {
             log.error("sendMessageInBackground : FAILED", e);
+            sendMessageFailed(R.string.err_messages_send);
+        } catch (Exception e) {
             sendMessageFailed(R.string.err_messages_send);
         }
     }
@@ -794,6 +800,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             deleteMessageDone(true, null);
         } catch (JandiNetworkException e) {
             log.error("deleteMessageInBackground : FAILED", e);
+            deleteMessageDone(false, getString(R.string.err_messages_delete));
+        } catch (Exception e) {
             deleteMessageDone(false, getString(R.string.err_messages_delete));
         }
     }
@@ -990,6 +998,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             } else {
                 modifyEntityFailed(getString(R.string.err_entity_modify));
             }
+        } catch (Exception e) {
+            modifyEntityFailed(getString(R.string.err_entity_modify));
         }
     }
 
@@ -1030,6 +1040,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
             deleteTopicSucceed();
         } catch (JandiNetworkException e) {
+            deleteTopicFailed(getString(R.string.err_entity_delete));
+        } catch (Exception e) {
             deleteTopicFailed(getString(R.string.err_entity_delete));
         }
     }
