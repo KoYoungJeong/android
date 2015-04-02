@@ -107,12 +107,19 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 String fileType = feedbackFileMessage.content.type;
                 if (fileType.startsWith("image/")) {
-                    String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
-                    Ion.with(fileImageView)
-                            .placeholder(R.drawable.jandi_fl_icon_img)
-                            .error(R.drawable.jandi_fl_icon_img)
-                            .crossfade(true)
-                            .load(imageUrl);
+                    if (!TextUtils.equals(feedbackFileMessage.content.ext, "psd") &&
+                            feedbackFileMessage.content.extraInfo != null &&
+                            !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
+
+                        String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                        Ion.with(fileImageView)
+                                .placeholder(R.drawable.jandi_fl_icon_img)
+                                .error(R.drawable.jandi_fl_icon_img)
+                                .crossfade(true)
+                                .load(imageUrl);
+                    } else {
+                        fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                    }
                 } else if (fileType.startsWith("audio")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
                 } else if (fileType.startsWith("video")) {

@@ -334,4 +334,5 @@
     <string name="jandi_message_search_available">"信息关键词搜寻功能上线啰！"</string>
     <string name="jandi_message_search_available_detail">"利用关键词轻松搜寻对话记录，还可以根据议题或发送者缩小搜寻范围，清楚了解对话或事件的来龙去脉！跃跃欲试吗？马上点击右上角的放大镜开始关键词搜寻！"</string>
     <string name="jandi_move_entity_after_share">"档案已成功被分享。您想要现在跳转到那对话中吗？"</string>
+    <string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
 </resources>

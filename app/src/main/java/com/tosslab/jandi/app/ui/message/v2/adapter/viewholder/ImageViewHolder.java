@@ -85,20 +85,27 @@ public class ImageViewHolder implements BodyViewHolder {
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
-            String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
-
-
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
+            } else if (TextUtils.equals(fileMessage.content.ext, "psd")) {
+                fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                fileNameTextView.setText(fileMessage.content.title);
+                fileTypeTextView.setText(fileMessage.content.ext);
             } else {
+                if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
+                    String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
 
-                Ion.with(fileImageView)
-                        .placeholder(R.drawable.jandi_fl_icon_img)
-                        .error(R.drawable.jandi_fl_icon_img)
-                        .crossfade(true)
-                        .load(imageUrl);
+                    Ion.with(fileImageView)
+                            .placeholder(R.drawable.jandi_fl_icon_img)
+                            .error(R.drawable.jandi_fl_icon_img)
+                            .crossfade(true)
+                            .load(imageUrl);
+
+                } else {
+                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                }
 
                 fileNameTextView.setText(fileMessage.content.title);
                 fileTypeTextView.setText(fileMessage.content.ext);
