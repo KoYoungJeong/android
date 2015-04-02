@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.network.socket.events.register;
 
+import android.text.TextUtils;
+
+import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 
@@ -13,17 +16,20 @@ import java.util.Map;
  */
 public class JandiEventRegister implements EventRegister {
 
-    private Socket socket;
+    private Emitter socket;
 
     private Map<String, List<EventListener>> eventMapper;
 
-    public JandiEventRegister(Socket socket) {
-        this.socket = socket;
+    public JandiEventRegister() {
         this.eventMapper = new HashMap<String, List<EventListener>>();
     }
 
     @Override
     public void register(String event, EventListener eventListener) {
+
+        if (TextUtils.isEmpty(event) || eventListener == null) {
+            return;
+        }
 
         if (eventMapper.containsKey(event)) {
             if (eventMapper.get(event).contains(eventListener)) {
@@ -35,13 +41,27 @@ public class JandiEventRegister implements EventRegister {
             eventMapper.put(event, eventListeners);
         }
 
-        socket.on(event, args -> eventListener.callback(args));
+        if (socket != null) {
+            socket.on(event, args -> {
+                for (EventListener listener : eventMapper.get(event)) {
+                    listener.callback(args);
+                }
+            });
+        }
     }
 
     @Override
     public void unregister(String event, EventListener eventListener) {
         if (eventMapper.containsKey(event)) {
-            eventMapper.get(event).remove(eventListener);
+            List<EventListener> eventListeners = eventMapper.get(event);
+            if (eventListeners.contains(eventListener)) {
+                eventListeners.remove(eventListener);
+            }
         }
+    }
+
+    @Override
+    public void setEmitter(Emitter socket) {
+        this.socket = socket;
     }
 }
