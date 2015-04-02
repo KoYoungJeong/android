@@ -162,7 +162,13 @@ public class MessageListFragment extends Fragment {
                             break;
                         case Send:
                             SendingMessage data = (SendingMessage) messageQueue.getData();
-                            messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            boolean isSuccess = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            if (isSuccess) {
+                                messageListPresenter.deleteDummyMessageAtList(data.getLocalId());
+                                EventBus.getDefault().post(new RefreshNewMessageEvent());
+                            } else {
+                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
+                            }
                             break;
                     }
                 }, throwable -> {

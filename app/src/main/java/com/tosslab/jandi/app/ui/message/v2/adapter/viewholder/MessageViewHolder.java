@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -87,7 +86,7 @@ public class MessageViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(textMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder);
 
             messageTextView.setText(spannableStringBuilder);
             if (hasLink) {
