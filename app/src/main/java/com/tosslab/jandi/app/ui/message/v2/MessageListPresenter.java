@@ -413,6 +413,7 @@ public class MessageListPresenter {
         messageListAdapter.notifyDataSetChanged();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateDummyMessageState(long localId, SendingState state) {
         messageListAdapter.updateDummyMessageState(localId, state);
         messageListAdapter.notifyDataSetChanged();
@@ -438,6 +439,7 @@ public class MessageListPresenter {
         return ((DummyMessageLink) messageListAdapter.getItem(position));
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void deleteDummyMessageAtList(long localId) {
         int position = messageListAdapter.getDummeMessagePositionByLocalId(localId);
         messageListAdapter.remove(position);
