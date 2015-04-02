@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -37,6 +38,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -328,6 +330,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             fileDetailModel.shareMessage(fileId, entityIdToBeShared);
             log.debug("success to share message");
             shareMessageSucceed(entityIdToBeShared);
+            showMoveDialog(entityIdToBeShared);
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             shareMessageFailed();
@@ -337,6 +340,30 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
+    }
+
+    @UiThread
+    void showMoveDialog(int entityIdToBeShared) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(FileDetailActivity.this);
+        builder.content(getString(R.string.jandi_move_entity_after_share))
+                .positiveText(R.string.jandi_confirm)
+                .negativeText(R.string.jandi_cancel)
+                .callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        FormattedEntity entity = EntityManager.getInstance(FileDetailActivity.this)
+                                .getEntityById(entityIdToBeShared);
+
+                        MessageListV2Activity_.intent(FileDetailActivity.this)
+                                .entityId(entityIdToBeShared)
+                                .entityType(entity.type)
+                                .isFavorite(entity.isStarred)
+                                .teamId(entity.getEntity().teamId)
+                                .start();
+                    }
+                })
+                .show();
+
     }
 
     @UiThread

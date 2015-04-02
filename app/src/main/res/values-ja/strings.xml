@@ -343,4 +343,5 @@ JANDIへようこそ"</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_message_search_available">"メッセージ検索機能が実装されました。"</string>
     <string name="jandi_message_search_available_detail">"キーワードを入力してメッセージを検索したり、送信者や送信先で絞り込んだり、検索結果のメッセージにジャンプすることもできます。"</string>
+    <string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
 </resources>
