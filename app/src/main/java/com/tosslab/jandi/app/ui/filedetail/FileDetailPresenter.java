@@ -186,27 +186,31 @@ public class FileDetailPresenter {
                         String thumbnailUrl = "";
                         if (fileMessage.content.extraInfo != null) {
                             thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
-                        }
-                        final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
-                        final String photoUrl = serverUrl + fileMessage.content.fileUrl;
 
-                        if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
-                            Ion.with(activity)
-                                    .load(thumbnailPhotoUrl)
-                                    .intoImageView(imageViewPhotoFile);
+                            final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
+                            final String photoUrl = serverUrl + fileMessage.content.fileUrl;
+
+                            if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
+                                Ion.with(activity)
+                                        .load(thumbnailPhotoUrl)
+                                        .intoImageView(imageViewPhotoFile);
+                            } else {
+                                Ion.with(imageViewPhotoFile)
+                                        .fitCenter()
+                                        .crossfade(true)
+                                        .load(thumbnailPhotoUrl);
+                            }
+                            // 이미지를 터치하면 큰 화면 보기로 넘어감
+                            imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
+                                    .intent(activity)
+                                    .imageUrl(photoUrl)
+                                    .imageName(fileMessage.content.name)
+                                    .imageType(fileMessage.content.type)
+                                    .start());
                         } else {
-                            Ion.with(imageViewPhotoFile)
-                                    .fitCenter()
-                                    .crossfade(true)
-                                    .load(thumbnailPhotoUrl);
+                            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_img);
                         }
-                        // 이미지를 터치하면 큰 화면 보기로 넘어감
-                        imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                                .intent(activity)
-                                .imageUrl(photoUrl)
-                                .imageName(fileMessage.content.name)
-                                .imageType(fileMessage.content.type)
-                                .start());
+
                     } else {
 
                         iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));

@@ -37,8 +37,15 @@ public class DeleteMessageDialogFragment extends DialogFragment {
 
         final int feedbackId = getArguments().getInt(FEEDBACK_ID, -1);
 
+        String message;
+        if (feedbackId == -1) {
+            message = getString(R.string.jandi_message_ask_about_deleting);
+        } else {
+            message = getString(R.string.jandi_message_ask_about_delete_comment);
+        }
+
         return new AlertDialog.Builder(getActivity())
-                .setMessage(R.string.jandi_message_ask_about_deleting)
+                .setMessage(message)
                 .setPositiveButton(R.string.jandi_action_delete,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -52,13 +59,7 @@ public class DeleteMessageDialogFragment extends DialogFragment {
                             }
                         }
                 )
-                .setNegativeButton(R.string.jandi_cancel,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                // DO NOTHING
-                            }
-                        }
-                )
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .create();
     }
 }

@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -89,7 +88,7 @@ public class FileDetailCommentView extends LinearLayout {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
 
-        boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+        boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
 
         textViewCommentContent.setText(spannableStringBuilder);
         if (hasLink) {

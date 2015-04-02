@@ -99,6 +99,8 @@ public class IntroActivity extends Activity {
                         subscriber.onNext(200);
                     } catch (JandiNetworkException e) {
                         subscriber.onNext(e.httpStatusCode);
+                    } catch (Exception e) {
+                        subscriber.onNext(500);
                     }
 
                     subscriber.onCompleted();

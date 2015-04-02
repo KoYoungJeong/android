@@ -73,7 +73,7 @@
 1:1 메시지를 통해서 독립성 또한 보장됩니다."</string>
 <string name="jandi_tutorial_file">"파일 업로드, 공유, 검색을
 메신저에서 한 번에"</string>
-<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 파워포인트, 엑셀, PDF 등
+<string name="jandi_tutorial_file_message">"사진과 동영상 뿐 아니라 PPT, 엑셀, PDF 등
 다양한 포맷의 업무 파일을 직접 업로드하여
 토픽이나 개인과 공유할 수 있습니다.
 또한 업로드한 파일들은 계속 보관되며
@@ -317,11 +317,11 @@
     <string name="jandi_share_externally">"공유하기"</string>
     <string name="jandi_my_files">"<b>내 파일</b>"</string>
     <string name="jandi_sign_in_ids_explain">"등록된 이메일 주소들을 로그인 ID로 사용하실 수 있습니다. 이 이메일 주소들은 각각 연동된 팀의 프로필에도 사용됩니다."</string>
-    <string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을생성하거나 참여할 수 있습니다.
+    <string name="jandi_account_home_help">"하나의 메일 주소로 여러 개의 팀을 생성하거나 참여할 수 있습니다.
 
-여러 개의 메일 주소를 추가하여 업무 용도와개인 용도의 팀을 분리해서 사용할 수 있습니다.
+여러 개의 메일 주소를 추가하여 업무 용도와 개인 용도의 팀을 분리해서 사용할 수 있습니다.
 
-특정 팀과 연동된 메일 주소는언제든 바꿀 수 있습니다."</string>
+특정 팀과 연동된 메일 주소는 언제든 바꿀 수 있습니다."</string>
     <string name="jadi_account_home">"잔디 메인"</string>
     <string name="jandi_go_to_main">"잔디 메인으로"</string>
     <string name="jandi_disable_user_profile_explain">"차단된 멤버입니다. 궁금하신 사항은 팀 관리자에게 문의하세요."</string>
@@ -349,4 +349,8 @@
     <string name="jandi_cannot_find_search_result_old">"파일 검색에 실패했습니다"</string>
     <string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
     <string name="jandi_count_with_brace">(%d)</string>
+    <string name="jandi_message_search_available">"잔디에 메시지 검색 기능이 업데이트 되었습니다!"</string>
+    <string name="jandi_message_search_available_detail">"메시지 검색으로 원하는 내용을 토픽 별, 멤버 별로 찾으실 수 있습니다. 또한, 검색 기능 이용 시, 해당 메시지가 작성된 대화로의 이동이 가능해 업무 맥락도 쉽게 파악하실 수 있습니다. \n손쉬운 메시지 검색으로 한결 편해진 업무 환경을 경험해보세요!"</string>
+    <string name="jandi_move_entity_after_share">"파일이 성공적으로 공유되었습니다. 파일이 공유된 대화로 이동하시겠습니까?"</string>
+    <string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
 </resources>

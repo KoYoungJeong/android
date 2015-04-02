@@ -63,9 +63,8 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class MessageListModel {
 
-    private static final Logger logger = Logger.getLogger(MessageListModel.class);
-
     public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
+    private static final Logger logger = Logger.getLogger(MessageListModel.class);
     @Bean
     MessageManipulator messageManipulator;
     @Bean
@@ -151,17 +150,22 @@ public class MessageListModel {
         return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
-    public void sendMessage(long localId, String message) {
+    public boolean sendMessage(long localId, String message) {
         SendingMessage sendingMessage = new SendingMessage(localId, message);
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
-            EventBus.getDefault().post(new RefreshNewMessageEvent());
+            return true;
         } catch (JandiNetworkException e) {
             logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+            return false;
+        } catch (Exception e) {
+            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
+            return false;
         }
     }
 

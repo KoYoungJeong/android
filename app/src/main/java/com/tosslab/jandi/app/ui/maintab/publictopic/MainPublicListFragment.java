@@ -188,6 +188,8 @@ public class MainPublicListFragment extends BaseChatListFragment {
             } else {
                 createTopicFailed(R.string.err_entity_create);
             }
+        } catch (Exception e) {
+            createTopicFailed(R.string.err_entity_create);
         }
     }
 
@@ -234,6 +236,8 @@ public class MainPublicListFragment extends BaseChatListFragment {
             joinChannelSucceed(channel);
         } catch (JandiNetworkException e) {
             log.error("fail to join channel", e);
+            joinChannelFailed();
+        } catch (Exception e) {
             joinChannelFailed();
         }
     }

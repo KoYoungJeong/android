@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.URLSpan;
+import android.util.Patterns;
 import android.view.View;
 
 import com.tosslab.jandi.app.R;
@@ -19,9 +20,20 @@ import java.util.regex.Pattern;
  */
 public class LinkifyUtil {
 
-    public static final boolean addLinks(Context context, Spannable text, Pattern pattern) {
+    private static final Pattern WEB_URL = Pattern.compile(
+            "((?:(http|https|Http|Https|rtsp|Rtsp):\\/\\/(?:(?:[a-zA-Z0-9\\$\\-\\_\\.\\+\\!\\*\\'\\(\\)"
+                    + "\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,64}(?:\\:(?:[a-zA-Z0-9\\$\\-\\_"
+                    + "\\.\\+\\!\\*\\'\\(\\)\\,\\;\\?\\&\\=]|(?:\\%[a-fA-F0-9]{2})){1,25})?\\@)?)?"
+                    + "(?:" + Patterns.DOMAIN_NAME + ")"
+                    + "(?:\\:\\d{1,5})?)" // plus option port number
+                    + "(\\/(?:(?:[" + Patterns.GOOD_IRI_CHAR + "\\;\\/\\?\\:\\@\\&\\=\\#\\~\\|"  // plus option query params
+                    + "\\-\\.\\+\\!\\*\\'\\(\\)\\,\\_])|(?:\\%[a-fA-F0-9]{2}))*)?"
+                    + "(?:\\b|$)"); // and finally, a word boundary or end of
 
-        Matcher m = pattern.matcher(text);
+
+    public static final boolean addLinks(Context context, Spannable text) {
+
+        Matcher m = WEB_URL.matcher(text);
 
 
         boolean hasLink = false;

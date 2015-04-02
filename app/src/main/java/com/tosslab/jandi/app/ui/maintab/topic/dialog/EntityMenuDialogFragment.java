@@ -200,6 +200,9 @@ public class EntityMenuDialogFragment extends DialogFragment {
         } catch (JandiNetworkException e) {
             showErrorToast(getString(R.string.err_entity_leave));
             e.printStackTrace();
+        } catch (Exception e) {
+            showErrorToast(getString(R.string.err_entity_leave));
+            e.printStackTrace();
         } finally {
             dismissProgressWheel();
             dismissOnUiThread();

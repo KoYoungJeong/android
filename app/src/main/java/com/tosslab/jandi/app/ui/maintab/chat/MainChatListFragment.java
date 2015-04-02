@@ -130,6 +130,8 @@ public class MainChatListFragment extends Fragment {
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -55,7 +55,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                messageListPresenter.setEmptyView();
+                messageListPresenter.dismissLoadingView();
                 return;
             }
 
@@ -79,7 +79,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
                 firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
             } else {
                 // if has no first item...
-                messageListPresenter.setEmptyView();
+                messageListPresenter.dismissLoadingView();
                 messageState.setLastUpdateLinkId(lastLinkId);
             }
 
@@ -113,6 +113,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
         }

@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -115,6 +116,17 @@ public class MessageListPresenter {
     void initObject() {
         messageListAdapter = new MessageListAdapter(activity);
         messageListAdapter.setHasStableIds(true);
+        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                if (messageListAdapter.getItemCount() == 0) {
+                    emptyMessageView.setVisibility(View.VISIBLE);
+                } else {
+                    emptyMessageView.setVisibility(View.GONE);
+                }
+            }
+        });
 
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
@@ -254,6 +266,7 @@ public class MessageListPresenter {
     public void openCameraForActivityResult(Fragment fragment) {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg");
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
@@ -482,19 +495,8 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void setEmptyView() {
+    public void dismissLoadingView() {
         loadingMessageView.setVisibility(View.GONE);
-        messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                if (messageListAdapter.getItemCount() == 0) {
-                    emptyMessageView.setVisibility(View.VISIBLE);
-                } else {
-                    emptyMessageView.setVisibility(View.GONE);
-                }
-            }
-        });
     }
 
     public void setMarker(int lastMarker) {
@@ -569,5 +571,14 @@ public class MessageListPresenter {
     public void setGotoLatestLayoutShowProgress() {
         arrowGoToLatestView.setVisibility(View.GONE);
         progressGoToLatestView.setVisibility(View.VISIBLE);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showEmptyView() {
+        emptyMessageView.setVisibility(View.VISIBLE);
+    }
+
+    public int getLastVisibleItemPosition() {
+        return ((LinearLayoutManager) messageListView.getLayoutManager()).findLastVisibleItemPosition();
     }
 }

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -108,12 +107,19 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 String fileType = feedbackFileMessage.content.type;
                 if (fileType.startsWith("image/")) {
-                    String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
-                    Ion.with(fileImageView)
-                            .placeholder(R.drawable.jandi_fl_icon_img)
-                            .error(R.drawable.jandi_fl_icon_img)
-                            .crossfade(true)
-                            .load(imageUrl);
+                    if (!TextUtils.equals(feedbackFileMessage.content.ext, "psd") &&
+                            feedbackFileMessage.content.extraInfo != null &&
+                            !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
+
+                        String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                        Ion.with(fileImageView)
+                                .placeholder(R.drawable.jandi_fl_icon_img)
+                                .error(R.drawable.jandi_fl_icon_img)
+                                .crossfade(true)
+                                .load(imageUrl);
+                    } else {
+                        fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                    }
                 } else if (fileType.startsWith("audio")) {
                     fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
                 } else if (fileType.startsWith("video")) {
@@ -143,7 +149,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(commentMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder, Patterns.WEB_URL);
+            boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
 
             commentTextView.setText(spannableStringBuilder);
             if (hasLink) {

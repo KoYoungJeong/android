@@ -113,9 +113,27 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
 
         if (needInvitePopup()) {
-            JandiPreference.setFirstAccess(MainTabActivity.this);
+            JandiPreference.setInvitePopup(MainTabActivity.this);
             showInvitePopup();
+        } else if (needSearchPopup()) {
+            JandiPreference.setSearchPopup(MainTabActivity.this);
+            showSearchPopup();
         }
+    }
+
+    private void showSearchPopup() {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainTabActivity.this);
+        View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_search_new_popup, null);
+
+        builder.customView(view, true)
+                .backgroundColor(getResources().getColor(R.color.white))
+                .positiveText(R.string.jandi_confirm)
+                .show();
+
+    }
+
+    private boolean needSearchPopup() {
+        return JandiPreference.isSearchPopup(MainTabActivity.this);
     }
 
     private void showInvitePopup() {
@@ -146,7 +164,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private boolean needInvitePopup() {
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(MainTabActivity.this).getFormattedUsersWithoutMe();
-        return JandiPreference.isFirstAccess(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
+        return JandiPreference.isInvitePopup(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
     }
 
     private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
@@ -209,6 +227,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         } catch (ResourceAccessException e) {
             log.error("connect failed", e);
+            getEntitiesFailed(getString(R.string.err_service_connection));
+        } catch (Exception e) {
             getEntitiesFailed(getString(R.string.err_service_connection));
         }
     }

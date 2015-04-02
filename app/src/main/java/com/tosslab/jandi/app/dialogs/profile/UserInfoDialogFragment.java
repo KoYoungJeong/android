@@ -271,6 +271,8 @@ public class UserInfoDialogFragment extends DialogFragment {
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

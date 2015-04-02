@@ -126,6 +126,8 @@ class InviteCommand implements MenuCommand {
         } catch (JandiNetworkException e) {
             log.error("fail to invite entity");
             inviteFailed(activity.getString(R.string.err_entity_invite));
+        } catch (Exception e) {
+            inviteFailed(activity.getString(R.string.err_entity_invite));
         }
     }
 

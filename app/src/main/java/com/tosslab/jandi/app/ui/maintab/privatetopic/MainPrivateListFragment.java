@@ -178,6 +178,8 @@ public class MainPrivateListFragment extends BaseChatListFragment {
             } else {
                 createGroupFailed(R.string.err_entity_create);
             }
+        } catch (Exception e) {
+            createGroupFailed(R.string.err_entity_create);
         }
     }
 

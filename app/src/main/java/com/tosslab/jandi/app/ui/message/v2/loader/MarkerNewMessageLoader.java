@@ -77,6 +77,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (Exception e) {
         } finally {
         }
     }

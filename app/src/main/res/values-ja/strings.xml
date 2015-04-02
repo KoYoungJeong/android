@@ -309,7 +309,7 @@ JANDIへようこそ"</string>
     <string name="jandi_share_externally">"ページをシェアする"</string>
     <string name="jandi_share_a_topic">"トピックにシェアする"</string>
     <string name="jandi_my_files">"<b>自分</b>"</string>
-    <string name="jandi_account_home_help">"1つのアカウントで複数のメールアドレスを登録することができます
+    <string name="jandi_account_home_help">"1つのアカウントで複数のチームを利用できます
 
 1つのアカウントで複数のメールアドレスを登録することができます
 
@@ -341,4 +341,8 @@ JANDIへようこそ"</string>
     <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
     <string name="jandi_input_search_keyword">"キーワードで検索"</string>
     <string name="jandi_count_with_brace">(%d)</string>
+    <string name="jandi_message_search_available">"メッセージ検索機能が実装されました。"</string>
+    <string name="jandi_message_search_available_detail">"キーワードを入力してメッセージを検索したり、送信者や送信先で絞り込んだり、検索結果のメッセージにジャンプすることもできます。"</string>
+    <string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
+    <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
 </resources>

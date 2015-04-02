@@ -80,6 +80,9 @@ class LeaveEntityCommand implements MenuCommand {
         } catch (JandiNetworkException e) {
             log.error("fail to leave cdp");
             leaveEntityFailed(activity.getString(R.string.err_entity_leave));
+        } catch (Exception e) {
+            log.error("fail to leave cdp");
+            leaveEntityFailed(activity.getString(R.string.err_entity_leave));
         }
     }
 

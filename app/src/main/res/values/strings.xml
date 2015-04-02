@@ -336,4 +336,8 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_later">"Later"</string>
     <string name="jandi_cannot_find_search_result_old">"No files found"</string>
     <string name="jandi_input_search_keyword">"Search by keyword(s)"</string>
+    <string name="jandi_message_search_available">"Message Search is now available!"</string>
+    <string name="jandi_message_search_available_detail">"Search through your messages by keyword, narrow the results by topic or sender, and jump back to specific points in the conversation for more context. Tap the search icon at the top right to try it now!"</string>
+    <string name="jandi_move_entity_after_share">"File has been shared successfully. Do you want to jump to that conversation now?"</string>
+    <string name="jandi_message_ask_about_delete_comment">"Are you sure you want to delete this comment? It cannot be undone."</string>
 </resources>

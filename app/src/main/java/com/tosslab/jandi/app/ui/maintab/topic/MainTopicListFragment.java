@@ -178,6 +178,9 @@ public class MainTopicListFragment extends Fragment {
         } catch (JandiNetworkException e) {
             logger.error("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
+        } catch (Exception e) {
+            logger.error("fail to join entity", e);
+            mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } finally {
             mainTopicPresenter.dismissProgressWheel();
         }
