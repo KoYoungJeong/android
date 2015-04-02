@@ -331,4 +331,6 @@
     <string name="jandi_cannot_find_search_result_old">"找不到档案"</string>
     <string name="jandi_input_search_keyword">"关键词搜寻"</string>
     <string name="jandi_count_with_brace">(%d)</string>
+    <string name="jandi_message_search_available">"信息关键词搜寻功能上线啰！"</string>
+    <string name="jandi_message_search_available_detail">"利用关键词轻松搜寻对话记录，还可以根据议题或发送者缩小搜寻范围，清楚了解对话或事件的来龙去脉！跃跃欲试吗？马上点击右上角的放大镜开始关键词搜寻！"</string>
 </resources>

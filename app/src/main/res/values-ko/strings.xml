@@ -349,4 +349,6 @@
     <string name="jandi_cannot_find_search_result_old">"파일 검색에 실패했습니다"</string>
     <string name="jandi_input_search_keyword">"검색어를 입력해주세요."</string>
     <string name="jandi_count_with_brace">(%d)</string>
+    <string name="jandi_message_search_available">"잔디에 메시지 검색 기능이 업데이트 되었습니다!"</string>
+    <string name="jandi_message_search_available_detail">"메시지 검색으로 원하는 내용을 토픽 별, 멤버 별로 찾으실 수 있습니다. 또한, 검색 기능 이용 시, 해당 메시지가 작성된 대화로의 이동이 가능해 업무 맥락도 쉽게 파악하실 수 있습니다. \n손쉬운 메시지 검색으로 한결 편해진 업무 환경을 경험해보세요!"</string>
 </resources>

@@ -58,13 +58,14 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
+                int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 updateMarker();
 
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
+                if (visibleLastItemPosition < lastItemPosition - 1 && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 } else {
                     messageListPresenter.moveToMessage(lastUpdatedMessage.messageId, 0);

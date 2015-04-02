@@ -575,4 +575,8 @@ public class MessageListPresenter {
     public void showEmptyView() {
         emptyMessageView.setVisibility(View.VISIBLE);
     }
+
+    public int getLastVisibleItemPosition() {
+        return ((LinearLayoutManager) messageListView.getLayoutManager()).findLastVisibleItemPosition();
+    }
 }

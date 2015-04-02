@@ -411,6 +411,7 @@ public class MessageListFragment extends Fragment {
 
     @Click(R.id.layout_messages_preview_last_item)
     void onPreviewClick() {
+        messageListPresenter.setPreviewVisibleGone();
         messageListPresenter.moveLastPage();
     }
 
