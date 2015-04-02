@@ -3,8 +3,10 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -82,6 +84,11 @@ import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -522,21 +529,35 @@ public class MessageListFragment extends Fragment {
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
                 Uri data = intent.getData();
+                Bundle extras = intent.getExtras();
 
-                if (data == null) {
-                    return;
+
+                if (data != null) {
+                    realFilePath = ImageFilePath.getPath(getActivity(), data);
+                    if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+
+                        String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                        String downloadName = GoogleImagePickerUtil.getWebImageName();
+                        ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
+                        downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
+                    } else {
+                        showFileUploadDialog(realFilePath);
+                    }
+                } else if (extras != null) {
+                    String realFilePath1 = GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg";
+                    if (extras.containsKey("data")) {
+
+                        Object data1 = extras.get("data");
+
+                        if (data1 instanceof Bitmap) {
+                            Bitmap bitmap = (Bitmap) data1;
+                            saveAndShowFileUploadDialog(bitmap);
+                        }
+                    } else if (new File(realFilePath1).exists()) {
+                        showFileUploadDialog(realFilePath1);
+                    }
                 }
 
-                realFilePath = ImageFilePath.getPath(getActivity(), data);
-                if (GoogleImagePickerUtil.isUrl(realFilePath)) {
-
-                    String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                    String downloadName = GoogleImagePickerUtil.getWebImageName();
-                    ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-                    downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-                } else {
-                    showFileUploadDialog(realFilePath);
-                }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
@@ -545,6 +566,33 @@ public class MessageListFragment extends Fragment {
                 break;
             default:
                 break;
+        }
+
+    }
+
+    @Background
+    void saveAndShowFileUploadDialog(Bitmap bitmap) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHssmm");
+
+        String path = GoogleImagePickerUtil.getDownloadPath() + "/camera" + dateFormat.format(System.currentTimeMillis()) + ".jpg";
+        new File(path).delete();
+        OutputStream stream = null;
+        try {
+            stream = new FileOutputStream(path);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            showFileUploadDialog(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

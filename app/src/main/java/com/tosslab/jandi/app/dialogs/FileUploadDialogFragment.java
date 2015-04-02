@@ -12,8 +12,11 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -66,12 +69,25 @@ public class FileUploadDialogFragment extends DialogFragment {
 
         // 파일 이름
         final EditText editTextInputName = (EditText) mainView.findViewById(R.id.et_file_name_to_be_uploaded);
+        File uploadFile = new File(realFilePath);
+        String fileName = uploadFile.getName();
         if (realFilePath.length() > 0) {
-            File f = new File(realFilePath);
-            editTextInputName.setText(f.getName());
-        } else {
-            // TODO : ERROR 처리
+            editTextInputName.setText(fileName);
         }
+
+        ImageView imageView = (ImageView) mainView.findViewById(R.id.img_upload_image);
+        if (fileName.endsWith("jpg") || fileName.endsWith("jpeg") || fileName.endsWith("png")) {
+            Glide.with(getActivity())
+                    .load(uploadFile)
+                    .crossFade()
+                    .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imageView);
+        } else {
+            imageView.setVisibility(View.GONE);
+        }
+
 
         // CDP
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);

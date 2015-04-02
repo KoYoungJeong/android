@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -63,6 +65,9 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -365,20 +370,43 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         String realFilePath;
         Uri data = intent.getData();
+        Bundle extras = intent.getExtras();
 
-        if (data == null) {
-            return;
+
+        if (data != null) {
+            realFilePath = ImageFilePath.getPath(getActivity(), data);
+            if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+
+                String downloadDir = GoogleImagePickerUtil.getDownloadPath();
+                String downloadName = GoogleImagePickerUtil.getWebImageName();
+                ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
+                downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
+            } else {
+                showFileUploadDialog(realFilePath);
+            }
+        } else if (extras != null && extras.containsKey("data")) {
+
+            Object data1 = extras.get("data");
+
+            if (data1 instanceof Bitmap) {
+                Bitmap bitmap = (Bitmap) data1;
+                saveAndShowFileUploadDialog(bitmap);
+            }
+
         }
+    }
 
-        realFilePath = ImageFilePath.getPath(getActivity(), data);
-        if (GoogleImagePickerUtil.isUrl(realFilePath)) {
+    @Background
+    void saveAndShowFileUploadDialog(Bitmap bitmap) {
 
-            String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-            String downloadName = GoogleImagePickerUtil.getWebImageName();
-            ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-            downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-        } else {
-            showFileUploadDialog(realFilePath);
+        String path = GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg";
+        OutputStream stream = null;
+        try {
+            stream = new FileOutputStream(path);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            showFileUploadDialog(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
