@@ -19,7 +19,7 @@
         android:layout_marginTop="24dp"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
-        android:text="No other members have joined your team. Invite them now to start collaborating"
+        android:text="@string/jandi_message_no_member"
         android:textColor="@color/account_home_help_dialog_text"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />

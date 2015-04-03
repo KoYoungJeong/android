@@ -700,7 +700,7 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
-        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, false);
         newFragment.show(getFragmentManager(), "dialog");
     }
 

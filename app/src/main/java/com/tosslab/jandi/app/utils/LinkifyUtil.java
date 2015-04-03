@@ -33,8 +33,7 @@ public class LinkifyUtil {
 
     public static final boolean addLinks(Context context, Spannable text) {
 
-        Matcher m = WEB_URL.matcher(text);
-
+        Matcher m = Patterns.WEB_URL.matcher(text);
 
         boolean hasLink = false;
 

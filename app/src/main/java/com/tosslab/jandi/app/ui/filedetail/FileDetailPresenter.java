@@ -8,7 +8,6 @@ import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
@@ -420,14 +419,9 @@ public class FileDetailPresenter {
     public void showDeleteFileDialog(int fileId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.jandi_action_delete)
-                .setMessage("Are you sure you want to delete this file? Please note this will not delete the associated comments.")
+                .setMessage(activity.getString(R.string.jandi_file_delete_message))
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_action_delete, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EventBus.getDefault().post(new ConfirmDeleteFile(fileId));
-                    }
-                })
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> EventBus.getDefault().post(new ConfirmDeleteFile(fileId)))
                 .create().show();
 
     }
