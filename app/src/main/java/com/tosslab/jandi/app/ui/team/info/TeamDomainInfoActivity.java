@@ -140,7 +140,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
                 return;
             }
 
-            createTeam(teamName, teamDomain, myName, myEmail);
+            createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
         }
 
 

@@ -9,8 +9,9 @@
 
     <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/jandi_ms_notice" />
+        android:layout_height="240dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/jandi_message_search" />
 
     <TextView
         android:layout_width="wrap_content"
