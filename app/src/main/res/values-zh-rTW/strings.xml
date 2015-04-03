@@ -330,7 +330,7 @@
     <string name="jandi_later">"之後"</string>
     <string name="jandi_send_invitation">"送出邀請"</string>
     <string name="jandi_cannot_find_search_result_old">"找不到檔案"</string>
-    <string name="jandi_input_search_keyword">"關鍵字搜尋"</string>
+    <string name="jandi_input_search_keyword">"按照關鍵字搜尋您的訊息"</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_message_search_available">"訊息關鍵字搜尋功能上線囉！"</string>
     <string name="jandi_message_search_available_detail">"利用關鍵字輕鬆搜尋對話記錄，還可以根據議題或發送者縮小搜尋範圍，清楚瞭解對話或事件的來龍去脈！躍躍欲試嗎？馬上點擊右上角的放大鏡開始關鍵字搜尋！"</string>
