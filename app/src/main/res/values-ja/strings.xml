@@ -346,4 +346,5 @@ JANDIへようこそ"</string>
     <string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
     <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
     <string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
+    <string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
 </resources>
