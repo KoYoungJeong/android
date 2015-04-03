@@ -300,7 +300,7 @@ JANDIへようこそ"</string>
     <string name="jandi_created_this_topic">"%sさんがこのトピックを作成しました"</string>
     <string name="jandi_invited_topic">"%1$sが %2$sさんを招待しました"</string>
     <string name="jandi_left_topic">"%sが退出しました"</string>
-    <string name="jandi_tos_and_pp">"サービス利用規約 &amp; プライバシーポリシー"</string>
+    <string name="jandi_tos_and_pp">"サービス利用規約"</string>
     <string name="jandi_topic_ask_about_deleting">"本当にこのトピックを削除しますか？"</string>
     <string name="jandi_create">"作成"</string>
     <string name="jandi_copy_link">"リンクをコピー"</string>
@@ -345,4 +345,5 @@ JANDIへようこそ"</string>
     <string name="jandi_message_search_available_detail">"キーワードを入力してメッセージを検索したり、送信者や送信先で絞り込んだり、検索結果のメッセージにジャンプすることもできます。"</string>
     <string name="jandi_move_entity_after_share">"ファイルが共有されました。ファイルについてコメントしますか？"</string>
     <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
+    <string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
 </resources>

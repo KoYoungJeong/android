@@ -336,4 +336,5 @@
     <string name="jandi_message_search_available_detail">"利用關鍵字輕鬆搜尋對話記錄，還可以根據議題或發送者縮小搜尋範圍，清楚瞭解對話或事件的來龍去脈！躍躍欲試嗎？馬上點擊右上角的放大鏡開始關鍵字搜尋！"</string>
     <string name="jandi_move_entity_after_share">"檔案已成功被分享。您想要現在跳轉到那對話中嗎？"</string>
     <string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
+    <string name="jandi_message_no_member">"還未有其他成員加入您的團隊。現在就邀請他們以開始協作。"</string>
 </resources>

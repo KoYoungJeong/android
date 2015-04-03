@@ -773,7 +773,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     // 정말 삭제할 건지 다시 물어본다.
     public void onEvent(RequestDeleteMessageEvent event) {
-        android.support.v4.app.DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event);
+        android.support.v4.app.DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, false);
         newFragment.show(getSupportFragmentManager(), DIALOG_TAG);
     }
 

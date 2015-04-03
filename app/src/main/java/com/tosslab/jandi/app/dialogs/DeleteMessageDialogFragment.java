@@ -19,13 +19,15 @@ public class DeleteMessageDialogFragment extends DialogFragment {
     private static final String MESSAGE_ID = "messageId";
     private static final String MESSAGE_TYPE = "messageType";
     private static final String FEEDBACK_ID = "feedbackId";
+    private static final String IS_COMMENT = "is_comment";
 
-    public static DeleteMessageDialogFragment newInstance(RequestDeleteMessageEvent req) {
+    public static DeleteMessageDialogFragment newInstance(RequestDeleteMessageEvent req, boolean isComment) {
         DeleteMessageDialogFragment frag = new DeleteMessageDialogFragment();
         Bundle args = new Bundle();
         args.putInt(MESSAGE_ID, req.messageId);
         args.putInt(MESSAGE_TYPE, req.messageType);
         args.putInt(FEEDBACK_ID, req.feedbackId);
+        args.putBoolean(IS_COMMENT, isComment);
         frag.setArguments(args);
         return frag;
     }
@@ -36,9 +38,10 @@ public class DeleteMessageDialogFragment extends DialogFragment {
         final int messageType = getArguments().getInt(MESSAGE_TYPE);
 
         final int feedbackId = getArguments().getInt(FEEDBACK_ID, -1);
+        final boolean isComment = getArguments().getBoolean(IS_COMMENT, false);
 
         String message;
-        if (feedbackId == -1) {
+        if (!isComment) {
             message = getString(R.string.jandi_message_ask_about_deleting);
         } else {
             message = getString(R.string.jandi_message_ask_about_delete_comment);
