@@ -12,5 +12,5 @@ public interface SocketConnector {
 
     void disconnect();
 
-    boolean isConnected();
+    boolean isConnectingOrConnected();
 }

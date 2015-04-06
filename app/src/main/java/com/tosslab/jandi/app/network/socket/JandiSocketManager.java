@@ -62,8 +62,8 @@ public class JandiSocketManager {
         eventRegister.unregister(event, eventListener);
     }
 
-    public boolean isConnected() {
-        return socketConnector.isConnected();
+    public boolean isConnectingOrConnected() {
+        return socketConnector.isConnectingOrConnected();
     }
 
 }

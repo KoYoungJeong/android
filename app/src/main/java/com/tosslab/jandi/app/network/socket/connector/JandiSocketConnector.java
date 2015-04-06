@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
-import android.util.Log;
-
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -15,13 +13,16 @@ import java.net.URISyntaxException;
 public class JandiSocketConnector implements SocketConnector {
 
     private Socket socket;
+    private boolean connectingOrConnected;
 
     public JandiSocketConnector() {
+        connectingOrConnected = false;
     }
 
     @Override
     public Emitter connect(String url, EventListener connectEventListener) {
         if (socket != null && socket.connected()) {
+            connectingOrConnected = true;
             return socket;
         }
 
@@ -37,18 +38,19 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         if (socket != null) {
+            connectingOrConnected = true;
 
             socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("INFO", "Success!!! hahahah");
+                    connectingOrConnected = true;
                     connectEventListener.callback(args);
                 }
             });
             socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("INFO", "Fail!!! hahahah");
+                    connectingOrConnected = false;
                 }
             });
             socket.connect();
@@ -60,13 +62,14 @@ public class JandiSocketConnector implements SocketConnector {
     @Override
     public void disconnect() {
         if (socket != null && socket.connected()) {
+            connectingOrConnected = false;
             socket.disconnect();
         }
     }
 
     @Override
-    public boolean isConnected() {
-        return socket != null && socket.connected();
+    public boolean isConnectingOrConnected() {
+        return connectingOrConnected;
     }
 
 }
