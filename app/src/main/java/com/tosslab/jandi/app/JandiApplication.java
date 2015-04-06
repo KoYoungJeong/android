@@ -6,7 +6,6 @@ import android.util.Log;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.utils.ConfigureLog4J;
 
 import org.apache.log4j.Logger;
@@ -18,11 +17,6 @@ import java.util.HashMap;
  */
 public class JandiApplication extends MultiDexApplication {
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
-    /**
-     * Application의 모든 Activities 가 사용하는 전역 변수
-     * Static 등으로 사용하면 LMK에 의해 삭제될 위험이 있음
-     */
-    private EntityManager mEntityManager = null;
 
     @Override
     public void onCreate() {
@@ -48,17 +42,10 @@ public class JandiApplication extends MultiDexApplication {
         if (!mTrackers.containsKey(trackerId)) {
 
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.setLocalDispatchPeriod(120);
-            Tracker t = analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID);
-
-            t.setSessionTimeout(60);
-            t.enableAutoActivityTracking(true);
-            t.enableExceptionReporting(true);
-            t.setAppName("JANDI");
-            t.setAppVersion("0.9.1");
-
+            Tracker t = (trackerId == TrackerName.APP_TRACKER)
+                    ? analytics.newTracker(JandiConstantsForFlavors.GA_TRACK_ID)
+                    : analytics.newTracker(R.xml.global_tracker);
             mTrackers.put(trackerId, t);
-
 
         }
         return mTrackers.get(trackerId);

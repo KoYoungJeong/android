@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
-import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -113,7 +112,7 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
             }
         });
 
-        if (position == getItemCount() - 1 && moreState == MoreState.Idle) {
+        if (position > 0 && position == getItemCount() - 1 && moreState == MoreState.Idle) {
             moreState = MoreState.Loading;
             EventBus.getDefault().post(new MoreSearchRequestEvent());
         }

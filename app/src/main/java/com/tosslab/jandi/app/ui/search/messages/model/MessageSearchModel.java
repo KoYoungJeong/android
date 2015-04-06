@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
-import android.graphics.Paint;
-import android.text.TextPaint;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -67,8 +65,6 @@ public class MessageSearchModel {
         ResMessageSearch.SearchRecord searchRecord;
         SearchResult result;
 
-        TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setTextSize(15);
         for (int idx = 0; idx < size; ++idx) {
             result = new SearchResult();
             searchRecord = searchRecordList.get(idx);
@@ -77,7 +73,7 @@ public class MessageSearchModel {
             result.date(searchRecord.getCurrentRecord().getLastDate());
 
             if (searchRecord.getPrevRecord() != null) {
-                result.previewText(TextStrategy.getSubSearchString(context, searchRecord.getPrevRecord(), textPaint));
+                result.previewText(TextStrategy.getSubSearchString(context, searchRecord.getPrevRecord()));
             }
 
             if (searchRecord.getCurrentRecord() != null) {
@@ -85,7 +81,7 @@ public class MessageSearchModel {
             }
 
             if (searchRecord.getNextRecord() != null) {
-                result.nextText(TextStrategy.getSubSearchString(context, searchRecord.getNextRecord(), textPaint));
+                result.nextText(TextStrategy.getSubSearchString(context, searchRecord.getNextRecord()));
             }
 
             result.setLinkId(searchRecord.getCurrentRecord().getLinkId());
