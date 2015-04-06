@@ -8,8 +8,8 @@
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:layout_marginTop="4dp"
-    android:foreground="?android:attr/selectableItemBackground"
     android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="4dp">
 
     <RelativeLayout
@@ -50,6 +50,8 @@
             android:layout_below="@+id/txt_message_search_topic_name"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:text="First Item" />
 
         <TextView
@@ -66,6 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/txt_message_search_second"
             android:layout_marginTop="18dp"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:text="Third Item" />
 
     </RelativeLayout>
