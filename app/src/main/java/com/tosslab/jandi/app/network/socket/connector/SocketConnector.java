@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.network.socket.events.EventListener;
  */
 public interface SocketConnector {
 
-    Emitter connect(String url, EventListener connectEventListener);
+    Emitter connect(String url, EventListener connectEventListener, EventListener disconnectEventListener);
 
     void disconnect();
 

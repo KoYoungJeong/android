@@ -51,7 +51,7 @@ public class JandiSocketManagerTest {
                 socketManager.sendByJson("connect_team", connectTeam);
 
             }
-        });
+        }, disconnectEventListener);
 
         socketManager.register("connect_team", new EventListener() {
             @Override
