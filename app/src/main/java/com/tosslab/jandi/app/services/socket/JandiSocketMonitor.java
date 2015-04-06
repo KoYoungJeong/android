@@ -10,9 +10,11 @@ public class JandiSocketMonitor implements Runnable {
 
     private boolean monitor;
     private Thread monitorThread;
+    private DisconnectListener disconnectListener;
 
-    public JandiSocketMonitor(JandiSocketManager jandiSocketManager) {
+    public JandiSocketMonitor(JandiSocketManager jandiSocketManager, DisconnectListener disconnectListener) {
         this.jandiSocketManager = jandiSocketManager;
+        this.disconnectListener = disconnectListener;
         monitor = true;
     }
 
@@ -37,7 +39,9 @@ public class JandiSocketMonitor implements Runnable {
             long sleepTime = getSleepTime(jandiSocketManager);
 
             if (!jandiSocketManager.isConnectingOrConnected()) {
-                // TODO Callback for Reconnect
+                if (disconnectListener != null) {
+                    disconnectListener.onDisconnected();
+                }
             }
 
             try {
@@ -61,6 +65,10 @@ public class JandiSocketMonitor implements Runnable {
         }
 
         return sleepTime;
+    }
+
+    public interface DisconnectListener {
+        void onDisconnected();
     }
 
 }

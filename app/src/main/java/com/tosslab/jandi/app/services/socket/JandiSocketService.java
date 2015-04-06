@@ -20,7 +20,7 @@ public class JandiSocketService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         jandiSocketManager = JandiSocketManager.getInstance();
         trySocketConnect();
-        jandiSocketMonitor = new JandiSocketMonitor(jandiSocketManager);
+        jandiSocketMonitor = new JandiSocketMonitor(jandiSocketManager, this::trySocketConnect);
         jandiSocketMonitor.startSocketMonitor();
         return super.onStartCommand(intent, flags, startId);
     }
