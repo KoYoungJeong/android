@@ -24,7 +24,9 @@ import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-import com.tosslab.jandi.app.events.files.ConfirmDeleteFile;
+import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -439,8 +441,20 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, getString(R.string.err_unshare));
     }
 
-    public void onEvent(ConfirmDeleteFile event) {
+    public void onEvent(ConfirmDeleteFileEvent event) {
         deleteFileInBackground(event.getFileId());
+    }
+
+    public void onEvent(DeleteFileEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false);
+        }
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false);
+        }
     }
 
     /**

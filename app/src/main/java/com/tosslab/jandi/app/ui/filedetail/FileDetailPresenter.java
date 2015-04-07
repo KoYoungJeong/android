@@ -31,7 +31,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
-import com.tosslab.jandi.app.events.files.ConfirmDeleteFile;
+import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -421,7 +421,7 @@ public class FileDetailPresenter {
         builder.setTitle(R.string.jandi_action_delete)
                 .setMessage(activity.getString(R.string.jandi_file_delete_message))
                 .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> EventBus.getDefault().post(new ConfirmDeleteFile(fileId)))
+                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> EventBus.getDefault().post(new ConfirmDeleteFileEvent(fileId)))
                 .create().show();
 
     }

@@ -20,7 +20,7 @@ public class JandiSocketConnector implements SocketConnector {
     }
 
     @Override
-    public Emitter connect(String url, EventListener connectEventListener, EventListener disconnectEventListener) {
+    public Emitter connect(String url, EventListener disconnectEventListener) {
         if (socket != null && socket.connected()) {
             connectingOrConnected = true;
             return socket;
@@ -30,6 +30,7 @@ public class JandiSocketConnector implements SocketConnector {
             try {
                 IO.Options options = new IO.Options();
                 options.reconnection = true;
+                options.forceNew = false;
 
                 socket = IO.socket(url, options);
             } catch (URISyntaxException e) {
@@ -40,15 +41,6 @@ public class JandiSocketConnector implements SocketConnector {
         if (socket != null) {
             connectingOrConnected = true;
 
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    connectingOrConnected = true;
-                    if (connectEventListener != null) {
-                        connectEventListener.callback(args);
-                    }
-                }
-            });
             socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {

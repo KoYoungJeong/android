@@ -3,13 +3,12 @@ package com.tosslab.jandi.app.network.socket.events.register;
 import android.text.TextUtils;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 2..
@@ -18,10 +17,10 @@ public class JandiEventRegister implements EventRegister {
 
     private Emitter socket;
 
-    private Map<String, List<EventListener>> eventMapper;
+    private Map<String, Queue<EventListener>> eventMapper;
 
     public JandiEventRegister() {
-        this.eventMapper = new HashMap<String, List<EventListener>>();
+        this.eventMapper = new ConcurrentHashMap<String, Queue<EventListener>>();
     }
 
     @Override
@@ -33,11 +32,13 @@ public class JandiEventRegister implements EventRegister {
 
         if (eventMapper.containsKey(event)) {
             if (eventMapper.get(event).contains(eventListener)) {
-                return;
+            } else {
+                eventMapper.get(event).offer(eventListener);
             }
+            return;
         } else {
-            List<EventListener> eventListeners = new ArrayList<>();
-            eventListeners.add(eventListener);
+            Queue<EventListener> eventListeners = new ConcurrentLinkedQueue<EventListener>();
+            eventListeners.offer(eventListener);
             eventMapper.put(event, eventListeners);
         }
 
@@ -53,7 +54,7 @@ public class JandiEventRegister implements EventRegister {
     @Override
     public void unregister(String event, EventListener eventListener) {
         if (eventMapper.containsKey(event)) {
-            List<EventListener> eventListeners = eventMapper.get(event);
+            Queue<EventListener> eventListeners = eventMapper.get(event);
             if (eventListeners.contains(eventListener)) {
                 eventListeners.remove(eventListener);
             }

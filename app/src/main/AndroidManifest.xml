@@ -218,6 +218,8 @@
 
         </activity>
 
+        <service android:name=".services.socket.JandiSocketService" />
+
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <receiver

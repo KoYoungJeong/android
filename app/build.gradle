@@ -59,7 +59,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
-    compile 'com.google.android.gms:play-services:7.0.+'
     compile 'com.google.android.gms:play-services-analytics:7.0.+'
     compile 'com.google.android.gms:play-services-gcm:7.0.+'
     compile 'com.android.support:support-v4:21.0.+'

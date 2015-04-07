@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -23,6 +25,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
@@ -119,6 +122,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             JandiPreference.setSearchPopup(MainTabActivity.this);
             showSearchPopup();
         }
+
+        Intent serviceIntent = new Intent(MainTabActivity.this, JandiSocketService.class);
+        stopService(serviceIntent);
+        startService(serviceIntent);
     }
 
     private void showSearchPopup() {
@@ -285,6 +292,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         } else {
             mMainTabPagerAdapter.hideNewTopicBadge();
         }
+    }
+
+    public void onEvent(TeamInfoChangeEvent event) {
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        setupActionBar(selectedTeamInfo);
+
     }
 
     public void onEventMainThread(ServiceMaintenanceEvent event) {

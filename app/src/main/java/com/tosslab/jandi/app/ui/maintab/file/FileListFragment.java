@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
@@ -294,6 +295,20 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
         doSearchInBackground();
+    }
+
+    public void onEvent(DeleteFileEvent event) {
+        int fileId = event.getId();
+        int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
+        if (positionByFileId >= 0) {
+            removeItem(positionByFileId);
+        }
+    }
+
+    @UiThread
+    void removeItem(int position) {
+        searchedFileItemListAdapter.remove(position);
+        searchedFileItemListAdapter.notifyDataSetChanged();
     }
 
     @Background
