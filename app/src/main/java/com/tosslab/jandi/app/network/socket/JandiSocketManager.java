@@ -38,8 +38,8 @@ public class JandiSocketManager {
         return jandiSocketManager;
     }
 
-    synchronized public boolean connect(EventListener disconnectEventListener) {
-        Emitter emitter = socketConnector.connect(JandiConstantsForFlavors.SERVICE_ROOT_URL, disconnectEventListener);
+    synchronized public boolean connect(EventListener disconnectListener) {
+        Emitter emitter = socketConnector.connect(JandiConstantsForFlavors.SERVICE_ROOT_URL, disconnectListener);
         eventRegister.setEmitter(emitter);
         jsonSocketEmitter.setEmitter(emitter);
         return true;

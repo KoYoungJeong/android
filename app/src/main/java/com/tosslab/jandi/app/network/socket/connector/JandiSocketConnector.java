@@ -20,7 +20,7 @@ public class JandiSocketConnector implements SocketConnector {
     }
 
     @Override
-    public Emitter connect(String url, EventListener disconnectEventListener) {
+    public Emitter connect(String url, EventListener disconnectListener) {
         if (socket != null && socket.connected()) {
             connectingOrConnected = true;
             return socket;
@@ -40,14 +40,9 @@ public class JandiSocketConnector implements SocketConnector {
 
         if (socket != null) {
             connectingOrConnected = true;
-
-            socket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-                @Override
-                public void call(Object... args) {
-                    connectingOrConnected = false;
-                    if (disconnectEventListener != null) {
-                        disconnectEventListener.callback(args);
-                    }
+            socket.on(Socket.EVENT_DISCONNECT, args -> {
+                if (disconnectListener != null) {
+                    disconnectListener.callback(args);
                 }
             });
             socket.connect();

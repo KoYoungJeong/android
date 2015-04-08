@@ -31,18 +31,16 @@ public class JandiEventRegister implements EventRegister {
         }
 
         if (eventMapper.containsKey(event)) {
-            if (eventMapper.get(event).contains(eventListener)) {
-            } else {
+            if (!eventMapper.get(event).contains(eventListener)) {
                 eventMapper.get(event).offer(eventListener);
             }
-            return;
         } else {
             Queue<EventListener> eventListeners = new ConcurrentLinkedQueue<EventListener>();
             eventListeners.offer(eventListener);
             eventMapper.put(event, eventListeners);
         }
 
-        if (socket != null) {
+        if (socket != null && !socket.hasListeners(event)) {
             socket.on(event, args -> {
                 for (EventListener listener : eventMapper.get(event)) {
                     listener.callback(args);
@@ -64,5 +62,18 @@ public class JandiEventRegister implements EventRegister {
     @Override
     public void setEmitter(Emitter socket) {
         this.socket = socket;
+        registerIfPending();
+    }
+
+    private void registerIfPending() {
+        for (String event : eventMapper.keySet()) {
+            if (socket != null && !socket.hasListeners(event)) {
+                socket.on(event, args -> {
+                    for (EventListener listener : eventMapper.get(event)) {
+                        listener.callback(args);
+                    }
+                });
+            }
+        }
     }
 }
