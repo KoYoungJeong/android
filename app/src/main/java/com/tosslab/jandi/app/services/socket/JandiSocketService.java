@@ -1,17 +1,22 @@
 package com.tosslab.jandi.app.services.socket;
 
+import android.app.ActivityManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +28,32 @@ public class JandiSocketService extends Service {
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            trySocketConnect();
+            Log.d("INFO", "connectReceiver : onReceive");
+            if (isActiveNetwork()) {
+                trySocketConnect();
+            }
         }
     };
     private JandiSocketServiceModel jandiSocketServiceModel;
     private Map<String, EventListener> eventHashMap;
+
+    public static void startSocketServiceIfStop(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningServiceInfo runningService : runningServices) {
+            if (TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
+                return;
+            }
+        }
+
+        context.startService(new Intent(context, JandiSocketService.class));
+    }
+
+    private boolean isActiveNetwork() {
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -76,6 +102,8 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_created", fileCommentRefreshListener);
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
+        eventHashMap.put("check_connect_team", objects -> jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam()));
+
     }
 
     private void setUpSocketListener() {
@@ -101,17 +129,22 @@ public class JandiSocketService extends Service {
 
     private void trySocketConnect() {
         Log.d("INFO", "trySocketConnect Start");
+
+        if (!isActiveNetwork()) {
+            return;
+        }
+
         if (!jandiSocketManager.isConnectingOrConnected()) {
             Log.d("INFO", "trySocketConnect not Connected");
             jandiSocketManager.connect(objects -> {
-                trySocketConnect();
-                setUpSocketListener();
+                Log.d("INFO", "Disconnected");
+                if (isActiveNetwork()) {
+                    trySocketConnect();
+                    setUpSocketListener();
+                }
             });
 
-            jandiSocketManager.register("check_connect_team", objects -> {
-                Log.d("INFO", "hahahaha Check Connect Team!!!");
-                jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
-            });
+            jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
         } else {
             Log.d("INFO", "trySocketConnect is Connected");
             setUpSocketListener();

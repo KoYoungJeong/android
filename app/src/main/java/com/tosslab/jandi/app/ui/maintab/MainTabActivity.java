@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -123,9 +122,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             showSearchPopup();
         }
 
-        Intent serviceIntent = new Intent(MainTabActivity.this, JandiSocketService.class);
-        stopService(serviceIntent);
-        startService(serviceIntent);
+        JandiSocketService.startSocketServiceIfStop(MainTabActivity.this);
     }
 
     private void showSearchPopup() {

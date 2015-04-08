@@ -29,7 +29,7 @@ public class JandiSocketConnector implements SocketConnector {
         if (socket == null) {
             try {
                 IO.Options options = new IO.Options();
-                options.reconnection = true;
+                options.reconnection = false;
                 options.forceNew = false;
 
                 socket = IO.socket(url, options);
@@ -41,10 +41,13 @@ public class JandiSocketConnector implements SocketConnector {
         if (socket != null) {
             connectingOrConnected = true;
             socket.on(Socket.EVENT_DISCONNECT, args -> {
+                connectingOrConnected = false;
                 if (disconnectListener != null) {
                     disconnectListener.callback(args);
                 }
             });
+            socket.on(Socket.EVENT_CONNECT_ERROR, args -> connectingOrConnected = false);
+            socket.on(Socket.EVENT_CONNECT_TIMEOUT, args -> connectingOrConnected = false);
             socket.connect();
         }
 
