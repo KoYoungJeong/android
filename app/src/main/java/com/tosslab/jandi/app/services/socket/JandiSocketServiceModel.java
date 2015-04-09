@@ -2,7 +2,11 @@ package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -18,6 +22,9 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -34,10 +41,12 @@ import de.greenrobot.event.EventBus;
  */
 public class JandiSocketServiceModel {
     private final Context context;
+    private final ObjectMapper objectMapper;
 
     public JandiSocketServiceModel(Context context) {
 
         this.context = context;
+        this.objectMapper = new ObjectMapper();
     }
 
 
@@ -84,7 +93,7 @@ public class JandiSocketServiceModel {
 
     public void deleteFile(Object object) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = this.objectMapper;
             SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileEvent.class);
 
             EventBus.getDefault().post(new DeleteFileEvent(socketFileEvent.getFile().getId()));
@@ -94,7 +103,7 @@ public class JandiSocketServiceModel {
     }
 
     public void refreshFileComment(Object object) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = this.objectMapper;
         try {
             SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileCommentEvent.class);
             EventBus.getDefault().post(new FileCommentRefreshEvent(socketFileEvent.getFile().getId()));
@@ -102,5 +111,60 @@ public class JandiSocketServiceModel {
             e.printStackTrace();
         }
 
+    }
+
+    public void refreshMessage(Object object) {
+        try {
+            ObjectMapper objectMapper = this.objectMapper;
+            SocketMessageEvent socketMessageEvent = objectMapper.readValue(object.toString(), SocketMessageEvent.class);
+            EventBus.getDefault().post(socketMessageEvent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshTopicState(Object object) {
+        refreshEntity();
+        try {
+            SocketTopicEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketTopicEvent.class);
+            EventBus.getDefault().post(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshChatCloseListener(Object object) {
+        refreshEntity();
+//        try {
+//            SocketChatCloseEvent socketChatCloseEvent = objectMapper.readValue(object.toString(), SocketChatCloseEvent.class);
+//            EventBus.getDefault().post(new ChatCloseEvent(socketChatCloseEvent.getChat().getCompanionId()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    public void refreshMemberProfile() {
+        refreshEntity();
+        EventBus.getDefault().post(new ProfileChangeEvent());
+    }
+
+    public void refreshTopicDelete(Object object) {
+        refreshEntity();
+        try {
+            SocketTopicEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketTopicEvent.class);
+            EventBus.getDefault().post(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshMemberStarred(Object object) {
+        refreshEntity();
+        try {
+            SocketMemberEvent socketMemberEvent = objectMapper.readValue(object.toString(), SocketMemberEvent.class);
+            EventBus.getDefault().post(new MemberStarredEvent(socketMemberEvent.getMember().getId()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

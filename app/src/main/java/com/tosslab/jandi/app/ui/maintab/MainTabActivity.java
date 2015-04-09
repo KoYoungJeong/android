@@ -72,14 +72,13 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance(MainTabActivity.this);
 
-
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
-        setupActionBar(selectedTeamInfo);
+        setupActionBar(selectedTeamInfo.getName());
 
         // ViewPager
         View[] tabViews = new View[4];
@@ -171,7 +170,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         return JandiPreference.isInvitePopup(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
     }
 
-    private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
+    private void setupActionBar(String teamName) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
@@ -179,7 +178,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(selectedTeamInfo.getName());
+        actionBar.setTitle(teamName);
     }
 
     @Override
@@ -188,6 +187,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
         getEntities();
+
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        setupActionBar(selectedTeamInfo.getName());
+
     }
 
     /**
@@ -293,7 +296,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     public void onEvent(TeamInfoChangeEvent event) {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
-        setupActionBar(selectedTeamInfo);
+        setupActionBar(selectedTeamInfo.getName());
 
     }
 

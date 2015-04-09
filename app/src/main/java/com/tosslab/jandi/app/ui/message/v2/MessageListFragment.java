@@ -29,8 +29,13 @@ import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
@@ -49,6 +54,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -296,8 +302,10 @@ public class MessageListFragment extends Fragment {
     private void setUpActionbar() {
 
         ActionBarActivity activity = (ActionBarActivity) getActivity();
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
-        activity.setSupportActionBar(toolbar);
+        if (activity.getSupportActionBar() == null) {
+            Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
+            activity.setSupportActionBar(toolbar);
+        }
 
         ActionBar actionBar = activity.getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -306,6 +314,7 @@ public class MessageListFragment extends Fragment {
 
         actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
     }
+
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
@@ -807,9 +816,49 @@ public class MessageListFragment extends Fragment {
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
+    public void onEvent(SocketMessageEvent event) {
+        if (isFromSearch) {
+            return;
+        }
+
+        if (event.getRoom().getId() == entityId) {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
+    }
+
     public void onEvent(RequestUserInfoEvent event) {
 
         UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
+    }
+
+    public void onEvent(ChatCloseEvent event) {
+        if (entityId == event.getCompanionId()) {
+            getActivity().finish();
+        }
+    }
+
+    public void onEvent(TopicDeleteEvent event) {
+        if (entityId == event.getId()) {
+            getActivity().finish();
+        }
+    }
+
+    public void onEvent(TopicInfoUpdateEvent event) {
+        if (event.getId() == entityId) {
+            setUpActionbar();
+            getActivity().invalidateOptionsMenu();
+        }
+    }
+
+    public void onEvent(MemberStarredEvent memberStarredEvent) {
+        if (memberStarredEvent.getId() == entityId) {
+            setUpActionbar();
+            getActivity().invalidateOptionsMenu();
+        }
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        messageListPresenter.justRefresh();
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {

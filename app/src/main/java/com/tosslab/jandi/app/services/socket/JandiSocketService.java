@@ -77,22 +77,31 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("team_join", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
-        eventHashMap.put("topic_deleted", entityRefreshListener);
-        eventHashMap.put("topic_name_updated", entityRefreshListener);
-        eventHashMap.put("topic_join", entityRefreshListener);
-        eventHashMap.put("topic_left", entityRefreshListener);
-        eventHashMap.put("topic_starred", entityRefreshListener);
-        eventHashMap.put("topic_unstarred", entityRefreshListener);
-        eventHashMap.put("chat_close", entityRefreshListener);
         eventHashMap.put("member_email_updated", entityRefreshListener);
-        eventHashMap.put("member_name_updated", entityRefreshListener);
-        eventHashMap.put("member_profile_updated", entityRefreshListener);
-        eventHashMap.put("member_starred", entityRefreshListener);
-        eventHashMap.put("member_unstarred", entityRefreshListener);
+        eventHashMap.put("topic_joined", entityRefreshListener);
+        eventHashMap.put("topic_invite", entityRefreshListener);
 
+        EventListener chatLCloseListener = objects -> jandiSocketServiceModel.refreshChatCloseListener(objects[0]);
+        eventHashMap.put("chat_close", chatLCloseListener);
+
+        EventListener memberProfileListener = objects -> jandiSocketServiceModel.refreshMemberProfile();
+        eventHashMap.put("member_profile_updated", memberProfileListener);
+        eventHashMap.put("member_name_updated", memberProfileListener); // TODO If in Chat...
+
+        EventListener topicDeleteListener = objects -> jandiSocketServiceModel.refreshTopicDelete(objects[0]);
+        eventHashMap.put("topic_deleted", topicDeleteListener);
+        eventHashMap.put("topic_left", topicDeleteListener);
+
+        EventListener topicStateListener = objects -> jandiSocketServiceModel.refreshTopicState(objects[0]);
+        eventHashMap.put("topic_name_updated", topicStateListener);
+        eventHashMap.put("topic_starred", topicStateListener);
+        eventHashMap.put("topic_unstarred", topicStateListener);
+
+        EventListener memberStarredListener = objects -> jandiSocketServiceModel.refreshMemberStarred(objects[0]);
+        eventHashMap.put("member_starred", memberStarredListener);
+        eventHashMap.put("member_unstarred", memberStarredListener);
 
         EventListener accountRefreshListener = objects -> jandiSocketServiceModel.refreshAccountInfo();
-
         eventHashMap.put("team_name_updated", accountRefreshListener);
         eventHashMap.put("team_domain_updated", accountRefreshListener);
 
@@ -104,10 +113,11 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_created", fileCommentRefreshListener);
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
-        eventHashMap.put("check_connect_team", objects -> {
-            Log.d("INFO", "check_connect_team : Connected!!!!");
-            jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
-        });
+        eventHashMap.put("check_connect_team", objects -> jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam()));
+
+        EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);
+
+        eventHashMap.put("message", messageRefreshListener);
 
     }
 

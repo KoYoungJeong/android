@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -103,11 +102,11 @@ public class MessageListModel {
     }
 
     public void stopRefreshTimer() {
-        messageListTimer.stop();
+//        messageListTimer.stop();
     }
 
     public void startRefreshTimer() {
-        messageListTimer.start();
+//        messageListTimer.start();
     }
 
     public void deleteMessage(int messageId) throws JandiNetworkException {

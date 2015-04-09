@@ -583,4 +583,9 @@ public class MessageListPresenter {
     public int getLastVisibleItemPosition() {
         return ((LinearLayoutManager) messageListView.getLayoutManager()).findLastVisibleItemPosition();
     }
+
+    @UiThread
+    public void justRefresh() {
+        messageListAdapter.notifyDataSetChanged();
+    }
 }

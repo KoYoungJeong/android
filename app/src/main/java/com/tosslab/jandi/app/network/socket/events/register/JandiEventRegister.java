@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.socket.events.register;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
@@ -42,6 +43,9 @@ public class JandiEventRegister implements EventRegister {
 
         if (socket != null && !socket.hasListeners(event)) {
             socket.on(event, args -> {
+                if (args != null && args[0] != null) {
+                    Log.d("INFO", event + " = " + args[0].toString());
+                }
                 for (EventListener listener : eventMapper.get(event)) {
                     listener.callback(args);
                 }
