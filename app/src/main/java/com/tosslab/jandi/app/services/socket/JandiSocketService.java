@@ -79,6 +79,8 @@ public class JandiSocketService extends Service {
         eventHashMap.put("topic_created", entityRefreshListener);
         eventHashMap.put("topic_deleted", entityRefreshListener);
         eventHashMap.put("topic_name_updated", entityRefreshListener);
+        eventHashMap.put("topic_join", entityRefreshListener);
+        eventHashMap.put("topic_left", entityRefreshListener);
         eventHashMap.put("topic_starred", entityRefreshListener);
         eventHashMap.put("topic_unstarred", entityRefreshListener);
         eventHashMap.put("chat_close", entityRefreshListener);
@@ -102,7 +104,10 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_created", fileCommentRefreshListener);
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
-        eventHashMap.put("check_connect_team", objects -> jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam()));
+        eventHashMap.put("check_connect_team", objects -> {
+            Log.d("INFO", "check_connect_team : Connected!!!!");
+            jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
+        });
 
     }
 
