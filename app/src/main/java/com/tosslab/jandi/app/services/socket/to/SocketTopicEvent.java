@@ -33,7 +33,6 @@ public class SocketTopicEvent {
     public static class TopicInfo {
         private int id;
         private String type;
-        private String name;
 
         public int getId() {
             return id;
@@ -51,12 +50,5 @@ public class SocketTopicEvent {
             this.type = type;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }

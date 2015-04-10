@@ -135,12 +135,6 @@ public class JandiSocketServiceModel {
 
     public void refreshChatCloseListener(Object object) {
         refreshEntity();
-//        try {
-//            SocketChatCloseEvent socketChatCloseEvent = objectMapper.readValue(object.toString(), SocketChatCloseEvent.class);
-//            EventBus.getDefault().post(new ChatCloseEvent(socketChatCloseEvent.getChat().getCompanionId()));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void refreshMemberProfile() {

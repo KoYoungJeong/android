@@ -84,9 +84,7 @@ public class JandiSocketService extends Service {
         eventHashMap.put("chat_close", chatLCloseListener);
 
         EventListener memberProfileListener = objects -> jandiSocketServiceModel.refreshMemberProfile();
-        eventHashMap.put("member_email_updated", memberProfileListener);
         eventHashMap.put("member_profile_updated", memberProfileListener);
-        eventHashMap.put("member_name_updated", memberProfileListener);
 
         EventListener topicDeleteListener = objects -> jandiSocketServiceModel.refreshTopicDelete(objects[0]);
         eventHashMap.put("topic_deleted", topicDeleteListener);

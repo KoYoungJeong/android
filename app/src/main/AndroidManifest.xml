@@ -164,7 +164,7 @@
                 <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".push.JandiBroadcastReceiver">
+        <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
