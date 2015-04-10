@@ -40,18 +40,21 @@ public class JandiSocketConnector implements SocketConnector {
 
         if (socket != null) {
             connectingOrConnected = true;
-            socket.on(Socket.EVENT_DISCONNECT, args -> {
-                connectingOrConnected = false;
-                if (disconnectListener != null) {
-                    disconnectListener.callback(args);
-                }
-            });
-            socket.on(Socket.EVENT_CONNECT_ERROR, args -> connectingOrConnected = false);
-            socket.on(Socket.EVENT_CONNECT_TIMEOUT, args -> connectingOrConnected = false);
+            socket
+                    .on(Socket.EVENT_DISCONNECT, args -> disconnectCallback(disconnectListener, args))
+                    .on(Socket.EVENT_CONNECT_ERROR, args -> disconnectCallback(disconnectListener, args))
+                    .on(Socket.EVENT_CONNECT_TIMEOUT, args -> disconnectCallback(disconnectListener, args));
             socket.connect();
         }
 
         return socket;
+    }
+
+    private void disconnectCallback(EventListener disconnectListener, Object[] args) {
+        connectingOrConnected = false;
+        if (disconnectListener != null) {
+            disconnectListener.callback(args);
+        }
     }
 
     @Override

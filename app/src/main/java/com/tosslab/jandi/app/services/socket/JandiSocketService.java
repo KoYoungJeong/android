@@ -10,10 +10,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+import com.tosslab.jandi.app.services.socket.monitor.ConnectMonitor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,17 +25,17 @@ import java.util.Map;
 public class JandiSocketService extends Service {
 
     private JandiSocketManager jandiSocketManager;
+    private JandiSocketServiceModel jandiSocketServiceModel;
+    private Map<String, EventListener> eventHashMap;
+
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("INFO", "connectReceiver : onReceive");
-            if (isActiveNetwork()) {
-                trySocketConnect();
-            }
+            trySocketConnect();
         }
     };
-    private JandiSocketServiceModel jandiSocketServiceModel;
-    private Map<String, EventListener> eventHashMap;
+    private ConnectMonitor connectMonitor = new ConnectMonitor(this::trySocketConnect);
+
 
     public static void startSocketServiceIfStop(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -77,7 +77,6 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("team_join", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
-        eventHashMap.put("member_email_updated", entityRefreshListener);
         eventHashMap.put("topic_joined", entityRefreshListener);
         eventHashMap.put("topic_invite", entityRefreshListener);
 
@@ -85,6 +84,7 @@ public class JandiSocketService extends Service {
         eventHashMap.put("chat_close", chatLCloseListener);
 
         EventListener memberProfileListener = objects -> jandiSocketServiceModel.refreshMemberProfile();
+        eventHashMap.put("member_email_updated", memberProfileListener);
         eventHashMap.put("member_profile_updated", memberProfileListener);
         eventHashMap.put("member_name_updated", memberProfileListener);
 
@@ -113,7 +113,10 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_created", fileCommentRefreshListener);
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
-        eventHashMap.put("check_connect_team", objects -> jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam()));
+        eventHashMap.put("check_connect_team", objects -> {
+            connectMonitor.stop();
+            jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
+        });
 
         EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);
 
@@ -137,33 +140,23 @@ public class JandiSocketService extends Service {
             jandiSocketManager.unregister(key, eventHashMap.get(key));
         }
 
-        Log.d("INFO", "onDestroy stopSocketMonitor");
         jandiSocketManager.disconnect();
         super.onDestroy();
     }
 
-    private void trySocketConnect() {
-        Log.d("INFO", "trySocketConnect Start");
+    synchronized private void trySocketConnect() {
 
         if (!isActiveNetwork()) {
             return;
         }
 
         if (!jandiSocketManager.isConnectingOrConnected()) {
-            Log.d("INFO", "trySocketConnect not Connected");
-            jandiSocketManager.connect(objects -> {
-                Log.d("INFO", "Disconnected");
-                if (isActiveNetwork()) {
-                    trySocketConnect();
-                    setUpSocketListener();
-                }
-            });
-
+            jandiSocketManager.connect(objects -> connectMonitor.start());
             jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
         } else {
-            Log.d("INFO", "trySocketConnect is Connected");
             setUpSocketListener();
         }
+
     }
 
     @Override
