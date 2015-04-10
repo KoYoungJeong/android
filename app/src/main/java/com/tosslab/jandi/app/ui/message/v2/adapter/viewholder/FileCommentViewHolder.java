@@ -37,6 +37,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private ImageView fileImageView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
 
     @Override
     public void initView(View rootView) {
@@ -53,6 +54,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
 
     }
 

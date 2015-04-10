@@ -40,13 +40,35 @@
         android:id="@+id/txt_message_create_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_message_user_name"
+        android:layout_alignTop="@+id/txt_message_user_name"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="4dp"
         android:layout_toRightOf="@+id/txt_message_user_name"
+        android:gravity="center"
         android:text="AM ??:??"
         android:textColor="@color/jandi_messages_date"
         android:textSize="@dimen/jandi_messages_date" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_message_create_date"
+        android:layout_alignTop="@+id/txt_message_create_date"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/txt_message_create_date">
+
+        <TextView
+            android:id="@+id/txt_entity_listitem_unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/jandi_img_read_unread"
+            android:gravity="center"
+            android:text="10"
+            android:textColor="@color/white"
+            android:textSize="@dimen/jandi_text_size_smaller"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/img_entity_listitem_line_through"

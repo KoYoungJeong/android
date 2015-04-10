@@ -23,6 +23,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView dateTextView;
     private TextView commentTextView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
 
     @Override
     public void initView(View rootView) {
@@ -30,6 +31,8 @@ public class PureCommentViewHolder implements BodyViewHolder {
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override

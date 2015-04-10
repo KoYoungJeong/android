@@ -32,6 +32,7 @@ public class FileViewHolder implements BodyViewHolder {
     private TextView fileTypeTextView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
 
     private FileViewHolder() {
     }
@@ -54,6 +55,7 @@ public class FileViewHolder implements BodyViewHolder {
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override

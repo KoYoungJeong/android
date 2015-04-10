@@ -78,7 +78,7 @@ public class IntroActivity extends Activity {
 
         } catch (JandiNetworkException e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
-            introViewModel.showUpdateDialog();
+            introViewModel.showMaintenanceDialog();
         } catch (Exception e) {
             introViewModel.showMaintenanceDialog();
         }
