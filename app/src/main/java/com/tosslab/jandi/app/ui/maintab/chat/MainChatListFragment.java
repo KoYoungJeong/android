@@ -83,7 +83,9 @@ public class MainChatListFragment extends Fragment {
     }
 
     public void onEventMainThread(SocketMessageEvent event) {
-        getChatList();
+        if (TextUtils.equals(event.getRoom().getType(), "chat")) {
+            getChatList();
+        }
     }
 
     public void onEvent(MessagePushEvent event) {

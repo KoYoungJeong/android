@@ -4,9 +4,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.style.CharacterStyle;
 import android.text.style.TextAppearanceSpan;
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.TextView;
 
@@ -42,8 +40,6 @@ public class EventViewHolder implements BodyViewHolder {
 
     @Override
     public void bindData(ResMessages.Link link) {
-
-        eventContentView.setText(" ");
 
         Observable.from(Arrays.asList(link.info))
                 .subscribeOn(Schedulers.io())

@@ -25,7 +25,7 @@ public class JandiV2HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
 
     private boolean prefixJson = false;
 

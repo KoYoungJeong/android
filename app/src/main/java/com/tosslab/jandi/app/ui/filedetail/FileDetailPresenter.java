@@ -152,6 +152,7 @@ public class FileDetailPresenter {
         textViewUserName.setText(userName);
 
         imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
+        textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
         // 파일
         String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);

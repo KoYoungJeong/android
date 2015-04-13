@@ -25,7 +25,7 @@ public class JandiV3HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
 
     private boolean prefixJson = false;
 
@@ -41,6 +41,13 @@ public class JandiV3HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     }
 
     /**
+     * Return the underlying {@code ObjectMapper} for this view.
+     */
+    public ObjectMapper getObjectMapper() {
+        return this.objectMapper;
+    }
+
+    /**
      * Set the {@code ObjectMapper} for this view. If not set, a default
      * {@link org.codehaus.jackson.map.ObjectMapper#ObjectMapper() ObjectMapper} is used.
      * <p>Setting a custom-configured {@code ObjectMapper} is one way to take further control of the JSON
@@ -52,13 +59,6 @@ public class JandiV3HttpMessageConverter extends AbstractHttpMessageConverter<Ob
     public void setObjectMapper(ObjectMapper objectMapper) {
         Assert.notNull(objectMapper, "ObjectMapper must not be null");
         this.objectMapper = objectMapper;
-    }
-
-    /**
-     * Return the underlying {@code ObjectMapper} for this view.
-     */
-    public ObjectMapper getObjectMapper() {
-        return this.objectMapper;
     }
 
     /**
