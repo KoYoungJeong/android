@@ -2,15 +2,13 @@ package com.tosslab.jandi.app.ui.login.tutorial;
 
 import android.app.Fragment;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
@@ -20,9 +18,9 @@ import org.androidannotations.annotations.ViewById;
  */
 @EFragment(R.layout.fragment_intro_tutorial)
 public class IntroTutorialFragment extends Fragment {
-    public static final int FIRST_PAGE      = 0;
-    public static final int SECOND_PAGE     = 1;
-    public static final int LAST_PAGE       = 2;
+    public static final int FIRST_PAGE = 0;
+    public static final int SECOND_PAGE = 1;
+    public static final int LAST_PAGE = 2;
 
     @FragmentArg
     int pageType;
@@ -32,6 +30,12 @@ public class IntroTutorialFragment extends Fragment {
     TextView textViewTutorialTitle;
     @ViewById(R.id.txt_tutorial_message)
     TextView textViewTutorialMessage;
+
+    @ViewById(R.id.layout_tutorial_top)
+    View topLayout;
+
+    @ViewById(R.id.layout_tutorial_bottom)
+    View bottomLayout;
 
     @AfterViews
     void initLayout() {
@@ -59,5 +63,15 @@ public class IntroTutorialFragment extends Fragment {
         imageViewTutorialHead.setImageResource(resImageHead);
         textViewTutorialTitle.setText(resTitleText);
         textViewTutorialMessage.setText(resMessageText);
+
+        int rootHeight = ((View) topLayout.getParent().getParent()).getMeasuredHeight();
+
+        ViewGroup.LayoutParams topLayoutParams = topLayout.getLayoutParams();
+        topLayoutParams.height = rootHeight / 2;
+        topLayout.setLayoutParams(topLayoutParams);
+
+        ViewGroup.LayoutParams bottomLayoutParams = bottomLayout.getLayoutParams();
+        bottomLayoutParams.height = rootHeight / 2;
+        bottomLayout.setLayoutParams(bottomLayoutParams);
     }
 }

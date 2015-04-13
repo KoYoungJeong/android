@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
     android:layout_gravity="bottom"
-    android:paddingBottom="8dp"
-    android:gravity="center">
-    <Button style="@style/JandiToturial.Indicator"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp">
+
+    <Button
         android:id="@+id/btn_tutorial_first"
-        />
-    <Button style="@style/JandiToturial.Indicator"
+        style="@style/JandiToturial.Indicator" />
+
+    <Button
         android:id="@+id/btn_tutorial_second"
-        />
-    <Button style="@style/JandiToturial.Indicator"
+        style="@style/JandiToturial.Indicator" />
+
+    <Button
         android:id="@+id/btn_tutorial_third"
-        />
-    <Button style="@style/JandiToturial.Indicator"
+        style="@style/JandiToturial.Indicator" />
+
+    <Button
         android:id="@+id/btn_tutorial_last"
-        />
+        style="@style/JandiToturial.Indicator" />
 </LinearLayout>

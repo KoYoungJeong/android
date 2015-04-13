@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment_;
  * Created by justinygchoi on 14. 10. 23..
  */
 public class IntroMainPagerAdapter extends FragmentPagerAdapter {
-    final int NUM_OF_PAGES_WITHOUT_TUTORIAL = 1;
     final int NUM_OF_PAGES_WITH_TUTORIAL = 4;
 
     public IntroMainPagerAdapter(FragmentManager fm) {
