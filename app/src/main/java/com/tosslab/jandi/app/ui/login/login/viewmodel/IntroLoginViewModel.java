@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -41,6 +44,9 @@ public class IntroLoginViewModel {
     @ViewById(R.id.txt_intro_login_forgot_password)
     TextView forgotPasswordView;
 
+    @ViewById(R.id.layout_tutorial_top)
+    View topLayout;
+
     /**
      * 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
      */
@@ -55,8 +61,14 @@ public class IntroLoginViewModel {
         mProgressWheel.init();
     }
 
+    @AfterViews
     void initView() {
-//        forgotPasswordView.setText();
+        int rootHeight = ((View) topLayout.getParent().getParent().getParent()).getMeasuredHeight();
+
+        ViewGroup.LayoutParams topLayoutParams = topLayout.getLayoutParams();
+        topLayoutParams.height = rootHeight / 2;
+        topLayout.setLayoutParams(topLayoutParams);
+
     }
 
     public void showProgressDialog() {

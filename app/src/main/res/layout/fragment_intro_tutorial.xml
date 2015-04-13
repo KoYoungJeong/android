@@ -5,27 +5,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/layout_tutorial_top"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#e8e8e8"
-        android:gravity="center_horizontal|bottom">
+        android:background="#e8e8e8">
+
         <ImageView
             android:id="@+id/img_tutorial_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@drawable/jandi_img_tutorial_01" />
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/jandi_border_gray" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/jandi_border_gray" />
+    </RelativeLayout>
+
 
     <LinearLayout
+        android:id="@+id/layout_tutorial_bottom"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
