@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.push.receiver;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -8,14 +9,27 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
+import com.koushikdutta.ion.Ion;
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -24,6 +38,7 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
  */
+@EBean
 public class JandiPushReceiverModel {
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
@@ -59,10 +74,20 @@ public class JandiPushReceiverModel {
         }
     }
 
-    public int recalculateBadgeCount(Context context) {
-        int badgeCount = JandiPreference.getBadgeCount(context);
-        badgeCount++;
-        return badgeCount;
+    @Background
+    public void updateEntityAndBadge(Context context) {
+
+        try {
+            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+            BadgeUtils.setBadge(context, totalUnreadCount);
+            JandiPreference.setBadgeCount(context, totalUnreadCount);
+            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
     }
 
     public PushTO parsingPushTO(Bundle extras) {
@@ -93,7 +118,11 @@ public class JandiPushReceiverModel {
         return false;
     }
 
-    public Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile, JandiBroadcastReceiver jandiBroadcastReceiver) {
+    private Notification generateNotification(Context context, PushTO.MessagePush messagePush) {
+        return generateNotification(context, messagePush, null);
+    }
+
+    private Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile) {
         String message = messagePush.getAlert();
         String chatName = messagePush.getChatName();
         String writerName = messagePush.getWriterName();
@@ -152,5 +181,51 @@ public class JandiPushReceiverModel {
         bigTextStyle.bigText(message);
         bigTextStyle.setSummaryText(summary);
         return bigTextStyle;
+    }
+
+    public boolean isPushOn() {
+        if (JandiConstants.PARSE_ACTIVATION_OFF.equals(
+                ParseInstallation
+                        .getCurrentInstallation()
+                        .getString(JandiConstants.PARSE_ACTIVATION))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Background
+    public void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
+        // 현재 디바이스 설정이 push off 라면 무시
+        String writerProfile = messagePush.getWriterThumb();
+        if (writerProfile != null) {
+            Bitmap bitmap = null;
+            try {
+                bitmap = Ion.with(context)
+                        .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile)
+                        .asBitmap()
+                        .get();
+            } catch (Exception e) {
+            }
+
+            Notification notification;
+            if (writerProfile != null) {
+                notification = generateNotification(context, messagePush, bitmap);
+            } else {
+                notification = generateNotification(context, messagePush);
+            }
+
+            sendNotification(context, notification);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void sendNotification(Context context, Notification notification) {
+        NotificationManager nm =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (notification != null) {
+            nm.notify(JandiConstants.NOTIFICATION_ID, notification);
+        }
     }
 }

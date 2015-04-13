@@ -107,6 +107,10 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("file_deleted", deleteFileListener);
 
+        EventListener unshareFileListener = objects -> jandiSocketServiceModel.unshareFile(objects[0]);
+        eventHashMap.put("file_unshared", unshareFileListener);
+        eventHashMap.put("file_shared", unshareFileListener);
+
         EventListener fileCommentRefreshListener = objects -> jandiSocketServiceModel.refreshFileComment(objects[0]);
         eventHashMap.put("file_comment_created", fileCommentRefreshListener);
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);

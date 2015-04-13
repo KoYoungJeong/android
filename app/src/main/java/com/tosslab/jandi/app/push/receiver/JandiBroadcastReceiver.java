@@ -1,25 +1,15 @@
 package com.tosslab.jandi.app.push.receiver;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.parse.ParseInstallation;
 import com.parse.ParsePush;
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import de.greenrobot.event.EventBus;
@@ -43,7 +33,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-        jandiPushReceiverModel = new JandiPushReceiverModel();
+        jandiPushReceiverModel = JandiPushReceiverModel_.getInstance_(context);
 
         Bundle extras = intent.getExtras();
         PushTO pushTO = jandiPushReceiverModel.parsingPushTO(extras);
@@ -61,14 +51,16 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            if (!PushMonitor.getInstance().hasEntityId(messagePush.getChatId())) {
-                sendNotificationWithProfile(context, messagePush);
+            if (!PushMonitor.getInstance().hasEntityId(messagePush.getChatId()) && jandiPushReceiverModel.isPushOn()) {
+                jandiPushReceiverModel.sendNotificationWithProfile(context, messagePush);
             }
 
-            int count = jandiPushReceiverModel.recalculateBadgeCount(context);
-            updateBadge(context, count);
-
-            EventBus.getDefault().post(new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
+            EventBus eventBus = EventBus.getDefault();
+            if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
+                eventBus.post(new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
+            } else {
+                jandiPushReceiverModel.updateEntityAndBadge(context);
+            }
         } else if (type.equals(JSON_VALUE_TYPE_SUBSCRIBE)) {
             PushTO.SubscribePush subscribePush = (PushTO.SubscribePush) pushTOInfo;
             subscribeTopic(subscribePush.getChatId());
@@ -79,49 +71,6 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             // DO NOTHING
         }
         return;
-    }
-
-    private void updateBadge(Context context, int count) {
-        JandiPreference.setBadgeCount(context, count);
-        BadgeUtils.setBadge(context, count);
-    }
-
-    private void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
-        // 현재 디바이스 설정이 push off 라면 무시
-        if (JandiConstants.PARSE_ACTIVATION_OFF.equals(
-                ParseInstallation
-                        .getCurrentInstallation()
-                        .getString(JandiConstants.PARSE_ACTIVATION))) {
-            return;
-        }
-
-        String writerProfile = messagePush.getWriterThumb();
-        Log.d("Profile Url", JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile);
-        if (writerProfile != null) {
-            Ion.with(context)
-                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + writerProfile)
-                    .asBitmap()
-                    .setCallback(new FutureCallback<Bitmap>() {
-                        @Override
-                        public void onCompleted(Exception e, Bitmap result) {
-
-                            if (e != null || result == null) {
-                                sendNotification(context, messagePush, null);
-                            } else if (result != null) {
-                                sendNotification(context, messagePush, result);
-                            }
-                        }
-                    });
-        }
-    }
-
-    private void sendNotification(final Context context, final PushTO.MessagePush messagePush, Bitmap writerProfile) {
-        NotificationManager nm =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = jandiPushReceiverModel.generateNotification(context, messagePush, writerProfile, this);
-        if (notification != null) {
-            nm.notify(JandiConstants.NOTIFICATION_ID, notification);
-        }
     }
 
     private void subscribeTopic(String chatId) {

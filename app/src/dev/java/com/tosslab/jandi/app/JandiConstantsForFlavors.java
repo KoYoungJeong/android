@@ -13,7 +13,7 @@ public class JandiConstantsForFlavors {
 
     // These constants are just for DEBUG mode
     private static final String SERVICE_PROTOCOL = "http";
-    private static final String SERVICE_DOMAIN = "192.168.0.203";
-    private static final String SERVICE_PORT = "80";
+    private static final String SERVICE_DOMAIN = "www.jandi.io";
+    private static final String SERVICE_PORT = "8888";
     public static final String SERVICE_ROOT_URL = SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
 }

@@ -10,7 +10,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SocketFileEvent {
     private EventFileInfo file;
-    private int teamId;
     private String type;
 
     public EventFileInfo getFile() {
@@ -19,14 +18,6 @@ public class SocketFileEvent {
 
     public void setFile(EventFileInfo file) {
         this.file = file;
-    }
-
-    public int getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
     }
 
     public String getType() {

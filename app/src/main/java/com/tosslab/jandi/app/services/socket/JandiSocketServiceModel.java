@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -21,7 +22,9 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
@@ -66,7 +69,7 @@ public class JandiSocketServiceModel {
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(context);
+            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
@@ -94,7 +97,7 @@ public class JandiSocketServiceModel {
     public void deleteFile(Object object) {
         try {
             ObjectMapper objectMapper = this.objectMapper;
-            SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileEvent.class);
+            SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileDeleteEvent.class);
 
             EventBus.getDefault().post(new DeleteFileEvent(socketFileEvent.getFile().getId()));
         } catch (IOException e) {
@@ -160,5 +163,17 @@ public class JandiSocketServiceModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void unshareFile(Object object) {
+        try {
+            ObjectMapper objectMapper = this.objectMapper;
+            SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
+
+            EventBus.getDefault().post(new ShareFileEvent(socketFileEvent.getFile().getId()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

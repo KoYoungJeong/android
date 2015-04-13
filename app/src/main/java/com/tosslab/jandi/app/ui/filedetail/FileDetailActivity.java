@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
@@ -92,7 +93,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
 
-        getFileDetail(false);
+        getFileDetail(false, true);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.deleteComment(messageId, feedbackId);
-            getFileDetail(false);
+            getFileDetail(false, true);
         } catch (JandiNetworkException e) {
         } catch (Exception e) {
         } finally {
@@ -225,11 +226,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     @Background
-    void getFileDetail(boolean isSendAction) {
-        fileDetailPresenter.showProgressWheel();
+    void getFileDetail(boolean isSendAction, boolean showDialog) {
+        if (showDialog) {
+            fileDetailPresenter.showProgressWheel();
+        }
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
+
             for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
                 if (messageDetail instanceof ResMessages.FileMessage) {
                     mResFileDetail = (ResMessages.FileMessage) messageDetail;
@@ -246,7 +250,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
-            getFileDetailFailed(getString(R.string.err_file_detail));
+            if (e.httpStatusCode == 403) {
+                getFileDetailFailed(getString(R.string.jandi_unshared_message));
+            } else {
+                getFileDetailFailed(getString(R.string.err_file_detail));
+
+            }
             finishOnMainThread();
         } catch (Exception e) {
             getFileDetailFailed(getString(R.string.err_file_detail));
@@ -374,7 +383,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
         fileDetailPresenter.clearAdapter();
-        getFileDetail(false);
+        getFileDetail(false, true);
     }
 
     @UiThread
@@ -424,7 +433,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     mEntityManager.getEntityById(entityIdToBeUnshared).type,
                     mResFileDetail);
             fileDetailPresenter.unshareMessageSucceed(entityIdToBeUnshared);
-            getFileDetail(false);
+            getFileDetail(false, true);
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
@@ -447,13 +456,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     public void onEvent(DeleteFileEvent event) {
         if (fileId == event.getId()) {
-            getFileDetail(false);
+            getFileDetail(false, false);
+        }
+    }
+
+    public void onEvent(ShareFileEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false, false);
         }
     }
 
     public void onEvent(FileCommentRefreshEvent event) {
         if (fileId == event.getId()) {
-            getFileDetail(false);
+            getFileDetail(false, false);
         }
     }
 
@@ -522,7 +537,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         try {
             fileDetailModel.sendMessageComment(fileId, message);
 
-            getFileDetail(true);
+            getFileDetail(true, true);
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);

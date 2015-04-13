@@ -54,6 +54,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -134,99 +135,96 @@ public class FileDetailPresenter {
 
     @UiThread
     public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
-        for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.FileMessage) {
-                final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
-                // 사용자
-                FormattedEntity writer = new FormattedEntity(fileMessage.writer);
-                String profileUrl = writer.getUserSmallProfileUrl();
-                Ion.with(imageViewUserProfile)
-                        .placeholder(R.drawable.jandi_profile)
-                        .error(R.drawable.jandi_profile)
-                        .transform(new IonCircleTransform())
-                        .load(profileUrl);
-                String userName = writer.getName();
-                textViewUserName.setText(userName);
+        ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
 
-                imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
+        final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
-                // 파일
-                String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
-                textViewFileCreateDate.setText(createTime);
-                // if Deleted File
-                if (TextUtils.equals(fileMessage.status, "archived")) {
+        // 사용자
+        FormattedEntity writer = new FormattedEntity(fileMessage.writer);
+        String profileUrl = writer.getUserSmallProfileUrl();
+        Ion.with(imageViewUserProfile)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(profileUrl);
+        String userName = writer.getName();
+        textViewUserName.setText(userName);
 
-                    imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
-                    fileInfoLayout.setVisibility(View.GONE);
-                    inputCommentLayout.setVisibility(View.GONE);
+        imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
-                    activity.getSupportActionBar().setTitle(R.string.jandi_deleted_file);
+        // 파일
+        String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
+        textViewFileCreateDate.setText(createTime);
+        // if Deleted File
+        if (TextUtils.equals(fileMessage.status, "archived")) {
 
-                    break;
-                }
+            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
+            fileInfoLayout.setVisibility(View.GONE);
+            inputCommentLayout.setVisibility(View.GONE);
 
-                activity.getSupportActionBar().setTitle(fileMessage.content.title);
-                String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+            activity.getSupportActionBar().setTitle(R.string.jandi_deleted_file);
 
-                // 공유 CDP 이름
-                drawFileSharedEntities(fileMessage);
+        } else {
 
-                if (!TextUtils.isEmpty(fileMessage.content.type)) {
-                    String serverUrl = (fileMessage.content.serverUrl.equals("root"))
-                            ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                            : fileMessage.content.serverUrl;
+            activity.getSupportActionBar().setTitle(fileMessage.content.title);
+            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+            textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
 
-                    if (fileMessage.content.type.startsWith("image")) {
-                        // 이미지일 경우
-                        iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
-                        // 중간 썸네일을 가져온다.
-                        String thumbnailUrl = "";
-                        if (fileMessage.content.extraInfo != null) {
-                            thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
+            // 공유 CDP 이름
+            drawFileSharedEntities(fileMessage);
 
-                            final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
-                            final String photoUrl = serverUrl + fileMessage.content.fileUrl;
+            if (!TextUtils.isEmpty(fileMessage.content.type)) {
+                String serverUrl = (fileMessage.content.serverUrl.equals("root"))
+                        ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                        : fileMessage.content.serverUrl;
 
-                            if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
-                                Ion.with(activity)
-                                        .load(thumbnailPhotoUrl)
-                                        .intoImageView(imageViewPhotoFile);
-                            } else {
-                                Ion.with(imageViewPhotoFile)
-                                        .fitCenter()
-                                        .crossfade(true)
-                                        .load(thumbnailPhotoUrl);
-                            }
-                            // 이미지를 터치하면 큰 화면 보기로 넘어감
-                            imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                                    .intent(activity)
-                                    .imageUrl(photoUrl)
-                                    .imageName(fileMessage.content.name)
-                                    .imageType(fileMessage.content.type)
-                                    .start());
+                if (fileMessage.content.type.startsWith("image")) {
+                    // 이미지일 경우
+                    iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
+                    // 중간 썸네일을 가져온다.
+                    String thumbnailUrl = "";
+                    if (fileMessage.content.extraInfo != null) {
+                        thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
+
+                        final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
+                        final String photoUrl = serverUrl + fileMessage.content.fileUrl;
+
+                        if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
+                            Ion.with(activity)
+                                    .load(thumbnailPhotoUrl)
+                                    .intoImageView(imageViewPhotoFile);
                         } else {
-                            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_img);
+                            Ion.with(imageViewPhotoFile)
+                                    .fitCenter()
+                                    .crossfade(true)
+                                    .load(thumbnailPhotoUrl);
                         }
-
+                        // 이미지를 터치하면 큰 화면 보기로 넘어감
+                        imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
+                                .intent(activity)
+                                .imageUrl(photoUrl)
+                                .imageName(fileMessage.content.name)
+                                .imageType(fileMessage.content.type)
+                                .start());
                     } else {
-
-                        iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));
-                        imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
-
-                        // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
-                        imageViewPhotoFile.setOnClickListener(view -> {
-                            String serverUrl1 = (fileMessage.content.serverUrl.equals("root"))
-                                    ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                                    : fileMessage.content.serverUrl;
-                            String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
-                            EventBus.getDefault().post(new FileDownloadStartEvent(serverUrl1 + fileName, fileMessage.content.name, fileMessage.content.type));
-                        });
+                        imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_img);
                     }
-                }
 
-                break;
+                } else {
+
+                    iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));
+                    imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
+
+                    // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
+                    imageViewPhotoFile.setOnClickListener(view -> {
+                        String serverUrl1 = (fileMessage.content.serverUrl.equals("root"))
+                                ? JandiConstantsForFlavors.SERVICE_ROOT_URL
+                                : fileMessage.content.serverUrl;
+                        String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
+                        EventBus.getDefault().post(new FileDownloadStartEvent(serverUrl1 + fileName, fileMessage.content.name, fileMessage.content.type));
+                    });
+                }
             }
         }
 
@@ -237,6 +235,17 @@ public class FileDetailPresenter {
         if (isSendAction) {
             listFileDetailComments.setSelection(fileDetailCommentListAdapter.getCount());
         }
+    }
+
+    private ResMessages.OriginalMessage getFileMessage(List<ResMessages.OriginalMessage> messageDetails) {
+
+        for (ResMessages.OriginalMessage messageDetail : messageDetails) {
+            if (messageDetail instanceof ResMessages.FileMessage) {
+                return messageDetail;
+            }
+        }
+
+        return null;
     }
 
     private int getDownloadIcon(String type) {
@@ -284,7 +293,7 @@ public class FileDetailPresenter {
         }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void drawFileSharedEntities(ResMessages.FileMessage resFileDetail) {
         if (resFileDetail == null) {
             return;
