@@ -45,7 +45,7 @@ public class FileExplorerItemListAdapter extends ArrayAdapter<FileExplorerItem> 
         final FileExplorerItem o = items.get(position);
         if (o != null) {
             TextView t1 = (TextView) v.findViewById(R.id.tv_file_explorer_item_name);
-            TextView t2 = (TextView) v.findViewById(R.id.tv_file_explorer_item_childcount);
+            //TextView t2 = (TextView) v.findViewById(R.id.tv_file_explorer_item_childcount);
             TextView t3 = (TextView) v.findViewById(R.id.tv_file_explorer_item_date);
                        /* Take the ImageView from layout and set the city's image */
             ImageView imageCity = (ImageView) v.findViewById(R.id.img_file_explorer_icon);
@@ -56,8 +56,6 @@ public class FileExplorerItemListAdapter extends ArrayAdapter<FileExplorerItem> 
 
             if (t1 != null) {
                 t1.setText(o.getName());
-            } else if (t2 != null) {
-                t2.setText(o.getData());
             } else if (t3 != null) {
                 t3.setText(o.getDate());
             }

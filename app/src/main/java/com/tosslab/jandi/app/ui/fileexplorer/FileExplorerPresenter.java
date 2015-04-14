@@ -12,6 +12,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -39,11 +40,14 @@ public class FileExplorerPresenter {
         fileListView.setAdapter(fileItemAdapter);
     }
 
+    private Logger log = Logger.getLogger(FileExplorerFragment.class);
+
     public void setFiles(List<FileItem> fileItems) {
         for (FileItem fileItem : fileItems) {
             fileItemAdapter.add(fileItem);
         }
         fileItemAdapter.notifyDataSetChanged();
+        log.info("adapter change : ");
 
     }
 
@@ -52,9 +56,13 @@ public class FileExplorerPresenter {
                 .currentPath(fileItem.getPath())
                 .build();
 
+        log.info("addfile fragment : " + fileItem.getPath());
+
         activity.getFragmentManager().beginTransaction()
-                .add(android.R.id.content, fragment, fileItem.getPath())
+                .add(R.id.file_explorer_container, fragment, fileItem.getPath())
                 .addToBackStack(fileItem.getPath())
                 .commit();
+
+        log.info("addfile count : " + activity.getFragmentManager().getBackStackEntryCount());
     }
 }
