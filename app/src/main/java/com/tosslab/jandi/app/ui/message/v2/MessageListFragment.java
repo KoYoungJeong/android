@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,12 +56,14 @@ import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.queue.MarkerUpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -175,6 +178,10 @@ public class MessageListFragment extends Fragment {
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
+                            break;
+                        case Marker:
+                            SocketRoomMarkerEvent.Marker marker = (SocketRoomMarkerEvent.Marker) messageQueue.getData();
+                            messageListPresenter.updateMarker(marker);
                             break;
                     }
                 }, throwable -> {
@@ -293,12 +300,6 @@ public class MessageListFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        messageSubscription.unsubscribe();
-    }
-
     private void setUpActionbar() {
 
         ActionBarActivity activity = (ActionBarActivity) getActivity();
@@ -385,10 +386,22 @@ public class MessageListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        messageSubscription.unsubscribe();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
-
+        Log.d("INFO", "onResume");
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
 
         PushMonitor.getInstance().register(entityId);
@@ -399,7 +412,7 @@ public class MessageListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().unregister(this);
+        Log.d("INFO", "onPause");
 
         if (!isFromSearch) {
             messageListModel.stopRefreshTimer();
@@ -823,6 +836,14 @@ public class MessageListFragment extends Fragment {
 
         if (event.getRoom().getId() == entityId) {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        }
+    }
+
+    public void onEvent(SocketRoomMarkerEvent event) {
+        int myId = EntityManager.getInstance(getActivity()).getMe().getId();
+        if (event.getRoom().getId() == entityId && event.getMarker().getMemberId() != myId) {
+            SocketRoomMarkerEvent.Marker marker = event.getMarker();
+            sendMessagePublisherEvent(new MarkerUpdateMessageQueue(marker));
         }
     }
 

@@ -21,12 +21,14 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -49,7 +51,7 @@ public class JandiSocketServiceModel {
     public JandiSocketServiceModel(Context context) {
 
         this.context = context;
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
     }
 
 
@@ -71,7 +73,7 @@ public class JandiSocketServiceModel {
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
-            EventBus.getDefault().post(new RetrieveTopicListEvent());
+            postEvent(new RetrieveTopicListEvent());
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
@@ -85,7 +87,7 @@ public class JandiSocketServiceModel {
             ResAccountInfo resAccountInfo = requestManager.request();
             JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
 
-            EventBus.getDefault().post(new TeamInfoChangeEvent());
+            postEvent(new TeamInfoChangeEvent());
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
@@ -96,20 +98,18 @@ public class JandiSocketServiceModel {
 
     public void deleteFile(Object object) {
         try {
-            ObjectMapper objectMapper = this.objectMapper;
             SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileDeleteEvent.class);
 
-            EventBus.getDefault().post(new DeleteFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new DeleteFileEvent(socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void refreshFileComment(Object object) {
-        ObjectMapper objectMapper = this.objectMapper;
         try {
             SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileCommentEvent.class);
-            EventBus.getDefault().post(new FileCommentRefreshEvent(socketFileEvent.getFile().getId()));
+            postEvent(new FileCommentRefreshEvent(socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -118,9 +118,8 @@ public class JandiSocketServiceModel {
 
     public void refreshMessage(Object object) {
         try {
-            ObjectMapper objectMapper = this.objectMapper;
             SocketMessageEvent socketMessageEvent = objectMapper.readValue(object.toString(), SocketMessageEvent.class);
-            EventBus.getDefault().post(socketMessageEvent);
+            postEvent(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -130,7 +129,7 @@ public class JandiSocketServiceModel {
         refreshEntity();
         try {
             SocketTopicEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketTopicEvent.class);
-            EventBus.getDefault().post(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()));
+            postEvent(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -142,14 +141,14 @@ public class JandiSocketServiceModel {
 
     public void refreshMemberProfile() {
         refreshEntity();
-        EventBus.getDefault().post(new ProfileChangeEvent());
+        postEvent(new ProfileChangeEvent());
     }
 
     public void refreshTopicDelete(Object object) {
         refreshEntity();
         try {
             SocketTopicEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketTopicEvent.class);
-            EventBus.getDefault().post(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
+            postEvent(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,7 +158,7 @@ public class JandiSocketServiceModel {
         refreshEntity();
         try {
             SocketMemberEvent socketMemberEvent = objectMapper.readValue(object.toString(), SocketMemberEvent.class);
-            EventBus.getDefault().post(new MemberStarredEvent(socketMemberEvent.getMember().getId()));
+            postEvent(new MemberStarredEvent(socketMemberEvent.getMember().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -167,13 +166,28 @@ public class JandiSocketServiceModel {
 
     public void unshareFile(Object object) {
         try {
-            ObjectMapper objectMapper = this.objectMapper;
             SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileUnsharedEvent.class);
 
-            EventBus.getDefault().post(new ShareFileEvent(socketFileEvent.getFile().getId()));
+            postEvent(new ShareFileEvent(socketFileEvent.getFile().getId()));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public void updateMarker(Object object) {
+        try {
+            SocketRoomMarkerEvent socketRoomMarkerEvent = objectMapper.readValue(object.toString(), SocketRoomMarkerEvent.class);
+            postEvent(socketRoomMarkerEvent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private <T> void postEvent(T object) {
+        EventBus eventBus = EventBus.getDefault();
+        if (eventBus.hasSubscriberForEvent(object.getClass())) {
+            eventBus.post(object);
+        }
     }
 }

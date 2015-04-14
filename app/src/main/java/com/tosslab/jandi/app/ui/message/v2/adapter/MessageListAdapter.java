@@ -309,20 +309,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         oldMoreState = MoreState.Idle;
     }
 
-    public ResMessages.Link getItemByLinkId(int linkId) {
+    public ResMessages.Link getItemByMessageId(int messageId) {
         for (int idx = 0; idx < messageList.size(); idx++) {
             ResMessages.Link link = messageList.get(idx);
-            if (link.messageId == linkId) {
+            if (link.messageId == messageId) {
                 return link;
             }
         }
         return null;
     }
 
-    public int getItemPositionByLinkId(int linkId) {
+    public int getItemPositionByMessageId(int messageId) {
         for (int idx = 0; idx < messageList.size(); idx++) {
             ResMessages.Link link = messageList.get(idx);
-            if (link.messageId == linkId) {
+            if (link.messageId == messageId) {
                 return idx;
             }
         }
@@ -440,6 +440,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    public int getItemPositionByLinkId(int linkId) {
+        for (int idx = 0; idx < messageList.size(); idx++) {
+            ResMessages.Link link = messageList.get(idx);
+            if (link.id == linkId) {
+                return idx;
+            }
+        }
+
+        return -1;
+
     }
 
     private enum MoreState {

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -227,6 +228,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             log.error(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
                 getEntitiesFailed(getString(R.string.err_expired_session));
+                stopJandiServiceInMainThread();
             } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()) {
                 EventBus.getDefault().post(new ServiceMaintenanceEvent());
             } else {
@@ -238,6 +240,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         } catch (Exception e) {
             getEntitiesFailed(getString(R.string.err_service_connection));
         }
+    }
+
+    @UiThread
+    void stopJandiServiceInMainThread() {
+        stopService(new Intent(MainTabActivity.this, JandiSocketService.class));
     }
 
     @UiThread

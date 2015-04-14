@@ -121,8 +121,10 @@ public class JandiSocketService extends Service {
         });
 
         EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);
-
         eventHashMap.put("message", messageRefreshListener);
+
+        EventListener markerUpdateListener = objects -> jandiSocketServiceModel.updateMarker(objects[0]);
+        eventHashMap.put("room_marker_updated", markerUpdateListener);
 
     }
 

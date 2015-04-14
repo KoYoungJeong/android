@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -225,7 +226,7 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.getItemPositionByLinkId(linkId);
+        int itemPosition = messageListAdapter.getItemPositionByMessageId(linkId);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -586,6 +587,28 @@ public class MessageListPresenter {
 
     @UiThread
     public void justRefresh() {
+        messageListAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread
+    public void updateMarker(SocketRoomMarkerEvent.Marker marker) {
+        int fromLinkId = marker.getFromLinkId();
+        int toLinkId = marker.getToLinkId();
+
+        int fromLinkPosition = messageListAdapter.getItemPositionByLinkId(fromLinkId);
+        int toLinkPosition = messageListAdapter.getItemPositionByLinkId(toLinkId);
+
+        if (fromLinkPosition < 0 || toLinkPosition < 0) {
+            return ;
+        }
+
+        for (int idx = fromLinkPosition; idx <= toLinkPosition; ++idx) {
+            ResMessages.Link item = messageListAdapter.getItem(idx);
+            if (item.unreadCount > 0) {
+                --item.unreadCount;
+            }
+        }
+
         messageListAdapter.notifyDataSetChanged();
     }
 }

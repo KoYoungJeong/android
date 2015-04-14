@@ -6,6 +6,7 @@ package com.tosslab.jandi.app;
 public class JandiConstantsForFlavors {
     // These constants are for REAL sevice
     public static final String SERVICE_ROOT_URL = "https://jandi.com/";
+    public static final String SOCKET_ROOT_URL = "https://ws.jandi.com/";
     public static final String GA_TRACK_ID = "UA-53634725-3";
     public static final String MIXPANEL_MEMBER_TRACK_ID = "f72e67d5099ab4e0ba4a83da4a9cafe3";
     public static final String MIXPANEL_ACCOUNT_TRACK_ID = "fe754ed3c3b6fcf0c510ebcfd6244f3e";

@@ -16,4 +16,9 @@ public class JandiConstantsForFlavors {
     private static final String SERVICE_DOMAIN = "www.jandi.io";
     private static final String SERVICE_PORT = "8888";
     public static final String SERVICE_ROOT_URL = SERVICE_PROTOCOL + "://" + SERVICE_DOMAIN + ":" + SERVICE_PORT + "/";
+
+    private static final String SOCKET_PROTOCOL = "http";
+    private static final String SOCKET_DOMAIN = "www.jandi.io";
+    private static final String SOCKET_PORT = "8888";
+    public static final String SOCKET_ROOT_URL = SOCKET_PROTOCOL + "://" + SOCKET_DOMAIN + ":" + SOCKET_PORT + "/";
 }
