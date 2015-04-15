@@ -28,6 +28,8 @@ import java.util.List;
 @EFragment(R.layout.fragment_file_explorer)
 public class FileExplorerFragment extends Fragment {
 
+    public static final String EXTERNAL_ROOT_PATH = "/micro_sdcard";
+    public static final String DEVICE_ROOT_PATH = "/sdcard";
     @FragmentArg
     String currentPath;
 
@@ -51,12 +53,11 @@ public class FileExplorerFragment extends Fragment {
         fileExplorerPresenter.setFiles(fileItems);
     }
 
-
     private String getReplaceFilePath(File file) {
         if (fileExplorerModel.isChildOfExternalSdcard(file)) {
-            return file.getAbsolutePath().replaceFirst(fileExplorerModel.getExternalSdCardPath(), "/micro_sdcard");
+            return file.getAbsolutePath().replaceFirst(fileExplorerModel.getExternalSdCardPath(), EXTERNAL_ROOT_PATH);
         } else {
-            return file.getAbsolutePath().replaceFirst(Environment.getExternalStorageDirectory().getAbsolutePath(), "/sdcard");
+            return file.getAbsolutePath().replaceFirst(Environment.getExternalStorageDirectory().getAbsolutePath(), DEVICE_ROOT_PATH);
         }
     }
 
