@@ -143,6 +143,7 @@ public class MessageListFragment extends Fragment {
     private MessageState messageState;
     private PublishSubject<MessageQueue> messagePublishSubject;
     private Subscription messageSubscription;
+    private boolean isForeground;
 
     @AfterInject
     void initObject() {
@@ -153,6 +154,8 @@ public class MessageListFragment extends Fragment {
 
         messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
+
+                    Log.d("INFO", messageQueue.getQueueType().toString());
 
                     switch (messageQueue.getQueueType()) {
                         case Saved:
@@ -401,7 +404,7 @@ public class MessageListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d("INFO", "onResume");
+        isForeground = true;
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
 
         PushMonitor.getInstance().register(entityId);
@@ -412,7 +415,7 @@ public class MessageListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("INFO", "onPause");
+        isForeground = false;
 
         if (!isFromSearch) {
             messageListModel.stopRefreshTimer();
@@ -834,14 +837,22 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
+        if (!isForeground) {
+            return;
+        }
+
         if (event.getRoom().getId() == entityId) {
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
-        int myId = EntityManager.getInstance(getActivity()).getMe().getId();
-        if (event.getRoom().getId() == entityId && event.getMarker().getMemberId() != myId) {
+
+        if (isFromSearch) {
+            return;
+        }
+
+        if (event.getRoom().getId() == entityId) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
             sendMessagePublisherEvent(new MarkerUpdateMessageQueue(marker));
         }

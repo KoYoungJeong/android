@@ -599,7 +599,7 @@ public class MessageListPresenter {
         int toLinkPosition = messageListAdapter.getItemPositionByLinkId(toLinkId);
 
         if (fromLinkPosition < 0 || toLinkPosition < 0) {
-            return ;
+            return;
         }
 
         for (int idx = fromLinkPosition; idx <= toLinkPosition; ++idx) {
