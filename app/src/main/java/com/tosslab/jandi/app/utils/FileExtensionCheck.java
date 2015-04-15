@@ -29,18 +29,18 @@ public class FileExtensionCheck {
     }
 
     public static int fileExtensionCheck(String fileName) {
-
         String ext = null;
-        try {
-            int dotPositon = fileName.lastIndexOf(".");
-            ext = fileName.toLowerCase().substring(dotPositon + 1);
-        } catch (Exception e) {
-            return R.drawable.jandi_fview_icon_etc;
+        Extensions[] values = Extensions.values();
+        Extensions extValue = null;
+
+        if (!TextUtils.isEmpty(fileName)) {
+            int dotPosition = fileName.lastIndexOf(".");
+
+            if (dotPosition > -1) {
+                ext = fileName.toLowerCase().substring(dotPosition + 1);
+            }
         }
 
-        Extensions[] values = Extensions.values();
-
-        Extensions extValue = null;
         for (Extensions value : values) {
             for (String fixedExt : value.getExtensionList()) {
                 if (TextUtils.equals(ext, fixedExt)) {
