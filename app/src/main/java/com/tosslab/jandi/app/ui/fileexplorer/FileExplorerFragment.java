@@ -54,9 +54,9 @@ public class FileExplorerFragment extends Fragment {
 
     private String getReplaceFilePath(File file) {
         if (fileExplorerModel.isChildOfExternalSdcard(file)) {
-            return file.getAbsolutePath().replaceFirst(Environment.getExternalStorageDirectory().getAbsolutePath(), "/sdcard");
-        } else {
             return file.getAbsolutePath().replaceFirst(fileExplorerModel.getExternalSdCardPath(), "/micro_sdcard");
+        } else {
+            return file.getAbsolutePath().replaceFirst(Environment.getExternalStorageDirectory().getAbsolutePath(), "/sdcard");
         }
     }
 
