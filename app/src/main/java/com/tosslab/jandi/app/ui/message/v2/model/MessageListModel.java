@@ -16,18 +16,22 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
+import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -41,6 +45,7 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -352,5 +357,19 @@ public class MessageListModel {
 
     public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
         return messageManipulator.getAfterMarkerMessage(linkId);
+    }
+
+    @Background
+    public void updateMarkerInfo(int teamId, int roomId) {
+        RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
+        RequestManager<ResRoomInfo> requestManager = RequestManager.newInstance(activity, request);
+        try {
+            ResRoomInfo resRoomInfo = requestManager.request();
+            JandiMarkerDatabaseManager.getInstance(activity).upsertMarkers(resRoomInfo);
+            EventBus.getDefault().post(new RoomMarkerEvent());
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
     }
 }

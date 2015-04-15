@@ -94,12 +94,16 @@ public class MainChatListFragment extends Fragment {
         }
     }
 
-    public void onEvent(final RequestMoveDirectMessageEvent event) {
+    public void onEvent(RequestMoveDirectMessageEvent event) {
+
         EntityManager entityManager = EntityManager.getInstance(getActivity());
+        int roomId = mainChatListModel.getRoomId(entityManager.getTeamId(), event.userId);
+
         MessageListV2Activity_.intent(getActivity())
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
+                .roomId(roomId)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
@@ -154,6 +158,7 @@ public class MainChatListFragment extends Fragment {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityId(chatItem.getEntityId())
+                .roomId(chatItem.getRoomId())
                 .isFavorite(chatItem.isStarred())
                 .teamId(mainChatListModel.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)

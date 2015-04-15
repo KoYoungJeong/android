@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
@@ -112,7 +113,8 @@ public class MainTopicListFragment extends Fragment {
 
                 if (entity.isJoined || entity.isPrivateGroup()) {
                     int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-                    mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred);
+                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+                    mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
                 } else {
                     joinChannelInBackground(entity);
                 }
@@ -174,7 +176,8 @@ public class MainTopicListFragment extends Fragment {
                         .trackJoinChannel();
             }
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred);
+            int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+            mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
         } catch (JandiNetworkException e) {
             logger.error("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));

@@ -76,10 +76,8 @@ public class SocketRoomMarkerEvent {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Marker {
 
-        @JsonProperty("member")
         private int memberId;
-        private int fromLinkId;
-        private int toLinkId;
+        private int lastLinkId;
 
         public int getMemberId() {
             return memberId;
@@ -89,20 +87,12 @@ public class SocketRoomMarkerEvent {
             this.memberId = memberId;
         }
 
-        public int getFromLinkId() {
-            return fromLinkId;
+        public int getLastLinkId() {
+            return lastLinkId;
         }
 
-        public void setFromLinkId(int fromLinkId) {
-            this.fromLinkId = fromLinkId;
-        }
-
-        public int getToLinkId() {
-            return toLinkId;
-        }
-
-        public void setToLinkId(int toLinkId) {
-            this.toLinkId = toLinkId;
+        public void setLastLinkId(int lastLinkId) {
+            this.lastLinkId = lastLinkId;
         }
     }
 }

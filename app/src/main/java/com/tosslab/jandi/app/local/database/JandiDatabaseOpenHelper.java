@@ -22,6 +22,7 @@ import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftTopicEntit
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftUser;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.LeftWhole;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.Messages;
+import static com.tosslab.jandi.app.local.database.DatabaseConsts.RoomsMarker;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.SearchKeyword;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.SendingMessages;
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.Table;
@@ -31,7 +32,7 @@ import static com.tosslab.jandi.app.local.database.DatabaseConsts.TempMessages;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 15;
+    private static final int DB_VERSION = 16;
     private static final String[] CREATE_TABLES = {
             Table.account + " (" +
                     Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -179,6 +180,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     Chats.lastLinkId + " INTEGER NOT NULL, " +
                     Chats.lastMessageId + " INTEGER NOT NULL, " +
                     Chats.entityId + " INTEGER NOT NULL, " +
+                    Chats.roomId + " INTEGER NOT NULL, " +
                     Chats.unread + " INTEGER NOT NULL, " +
                     Chats.name + " TEXT ," +
                     Chats.lastMessage + " TEXT ," +
@@ -191,6 +193,15 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     SearchKeyword.type + " INTEGER NOT NULL, " +
                     SearchKeyword.keyword + " TEXT NOT NULL, " +
                     SearchKeyword.initSound + " TEXT " +
+                    ");",
+
+            Table.rooms_marker + " (" +
+                    RoomsMarker._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
+                    RoomsMarker.type + " INTEGER NOT NULL, " +
+                    RoomsMarker.teamId + " INTEGER NOT NULL, " +
+                    RoomsMarker.roomId + " TEXT NOT NULL, " +
+                    RoomsMarker.memberId + " INTEGER NOT NULL, " +
+                    RoomsMarker.lastLinkId + " INTEGER NOT NULL " +
                     ");"
 
 

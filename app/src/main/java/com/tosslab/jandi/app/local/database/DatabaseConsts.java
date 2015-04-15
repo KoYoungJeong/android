@@ -15,7 +15,9 @@ public class DatabaseConsts {
 
         files,
 
-        search_keyword
+        search_keyword,
+
+        rooms_marker
     }
 
     public enum Account {
@@ -92,10 +94,14 @@ public class DatabaseConsts {
 
     public enum Chats {
         _id, teamId, name, isStarred, lastMessageId,
-        unread, entityId, lastLinkId, lastMessage, photo, status
+        unread, entityId, roomId, lastLinkId, lastMessage, photo, status
     }
 
     public enum SearchKeyword {
         _id, type, keyword, initSound
+    }
+
+    public enum RoomsMarker {
+        _id, type, teamId, roomId, memberId, lastLinkId
     }
 }

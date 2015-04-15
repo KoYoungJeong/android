@@ -45,10 +45,21 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
+    private int teamId;
+    private int roomId;
+
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new ArrayList<ResMessages.Link>();
         oldMoreState = MoreState.Idle;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public int getCount() {
@@ -68,6 +79,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
 
         viewHolder.initView(convertView);
+        viewHolder.setTeamId(teamId);
+        viewHolder.setRoomId(roomId);
 
 
         RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);

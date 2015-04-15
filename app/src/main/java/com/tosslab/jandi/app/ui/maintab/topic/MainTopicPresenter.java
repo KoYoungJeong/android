@@ -50,11 +50,14 @@ public class MainTopicPresenter {
         topicListView.setAdapter(topicListAdapter);
     }
 
-    public void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred) {
+    @UiThread
+    public void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred, int teamId) {
         MessageListV2Activity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
+                .teamId(teamId)
+                .roomId(entityId)
                 .isFavorite(isStarred)
                 .start();
     }

@@ -36,7 +36,6 @@ public class ResMessages {
         public int id;
         public int teamId;
         public int fromEntity;
-        public int unreadCount;
         public Date time;
         public int messageId;
         public String status;

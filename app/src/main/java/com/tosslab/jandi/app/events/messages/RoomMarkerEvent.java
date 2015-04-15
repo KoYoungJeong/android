@@ -1,0 +1,7 @@
+package com.tosslab.jandi.app.events.messages;
+
+/**
+ * Created by Steve SeongUg Jung on 15. 4. 15..
+ */
+public class RoomMarkerEvent {
+}

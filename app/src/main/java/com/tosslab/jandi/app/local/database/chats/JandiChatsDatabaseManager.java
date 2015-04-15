@@ -63,6 +63,7 @@ public class JandiChatsDatabaseManager {
             tempValues.put(Chats.lastMessageId.name(), chatItem.getLastMessageId());
             tempValues.put(Chats.unread.name(), chatItem.getUnread());
             tempValues.put(Chats.entityId.name(), chatItem.getEntityId());
+            tempValues.put(Chats.roomId.name(), chatItem.getRoomId());
             tempValues.put(Chats.photo.name(), chatItem.getPhoto());
             tempValues.put(Chats.status.name(), chatItem.getStatus() ? 1 : 0);
 
@@ -97,17 +98,18 @@ public class JandiChatsDatabaseManager {
             ChatItem tempItem;
 
 
-            while (cursor.moveToNext()) {
+            int nameIdx = cursor.getColumnIndex(Chats.name.name());
+            int isStarredIdx = cursor.getColumnIndex(Chats.isStarred.name());
+            int lastMessageIdIdx = cursor.getColumnIndex(Chats.lastMessageId.name());
+            int unreadIdx = cursor.getColumnIndex(Chats.unread.name());
+            int entityIdIdx = cursor.getColumnIndex(Chats.entityId.name());
+            int roomIdIdx = cursor.getColumnIndex(Chats.roomId.name());
+            int lastLinkIdIdx = cursor.getColumnIndex(Chats.lastLinkId.name());
+            int lastMessageIdx = cursor.getColumnIndex(Chats.lastMessage.name());
+            int photoIdx = cursor.getColumnIndex(Chats.photo.name());
+            int statusIdx = cursor.getColumnIndex(Chats.status.name());
 
-                int nameIdx = cursor.getColumnIndex(Chats.name.name());
-                int isStarredIdx = cursor.getColumnIndex(Chats.isStarred.name());
-                int lastMessageIdIdx = cursor.getColumnIndex(Chats.lastMessageId.name());
-                int unreadIdx = cursor.getColumnIndex(Chats.unread.name());
-                int entityIdIdx = cursor.getColumnIndex(Chats.entityId.name());
-                int lastLinkIdIdx = cursor.getColumnIndex(Chats.lastLinkId.name());
-                int lastMessageIdx = cursor.getColumnIndex(Chats.lastMessage.name());
-                int photoIdx = cursor.getColumnIndex(Chats.photo.name());
-                int statusIdx = cursor.getColumnIndex(Chats.status.name());
+            while (cursor.moveToNext()) {
 
                 tempItem = new ChatItem();
 
@@ -117,6 +119,7 @@ public class JandiChatsDatabaseManager {
                         .lastMessageId(cursor.getInt(lastMessageIdIdx))
                         .unread(cursor.getInt(unreadIdx))
                         .entityId(cursor.getInt(entityIdIdx))
+                        .roomId(cursor.getInt(roomIdIdx))
                         .lastMessage(cursor.getString(lastMessageIdx))
                         .status(cursor.getInt(statusIdx) == 1)
                         .photo(cursor.getString(photoIdx));
@@ -130,7 +133,6 @@ public class JandiChatsDatabaseManager {
 
         return chatItems;
     }
-
 
     private void closeCursor(Cursor cursor) {
         if (cursor != null && !cursor.isClosed()) {

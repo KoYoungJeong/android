@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -70,6 +71,7 @@ public class MainChatListModel {
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
+                            .roomId(resChat.getEntityId())
                             .lastLinkId(resChat.getLastLinkId())
                             .lastMessage(resChat.getLastMessage())
                             .lastMessageId(resChat.getLastMessageId())
@@ -98,5 +100,22 @@ public class MainChatListModel {
 
     public void saveChatList(int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
+    }
+
+    public int getRoomId(int teamId, int userId) {
+
+        List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+
+        ChatItem first = Observable.from(savedChatItems)
+                .filter(new Func1<ChatItem, Boolean>() {
+                    @Override
+                    public Boolean call(ChatItem chatItem) {
+                        return chatItem.getEntityId() == userId;
+                    }
+                })
+                .firstOrDefault(new ChatItem())
+                .toBlocking().first();
+
+        return first.getRoomId();
     }
 }

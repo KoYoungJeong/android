@@ -32,6 +32,8 @@ public class ImageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private int roomId;
+    private int teamId;
 
     @Override
     public void initView(View rootView) {
@@ -74,8 +76,10 @@ public class ImageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        unreadTextView.setText(String.valueOf(link.unreadCount));
-        if (link.unreadCount <= 0) {
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
             unreadTextView.setVisibility(View.GONE);
         } else {
             unreadTextView.setVisibility(View.VISIBLE);
@@ -130,5 +134,17 @@ public class ImageViewHolder implements BodyViewHolder {
     public int getLayoutId() {
         return R.layout.item_message_img_v2;
 
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

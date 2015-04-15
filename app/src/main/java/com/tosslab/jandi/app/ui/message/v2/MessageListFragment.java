@@ -47,12 +47,14 @@ import com.tosslab.jandi.app.events.messages.DummyRetryEvent;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
+import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -63,7 +65,6 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
-import com.tosslab.jandi.app.ui.message.to.queue.MarkerUpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -130,16 +131,16 @@ public class MessageListFragment extends Fragment {
     boolean isFromSearch = false;
     @FragmentArg
     int lastMarker = -1;
+    @FragmentArg
+    int roomId;
 
     @Bean
     MessageListPresenter messageListPresenter;
 
     @Bean
     MessageListModel messageListModel;
-
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
-
     private MessageState messageState;
     private PublishSubject<MessageQueue> messagePublishSubject;
     private Subscription messageSubscription;
@@ -181,10 +182,6 @@ public class MessageListFragment extends Fragment {
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
-                            break;
-                        case Marker:
-                            SocketRoomMarkerEvent.Marker marker = (SocketRoomMarkerEvent.Marker) messageQueue.getData();
-                            messageListPresenter.updateMarker(marker);
                             break;
                     }
                 }, throwable -> {
@@ -228,7 +225,11 @@ public class MessageListFragment extends Fragment {
             this.newsMessageLoader = newsMessageLoader;
             this.oldMessageLoader = oldMessageLoader;
         }
+
+        messageListPresenter.setMarkerInfo(teamId, roomId);
+        messageListModel.updateMarkerInfo(teamId, roomId);
     }
+
 
     private void getSavedMessageList() {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
@@ -846,15 +847,20 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    public void onEvent(RoomMarkerEvent event) {
+        messageListPresenter.justRefresh();
+    }
+
     public void onEvent(SocketRoomMarkerEvent event) {
 
         if (isFromSearch) {
             return;
         }
 
-        if (event.getRoom().getId() == entityId) {
+        if (event.getRoom().getId() == roomId) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            sendMessagePublisherEvent(new MarkerUpdateMessageQueue(marker));
+            JandiMarkerDatabaseManager.getInstance(getActivity()).updateMarker(teamId, roomId, marker.getMemberId(), marker.getLastLinkId());
+            messageListPresenter.justRefresh();
         }
     }
 
