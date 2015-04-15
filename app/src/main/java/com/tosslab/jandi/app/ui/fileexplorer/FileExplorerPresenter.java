@@ -48,9 +48,9 @@ public class FileExplorerPresenter {
 
     }
 
-    public void addFileFragment(FileItem fileItem, String microSdCardPath) {
+    public void addFileFragment(FileItem fileItem) {
         FileExplorerFragment fragment = FileExplorerFragment_.builder()
-                .currentPath(fileItem.getPath()).microSdCardPath(microSdCardPath)
+                .currentPath(fileItem.getPath())
                 .build();
 
         activity.getFragmentManager().beginTransaction()

@@ -3,12 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Switch
+    <Spinner
+        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:id="@+id/file_explorer_switch_button"
-        android:background="#999999"
-        android:textOff="in"
-        android:textOn="out" />
+        android:id="@+id/file_explorer_spinner_button" />
 
 </RelativeLayout>

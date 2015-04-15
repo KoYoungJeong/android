@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.ui.fileexplorer.to.FileItem;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,8 +25,8 @@ import rx.Observable;
 @EBean
 public class FileExplorerModel {
 
-    private Logger log = Logger.getLogger(FileExplorerModel.class);
-
+    public static final String DEFAULT_STORAGE = "/storage";
+    public static final String EMULATED_PATH_NAME = "emulated";
     @RootContext
     Context context;
 
@@ -40,7 +39,7 @@ public class FileExplorerModel {
         return new File(path);
     }
 
-    public List<FileItem> fill(File f, String microSdCardPath) {
+    public List<FileItem> getChildFiles(File f) {
 
         File[] originFiles = f.listFiles();
 
@@ -71,7 +70,12 @@ public class FileExplorerModel {
 
         });
 
-        if (!TextUtils.equals(f.getAbsolutePath(), (microSdCardPath == null || microSdCardPath.length() == 0) ? Environment.getExternalStorageDirectory().getAbsolutePath() : microSdCardPath)) {
+        String externalSdCardPath = getExternalSdCardPath();
+        String internalSdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+
+        String currentPath = f.getAbsolutePath();
+
+        if (!TextUtils.equals(currentPath, internalSdcardPath) && !TextUtils.equals(currentPath, externalSdCardPath)) {
             File parentFile = f.getParentFile();
             files.add(0, new FileItem("..", parentFile.getAbsolutePath(), parentFile.list().length, formater.format(parentFile.lastModified()), true));
         }
@@ -79,13 +83,17 @@ public class FileExplorerModel {
         return files;
     }
 
-    public String microSdCardPathCheck(File[] originFiles, String inStoragePath) {
+    public String getExternalSdCardPath() {
+        File storageDir = new File(DEFAULT_STORAGE);
+        File[] originFiles = storageDir.listFiles();
+        String inStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath().substring(0, Environment.getExternalStorageDirectory().getAbsolutePath().lastIndexOf("/") + 1);
+
         String microSdCardPath = null;
 
         for (int i = 0; i < originFiles.length; i++) {
 
             try {
-                if (originFiles[i].canRead() && originFiles[i].isDirectory() && !TextUtils.equals(originFiles[i].getName(), "emulated")
+                if (originFiles[i].canRead() && originFiles[i].isDirectory() && !TextUtils.equals(originFiles[i].getName(), EMULATED_PATH_NAME)
                         && !originFiles[i].getCanonicalPath().contains(inStoragePath)) {
                     microSdCardPath = originFiles[i].getAbsolutePath();
                 }
@@ -97,4 +105,17 @@ public class FileExplorerModel {
         return microSdCardPath;
     }
 
+    public boolean hasExternalSdCard() {
+        return !TextUtils.isEmpty(getExternalSdCardPath());
+    }
+
+    public boolean isChildOfExternalSdcard(File file) {
+
+        if (!hasExternalSdCard() || file == null) {
+            return false;
+        } else {
+            String externalSdCardPath = getExternalSdCardPath();
+            return file.getAbsolutePath().contains(externalSdCardPath);
+        }
+    }
 }
