@@ -34,23 +34,15 @@ public class FileItemAdapter extends ArrayAdapter<FileItem> {
         final FileItem item = getItem(position);
         if (item != null) {
             TextView fileNameTextView = (TextView) convertView.findViewById(R.id.tv_file_explorer_item_name);
-            //TextView childCountTextView = (TextView) convertView.findViewById(R.id.tv_file_explorer_item_childcount);
             TextView dateTextView = (TextView) convertView.findViewById(R.id.tv_file_explorer_item_date);
 
             ImageView iconImageView = (ImageView) convertView.findViewById(R.id.img_file_explorer_icon);
 
             if (item.isDirectory()) {
                 iconImageView.setImageResource(R.drawable.tmp_directory_icon);
-                /*if (item.getChildCount() <= 1) {
-                    childCountTextView.setText(String.format("%d item", item.getChildCount()));
-                } else {
-                    childCountTextView.setText(String.format("%d items", item.getChildCount()));
-                }*/
             } else {
 
                 iconImageView.setImageResource(fileExtensionCheck(item.getName()));
-                //iconImageView.setImageResource(R.drawable.tmp_file_icon);
-                //childCountTextView.setText("");
             }
 
             fileNameTextView.setText(item.getName());

@@ -8,8 +8,14 @@ import com.tosslab.jandi.app.R;
 public class FileExtensionCheck {
 
     public static int fileExtensionCheck(String fileName) {
-        int pos = fileName.lastIndexOf(".");
-        String ext = fileName.toLowerCase().substring(pos + 1);
+
+        String ext = null;
+        try {
+            int pos = fileName.lastIndexOf(".");
+            ext = fileName.toLowerCase().substring(pos + 1);
+        } catch (Exception e) {
+            return R.drawable.jandi_fview_icon_etc;
+        }
 
         if (ext.equals("jpg") || ext.equals("jpeg") || ext.equals("gif") || ext.equals("bmp") || ext.equals("png")
                 || ext.equals("tif")) {

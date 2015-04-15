@@ -18,18 +18,6 @@
             android:background="?attr/colorPrimary"
             android:visibility="visible" />
 
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
-            android:id="@+id/file_explorer_change"
-            android:checked="false"
-            android:background="#999999"
-            android:layout_marginRight="16dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:textOff="in"
-            android:textOn="out" />
-
     </RelativeLayout>
 
     <FrameLayout
