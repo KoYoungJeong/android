@@ -1,11 +1,32 @@
 package com.tosslab.jandi.app.utils;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.R;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Bill Minwook Heo on 15. 4. 14..
  */
 public class FileExtensionCheck {
+
+
+    private enum Extensions {
+        IMAGE("jpg", "jpeg", "gif", "bmp", "png", "tif"), VIDEO("avi", "mpg", "mpeg", "wmv", "mp4", "mkv", "asf", "flv"),
+        AUDIO("mp3", "wma", "wav", "mid"), PDF("pdf"), TXT("txt"), HWP("hwp"), EXEL("xls", "xlsx"), DOC("doc", "docx"), PPT("ppt", "pptx"), ETC("");
+        private final List<String> extensionList;
+
+        private Extensions(String... extensions) {
+            extensionList = Arrays.asList(extensions);
+        }
+
+        public List<String> getExtensionList() {
+            return Collections.unmodifiableList(extensionList);
+        }
+    }
 
     public static int fileExtensionCheck(String fileName) {
 
@@ -17,38 +38,46 @@ public class FileExtensionCheck {
             return R.drawable.jandi_fview_icon_etc;
         }
 
-        boolean isImageExtension = ext.equals("jpg") || ext.equals("jpeg") || ext.equals("gif") || ext.equals("bmp") || ext.equals("png") || ext.equals("tif");
-        boolean isVideoExtension = ext.equals("avi") || ext.equals("mpg") || ext.equals("mpeg") || ext.equals("wmv") || ext.equals("mp4") || ext.equals("mkv")
-                || ext.equals("asf") || ext.equals("flv");
-        boolean isAudioExtension = ext.equals("mp3") || ext.equals("wma") || ext.equals("wav") || ext.equals("mid");
-        boolean isPdfExtension = ext.equals("pdf");
-        boolean isTxtExtension = ext.equals("txt");
-        boolean isHwpExtension = ext.equals("hwp");
-        boolean isExelExtension = ext.equals("xls") || ext.equals("xlsx");
-        boolean isDocExtension = ext.equals("doc") || ext.equals("docx");
-        boolean isPptExtension = ext.equals("ppt") || ext.equals("pptx");
+        Extensions[] values = Extensions.values();
 
-        if (isImageExtension) {
-            return R.drawable.jandi_fview_icon_etc;
-        } else if (isVideoExtension) {
-            return R.drawable.jandi_fview_icon_video;
-        } else if (isAudioExtension) {
-            return R.drawable.jandi_fview_icon_audio;
-        } else if (isPdfExtension) {
-            return R.drawable.jandi_fview_icon_pdf;
-        } else if (isTxtExtension) {
-            return R.drawable.jandi_fview_icon_txt;
-        } else if (isHwpExtension) {
-            return R.drawable.jandi_fl_icon_hwp;
-        } else if (isExelExtension) {
-            return R.drawable.jandi_fl_icon_exel;
-        } else if (isDocExtension) {
-            return R.drawable.jandi_fview_icon_txt;
-        } else if (isPptExtension) {
-            return R.drawable.jandi_fview_icon_ppt;
-        } else {
-            return R.drawable.jandi_fview_icon_etc;
+        Extensions extValue = null;
+        for (Extensions value : values) {
+            for (String fixedExt : value.getExtensionList()) {
+                if (TextUtils.equals(ext, fixedExt)) {
+                    extValue = value;
+                    break;
+                }
+            }
         }
 
+        if (extValue == null) {
+            extValue = Extensions.ETC;
+        }
+
+        switch (extValue) {
+
+            case IMAGE:
+                return R.drawable.jandi_fview_icon_etc;
+            case VIDEO:
+                return R.drawable.jandi_fview_icon_video;
+            case AUDIO:
+                return R.drawable.jandi_fview_icon_audio;
+            case PDF:
+                return R.drawable.jandi_fview_icon_pdf;
+            case TXT:
+                return R.drawable.jandi_fview_icon_txt;
+            case HWP:
+                return R.drawable.jandi_fl_icon_hwp;
+            case EXEL:
+                return R.drawable.jandi_fl_icon_exel;
+            case DOC:
+                return R.drawable.jandi_fview_icon_txt;
+            case PPT:
+                return R.drawable.jandi_fview_icon_ppt;
+            default:
+            case ETC:
+                return R.drawable.jandi_fview_icon_etc;
+
+        }
     }
 }
