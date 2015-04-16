@@ -6,9 +6,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
     android:descendantFocusability="blocksDescendants"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     android:paddingBottom="10dp"
-    android:foreground="?android:attr/selectableItemBackground"
     android:paddingLeft="@dimen/jandi_messages_padding_left"
     android:paddingRight="@dimen/jandi_messages_padding_right"
     android:paddingTop="5dp"
@@ -74,7 +74,7 @@
     <!-- 실제 메시지 내용 -->
     <TextView
         android:id="@+id/txt_message_content"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_message_user_name"
         android:layout_toRightOf="@+id/img_message_user_profile"
