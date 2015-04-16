@@ -106,7 +106,6 @@ public class FileDetailPresenter {
         mProgressWheel = new ProgressWheel(activity);
         mProgressWheel.init();
 
-        listFileDetailComments.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
     }
 
     private void addFileDetailViewAsListviewHeader() {
