@@ -1,7 +1,10 @@
 package com.tosslab.jandi.app.ui.web;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +27,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -50,7 +54,40 @@ public class InternalWebActivity extends ActionBarActivity {
     @AfterInject
     void initObject() {
 
-        internalWebPresenter.setWebViewClient(new WebViewClient());
+        internalWebPresenter.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                if (!url.startsWith("http")) {
+
+                    if (url.startsWith("intent")) {
+
+                        Intent intent = null;
+                        try {
+                            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+
+                        try {
+                            if (intent != null) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intent.getDataString())));
+                                return true;
+                            }
+                        } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
 
         internalWebPresenter.setWebCromeClient(new WebChromeClient() {
             @Override
