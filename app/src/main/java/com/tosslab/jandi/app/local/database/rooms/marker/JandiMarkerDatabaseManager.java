@@ -165,4 +165,12 @@ public class JandiMarkerDatabaseManager {
 
         return database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValue);
     }
+
+    public int deleteMarker(int teamId, int roomId, int memberId) {
+        SQLiteDatabase database = getWriteableDatabase();
+        String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " + ? AND " + DatabaseConsts.RoomsMarker.memberId + " = ?";
+        String[] whereArgs = {String.valueOf(teamId), String.valueOf(roomId), String.valueOf(memberId)};
+        return database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
+
+    }
 }

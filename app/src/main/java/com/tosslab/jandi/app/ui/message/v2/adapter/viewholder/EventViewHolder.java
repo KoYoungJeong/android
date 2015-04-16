@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -29,6 +30,7 @@ import rx.schedulers.Schedulers;
  */
 public class EventViewHolder implements BodyViewHolder {
 
+    public static final String KEY_PARSING_DATA = "parsing_data";
     private TextView eventContentView;
 
     @Override
@@ -45,11 +47,17 @@ public class EventViewHolder implements BodyViewHolder {
                 .subscribeOn(Schedulers.io())
                 .map(stringObjectMap -> {
                     Map<String, Object> info = link.info;
-                    ObjectMapper objectMapper = new ObjectMapper();
+                    if (link.info.containsKey(KEY_PARSING_DATA)) {
+                        return link.info.get(KEY_PARSING_DATA);
+                    }
+
+                    ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
                     try {
 
                         String s = objectMapper.writeValueAsString(info);
-                        return objectMapper.readValue(s, ResMessages.EventInfo.class);
+                        ResMessages.EventInfo eventInfo = objectMapper.readValue(s, ResMessages.EventInfo.class);
+                        link.info.put(KEY_PARSING_DATA, eventInfo);
+                        return eventInfo;
 
                     } catch (IOException e) {
                         e.printStackTrace();

@@ -842,9 +842,16 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        if (event.getRoom().getId() == entityId) {
+        if (event.getRoom().getId() == roomId) {
+            if (TextUtils.equals(event.getMessageType(), "topic_leave")) {
+                messageListModel.deleteMarker(teamId, roomId, event.getWriter());
+            } else if (TextUtils.equals(event.getMessageType(), "topic_join")) {
+                messageListModel.insertMarker(teamId, roomId, event.getWriter());
+            }
+
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+
     }
 
     public void onEvent(RoomMarkerEvent event) {

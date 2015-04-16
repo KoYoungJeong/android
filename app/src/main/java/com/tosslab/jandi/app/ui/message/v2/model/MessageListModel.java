@@ -372,4 +372,12 @@ public class MessageListModel {
         }
 
     }
+
+    public void deleteMarker(int teamId, int roomId, int memberId) {
+        JandiMarkerDatabaseManager.getInstance(activity).deleteMarker(teamId, roomId, memberId);
+    }
+
+    public void insertMarker(int teamId, int roomId, int memberId) {
+        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, memberId, -1);
+    }
 }
