@@ -155,6 +155,9 @@ public class MainChatListFragment extends Fragment {
         BadgeUtils.setBadge(getActivity(), badgeCount);
         mainChatListPresenter.refreshListView();
 
+        boolean hasAlarmCount = MainChatListModel.hasAlarmCount(mainChatListPresenter.getChatItems());
+        EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityId(chatItem.getEntityId())

@@ -92,4 +92,13 @@ public class MainTopicPresenter {
             progressWheel.dismiss();
         }
     }
+
+    public List<FormattedEntity> getJoinedTopics() {
+        return topicListAdapter.getJoinEntities();
+    }
+
+    @UiThread
+    public void refreshList() {
+        topicListAdapter.notifyDataSetChanged();
+    }
 }

@@ -42,6 +42,10 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
         return this;
     }
 
+    public List<FormattedEntity> getJoinEntities() {
+        return items.get(Type.JOINED);
+    }
+
     public TopicListAdapter unjoinEntities(List<FormattedEntity> entities) {
         items.put(Type.UNJOINED, entities);
         return this;

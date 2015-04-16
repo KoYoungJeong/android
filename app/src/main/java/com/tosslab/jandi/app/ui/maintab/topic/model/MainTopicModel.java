@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Bean;
@@ -15,6 +16,9 @@ import org.androidannotations.annotations.RootContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -67,5 +71,25 @@ public class MainTopicModel {
             }
         }
         return false;
+    }
+
+    public boolean updateBadge(SocketMessageEvent event, List<FormattedEntity> joinedTopics) {
+        FormattedEntity entity = Observable.from(joinedTopics)
+                .filter(new Func1<FormattedEntity, Boolean>() {
+                    @Override
+                    public Boolean call(FormattedEntity entity) {
+                        return entity.getId() == event.getRoom().getId();
+                    }
+                })
+                .firstOrDefault(new FormattedEntity())
+                .toBlocking()
+                .first();
+
+        if (entity.getId() > 0) {
+            entity.alarmCount++;
+            return true;
+        } else {
+            return false;
+        }
     }
 }

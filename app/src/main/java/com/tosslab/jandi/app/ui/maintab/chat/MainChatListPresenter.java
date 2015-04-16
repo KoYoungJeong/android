@@ -59,4 +59,8 @@ public class MainChatListPresenter {
     public boolean hasChatItems() {
         return mainChatListAdapter != null && mainChatListAdapter.getCount() > 0;
     }
+
+    public List<ChatItem> getChatItems() {
+        return mainChatListAdapter.getChatItems();
+    }
 }
