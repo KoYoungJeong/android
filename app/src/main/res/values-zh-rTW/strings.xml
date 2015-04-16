@@ -338,4 +338,6 @@
     <string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
     <string name="jandi_message_no_member">"還未有其他成員加入您的團隊。現在就邀請他們以開始協作。"</string>
     <string name="jandi_file_delete_message">"您確定要刪除這檔案？ 請注意留言的部分不會被刪除。"</string>
+    <string name="jandi_device_storage">行動裝置</string>
+    <string name="jandi_sdcard_storage">記憶卡</string>
 </resources>

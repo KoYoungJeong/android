@@ -337,4 +337,6 @@
     <string name="jandi_message_ask_about_delete_comment">"您确定要永久删除这留言吗？删除的留言将无法复原。"</string>
     <string name="jandi_message_no_member">"还未有其他成员加入您的团队。现在就邀请他们以开始协作。"</string>
     <string name="jandi_file_delete_message">"您确定要删除这档案？ 请注意留言的部分不会被删除。"</string>
+    <string name="jandi_device_storage">行动装置</string>
+    <string name="jandi_sdcard_storage">记忆卡</string>
 </resources>

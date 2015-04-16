@@ -355,4 +355,6 @@
     <string name="jandi_message_ask_about_delete_comment">"이 댓글을 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
     <string name="jandi_message_no_member">"아직 팀에 가입한 멤버가 없습니다. 지금 바로 멤버들을 초대하세요."</string>
     <string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
+    <string name="jandi_device_storage">장치</string>
+    <string name="jandi_sdcard_storage">SD 카드</string>
 </resources>
