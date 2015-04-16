@@ -58,18 +58,30 @@ public class InternalWebActivity extends ActionBarActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-                if (url.startsWith("intent")) {
+                if (!url.startsWith("http")) {
 
-                    try {
+                    if (url.startsWith("intent")) {
+
+                        Intent intent = null;
                         try {
-                            Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intent.getDataString())));
+                            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
+                            return false;
                         }
+
+                        try {
+                            if (intent != null) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intent.getDataString())));
+                                return true;
+                            }
+                        } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                         return true;
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
                     }
                 }
 
