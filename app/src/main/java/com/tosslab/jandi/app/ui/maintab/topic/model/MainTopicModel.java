@@ -74,6 +74,7 @@ public class MainTopicModel {
     }
 
     public boolean updateBadge(SocketMessageEvent event, List<FormattedEntity> joinedTopics) {
+        FormattedEntity emptyEntity = new FormattedEntity();
         FormattedEntity entity = Observable.from(joinedTopics)
                 .filter(new Func1<FormattedEntity, Boolean>() {
                     @Override
@@ -81,11 +82,11 @@ public class MainTopicModel {
                         return entity.getId() == event.getRoom().getId();
                     }
                 })
-                .firstOrDefault(new FormattedEntity())
+                .firstOrDefault(emptyEntity)
                 .toBlocking()
                 .first();
 
-        if (entity.getId() > 0) {
+        if (entity != emptyEntity && entity.getId() > 0) {
             entity.alarmCount++;
             return true;
         } else {
