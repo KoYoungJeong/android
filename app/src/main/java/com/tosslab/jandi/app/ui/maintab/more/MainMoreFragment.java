@@ -24,7 +24,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -33,7 +32,6 @@ import org.apache.log4j.Logger;
 public class MainMoreFragment extends Fragment {
 
     public static final String SUPPORT_URL = "http://support.jandi.com";
-    private final static Logger logger = Logger.getLogger(MainMoreFragment.class);
     protected Context mContext;
 
     IconWithTextView profileIconView;
@@ -55,8 +53,13 @@ public class MainMoreFragment extends Fragment {
 
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
 
-        showUserProfile();
         showJandiVersion();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showUserProfile();
     }
 
     private void showUserProfile() {

@@ -408,7 +408,7 @@ public class MessageListFragment extends Fragment {
         isForeground = true;
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
 
-        PushMonitor.getInstance().register(entityId);
+        PushMonitor.getInstance().register(roomId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
     }
