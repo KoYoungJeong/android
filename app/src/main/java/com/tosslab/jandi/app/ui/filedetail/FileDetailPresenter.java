@@ -107,7 +107,6 @@ public class FileDetailPresenter {
         mProgressWheel = new ProgressWheel(activity);
         mProgressWheel.init();
 
-        listFileDetailComments.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_DISABLED);
     }
 
     private void addFileDetailViewAsListviewHeader() {
@@ -342,6 +341,8 @@ public class FileDetailPresenter {
             }
             textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
             textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
+        } else {
+            textViewFileSharedCdp.setText(R.string.jandi_nowhere_shared_file);
         }
     }
 

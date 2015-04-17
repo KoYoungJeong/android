@@ -338,4 +338,5 @@
     <string name="jandi_message_no_member">"还未有其他成员加入您的团队。现在就邀请他们以开始协作。"</string>
     <string name="jandi_file_delete_message">"您确定要删除这档案？ 请注意留言的部分不会被删除。"</string>
     <string name="jandi_unshared_message">"这档案已经从这私人议题中取消分享"</string>
+    <string name="jandi_nowhere_shared_file">"档案没有分享到其它群组"</string>
 </resources>
