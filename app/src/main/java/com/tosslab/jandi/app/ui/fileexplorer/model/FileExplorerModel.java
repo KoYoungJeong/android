@@ -97,11 +97,11 @@ public class FileExplorerModel {
                         && !originFiles[i].getCanonicalPath().contains(inStoragePath)) {
                     microSdCardPath = originFiles[i].getAbsolutePath();
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return microSdCardPath;
     }
 
