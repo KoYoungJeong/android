@@ -18,7 +18,6 @@ import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -175,9 +174,7 @@ public class FileDetailPresenter {
             drawFileSharedEntities(fileMessage);
 
             if (!TextUtils.isEmpty(fileMessage.content.type)) {
-                String serverUrl = (fileMessage.content.serverUrl.equals("root"))
-                        ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                        : fileMessage.content.serverUrl;
+                String serverUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL;
 
                 if (fileMessage.content.type.startsWith("image")) {
                     // 이미지일 경우
