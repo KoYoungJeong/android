@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -132,6 +133,14 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossfade(true)
                                 .load(imageUrl);
+
+                        fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                                .intent(fileImageView.getContext())
+                                .imageUrl(JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.fileUrl)
+                                .imageName(feedbackFileMessage.content.name)
+                                .imageType(feedbackFileMessage.content.type)
+                                .start());
+
                     } else {
                         fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                     }

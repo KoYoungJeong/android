@@ -82,6 +82,7 @@ public class PhotoViewActivity extends ActionBarActivity {
     private void loadImage() {
         Ion.with(photoView)
                 .crossfade(true)
+                .deepZoom()
                 .load(imageUrl)
                 .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
     }

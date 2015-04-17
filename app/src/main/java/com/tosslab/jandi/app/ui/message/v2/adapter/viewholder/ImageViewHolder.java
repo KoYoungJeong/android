@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
@@ -92,6 +93,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
+
         nameTextView.setText(fromEntity.name);
 
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
@@ -116,6 +118,13 @@ public class ImageViewHolder implements BodyViewHolder {
                             .error(R.drawable.jandi_fl_icon_img)
                             .crossfade(true)
                             .load(imageUrl);
+
+                    fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                            .intent(fileImageView.getContext())
+                            .imageUrl(JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.fileUrl)
+                            .imageName(fileMessage.content.name)
+                            .imageType(fileMessage.content.type)
+                            .start());
 
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
