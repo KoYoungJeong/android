@@ -35,18 +35,25 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import rx.Subscription;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 6..
  */
 public class JandiSocketServiceModel {
+    private static final Logger logger = Logger.getLogger(JandiSocketServiceModel.class);
     private final Context context;
     private final ObjectMapper objectMapper;
+    private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
+    private Subscription subscribe;
 
     public JandiSocketServiceModel(Context context) {
 
@@ -179,7 +186,10 @@ public class JandiSocketServiceModel {
         try {
             SocketRoomMarkerEvent socketRoomMarkerEvent = objectMapper.readValue(object.toString(), SocketRoomMarkerEvent.class);
             postEvent(socketRoomMarkerEvent);
-        } catch (IOException e) {
+            if (EntityManager.getInstance(context).getMe().getId() == socketRoomMarkerEvent.getMarker().getMemberId()) {
+                markerPublishSubject.onNext(socketRoomMarkerEvent);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -188,6 +198,33 @@ public class JandiSocketServiceModel {
         EventBus eventBus = EventBus.getDefault();
         if (eventBus.hasSubscriberForEvent(object.getClass())) {
             eventBus.post(object);
+        }
+    }
+
+    public void startMarkerObserver() {
+        markerPublishSubject = PublishSubject.create();
+        subscribe = markerPublishSubject.throttleLast(1000 * 10, TimeUnit.MILLISECONDS)
+                .subscribe(o -> {
+                    JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+                    try {
+                        ResLeftSideMenu entitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+                        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entitiesInfo);
+                        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
+                        JandiPreference.setBadgeCount(context, totalUnreadCount);
+                        BadgeUtils.setBadge(context, totalUnreadCount);
+
+                        postEvent(new RetrieveTopicListEvent());
+
+                    } catch (JandiNetworkException e) {
+                        e.printStackTrace();
+                    }
+
+                }, throwable -> logger.debug(throwable.getMessage()));
+    }
+
+    public void stopMarkerObserver() {
+        if (!subscribe.isUnsubscribed()) {
+            subscribe.unsubscribe();
         }
     }
 }

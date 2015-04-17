@@ -156,8 +156,6 @@ public class MessageListFragment extends Fragment {
         messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
 
-                    Log.d("INFO", messageQueue.getQueueType().toString());
-
                     switch (messageQueue.getQueueType()) {
                         case Saved:
                             getSavedMessageList();

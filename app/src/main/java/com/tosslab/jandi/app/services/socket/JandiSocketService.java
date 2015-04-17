@@ -62,6 +62,8 @@ public class JandiSocketService extends Service {
 
         eventHashMap = new HashMap<String, EventListener>();
 
+        jandiSocketServiceModel.startMarkerObserver();
+
         initEventMapper();
 
         trySocketConnect();
@@ -145,6 +147,7 @@ public class JandiSocketService extends Service {
         }
 
         jandiSocketManager.disconnect();
+        jandiSocketServiceModel.stopMarkerObserver();
         super.onDestroy();
     }
 
