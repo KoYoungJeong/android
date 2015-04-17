@@ -213,6 +213,8 @@ public class JandiSocketServiceModel {
                         JandiPreference.setBadgeCount(context, totalUnreadCount);
                         BadgeUtils.setBadge(context, totalUnreadCount);
 
+                        EntityManager.getInstance(context).refreshEntity(entitiesInfo);
+
                         postEvent(new RetrieveTopicListEvent());
 
                     } catch (JandiNetworkException e) {
