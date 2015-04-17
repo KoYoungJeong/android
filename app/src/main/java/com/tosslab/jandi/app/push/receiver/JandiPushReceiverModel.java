@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -98,7 +99,7 @@ public class JandiPushReceiverModel {
 
         try {
             String jsonData = extras.getString(JandiBroadcastReceiver.JSON_KEY_DATA);
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
             return mapper.readValue(jsonData, PushTO.class);
         } catch (IOException e) {
             return null;

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.socket.emit;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -23,7 +24,7 @@ public class JsonSocketEmitter implements SocketEmitter {
         T data = socketEmitData.getObject();
 
         try {
-            String jsonData = new ObjectMapper().writeValueAsString(data);
+            String jsonData = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(data);
             emitter.emit(socketEmitData.getEvent(), jsonData);
         } catch (IOException e) {
             e.printStackTrace();
