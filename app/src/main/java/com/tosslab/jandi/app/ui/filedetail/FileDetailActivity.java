@@ -374,6 +374,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         MessageListV2Activity_.intent(FileDetailActivity.this)
                                 .entityId(entityIdToBeShared)
                                 .entityType(entity.type)
+                                .roomId(entity.type != JandiConstants.TYPE_DIRECT_MESSAGE ? entityIdToBeShared : -1)
                                 .isFavorite(entity.isStarred)
                                 .teamId(entity.getEntity().teamId)
                                 .start();
@@ -640,6 +641,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
+                .roomId(-1)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();

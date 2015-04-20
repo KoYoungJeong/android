@@ -150,6 +150,11 @@ public class JandiMarkerDatabaseManager {
     }
 
     public long updateMarker(int teamId, int roomId, int memberId, int lastLinkId) {
+
+        if (teamId <= 0 || roomId <= 0 || memberId <= 0) {
+            return -1;
+        }
+
         SQLiteDatabase database = getWriteableDatabase();
 
         String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " + ? AND " + DatabaseConsts.RoomsMarker.memberId + " = ?";

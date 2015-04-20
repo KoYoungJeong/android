@@ -543,15 +543,6 @@ public class MessageListPresenter {
         }
     }
 
-    public void restartMessageApp(int entityId, int entityType, boolean isFavorite, int teamId) {
-        MessageListV2Activity_.intent(activity)
-                .entityId(entityId)
-                .entityType(entityType)
-                .teamId(teamId)
-                .isFavorite(isFavorite)
-                .start();
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setGotoLatestLayoutVisibleGone() {
         gotoLatestLayoutVisible = false;

@@ -98,6 +98,7 @@ public class TopicMemberActivity extends ActionBarActivity {
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .roomId(-1)
                 .entityId(event.userId)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .isFromPush(false)

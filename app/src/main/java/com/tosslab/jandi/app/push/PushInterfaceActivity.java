@@ -88,7 +88,7 @@ public class PushInterfaceActivity extends Activity {
 
         FormattedEntity entity = EntityManager.getInstance(PushInterfaceActivity.this).getEntityById(entityId);
         boolean isUser = entity.isUser();
-        int roomId = 0;
+        int roomId = -1;
         if (!isUser) {
             roomId = entityId;
         } else {

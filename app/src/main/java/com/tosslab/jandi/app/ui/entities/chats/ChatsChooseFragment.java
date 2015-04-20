@@ -127,6 +127,7 @@ public class ChatsChooseFragment extends Fragment {
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
+                .roomId(-1)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
@@ -150,6 +151,7 @@ public class ChatsChooseFragment extends Fragment {
                     .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                     .entityId(entityId)
                     .teamId(chatChooseModel.getTeamId())
+                    .roomId(-1)
                     .isFavorite(chatChooseItem.isStarred())
                     .start();
         }
