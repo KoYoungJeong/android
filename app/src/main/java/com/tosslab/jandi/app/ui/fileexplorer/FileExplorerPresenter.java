@@ -39,11 +39,11 @@ public class FileExplorerPresenter {
         fileListView.setAdapter(fileItemAdapter);
     }
 
-
     public void setFiles(List<FileItem> fileItems) {
         for (FileItem fileItem : fileItems) {
             fileItemAdapter.add(fileItem);
         }
+
         fileItemAdapter.notifyDataSetChanged();
 
     }
@@ -57,5 +57,6 @@ public class FileExplorerPresenter {
                 .add(R.id.file_explorer_container, fragment, fileItem.getPath())
                 .addToBackStack(fileItem.getPath())
                 .commit();
+
     }
 }

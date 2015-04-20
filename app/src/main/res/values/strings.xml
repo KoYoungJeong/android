@@ -343,4 +343,6 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_file_delete_message">"Are you sure you want to delete this file? Please note this will not delete the associated comments."</string>
     <string name="jandi_device_storage">Device</string>
     <string name="jandi_sdcard_storage">SD Card</string>
+    <string name="jandi_sdcard_storage_mounted">SD Card mounted</string>
+    <string name="jandi_sdcard_storage_unmounted">SD Card unmounted</string>
 </resources>

@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.tosslab.jandi.app.R;
@@ -28,10 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileExplorerActivity extends ActionBarActivity {
+    public static final String DATA_SCHEME_FILE = "file";
+    public static final int SPINNER_POSION_SECOND = 1;
+
+    private boolean mountUnmountStateAction = true;
+    private boolean toolbarRenewal = false;
 
     private FileExplorerModel fileExplorerModel;
-
-    private boolean mountUnmountStateAction;
+    private BroadcastReceiver sdcardStateReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,51 +49,58 @@ public class FileExplorerActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction()
                 .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
                 .commit();
-
-        sdcardStateReciver();
     }
 
     public void sdcardStateReciver() {
-        // install an intent filter to receive SD card related events.
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
         intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
-        intentFilter.addDataScheme("file");
+        intentFilter.addDataScheme(DATA_SCHEME_FILE);
 
-        BroadcastReceiver sdcardStateReceiver1 = new BroadcastReceiver() {
+        sdcardStateReceiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
-                mountUnmountStateAction = true;
-                Boolean state = false;
                 String action = intent.getAction();
+
                 if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
-                    Toast.makeText(context, "SD Card mounted", Toast.LENGTH_LONG).show();
-                    state = true;
-
+                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_mounted), Toast.LENGTH_LONG).show();
+                    mountUnmountStateAction = true;
                 } else if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-                    Toast.makeText(context, "SD Card unmounted", Toast.LENGTH_LONG).show();
-                    state = false;
+                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_unmounted), Toast.LENGTH_SHORT).show();
+                    mountUnmountStateAction = false;
+                }
 
-                } else if (action.equals(Intent.ACTION_MEDIA_SCANNER_STARTED)) {
-                    Toast.makeText(context, "SD Card scanner started", Toast.LENGTH_LONG).show();
+                if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED) || action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                    toolbarRenewal = true;
+                    invalidateOptionsMenu();
 
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     getFragmentManager().beginTransaction()
                             .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
                             .commit();
 
-                    invalidateOptionsMenu();
-                    //
-                } else if (action.equals(Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
-                    Toast.makeText(context, "SD Card scanner finished", Toast.LENGTH_LONG).show();
-
-                } else if (action.equals(Intent.ACTION_MEDIA_EJECT)) {
-                    Toast.makeText(context, "SD Card eject", Toast.LENGTH_LONG).show();
+                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
             }
         };
-        registerReceiver(sdcardStateReceiver1, intentFilter);
+        registerReceiver(sdcardStateReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(sdcardStateReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPostResume();
+        sdcardStateReciver();
     }
 
     private void setupActionbar() {
@@ -131,14 +141,9 @@ public class FileExplorerActivity extends ActionBarActivity {
         List<String> paths = new ArrayList<String>();
 
         paths.add(getString(R.string.jandi_device_storage));
-
-        if (fileExplorerModel.hasExternalSdCard()) {
+        if (fileExplorerModel.hasExternalSdCard() && mountUnmountStateAction) {
             paths.add(getString(R.string.jandi_sdcard_storage));
         }
-
-
-        SpinnerAdapter getAdapter = rootPathSpinner.getAdapter();
-
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(FileExplorerActivity.this, R.layout.layout_file_explorer_spinner_title, paths);
         adapter.setDropDownViewResource(R.layout.layout_file_explorer_spinner_dropdown);
@@ -147,23 +152,26 @@ public class FileExplorerActivity extends ActionBarActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                //if (mountUnmountStateAction) {
-                String movePath = null;
+                if (!toolbarRenewal) {
+                    String movePath = null;
 
-                if (position == 1) {
-                    movePath = fileExplorerModel.getExternalSdCardPath();
+                    if (position == SPINNER_POSION_SECOND) {
+                        movePath = fileExplorerModel.getExternalSdCardPath();
+                    }
+
+
+                    FileExplorerFragment fragment = FileExplorerFragment_.builder()
+                            .currentPath(movePath)
+                            .build();
+
+                    getFragmentManager().beginTransaction()
+                            .add(R.id.file_explorer_container, fragment, movePath)
+                            .commit();
+
+                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
 
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-                FileExplorerFragment fragment = FileExplorerFragment_.builder()
-                        .currentPath(movePath)
-                        .build();
-
-                getFragmentManager().beginTransaction()
-                        .add(R.id.file_explorer_container, fragment, movePath)
-                        .commit();
-                //}
+                toolbarRenewal = false;
 
             }
         });
@@ -197,11 +205,10 @@ public class FileExplorerActivity extends ActionBarActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String movePath = null;
 
-                if (position == 1) {
+                if (position == SPINNER_POSION_SECOND) {
                     movePath = fileExplorerModel.getExternalSdCardPath();
                 }
 
-                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
                 FileExplorerFragment fragment = FileExplorerFragment_.builder()
                         .currentPath(movePath)
@@ -210,6 +217,8 @@ public class FileExplorerActivity extends ActionBarActivity {
                 getFragmentManager().beginTransaction()
                         .add(R.id.file_explorer_container, fragment, movePath)
                         .commit();
+
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         });
 
