@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.FileActionEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -49,6 +51,8 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -583,5 +587,16 @@ public class MessageListPresenter {
     public void setMarkerInfo(int teamId, int roomId) {
         messageListAdapter.setTeamId(teamId);
         messageListAdapter.setRoomId(roomId);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showFileActionDialog(int messageId) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
+        builder.items(R.array.file_message_actions)
+                .negativeText(R.string.jandi_cancel)
+                .itemsCallback((dialog, itemView, which, text) -> EventBus.getDefault().post(new FileActionEvent(messageId, FileActionEvent.EventType.values()[which])))
+                .show();
+
+
     }
 }

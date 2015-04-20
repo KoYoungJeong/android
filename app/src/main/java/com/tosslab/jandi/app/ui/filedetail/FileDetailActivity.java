@@ -564,9 +564,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     public void download() {
-        String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))
-                ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                : mResFileDetail.content.serverUrl;
+        String serverUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL;
         String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
 
         final ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);

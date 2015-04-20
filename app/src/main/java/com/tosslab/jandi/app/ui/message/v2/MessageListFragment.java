@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.FileActionEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -712,8 +713,10 @@ public class MessageListFragment extends Fragment {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
             messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
-        } else if (link.message instanceof ResMessages.CommentMessage) {
+        } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
+        } else if (messageListModel.isFileType(link.message)) {
+            messageListPresenter.showFileActionDialog(link.messageId);
         }
     }
 
