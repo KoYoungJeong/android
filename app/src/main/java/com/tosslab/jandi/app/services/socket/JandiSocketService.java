@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
@@ -57,6 +58,7 @@ public class JandiSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("INFO", "JandiSocketService : onStartCommand");
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
         jandiSocketManager = JandiSocketManager.getInstance();
 
@@ -118,20 +120,11 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
         eventHashMap.put("check_connect_team", objects -> {
+            jandiSocketServiceModel.refreshToken();
             jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
         });
-        eventHashMap.put("connect_team", objects -> {
-            connectMonitor.stop();
-        });
-        eventHashMap.put("error_connect_team", objects -> {
-            boolean isRefreshToken = jandiSocketServiceModel.refreshToken();
-
-            if (isRefreshToken) {
-                jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
-            } else {
-                connectMonitor.start();
-            }
-        });
+        eventHashMap.put("connect_team", objects -> connectMonitor.stop());
+        eventHashMap.put("error_connect_team", objects -> connectMonitor.start());
 
         EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);
         eventHashMap.put("message", messageRefreshListener);
@@ -150,6 +143,8 @@ public class JandiSocketService extends Service {
 
     @Override
     public void onDestroy() {
+
+        Log.d("INFO", "JandiSocketService : onDestroy");
 
         unregisterReceiver(connectReceiver);
 
