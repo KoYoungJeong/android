@@ -18,6 +18,8 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
@@ -66,7 +68,8 @@ public class JandiSocketServiceModel {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity me = entityManager.getMe();
-        return new ConnectTeam(selectedTeamInfo.getTeamId(), selectedTeamInfo.getName(), selectedTeamInfo.getMemberId(), me.getName());
+        String token = JandiPreference.getAccessToken(context);
+        return new ConnectTeam(token, selectedTeamInfo.getTeamId(), selectedTeamInfo.getName(), selectedTeamInfo.getMemberId(), me.getName());
 
     }
 
@@ -227,6 +230,15 @@ public class JandiSocketServiceModel {
     public void stopMarkerObserver() {
         if (!subscribe.isUnsubscribed()) {
             subscribe.unsubscribe();
+        }
+    }
+
+    public boolean refreshToken() {
+        try {
+            ResAccessToken token = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
+            return token != null;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

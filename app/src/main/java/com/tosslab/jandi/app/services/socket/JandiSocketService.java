@@ -118,8 +118,19 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
         eventHashMap.put("check_connect_team", objects -> {
-            connectMonitor.stop();
             jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
+        });
+        eventHashMap.put("connect_team", objects -> {
+            connectMonitor.stop();
+        });
+        eventHashMap.put("error_connect_team", objects -> {
+            boolean isRefreshToken = jandiSocketServiceModel.refreshToken();
+
+            if (isRefreshToken) {
+                jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
+            } else {
+                connectMonitor.start();
+            }
         });
 
         EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);

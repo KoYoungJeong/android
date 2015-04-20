@@ -4,13 +4,14 @@ package com.tosslab.jandi.app.network.socket.domain;
  * Created by Steve SeongUg Jung on 15. 4. 2..
  */
 public class ConnectTeam {
+    private final String token;
     private final int teamId;
     private final String teamName;
     private final int memberId;
     private final String userName;
 
-    public ConnectTeam(int teamId, String teamName, int memberId, String userName) {
-
+    public ConnectTeam(String token, int teamId, String teamName, int memberId, String userName) {
+        this.token = token;
         this.teamId = teamId;
         this.teamName = teamName;
         this.memberId = memberId;
@@ -31,5 +32,9 @@ public class ConnectTeam {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getToken() {
+        return token;
     }
 }
