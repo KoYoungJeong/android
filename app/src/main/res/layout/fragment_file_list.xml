@@ -20,6 +20,11 @@
         android:scrollbars="vertical"
         android:smoothScrollbar="true" />
 
+    <include
+        android:id="@+id/layout_file_list_empty"
+        layout="@layout/view_search_list_empty"
+        android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/layout_file_list_header"
         android:layout_width="match_parent"
@@ -91,10 +96,6 @@
             android:background="@color/jandi_file_search_item_divider" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/layout_file_list_empty"
-        layout="@layout/view_search_list_empty"
-        android:visibility="gone" />
 
     <include
         android:id="@+id/layout_file_list_search_empty"

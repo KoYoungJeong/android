@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.MediaStore;
@@ -23,6 +24,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
@@ -420,4 +422,16 @@ public class FileListPresenter {
         searchEmptyView.setVisibility(visible);
     }
 
+    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage(context.getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
+        progressDialog.show();
+
+        return progressDialog;
+    }
+
+    public void showSuccessToast(String message) {
+        ColoredToast.show(context, message);
+    }
 }

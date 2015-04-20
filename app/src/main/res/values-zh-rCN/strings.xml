@@ -328,7 +328,7 @@
     <string name="jandi_member_invite_popup_2">"现在就建立一个团队来看看JANDI可以如何变化您在工作场合上的沟通及协作方式。"</string>
     <string name="jandi_later">"之后"</string>
     <string name="jandi_send_invitation">"送出邀请"</string>
-    <string name="jandi_cannot_find_search_result_old">"找不到档案"</string>
+    <string name="jandi_cannot_find_search_result_old">"没有找到档案"</string>
     <string name="jandi_input_search_keyword">"按照关键词搜寻您的信息"</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_message_search_available">"信息关键词搜寻功能上线啰！"</string>

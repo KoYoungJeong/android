@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
@@ -32,10 +33,13 @@ import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -295,6 +299,37 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
         doSearchInBackground();
+    }
+
+    public void onEventMainThread(ConfirmFileUploadEvent event) {
+        ProgressDialog uploadProgress = fileListPresenter.getUploadProgress(event);
+
+        uploadFile(event, uploadProgress);
+
+    }
+
+    @Background
+    void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
+
+        int entityId = event.entityId;
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+
+        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+        boolean isPublicTopic = entity.isPublicTopic();
+        try {
+            JsonObject result = fileListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
+            if (result.get("code") == null) {
+
+                fileListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
+                fileListModel.trackUploadingFile(entityType, result);
+            } else {
+                fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
+            }
+        } catch (Exception e) {
+            fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
+        } finally {
+            fileListPresenter.dismissProgressDialog(uploadProgressDialog);
+        }
     }
 
     public void onEvent(DeleteFileEvent event) {
