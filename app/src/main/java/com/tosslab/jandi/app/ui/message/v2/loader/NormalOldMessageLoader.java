@@ -55,14 +55,15 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     }
 
     @Override
-    public void load(int linkId) {
+    public ResMessages load(int linkId) {
+        ResMessages oldMessage = null;
         try {
 
-            ResMessages oldMessage = messageListModel.getOldMessage(linkId);
+            oldMessage = messageListModel.getOldMessage(linkId);
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 checkItemCountIfException();
-                return;
+                return oldMessage;
             }
 
             int firstLinkId = oldMessage.records.get(0).id;
@@ -113,6 +114,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
+
+        return oldMessage;
 
     }
 

@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -162,7 +161,14 @@ public class MessageListFragment extends Fragment {
                             break;
                         case Old:
                             if (oldMessageLoader != null) {
-                                oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+                                ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+
+                                if (roomId <= 0) {
+                                    roomId = resMessages.entityId;
+                                    messageListPresenter.setMarkerInfo(teamId, roomId);
+                                    messageListModel.updateMarkerInfo(teamId, roomId);
+                                }
+
                             }
                             messageListModel.trackGetOldMessage(entityType);
                             break;
@@ -842,9 +848,11 @@ public class MessageListFragment extends Fragment {
 
         if (event.getRoom().getId() == roomId) {
             if (TextUtils.equals(event.getMessageType(), "topic_leave")) {
-                messageListModel.deleteMarker(teamId, roomId, event.getWriter());
+                messageListModel.updateMarkerInfo(teamId, roomId);
             } else if (TextUtils.equals(event.getMessageType(), "topic_join")) {
-                messageListModel.insertMarker(teamId, roomId, event.getWriter());
+                messageListModel.updateMarkerInfo(teamId, roomId);
+            } else if (TextUtils.equals(event.getMessageType(), "topic_invite")) {
+                messageListModel.updateMarkerInfo(teamId, roomId);
             }
 
             sendMessagePublisherEvent(new NewMessageQueue(messageState));

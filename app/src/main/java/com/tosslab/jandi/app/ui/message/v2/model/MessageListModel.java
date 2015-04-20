@@ -361,6 +361,11 @@ public class MessageListModel {
 
     @Background
     public void updateMarkerInfo(int teamId, int roomId) {
+
+        if (teamId <= 0 || roomId <= 0) {
+            return ;
+        }
+
         RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
         RequestManager<ResRoomInfo> requestManager = RequestManager.newInstance(activity, request);
         try {

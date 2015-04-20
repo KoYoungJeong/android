@@ -17,6 +17,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResMessages {
+    public int entityId;
     public int lastLinkId;
     public int firstLinkId;
     public List<Link> records;
