@@ -26,7 +26,6 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.files.FileActionEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -589,14 +588,4 @@ public class MessageListPresenter {
         messageListAdapter.setRoomId(roomId);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showFileActionDialog(int messageId) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity);
-        builder.items(R.array.file_message_actions)
-                .negativeText(R.string.jandi_cancel)
-                .itemsCallback((dialog, itemView, which, text) -> EventBus.getDefault().post(new FileActionEvent(messageId, FileActionEvent.EventType.values()[which])))
-                .show();
-
-
-    }
 }

@@ -6,6 +6,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.DeleteAction;
+import com.tosslab.jandi.app.ui.message.v2.model.file.action.DeleteAction_;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.DownloadAction;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.FileAction;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.ShareAction;
@@ -40,7 +41,7 @@ public class FileActor {
                 fileAction = new UnshareAction();
                 break;
             case Delete:
-                fileAction = new DeleteAction(context);
+                fileAction = DeleteAction_.getInstance_(context);
                 break;
         }
         return fileAction;
