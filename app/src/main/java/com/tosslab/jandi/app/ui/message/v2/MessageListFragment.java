@@ -60,7 +60,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
-import com.tosslab.jandi.app.ui.message.model.menus.InviteCommand_;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -235,6 +234,7 @@ public class MessageListFragment extends Fragment {
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListModel.updateMarkerInfo(teamId, roomId);
+
     }
 
 
@@ -302,6 +302,29 @@ public class MessageListFragment extends Fragment {
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
+        }
+
+        insertEmptyMessage();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void insertEmptyMessage() {
+        EntityManager entityManager = EntityManager.getInstance(getActivity());
+        FormattedEntity entity = entityManager.getEntityById(entityId);
+        if (!entity.isUser()) {
+            int topicMemberCount = entity.getMemberCount();
+            int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
+
+            if (teamMemberCount <= 0) {
+                messageListPresenter.insertTeamMemberEmptyLayout();
+            } else if (topicMemberCount <= 1) {
+                messageListPresenter.insertTopicMemberEmptyLayout();
+            } else {
+                messageListPresenter.clearEmptyMessageLayout();
+            }
+
+        } else {
+            messageListPresenter.insertMessageEmptyLayout();
         }
     }
 
@@ -858,10 +881,13 @@ public class MessageListFragment extends Fragment {
         if (event.getRoom().getId() == roomId) {
             if (TextUtils.equals(event.getMessageType(), "topic_leave")) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
+                insertEmptyMessage();
             } else if (TextUtils.equals(event.getMessageType(), "topic_join")) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
+                insertEmptyMessage();
             } else if (TextUtils.equals(event.getMessageType(), "topic_invite")) {
                 messageListModel.updateMarkerInfo(teamId, roomId);
+                insertEmptyMessage();
             }
 
             sendMessagePublisherEvent(new NewMessageQueue(messageState));

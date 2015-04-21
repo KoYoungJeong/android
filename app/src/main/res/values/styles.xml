@@ -19,6 +19,7 @@
         <item name="pstsIndicatorColor">@color/jandi_tab_indicator</item>
         <item name="pstsUnderlineColor">@color/jandi_tab_underline</item>
         <item name="pstsIndicatorHeight">2dp</item>
+        <item name="pstsTabPaddingLeftRight">2dp</item>
         <item name="pstsUnderlineHeight">0.5dp</item>
         <item name="pstsDividerColor">@android:color/transparent</item>
         <item name="pstsShouldExpand">true</item>

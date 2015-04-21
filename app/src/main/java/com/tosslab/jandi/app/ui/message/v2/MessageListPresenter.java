@@ -126,11 +126,16 @@ public class MessageListPresenter {
         messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                super.onChanged();
-                if (messageListAdapter.getItemCount() == 0) {
-                    emptyMessageView.setVisibility(View.VISIBLE);
-                } else {
+                int itemCountWithoutEvent = getItemCountWithoutEvent();
+                if (itemCountWithoutEvent > 0) {
                     emptyMessageView.setVisibility(View.GONE);
+                } else {
+
+                    if (loadingMessageView.getVisibility() != View.VISIBLE) {
+                        emptyMessageView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyMessageView.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -238,7 +243,12 @@ public class MessageListPresenter {
 
     public int getFirstVisibleItemLinkId() {
         if (messageListAdapter.getCount() > 0) {
-            return messageListAdapter.getItem(((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition()).messageId;
+            int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition >= 0) {
+                return messageListAdapter.getItem(firstVisibleItemPosition).messageId;
+            } else {
+                return -1;
+            }
         } else {
             return -1;
         }
@@ -594,24 +604,40 @@ public class MessageListPresenter {
 
     @UiThread
     public void insertMessageEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
         emptyMessageView.removeAllViews();
 
         LayoutInflater.from(activity).inflate(R.layout.view_message_list_empty, emptyMessageView, true);
     }
 
     @UiThread
-    public void insertMemberEmptyLayout() {
+    public void insertTeamMemberEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
 
-        view.setOnClickListener(v -> InviteActivity_.intent(activity).start());
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
     }
 
     @UiThread
     public void insertTopicMemberEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
+
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_topic_member_empty, emptyMessageView, true);
-        view.setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+
     }
 
     public int getItemCountWithoutEvent() {
@@ -624,5 +650,28 @@ public class MessageListPresenter {
         }
 
         return itemCount;
+    }
+
+    @UiThread
+    public void dismissEmptyView() {
+        emptyMessageView.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    public void checkItemCountIfException() {
+        boolean hasItem = getFirstVisibleItemLinkId() > 0;
+        dismissLoadingView();
+        if (!hasItem) {
+            showEmptyView();
+        } else {
+            dismissEmptyView();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void clearEmptyMessageLayout() {
+        if (emptyMessageView != null) {
+            emptyMessageView.removeAllViews();
+        }
     }
 }
