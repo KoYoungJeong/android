@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -101,9 +101,11 @@ public class MessageViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder);
 
-            messageTextView.setText(spannableStringBuilder);
             if (hasLink) {
-                messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                messageTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                LinkifyUtil.setOnLinkClick(messageTextView);
+            } else {
+                messageTextView.setText(spannableStringBuilder);
             }
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));

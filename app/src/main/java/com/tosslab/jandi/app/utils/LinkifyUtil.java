@@ -1,16 +1,15 @@
 package com.tosslab.jandi.app.utils;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.Spanned;
-import android.text.style.URLSpan;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +36,7 @@ public class LinkifyUtil {
 
         boolean hasLink = false;
 
+        int color = context.getResources().getColor(R.color.jandi_main);
         while (m.find()) {
             int start = m.start();
             int end = m.end();
@@ -44,21 +44,7 @@ public class LinkifyUtil {
             hasLink = true;
             String url = m.group(0);
 
-            URLSpan span = new URLSpan(url) {
-                @Override
-                public void onClick(View widget) {
-                    InternalWebActivity_.intent(context)
-                            .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            .url(url)
-                            .start();
-
-                    if (context instanceof Activity) {
-                        Activity activity = ((Activity) context);
-                        activity.overridePendingTransition(R.anim.origin_activity_open_enter, R.anim.origin_activity_open_exit);
-                    }
-
-                }
-            };
+            JandiURLSpan span = new JandiURLSpan(context, url, color);
 
             text.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -66,4 +52,50 @@ public class LinkifyUtil {
         return hasLink;
     }
 
+    public static final void setOnLinkClick(TextView textView) {
+        textView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                TextView widget = (TextView) v;
+                CharSequence text = widget.getText();
+
+                if (!(text instanceof Spanned)) {
+                    return false;
+                }
+
+                Spanned buffer = ((Spanned) text);
+                int action = event.getAction();
+
+                if (action == MotionEvent.ACTION_UP ||
+                        action == MotionEvent.ACTION_DOWN) {
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+
+                    x -= widget.getTotalPaddingLeft();
+                    y -= widget.getTotalPaddingTop();
+
+                    x += widget.getScrollX();
+                    y += widget.getScrollY();
+
+                    Layout layout = widget.getLayout();
+                    int line = layout.getLineForVertical(y);
+                    int off = layout.getOffsetForHorizontal(line, x);
+
+                    JandiURLSpan[] link = buffer.getSpans(off, off, JandiURLSpan.class);
+
+                    if (link.length != 0) {
+                        if (action == MotionEvent.ACTION_UP) {
+                            link[0].onClick();
+                        }
+
+                        return true;
+                    }
+                }
+
+                return false;
+
+            }
+        });
+
+    }
 }

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -90,9 +91,11 @@ public class FileDetailCommentView extends LinearLayout {
 
         boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
 
-        textViewCommentContent.setText(spannableStringBuilder);
         if (hasLink) {
-            textViewCommentContent.setMovementMethod(LinkMovementMethod.getInstance());
+            textViewCommentContent.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+            LinkifyUtil.setOnLinkClick(textViewCommentContent);
+        } else {
+            textViewCommentContent.setText(spannableStringBuilder);
         }
     }
 }

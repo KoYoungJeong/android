@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -175,9 +176,11 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
 
-            commentTextView.setText(spannableStringBuilder);
             if (hasLink) {
-                commentTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                commentTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                LinkifyUtil.setOnLinkClick(commentTextView);
+            } else {
+                commentTextView.setText(spannableStringBuilder);
             }
         }
 
