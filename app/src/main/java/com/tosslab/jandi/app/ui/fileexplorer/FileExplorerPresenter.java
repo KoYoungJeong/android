@@ -39,6 +39,7 @@ public class FileExplorerPresenter {
         fileListView.setAdapter(fileItemAdapter);
     }
 
+
     public void setFiles(List<FileItem> fileItems) {
         for (FileItem fileItem : fileItems) {
             fileItemAdapter.add(fileItem);
@@ -53,7 +54,7 @@ public class FileExplorerPresenter {
                 .build();
 
         activity.getFragmentManager().beginTransaction()
-                .add(android.R.id.content, fragment, fileItem.getPath())
+                .add(R.id.file_explorer_container, fragment, fileItem.getPath())
                 .addToBackStack(fileItem.getPath())
                 .commit();
     }

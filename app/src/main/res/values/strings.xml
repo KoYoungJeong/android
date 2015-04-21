@@ -347,4 +347,6 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_topic_no_member_2">"Tap the button below to invite other members to the conversation."</string>
     <string name="jandi_invite_member_to_topic">"Invite Members"</string>
     <string name="jandi_shared_in_room">"Shared in"</string>
+    <string name="jandi_device_storage">Device</string>
+    <string name="jandi_sdcard_storage">SD Card</string>
 </resources>

@@ -343,4 +343,6 @@
     <string name="jandi_topic_no_member_2">"轻触按钮邀请其他成员加入。"</string>
     <string name="jandi_invite_member_to_topic">"邀请成员至此议题"</string>
     <string name="jandi_shared_in_room">"曾经分享在哪个议题下"</string>
+    <string name="jandi_device_storage">行动装置</string>
+    <string name="jandi_sdcard_storage">记忆卡</string>
 </resources>

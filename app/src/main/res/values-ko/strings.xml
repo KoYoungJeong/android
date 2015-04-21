@@ -361,4 +361,6 @@
     <string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
     <string name="jandi_invite_member_to_topic">"토픽에 멤버 초대하기"</string>
     <string name="jandi_shared_in_room">"공유된 곳"</string>
+    <string name="jandi_device_storage">장치</string>
+    <string name="jandi_sdcard_storage">SD 카드</string>
 </resources>
