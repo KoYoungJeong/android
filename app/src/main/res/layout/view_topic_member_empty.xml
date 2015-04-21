@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:src="@drawable/help_invite_members" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/jandi_topic_no_member_1"
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="@string/jandi_topic_no_member_2"
+        android:textColor="@color/account_home_help_dialog_text"
+        android:textSize="@dimen/jandi_text_size_medium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/btn_chat_choose_member_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@color/transparent"
+        android:text="@string/jandi_invite_member_to_topic"
+        android:textColor="@color/jandi_border_green"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
+
+
+</LinearLayout>

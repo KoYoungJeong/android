@@ -340,4 +340,7 @@
     <string name="jandi_file_delete_message">"您確定要刪除這檔案？ 請注意留言的部分不會被刪除。"</string>
     <string name="jandi_unshared_message">"這檔案已經從這私人議題中取消分享 "</string>
     <string name="jandi_nowhere_shared_file">"檔案沒有分享到其它群組"</string>
+    <string name="jandi_topic_no_member_1">"這個議題目前只有您一人。"</string>
+    <string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
+    <string name="jandi_invite_member_to_topic">"邀請成員至此議題"</string>
 </resources>

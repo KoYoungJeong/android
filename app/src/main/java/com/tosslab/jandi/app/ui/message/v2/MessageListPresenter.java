@@ -11,13 +11,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
@@ -26,13 +27,16 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
@@ -96,7 +100,7 @@ public class MessageListPresenter {
     View disabledUser;
 
     @ViewById(R.id.layout_messages_empty)
-    View emptyMessageView;
+    LinearLayout emptyMessageView;
 
     @ViewById(R.id.layout_messages_loading)
     View loadingMessageView;
@@ -499,7 +503,7 @@ public class MessageListPresenter {
         emptyMessageView.setVisibility(View.GONE);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissLoadingView() {
         loadingMessageView.setVisibility(View.GONE);
     }
@@ -588,4 +592,37 @@ public class MessageListPresenter {
         messageListAdapter.setRoomId(roomId);
     }
 
+    @UiThread
+    public void insertMessageEmptyLayout() {
+        emptyMessageView.removeAllViews();
+
+        LayoutInflater.from(activity).inflate(R.layout.view_message_list_empty, emptyMessageView, true);
+    }
+
+    @UiThread
+    public void insertMemberEmptyLayout() {
+        emptyMessageView.removeAllViews();
+        View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
+
+        view.setOnClickListener(v -> InviteActivity_.intent(activity).start());
+    }
+
+    @UiThread
+    public void insertTopicMemberEmptyLayout() {
+        emptyMessageView.removeAllViews();
+        View view = LayoutInflater.from(activity).inflate(R.layout.view_topic_member_empty, emptyMessageView, true);
+        view.setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+    }
+
+    public int getItemCountWithoutEvent() {
+
+        int itemCount = messageListAdapter.getItemCount();
+        for (int idx = itemCount - 1; idx >= 0; --idx) {
+            if (messageListAdapter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
+                itemCount--;
+            }
+        }
+
+        return itemCount;
+    }
 }

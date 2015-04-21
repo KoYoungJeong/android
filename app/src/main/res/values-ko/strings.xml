@@ -357,4 +357,7 @@
     <string name="jandi_file_delete_message">"이 파일을 삭제하시겠습니까? 파일의 댓글은 삭제되지 않습니다."</string>
     <string name="jandi_unshared_message">"이 파일은 이 비공개 토픽에서 공유 해제되어 더 이상 열람하실 수 없습니다"</string>
     <string name="jandi_nowhere_shared_file">"공유된 대화방이 없습니다"</string>
+    <string name="jandi_topic_no_member_1">"아직 토픽에 초대된 멤버가 없습니다."</string>
+    <string name="jandi_topic_no_member_2">"여기를 터치하시고 토픽에 멤버를 초대해보세요."</string>
+    <string name="jandi_invite_member_to_topic">"토픽에 멤버 초대하기"</string>
 </resources>
