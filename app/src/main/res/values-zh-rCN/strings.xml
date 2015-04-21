@@ -342,4 +342,5 @@
     <string name="jandi_topic_no_member_1">"这个议题目前只有您一人。"</string>
     <string name="jandi_topic_no_member_2">"轻触按钮邀请其他成员加入。"</string>
     <string name="jandi_invite_member_to_topic">"邀请成员至此议题"</string>
+    <string name="jandi_shared_in_room">"曾经分享在哪个议题下"</string>
 </resources>

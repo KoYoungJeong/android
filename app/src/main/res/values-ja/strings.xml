@@ -352,4 +352,5 @@ JANDIへようこそ"</string>
     <string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
     <string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
     <string name="jandi_invite_member_to_topic">"このトピックに招待"</string>
+    <string name="jandi_shared_in_room">"共有範囲"</string>
 </resources>

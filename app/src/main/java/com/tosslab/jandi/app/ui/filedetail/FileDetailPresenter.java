@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.MessageSpannable;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -305,6 +306,11 @@ public class FileDetailPresenter {
         if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
             int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
+            int shareTextSize = (int) activity.getResources().getDimension(R.dimen.jandi_text_size_small);
+            int shareTextColor = activity.getResources().getColor(R.color.file_name);
+            MessageSpannable messageSpannable = new MessageSpannable(shareTextSize, shareTextColor);
+            spannableStringBuilder.append(activity.getString(R.string.jandi_shared_in_room))
+                    .setSpan(messageSpannable, 0, spannableStringBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             for (int idx = 0; idx < nSharedEntities; idx++) {
                 FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));

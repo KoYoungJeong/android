@@ -343,4 +343,5 @@
     <string name="jandi_topic_no_member_1">"這個議題目前只有您一人。"</string>
     <string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
     <string name="jandi_invite_member_to_topic">"邀請成員至此議題"</string>
+    <string name="jandi_shared_in_room">"曾經分享在哪個議題下"</string>
 </resources>
