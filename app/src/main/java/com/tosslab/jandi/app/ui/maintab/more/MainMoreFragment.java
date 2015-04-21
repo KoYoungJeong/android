@@ -1,13 +1,19 @@
 package com.tosslab.jandi.app.ui.maintab.more;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
+import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
@@ -17,14 +23,18 @@ import com.tosslab.jandi.app.ui.member.TeamInfoActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -38,6 +48,8 @@ public class MainMoreFragment extends Fragment {
 
     IconWithTextView profileIconView;
 
+    @SystemService
+    ClipboardManager clipboardManager;
 
     @ViewById(R.id.txt_more_jandi_version)
     TextView textViewJandiVersion;
@@ -97,9 +109,12 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_invite)
     public void moveToInvitationActivity() {
-        InviteActivity_.intent(MainMoreFragment.this)
+        /*InviteActivity_.intent(MainMoreFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .start();
+                .start();*/
+
+        DialogFragment invitationDialog = new InvitationDialogFragment();
+        invitationDialog.show(getFragmentManager(), "invitationsDialog");
 
     }
 
@@ -125,5 +140,58 @@ public class MainMoreFragment extends Fragment {
                 .hideActionBar(true)
                 .start();
 
+    }
+
+
+    public void onEvent(TeamInvitationsEvent event) {
+        switch (event.type) {
+            case JandiConstants.TYPE_INVITATION_EMAIL:
+                logger.info("TeamInvitationsEvent : from email");
+                InviteActivity_.intent(MainMoreFragment.this)
+                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        .start();
+                //messageListPresenter.openAlbumForActivityResult(MainMoreFragment.this);
+                break;
+            case JandiConstants.TYPE_INVITATION_KAKAO:
+                logger.info("TeamInvitationsEvent : from kakao");
+                //messageListPresenter.openCameraForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_INVITATION_LINE:
+                logger.info("TeamInvitationsEvent : from LINE");
+                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_INVITATION_WECHAT:
+                logger.info("TeamInvitationsEvent : from WeChat");
+                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
+                logger.info("TeamInvitationsEvent : from facebook messenger");
+                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
+                break;
+            case JandiConstants.TYPE_INVITATION_COPY_LINK:
+                logger.info("TeamInvitationsEvent : from copy link");
+                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
+
+                ClipData clipData = ClipData.newPlainText("", "abcdefg");
+                clipboardManager.setPrimaryClip(clipData);
+
+                ColoredToast.show(mContext, "Your team's invitation link has been copied.\nSend the link to anyone you wish to invite to your team!");
+                break;
+            default:
+                break;
+
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 }

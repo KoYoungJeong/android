@@ -341,4 +341,11 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_message_ask_about_delete_comment">"Are you sure you want to delete this comment? It cannot be undone."</string>
     <string name="jandi_message_no_member">"No other members have joined your team. Invite them now to start collaborating."</string>
     <string name="jandi_file_delete_message">"Are you sure you want to delete this file? Please note this will not delete the associated comments."</string>
+
+    <string name="menu_email">Email</string>
+    <string name="menu_kakao">Kakao</string>
+    <string name="menu_line">LINE</string>
+    <string name="menu_wechat">WeChat</string>
+    <string name="menu_facebook_messenger">Facebook Messenger</string>
+    <string name="menu_copy_link">Copy Link</string>
 </resources>

@@ -3,9 +3,11 @@ package com.tosslab.jandi.app.ui.invites;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.adapter.InviteListAdapter;
@@ -36,6 +38,9 @@ public class InvitePresenter {
 
     @ViewById(R.id.lv_invite)
     ListView inviteListView;
+
+    @ViewById(R.id.invite_succes_text_display)
+    TextView displaySendEmailSuccesText;
 
     @RootContext
     Activity activity;
@@ -70,6 +75,13 @@ public class InvitePresenter {
         adapter.add(0, emailTO);
         adapter.notifyDataSetChanged();
     }
+
+    @UiThread
+    public void addSendEmailSuccessText(){
+        displaySendEmailSuccesText.setVisibility(View.VISIBLE);
+        displaySendEmailSuccesText.setText("Invitations ahve been successfully sent to");
+    }
+
 
     @UiThread
     public void clearEmailTextView() {

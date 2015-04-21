@@ -59,4 +59,9 @@ public class InviteModel {
 
         return isContain;
     }
+
+    public String invitationSNS() throws JandiNetworkException {
+        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return "";
+    }
 }

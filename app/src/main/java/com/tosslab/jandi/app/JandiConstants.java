@@ -29,5 +29,12 @@ public class JandiConstants {
     public static final int TYPE_UPLOAD_EXPLORER        = 0x02;
     public static final int TYPE_FILE_DETAIL_REFRESH    = 0x03;
 
+    public static final int TYPE_INVITATION_EMAIL               = 0x01;
+    public static final int TYPE_INVITATION_KAKAO               = 0x02;
+    public static final int TYPE_INVITATION_LINE                = 0x03;
+    public static final int TYPE_INVITATION_WECHAT              = 0x04;
+    public static final int TYPE_INVITATION_FACEBOOK_MESSENGER  = 0x05;
+    public static final int TYPE_INVITATION_COPY_LINK           = 0x06;
+
     public static final int NOTIFICATION_ID = 100;
 }

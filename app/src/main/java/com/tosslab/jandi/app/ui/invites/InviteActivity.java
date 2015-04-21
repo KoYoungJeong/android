@@ -44,15 +44,14 @@ public class InviteActivity extends BaseAnalyticsActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
-
         // Set up the action bar.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
     }
+
 
     @Override
     protected void onResume() {
@@ -90,6 +89,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
                 try {
                     inviteModel.inviteMembers(Arrays.asList(emailText));
                     invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
+                    invitePresenter.addSendEmailSuccessText();
                     invitePresenter.showSuccessToast(getString(R.string.jandi_invite_success));
                 } catch (JandiNetworkException e) {
                     logger.debug(e.getErrorInfo() + " : " + e.httpBody);
