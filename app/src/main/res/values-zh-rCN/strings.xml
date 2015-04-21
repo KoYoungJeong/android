@@ -339,4 +339,6 @@
     <string name="jandi_file_delete_message">"您确定要删除这档案？ 请注意留言的部分不会被删除。"</string>
     <string name="jandi_device_storage">行动装置</string>
     <string name="jandi_sdcard_storage">记忆卡</string>
+    <string name="jandi_sdcard_storage_mounted">连接记忆卡</string>
+    <string name="jandi_sdcard_storage_unmounted">解除连接记忆卡</string>
 </resources>
