@@ -117,27 +117,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
             showInvitePopup();
-        } else if (needSearchPopup()) {
-            JandiPreference.setSearchPopup(MainTabActivity.this);
-            showSearchPopup();
         }
 
         JandiSocketService.startSocketServiceIfStop(MainTabActivity.this);
-    }
-
-    private void showSearchPopup() {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainTabActivity.this);
-        View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_search_new_popup, null);
-
-        builder.customView(view, true)
-                .backgroundColor(getResources().getColor(R.color.white))
-                .positiveText(R.string.jandi_confirm)
-                .show();
-
-    }
-
-    private boolean needSearchPopup() {
-        return JandiPreference.isSearchPopup(MainTabActivity.this);
     }
 
     private void showInvitePopup() {
