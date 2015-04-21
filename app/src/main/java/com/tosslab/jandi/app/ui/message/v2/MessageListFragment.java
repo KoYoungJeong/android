@@ -146,6 +146,7 @@ public class MessageListFragment extends Fragment {
     private PublishSubject<MessageQueue> messagePublishSubject;
     private Subscription messageSubscription;
     private boolean isForeground;
+    private File photoFileByCamera;
 
     @AfterInject
     void initObject() {
@@ -570,7 +571,15 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.openAlbumForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                messageListPresenter.openCameraForActivityResult(MessageListFragment.this);
+
+                try {
+                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
+                    photoFileByCamera = File.createTempFile("camera", ".jpg", directory);
+                    messageListPresenter.openCameraForActivityResult(MessageListFragment.this, Uri.fromFile(photoFileByCamera));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
                 logger.info("RequestFileUploadEvent : from explorer");
@@ -585,18 +594,18 @@ public class MessageListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
-        if (resultCode != Activity.RESULT_OK || intent == null) {
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
         String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
+                if (intent == null) {
+                    return;
+                }
                 Uri data = intent.getData();
-                Bundle extras = intent.getExtras();
-
 
                 if (data != null) {
                     realFilePath = ImageFilePath.getPath(getActivity(), data);
@@ -609,26 +618,21 @@ public class MessageListFragment extends Fragment {
                     } else {
                         showFileUploadDialog(realFilePath);
                     }
-                } else if (extras != null) {
-                    String realFilePath1 = GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg";
-                    if (extras.containsKey("data")) {
+                }
+                break;
 
-                        Object data1 = extras.get("data");
-
-                        if (data1 instanceof Bitmap) {
-                            Bitmap bitmap = (Bitmap) data1;
-                            saveAndShowFileUploadDialog(bitmap);
-                        }
-                    } else if (new File(realFilePath1).exists()) {
-                        showFileUploadDialog(realFilePath1);
-                    }
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                if (photoFileByCamera != null && photoFileByCamera.exists()) {
+                    showFileUploadDialog(photoFileByCamera.getAbsolutePath());
                 }
 
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
                 realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                showFileUploadDialog(realFilePath);
+                if (TextUtils.isEmpty(realFilePath)) {
+                    showFileUploadDialog(realFilePath);
+                }
                 break;
             default:
                 break;

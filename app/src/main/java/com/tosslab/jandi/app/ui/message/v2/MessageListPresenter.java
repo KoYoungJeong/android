@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -280,10 +281,9 @@ public class MessageListPresenter {
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
     }
 
-    public void openCameraForActivityResult(Fragment fragment) {
-
+    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 

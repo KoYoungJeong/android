@@ -72,6 +72,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
      */
     private int selectedTeamId;
     private boolean isSearchLayoutFirst = true;
+    private File photoFileByCamera;
 
     @AfterInject
     void init() {
@@ -402,7 +404,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 fileListPresenter.openAlbumForActivityResult(FileListFragment.this);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                fileListPresenter.openCameraForActivityResult(FileListFragment.this);
+                try {
+                    photoFileByCamera = File.createTempFile("camera", ".jpg", new File(GoogleImagePickerUtil.getDownloadPath()));
+                    fileListPresenter.openCameraForActivityResult(FileListFragment.this, Uri.fromFile(photoFileByCamera));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
                 fileListPresenter.openExplorerForActivityResult(FileListFragment.this);
@@ -414,7 +421,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
     void onGalleryActivityResult(int resultCode, Intent intent) {
-        if (resultCode != Activity.RESULT_OK) {
+        if (resultCode != Activity.RESULT_OK || intent == null) {
             return;
         }
 
@@ -488,13 +495,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        Uri data = intent.getData();
-
-        if (data == null) {
-            return;
+        if (photoFileByCamera != null && photoFileByCamera.exists()) {
+            showFileUploadDialog(photoFileByCamera.getAbsolutePath());
         }
-        String realFilePath = ImageFilePath.getPath(getActivity(), data);
-        showFileUploadDialog(realFilePath);
 
     }
 
