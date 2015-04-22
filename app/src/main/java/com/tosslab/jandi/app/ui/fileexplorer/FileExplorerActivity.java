@@ -1,5 +1,10 @@
 package com.tosslab.jandi.app.ui.fileexplorer;
 
+import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -11,6 +16,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel;
@@ -21,8 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileExplorerActivity extends ActionBarActivity {
+    public static final String DATA_SCHEME_FILE = "file";
+    public static final int SPINNER_POSION_SECOND = 1;
+
+    private boolean mountUnmountStateAction = true;
+    private boolean toolbarRenewal = false;
 
     private FileExplorerModel fileExplorerModel;
+    private BroadcastReceiver sdcardStateReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,7 +49,58 @@ public class FileExplorerActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction()
                 .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
                 .commit();
+    }
 
+    public void sdcardStateReciver() {
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
+        intentFilter.addDataScheme(DATA_SCHEME_FILE);
+
+        sdcardStateReceiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_mounted), Toast.LENGTH_LONG).show();
+                    mountUnmountStateAction = true;
+                } else if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_unmounted), Toast.LENGTH_SHORT).show();
+                    mountUnmountStateAction = false;
+                }
+
+                if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED) || action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                    toolbarRenewal = true;
+                    invalidateOptionsMenu();
+
+                    getFragmentManager().beginTransaction()
+                            .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
+                            .commit();
+
+                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+            }
+        };
+        registerReceiver(sdcardStateReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            unregisterReceiver(sdcardStateReceiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPostResume();
+        sdcardStateReciver();
     }
 
     private void setupActionbar() {
@@ -56,10 +119,64 @@ public class FileExplorerActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
-            finish();
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            } else {
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+
+        getMenuInflater().inflate(R.menu.file_explorer_toolbar_switch, menu);
+
+        View actionView = menu.findItem(R.id.file_explorer_switch_item).getActionView();
+        Spinner rootPathSpinner = (Spinner) actionView.findViewById(R.id.file_explorer_spinner_button);
+
+        List<String> paths = new ArrayList<String>();
+
+        paths.add(getString(R.string.jandi_device_storage));
+        if (fileExplorerModel.hasExternalSdCard() && mountUnmountStateAction) {
+            paths.add(getString(R.string.jandi_sdcard_storage));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(FileExplorerActivity.this, R.layout.layout_file_explorer_spinner_title, paths);
+        adapter.setDropDownViewResource(R.layout.layout_file_explorer_spinner_dropdown);
+        rootPathSpinner.setAdapter(adapter);
+        rootPathSpinner.setOnItemSelectedListener(new SimpleOnItemSelectedListner() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!toolbarRenewal) {
+                    String movePath = null;
+
+                    if (position == SPINNER_POSION_SECOND) {
+                        movePath = fileExplorerModel.getExternalSdCardPath();
+                    }
+
+
+                    FileExplorerFragment fragment = FileExplorerFragment_.builder()
+                            .currentPath(movePath)
+                            .build();
+
+                    getFragmentManager().beginTransaction()
+                            .add(R.id.file_explorer_container, fragment, movePath)
+                            .commit();
+
+                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
+
+                toolbarRenewal = false;
+
+            }
+        });
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -88,9 +205,10 @@ public class FileExplorerActivity extends ActionBarActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String movePath = null;
 
-                if (position == 1) {
+                if (position == SPINNER_POSION_SECOND) {
                     movePath = fileExplorerModel.getExternalSdCardPath();
                 }
+
 
                 FileExplorerFragment fragment = FileExplorerFragment_.builder()
                         .currentPath(movePath)
@@ -99,6 +217,8 @@ public class FileExplorerActivity extends ActionBarActivity {
                 getFragmentManager().beginTransaction()
                         .add(R.id.file_explorer_container, fragment, movePath)
                         .commit();
+
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         });
 

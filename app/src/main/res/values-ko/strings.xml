@@ -363,4 +363,6 @@
     <string name="jandi_shared_in_room">"공유된 곳"</string>
     <string name="jandi_device_storage">장치</string>
     <string name="jandi_sdcard_storage">SD 카드</string>
+    <string name="jandi_sdcard_storage_mounted">SD 카드가 인식되었습니다</string>
+    <string name="jandi_sdcard_storage_unmounted">SD 카드가 해제되었습니다</string>
 </resources>

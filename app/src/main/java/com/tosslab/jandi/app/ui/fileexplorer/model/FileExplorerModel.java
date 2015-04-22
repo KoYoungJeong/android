@@ -27,6 +27,7 @@ public class FileExplorerModel {
 
     public static final String DEFAULT_STORAGE = "/storage";
     public static final String EMULATED_PATH_NAME = "emulated";
+
     @RootContext
     Context context;
 
@@ -35,51 +36,38 @@ public class FileExplorerModel {
         if (TextUtils.isEmpty(path)) {
             path = Environment.getExternalStorageDirectory().getAbsolutePath();
         }
-
         return new File(path);
     }
 
     public List<FileItem> getChildFiles(File f) {
-
         File[] originFiles = f.listFiles();
-
         List<FileItem> files = new ArrayList<FileItem>();
-
         DateFormat formater = DateFormat.getDateTimeInstance();
         Iterator<FileItem> iterator = Observable.from(originFiles)
                 .filter(file -> !file.getName().startsWith("."))
                 .map(file -> new FileItem(file.getName(), file.getAbsolutePath(), file.list() != null ? file.list().length : 0, formater.format(file.lastModified()), file.isDirectory()))
                 .toBlocking()
                 .getIterator();
-
         while (iterator.hasNext()) {
             files.add(iterator.next());
         }
-
         Collections.sort(files, (lhs, rhs) -> {
-
             int leftDirectory = lhs.isDirectory() ? 1 : 0;
             int rightDirectory = rhs.isDirectory() ? 1 : 0;
-
             if (leftDirectory - rightDirectory == 0) {
-
                 return lhs.getName().compareToIgnoreCase(rhs.getName());
             } else {
                 return rightDirectory - leftDirectory;
             }
 
         });
-
         String externalSdCardPath = getExternalSdCardPath();
         String internalSdcardPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-
         String currentPath = f.getAbsolutePath();
-
         if (!TextUtils.equals(currentPath, internalSdcardPath) && !TextUtils.equals(currentPath, externalSdCardPath)) {
             File parentFile = f.getParentFile();
             files.add(0, new FileItem("..", parentFile.getAbsolutePath(), parentFile.list().length, formater.format(parentFile.lastModified()), true));
         }
-
         return files;
     }
 
@@ -97,20 +85,20 @@ public class FileExplorerModel {
                         && !originFiles[i].getCanonicalPath().contains(inStoragePath)) {
                     microSdCardPath = originFiles[i].getAbsolutePath();
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return microSdCardPath;
     }
 
     public boolean hasExternalSdCard() {
+        boolean a = !TextUtils.isEmpty(getExternalSdCardPath());
         return !TextUtils.isEmpty(getExternalSdCardPath());
     }
 
     public boolean isChildOfExternalSdcard(File file) {
-
         if (!hasExternalSdCard() || file == null) {
             return false;
         } else {

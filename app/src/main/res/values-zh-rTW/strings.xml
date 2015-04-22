@@ -346,4 +346,6 @@
     <string name="jandi_shared_in_room">"曾經分享在哪個議題下"</string>
     <string name="jandi_device_storage">行動裝置</string>
     <string name="jandi_sdcard_storage">記憶卡</string>
+    <string name="jandi_sdcard_storage_mounted">連接記憶卡</string>
+    <string name="jandi_sdcard_storage_unmounted">解除連接記憶卡</string>
 </resources>
