@@ -79,7 +79,7 @@ public class JandiSocketService extends Service {
 
         EventListener entityRefreshListener = objects -> jandiSocketServiceModel.refreshEntity();
 
-        eventHashMap.put("team_join", entityRefreshListener);
+        eventHashMap.put("team_joined", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
         eventHashMap.put("topic_joined", entityRefreshListener);
         eventHashMap.put("topic_invite", entityRefreshListener);
