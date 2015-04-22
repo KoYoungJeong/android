@@ -8,7 +8,7 @@
 
         <item name="searchViewStyle">@style/JandiSearchView</item>
         <item name="colorPrimary">@color/jandi_primary_color</item>
-        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_color</item>
         <item name="colorAccent">@color/jandi_text_main</item>
     </style>
 
