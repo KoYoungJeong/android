@@ -349,4 +349,6 @@ Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_shared_in_room">"Shared in"</string>
     <string name="jandi_device_storage">Device</string>
     <string name="jandi_sdcard_storage">SD Card</string>
+    <string name="jandi_sdcard_storage_mounted">SD Card mounted</string>
+    <string name="jandi_sdcard_storage_unmounted">SD Card unmounted</string>
 </resources>

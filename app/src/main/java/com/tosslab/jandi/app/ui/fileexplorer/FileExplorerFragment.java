@@ -16,7 +16,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
-import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
@@ -30,6 +29,7 @@ public class FileExplorerFragment extends Fragment {
 
     public static final String EXTERNAL_ROOT_PATH = "/micro_sdcard";
     public static final String DEVICE_ROOT_PATH = "/sdcard";
+
     @FragmentArg
     String currentPath;
 
@@ -60,12 +60,6 @@ public class FileExplorerFragment extends Fragment {
             return file.getAbsolutePath().replaceFirst(Environment.getExternalStorageDirectory().getAbsolutePath(), DEVICE_ROOT_PATH);
         }
     }
-
-    @OptionsItem(android.R.id.home)
-    void onHomeOptionSelected() {
-        getActivity().finish();
-    }
-
 
     @ItemClick(R.id.lv_file_explorer)
     void onFileItemClick(FileItem fileItem) {
