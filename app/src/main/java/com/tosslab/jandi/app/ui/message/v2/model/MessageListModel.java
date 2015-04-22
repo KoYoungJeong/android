@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
@@ -41,6 +42,7 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -363,7 +365,7 @@ public class MessageListModel {
     public void updateMarkerInfo(int teamId, int roomId) {
 
         if (teamId <= 0 || roomId <= 0) {
-            return ;
+            return;
         }
 
         RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
@@ -384,5 +386,18 @@ public class MessageListModel {
 
     public void insertMarker(int teamId, int roomId, int memberId) {
         JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, memberId, -1);
+    }
+
+    public void updateEntityInfo() {
+        try {
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(totalEntitiesInfo);
+            EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            JandiPreference.setBadgeCount(activity, totalUnreadCount);
+            BadgeUtils.setBadge(activity, totalUnreadCount);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
     }
 }
