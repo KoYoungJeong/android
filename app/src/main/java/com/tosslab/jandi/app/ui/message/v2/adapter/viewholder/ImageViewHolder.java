@@ -105,10 +105,6 @@ public class ImageViewHolder implements BodyViewHolder {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
-            } else if (TextUtils.equals(fileMessage.content.ext, "psd")) {
-                fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
-                fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(fileMessage.content.ext);
             } else {
                 if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
                     String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");

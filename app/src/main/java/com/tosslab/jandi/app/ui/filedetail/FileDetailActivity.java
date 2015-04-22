@@ -94,7 +94,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
 
-        getFileDetail(false, true);
     }
 
     @Override
@@ -198,13 +197,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        getFileDetail(false, true);
         trackGaFileDetail(mEntityManager);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
 

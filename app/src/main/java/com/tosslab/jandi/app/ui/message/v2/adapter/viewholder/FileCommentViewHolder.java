@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -124,8 +123,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 String fileType = feedbackFileMessage.content.type;
                 if (fileType.startsWith("image/")) {
-                    if (!TextUtils.equals(feedbackFileMessage.content.ext, "psd") &&
-                            feedbackFileMessage.content.extraInfo != null &&
+                    if (feedbackFileMessage.content.extraInfo != null &&
                             !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
 
                         String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");

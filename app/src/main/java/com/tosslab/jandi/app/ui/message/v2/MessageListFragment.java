@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -867,6 +868,10 @@ public class MessageListFragment extends Fragment {
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(new OldMessageQueue(messageState));
         }
+    }
+
+    public void onEvent(DeleteFileEvent event) {
+        messageListPresenter.changeToArchive(event.getId());
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
