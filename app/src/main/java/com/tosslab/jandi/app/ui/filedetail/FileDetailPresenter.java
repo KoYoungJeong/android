@@ -307,7 +307,7 @@ public class FileDetailPresenter {
             int nSharedEntities = resFileDetail.shareEntities.size();
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             int shareTextSize = (int) activity.getResources().getDimension(R.dimen.jandi_text_size_small);
-            int shareTextColor = activity.getResources().getColor(R.color.file_name);
+            int shareTextColor = activity.getResources().getColor(R.color.file_type);
             MessageSpannable messageSpannable = new MessageSpannable(shareTextSize, shareTextColor);
             spannableStringBuilder.append(activity.getString(R.string.jandi_shared_in_room))
                     .setSpan(messageSpannable, 0, spannableStringBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
