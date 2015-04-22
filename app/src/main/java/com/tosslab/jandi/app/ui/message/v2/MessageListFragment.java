@@ -630,7 +630,7 @@ public class MessageListFragment extends Fragment {
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
                 realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                if (TextUtils.isEmpty(realFilePath)) {
+                if (!TextUtils.isEmpty(realFilePath)) {
                     showFileUploadDialog(realFilePath);
                 }
                 break;

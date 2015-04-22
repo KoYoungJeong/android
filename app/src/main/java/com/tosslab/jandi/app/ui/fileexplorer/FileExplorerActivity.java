@@ -16,11 +16,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel;
 import com.tosslab.jandi.app.ui.fileexplorer.model.FileExplorerModel_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.listeners.SimpleOnItemSelectedListner;
 
 import java.util.ArrayList;
@@ -32,9 +32,31 @@ public class FileExplorerActivity extends ActionBarActivity {
 
     private boolean mountUnmountStateAction = true;
     private boolean toolbarRenewal = false;
+    private BroadcastReceiver sdcardStateReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
 
+            if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                ColoredToast.show(context, getString(R.string.jandi_sdcard_storage_mounted));
+                mountUnmountStateAction = true;
+            } else if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+                ColoredToast.showWarning(context, getString(R.string.jandi_sdcard_storage_unmounted));
+                mountUnmountStateAction = false;
+            }
+
+            if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED) || action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
+                toolbarRenewal = true;
+                invalidateOptionsMenu();
+
+                getFragmentManager().beginTransaction()
+                        .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
+                        .commit();
+
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+        }
+    };
     private FileExplorerModel fileExplorerModel;
-    private BroadcastReceiver sdcardStateReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,37 +74,11 @@ public class FileExplorerActivity extends ActionBarActivity {
     }
 
     public void sdcardStateReciver() {
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme(DATA_SCHEME_FILE);
 
-        sdcardStateReceiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if (action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
-                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_mounted), Toast.LENGTH_LONG).show();
-                    mountUnmountStateAction = true;
-                } else if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-                    Toast.makeText(context, getString(R.string.jandi_sdcard_storage_unmounted), Toast.LENGTH_SHORT).show();
-                    mountUnmountStateAction = false;
-                }
-
-                if (action.equals(Intent.ACTION_MEDIA_UNMOUNTED) || action.equals(Intent.ACTION_MEDIA_MOUNTED)) {
-                    toolbarRenewal = true;
-                    invalidateOptionsMenu();
-
-                    getFragmentManager().beginTransaction()
-                            .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
-                            .commit();
-
-                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
-            }
-        };
         registerReceiver(sdcardStateReceiver, intentFilter);
     }
 
@@ -119,11 +115,7 @@ public class FileExplorerActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
-            if (getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStack();
-            } else {
-                finish();
-            }
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);
@@ -177,52 +169,6 @@ public class FileExplorerActivity extends ActionBarActivity {
         });
 
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        menu.clear();
-
-        getMenuInflater().inflate(R.menu.file_explorer_toolbar_switch, menu);
-
-        View actionView = menu.findItem(R.id.file_explorer_switch_item).getActionView();
-        Spinner rootPathSpinner = (Spinner) actionView.findViewById(R.id.file_explorer_spinner_button);
-
-        List<String> paths = new ArrayList<String>();
-
-        paths.add(getString(R.string.jandi_device_storage));
-
-        if (fileExplorerModel.hasExternalSdCard()) {
-            paths.add(getString(R.string.jandi_sdcard_storage));
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(FileExplorerActivity.this, R.layout.layout_file_explorer_spinner_title, paths);
-        adapter.setDropDownViewResource(R.layout.layout_file_explorer_spinner_dropdown);
-        rootPathSpinner.setAdapter(adapter);
-        rootPathSpinner.setOnItemSelectedListener(new SimpleOnItemSelectedListner() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String movePath = null;
-
-                if (position == SPINNER_POSION_SECOND) {
-                    movePath = fileExplorerModel.getExternalSdCardPath();
-                }
-
-
-                FileExplorerFragment fragment = FileExplorerFragment_.builder()
-                        .currentPath(movePath)
-                        .build();
-
-                getFragmentManager().beginTransaction()
-                        .add(R.id.file_explorer_container, fragment, movePath)
-                        .commit();
-
-                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
