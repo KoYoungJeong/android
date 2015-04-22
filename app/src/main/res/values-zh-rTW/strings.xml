@@ -348,4 +348,5 @@
     <string name="jandi_sdcard_storage">記憶卡</string>
     <string name="jandi_sdcard_storage_mounted">連接記憶卡</string>
     <string name="jandi_sdcard_storage_unmounted">解除連接記憶卡</string>
+    <string name="jandi_deleted_message">"(刪除的消息)"</string>
 </resources>

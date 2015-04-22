@@ -178,7 +178,12 @@ public class MessageListFragment extends Fragment {
                             break;
                         case New:
                             if (newsMessageLoader != null) {
-                                newsMessageLoader.load(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                                MessageState data = (MessageState) messageQueue.getData();
+                                int lastUpdateLinkId = data.getLastUpdateLinkId();
+                                if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                                    oldMessageLoader.load(lastUpdateLinkId);
+                                }
+                                newsMessageLoader.load(lastUpdateLinkId);
                             }
                             break;
                         case Send:
@@ -887,16 +892,30 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        if (event.getRoom().getId() == roomId) {
-            if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
-                    TextUtils.equals(event.getMessageType(), "topic_join") ||
-                    TextUtils.equals(event.getMessageType(), "topic_invite")) {
+        boolean isSameRoomId = false;
+        if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
 
-                updateRoomInfo();
-            } else {
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            isSameRoomId = event.getRoom().getId() == roomId;
+        } else {
+            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                if (roomId == messageRoom.getId()) {
+                    isSameRoomId = true;
+                    break;
+                }
             }
+        }
 
+        if (!isSameRoomId) {
+            return;
+        }
+
+        if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
+                TextUtils.equals(event.getMessageType(), "topic_join") ||
+                TextUtils.equals(event.getMessageType(), "topic_invite")) {
+
+            updateRoomInfo();
+        } else {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
     }

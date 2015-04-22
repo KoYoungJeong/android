@@ -351,4 +351,5 @@ Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_sdcard_storage">SD Card</string>
     <string name="jandi_sdcard_storage_mounted">SD Card mounted</string>
     <string name="jandi_sdcard_storage_unmounted">SD Card unmounted</string>
+    <string name="jandi_deleted_message">"(Deleted Message)"</string>
 </resources>

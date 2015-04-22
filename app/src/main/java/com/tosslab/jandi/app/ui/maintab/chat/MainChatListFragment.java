@@ -78,13 +78,23 @@ public class MainChatListFragment extends Fragment {
         UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
     }
 
-    public void onEventMainThread(RetrieveTopicListEvent event) {
+    public void onEvent(RetrieveTopicListEvent event) {
         getChatList();
     }
 
-    public void onEventMainThread(SocketMessageEvent event) {
-        if (TextUtils.equals(event.getRoom().getType(), "chat")) {
-            getChatList();
+    public void onEvent(SocketMessageEvent event) {
+        if (TextUtils.equals(event.getMessageType(), "file_comment")) {
+            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                if (TextUtils.equals(messageRoom.getType(), "chat")) {
+                    getChatList();
+                    return;
+                }
+            }
+        } else {
+
+            if (TextUtils.equals(event.getRoom().getType(), "chat")) {
+                getChatList();
+            }
         }
     }
 
