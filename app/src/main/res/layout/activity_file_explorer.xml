@@ -12,18 +12,18 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/layout_file_explorer_bar"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            android:visibility="visible" />
+            android:visibility="visible"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     </RelativeLayout>
 
     <FrameLayout
+        android:id="@+id/file_explorer_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/file_explorer_container">
+        android:layout_height="match_parent">
 
     </FrameLayout>
 

@@ -509,7 +509,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 
         String realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-        showFileUploadDialog(realFilePath);
+        if (!TextUtils.isEmpty(realFilePath)) {
+            showFileUploadDialog(realFilePath);
+        }
     }
 
     @UiThread

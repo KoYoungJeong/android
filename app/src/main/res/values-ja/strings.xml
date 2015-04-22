@@ -355,4 +355,6 @@ JANDIへようこそ"</string>
     <string name="jandi_shared_in_room">"共有範囲"</string>
     <string name="jandi_device_storage">デバイス</string>
     <string name="jandi_sdcard_storage">SDカード</string>
+    <string name="jandi_sdcard_storage_mounted">SDカードをマウントしました</string>
+    <string name="jandi_sdcard_storage_unmounted">SDカードのマウントを解除しました</string>
 </resources>

@@ -630,7 +630,7 @@ public class MessageListFragment extends Fragment {
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
 
                 realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                if (TextUtils.isEmpty(realFilePath)) {
+                if (!TextUtils.isEmpty(realFilePath)) {
                     showFileUploadDialog(realFilePath);
                 }
                 break;
@@ -883,20 +883,26 @@ public class MessageListFragment extends Fragment {
         }
 
         if (event.getRoom().getId() == roomId) {
-            if (TextUtils.equals(event.getMessageType(), "topic_leave")) {
-                messageListModel.updateMarkerInfo(teamId, roomId);
-                insertEmptyMessage();
-            } else if (TextUtils.equals(event.getMessageType(), "topic_join")) {
-                messageListModel.updateMarkerInfo(teamId, roomId);
-                insertEmptyMessage();
-            } else if (TextUtils.equals(event.getMessageType(), "topic_invite")) {
-                messageListModel.updateMarkerInfo(teamId, roomId);
-                insertEmptyMessage();
+            if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
+                    TextUtils.equals(event.getMessageType(), "topic_join") ||
+                    TextUtils.equals(event.getMessageType(), "topic_invite")) {
+
+                updateRoomInfo();
+            } else {
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
             }
 
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
+    }
+
+    @Background
+    void updateRoomInfo() {
+        messageListModel.updateEntityInfo();
+        messageListModel.updateMarkerInfo(teamId, roomId);
+        insertEmptyMessage();
+
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     public void onEvent(RoomMarkerEvent event) {
