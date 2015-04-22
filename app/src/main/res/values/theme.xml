@@ -7,8 +7,9 @@
         <item name="android:splitMotionEvents">false</item>
 
         <item name="searchViewStyle">@style/JandiSearchView</item>
-        <item name="colorPrimary">@color/jandi_main</item>
-        <item name="colorPrimaryDark">@color/jandi_messages_button_bg_normal</item>
+        <item name="colorPrimary">@color/jandi_primary_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorAccent">@color/jandi_text_main</item>
     </style>
 
     <!-- Intro 화면은 어둡기 때문에 -->
@@ -18,9 +19,9 @@
 
     <!-- Actionbar -->
     <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/jandi_main</item>
-        <item name="android:backgroundStacked">@color/jandi_main</item>
-        <item name="android:backgroundSplit">@color/jandi_main</item>
+        <item name="android:background">@color/jandi_primary_color</item>
+        <item name="android:backgroundStacked">@color/jandi_primary_color</item>
+        <item name="android:backgroundSplit">@color/jandi_primary_color</item>
     </style>
 
     <style name="JandiTheme.ActionBarOverlay" parent="@style/Theme.AppCompat.Light.NoActionBar">

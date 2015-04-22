@@ -39,7 +39,7 @@
         android:padding="20dp"
         android:background="@android:color/transparent"
         android:text="@string/jandi_upload_a_file"
-        android:textColor="@color/jandi_border_green"
+        android:textColor="@color/jandi_text_main"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
 </LinearLayout>

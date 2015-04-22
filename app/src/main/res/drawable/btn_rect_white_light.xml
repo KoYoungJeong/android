@@ -5,7 +5,7 @@
 
         <shape android:shape="rectangle">
 
-            <solid android:color="@color/jandi_messages_button_bg_normal" />
+            <solid android:color="@color/jandi_background_highlight" />
 
         </shape>
 

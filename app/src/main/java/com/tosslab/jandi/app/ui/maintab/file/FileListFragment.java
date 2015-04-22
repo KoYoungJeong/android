@@ -571,7 +571,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         RelativeLayout.LayoutParams headerViewLayoutParams = ((RelativeLayout.LayoutParams) headerView.getLayoutParams());
         headerViewLayoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
 //        headerViewLayoutParams.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
-        headerView.setBackgroundColor(getResources().getColor(R.color.jandi_main));
+        headerView.setBackgroundColor(getResources().getColor(R.color.jandi_primary_color));
 
         setHeaderTextViewColor(((ViewGroup) headerView), getResources().getColor(R.color.white));
         setHeaderImageViewImage(((ViewGroup) headerView), R.drawable.jandi_arrow_down);

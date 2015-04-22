@@ -24,7 +24,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="2dp"
             android:text="@string/jandi_messages"
-            android:textColor="@drawable/jandi_selector_font"
+            android:textColor="@color/jandi_selector_font"
             android:textSize="@dimen/jandi_tab_text_size" />
 
         <ImageView

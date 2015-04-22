@@ -8,7 +8,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/account_home_help_dialog_background"
+        android:background="?colorPrimary"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingTop="24dp"

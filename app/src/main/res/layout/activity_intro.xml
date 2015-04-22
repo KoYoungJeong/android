@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_main"
+    android:background="@color/jandi_primary_color"
     android:orientation="vertical"
     tools:context=".ui.login.IntroMainActivity_">
 

@@ -32,7 +32,7 @@
         android:layout_marginTop="28dp"
         android:background="@color/transparent"
         android:text="@string/jandi_send_invitation"
-        android:textColor="@color/jandi_border_green"
+        android:textColor="@color/jandi_text_main"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
 

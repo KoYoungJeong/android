@@ -29,7 +29,7 @@
         android:id="@+id/layout_file_list_header"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:background="@color/jandi_more_bg"
+        android:background="@color/jandi_background_default"
         android:orientation="vertical">
 
         <LinearLayout

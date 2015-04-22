@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/jandi_more_bg"
+        android:background="@color/jandi_background_default"
         android:paddingBottom="1dp"
         android:weightSum="3">
 
@@ -20,7 +20,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_profile_actionb"
@@ -36,7 +35,6 @@
             android:layout_marginLeft="1dp"
             android:layout_marginRight="1dp"
             android:layout_weight="1"
-            android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_team_member"
@@ -49,7 +47,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/white"
             android:gravity="center"
             android:orientation="vertical"
             android:text="@string/jandi_invitation"
@@ -60,7 +57,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/jandi_more_bg"
+        android:background="@color/jandi_background_default"
         android:weightSum="3">
 
         <!-- 설정 -->
