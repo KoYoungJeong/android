@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -57,6 +58,19 @@ class InviteCommand implements MenuCommand {
      */
     @UiThread
     public void inviteMembersToEntity() {
+
+        int teamMemberCountWithoutMe = entityManager.getFormattedUsersWithoutMe().size();
+
+        if (teamMemberCountWithoutMe <= 0) {
+
+            InviteActivity_.intent(activity)
+                    .start();
+
+            return;
+
+        }
+
+
         /**
          * 사용자 초대를 위한 Dialog 를 보여준 뒤, 체크된 사용자를 초대한다.
          */
