@@ -27,7 +27,6 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
@@ -39,6 +38,7 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.MessageSpannable;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -175,18 +175,15 @@ public class FileDetailPresenter {
             drawFileSharedEntities(fileMessage);
 
             if (!TextUtils.isEmpty(fileMessage.content.type)) {
-                String serverUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL;
 
                 if (fileMessage.content.type.startsWith("image")) {
                     // 이미지일 경우
                     iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
                     // 중간 썸네일을 가져온다.
-                    String thumbnailUrl = "";
-                    if (fileMessage.content.extraInfo != null) {
-                        thumbnailUrl = fileMessage.content.extraInfo.largeThumbnailUrl;
+                    if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
 
-                        final String thumbnailPhotoUrl = serverUrl + thumbnailUrl;
-                        final String photoUrl = serverUrl + fileMessage.content.fileUrl;
+                        String thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
+                        String photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
 
                         if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
                             Ion.with(activity)
@@ -215,13 +212,7 @@ public class FileDetailPresenter {
                     imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
 
                     // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
-                    imageViewPhotoFile.setOnClickListener(view -> {
-                        String serverUrl1 = (fileMessage.content.serverUrl.equals("root"))
-                                ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                                : fileMessage.content.serverUrl;
-                        String fileName = fileMessage.content.fileUrl.replace(" ", "%20");
-                        EventBus.getDefault().post(new FileDownloadStartEvent(serverUrl1 + fileName, fileMessage.content.name, fileMessage.content.type));
-                    });
+                    imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new FileDownloadStartEvent(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl), fileMessage.content.name, fileMessage.content.type)));
                 }
             }
         }

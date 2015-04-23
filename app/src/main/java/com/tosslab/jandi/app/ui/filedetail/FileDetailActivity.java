@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -564,7 +565,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     public void download() {
-        String serverUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL;
         String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
 
         final ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
@@ -572,7 +572,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         progressDialog.setMessage("Downloading " + fileName);
         progressDialog.show();
 
-        downloadInBackground(serverUrl + fileName, mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
+        downloadInBackground(BitmapUtil.getFileeUrl(mResFileDetail.content.fileUrl), mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
     }
 
     public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {

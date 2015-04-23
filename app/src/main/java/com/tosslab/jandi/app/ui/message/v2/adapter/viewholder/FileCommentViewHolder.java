@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -126,7 +127,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                     if (feedbackFileMessage.content.extraInfo != null &&
                             !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
 
-                        String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                        String imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
@@ -135,7 +136,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                         fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(fileImageView.getContext())
-                                .imageUrl(JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.fileUrl)
+                                .imageUrl(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl))
                                 .imageName(feedbackFileMessage.content.name)
                                 .imageType(feedbackFileMessage.content.type)
                                 .start());

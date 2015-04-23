@@ -13,6 +13,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 
 import java.io.File;
@@ -35,13 +36,13 @@ public class DownloadAction implements FileAction {
 
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage("Downloading " + fileUrl);
+        progressDialog.setMessage("Downloading " + message.content.name);
         progressDialog.show();
 
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
-        String url = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileUrl;
+        String url = BitmapUtil.getFileeUrl(fileUrl);
         Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)

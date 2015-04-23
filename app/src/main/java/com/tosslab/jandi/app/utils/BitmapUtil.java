@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.text.TextUtils;
+
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 11..
@@ -27,5 +30,18 @@ public class BitmapUtil {
         canvas.drawCircle(r, r, r, paint);
         squaredBitmap.recycle();
         return bitmap;
+    }
+
+    public static String getFileeUrl(String url) {
+
+        if (TextUtils.isEmpty(url)) {
+            return url;
+        }
+
+        if (url.startsWith("http")) {
+            return url.replaceAll(" ", "%20");
+        } else {
+            return JandiConstantsForFlavors.SERVICE_ROOT_URL + url.replaceAll(" ", "%20");
+        }
     }
 }
