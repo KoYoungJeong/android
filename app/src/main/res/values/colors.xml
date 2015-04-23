@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="jandi_primary_color">#FF003658</color>
-    <color name="jandi_primary_dark_color">#FF003658</color>
+    <color name="jandi_primary_dark_color">#FF002541</color>
 
     <color name="jandi_text_main">#FF00A4E6</color>
 
