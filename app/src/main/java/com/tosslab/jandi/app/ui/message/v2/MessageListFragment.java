@@ -277,12 +277,8 @@ public class MessageListFragment extends Fragment {
         messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
-                if (!isFromSearch) {
-                    MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
-                    return true;
-                } else {
-                    return false;
-                }
+                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
+                return true;
             }
         });
 
@@ -750,12 +746,11 @@ public class MessageListFragment extends Fragment {
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
+            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
             messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
-//            messageListPresenter.showFileActionDialog(link.messageId);
         }
     }
 
