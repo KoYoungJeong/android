@@ -706,9 +706,7 @@ public class MessageListFragment extends Fragment {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-            if (messageListModel.isFailedDummyMessage(dummyMessageLink)) {
-                messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
-            }
+            messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
 
             return;
         }
@@ -757,6 +755,7 @@ public class MessageListFragment extends Fragment {
     public void onEvent(DummyRetryEvent event) {
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setSendingState(SendingState.Sending);
+        messageListPresenter.justRefresh();
         messageListModel.sendMessage(dummyMessage.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body);
     }
 
