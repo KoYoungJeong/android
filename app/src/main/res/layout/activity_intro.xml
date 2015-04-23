@@ -1,37 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_primary_color"
-    android:orientation="vertical">
+    android:background="@color/jandi_primary_color">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="33" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-    <ImageView
-        android:layout_width="143dp"
-        android:layout_height="143dp"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerInside"
-        android:src="@drawable/jandi_intro_symbol" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="35" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/jandi_intro_symbol" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
         android:src="@drawable/jandi_intro_logo" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="10" />
-</LinearLayout>
+</RelativeLayout>
 

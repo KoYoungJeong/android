@@ -4,7 +4,7 @@
     <!-- NORMAL -->
     <item android:state_focused="false" android:state_pressed="false">
         <shape>
-            <solid android:color="@color/jandi_primary_color" />
+            <solid android:color="@color/jandi_accent_color" />
             <!--<stroke android:color="#999999" android:width="1dp" />-->
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
@@ -15,7 +15,7 @@
     <!-- CLICK -->
     <item android:state_focused="false" android:state_pressed="true">
         <shape>
-            <solid android:color="@color/jandi_primary_color" />
+            <solid android:color="@color/jandi_accent_color_b2" />
             <!--<stroke android:color="#999999" android:width="1dp" />-->
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"

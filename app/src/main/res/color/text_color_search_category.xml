@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:color="@color/jandi_text_main" android:state_selected="true" />
+    <item android:color="@color/jandi_accent_color" android:state_selected="true" />
 
-    <item android:color="#FF404040" />
+    <item android:color="@color/jandi_message_search_item_topic_txt_color" />
 
 </selector>

@@ -40,7 +40,7 @@
         android:layout_marginTop="28dp"
         android:padding="20dp"
         android:text="@string/jandi_select_direct_messages"
-        android:textColor="@color/jandi_text_main"
+        android:textColor="@color/jandi_accent_color"
         android:textSize="@dimen/jandi_text_size_large"
         android:textStyle="bold" />
 

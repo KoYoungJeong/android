@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/img_message_commented_photo"
             android:text="Commented on "
-            android:textColor="@color/jandi_text_main"
+            android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_messages_comment" />
 
         <TextView
@@ -132,7 +132,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/txt_message_commented_owner"
             android:text="'s file"
-            android:textColor="@color/jandi_text_main"
+            android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_messages_comment" />
 
         <TextView

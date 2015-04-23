@@ -166,7 +166,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                     accountTeamRowView1.setTeamName(getString(R.string.jandi_team_select_create_a_team));
                     accountTeamRowView1.setIcon(R.drawable.jandi_icon_teamlist_add);
                     accountTeamRowView1.setBadgeCount(0);
-                    accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.jandi_text_main));
+                    accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.jandi_accent_color));
                     accountTeamRowView1.setOnClickListener(v -> accountHomePresenter.onCreateTeamSelect());
 
                     view = accountTeamRowView1;

@@ -11,6 +11,13 @@
         <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
         <item name="colorAccent">@color/jandi_accent_color</item>
 
+        <item name="android:alertDialogTheme">@style/JandiTheme.AlertDialog</item>
+    </style>
+
+    <style name="JandiTheme.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/jandi_primary_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorAccent">@color/jandi_accent_color</item>
     </style>
 
     <!-- Intro 화면은 어둡기 때문에 -->

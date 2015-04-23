@@ -7,7 +7,7 @@
 
             <corners android:radius="2dp" />
             <solid android:color="@color/jandi_primary_color" />
-            <stroke android:width="0.5dp" android:color="@color/jandi_text_main" />
+            <stroke android:width="0.5dp" android:color="@color/jandi_accent_color" />
             <size android:width="1dp" android:height="1dp" />
 
         </shape>
@@ -19,7 +19,7 @@
 
             <corners android:radius="2dp" />
             <solid android:color="@color/white" />
-            <stroke android:width="0.5dp" android:color="@color/jandi_text_main" />
+            <stroke android:width="0.5dp" android:color="@color/jandi_accent_color" />
             <size android:width="1dp" android:height="1dp" />
 
         </shape>
