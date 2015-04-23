@@ -51,6 +51,19 @@ public class JandiSocketService extends Service {
         context.startService(new Intent(context, JandiSocketService.class));
     }
 
+    public static void stopSocketServiceIfRunning(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningServiceInfo runningService : runningServices) {
+            if (TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
+                context.stopService(new Intent(context, JandiSocketService.class));
+                return;
+            }
+        }
+
+    }
+
     private boolean isActiveNetwork() {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();

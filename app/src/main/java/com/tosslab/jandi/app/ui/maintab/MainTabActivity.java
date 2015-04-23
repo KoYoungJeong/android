@@ -226,7 +226,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void stopJandiServiceInMainThread() {
-        stopService(new Intent(MainTabActivity.this, JandiSocketService.class));
+        JandiSocketService.stopSocketServiceIfRunning(MainTabActivity.this);
+
     }
 
     @UiThread

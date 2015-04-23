@@ -21,6 +21,7 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
@@ -126,6 +127,8 @@ public class SettingsFragment extends PreferenceFragment {
                     .trackSignOut()
                     .flush()
                     .clear();
+
+            JandiSocketService.stopSocketServiceIfRunning(getActivity());
 
             ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
 

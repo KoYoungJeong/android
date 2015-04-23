@@ -228,7 +228,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     @UiThread
     @Override
     public void moveSelectedTeam() {
-        stopService(new Intent(AccountHomeActivity.this, JandiSocketService.class));
+        JandiSocketService.stopSocketServiceIfRunning(AccountHomeActivity.this);
         JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
 
         MainTabActivity_.intent(AccountHomeActivity.this)
