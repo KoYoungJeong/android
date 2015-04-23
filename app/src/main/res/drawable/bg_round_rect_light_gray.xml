@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <corners android:radius="10dp" />
-    <solid android:color="#D7D7D7" />
+    <solid android:color="@color/jandi_disable_user_color" />
 
 
 </shape>

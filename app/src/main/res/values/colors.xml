@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="jandi_primary_color">#FF003658</color>
-    <color name="jandi_primary_dark_color">#FF03526E</color>
+    <color name="jandi_primary_dark_color">#FF003658</color>
 
     <color name="jandi_text_main">#FF00A4E6</color>
 
     <color name="jandi_background_highlight">#FFF2FBFF</color>
     <color name="jandi_background_default">#FFF1F4F8</color>
     <color name="jandi_tab_sliding_indicator">@color/jandi_text_main</color>
+
+    <color name="jandi_disable_user_color">#D7D7D7</color>
+    <color name="jandi_transparent_white_75">#DDFFFFFF</color>
+
+    <color name="jandi_primary_color_transparent_55">#55003658</color>
+    <color name="jandi_primary_color_transparent_22">#22003658</color>
+    <color name="jandi_primary_color_transparent_11">#11003658</color>
+    <color name="jandi_primary_color_transparent_b2">#B2003658</color>
+
 
     <color name="jandi_text">#FF333333</color>
     <color name="jandi_text_medium">#666666</color>

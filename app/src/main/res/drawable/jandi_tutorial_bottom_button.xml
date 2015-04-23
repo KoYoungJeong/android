@@ -5,7 +5,7 @@
     <item android:state_selected="false">
         <shape android:shape="oval">
             <solid
-                android:color="#bcdfd2" />
+                android:color="@color/jandi_primary_color_transparent_22" />
             <size
                 android:width="8dp"
                 android:height="8dp"/>
@@ -15,7 +15,7 @@
     <item android:state_selected="true">
         <shape android:shape="oval">
             <solid
-                android:color="#31c08a" />
+                android:color="@color/jandi_primary_color_transparent_b2" />
             <size
                 android:width="8dp"
                 android:height="8dp"/>
