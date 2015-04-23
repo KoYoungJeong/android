@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -25,12 +26,12 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
-import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
@@ -130,6 +131,13 @@ public class JandiSocketServiceModel {
     public void refreshMessage(Object object) {
         try {
             SocketMessageEvent socketMessageEvent = objectMapper.readValue(object.toString(), SocketMessageEvent.class);
+
+            if (TextUtils.equals(socketMessageEvent.getMessageType(), "topic_leave") ||
+                    TextUtils.equals(socketMessageEvent.getMessageType(), "topic_join") ||
+                    TextUtils.equals(socketMessageEvent.getMessageType(), "topic_invite")) {
+                refreshEntity();
+            }
+
             postEvent(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();

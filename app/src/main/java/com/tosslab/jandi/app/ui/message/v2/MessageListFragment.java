@@ -917,7 +917,6 @@ public class MessageListFragment extends Fragment {
 
     @Background
     void updateRoomInfo() {
-        messageListModel.updateEntityInfo();
         messageListModel.updateMarkerInfo(teamId, roomId);
         insertEmptyMessage();
 
