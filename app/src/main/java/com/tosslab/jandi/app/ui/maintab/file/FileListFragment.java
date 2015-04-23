@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -34,9 +33,11 @@ import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -74,7 +75,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -213,6 +213,21 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         getPreviousFile();
     }
 
+    public void onEventMainThread(CreateFileEvent event) {
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        mSearchQuery.setToFirst();
+        searchedFileItemListAdapter.clearAdapter();
+        doSearchInBackground(itemCount + 1);
+    }
+
+    public void onEventMainThread(ShareFileEvent event) {
+        int itemCount = searchedFileItemListAdapter.getItemCount();
+        mSearchQuery.setToFirst();
+        searchedFileItemListAdapter.clearAdapter();
+        doSearchInBackground(itemCount + 1);
+    }
+
+
     @Background
     void getPreviousFile() {
 
@@ -264,8 +279,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         EventBus.getDefault().register(this);
         mSearchQuery.setToFirst();
         // 서치 시작
+        int itemCount = searchedFileItemListAdapter.getItemCount();
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground();
+        doSearchInBackground(itemCount);
     }
 
     @Override
@@ -282,25 +298,25 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground();
+        doSearchInBackground(-1);
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
         mSearchQuery.setFileType(event.getServerQuery());
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground();
+        doSearchInBackground(-1);
     }
 
     public void onEvent(CategorizingAsOwner event) {
         mSearchQuery.setWriter(event.userId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground();
+        doSearchInBackground(-1);
     }
 
     public void onEvent(CategorizingAsEntity event) {
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground();
+        doSearchInBackground(-1);
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
@@ -316,17 +332,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         int entityId = event.entityId;
         FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
 
-        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
         boolean isPublicTopic = entity.isPublicTopic();
         try {
             JsonObject result = fileListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
-            if (result.get("code") == null) {
 
-                fileListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
-                fileListModel.trackUploadingFile(entityType, result);
-            } else {
-                fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
-            }
+            int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+            fileListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
+            fileListModel.trackUploadingFile(entityType, result);
         } catch (Exception e) {
             fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
         } finally {
@@ -349,7 +361,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     @Background
-    void doSearchInBackground() {
+    void doSearchInBackground(int requestCount) {
 
         fileListPresenter.setInitLoadingViewVisible(View.VISIBLE);
         fileListPresenter.setEmptyViewVisible(View.GONE);
@@ -358,6 +370,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             reqSearchFile.teamId = selectedTeamId;
+            if (requestCount > ReqSearchFile.MAX) {
+                reqSearchFile.listCount = requestCount;
+            }
             ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
 
             updateAdapter(resSearchFile);
@@ -742,66 +757,4 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    /**
-     * Full To Refresh 전용
-     * TODO 위에 거랑 합치기.
-     */
-    private class GetPreviousFilesTask extends AsyncTask<Void, Void, OldFileResult> {
-        private final Context context;
-
-        private GetPreviousFilesTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected OldFileResult doInBackground(Void... voids) {
-            try {
-                ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
-                reqSearchFile.teamId = selectedTeamId;
-                ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
-
-                List<ResMessages.OriginalMessage> files;
-                if (resSearchFile.fileCount > 0) {
-                    files = fileListModel.descSortByCreateTime(resSearchFile.files);
-                    mSearchQuery.setNext(resSearchFile.firstIdOfReceivedList);
-                } else {
-                    files = new ArrayList<ResMessages.OriginalMessage>();
-                }
-                return new OldFileResult(resSearchFile.fileCount, files, null);
-            } catch (JandiNetworkException e) {
-                log.error("fail to get searched files.", e);
-                return new OldFileResult(0, new ArrayList<ResMessages.OriginalMessage>(), context.getString(R.string.err_file_search));
-            } catch (Exception e) {
-                log.error("fail to get searched files.", e);
-                return new OldFileResult(0, new ArrayList<ResMessages.OriginalMessage>(), context.getString(R.string.err_file_search));
-            }
-        }
-
-        @Override
-        protected void onPostExecute(OldFileResult oldFileResult) {
-
-            if (oldFileResult.fileCount > 0) {
-                searchedFileItemListAdapter.insert(oldFileResult.files);
-            }
-
-
-            if (oldFileResult.fileCount < ReqSearchFile.MAX) {
-                ColoredToast.showWarning(mContext, context.getString(R.string.warn_no_more_files));
-                searchedFileItemListAdapter.setNoMoreLoad();
-            } else {
-                searchedFileItemListAdapter.setReadyMore();
-            }
-
-            if (TextUtils.isEmpty(oldFileResult.resultMessage)) {
-                // Success
-                searchedFileItemListAdapter.notifyDataSetChanged();
-            } else {
-                ColoredToast.showError(mContext, oldFileResult.resultMessage);
-            }
-        }
-    }
 }

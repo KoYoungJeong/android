@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -73,7 +74,7 @@ public class MainChatListModel {
                     chatItem.entityId(userEntity.getId())
                             .roomId(resChat.getEntityId())
                             .lastLinkId(resChat.getLastLinkId())
-                            .lastMessage(resChat.getLastMessage())
+                            .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
                             .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))

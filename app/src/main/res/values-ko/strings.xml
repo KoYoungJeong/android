@@ -365,4 +365,6 @@
     <string name="jandi_sdcard_storage">SD 카드</string>
     <string name="jandi_sdcard_storage_mounted">SD 카드가 인식되었습니다</string>
     <string name="jandi_sdcard_storage_unmounted">SD 카드가 해제되었습니다</string>
+    <string name="jandi_deleted_message">"(삭제된 메세지)"</string>
+    <string name="jandi_try_again">"다시 시도하기"</string>
 </resources>

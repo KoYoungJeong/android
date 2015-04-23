@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
+import com.tosslab.jandi.app.events.files.CreateFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
@@ -129,6 +131,13 @@ public class JandiSocketServiceModel {
     public void refreshMessage(Object object) {
         try {
             SocketMessageEvent socketMessageEvent = objectMapper.readValue(object.toString(), SocketMessageEvent.class);
+
+            if (TextUtils.equals(socketMessageEvent.getMessageType(), "topic_leave") ||
+                    TextUtils.equals(socketMessageEvent.getMessageType(), "topic_join") ||
+                    TextUtils.equals(socketMessageEvent.getMessageType(), "topic_invite")) {
+                refreshEntity();
+            }
+
             postEvent(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();
@@ -239,6 +248,15 @@ public class JandiSocketServiceModel {
             return token != null;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public void createFile(Object object) {
+        try {
+            SocketFileEvent socketFileEvent = objectMapper.readValue(object.toString(), SocketFileEvent.class);
+            postEvent(new CreateFileEvent(socketFileEvent.getFile().getId()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

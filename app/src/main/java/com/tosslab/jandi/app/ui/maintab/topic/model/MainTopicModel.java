@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.topic.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
@@ -79,7 +80,16 @@ public class MainTopicModel {
                 .filter(new Func1<FormattedEntity, Boolean>() {
                     @Override
                     public Boolean call(FormattedEntity entity) {
-                        return entity.getId() == event.getRoom().getId();
+                        if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
+                            return entity.getId() == event.getRoom().getId();
+                        } else {
+                            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                                if (entity.getId() == messageRoom.getId()) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
                     }
                 })
                 .firstOrDefault(emptyEntity)

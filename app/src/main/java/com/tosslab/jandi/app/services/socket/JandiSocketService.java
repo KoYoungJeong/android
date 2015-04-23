@@ -51,6 +51,19 @@ public class JandiSocketService extends Service {
         context.startService(new Intent(context, JandiSocketService.class));
     }
 
+    public static void stopSocketServiceIfRunning(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
+
+        for (ActivityManager.RunningServiceInfo runningService : runningServices) {
+            if (TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
+                context.stopService(new Intent(context, JandiSocketService.class));
+                return;
+            }
+        }
+
+    }
+
     private boolean isActiveNetwork() {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
@@ -79,7 +92,7 @@ public class JandiSocketService extends Service {
 
         EventListener entityRefreshListener = objects -> jandiSocketServiceModel.refreshEntity();
 
-        eventHashMap.put("team_join", entityRefreshListener);
+        eventHashMap.put("team_joined", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
         eventHashMap.put("topic_joined", entityRefreshListener);
         eventHashMap.put("topic_invite", entityRefreshListener);
@@ -108,8 +121,10 @@ public class JandiSocketService extends Service {
         eventHashMap.put("team_domain_updated", accountRefreshListener);
 
         EventListener deleteFileListener = objects -> jandiSocketServiceModel.deleteFile(objects[0]);
-
         eventHashMap.put("file_deleted", deleteFileListener);
+
+        EventListener createFileListener = objects -> jandiSocketServiceModel.createFile(objects[0]);
+        eventHashMap.put("file_created", createFileListener);
 
         EventListener unshareFileListener = objects -> jandiSocketServiceModel.unshareFile(objects[0]);
         eventHashMap.put("file_unshared", unshareFileListener);

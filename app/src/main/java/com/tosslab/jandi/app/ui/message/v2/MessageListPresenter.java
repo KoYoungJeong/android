@@ -378,6 +378,7 @@ public class MessageListPresenter {
         clipboardManager.setPrimaryClip(clipData);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void changeToArchive(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";

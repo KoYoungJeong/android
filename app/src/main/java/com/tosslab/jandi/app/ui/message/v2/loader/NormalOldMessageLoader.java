@@ -73,6 +73,11 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
+            int lastLinkIdInMessage = oldMessage.records.get(oldMessage.records.size() - 1).id;
+            if (oldMessage.lastLinkId <= lastLinkIdInMessage) {
+                updateMarker(teamId, oldMessage.entityId, lastLinkIdInMessage);
+            }
+
 
             if (linkId == -1) {
 
@@ -89,7 +94,6 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
                 messageListPresenter.moveLastPage();
 
-                updateMarker();
             } else {
 
                 int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
@@ -127,10 +131,11 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         }
     }
 
-    private void updateMarker() {
+    private void updateMarker(int teamId, int roomId, int lastUpdateLinkId) {
         try {
-            if (messageState.getLastUpdateLinkId() > 0) {
-                messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            if (lastUpdateLinkId > 0) {
+                messageListModel.updateMarker(lastUpdateLinkId);
+                messageListModel.updateMarkerInfo(teamId, roomId);
             }
         } catch (JandiNetworkException e) {
             logger.error("set marker failed", e);

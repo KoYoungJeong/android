@@ -38,6 +38,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -177,7 +178,12 @@ public class MessageListFragment extends Fragment {
                             break;
                         case New:
                             if (newsMessageLoader != null) {
-                                newsMessageLoader.load(((MessageState) messageQueue.getData()).getLastUpdateLinkId());
+                                MessageState data = (MessageState) messageQueue.getData();
+                                int lastUpdateLinkId = data.getLastUpdateLinkId();
+                                if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                                    oldMessageLoader.load(lastUpdateLinkId);
+                                }
+                                newsMessageLoader.load(lastUpdateLinkId);
                             }
                             break;
                         case Send:
@@ -271,12 +277,8 @@ public class MessageListFragment extends Fragment {
         messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
-                if (!isFromSearch) {
-                    MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
-                    return true;
-                } else {
-                    return false;
-                }
+                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
+                return true;
             }
         });
 
@@ -704,9 +706,7 @@ public class MessageListFragment extends Fragment {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-            if (messageListModel.isFailedDummyMessage(dummyMessageLink)) {
-                messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
-            }
+            messageListPresenter.showDummyMessageDialog(dummyMessageLink.getLocalId());
 
             return;
         }
@@ -744,18 +744,18 @@ public class MessageListFragment extends Fragment {
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId);
+            boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
             messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
-//            messageListPresenter.showFileActionDialog(link.messageId);
         }
     }
 
     public void onEvent(DummyRetryEvent event) {
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setSendingState(SendingState.Sending);
+        messageListPresenter.justRefresh();
         messageListModel.sendMessage(dummyMessage.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body);
     }
 
@@ -869,6 +869,10 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    public void onEvent(DeleteFileEvent event) {
+        messageListPresenter.changeToArchive(event.getId());
+    }
+
     public void onEvent(RefreshNewMessageEvent event) {
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
@@ -882,23 +886,36 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        if (event.getRoom().getId() == roomId) {
-            if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
-                    TextUtils.equals(event.getMessageType(), "topic_join") ||
-                    TextUtils.equals(event.getMessageType(), "topic_invite")) {
+        boolean isSameRoomId = false;
+        if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
 
-                updateRoomInfo();
-            } else {
-                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+            isSameRoomId = event.getRoom().getId() == roomId;
+        } else {
+            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                if (roomId == messageRoom.getId()) {
+                    isSameRoomId = true;
+                    break;
+                }
             }
+        }
 
+        if (!isSameRoomId) {
+            return;
+        }
+
+        if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
+                TextUtils.equals(event.getMessageType(), "topic_join") ||
+                TextUtils.equals(event.getMessageType(), "topic_invite")) {
+
+            updateRoomInfo();
+        } else {
+            sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
     }
 
     @Background
     void updateRoomInfo() {
-        messageListModel.updateEntityInfo();
         messageListModel.updateMarkerInfo(teamId, roomId);
         insertEmptyMessage();
 

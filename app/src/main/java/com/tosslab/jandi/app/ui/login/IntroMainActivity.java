@@ -1,10 +1,12 @@
 package com.tosslab.jandi.app.ui.login;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.widget.Button;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.login.adapter.IntroMainPagerAdapter;
 import com.tosslab.jandi.app.ui.login.tutorial.IntroTutorialFragment;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -39,6 +41,10 @@ public class IntroMainActivity extends Activity {
             // If Log in User, then move last page
             mViewPager.setCurrentItem(mAdapter.getCount() - 1);
         }
+
+        JandiSocketService.stopSocketServiceIfRunning(IntroMainActivity.this);
+
+
     }
 
     private void setUpView() {

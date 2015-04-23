@@ -439,4 +439,5 @@ public class FileListPresenter {
     public void showSuccessToast(String message) {
         ColoredToast.show(context, message);
     }
+
 }
