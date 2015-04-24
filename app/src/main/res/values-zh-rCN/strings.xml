@@ -56,12 +56,12 @@
     <string name="jandi_action_starred">"标记"</string>
 
     <!-- 튜토리얼 -->
-    <string name="jandi_tutorial_welcome">"欢迎使用JANDI"</string>
-    <string name="jandi_tutorial_welcome_message">"我们的使命是让您的工作日更简单、更高效、更愉快。我们将所有您对通讯软件的喜爱与云端存储的便利性及增加的强大搜寻功能做了结合，然后都这全部都放置在您的手掌心上。"</string>
-    <string name="jandi_tutorial_topic">"将您的整体团队聚集在一处"</string>
+    <string name="jandi_tutorial_welcome">"欢迎使用"</string>
+    <string name="jandi_tutorial_welcome_message">"JANDI让工作变简单、愉快。 我们将你对通讯软件的要求与云端存储的需求结合，并放在你的手掌上。"</string>
+    <string name="jandi_tutorial_topic">"JANDI在一起"</string>
     <string name="jandi_tutorial_topic_message">"在您选择的议题跟组织里的同仁联络，无论是专案上的协作或仅是闲谈。当您需要更多隐私，就邀请特定成员到私人议题及直接传讯里面继续对话。"</string>
     <string name="jandi_tutorial_file">"简单的几个点击来上传档案"</string>
-    <string name="jandi_tutorial_file_message">"您可以从您的手机或JANDI的档案数据库分享文件、简报、视频及任何其它档案给您的团队。我们自动将您所有的内容储存并排序好让您之后好找。"</string>
+    <string name="jandi_tutorial_file_message">"零时间、空间限制，随时从行动装置分享文档、投影片、视频及任何档案给所有团队成员。"</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"我的议题"</string>
@@ -190,7 +190,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
-    <string name="jandi_forgot_password"><b><u>忘记您的密码了？</u></b></string>
+    <string name="jandi_forgot_password"><b><u>忘记密码？</u></b></string>
     <string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
@@ -347,6 +347,6 @@
     <string name="jandi_sdcard_storage">记忆卡</string>
     <string name="jandi_sdcard_storage_mounted">连接记忆卡</string>
     <string name="jandi_sdcard_storage_unmounted">解除连接记忆卡</string>
-    <string name="jandi_deleted_message">"(删除的消息)"</string>
+    <string name="jandi_deleted_message">"(删除的信息)"</string>
     <string name="jandi_try_again">"请再试一次"</string>
 </resources>

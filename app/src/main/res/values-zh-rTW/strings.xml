@@ -56,12 +56,12 @@
     <string name="jandi_action_starred">"標記"</string>
 
     <!-- 튜토리얼 -->
-    <string name="jandi_tutorial_welcome">"歡迎使用JANDI"</string>
-    <string name="jandi_tutorial_welcome_message">"我們的使命是讓您的工作日更簡單、更高效、更愉快。我們將所有您對通訊軟體的喜愛與雲端存儲的便利性及增加的強大搜尋功能做了結合，然後都這全部都放置在您的手掌心上。"</string>
-    <string name="jandi_tutorial_topic">"將您的整體團隊聚集在一處"</string>
+    <string name="jandi_tutorial_welcome">"歡迎使用"</string>
+    <string name="jandi_tutorial_welcome_message">"JANDI讓工作變簡單、愉快。我們將你對通訊軟體的要求與雲端存儲的需求結合，並放在你的手掌上。"</string>
+    <string name="jandi_tutorial_topic">"JANDI在一起"</string>
     <string name="jandi_tutorial_topic_message">"在您選擇的議題跟組織裏的同仁聯絡，無論是專案上的協作或僅是閑談。當您需要更多隱私，就邀請特定成員到私人議題及直接傳訊裏面繼續對話。"</string>
     <string name="jandi_tutorial_file">"簡單的幾個點擊來上傳檔案"</string>
-    <string name="jandi_tutorial_file_message">"您可以從您的手機或JANDI的檔案資料庫分享文件、簡報、視頻及任何其它檔案給您的團隊。我們自動將您所有的内容儲存並排序好讓您之後好找。"</string>
+    <string name="jandi_tutorial_file_message">"零時間、空間限制，隨時從行動裝置分享文件、簡報、視頻及任何檔案給所有團隊成員。"</string>
 
     <!-- Manipulate Entity -->
     <string name="jandi_entity_joined_topic">"我的議題"</string>
@@ -191,7 +191,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
     <string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
-    <string name="jandi_forgot_password"><b><u>忘記您的密碼了？</u></b></string>
+    <string name="jandi_forgot_password"><b><u>忘記密碼？</u></b></string>
     <string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
     <string name="jandi_profile_phone_number_hint">"電話號碼"</string>
     <string name="jandi_profile_division_hint">"部門"</string>
@@ -348,6 +348,6 @@
     <string name="jandi_sdcard_storage">記憶卡</string>
     <string name="jandi_sdcard_storage_mounted">連接記憶卡</string>
     <string name="jandi_sdcard_storage_unmounted">解除連接記憶卡</string>
-    <string name="jandi_deleted_message">"(刪除的消息)"</string>
+    <string name="jandi_deleted_message">"(刪除的訊息)"</string>
     <string name="jandi_try_again">"請再試一次"</string>
 </resources>

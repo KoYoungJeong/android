@@ -43,7 +43,8 @@ public class JandiSocketService extends Service {
         List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
 
         for (ActivityManager.RunningServiceInfo runningService : runningServices) {
-            if (TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
+
+            if (TextUtils.equals(runningService.service.getPackageName(), context.getPackageName()) && TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
                 return;
             }
         }
@@ -56,7 +57,7 @@ public class JandiSocketService extends Service {
         List<ActivityManager.RunningServiceInfo> runningServices = activityManager.getRunningServices(Integer.MAX_VALUE);
 
         for (ActivityManager.RunningServiceInfo runningService : runningServices) {
-            if (TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
+            if (TextUtils.equals(runningService.service.getPackageName(), context.getPackageName()) && TextUtils.equals(runningService.service.getClassName(), JandiSocketService.class.getName())) {
                 context.stopService(new Intent(context, JandiSocketService.class));
                 return;
             }
