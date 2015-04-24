@@ -6,8 +6,8 @@
     android:gravity="center">
 
     <ProgressBar
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="@dimen/jandi_progress_size"
+        android:layout_height="@dimen/jandi_progress_size"
         android:indeterminateDrawable="@drawable/progress_wheel_animation"
         android:indeterminateOnly="true" />
 </LinearLayout>
