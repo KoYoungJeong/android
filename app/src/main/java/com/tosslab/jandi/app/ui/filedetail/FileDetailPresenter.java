@@ -303,6 +303,9 @@ public class FileDetailPresenter {
             spannableStringBuilder.append(activity.getString(R.string.jandi_shared_in_room))
                     .setSpan(messageSpannable, 0, spannableStringBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
+            spannableStringBuilder.append(" ");
+            int firstLength = spannableStringBuilder.length();
+
             for (int idx = 0; idx < nSharedEntities; idx++) {
                 FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));
 
@@ -310,7 +313,7 @@ public class FileDetailPresenter {
                     continue;
                 }
 
-                if (spannableStringBuilder.length() > 0) {
+                if (spannableStringBuilder.length() > firstLength) {
                     spannableStringBuilder.append(", ");
                 }
 

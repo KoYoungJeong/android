@@ -33,7 +33,6 @@ import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterInject;
@@ -44,8 +43,6 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -436,8 +433,22 @@ public class FileListPresenter {
         return progressDialog;
     }
 
+    @UiThread
     public void showSuccessToast(String message) {
         ColoredToast.show(context, message);
     }
 
+    @UiThread
+    public void dismissMoreProgressBar() {
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
+        animation.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                moreLoadingProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        moreLoadingProgressBar.setAnimation(animation);
+        animation.startNow();
+    }
 }
