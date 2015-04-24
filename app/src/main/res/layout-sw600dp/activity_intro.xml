@@ -11,21 +11,20 @@
         android:layout_centerInParent="true">
 
         <ImageView
-            android:layout_width="145dp"
-            android:layout_height="145dp"
-            android:layout_marginBottom="80dp"
-            android:scaleType="centerInside"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginBottom="100dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/jandi_intro_symbol" />
     </LinearLayout>
 
     <ImageView
-        android:layout_width="75dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal=
-            "true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="60dp"
         android:src="@drawable/jandi_intro_logo" />
 
 </RelativeLayout>
