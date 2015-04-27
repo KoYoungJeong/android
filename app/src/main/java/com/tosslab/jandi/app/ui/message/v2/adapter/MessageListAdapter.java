@@ -79,8 +79,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
 
         viewHolder.initView(convertView);
-        viewHolder.setTeamId(teamId);
-        viewHolder.setRoomId(roomId);
 
 
         RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);
@@ -92,7 +90,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
     public void onBindViewHolder(RecyclerBodyViewHodler viewHolder, int position) {
 
         ResMessages.Link item = getItem(position);
-        viewHolder.getViewHolder().bindData(item);
+        viewHolder.getViewHolder().bindData(item, teamId, roomId);
 
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {

@@ -34,8 +34,6 @@ public class ImageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
-    private int roomId;
-    private int teamId;
 
     @Override
     public void initView(View rootView) {
@@ -54,7 +52,7 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -78,7 +76,7 @@ public class ImageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -107,9 +105,14 @@ public class ImageViewHolder implements BodyViewHolder {
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
             } else {
+                String imageUrl = null;
                 if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
-                    String imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.smallThumbnailUrl);
+                    imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.smallThumbnailUrl);
+                } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
+                    imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+                }
 
+                if (!TextUtils.isEmpty(imageUrl)) {
                     Ion.with(fileImageView)
                             .placeholder(R.drawable.jandi_fl_icon_img)
                             .error(R.drawable.jandi_fl_icon_img)
@@ -122,7 +125,6 @@ public class ImageViewHolder implements BodyViewHolder {
                             .imageName(fileMessage.content.name)
                             .imageType(fileMessage.content.type)
                             .start());
-
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }
@@ -142,15 +144,4 @@ public class ImageViewHolder implements BodyViewHolder {
 
     }
 
-    @Override
-    public void setTeamId(int teamId) {
-
-        this.teamId = teamId;
-    }
-
-    @Override
-    public void setRoomId(int roomId) {
-
-        this.roomId = roomId;
-    }
 }

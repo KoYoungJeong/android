@@ -14,12 +14,12 @@ import rx.Observable;
  */
 public class UnreadCountUtil {
 
-    public static int getUnreadCount(Context context, int teamId, int roomId, int linkId) {
+    public static int getUnreadCount(Context context, int teamId, int roomId, int linkId, int fromEntityId, int myId) {
 
         List<ResRoomInfo.MarkerInfo> markers = JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
 
         int unreadCount = Observable.from(markers)
-                .filter(markerInfo -> markerInfo.getLastLinkId() < linkId)
+                .filter(markerInfo -> markerInfo.getLastLinkId() < linkId && !(fromEntityId == myId && markerInfo.getMemberId() == myId))
                 .count()
                 .toBlocking()
                 .first();

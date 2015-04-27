@@ -44,7 +44,7 @@ public class EventViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         Observable.from(Arrays.asList(link.info))
                 .subscribeOn(Schedulers.io())
@@ -188,16 +188,6 @@ public class EventViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_event_v2;
-    }
-
-    @Override
-    public void setTeamId(int teamId) {
-
-    }
-
-    @Override
-    public void setRoomId(int roomId) {
-
     }
 
 }
