@@ -71,7 +71,9 @@ public class MainMoreFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        EventBus.getDefault().register(this);
         showUserProfile();
+
     }
 
     private void showUserProfile() {
@@ -149,31 +151,19 @@ public class MainMoreFragment extends Fragment {
     public void onEvent(TeamInvitationsEvent event) {
         switch (event.type) {
             case JandiConstants.TYPE_INVITATION_EMAIL:
-                logger.info("TeamInvitationsEvent : from email");
                 InviteActivity_.intent(MainMoreFragment.this)
                         .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                         .start();
-                //messageListPresenter.openAlbumForActivityResult(MainMoreFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_KAKAO:
-                logger.info("TeamInvitationsEvent : from kakao");
-                //messageListPresenter.openCameraForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_LINE:
-                logger.info("TeamInvitationsEvent : from LINE");
-                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_WECHAT:
-                logger.info("TeamInvitationsEvent : from WeChat");
-                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                logger.info("TeamInvitationsEvent : from facebook messenger");
-                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_COPY_LINK:
-                logger.info("TeamInvitationsEvent : from copy link , teamName : " + mEntityManager.getTeamName());
-                //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 ClipData clipData = ClipData.newPlainText("", "abcdefg");
                 clipboardManager.setPrimaryClip(clipData);
 
@@ -183,12 +173,6 @@ public class MainMoreFragment extends Fragment {
                 break;
 
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        EventBus.getDefault().register(this);
     }
 
     @Override
