@@ -3,6 +3,11 @@ package com.tosslab.jandi.app.ui.invites;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +47,10 @@ public class InviteView {
     @ViewById(R.id.invite_succes_text_display)
     TextView displaySendEmailSuccesText;
 
+    @ViewById(R.id.invite_footer_text)
+    TextView manyPeopleInviteText;
+
+
     @RootContext
     Activity activity;
 
@@ -54,6 +63,21 @@ public class InviteView {
         inviteListView.setAdapter(adapter);
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
+
+        String inviteText = activity.getString(R.string.jandi_invite_many_people_explain);
+        int index = inviteText.indexOf("support");
+        SpannableStringBuilder builder = new SpannableStringBuilder(inviteText);
+        URLSpan urlSpan = new URLSpan("mailto:" + inviteText.substring(index).toString()) {
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setColor(activity.getResources().getColor(R.color.jandi_accent_color));
+            }
+        };
+        builder.setSpan(urlSpan, index, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        manyPeopleInviteText.setText(builder);
+        manyPeopleInviteText.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 

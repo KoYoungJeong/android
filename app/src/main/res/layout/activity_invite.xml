@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,8 +18,7 @@
     <RelativeLayout
         android:id="@+id/layout_invite_send_email"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_below="@+id/layout_search_bar">
+        android:layout_height="72dp">
 
         <EditText
             android:id="@+id/edit_invite_email"
@@ -50,7 +49,6 @@
         android:id="@+id/invite_succes_text_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/layout_invite_send_email"
         android:layout_marginBottom="25dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
@@ -59,33 +57,23 @@
         android:textColor="@color/jandi_black_89"
         android:visibility="invisible" />
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/lv_invite"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/invite_footer_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/invite_succes_text_display"
-        android:orientation="vertical">
+        android:lineSpacingExtra="4dp"
+        android:paddingBottom="17dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="17dp"
+        android:text="@string/jandi_invite_many_people_explain"
+        android:textColor="@color/jandi_black_89"
+        android:textSize="@dimen/jandi_text_size_large" />
 
-
-        <ListView
-            android:id="@+id/lv_invite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/invite_footer_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/lv_invite"
-            android:lineSpacingExtra="4dp"
-            android:paddingBottom="17dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="17dp"
-            android:text="Inviting over 100 members?\nContact us at"
-            android:textColor="@color/jandi_black_89"
-            android:textSize="@dimen/jandi_text_size_large" />
-    </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>
