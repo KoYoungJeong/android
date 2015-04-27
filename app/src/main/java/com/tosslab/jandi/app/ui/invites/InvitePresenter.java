@@ -79,7 +79,6 @@ public class InvitePresenter {
     @UiThread
     public void addSendEmailSuccessText(){
         displaySendEmailSuccesText.setVisibility(View.VISIBLE);
-        displaySendEmailSuccesText.setText("Invitations ahve been successfully sent to");
     }
 
 
