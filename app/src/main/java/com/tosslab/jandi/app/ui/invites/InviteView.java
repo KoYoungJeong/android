@@ -28,12 +28,12 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
 @EBean
-public class InvitePresenter {
+public class InviteView {
 
-    @ViewById(R.id.btn_invitation_confirm)
+    @ViewById(R.id.btn_invite_send)
     Button inviteButton;
 
-    @ViewById(R.id.et_invitation_email)
+    @ViewById(R.id.edit_invite_email)
     EditText emailTextView;
 
     @ViewById(R.id.lv_invite)
@@ -70,14 +70,13 @@ public class InvitePresenter {
         inviteButton.setEnabled(invalidEmail);
     }
 
-    @UiThread
-    public void addEmailAtFirst(EmailTO emailTO) {
+    public void addEmail(EmailTO emailTO) {
         adapter.add(0, emailTO);
         adapter.notifyDataSetChanged();
     }
 
     @UiThread
-    public void addSendEmailSuccessText(){
+    public void addSendEmailSuccessText() {
         displaySendEmailSuccesText.setVisibility(View.VISIBLE);
     }
 
@@ -163,5 +162,21 @@ public class InvitePresenter {
     @UiThread
     public void showWarnToast(String message) {
         ColoredToast.showWarning(activity, message);
+    }
+
+    @UiThread
+    public void updateSuccessInvite(EmailTO o) {
+        for (int idx = adapter.getCount() - 1; idx >= 0; --idx) {
+            EmailTO item = adapter.getItem(idx);
+            if (item == o) {
+                item.setSuccess(true);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    public void moveToSelection(int position) {
+        inviteListView.smoothScrollToPosition(position);
     }
 }

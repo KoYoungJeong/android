@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -50,27 +51,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_invite_send_email"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="25dp"
         android:layout_marginLeft="16dp"
-        android:text="Invitations have been successfully sent to"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/jandi_invitation_successfully"
+        android:textColor="@color/jandi_black_89"
         android:visibility="invisible" />
 
-
-    <ListView
-        android:id="@+id/lv_invite"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/invite_footer_text"
-        android:layout_below="@+id/invite_succes_text_display" />
+        android:layout_below="@+id/invite_succes_text_display"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/invite_footer_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:lineSpacingExtra="4dp"
-        android:paddingBottom="10dp"
-        android:text="Inviting\nContact"
-        android:textSize="@dimen/jandi_text_size_large" />
+
+        <ListView
+            android:id="@+id/lv_invite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/invite_footer_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/lv_invite"
+            android:lineSpacingExtra="4dp"
+            android:paddingBottom="17dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="17dp"
+            android:text="Inviting over 100 members?\nContact us at"
+            android:textColor="@color/jandi_black_89"
+            android:textSize="@dimen/jandi_text_size_large" />
+    </LinearLayout>
 
 </RelativeLayout>

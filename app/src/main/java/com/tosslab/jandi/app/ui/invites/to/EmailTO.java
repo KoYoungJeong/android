@@ -5,17 +5,26 @@ package com.tosslab.jandi.app.ui.invites.to;
  */
 public class EmailTO {
     private final String email;
+    private boolean isSuccess;
 
-    private EmailTO(String email) {
+    private EmailTO(String email, boolean isSuccess) {
         this.email = email;
+        this.isSuccess = isSuccess;
     }
 
-    public static EmailTO create(String email) {
-        return new EmailTO(email);
+    public static EmailTO create(String email, boolean success) {
+        return new EmailTO(email, success);
     }
 
     public String getEmail() {
         return email;
     }
 
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public void setSuccess(boolean isSuccess) {
+        this.isSuccess = isSuccess;
+    }
 }
