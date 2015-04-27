@@ -54,6 +54,10 @@ public class ResTeamDetailInfo {
         private String status;
         private String type;
 
+        private String invitationStatus;
+
+        private String invitationCode;
+
         public String get_Id() {
             return _Id;
         }
@@ -102,6 +106,22 @@ public class ResTeamDetailInfo {
             return type;
         }
 
+        public String getInvitationStatus() {
+            return invitationStatus;
+        }
+
+        public void setInvitationStatus(String invitationStatus) {
+            this.invitationStatus = invitationStatus;
+        }
+
+        public String getInvitationCode() {
+            return invitationCode;
+        }
+
+        public void setInvitationCode(String invitationCode) {
+            this.invitationCode = invitationCode;
+        }
+
         @Override
         public String toString() {
             return "InviteTeam{" +
@@ -117,6 +137,8 @@ public class ResTeamDetailInfo {
                     ", teamMembers=" + teamMembers +
                     ", status='" + status + '\'' +
                     ", type='" + type + '\'' +
+                    ", invitationStatus='" + invitationStatus + '\'' +
+                    ", invitationCode='" + invitationCode + '\'' +
                     '}';
         }
     }

@@ -46,4 +46,7 @@ public interface TeamsApiClient {
     @RequiresAuthentication
     ResLeftSideMenu.User getMemberProfile(int teamId, int memberId);
 
+    @Get("/teams/{teamId}")
+    @RequiresAuthentication
+    ResTeamDetailInfo getTeamInfo(int teamId);
 }
