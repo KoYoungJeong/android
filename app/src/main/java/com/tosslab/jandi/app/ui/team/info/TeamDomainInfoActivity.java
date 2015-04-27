@@ -43,6 +43,9 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     @Extra
     int teamId;
 
+    private String userEmail;
+    private String userName;
+
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
@@ -87,30 +90,25 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
             }
         });
 
-
         initUserEmailInfo();
         initUserDefaultName();
-
 
     }
 
     @Background
     void initUserDefaultName() {
-        String name = teamDomainInfoModel.getUserName();
-        teamDomainInfoPresenter.setDefaultName(name);
-
+        userName = teamDomainInfoModel.getUserName();
     }
 
     @Background
     void initUserEmailInfo() {
         List<ResAccountInfo.UserEmail> userEmails = teamDomainInfoModel.initUserEmailInfo();
         if (userEmails != null && userEmails.size() > 0) {
-            teamDomainInfoPresenter.setEmails(userEmails);
+            userEmail = userEmails.get(0).getId();
         } else {
             ColoredToast.showWarning(TeamDomainInfoActivity.this, getString(R.string.err_network));
             finish();
         }
-
     }
 
     @OptionsItem(android.R.id.home)
@@ -125,15 +123,15 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         Mode activityMode = Mode.valueOf(mode);
         if (activityMode == Mode.JOIN) {
 
-            String myName = teamDomainInfoPresenter.getMyName();
-            String myEmail = teamDomainInfoPresenter.getMyEmail();
+            String myName = userName;
+            String myEmail = userEmail;
             joinTeam(token, myName, myEmail);
         } else {
 
             String teamName = teamDomainInfoPresenter.getTeamName();
             String teamDomain = teamDomainInfoPresenter.getTeamDomain();
-            String myName = teamDomainInfoPresenter.getMyName();
-            String myEmail = teamDomainInfoPresenter.getMyEmail();
+            String myName = userName;
+            String myEmail = userEmail;
 
             if (TextUtils.isEmpty(teamDomain)) {
                 teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));

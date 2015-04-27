@@ -342,10 +342,14 @@ Assign one email to each team to let other members know how to contact you."</st
     <string name="jandi_message_no_member">"No other members have joined your team. Invite them now to start collaborating."</string>
     <string name="jandi_file_delete_message">"Are you sure you want to delete this file? Please note this will not delete the associated comments."</string>
 
-    <string name="menu_email">Email</string>
-    <string name="menu_kakao">Kakao</string>
-    <string name="menu_line">LINE</string>
-    <string name="menu_wechat">WeChat</string>
-    <string name="menu_facebook_messenger">Facebook Messenger</string>
-    <string name="menu_copy_link">Copy Link</string>
+    <string name="jandi_invite_email">Invite by Email</string>
+    <string name="jandi_invite_kakao">KakaoTalk</string>
+    <string name="jandi_invite_line">LINE</string>
+    <string name="jandi_invite_wechat">WeChat</string>
+    <string name="jandi_invite_facebook_messenger">Facebook Messenger</string>
+    <string name="jandi_invite_copy_link">Copy Link</string>
+    <string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
+    <string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
+    <string name="jandi_invite_contents">" invited you to JANDI. Follow the link below to get started now!"</string>
+
 </resources>

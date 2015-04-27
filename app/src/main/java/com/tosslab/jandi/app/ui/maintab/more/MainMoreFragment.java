@@ -169,13 +169,12 @@ public class MainMoreFragment extends Fragment {
                 //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_INVITATION_COPY_LINK:
-                logger.info("TeamInvitationsEvent : from copy link");
+                logger.info("TeamInvitationsEvent : from copy link , teamName : " + mEntityManager.getTeamName());
                 //messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
-
                 ClipData clipData = ClipData.newPlainText("", "abcdefg");
                 clipboardManager.setPrimaryClip(clipData);
 
-                ColoredToast.show(mContext, "Your team's invitation link has been copied.\nSend the link to anyone you wish to invite to your team!");
+                ColoredToast.show(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
                 break;
             default:
                 break;
