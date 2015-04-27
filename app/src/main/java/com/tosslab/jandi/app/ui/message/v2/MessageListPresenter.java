@@ -40,7 +40,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -598,9 +597,11 @@ public class MessageListPresenter {
         messageListAdapter.notifyDataSetChanged();
     }
 
+    @UiThread
     public void setMarkerInfo(int teamId, int roomId) {
         messageListAdapter.setTeamId(teamId);
         messageListAdapter.setRoomId(roomId);
+        messageListAdapter.notifyDataSetChanged();
     }
 
     @UiThread
@@ -675,4 +676,5 @@ public class MessageListPresenter {
             emptyMessageView.removeAllViews();
         }
     }
+
 }

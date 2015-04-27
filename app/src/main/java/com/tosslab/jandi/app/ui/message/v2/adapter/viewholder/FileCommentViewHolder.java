@@ -40,8 +40,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
-    private int roomId;
-    private int teamId;
 
     @Override
     public void initView(View rootView) {
@@ -64,7 +62,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -86,7 +84,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -124,10 +122,16 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 String fileType = feedbackFileMessage.content.type;
                 if (fileType.startsWith("image/")) {
+                    String imageUrl = null;
                     if (feedbackFileMessage.content.extraInfo != null &&
                             !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
 
-                        String imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
+                        imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
+
+                    } else if (!TextUtils.isEmpty(feedbackFileMessage.content.fileUrl)) {
+                        imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl);
+                    }
+                    if (!TextUtils.isEmpty(imageUrl)) {
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
@@ -192,15 +196,4 @@ public class FileCommentViewHolder implements BodyViewHolder {
         return R.layout.item_message_cmt_with_file_v2;
     }
 
-    @Override
-    public void setTeamId(int teamId) {
-
-        this.teamId = teamId;
-    }
-
-    @Override
-    public void setRoomId(int roomId) {
-
-        this.roomId = roomId;
-    }
 }

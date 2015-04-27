@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
@@ -28,8 +27,6 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView commentTextView;
     private View disableLineThroughView;
     private TextView unreadTextView;
-    private int teamId;
-    private int roomId;
 
     @Override
     public void initView(View rootView) {
@@ -42,7 +39,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -63,7 +60,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -98,15 +95,4 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
     }
 
-    @Override
-    public void setTeamId(int teamId) {
-
-        this.teamId = teamId;
-    }
-
-    @Override
-    public void setRoomId(int roomId) {
-
-        this.roomId = roomId;
-    }
 }
