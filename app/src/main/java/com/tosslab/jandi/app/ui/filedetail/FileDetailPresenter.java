@@ -180,11 +180,18 @@ public class FileDetailPresenter {
                     // 이미지일 경우
                     iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
                     // 중간 썸네일을 가져온다.
+                    String thumbnailPhotoUrl = null;
+                    String photoUrl = null;
                     if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
 
-                        String thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
-                        String photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+                        thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
+                        photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+                    } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
+                        thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+                        photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+                    }
 
+                    if (!TextUtils.isEmpty(thumbnailPhotoUrl) && !TextUtils.isEmpty(photoUrl)) {
                         if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
                             Ion.with(activity)
                                     .load(thumbnailPhotoUrl)
@@ -196,16 +203,16 @@ public class FileDetailPresenter {
                                     .load(thumbnailPhotoUrl);
                         }
                         // 이미지를 터치하면 큰 화면 보기로 넘어감
+                        final String finalPhotoUrl = photoUrl;
                         imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(activity)
-                                .imageUrl(photoUrl)
+                                .imageUrl(finalPhotoUrl)
                                 .imageName(fileMessage.content.name)
                                 .imageType(fileMessage.content.type)
                                 .start());
                     } else {
                         imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_img);
                     }
-
                 } else {
 
                     iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));

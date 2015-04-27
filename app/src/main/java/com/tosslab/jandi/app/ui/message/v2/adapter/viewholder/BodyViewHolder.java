@@ -11,13 +11,9 @@ public interface BodyViewHolder {
 
     void initView(View rootView);
 
-    void bindData(ResMessages.Link link);
+    void bindData(ResMessages.Link link, int teamId, int roomId);
 
     int getLayoutId();
-
-    void setTeamId(int teamId);
-
-    void setRoomId(int roomId);
 
     public enum Type {
         Message, File, Image, PureComment, FileComment, Dummy, Event
