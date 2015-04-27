@@ -45,10 +45,21 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
 
+    private int teamId;
+    private int roomId;
+
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new ArrayList<ResMessages.Link>();
         oldMoreState = MoreState.Idle;
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public int getCount() {
@@ -68,6 +79,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
 
         viewHolder.initView(convertView);
+        viewHolder.setTeamId(teamId);
+        viewHolder.setRoomId(roomId);
 
 
         RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);
@@ -309,20 +322,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         oldMoreState = MoreState.Idle;
     }
 
-    public ResMessages.Link getItemByLinkId(int linkId) {
+    public ResMessages.Link getItemByMessageId(int messageId) {
         for (int idx = 0; idx < messageList.size(); idx++) {
             ResMessages.Link link = messageList.get(idx);
-            if (link.messageId == linkId) {
+            if (link.messageId == messageId) {
                 return link;
             }
         }
         return null;
     }
 
-    public int getItemPositionByLinkId(int linkId) {
+    public int getItemPositionByMessageId(int messageId) {
         for (int idx = 0; idx < messageList.size(); idx++) {
             ResMessages.Link link = messageList.get(idx);
-            if (link.messageId == linkId) {
+            if (link.messageId == messageId) {
                 return idx;
             }
         }
@@ -440,6 +453,18 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    public int getItemPositionByLinkId(int linkId) {
+        for (int idx = 0; idx < messageList.size(); idx++) {
+            ResMessages.Link link = messageList.get(idx);
+            if (link.id == linkId) {
+                return idx;
+            }
+        }
+
+        return -1;
+
     }
 
     private enum MoreState {

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,7 @@ import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
+import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -23,6 +25,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
@@ -70,14 +73,13 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance(MainTabActivity.this);
 
-
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
 
-        setupActionBar(selectedTeamInfo);
+        setupActionBar(selectedTeamInfo.getName());
 
         // ViewPager
         View[] tabViews = new View[4];
@@ -115,25 +117,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
             showInvitePopup();
-        } else if (needSearchPopup()) {
-            JandiPreference.setSearchPopup(MainTabActivity.this);
-            showSearchPopup();
         }
-    }
 
-    private void showSearchPopup() {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainTabActivity.this);
-        View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_search_new_popup, null);
-
-        builder.customView(view, true)
-                .backgroundColor(getResources().getColor(R.color.white))
-                .positiveText(R.string.jandi_confirm)
-                .show();
-
-    }
-
-    private boolean needSearchPopup() {
-        return JandiPreference.isSearchPopup(MainTabActivity.this);
+        JandiSocketService.startSocketServiceIfStop(MainTabActivity.this);
     }
 
     private void showInvitePopup() {
@@ -167,7 +153,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         return JandiPreference.isInvitePopup(MainTabActivity.this) && (formattedUsersWithoutMe == null || formattedUsersWithoutMe.isEmpty());
     }
 
-    private void setupActionBar(ResAccountInfo.UserTeam selectedTeamInfo) {
+    private void setupActionBar(String teamName) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
@@ -175,7 +161,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle(selectedTeamInfo.getName());
+        actionBar.setTitle(teamName);
     }
 
     @Override
@@ -184,6 +170,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
         getEntities();
+
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        setupActionBar(selectedTeamInfo.getName());
+
     }
 
     /**
@@ -220,6 +210,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             log.error(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
                 getEntitiesFailed(getString(R.string.err_expired_session));
+                stopJandiServiceInMainThread();
             } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()) {
                 EventBus.getDefault().post(new ServiceMaintenanceEvent());
             } else {
@@ -231,6 +222,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         } catch (Exception e) {
             getEntitiesFailed(getString(R.string.err_service_connection));
         }
+    }
+
+    @UiThread
+    void stopJandiServiceInMainThread() {
+        JandiSocketService.stopSocketServiceIfRunning(MainTabActivity.this);
+
     }
 
     @UiThread
@@ -285,6 +282,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         } else {
             mMainTabPagerAdapter.hideNewTopicBadge();
         }
+    }
+
+    public void onEvent(TeamInfoChangeEvent event) {
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        setupActionBar(selectedTeamInfo.getName());
+
     }
 
     public void onEventMainThread(ServiceMaintenanceEvent event) {

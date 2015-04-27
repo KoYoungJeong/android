@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -166,7 +167,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                     accountTeamRowView1.setTeamName(getString(R.string.jandi_team_select_create_a_team));
                     accountTeamRowView1.setIcon(R.drawable.jandi_icon_teamlist_add);
                     accountTeamRowView1.setBadgeCount(0);
-                    accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.text_color_green));
+                    accountTeamRowView1.setNameTextColor(getResources().getColorStateList(R.color.jandi_accent_color));
                     accountTeamRowView1.setOnClickListener(v -> accountHomePresenter.onCreateTeamSelect());
 
                     view = accountTeamRowView1;
@@ -227,6 +228,10 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @UiThread
     @Override
+    public void moveSelectedTeam() {
+        JandiSocketService.stopSocketServiceIfRunning(AccountHomeActivity.this);
+        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
+
     public void moveSelectedTeam(boolean firstJoin) {
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

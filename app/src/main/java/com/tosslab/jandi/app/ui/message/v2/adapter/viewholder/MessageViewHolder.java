@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +32,9 @@ public class MessageViewHolder implements BodyViewHolder {
     private TextView messageTextView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
+    private int roomId;
+    private int teamId;
 
 
     @Override
@@ -43,6 +46,7 @@ public class MessageViewHolder implements BodyViewHolder {
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override
@@ -70,6 +74,15 @@ public class MessageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
+            unreadTextView.setVisibility(View.GONE);
+        } else {
+            unreadTextView.setVisibility(View.VISIBLE);
+        }
+
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
@@ -88,18 +101,32 @@ public class MessageViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder);
 
-            messageTextView.setText(spannableStringBuilder);
             if (hasLink) {
-                messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                messageTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                LinkifyUtil.setOnLinkClick(messageTextView);
+            } else {
+                messageTextView.setText(spannableStringBuilder);
             }
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-
+        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_msg_v2;
 
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

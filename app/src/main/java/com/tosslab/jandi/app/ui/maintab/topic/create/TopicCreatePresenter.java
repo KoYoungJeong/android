@@ -99,7 +99,7 @@ public class TopicCreatePresenter {
     }
 
     @UiThread
-    public void createTopicSuccess(int entityId, String topicTitle, boolean publicSelected) {
+    public void createTopicSuccess(int teamId, int entityId, String topicTitle, boolean publicSelected) {
 
         ColoredToast.show(activity, activity.getString(R.string.jandi_message_create_entity, topicTitle));
 
@@ -112,6 +112,8 @@ public class TopicCreatePresenter {
 
         MessageListV2Activity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .teamId(teamId)
+                .roomId(entityId)
                 .entityType(entityType)
                 .entityId(entityId)
                 .isFavorite(false)

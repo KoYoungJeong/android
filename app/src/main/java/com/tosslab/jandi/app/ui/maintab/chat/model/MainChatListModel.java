@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -22,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -70,8 +72,9 @@ public class MainChatListModel {
 
                     ChatItem chatItem = new ChatItem();
                     chatItem.entityId(userEntity.getId())
+                            .roomId(resChat.getEntityId())
                             .lastLinkId(resChat.getLastLinkId())
-                            .lastMessage(resChat.getLastMessage())
+                            .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
                             .lastMessageId(resChat.getLastMessageId())
                             .name(userEntity.getName())
                             .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
@@ -98,5 +101,22 @@ public class MainChatListModel {
 
     public void saveChatList(int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
+    }
+
+    public int getRoomId(int teamId, int userId) {
+
+        List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+
+        ChatItem first = Observable.from(savedChatItems)
+                .filter(new Func1<ChatItem, Boolean>() {
+                    @Override
+                    public Boolean call(ChatItem chatItem) {
+                        return chatItem.getEntityId() == userId;
+                    }
+                })
+                .firstOrDefault(new ChatItem())
+                .toBlocking().first();
+
+        return first.getRoomId();
     }
 }

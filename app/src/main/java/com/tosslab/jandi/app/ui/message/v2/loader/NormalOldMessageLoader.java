@@ -55,14 +55,15 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     }
 
     @Override
-    public void load(int linkId) {
+    public ResMessages load(int linkId) {
+        ResMessages oldMessage = null;
         try {
 
-            ResMessages oldMessage = messageListModel.getOldMessage(linkId);
+            oldMessage = messageListModel.getOldMessage(linkId);
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                checkItemCountIfException();
-                return;
+                checkItemCountIfException(linkId);
+                return oldMessage;
             }
 
             int firstLinkId = oldMessage.records.get(0).id;
@@ -71,6 +72,11 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             messageState.setFirstMessage(isFirstMessage);
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
+
+            int lastLinkIdInMessage = oldMessage.records.get(oldMessage.records.size() - 1).id;
+            if (oldMessage.lastLinkId <= lastLinkIdInMessage) {
+                updateMarker(teamId, oldMessage.entityId, lastLinkIdInMessage);
+            }
 
 
             if (linkId == -1) {
@@ -88,7 +94,6 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
                 messageListPresenter.moveLastPage();
 
-                updateMarker();
             } else {
 
                 int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
@@ -107,27 +112,30 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
         } catch (JandiNetworkException e) {
             logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
-            checkItemCountIfException();
+            checkItemCountIfException(linkId);
         } catch (Exception e) {
-            checkItemCountIfException();
+            checkItemCountIfException(linkId);
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
 
+        return oldMessage;
+
     }
 
-    private void checkItemCountIfException() {
-        boolean hasItem = messageListPresenter.getFirstVisibleItemLinkId() > 0;
+    private void checkItemCountIfException(int linkId) {
+        boolean hasItem = linkId > 0;
         if (!hasItem) {
             messageListPresenter.dismissLoadingView();
             messageListPresenter.showEmptyView();
         }
     }
 
-    private void updateMarker() {
+    private void updateMarker(int teamId, int roomId, int lastUpdateLinkId) {
         try {
-            if (messageState.getLastUpdateLinkId() > 0) {
-                messageListModel.updateMarker(messageState.getLastUpdateLinkId());
+            if (lastUpdateLinkId > 0) {
+                messageListModel.updateMarker(lastUpdateLinkId);
+                messageListModel.updateMarkerInfo(teamId, roomId);
             }
         } catch (JandiNetworkException e) {
             logger.error("set marker failed", e);

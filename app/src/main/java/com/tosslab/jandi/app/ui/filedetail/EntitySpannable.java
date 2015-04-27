@@ -6,6 +6,7 @@ import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
@@ -43,6 +44,7 @@ public class EntitySpannable extends ClickableSpan {
                 .teamId(teamId)
                 .entityId(entityId)
                 .entityType(entityType)
+                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
                 .isFromPush(false)
                 .isFavorite(isStarred)
                 .start();

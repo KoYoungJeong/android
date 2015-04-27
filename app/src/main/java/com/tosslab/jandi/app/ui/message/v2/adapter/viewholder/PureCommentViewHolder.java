@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -7,12 +8,15 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 21..
@@ -23,6 +27,9 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView dateTextView;
     private TextView commentTextView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
+    private int teamId;
+    private int roomId;
 
     @Override
     public void initView(View rootView) {
@@ -30,6 +37,8 @@ public class PureCommentViewHolder implements BodyViewHolder {
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override
@@ -53,6 +62,16 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
+
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
+            unreadTextView.setVisibility(View.GONE);
+        } else {
+            unreadTextView.setVisibility(View.VISIBLE);
+        }
+
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
             commentTextView.setText(commentMessage.content.body);
@@ -62,17 +81,32 @@ public class PureCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
 
-            commentTextView.setText(spannableStringBuilder);
             if (hasLink) {
-                commentTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                commentTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                LinkifyUtil.setOnLinkClick(commentTextView);
+            } else {
+                commentTextView.setText(spannableStringBuilder);
             }
         }
 
+        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_cmt_without_file_v2;
 
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

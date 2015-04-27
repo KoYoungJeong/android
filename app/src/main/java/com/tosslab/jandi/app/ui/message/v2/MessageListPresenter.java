@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
@@ -25,13 +28,16 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
@@ -49,6 +55,8 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -93,7 +101,7 @@ public class MessageListPresenter {
     View disabledUser;
 
     @ViewById(R.id.layout_messages_empty)
-    View emptyMessageView;
+    LinearLayout emptyMessageView;
 
     @ViewById(R.id.layout_messages_loading)
     View loadingMessageView;
@@ -119,11 +127,16 @@ public class MessageListPresenter {
         messageListAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                super.onChanged();
-                if (messageListAdapter.getItemCount() == 0) {
-                    emptyMessageView.setVisibility(View.VISIBLE);
-                } else {
+                int itemCountWithoutEvent = getItemCountWithoutEvent();
+                if (itemCountWithoutEvent > 0) {
                     emptyMessageView.setVisibility(View.GONE);
+                } else {
+
+                    if (loadingMessageView.getVisibility() != View.VISIBLE) {
+                        emptyMessageView.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyMessageView.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -225,13 +238,18 @@ public class MessageListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
-        int itemPosition = messageListAdapter.getItemPositionByLinkId(linkId);
+        int itemPosition = messageListAdapter.getItemPositionByMessageId(linkId);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
     public int getFirstVisibleItemLinkId() {
         if (messageListAdapter.getCount() > 0) {
-            return messageListAdapter.getItem(((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition()).messageId;
+            int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
+            if (firstVisibleItemPosition >= 0) {
+                return messageListAdapter.getItem(firstVisibleItemPosition).messageId;
+            } else {
+                return -1;
+            }
         } else {
             return -1;
         }
@@ -263,10 +281,9 @@ public class MessageListPresenter {
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
     }
 
-    public void openCameraForActivityResult(Fragment fragment) {
-
+    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg");
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
@@ -361,6 +378,7 @@ public class MessageListPresenter {
         clipboardManager.setPrimaryClip(clipData);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void changeToArchive(int messageId) {
         int position = messageListAdapter.indexByMessageId(messageId);
         String archivedStatus = "archived";
@@ -496,7 +514,7 @@ public class MessageListPresenter {
         emptyMessageView.setVisibility(View.GONE);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissLoadingView() {
         loadingMessageView.setVisibility(View.GONE);
     }
@@ -543,15 +561,6 @@ public class MessageListPresenter {
         }
     }
 
-    public void restartMessageApp(int entityId, int entityType, boolean isFavorite, int teamId) {
-        MessageListV2Activity_.intent(activity)
-                .entityId(entityId)
-                .entityType(entityType)
-                .teamId(teamId)
-                .isFavorite(isFavorite)
-                .start();
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setGotoLatestLayoutVisibleGone() {
         gotoLatestLayoutVisible = false;
@@ -582,5 +591,88 @@ public class MessageListPresenter {
 
     public int getLastVisibleItemPosition() {
         return ((LinearLayoutManager) messageListView.getLayoutManager()).findLastVisibleItemPosition();
+    }
+
+    @UiThread
+    public void justRefresh() {
+        messageListAdapter.notifyDataSetChanged();
+    }
+
+    public void setMarkerInfo(int teamId, int roomId) {
+        messageListAdapter.setTeamId(teamId);
+        messageListAdapter.setRoomId(roomId);
+    }
+
+    @UiThread
+    public void insertMessageEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
+        emptyMessageView.removeAllViews();
+
+        LayoutInflater.from(activity).inflate(R.layout.view_message_list_empty, emptyMessageView, true);
+    }
+
+    @UiThread
+    public void insertTeamMemberEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
+        emptyMessageView.removeAllViews();
+        View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
+
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
+    }
+
+    @UiThread
+    public void insertTopicMemberEmptyLayout() {
+
+        if (emptyMessageView == null) {
+            return;
+        }
+
+        emptyMessageView.removeAllViews();
+        View view = LayoutInflater.from(activity).inflate(R.layout.view_topic_member_empty, emptyMessageView, true);
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> EventBus.getDefault().post(new TopicInviteEvent()));
+
+    }
+
+    public int getItemCountWithoutEvent() {
+
+        int itemCount = messageListAdapter.getItemCount();
+        for (int idx = itemCount - 1; idx >= 0; --idx) {
+            if (messageListAdapter.getItemViewType(idx) == BodyViewHolder.Type.Event.ordinal()) {
+                itemCount--;
+            }
+        }
+
+        return itemCount;
+    }
+
+    @UiThread
+    public void dismissEmptyView() {
+        emptyMessageView.setVisibility(View.GONE);
+    }
+
+    @UiThread
+    public void checkItemCountIfException() {
+        boolean hasItem = getFirstVisibleItemLinkId() > 0;
+        dismissLoadingView();
+        if (!hasItem) {
+            showEmptyView();
+        } else {
+            dismissEmptyView();
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void clearEmptyMessageLayout() {
+        if (emptyMessageView != null) {
+            emptyMessageView.removeAllViews();
+        }
     }
 }

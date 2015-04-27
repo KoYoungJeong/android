@@ -163,7 +163,7 @@
                 <action android:name="com.parse.push.intent.DELETE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".push.JandiBroadcastReceiver">
+        <receiver android:name=".push.receiver.JandiBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.tosslab.jandi.app.Push" />
             </intent-filter>
@@ -199,6 +199,7 @@
         <activity
             android:name=".ui.share.MainShareActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Jandi.Transparent">
             <intent-filter>
@@ -216,6 +217,8 @@
             </intent-filter>
 
         </activity>
+
+        <service android:name=".services.socket.JandiSocketService" />
 
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
@@ -248,5 +251,6 @@
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+
     <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
 </manifest>

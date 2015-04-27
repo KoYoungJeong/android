@@ -22,7 +22,11 @@ import org.androidannotations.annotations.RootContext;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -128,7 +132,20 @@ public class FileDetailModel {
             shareEntities.add(myEntityId);
         }
 
-        return entityManager.retrieveExclusivedEntities(shareEntities);
+        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(shareEntities);
+
+        Iterator<FormattedEntity> enabledEntities = Observable.from(entities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
+                .toBlocking()
+                .getIterator();
+
+        List<FormattedEntity> formattedEntities = new ArrayList<>();
+
+        while (enabledEntities.hasNext()) {
+            formattedEntities.add(enabledEntities.next());
+        }
+
+        return formattedEntities;
     }
 
     public boolean isEnableUserFromUploder(ResFileDetail resFileDetail) {

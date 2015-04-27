@@ -14,7 +14,9 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
@@ -109,10 +111,12 @@ public class MainTopicListFragment extends Fragment {
                 entity.alarmCount = 0;
                 adapter.notifyDataSetChanged();
 
+                EventBus.getDefault().post(new TopicBadgeEvent(mainTopicModel.hasAlarmCount(mainTopicPresenter.getJoinedTopics())));
 
                 if (entity.isJoined || entity.isPrivateGroup()) {
                     int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-                    mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred);
+                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+                    mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
                 } else {
                     joinChannelInBackground(entity);
                 }
@@ -174,7 +178,8 @@ public class MainTopicListFragment extends Fragment {
                         .trackJoinChannel();
             }
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred);
+            int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+            mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
         } catch (JandiNetworkException e) {
             logger.error("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
@@ -201,6 +206,18 @@ public class MainTopicListFragment extends Fragment {
     public void onEvent(MessagePushEvent event) {
         if (!TextUtils.equals(event.getEntityType(), "user")) {
 
+        }
+    }
+
+    public void onEvent(SocketMessageEvent event) {
+        if (TextUtils.equals(event.getMessageType(), "chat")) {
+            return;
+        }
+
+        List<FormattedEntity> joinedTopics = mainTopicPresenter.getJoinedTopics();
+        if (mainTopicModel.updateBadge(event, joinedTopics)) {
+            mainTopicPresenter.refreshList();
+            EventBus.getDefault().post(new TopicBadgeEvent(true));
         }
     }
 

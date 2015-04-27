@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme. -->
+    <style name="JandiTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+        <item name="android:splitMotionEvents">false</item>
+
+        <item name="searchViewStyle">@style/JandiSearchView</item>
+        <item name="colorPrimary">@color/jandi_primary_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorAccent">@color/jandi_accent_color</item>
+
+        <item name="android:alertDialogTheme">@style/JandiTheme.AlertDialog</item>
+    </style>
+
+    <style name="JandiTheme.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/jandi_primary_color</item>
+        <item name="colorPrimaryDark">@color/jandi_primary_dark_color</item>
+        <item name="colorAccent">@color/jandi_accent_color</item>
+    </style>
+
+    <!-- Intro 화면은 어둡기 때문에 -->
+    <style name="JandiTheme.Intro" parent="android:Theme.DeviceDefault.NoActionBar.Fullscreen"></style>
+
+    <style name="JandiTheme.PushIntro" parent="@style/Theme.AppCompat.Light.NoActionBar"></style>
+
+    <!-- Actionbar -->
+    <style name="JandiActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/jandi_primary_color</item>
+        <item name="android:backgroundStacked">@color/jandi_primary_color</item>
+        <item name="android:backgroundSplit">@color/jandi_primary_color</item>
+    </style>
+
+    <style name="JandiTheme.ActionBarOverlay" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="colorPrimary">@color/backgournd_photo_actionbar</item>
+        <item name="colorPrimaryDark">@color/backgournd_photo_actionbar</item>
+    </style>
+
+    <style name="JandiSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="layout">@layout/view_search_view</item>
+        <item name="closeIcon">@drawable/jandi_actionb_remove</item>
+        <item name="queryBackground">@drawable/jandi_textfield_activated_holo_dark</item>
+    </style>
+</resources>

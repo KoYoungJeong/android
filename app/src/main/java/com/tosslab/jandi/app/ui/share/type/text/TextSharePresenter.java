@@ -141,6 +141,7 @@ public class TextSharePresenter {
 
         MessageListV2Activity_.intent(context)
                 .teamId(teamId)
+                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityType : entity.getEntityId())
                 .entityId(entity.getEntityId())
                 .entityType(entityType)
                 .isFavorite(starredEntity)

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.manager;
 import android.content.Context;
 
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -51,6 +52,7 @@ public class RequestManager<ResponseObject> {
                 }
             } else {
                 // exception, not unauthorized
+                JandiSocketService.stopSocketServiceIfRunning(context);
                 logger.error("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                 throw new JandiNetworkException(e);
             }

@@ -40,25 +40,25 @@ public class MenuCommandBuilder {
             case android.R.id.home:
                 return new HomeMenuCommand(activity);
             case R.id.action_entity_starred:
-                FavoriteTriggerCommand_ favoriteTriggerCommand_ = FavoriteTriggerCommand_.getInstance_(activity);
-                favoriteTriggerCommand_.initData(activity, mJandiEntityClient, chattingInfomations);
-                return favoriteTriggerCommand_;
+                FavoriteTriggerCommand favoriteTriggerCommand = FavoriteTriggerCommand_.getInstance_(activity);
+                favoriteTriggerCommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                return favoriteTriggerCommand;
             case R.id.action_entity_move_file_list:
                 return new FileListCommand(activity, chattingInfomations);
             case R.id.action_entity_invite:
             case R.id.action_my_entity_invite:
-                InviteCommand_ inviteCommand_ = InviteCommand_.getInstance_(activity);
-                inviteCommand_.initData(activity, mJandiEntityClient, chattingInfomations);
-                return inviteCommand_;
+                InviteCommand invitecommand = InviteCommand_.getInstance_(activity);
+                invitecommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                return invitecommand;
             case R.id.action_my_entity_rename:
                 return new ModifyEntityCommand(activity, chattingInfomations);
             case R.id.action_my_entity_delete:
                 return new DeleteTopicCommand(activity);
             case R.id.action_entity_leave:
             case R.id.action_my_entity_leave:
-                LeaveEntityCommand_ leaveEntityCommand_ = LeaveEntityCommand_.getInstance_(activity);
-                leaveEntityCommand_.initData(activity, mJandiEntityClient, chattingInfomations);
-                return leaveEntityCommand_;
+                LeaveEntityCommand leaveentitycommand = LeaveEntityCommand_.getInstance_(activity);
+                leaveentitycommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                return leaveentitycommand;
             case R.id.action_entity_members:
             case R.id.action_my_entity_members:
                 TopicParticipantCommand topicParticipantCommand = TopicParticipantCommand_.getInstance_(activity);

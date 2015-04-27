@@ -1,11 +1,13 @@
 package com.tosslab.jandi.app.ui.photo;
 
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -55,7 +57,7 @@ public class PhotoViewActivity extends ActionBarActivity {
         if (isGif()) {
             loadGif();
         } else {
-            loadImage();
+            loadImageDeepZoom();
         }
 
         autoHideActionBar();
@@ -79,11 +81,48 @@ public class PhotoViewActivity extends ActionBarActivity {
         finish();
     }
 
-    private void loadImage() {
-        Ion.with(photoView)
-                .crossfade(true)
+    private void loadImageDeepZoom() {
+        Ion.with(PhotoViewActivity.this)
                 .load(imageUrl)
-                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
+                .setLogging("INFO", Log.INFO)
+                .withBitmap()
+                .crossfade(true)
+                .fitCenter()
+                .deepZoom()
+                .intoImageView(photoView)
+                .setCallback((e, result) -> {
+
+                    if (e != null) {
+                        loadImagePlain();
+                    } else {
+
+                        Drawable drawable = result.getDrawable();
+                        int intrinsicWidth = drawable.getIntrinsicWidth();
+                        int intrinsicHeight = drawable.getIntrinsicHeight();
+                        if (intrinsicHeight <= 0 || intrinsicWidth <= 0) {
+                            loadImagePlain();
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                        }
+
+
+                    }
+                });
+    }
+
+    @UiThread
+    void loadImagePlain() {
+        Ion.with(PhotoViewActivity.this)
+                .load(imageUrl)
+                .setLogging("INFO", Log.INFO)
+                .withBitmap()
+                .crossfade(true)
+                .fitCenter()
+                .error(R.drawable.jandi_fl_icon_deleted)
+                .intoImageView(photoView)
+                .setCallback((e, result) -> {
+                    progressBar.setVisibility(View.GONE);
+                });
     }
 
     private void loadGif() {

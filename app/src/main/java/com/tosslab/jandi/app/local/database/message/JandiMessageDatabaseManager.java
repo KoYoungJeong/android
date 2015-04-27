@@ -9,6 +9,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 
@@ -61,7 +62,7 @@ public class JandiMessageDatabaseManager {
         database.delete(Table.messages.name(), where, whereArgs);
 
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
         String messagesString = null;
         try {
             messagesString = objectMapper.writeValueAsString(messages);
@@ -102,7 +103,7 @@ public class JandiMessageDatabaseManager {
             return new ArrayList<ResMessages.Link>();
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
         try {
             return objectMapper.readValue(messagesString, objectMapper.getTypeFactory().constructCollectionType(List.class, ResMessages.Link.class));
         } catch (IOException e) {

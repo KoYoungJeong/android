@@ -22,7 +22,8 @@ public class BaseInitUtil {
 
     public static void initData(Context context) {
 
-        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+        httpOn();
+        logOn();
 
         JandiRestClient jandiRestClient = new JandiRestClient_(context);
         ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
@@ -34,9 +35,16 @@ public class BaseInitUtil {
         JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
         JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());
         JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(accountInfo);
+    }
 
-
+    public static void logOn() {
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
     }
+
+    public static void httpOn() {
+        Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
+    }
+
+
 }

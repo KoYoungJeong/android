@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -26,9 +27,13 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 6. 20..
@@ -93,7 +98,19 @@ public class FileUploadDialogFragment extends DialogFragment {
         final Spinner spinner = (Spinner) mainView.findViewById(R.id.spinner_cdps);
         spinner.setPrompt(getString(R.string.jandi_action_share));
         EntityManager entityManager = EntityManager.getInstance(getActivity());
-        mEntityArrayAdapter = new EntitySimpleListAdapter(getActivity(), entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId())));
+        List<FormattedEntity> unsharedEntities = entityManager.retrieveExclusivedEntities(Arrays.asList(entityManager.getMe().getId()));
+
+        Iterator<FormattedEntity> enabledEntities = Observable.from(unsharedEntities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled")).toBlocking()
+                .getIterator();
+
+        List<FormattedEntity> formattedEntities = new ArrayList<>();
+
+        while (enabledEntities.hasNext()) {
+            formattedEntities.add(enabledEntities.next());
+        }
+
+        mEntityArrayAdapter = new EntitySimpleListAdapter(getActivity(), formattedEntities);
         spinner.setAdapter(mEntityArrayAdapter);
 
         int size = mEntityArrayAdapter.getCount();

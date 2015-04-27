@@ -77,4 +77,14 @@ public class DummyViewHolder implements BodyViewHolder {
         return R.layout.item_message_dummy_v2;
 
     }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+    }
 }

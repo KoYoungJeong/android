@@ -13,6 +13,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
@@ -31,6 +33,9 @@ public class ImageViewHolder implements BodyViewHolder {
     private TextView fileTypeTextView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
+    private int roomId;
+    private int teamId;
 
     @Override
     public void initView(View rootView) {
@@ -43,6 +48,8 @@ public class ImageViewHolder implements BodyViewHolder {
         fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
 
     }
 
@@ -71,12 +78,22 @@ public class ImageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
+            unreadTextView.setVisibility(View.GONE);
+        } else {
+            unreadTextView.setVisibility(View.VISIBLE);
+        }
+
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
+
 
         nameTextView.setText(fromEntity.name);
 
@@ -89,19 +106,22 @@ public class ImageViewHolder implements BodyViewHolder {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
-            } else if (TextUtils.equals(fileMessage.content.ext, "psd")) {
-                fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
-                fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(fileMessage.content.ext);
             } else {
                 if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
-                    String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + fileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                    String imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.smallThumbnailUrl);
 
                     Ion.with(fileImageView)
                             .placeholder(R.drawable.jandi_fl_icon_img)
                             .error(R.drawable.jandi_fl_icon_img)
                             .crossfade(true)
                             .load(imageUrl);
+
+                    fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                            .intent(fileImageView.getContext())
+                            .imageUrl(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl))
+                            .imageName(fileMessage.content.name)
+                            .imageType(fileMessage.content.type)
+                            .start());
 
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
@@ -113,12 +133,24 @@ public class ImageViewHolder implements BodyViewHolder {
 
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-
+        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_img_v2;
 
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

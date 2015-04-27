@@ -28,10 +28,15 @@
         android:id="@+id/layout_messages_loading"
         layout="@layout/progress_wheel" />
 
-    <include
+    <LinearLayout
         android:id="@+id/layout_messages_empty"
-        layout="@layout/view_message_list_empty"
-        android:visibility="gone" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_messages_disable_alert"

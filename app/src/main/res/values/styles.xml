@@ -16,14 +16,15 @@
     <style name="PagerSlidingTabStrip">
         <item name="android:background">@color/jandi_tab_background</item>
         <!--<item name="android:textColor">@color/jandi_tab_text</item>-->
-        <item name="pstsIndicatorColor">@color/jandi_tab_indicator</item>
+        <item name="pstsIndicatorColor">@color/jandi_tab_sliding_indicator</item>
         <item name="pstsUnderlineColor">@color/jandi_tab_underline</item>
         <item name="pstsIndicatorHeight">2dp</item>
+        <item name="pstsTabPaddingLeftRight">2dp</item>
         <item name="pstsUnderlineHeight">0.5dp</item>
         <item name="pstsDividerColor">@android:color/transparent</item>
         <item name="pstsShouldExpand">true</item>
         <item name="pstsTextAllCaps">false</item>
-        <item name="pstsActivateTextColor">@color/jandi_tab_text</item>
+        <item name="pstsActivateTextColor">@color/jandi_primary_color</item>
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
@@ -34,7 +35,7 @@
         <item name="android:layout_height">42dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:background">@drawable/jandi_btn_dynamic_selector</item>
+        <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
     <!-- 파일 리스트의 상단 카테고리 탭 -->
     <style name="JandiFileListCategoryTab"></style>
@@ -80,7 +81,7 @@
         <item name="android:layout_height">42dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:background">@drawable/jandi_btn_dynamic_selector</item>
+        <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
     <!-- 튜토리얼 페이지 안의 이메일 주소 창 -->
     <style name="JandiTutorial.EditText" parent="JandiTutorial">
@@ -186,7 +187,7 @@
         <item name="android:layout_height">42dp</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:background">@drawable/jandi_btn_dynamic_selector</item>
+        <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
 
     <style name="JandiTeam"></style>

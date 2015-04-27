@@ -16,19 +16,23 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
+import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
+import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -38,10 +42,12 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -103,11 +109,11 @@ public class MessageListModel {
     }
 
     public void stopRefreshTimer() {
-        messageListTimer.stop();
+//        messageListTimer.stop();
     }
 
     public void startRefreshTimer() {
-        messageListTimer.start();
+//        messageListTimer.start();
     }
 
     public void deleteMessage(int messageId) throws JandiNetworkException {
@@ -353,5 +359,45 @@ public class MessageListModel {
 
     public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
         return messageManipulator.getAfterMarkerMessage(linkId);
+    }
+
+    @Background
+    public void updateMarkerInfo(int teamId, int roomId) {
+
+        if (teamId <= 0 || roomId <= 0) {
+            return;
+        }
+
+        RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
+        RequestManager<ResRoomInfo> requestManager = RequestManager.newInstance(activity, request);
+        try {
+            ResRoomInfo resRoomInfo = requestManager.request();
+            JandiMarkerDatabaseManager.getInstance(activity).upsertMarkers(resRoomInfo);
+            EventBus.getDefault().post(new RoomMarkerEvent());
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteMarker(int teamId, int roomId, int memberId) {
+        JandiMarkerDatabaseManager.getInstance(activity).deleteMarker(teamId, roomId, memberId);
+    }
+
+    public void insertMarker(int teamId, int roomId, int memberId) {
+        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, memberId, -1);
+    }
+
+    public void updateEntityInfo() {
+        try {
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(totalEntitiesInfo);
+            EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            JandiPreference.setBadgeCount(activity, totalUnreadCount);
+            BadgeUtils.setBadge(activity, totalUnreadCount);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
     }
 }

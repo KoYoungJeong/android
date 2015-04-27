@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
 import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
@@ -77,10 +78,25 @@ public class MainChatListFragment extends Fragment {
         UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
     }
 
-    public void onEventMainThread(RetrieveTopicListEvent event) {
+    public void onEvent(RetrieveTopicListEvent event) {
         getChatList();
     }
 
+    public void onEvent(SocketMessageEvent event) {
+        if (TextUtils.equals(event.getMessageType(), "file_comment")) {
+            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                if (TextUtils.equals(messageRoom.getType(), "chat")) {
+                    getChatList();
+                    return;
+                }
+            }
+        } else {
+
+            if (TextUtils.equals(event.getRoom().getType(), "chat")) {
+                getChatList();
+            }
+        }
+    }
 
     public void onEvent(MessagePushEvent event) {
         if (TextUtils.equals(event.getEntityType(), "user")) {
@@ -88,12 +104,16 @@ public class MainChatListFragment extends Fragment {
         }
     }
 
-    public void onEvent(final RequestMoveDirectMessageEvent event) {
+    public void onEvent(RequestMoveDirectMessageEvent event) {
+
         EntityManager entityManager = EntityManager.getInstance(getActivity());
+        int roomId = mainChatListModel.getRoomId(entityManager.getTeamId(), event.userId);
+
         MessageListV2Activity_.intent(getActivity())
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
+                .roomId(roomId)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
@@ -145,9 +165,13 @@ public class MainChatListFragment extends Fragment {
         BadgeUtils.setBadge(getActivity(), badgeCount);
         mainChatListPresenter.refreshListView();
 
+        boolean hasAlarmCount = MainChatListModel.hasAlarmCount(mainChatListPresenter.getChatItems());
+        EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityId(chatItem.getEntityId())
+                .roomId(chatItem.getRoomId())
                 .isFavorite(chatItem.isStarred())
                 .teamId(mainChatListModel.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)

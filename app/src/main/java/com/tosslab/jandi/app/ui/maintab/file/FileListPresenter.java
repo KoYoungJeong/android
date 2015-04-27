@@ -2,8 +2,10 @@ package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -23,6 +25,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
 import com.tosslab.jandi.app.events.files.CategorizingAsOwner;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
@@ -30,7 +33,6 @@ import com.tosslab.jandi.app.lists.entities.UserEntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.files.FileTypeSimpleListAdapter;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterInject;
@@ -394,8 +396,9 @@ public class FileListPresenter {
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
     }
 
-    public void openCameraForActivityResult(Fragment fragment) {
+    public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
@@ -419,5 +422,33 @@ public class FileListPresenter {
     @UiThread
     public void setSearchEmptryViewVisible(int visible) {
         searchEmptyView.setVisibility(visible);
+    }
+
+    public ProgressDialog getUploadProgress(ConfirmFileUploadEvent event) {
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage(context.getString(R.string.jandi_file_uploading) + " " + event.realFilePath);
+        progressDialog.show();
+
+        return progressDialog;
+    }
+
+    @UiThread
+    public void showSuccessToast(String message) {
+        ColoredToast.show(context, message);
+    }
+
+    @UiThread
+    public void dismissMoreProgressBar() {
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
+        animation.setAnimationListener(new SimpleEndAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                moreLoadingProgressBar.setVisibility(View.GONE);
+            }
+        });
+
+        moreLoadingProgressBar.setAnimation(animation);
+        animation.startNow();
     }
 }

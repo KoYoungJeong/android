@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -73,7 +74,7 @@ public class JandiEntityDatabaseManager {
             database.delete(Table.left_whole.name(), DatabaseConsts.LeftWhole.teamId + " = ?", new String[]{String.valueOf(teamId)});
 
             try {
-                String jsonWholeValue = new ObjectMapper().writeValueAsString(leftSideMenu);
+                String jsonWholeValue = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(leftSideMenu);
 
                 ContentValues values = new ContentValues();
                 values.put(DatabaseConsts.LeftWhole.teamId.name(), teamId);
@@ -361,7 +362,7 @@ public class JandiEntityDatabaseManager {
             String jsonWholeValue = cursor.getString(cursor.getColumnIndex(DatabaseConsts.LeftWhole.whole.name()));
 
             try {
-                resLeftSideMenu = new ObjectMapper().readValue(jsonWholeValue, ResLeftSideMenu.class);
+                resLeftSideMenu = JacksonMapper.getInstance().getObjectMapper().readValue(jsonWholeValue, ResLeftSideMenu.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }

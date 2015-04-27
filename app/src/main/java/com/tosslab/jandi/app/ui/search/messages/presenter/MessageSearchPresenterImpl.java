@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.search.messages.presenter;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
@@ -110,8 +112,14 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
 
     @Override
     public void onSelectEntity(int entityId, String name) {
+
         view.setEntityName(name);
         searchQeuryInfo.entityId(entityId);
+
+        if (TextUtils.isEmpty(searchQeuryInfo.getQuery())) {
+            return;
+        }
+
         view.clearSearchResult();
         onSearchRequest(searchQeuryInfo.getQuery());
     }
@@ -120,6 +128,11 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     public void onSelectMember(int memberId, String name) {
         view.setMemberName(name);
         searchQeuryInfo.writerId(memberId);
+
+        if (TextUtils.isEmpty(searchQeuryInfo.getQuery())) {
+            return;
+        }
+
         view.clearSearchResult();
         onSearchRequest(searchQeuryInfo.getQuery());
     }

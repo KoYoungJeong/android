@@ -32,6 +32,9 @@ public class FileViewHolder implements BodyViewHolder {
     private TextView fileTypeTextView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
+    private int roomId;
+    private int teamId;
 
     private FileViewHolder() {
     }
@@ -54,6 +57,7 @@ public class FileViewHolder implements BodyViewHolder {
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override
@@ -79,6 +83,15 @@ public class FileViewHolder implements BodyViewHolder {
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
 
+        }
+
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
+            unreadTextView.setVisibility(View.GONE);
+        } else {
+            unreadTextView.setVisibility(View.VISIBLE);
         }
 
         Ion.with(profileImageView)
@@ -125,12 +138,24 @@ public class FileViewHolder implements BodyViewHolder {
         }
 
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-
+        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_file_v2;
 
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

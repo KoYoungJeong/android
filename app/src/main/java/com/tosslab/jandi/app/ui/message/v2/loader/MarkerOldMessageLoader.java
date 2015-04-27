@@ -42,10 +42,10 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
     }
 
     @Override
-    public void load(int linkId) {
+    public ResMessages load(int linkId) {
+        ResMessages oldMessage = null;
         try {
 
-            ResMessages oldMessage;
             boolean isCallByMarker = messageListPresenter.getFirstVisibleItemLinkId() > 0;
             if (isCallByMarker) {
                 oldMessage = messageListModel.getOldMessage(linkId);
@@ -56,7 +56,7 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 messageListPresenter.dismissLoadingView();
-                return;
+                return oldMessage;
             }
 
             if (!isCallByMarker) {
@@ -118,5 +118,6 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
             messageListPresenter.dismissProgressWheel();
         }
 
+        return oldMessage;
     }
 }

@@ -4,26 +4,40 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
  * Created by Steve SeongUg Jung on 15. 1. 8..
  */
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.builder.Builders;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.json.JSONException;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @EBean
 public class FileListModel {
@@ -95,5 +109,42 @@ public class FileListModel {
                 TextUtils.isEmpty(searchFile.keyword) &&
                 TextUtils.equals(searchFile.fileType, "all") &&
                 TextUtils.equals(searchFile.writerId, "all");
+    }
+
+    public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
+        File uploadFile = new File(event.realFilePath);
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String permissionCode = (isPublicTopic) ? "744" : "740";
+        Builders.Any.M ionBuilder
+                = Ion
+                .with(context)
+                .load(requestURL)
+                .uploadProgressDialog(progressDialog)
+                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setMultipartParameter("title", event.title)
+                .setMultipartParameter("share", "" + event.entityId)
+                .setMultipartParameter("permission", permissionCode)
+                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+
+        // Comment가 함께 등록될 경우 추가
+        if (event.comment != null && !event.comment.isEmpty()) {
+            ionBuilder.setMultipartParameter("comment", event.comment);
+        }
+
+        JsonObject userFile = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject()
+                .get();
+
+        return userFile;
+    }
+
+    public void trackUploadingFile(int entityType, JsonObject result) {
+
+        try {
+            MixpanelMemberAnalyticsClient.getInstance(context, EntityManager.getInstance(context).getDistictId()).trackUploadingFile(entityType, result);
+        } catch (JSONException e) {
+        }
     }
 }

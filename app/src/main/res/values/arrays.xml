@@ -6,6 +6,13 @@
         <item>@string/menu_a_file</item>
     </string-array>
 
+    <string-array name="file_message_actions">
+        <item>@string/jandi_action_download</item>
+        <item>@string/jandi_action_share</item>
+        <item>@string/jandi_action_unshare</item>
+        <item>@string/jandi_action_delete</item>
+    </string-array>
+
     <string-array name="types_invitations">
         <item>@string/jandi_invite_email</item>
         <item>@string/jandi_invite_kakao</item>

@@ -127,6 +127,10 @@ public class MainChatListAdapter extends BaseAdapter {
         entities.addAll(chatItems);
     }
 
+    public List<ChatItem> getChatItems() {
+        return entities;
+    }
+
     static class ViewHolder {
         public Context context;
         public ImageView imageViewIcon;

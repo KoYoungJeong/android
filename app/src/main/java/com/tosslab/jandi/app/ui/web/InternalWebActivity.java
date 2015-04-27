@@ -80,7 +80,11 @@ public class InternalWebActivity extends ActionBarActivity {
                             return false;
                         }
                     } else {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                        } catch (ActivityNotFoundException e) {
+                            e.printStackTrace();
+                        }
                         return true;
                     }
                 }

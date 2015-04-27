@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
  */
 public class JandiPreference {
     public static final int NOT_SET_YET = -1;
-    public static final String PREF_SEARCH_POPUP = "search_popup";
     // SharedPreference Key 값
     private static final String PREF_NAME = "JandiPref";
     private static final String PREF_TOKEN = "token";
@@ -162,11 +161,4 @@ public class JandiPreference {
         getSharedPreferences(context).edit().putBoolean(PREF_INVITE_POPUP, false).commit();
     }
 
-    public static boolean isSearchPopup(Context context) {
-        return getSharedPreferences(context).getBoolean(PREF_SEARCH_POPUP, true);
-    }
-
-    public static void setSearchPopup(Context context) {
-        getSharedPreferences(context).edit().putBoolean(PREF_SEARCH_POPUP, false).commit();
-    }
 }

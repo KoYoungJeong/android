@@ -43,6 +43,7 @@ public class FileExplorerPresenter {
         for (FileItem fileItem : fileItems) {
             fileItemAdapter.add(fileItem);
         }
+
         fileItemAdapter.notifyDataSetChanged();
 
     }
@@ -53,8 +54,9 @@ public class FileExplorerPresenter {
                 .build();
 
         activity.getFragmentManager().beginTransaction()
-                .add(android.R.id.content, fragment, fileItem.getPath())
+                .add(R.id.file_explorer_container, fragment, fileItem.getPath())
                 .addToBackStack(fileItem.getPath())
                 .commit();
+
     }
 }

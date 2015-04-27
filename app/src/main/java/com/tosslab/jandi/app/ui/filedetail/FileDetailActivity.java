@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -24,8 +25,11 @@ import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
-import com.tosslab.jandi.app.events.files.ConfirmDeleteFile;
+import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
+import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
+import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
@@ -39,6 +43,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -90,7 +95,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         mEntityManager = EntityManager.getInstance(FileDetailActivity.this);
 
-        getFileDetail(false);
     }
 
     @Override
@@ -140,7 +144,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.deleteComment(messageId, feedbackId);
-            getFileDetail(false);
+            getFileDetail(false, true);
         } catch (JandiNetworkException e) {
         } catch (Exception e) {
         } finally {
@@ -186,17 +190,24 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
+        getFileDetail(false, true);
         trackGaFileDetail(mEntityManager);
     }
 
     @Override
-    public void onPause() {
+    protected void onDestroy() {
         EventBus.getDefault().unregister(this);
-        super.onPause();
+        super.onDestroy();
     }
+
 
     @Override
     protected void onStop() {
@@ -223,11 +234,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     @Background
-    void getFileDetail(boolean isSendAction) {
-        fileDetailPresenter.showProgressWheel();
+    void getFileDetail(boolean isSendAction, boolean showDialog) {
+        if (showDialog) {
+            fileDetailPresenter.showProgressWheel();
+        }
         log.debug("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
+
             for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
                 if (messageDetail instanceof ResMessages.FileMessage) {
                     mResFileDetail = (ResMessages.FileMessage) messageDetail;
@@ -244,7 +258,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         } catch (JandiNetworkException e) {
             log.error("fail to get file detail.", e);
-            getFileDetailFailed(getString(R.string.err_file_detail));
+            if (e.httpStatusCode == 403) {
+                getFileDetailFailed(getString(R.string.jandi_unshared_message));
+            } else {
+                getFileDetailFailed(getString(R.string.err_file_detail));
+
+            }
             finishOnMainThread();
         } catch (Exception e) {
             getFileDetailFailed(getString(R.string.err_file_detail));
@@ -356,6 +375,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                         MessageListV2Activity_.intent(FileDetailActivity.this)
                                 .entityId(entityIdToBeShared)
                                 .entityType(entity.type)
+                                .roomId(entity.type != JandiConstants.TYPE_DIRECT_MESSAGE ? entityIdToBeShared : -1)
                                 .isFavorite(entity.isStarred)
                                 .teamId(entity.getEntity().teamId)
                                 .start();
@@ -372,7 +392,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 mEntityManager.getEntityById(entityIdToBeShared).type,
                 mResFileDetail);
         fileDetailPresenter.clearAdapter();
-        getFileDetail(false);
+        getFileDetail(false, true);
     }
 
     @UiThread
@@ -422,7 +442,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     mEntityManager.getEntityById(entityIdToBeUnshared).type,
                     mResFileDetail);
             fileDetailPresenter.unshareMessageSucceed(entityIdToBeUnshared);
-            getFileDetail(false);
+            getFileDetail(false, true);
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
             unshareMessageFailed();
@@ -439,8 +459,26 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         ColoredToast.showError(this, getString(R.string.err_unshare));
     }
 
-    public void onEvent(ConfirmDeleteFile event) {
+    public void onEvent(ConfirmDeleteFileEvent event) {
         deleteFileInBackground(event.getFileId());
+    }
+
+    public void onEvent(DeleteFileEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false, false);
+        }
+    }
+
+    public void onEvent(ShareFileEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false, false);
+        }
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (fileId == event.getId()) {
+            getFileDetail(false, false);
+        }
     }
 
     /**
@@ -508,7 +546,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         try {
             fileDetailModel.sendMessageComment(fileId, message);
 
-            getFileDetail(true);
+            getFileDetail(true, true);
             log.debug("success to send message");
         } catch (JandiNetworkException e) {
             log.error("fail to send message", e);
@@ -527,9 +565,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     public void download() {
-        String serverUrl = (mResFileDetail.content.serverUrl.equals("root"))
-                ? JandiConstantsForFlavors.SERVICE_ROOT_URL
-                : mResFileDetail.content.serverUrl;
         String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
 
         final ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
@@ -537,7 +572,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         progressDialog.setMessage("Downloading " + fileName);
         progressDialog.show();
 
-        downloadInBackground(serverUrl + fileName, mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
+        downloadInBackground(BitmapUtil.getFileeUrl(mResFileDetail.content.fileUrl), mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
     }
 
     public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {
@@ -604,6 +639,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 .teamId(entityManager.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(event.userId)
+                .roomId(-1)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();

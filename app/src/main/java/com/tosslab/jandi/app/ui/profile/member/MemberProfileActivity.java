@@ -18,15 +18,19 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -294,6 +298,17 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             } catch (JandiNetworkException e) {
                 memberProfilePresenter.updateProfileFailed();
             }
+        }
+
+        try {
+            ResLeftSideMenu entitiesInfo = JandiEntityClient_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
+            JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
+            BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
+            EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
         }
 
         memberProfilePresenter.dismissProgressWheel();

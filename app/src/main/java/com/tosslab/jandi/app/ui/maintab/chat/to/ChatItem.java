@@ -13,6 +13,7 @@ public class ChatItem {
     private String lastMessage;
     private String photo;
     private boolean status;
+    private int roomId;
 
     public int getLastMessageId() {
         return lastMessageId;
@@ -93,5 +94,14 @@ public class ChatItem {
     public ChatItem status(boolean status) {
         this.status = status;
         return this;
+    }
+
+    public ChatItem roomId(int roomId) {
+        this.roomId = roomId;
+        return this;
+    }
+
+    public int getRoomId() {
+        return roomId;
     }
 }

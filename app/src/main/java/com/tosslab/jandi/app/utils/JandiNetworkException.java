@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.utils;
 
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -33,7 +35,7 @@ public class JandiNetworkException extends Exception {
         this.httpStatusCode = e.getStatusCode().value();
         this.httpStatusMessage = e.getStatusText();
 
-        ObjectMapper om = new ObjectMapper();
+        ObjectMapper om = JacksonMapper.getInstance().getObjectMapper();
         try {
             Map<String, Object> m = om.readValue(
                     e.getResponseBodyAsString(),

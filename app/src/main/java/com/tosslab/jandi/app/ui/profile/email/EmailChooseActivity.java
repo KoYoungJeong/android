@@ -61,7 +61,13 @@ public class EmailChooseActivity extends ActionBarActivity {
 
     @OptionsItem(R.id.action_confirm)
     void onOkOptionSelected() {
-        String selectedEmail = emailChoosePresenter.getSelectedEmail().getEmail();
+        AccountEmail selectedAccountEmail = emailChoosePresenter.getSelectedEmail();
+
+        if (selectedAccountEmail == null) {
+            return;
+        }
+
+        String selectedEmail = selectedAccountEmail.getEmail();
         String originPrimaryEmail = emailChooseModel.getPrimaryEmail();
         if (!TextUtils.equals(originPrimaryEmail, selectedEmail)) {
             requestChangePrimaryEmail(selectedEmail);

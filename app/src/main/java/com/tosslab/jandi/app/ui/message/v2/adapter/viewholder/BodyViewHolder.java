@@ -15,6 +15,10 @@ public interface BodyViewHolder {
 
     int getLayoutId();
 
+    void setTeamId(int teamId);
+
+    void setRoomId(int roomId);
+
     public enum Type {
         Message, File, Image, PureComment, FileComment, Dummy, Event
     }

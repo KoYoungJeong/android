@@ -97,6 +97,20 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
         return searedFiles.size();
     }
 
+    public int findPositionByFileId(int fileId) {
+        int itemCount = getItemCount();
+        for (int idx = 0; idx < itemCount; ++idx) {
+            if (getItem(idx).id == fileId) {
+                return idx;
+            }
+        }
+        return -1;
+    }
+
+    public void remove(int position) {
+        searedFiles.remove(position);
+    }
+
     private enum MoreState {
         Idle, Loading, NoMore
     }

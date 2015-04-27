@@ -220,7 +220,7 @@ public class EditTextDialogFragment extends DialogFragment {
                 input.setHint(R.string.jandi_profile_division_hint);
                 break;
             case ACTION_MODIFY_PROFILE_POSITION:
-                input.setHint(R.string.jandi_profile_division_hint);
+                input.setHint(R.string.jandi_profile_position_hint);
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:

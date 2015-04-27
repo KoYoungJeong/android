@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -37,6 +39,9 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private ImageView fileImageView;
     private View disableCoverView;
     private View disableLineThroughView;
+    private TextView unreadTextView;
+    private int roomId;
+    private int teamId;
 
     @Override
     public void initView(View rootView) {
@@ -53,6 +58,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+
+        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
 
     }
 
@@ -78,6 +85,16 @@ public class FileCommentViewHolder implements BodyViewHolder {
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
+
+        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id);
+
+        unreadTextView.setText(String.valueOf(unreadCount));
+        if (unreadCount <= 0) {
+            unreadTextView.setVisibility(View.GONE);
+        } else {
+            unreadTextView.setVisibility(View.VISIBLE);
+        }
+
 
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
@@ -107,16 +124,23 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
                 String fileType = feedbackFileMessage.content.type;
                 if (fileType.startsWith("image/")) {
-                    if (!TextUtils.equals(feedbackFileMessage.content.ext, "psd") &&
-                            feedbackFileMessage.content.extraInfo != null &&
+                    if (feedbackFileMessage.content.extraInfo != null &&
                             !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
 
-                        String imageUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + feedbackFileMessage.content.extraInfo.smallThumbnailUrl.replaceAll(" ", "%20");
+                        String imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossfade(true)
                                 .load(imageUrl);
+
+                        fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                                .intent(fileImageView.getContext())
+                                .imageUrl(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl))
+                                .imageName(feedbackFileMessage.content.name)
+                                .imageType(feedbackFileMessage.content.type)
+                                .start());
+
                     } else {
                         fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                     }
@@ -151,18 +175,32 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
             boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
 
-            commentTextView.setText(spannableStringBuilder);
             if (hasLink) {
-                commentTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                commentTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                LinkifyUtil.setOnLinkClick(commentTextView);
+            } else {
+                commentTextView.setText(spannableStringBuilder);
             }
         }
 
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-
+        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_cmt_with_file_v2;
+    }
+
+    @Override
+    public void setTeamId(int teamId) {
+
+        this.teamId = teamId;
+    }
+
+    @Override
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

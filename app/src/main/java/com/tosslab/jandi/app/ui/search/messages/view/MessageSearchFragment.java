@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
@@ -317,6 +316,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
                 .teamId(currentTeamId)
                 .entityId(entityId)
                 .entityType(entityType)
+                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : entityType)
                 .isFavorite(isStarred)
                 .isFromSearch(true)
                 .lastMarker(linkId)

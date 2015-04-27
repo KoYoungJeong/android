@@ -7,7 +7,8 @@
         android:id="@+id/layout_search_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/layout_search_category" />
+        android:layout_above="@+id/layout_search_category"
+        android:background="@color/jandi_background_default" />
 
     <RelativeLayout
         android:id="@+id/layout_search_bar"

@@ -338,7 +338,7 @@ JANDIへようこそ"</string>
     <string name="jandi_member_invite_popup_2">"今すぐチームを作って、仕事のやりとりがどれだけ劇的に改善できるかご自身の目で確かめてみましょう"</string>
     <string name="jandi_later">"後で"</string>
     <string name="jandi_send_invitation">"招待メールを送信"</string>
-    <string name="jandi_cannot_find_search_result_old">"検索に失敗しました"</string>
+    <string name="jandi_cannot_find_search_result_old">"ファイルが見つかりません"</string>
     <string name="jandi_input_search_keyword">"キーワードで検索"</string>
     <string name="jandi_count_with_brace">(%d)</string>
     <string name="jandi_message_search_available">"メッセージ検索機能が実装されました。"</string>
@@ -347,4 +347,16 @@ JANDIへようこそ"</string>
     <string name="jandi_message_ask_about_delete_comment">"本当に削除しますか？元には戻せません"</string>
     <string name="jandi_message_no_member">"このチームには他のメンバーがいません。新しいメンバーを招待してコラボレーションを始めましょう"</string>
     <string name="jandi_file_delete_message">"ファイルを削除してよいですか？削除後もコメントは残ります"</string>
+    <string name="jandi_unshared_message">"このファイルは非共有化されました"</string>
+    <string name="jandi_nowhere_shared_file">"共有されたファイルがありません"</string>
+    <string name="jandi_topic_no_member_1">"このトピックには他にメンバーがいません。"</string>
+    <string name="jandi_topic_no_member_2">"以下のボタンをタップしてメンバーを招待しましょう"</string>
+    <string name="jandi_invite_member_to_topic">"このトピックに招待"</string>
+    <string name="jandi_shared_in_room">"共有範囲"</string>
+    <string name="jandi_device_storage">デバイス</string>
+    <string name="jandi_sdcard_storage">SDカード</string>
+    <string name="jandi_sdcard_storage_mounted">SDカードをマウントしました</string>
+    <string name="jandi_sdcard_storage_unmounted">SDカードのマウントを解除しました</string>
+    <string name="jandi_deleted_message">"(削除されたメッセージ)"</string>
+    <string name="jandi_try_again">"閉じる"</string>
 </resources>

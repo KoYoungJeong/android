@@ -27,7 +27,8 @@ public class MessageListV2Activity extends ActionBarActivity {
     boolean isFromSearch = false;
     @Extra
     int lastMarker = -1;
-
+    @Extra
+    int roomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class MessageListV2Activity extends ActionBarActivity {
                         MessageListFragment_
                                 .builder()
                                 .entityId(entityId)
+                                .roomId(roomId)
                                 .entityType(entityType)
                                 .isFavorite(isFavorite)
                                 .isFromPush(isFromPush)

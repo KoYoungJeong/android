@@ -58,7 +58,7 @@
 
     <include
         android:id="@+id/layout_member_empty"
-        layout="@layout/view_member_empty"
+        layout="@layout/view_team_member_empty"
         android:visibility="gone" />
 
 </RelativeLayout>

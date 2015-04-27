@@ -16,6 +16,7 @@ public class ResChat {
     private int companionId;
     private int lastLinkId;
     private String lastMessage;
+    private String lastMessageStatus;
 
     public int getLastMessageId() {
         return lastMessageId;
@@ -64,5 +65,13 @@ public class ResChat {
     public ResChat companionId(int companionId) {
         this.companionId = companionId;
         return this;
+    }
+
+    public String getLastMessageStatus() {
+        return lastMessageStatus;
+    }
+
+    public void setLastMessageStatus(String lastMessageStatus) {
+        this.lastMessageStatus = lastMessageStatus;
     }
 }
