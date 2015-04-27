@@ -154,8 +154,8 @@
     <orderEntry type="library" exported="" name="material-dialogs-0.6.3.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockito-all-1.10.19" level="project" />
     <orderEntry type="library" exported="" name="engine.io-client-0.4.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="sqlite4java-0.282" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="maven-ant-tasks-2.1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="sqlite4java-0.282" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="mockable-android-21" level="project" />
     <orderEntry type="library" exported="" name="Java-WebSocket-1.3.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.0.0" level="project" />
