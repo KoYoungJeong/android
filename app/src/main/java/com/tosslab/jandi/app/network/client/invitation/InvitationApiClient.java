@@ -2,11 +2,13 @@ package com.tosslab.jandi.app.network.client.invitation;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
+import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -68,13 +70,14 @@ public interface InvitationApiClient {
      */
     @Put("/account/invitations/{invitationId}")
     @RequiresAuthentication
-    List<ResPendingTeamInfo> confirmOrdeclineInvitation(ReqInvitationConfirm reqInvitationConfirm, String invitationId);
+    List<ResPendingTeamInfo> confirmOrDeclineInvitation(ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore, String invitationId);
 
     /**
      * 초대된 목록 가져오기
      */
     @Get("/account/invitations")
     @RequiresAuthentication
+    @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     List<ResPendingTeamInfo> getPedingTeamInfo();
 
 }

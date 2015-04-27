@@ -17,7 +17,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,8 +29,6 @@ import rx.Observable;
  */
 @EBean
 public class TeamDomainInfoModel {
-
-    private final static Logger logger = Logger.getLogger(TeamDomainInfoModel.class);
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -73,7 +70,7 @@ public class TeamDomainInfoModel {
     }
 
     @SupposeBackground
-    public ResTeamDetailInfo acceptInvite(String token, String userEmail, String name) {
+    public ResTeamDetailInfo acceptInvite(String token, String userEmail, String name, String invitationId) {
 
         ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
 
@@ -81,7 +78,7 @@ public class TeamDomainInfoModel {
             return null;
         }
 
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, token, userEmail, name);
+        AcceptInviteRequest request = AcceptInviteRequest.create(context, token, userEmail, name, invitationId);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, request);
         try {
             ResTeamDetailInfo resTeamDetailInfos = requestManager.request();

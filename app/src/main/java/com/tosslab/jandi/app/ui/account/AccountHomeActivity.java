@@ -264,6 +264,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                 .teamName(selectedTeam.getName())
                 .domain(selectedTeam.getTeamDomain())
                 .token(selectedTeam.getToken())
+                .invitationId(selectedTeam.getInvitationId())
                 .startForResult(REQ_TEAM_JOIN);
     }
 

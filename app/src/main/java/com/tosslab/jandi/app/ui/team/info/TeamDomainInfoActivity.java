@@ -42,6 +42,8 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     String teamName;
     @Extra
     int teamId;
+    @Extra
+    String invitationId;
 
     private String userEmail;
     private String userName;
@@ -125,7 +127,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
             String myName = userName;
             String myEmail = userEmail;
-            joinTeam(token, myName, myEmail);
+            joinTeam(token, myName, myEmail, invitationId);
         } else {
 
             String teamName = teamDomainInfoPresenter.getTeamName();
@@ -165,10 +167,10 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         }
     }
 
-    void joinTeam(String token, String myName, String myEmail) {
+    void joinTeam(String token, String myName, String myEmail, String invitationId) {
         teamDomainInfoPresenter.showProgressWheel();
 
-        ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName);
+        ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName, invitationId);
         if (resTeamDetailInfos != null) {
             teamDomainInfoModel.updateTeamInfo(teamId);
             teamDomainInfoPresenter.successJoinTeam();
