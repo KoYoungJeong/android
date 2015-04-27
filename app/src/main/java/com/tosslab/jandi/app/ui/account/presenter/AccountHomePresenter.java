@@ -12,7 +12,7 @@ public interface AccountHomePresenter {
 
     void setView(View view);
 
-    void onJoinedTeamSelect(int teamId);
+    void onJoinedTeamSelect(int teamId, boolean firstJoin);
 
     void onCreateTeamSelect();
 
@@ -50,7 +50,7 @@ public interface AccountHomePresenter {
 
         void showProgressWheel();
 
-        void moveSelectedTeam();
+        void moveSelectedTeam(boolean firstJoin);
 
         void moveEmailEditClick();
 

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
+import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
@@ -140,7 +141,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
                     accountTeamRowView.setOnClickListener(v -> {
                         Team clickedTeam = (Team) v.getTag();
-                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId());
+                        accountHomePresenter.onJoinedTeamSelect(clickedTeam.getTeamId(), false);
                     });
                     view = accountTeamRowView;
                     break;
@@ -226,10 +227,17 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @UiThread
     @Override
-    public void moveSelectedTeam() {
+    public void moveSelectedTeam(boolean firstJoin) {
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
+
+        if (firstJoin) {
+            MemberProfileActivity_.intent(AccountHomeActivity.this)
+                    .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    .start();
+        }
+
         finish();
     }
 
