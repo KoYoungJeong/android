@@ -162,7 +162,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
 
-        if (getActivity() instanceof SearchActivity && isSearchLayoutFirst) {
+        if (isInSearchActivity() && isSearchLayoutFirst) {
             onSearchHeaderReset();
             initSearchLayoutIfFirst();
         }
@@ -226,6 +226,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEventMainThread(ShareFileEvent event) {
+
+        if (isInSearchActivity()) {
+            return;
+        }
+
         int itemCount = searchedFileItemListAdapter.getItemCount();
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(itemCount + 1);
@@ -367,11 +372,20 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(DeleteFileEvent event) {
+
+        if (isInSearchActivity()) {
+            return;
+        }
+
         int fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
             removeItem(positionByFileId);
         }
+    }
+
+    private boolean isInSearchActivity() {
+        return getActivity() instanceof SearchActivity;
     }
 
     @UiThread
