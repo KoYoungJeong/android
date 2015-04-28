@@ -28,7 +28,7 @@
     <string name="jandi_question_team_create">"您的團隊還未使用JANDI嗎？"</string>
 
     <!-- Login -->
-    <string name="jandi_action_start">"如何開始"</string>
+    <string name="jandi_action_start">"註冊"</string>
     <string name="jandi_action_login">"登入"</string>
     <string name="jandi_select_team">"選擇您的團隊"</string>
     <string name="jandi_user_id">"電子郵件"</string>
@@ -247,7 +247,7 @@
     <string name="jandi_cannot_find_search_result_1">"您的檔案庫是空的。"</string>
     <string name="jandi_cannot_find_search_result_2">"直接上傳及分享檔案到任何對話當中。"</string>
     <string name="jandi_team_join_fail">"處理過程中發生錯誤。請再試一次。 "</string>
-    <string name="jandi_sent_password_reset_mail">"密碼重設指示已經成功寄送到您的電子郵件 "</string>
+    <string name="jandi_sent_password_reset_mail">"密碼重設指示已經成功寄送到您的電子郵箱"</string>
     <string name="jandi_fail_send_password_reset_email">"密碼重設電子郵件無法寄出 "</string>
     <string name="jandi_error_web_token">"登入時遇到問題。請再試一次。登入时遇到问题。请再试一次。"</string>
     <string name="jandi_success_web_token">"登入成功"</string>

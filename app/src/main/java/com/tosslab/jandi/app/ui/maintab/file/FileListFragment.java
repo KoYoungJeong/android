@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,6 +78,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by justinygchoi on 2014. 10. 13..
@@ -118,6 +121,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     private boolean isSearchLayoutFirst = true;
     private File photoFileByCamera;
     private boolean isForeground;
+    private PublishSubject<Integer> initSearchSubject;
 
     @AfterInject
     void init() {
@@ -128,6 +132,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
         fileListPresenter.setEntityIdForCategorizing(entityIdForCategorizing);
         fileListPresenter.setCurrentEntityCategorizingAccodingBy(mCurrentEntityCategorizingAccodingBy);
+
+        initSearchSubject = PublishSubject.create();
+        initSearchSubject.observeOn(Schedulers.io())
+                .subscribe(index -> {
+                    mSearchQuery.setToFirst();
+                    searchedFileItemListAdapter.clearAdapter();
+                    doSearchInBackground(index);
+                }, throwable -> log.debug("Search Fail : " + throwable.getMessage()));
     }
 
     @AfterViews
@@ -150,11 +162,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
 
-        if (getActivity() instanceof SearchActivity && isSearchLayoutFirst) {
+        if (isInSearchActivity() && isSearchLayoutFirst) {
             onSearchHeaderReset();
             initSearchLayoutIfFirst();
         }
-        doSearchInBackground(-1);
+        initSearchSubject.onNext(-1);
     }
 
     @Override
@@ -214,10 +226,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEventMainThread(ShareFileEvent event) {
+
+        if (isInSearchActivity()) {
+            return;
+        }
+
         int itemCount = searchedFileItemListAdapter.getItemCount();
-        mSearchQuery.setToFirst();
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground(itemCount + 1);
+        initSearchSubject.onNext(itemCount + 1);
     }
 
 
@@ -299,31 +315,28 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
      * **********************************************************
      */
     void doKeywordSearch(String s) {
-        mSearchQuery.setToFirst();
         mSearchQuery.setKeyword(s);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground(-1);
+        initSearchSubject.onNext(-1);
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
-        mSearchQuery.setToFirst();
+        Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground(-1);
+        initSearchSubject.onNext(-1);
     }
 
     public void onEvent(CategorizingAsOwner event) {
-        mSearchQuery.setToFirst();
         mSearchQuery.setWriter(event.userId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground(-1);
+        initSearchSubject.onNext(-1);
     }
 
     public void onEvent(CategorizingAsEntity event) {
-        mSearchQuery.setToFirst();
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
-        doSearchInBackground(-1);
+        initSearchSubject.onNext(-1);
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
@@ -359,6 +372,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(DeleteFileEvent event) {
+
+        if (isInSearchActivity()) {
+            return;
+        }
+
         int fileId = event.getId();
         int positionByFileId = searchedFileItemListAdapter.findPositionByFileId(fileId);
         if (positionByFileId >= 0) {
@@ -366,13 +384,25 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
+    private boolean isInSearchActivity() {
+        return getActivity() instanceof SearchActivity;
+    }
+
     @UiThread
     void removeItem(int position) {
         searchedFileItemListAdapter.remove(position);
         searchedFileItemListAdapter.notifyDataSetChanged();
+        if (searchedFileItemListAdapter.getItemCount() <= 0) {
+            if (fileListModel.isDefaultSearchQueryIgnoreMessageId(mSearchQuery.getRequestQuery())) {
+                fileListPresenter.setEmptyViewVisible(View.VISIBLE);
+                fileListPresenter.setSearchEmptryViewVisible(View.GONE);
+            } else {
+                fileListPresenter.setEmptyViewVisible(View.GONE);
+                fileListPresenter.setSearchEmptryViewVisible(View.VISIBLE);
+            }
+        }
     }
 
-    @Background
     void doSearchInBackground(int requestCount) {
 
         fileListPresenter.setInitLoadingViewVisible(View.VISIBLE);

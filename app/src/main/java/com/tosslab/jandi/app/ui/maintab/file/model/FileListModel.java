@@ -111,6 +111,13 @@ public class FileListModel {
                 TextUtils.equals(searchFile.writerId, "all");
     }
 
+    public boolean isDefaultSearchQueryIgnoreMessageId(ReqSearchFile searchFile) {
+        return searchFile.sharedEntityId == -1 &&
+                TextUtils.isEmpty(searchFile.keyword) &&
+                TextUtils.equals(searchFile.fileType, "all") &&
+                TextUtils.equals(searchFile.writerId, "all");
+    }
+
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
         String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
