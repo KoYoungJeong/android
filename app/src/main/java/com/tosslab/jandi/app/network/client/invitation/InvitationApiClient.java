@@ -47,6 +47,7 @@ public interface InvitationApiClient {
      */
     @Post("/invitations")
     @RequiresAuthentication
+    @Deprecated
     List<ResInvitationMembers> inviteMembers(ReqInvitationMembers invitation);
 
     /**

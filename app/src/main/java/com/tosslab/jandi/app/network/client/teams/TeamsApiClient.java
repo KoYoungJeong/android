@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.network.client.teams;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -16,6 +18,8 @@ import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+
+import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 15..
@@ -45,5 +49,10 @@ public interface TeamsApiClient {
     @Get("/teams/{teamId}/members/{memberId}")
     @RequiresAuthentication
     ResLeftSideMenu.User getMemberProfile(int teamId, int memberId);
+
+    @Post("/teams/{teamId}/invitations")
+    @RequiresAuthentication
+    List<ResInvitationMembers> inviteToTeam(int teamId, ReqInvitationMembers invitationMembers);
+
 
 }
