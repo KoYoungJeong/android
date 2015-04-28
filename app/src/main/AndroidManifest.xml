@@ -95,7 +95,8 @@
         <activity
             android:name=".ui.invites.InviteActivity_"
             android:label="@string/menu_entity_invite"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.entities.EntityChooseActivity_"
             android:screenOrientation="portrait"

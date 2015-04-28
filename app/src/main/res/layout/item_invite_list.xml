@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/jandi_team_selector_icon" />
+        android:src="@drawable/jandi_icon_user" />
 
     <TextView
         android:id="@+id/txt_invite_email"
@@ -28,7 +28,20 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="Email"
-        android:textColor="@color/jandi_team_selector_text_default"
-        android:textSize="20sp" />
+        android:textColor="@color/jandi_black_89"
+        android:textSize="@dimen/jandi_text_size_large" />
+
+    <ProgressBar
+        android:id="@+id/progress_invite_processing"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
+        android:indeterminate="true" />
+
+    <ImageView
+        android:id="@+id/img_invite_success"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/jandi_icon_accept"
+        android:visibility="gone" />
 
 </LinearLayout>

@@ -36,7 +36,7 @@ public class DummyViewHolder implements BodyViewHolder {
 
 
     @Override
-    public void bindData(ResMessages.Link link) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -78,13 +78,4 @@ public class DummyViewHolder implements BodyViewHolder {
 
     }
 
-    @Override
-    public void setTeamId(int teamId) {
-
-    }
-
-    @Override
-    public void setRoomId(int roomId) {
-
-    }
 }

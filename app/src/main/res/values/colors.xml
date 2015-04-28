@@ -3,7 +3,7 @@
     <color name="jandi_primary_color">#FF003658</color>
     <color name="jandi_primary_dark_color">#FF002541</color>
 
-    <color name="jandi_accent_color">#FF00A4E6</color>
+    <color name="jandi_accent_color">#FF00A3E1</color>
 
     <color name="jandi_background_highlight">#FFF2FBFF</color>
     <color name="jandi_background_default">#FFF1F4F8</color>
@@ -19,6 +19,7 @@
 
     <color name="jandi_accent_color_b2">#B200A4E6</color>
 
+    <color name="jandi_black_89">#89000000</color>
 
 
     <color name="jandi_text">#FF333333</color>

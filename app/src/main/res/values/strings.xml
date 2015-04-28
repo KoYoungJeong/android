@@ -363,5 +363,8 @@ Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_invite_succes_copy_link">"The team invitation link has been copied to your clipboard. Use it to invite others to your team."</string>
     <string name="jandi_invite_succes_send">"Invitations have been sent to:"</string>
     <string name="jandi_invite_contents">" invited you to JANDI. Follow the link below to get started now!"</string>
+    <string name="jandi_invitation_successfully">"Invitations have been successfully sent to"</string>
+    <string name="jandi_invite_many_people_explain">"Inviting over 100 members?
+Contact us at support@tosslab.com"</string>
 
 </resources>

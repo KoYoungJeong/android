@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -49,6 +51,8 @@ public class InviteListAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(context).inflate(R.layout.item_invite_list, parent, false);
             viewHolder.emailView = (TextView) convertView.findViewById(R.id.txt_invite_email);
+            viewHolder.sendingProgress = (ProgressBar) convertView.findViewById(R.id.progress_invite_processing);
+            viewHolder.successImageView = (ImageView) convertView.findViewById(R.id.img_invite_success);
 
             convertView.setTag(viewHolder);
         } else {
@@ -58,6 +62,14 @@ public class InviteListAdapter extends BaseAdapter {
         EmailTO item = getItem(position);
 
         viewHolder.emailView.setText(item.getEmail());
+
+        if (item.isSuccess()) {
+            viewHolder.successImageView.setVisibility(View.VISIBLE);
+            viewHolder.sendingProgress.setVisibility(View.GONE);
+        } else {
+            viewHolder.successImageView.setVisibility(View.GONE);
+            viewHolder.sendingProgress.setVisibility(View.VISIBLE);
+        }
 
         return convertView;
     }
@@ -74,7 +86,15 @@ public class InviteListAdapter extends BaseAdapter {
         inviteList.clear();
     }
 
+    public int add(EmailTO emailTO) {
+        inviteList.add(emailTO);
+
+        return inviteList.size() - 1;
+    }
+
     private static class ViewHolder {
         TextView emailView;
+        ProgressBar sendingProgress;
+        ImageView successImageView;
     }
 }
