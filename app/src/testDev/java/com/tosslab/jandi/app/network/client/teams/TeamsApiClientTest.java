@@ -4,9 +4,12 @@ import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
@@ -19,8 +22,14 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.fail;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
 public class TeamsApiClientTest {
@@ -71,6 +80,20 @@ public class TeamsApiClientTest {
 
         ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(accountInfo.getMemberships().get(0).getTeamId());
 
+
+    }
+
+    @Test
+    public void testInviteToTeam() throws Exception {
+
+        JandiRestClient jandiRestClient_ = new JandiRestClient_(Robolectric.application);
+        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+        ResAccountInfo accountInfo = jandiRestClient_.getAccountInfo();
+
+        int teamId = accountInfo.getMemberships().get(0).getTeamId();
+        List<ResInvitationMembers> resInvitationMemberses = teamsApiClient_.inviteToTeam(teamId, new ReqInvitationMembers(teamId, Arrays.asList("jsuch2362@naver.com"), LanguageUtil.getLanguage(Robolectric.application)));
+
+        assertThat(resInvitationMemberses, is(notNullValue()));
 
     }
 }

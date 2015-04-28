@@ -2,8 +2,8 @@ package com.tosslab.jandi.app.ui.invites.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
-import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
+import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
+import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -31,9 +31,9 @@ public class InviteRequest implements Request<List<ResInvitationMembers>> {
     @Override
     public List<ResInvitationMembers> request() throws JandiNetworkException {
 
-        InvitationApiClient apiClient = new InvitationApiClient_(context);
+        TeamsApiClient apiClient = new TeamsApiClient_(context);
         apiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        return apiClient.inviteMembers(new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context)));
+        return apiClient.inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context)));
     }
 }
