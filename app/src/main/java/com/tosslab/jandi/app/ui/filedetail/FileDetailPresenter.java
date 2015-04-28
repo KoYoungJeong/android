@@ -44,6 +44,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -215,7 +216,7 @@ public class FileDetailPresenter {
                     }
                 } else {
 
-                    iconFileType.setImageResource(getIconByFileType(fileMessage.content.type));
+                    iconFileType.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
                     imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
 
                     // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
@@ -265,28 +266,6 @@ public class FileDetailPresenter {
             return R.drawable.jandi_down_etc;
         }
 
-    }
-
-    private int getIconByFileType(String type) {
-        if (type.startsWith("audio")) {
-            return R.drawable.jandi_fview_icon_audio;
-        } else if (type.startsWith("video")) {
-            return R.drawable.jandi_fview_icon_video;
-        } else if (type.startsWith("application/pdf")) {
-            return R.drawable.jandi_fview_icon_pdf;
-        } else if (type.startsWith("text")) {
-            return R.drawable.jandi_fview_icon_txt;
-        } else if (TextUtils.equals(type, "application/x-hwp")) {
-            return R.drawable.jandi_fl_icon_hwp;
-        } else if (FormatConverter.isSpreadSheetMimeType(type)) {
-            return R.drawable.jandi_fl_icon_exel;
-        } else if (FormatConverter.isPresentationMimeType(type)) {
-            return R.drawable.jandi_fview_icon_ppt;
-        } else if (FormatConverter.isDocmentMimeType(type)) {
-            return R.drawable.jandi_fview_icon_txt;
-        } else {
-            return R.drawable.jandi_fview_icon_etc;
-        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

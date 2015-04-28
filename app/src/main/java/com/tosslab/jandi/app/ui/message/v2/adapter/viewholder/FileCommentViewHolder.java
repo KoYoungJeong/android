@@ -18,9 +18,9 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -148,24 +148,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
                     } else {
                         fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                     }
-                } else if (fileType.startsWith("audio")) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_audio);
-                } else if (fileType.startsWith("video")) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_video);
-                } else if (fileType.startsWith("application/pdf")) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_pdf);
-                } else if (fileType.startsWith("text")) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
-                } else if (TextUtils.equals(fileType, "application/x-hwp")) {
-                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_hwp);
-                } else if (FormatConverter.isSpreadSheetMimeType(fileType)) {
-                    fileImageView.setImageResource(R.drawable.jandi_fl_icon_exel);
-                } else if (FormatConverter.isPresentationMimeType(fileType)) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_ppt);
-                } else if (FormatConverter.isDocmentMimeType(fileType)) {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_txt);
                 } else {
-                    fileImageView.setImageResource(R.drawable.jandi_fview_icon_etc);
+                    fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
                 }
             }
 
