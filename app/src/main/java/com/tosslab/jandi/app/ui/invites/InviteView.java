@@ -111,6 +111,7 @@ public class InviteView {
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void notifyDatasetChanged() {
 
         adapter.notifyDataSetChanged();
@@ -189,11 +190,11 @@ public class InviteView {
     }
 
     @UiThread
-    public void updateSuccessInvite(EmailTO o) {
+    public void updateSuccessInvite(EmailTO o, int isSuccess) {
         for (int idx = adapter.getCount() - 1; idx >= 0; --idx) {
             EmailTO item = adapter.getItem(idx);
             if (item == o) {
-                item.setSuccess(true);
+                item.setSuccess(isSuccess);
             }
         }
 
@@ -202,5 +203,9 @@ public class InviteView {
 
     public void moveToSelection(int position) {
         inviteListView.smoothScrollToPosition(position);
+    }
+
+    public EmailTO getInviteEmail(int position) {
+        return adapter.getItem(position);
     }
 }

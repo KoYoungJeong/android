@@ -63,9 +63,17 @@ public class InviteListAdapter extends BaseAdapter {
 
         viewHolder.emailView.setText(item.getEmail());
 
-        if (item.isSuccess()) {
+        int success = item.getSuccess();
+        if (success != 0) {
             viewHolder.successImageView.setVisibility(View.VISIBLE);
             viewHolder.sendingProgress.setVisibility(View.GONE);
+
+            if (success == 1) {
+                viewHolder.successImageView.setImageResource(R.drawable.jandi_icon_accept);
+            } else {
+                viewHolder.successImageView.setImageResource(R.drawable.alert_disabled_members);
+            }
+
         } else {
             viewHolder.successImageView.setVisibility(View.GONE);
             viewHolder.sendingProgress.setVisibility(View.VISIBLE);

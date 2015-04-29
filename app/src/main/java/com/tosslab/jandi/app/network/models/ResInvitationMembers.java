@@ -33,6 +33,22 @@ public class ResInvitationMembers {
         return account;
     }
 
+    public void setAccount(String account) {
+        this.account = account;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setSuccess(boolean isSuccess) {
+        this.isSuccess = isSuccess;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
     @Override
     public String toString() {
         return "ResInvitationMembers{" +

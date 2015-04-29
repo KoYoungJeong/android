@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
  */
-public class InviteRequest implements Request<List<ResInvitationMembers>> {
+public class InviteRequest implements Request<ResInvitationMembers> {
 
     private final Context context;
     private final int teamId;
@@ -29,7 +29,7 @@ public class InviteRequest implements Request<List<ResInvitationMembers>> {
     }
 
     @Override
-    public List<ResInvitationMembers> request() throws JandiNetworkException {
+    public ResInvitationMembers request() throws JandiNetworkException {
 
         TeamsApiClient apiClient = new TeamsApiClient_(context);
         apiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));

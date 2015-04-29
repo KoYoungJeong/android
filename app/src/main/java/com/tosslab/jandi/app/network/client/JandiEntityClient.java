@@ -80,33 +80,6 @@ public class JandiEntityClient {
 
     /**
      * *********************************************************
-     * 팀 관리
-     * **********************************************************
-     */
-    public List<ResInvitationMembers> inviteTeamMember(String email) throws JandiNetworkException {
-        try {
-            final List<String> strings = Arrays.asList(email);
-
-            // TODO Convert Lambda
-            return RequestManager.newInstance(context, new Request<List<ResInvitationMembers>>() {
-
-                @Override
-                public List<ResInvitationMembers> request() throws JandiNetworkException {
-                    InvitationApiClient invitationApiClient = new InvitationApiClient_(context);
-                    invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                    return invitationApiClient.inviteMembers(new ReqInvitationMembers(selectedTeamId, strings, LanguageUtil.getLanguage(context)));
-                }
-            }).request();
-
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
-        }
-    }
-
-    /**
-     * *********************************************************
      * Entity (Channel, Private Group, Direct Message) 관련
      * **********************************************************
      */
