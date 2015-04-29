@@ -11,40 +11,25 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
-import com.tosslab.jandi.app.events.files.FileDownloadStartEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.MessageSpannable;
-import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -76,30 +61,22 @@ public class FileDetailPresenter {
 
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
+
+    @Bean
+    FileHeadManager fileHeadManager;
+
     @ViewById(R.id.list_file_detail_comments)
     ListView listFileDetailComments;
 
     @ViewById(R.id.ly_file_detail_input_comment)
     LinearLayout inputCommentLayout;
+
     @ViewById(R.id.et_file_detail_comment)
     EditText editTextComment;
     @ViewById(R.id.btn_file_detail_send_comment)
     Button buttonSendComment;
 
-    // in File Detail Header
-    ImageView imageViewUserProfile;
-    TextView textViewUserName;
-    TextView textViewFileCreateDate;
-    TextView textViewFileContentInfo;
-    TextView textViewFileSharedCdp;
-    View disableLineThroughView;
-    View disableCoverView;
-
-    ImageView imageViewPhotoFile;
-    ImageView iconFileType;
-
     private ProgressWheel mProgressWheel;
-    private LinearLayout fileInfoLayout;
 
 
     @AfterViews
@@ -112,17 +89,7 @@ public class FileDetailPresenter {
 
     private void addFileDetailViewAsListviewHeader() {
         // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
-        View header = LayoutInflater.from(activity).inflate(R.layout.activity_file_detail_header, null, false);
-        imageViewUserProfile = (ImageView) header.findViewById(R.id.img_file_detail_user_profile);
-        textViewUserName = (TextView) header.findViewById(R.id.txt_file_detail_user_name);
-        textViewFileCreateDate = (TextView) header.findViewById(R.id.txt_file_detail_create_date);
-        textViewFileContentInfo = (TextView) header.findViewById(R.id.txt_file_detail_file_info);
-        textViewFileSharedCdp = (TextView) header.findViewById(R.id.txt_file_detail_shared_cdp);
-        imageViewPhotoFile = (ImageView) header.findViewById(R.id.img_file_detail_photo);
-        fileInfoLayout = (LinearLayout) header.findViewById(R.id.ly_file_detail_info);
-        iconFileType = (ImageView) header.findViewById(R.id.icon_file_detail_content_type);
-        disableLineThroughView = header.findViewById(R.id.img_entity_listitem_line_through);
-        disableCoverView = header.findViewById(R.id.view_entity_listitem_warning);
+        View header = fileHeadManager.getHeaderView();
 
         listFileDetailComments.addHeaderView(header);
         listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
@@ -140,89 +107,14 @@ public class FileDetailPresenter {
 
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
-        // 사용자
-        FormattedEntity writer = new FormattedEntity(fileMessage.writer);
-        String profileUrl = writer.getUserSmallProfileUrl();
-        Ion.with(imageViewUserProfile)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .load(profileUrl);
-        String userName = writer.getName();
-        textViewUserName.setText(userName);
+        fileHeadManager.setFileInfo(fileMessage);
 
-        imageViewUserProfile.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
-        textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileDetail.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
-
-        // 파일
-        String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
-        textViewFileCreateDate.setText(createTime);
-        // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {
 
-            imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
-            fileInfoLayout.setVisibility(View.GONE);
             inputCommentLayout.setVisibility(View.GONE);
 
             activity.getSupportActionBar().setTitle(R.string.jandi_deleted_file);
 
-        } else {
-
-            activity.getSupportActionBar().setTitle(fileMessage.content.title);
-            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-            textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
-
-            // 공유 CDP 이름
-            drawFileSharedEntities(fileMessage);
-
-            if (!TextUtils.isEmpty(fileMessage.content.type)) {
-
-                if (fileMessage.content.type.startsWith("image")) {
-                    // 이미지일 경우
-                    iconFileType.setImageResource(R.drawable.jandi_fview_icon_img);
-                    // 중간 썸네일을 가져온다.
-                    String thumbnailPhotoUrl = null;
-                    String photoUrl = null;
-                    if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
-
-                        thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
-                        photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
-                    } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
-                        thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
-                        photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
-                    }
-
-                    if (!TextUtils.isEmpty(thumbnailPhotoUrl) && !TextUtils.isEmpty(photoUrl)) {
-                        if (TextUtils.equals(fileMessage.content.type, "image/gif")) {
-                            Ion.with(activity)
-                                    .load(thumbnailPhotoUrl)
-                                    .intoImageView(imageViewPhotoFile);
-                        } else {
-                            Ion.with(imageViewPhotoFile)
-                                    .fitCenter()
-                                    .crossfade(true)
-                                    .load(thumbnailPhotoUrl);
-                        }
-                        // 이미지를 터치하면 큰 화면 보기로 넘어감
-                        final String finalPhotoUrl = photoUrl;
-                        imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                                .intent(activity)
-                                .imageUrl(finalPhotoUrl)
-                                .imageName(fileMessage.content.name)
-                                .imageType(fileMessage.content.type)
-                                .start());
-                    } else {
-                        imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_img);
-                    }
-                } else {
-
-                    iconFileType.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
-                    imageViewPhotoFile.setImageResource(getDownloadIcon(fileMessage.content.type));
-
-                    // 파일 타입 이미지를 터치하면 다운로드로 넘어감.
-                    imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new FileDownloadStartEvent(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl), fileMessage.content.name, fileMessage.content.type)));
-                }
-            }
         }
 
         fileDetailCommentListAdapter.clear();
@@ -245,88 +137,9 @@ public class FileDetailPresenter {
         return null;
     }
 
-    private int getDownloadIcon(String type) {
-        if (type.startsWith("audio")) {
-            return R.drawable.jandi_down_audio;
-        } else if (type.startsWith("video")) {
-            return R.drawable.jandi_down_video;
-        } else if (type.startsWith("application/pdf")) {
-            return R.drawable.jandi_down_pdf;
-        } else if (type.startsWith("text")) {
-            return R.drawable.jandi_down_txt;
-        } else if (TextUtils.equals(type, "application/x-hwp")) {
-            return R.drawable.jandi_down_hwp;
-        } else if (FormatConverter.isSpreadSheetMimeType(type)) {
-            return R.drawable.jandi_down_txt;
-        } else if (FormatConverter.isPresentationMimeType(type)) {
-            return R.drawable.jandi_down_txt;
-        } else if (FormatConverter.isDocmentMimeType(type)) {
-            return R.drawable.jandi_down_txt;
-        } else {
-            return R.drawable.jandi_down_etc;
-        }
-
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void drawFileSharedEntities(ResMessages.FileMessage resFileDetail) {
-        if (resFileDetail == null) {
-            return;
-        }
-        EntityManager mEntityManager = EntityManager.getInstance(activity);
-        if (mEntityManager == null) {
-            return;
-        }
-
-        int teamId = mEntityManager.getTeamId();
-
-        if (resFileDetail.shareEntities != null && !resFileDetail.shareEntities.isEmpty()) {
-            int nSharedEntities = resFileDetail.shareEntities.size();
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            int shareTextSize = (int) activity.getResources().getDimension(R.dimen.jandi_text_size_small);
-            int shareTextColor = activity.getResources().getColor(R.color.file_type);
-            MessageSpannable messageSpannable = new MessageSpannable(shareTextSize, shareTextColor);
-            spannableStringBuilder.append(activity.getString(R.string.jandi_shared_in_room))
-                    .setSpan(messageSpannable, 0, spannableStringBuilder.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-            spannableStringBuilder.append(" ");
-            int firstLength = spannableStringBuilder.length();
-
-            for (int idx = 0; idx < nSharedEntities; idx++) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));
-
-                if (sharedEntity == null) {
-                    continue;
-                }
-
-                if (spannableStringBuilder.length() > firstLength) {
-                    spannableStringBuilder.append(", ");
-                }
-
-                int entityType;
-                if (sharedEntity.isPrivateGroup()) {
-                    entityType = JandiConstants.TYPE_PRIVATE_TOPIC;
-                } else if (sharedEntity.isPublicTopic()) {
-                    entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
-                } else {
-                    entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
-
-                }
-
-                EntitySpannable entitySpannable = new EntitySpannable(activity, teamId, sharedEntity.getId(), entityType, sharedEntity.isStarred);
-
-                int length = spannableStringBuilder.length();
-                spannableStringBuilder.append(sharedEntity.getName());
-
-                spannableStringBuilder.setSpan(entitySpannable, length, length + sharedEntity.getName().length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-
-            }
-            textViewFileSharedCdp.setMovementMethod(LinkMovementMethod.getInstance());
-            textViewFileSharedCdp.setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
-        } else {
-            textViewFileSharedCdp.setText(R.string.jandi_nowhere_shared_file);
-        }
+        fileHeadManager.drawFileSharedEntities(resFileDetail);
     }
 
 
@@ -422,14 +235,7 @@ public class FileDetailPresenter {
 
     @UiThread
     public void drawFileWriterState(boolean isEnabled) {
-        if (isEnabled) {
-            disableCoverView.setVisibility(View.GONE);
-            disableLineThroughView.setVisibility(View.GONE);
-        } else {
-            disableCoverView.setVisibility(View.VISIBLE);
-            disableLineThroughView.setVisibility(View.VISIBLE);
-            textViewUserName.setTextColor(activity.getResources().getColor(R.color.deactivate_text_color));
-        }
+        fileHeadManager.drawFileWriterState(isEnabled);
     }
 
     @UiThread

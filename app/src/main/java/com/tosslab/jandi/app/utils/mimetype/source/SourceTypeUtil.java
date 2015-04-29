@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.utils.mimetype.source;
 
+import android.text.TextUtils;
+
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
@@ -87,9 +89,13 @@ public class SourceTypeUtil {
 
     public static MimeTypeUtil.SourceType getSourceType(String sourceUrl) {
 
-        MimeTypeUtil.SourceType sourceType = MimeTypeUtil.SourceType.valueOf(sourceUrl);
+        for (MimeTypeUtil.SourceType sourceType : MimeTypeUtil.SourceType.values()) {
+            if (TextUtils.equals(sourceType.name().toLowerCase(), sourceUrl.toLowerCase())) {
+                return sourceType;
+            }
+        }
 
-        return sourceType != null ? sourceType : MimeTypeUtil.SourceType.S3;
+        return MimeTypeUtil.SourceType.S3;
 
     }
 

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -19,7 +20,6 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
@@ -46,6 +46,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -565,6 +567,18 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     public void download() {
+
+        MimeTypeUtil.PlaceholderType placeholderType = PlaceholderUtil.getPlaceholderType(mResFileDetail.content.serverUrl, mResFileDetail.content.icon);
+
+        switch (placeholderType) {
+            case Google:
+            case Dropbox:
+                String photoUrl = BitmapUtil.getFileeUrl(mResFileDetail.content.fileUrl);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(photoUrl)));
+                return;
+        }
+
+
         String fileName = mResFileDetail.content.fileUrl.replace(" ", "%20");
 
         final ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
