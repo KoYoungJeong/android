@@ -359,4 +359,14 @@ JANDIへようこそ"</string>
     <string name="jandi_sdcard_storage_unmounted">SDカードのマウントを解除しました</string>
     <string name="jandi_deleted_message">"(削除されたメッセージ)"</string>
     <string name="jandi_try_again">"閉じる"</string>
+
+    <string name="jandi_invite_email">メールで招待</string>
+    <string name="jandi_invite_kakao">カカオトーク</string>
+    <string name="jandi_invite_line">LINE</string>
+    <string name="jandi_invite_wechat">WeChat</string>
+    <string name="jandi_invite_facebook_messenger">Facebookメッセンジャー</string>
+    <string name="jandi_invite_copy_link">Copy Link</string>
+    <string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
+    <string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
+    <string name="jandi_invite_contents">" があなたをJANDIに招待しました。以下のリンクをクリックしてチームに参加しましょう！"</string>
 </resources>

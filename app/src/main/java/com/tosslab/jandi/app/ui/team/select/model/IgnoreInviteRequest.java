@@ -5,18 +5,16 @@ import android.content.Context;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
-import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
+import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
-import java.util.List;
-
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
-public class IgnoreInviteRequest implements Request<List<ResPendingTeamInfo>> {
+public class IgnoreInviteRequest implements Request<ResTeamDetailInfo> {
 
     private final Context context;
     private final InvitationApiClient invitationApiClient;
@@ -34,11 +32,14 @@ public class IgnoreInviteRequest implements Request<List<ResPendingTeamInfo>> {
 
 
     @Override
-    public List<ResPendingTeamInfo> request() throws JandiNetworkException {
+    public ResTeamDetailInfo request() throws JandiNetworkException {
 
         invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        ReqInvitationConfirm reqInvitationConfirm = new ReqInvitationConfirm(team.getToken(), ReqInvitationConfirm.Type.DECLINE.getType(), "", "");
-        return invitationApiClient.declineInvitation(reqInvitationConfirm);
+        //ReqInvitationConfirm reqInvitationConfirm = new ReqInvitationConfirm(team.getToken(), ReqInvitationConfirm.Type.DECLINE.getType(), "", "");
+        //return invitationApiClient.declineInvitation(reqInvitationConfirm);
+
+        ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore = new ReqInvitationConfirmOrIgnore(ReqInvitationConfirmOrIgnore.Type.DECLINE.getType());
+        return invitationApiClient.confirmOrDeclineInvitation(team.getInvitationId(), reqInvitationConfirmOrIgnore);
     }
 }

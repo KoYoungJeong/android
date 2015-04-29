@@ -258,6 +258,8 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @Override
     public void moveCreatedTeamDomain(Team selectedTeam) {
+
+
         TeamDomainInfoActivity_.intent(AccountHomeActivity.this)
                 .mode(TeamDomainInfoActivity.Mode.JOIN.name())
                 .teamId(selectedTeam.getTeamId())

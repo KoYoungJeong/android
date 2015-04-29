@@ -6,9 +6,11 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
+import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -28,6 +30,10 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Bean
     AccountHomeModel accountHomeModel;
+
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+
     @RootContext
     Context context;
 
@@ -140,7 +146,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            accountHomeModel.ignorePendingTeam(context, selectedTeam);
+            //accountHomeModel.ignorePendingTeam(context, selectedTeam);
+
+            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationConfirmOrIgnore.Type.DECLINE.getType());
         } catch (JandiNetworkException e) {
         } catch (Exception e) {
         } finally {

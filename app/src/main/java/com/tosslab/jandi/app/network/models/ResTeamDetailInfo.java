@@ -53,10 +53,9 @@ public class ResTeamDetailInfo {
         private List<Integer> teamMembers;
         private String status;
         private String type;
-
         private String invitationStatus;
-
         private String invitationCode;
+        private String invitationUrl;
 
         public String get_Id() {
             return _Id;
@@ -120,6 +119,14 @@ public class ResTeamDetailInfo {
 
         public void setInvitationCode(String invitationCode) {
             this.invitationCode = invitationCode;
+        }
+
+        public String getInvitationUrl() {
+            return invitationUrl;
+        }
+
+        public void setInvitationUrl(String invitationUrl) {
+            this.invitationUrl = invitationUrl;
         }
 
         @Override

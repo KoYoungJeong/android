@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -44,15 +45,12 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     int teamId;
     @Extra
     String invitationId;
-
-    private String userEmail;
-    private String userName;
-
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-
     @Bean
     TeamDomainInfoPresenter teamDomainInfoPresenter;
+    private String userEmail;
+    private String userName;
 
     @AfterViews
     void initView() {
@@ -127,7 +125,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
             String myName = userName;
             String myEmail = userEmail;
-            joinTeam(token, myName, myEmail, invitationId);
+            joinTeam(invitationId);
         } else {
 
             String teamName = teamDomainInfoPresenter.getTeamName();
@@ -167,17 +165,17 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         }
     }
 
-    void joinTeam(String token, String myName, String myEmail, String invitationId) {
+    void joinTeam(String invitationId) {
         teamDomainInfoPresenter.showProgressWheel();
 
-        ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName, invitationId);
-        if (resTeamDetailInfos != null) {
+        try {
+            teamDomainInfoModel.acceptOrDclineInvite(invitationId, ReqInvitationConfirmOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(teamId);
             teamDomainInfoPresenter.successJoinTeam();
-            String distictId = resTeamDetailInfos.getInviteTeamMember().getId() + "-" + resTeamDetailInfos.getInviteTeamMember().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                     .pageViewMemberCreateSuccess();
-        } else {
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
             teamDomainInfoPresenter.failJoinTeam();
         }
 

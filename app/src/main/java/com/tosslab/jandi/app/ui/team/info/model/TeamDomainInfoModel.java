@@ -70,7 +70,7 @@ public class TeamDomainInfoModel {
     }
 
     @SupposeBackground
-    public ResTeamDetailInfo acceptInvite(String token, String userEmail, String name, String invitationId) {
+    public ResTeamDetailInfo acceptOrDclineInvite(String invitationId, String type) throws JandiNetworkException {
 
         ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
 
@@ -78,17 +78,18 @@ public class TeamDomainInfoModel {
             return null;
         }
 
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, token, userEmail, name, invitationId);
+        AcceptInviteRequest request = AcceptInviteRequest.create(context, invitationId, type);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, request);
-        try {
-            ResTeamDetailInfo resTeamDetailInfos = requestManager.request();
-            return resTeamDetailInfos;
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-            return null;
-        }
+        ResTeamDetailInfo resTeamDetailInfos = requestManager.request();
+        return resTeamDetailInfos;
 
+    }
 
+    public ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId) throws JandiNetworkException {
+        TeamInfoRequest request = TeamInfoRequest.create(context, teamId);
+        RequestManager<ResTeamDetailInfo.InviteTeam> requestManager = RequestManager.newInstance(context, request);
+        ResTeamDetailInfo.InviteTeam resTeamDetailInfo = requestManager.request();
+        return resTeamDetailInfo;
     }
 
     public void updateTeamInfo(int teamId) {

@@ -5,6 +5,16 @@ package com.tosslab.jandi.app.network.models;
  */
 public class ReqInvitationConfirmOrIgnore {
 
+    private final String type;
+
+    public ReqInvitationConfirmOrIgnore(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public enum Type {
         ACCEPT("accept"), DECLINE("decline");
         private final String type;
@@ -16,11 +26,5 @@ public class ReqInvitationConfirmOrIgnore {
         public String getType() {
             return type;
         }
-    }
-
-    private String type;
-
-    public ReqInvitationConfirmOrIgnore(String type) {
-        this.type = type;
     }
 }

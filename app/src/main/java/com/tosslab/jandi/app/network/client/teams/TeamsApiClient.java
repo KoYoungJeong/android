@@ -57,5 +57,5 @@ public interface TeamsApiClient {
 
     @Get("/teams/{teamId}")
     @RequiresAuthentication
-    ResTeamDetailInfo getTeamInfo(int teamId);
+    ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId);
 }

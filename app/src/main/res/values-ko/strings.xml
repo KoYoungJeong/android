@@ -367,4 +367,14 @@
     <string name="jandi_sdcard_storage_unmounted">SD 카드가 해제되었습니다</string>
     <string name="jandi_deleted_message">"(삭제된 메세지)"</string>
     <string name="jandi_try_again">"다시 시도하기"</string>
+
+    <string name="jandi_invite_email">이메일로 초대</string>
+    <string name="jandi_invite_kakao">카카오톡으로 보내기</string>
+    <string name="jandi_invite_line">라인으로 보내기</string>
+    <string name="jandi_invite_wechat">위챗으로 보내기</string>
+    <string name="jandi_invite_facebook_messenger">페이스북 메신저로 보내기</string>
+    <string name="jandi_invite_copy_link">Copy Link</string>
+    <string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
+    <string name="jandi_invite_succes_send">"아래 주소들로 초대장이 성공적으로 전송되었습니다."</string>
+    <string name="jandi_invite_contents">" 잔디 팀에 초대받으셨습니다. 아래 링크를 통해 참여하실 수 있습니다."</string>
 </resources>

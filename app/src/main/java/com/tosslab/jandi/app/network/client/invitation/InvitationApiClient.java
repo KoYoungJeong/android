@@ -67,11 +67,11 @@ public interface InvitationApiClient {
     List<ResPendingTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
 
     /**
-     * 초대 거절하기
+     * 초대 수락 또는 거절
      */
     @Put("/account/invitations/{invitationId}")
     @RequiresAuthentication
-    List<ResPendingTeamInfo> confirmOrDeclineInvitation(ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore, String invitationId);
+    ResTeamDetailInfo confirmOrDeclineInvitation(String invitationId, ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore);
 
     /**
      * 초대된 목록 가져오기

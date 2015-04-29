@@ -350,4 +350,14 @@
     <string name="jandi_sdcard_storage_unmounted">解除連接記憶卡</string>
     <string name="jandi_deleted_message">"(刪除的訊息)"</string>
     <string name="jandi_try_again">"請再試一次"</string>
+
+    <string name="jandi_invite_email">透過電子郵件邀請</string>
+    <string name="jandi_invite_kakao">KakaoTalk</string>
+    <string name="jandi_invite_line">LINE</string>
+    <string name="jandi_invite_wechat">微信</string>
+    <string name="jandi_invite_facebook_messenger">Facebook Messenger</string>
+    <string name="jandi_invite_copy_link">Copy Link</string>
+    <string name="jandi_invite_succes_copy_link">"成員邀請的連結已複製到剪貼簿"</string>
+    <string name="jandi_invite_succes_send">"邀請信發送至："</string>
+    <string name="jandi_invite_contents">" 邀請你加入JANDI。點擊下列連結開啟新帳戶。"</string>
 </resources>
