@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.profile.member.model;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -55,7 +53,7 @@ public class MemberProfileModel {
         return mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 
-    public String uploadProfilePhoto(final ProgressDialog progressDialog, File file) throws ExecutionException, InterruptedException {
+    public String uploadProfilePhoto(File file) throws ExecutionException, InterruptedException {
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
@@ -64,13 +62,6 @@ public class MemberProfileModel {
 
         return Ion.with(context)
                 .load(HttpPut.METHOD_NAME, requestURL)
-                .uploadProgressDialog(progressDialog)
-                .progress(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long downloaded, long total) {
-                        progressDialog.setProgress((int) (downloaded / total));
-                    }
-                })
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
