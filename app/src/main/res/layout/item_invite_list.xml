@@ -39,8 +39,8 @@
 
     <ImageView
         android:id="@+id/img_invite_success"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="21.3dp"
+        android:layout_height="21.3dp"
         android:src="@drawable/jandi_icon_accept"
         android:visibility="gone" />
 

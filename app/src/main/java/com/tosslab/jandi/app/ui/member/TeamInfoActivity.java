@@ -13,26 +13,20 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.lists.FormattedDummyEntity;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.member.model.TeamInfoModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
-import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.log4j.Logger;
 
@@ -155,48 +149,5 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * *********************************************************
-     * 팀원으로 초대
-     * **********************************************************
-     */
-    @UiThread
-    public void inviteTeamMember(String email) {
-        mProgressWheel.show();
-        inviteTeamMemberInBackground(email);
-    }
-
-    @Background
-    public void inviteTeamMemberInBackground(String email) {
-        try {
-            List<ResInvitationMembers> resInvitation = mJandiEntityClient.inviteTeamMember(email);
-            inviteTeamMemberSucceed(resInvitation, email);
-        } catch (JandiNetworkException e) {
-            log.error("Invitation failed", e);
-            inviteTeamMemberFailed(getString(R.string.err_invitation_failed));
-        } catch (Exception e) {
-            log.error("Invitation failed", e);
-            inviteTeamMemberFailed(getString(R.string.err_invitation_failed));
-        }
-    }
-
-    @UiThread
-    public void inviteTeamMemberSucceed(List<ResInvitationMembers> resInvitation, String succeedEmail) {
-        mProgressWheel.dismiss();
-        ColoredToast.show(this, getString(R.string.jandi_invitation_succeed));
-        for (ResInvitationMembers resInvitationMembers : resInvitation) {
-            teamUserListAdapter.addMember(new FormattedDummyEntity(resInvitationMembers.getEmail()));
-            if (mEntityManager != null) {
-                trackInviteUser(mEntityManager.getDistictId());
-            }
-        }
-    }
-
-    @UiThread
-    public void inviteTeamMemberFailed(String message) {
-        mProgressWheel.dismiss();
-        ColoredToast.showError(this, message);
     }
 }

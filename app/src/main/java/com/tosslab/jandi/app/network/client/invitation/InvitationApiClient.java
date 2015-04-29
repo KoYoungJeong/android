@@ -43,14 +43,6 @@ public interface InvitationApiClient {
 
 
     /**
-     * 팀에 초대하기.
-     */
-    @Post("/invitations")
-    @RequiresAuthentication
-    @Deprecated
-    List<ResInvitationMembers> inviteMembers(ReqInvitationMembers invitation);
-
-    /**
      * 초대 수락하기.
      */
     @Put("/invitations")

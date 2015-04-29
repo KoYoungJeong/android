@@ -18,6 +18,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.apache.log4j.Logger;
 
@@ -55,12 +56,16 @@ public class InviteActivity extends BaseAnalyticsActivity {
                     public void call(EmailTO o) {
                         try {
                             inviteModel.inviteMembers(Arrays.asList(o.getEmail()));
-                            inviteView.updateSuccessInvite(o);
+                            inviteView.updateSuccessInvite(o, 1);
                             inviteView.addSendEmailSuccessText();
 
                         } catch (JandiNetworkException e) {
+                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            inviteView.updateSuccessInvite(o, -1);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         } catch (Exception e) {
+                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            inviteView.updateSuccessInvite(o, -1);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         }
                     }
@@ -111,7 +116,7 @@ public class InviteActivity extends BaseAnalyticsActivity {
         String emailText = inviteView.getEmailText();
         if (!inviteView.getInvites().contains(emailText)) {
             if (!inviteModel.isInvitedEmail(emailText)) {
-                EmailTO emailTO = EmailTO.create(emailText, false);
+                EmailTO emailTO = EmailTO.create(emailText);
                 inviteView.addEmail(emailTO);
                 inviteView.moveToSelection(0);
 
@@ -123,6 +128,17 @@ public class InviteActivity extends BaseAnalyticsActivity {
             inviteView.showWarnToast(getString(R.string.jandi_invitation_succeed));
         }
         inviteView.clearEmailTextView();
+    }
+
+    @ItemClick(R.id.lv_invite)
+    void onEmailItemClick(int position) {
+        EmailTO inviteEmail = inviteView.getInviteEmail(position);
+
+        if (inviteEmail.getSuccess() == -1) {
+            inviteEmail.setSuccess(0);
+            inviteView.notifyDatasetChanged();
+            emailSendingSubject.onNext(inviteEmail);
+        }
     }
 
 }

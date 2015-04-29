@@ -65,23 +65,6 @@ public class InvitationApiClientTest {
     }
 
     @Test
-    public void testInviteTeamMembers() throws Exception {
-
-
-        List<String> list = new ArrayList<String>();
-        list.add("test.test@test.com");
-        list.add("john@tosslab.com");
-
-        ReqInvitationMembers invitations = new ReqInvitationMembers(279, list, "ko");
-        List<ResInvitationMembers> resInvitationses = invitationApiClient.inviteMembers(invitations);
-
-        assertNotNull(resInvitationses);
-
-        System.out.println(resInvitationses);
-
-    }
-
-    @Test
     public void testGetPendingTeamInfo() {
         List<ResPendingTeamInfo> pedingTeamInfo = invitationApiClient.getPedingTeamInfo();
 
