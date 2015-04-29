@@ -366,5 +366,10 @@ Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_invitation_successfully">"Invitations have been successfully sent to"</string>
     <string name="jandi_invite_many_people_explain">"Inviting over 100 members?
 Contact us at support@tosslab.com"</string>
-
+    <string name="jandi_invite_disabled" formatted="false">Invitation has been disabled by admin. Please contact your team admin %s for further detail.</string>
+    <string name="jandi_deleted_team">This team has been deleted from JANDI and no longer exists.</string>
+    <string name="jandi_disabled_team" formatted="false">You are a disabled member of %s. Please contact the team administrator.</string>
+    <string name="jandi_joined_team" formatted="false">You have already joined %s. Please check your team list.</string>
+    <string name="jandi_expired_invitation_link">This invitation has expired. Please request a new invitation from the team member who invited you.</string>
+    <string name="jandi_invite_app_not_installed">The app is not installed on your device. The invitation link has been copied to the clipboard. </string>
 </resources>

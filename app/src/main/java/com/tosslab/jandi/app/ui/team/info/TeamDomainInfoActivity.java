@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.team.info;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -22,6 +24,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
@@ -32,6 +35,11 @@ import java.util.List;
 @OptionsMenu(R.menu.teamdomain_info)
 public class TeamDomainInfoActivity extends ActionBarActivity {
 
+    public static final int NOT_AVAILABLE_INVITATION_CODE = 40003;
+    public static final int DISABLED_MEMBER = 40301;
+    public static final int REMOVED_TEAM = 40302;
+    public static final int TEAM_INVITATION_DISABLED = 40303;
+    public static final int ENABLED_MEMBER = 40304;
     @Extra
     String mode = "CREATE";
 
@@ -123,8 +131,6 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         Mode activityMode = Mode.valueOf(mode);
         if (activityMode == Mode.JOIN) {
 
-            String myName = userName;
-            String myEmail = userEmail;
             joinTeam(invitationId);
         } else {
 
@@ -176,11 +182,44 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
                     .pageViewMemberCreateSuccess();
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+
+            if (e.errCode == NOT_AVAILABLE_INVITATION_CODE) {
+                alertTextDialog(getResources().getString(R.string.jandi_expired_invitation_link));
+            } else if (e.errCode == DISABLED_MEMBER) {
+                alertTextDialog(getResources().getString(R.string.jandi_disabled_team, teamName));
+            } else if (e.errCode == REMOVED_TEAM) {
+                alertTextDialog(getResources().getString(R.string.jandi_deleted_team));
+            } else if (e.errCode == TEAM_INVITATION_DISABLED) {
+                alertTextDialog(getResources().getString(R.string.jandi_invite_disabled));
+            } else if (e.errCode == ENABLED_MEMBER) {
+                alertTextDialog(getResources().getString(R.string.jandi_joined_team, teamName));
+            }
             teamDomainInfoPresenter.failJoinTeam();
         }
 
         teamDomainInfoPresenter.dismissProgressWheel();
 
+    }
+
+    @UiThread
+    public void alertTextDialog(String alertText) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder
+                .setMessage(alertText)
+                .setCancelable(false)
+                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                // 다이얼로그를 취소한다
+                                dialog.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
     }
 
     private void setUpActionBar(Mode mode) {

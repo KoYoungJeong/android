@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -41,6 +42,7 @@ public interface TeamsApiClient {
 
     @Post("/teams")
     @RequiresAuthentication
+    @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
 
 

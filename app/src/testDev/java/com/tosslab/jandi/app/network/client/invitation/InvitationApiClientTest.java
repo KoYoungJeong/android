@@ -3,9 +3,7 @@ package com.tosslab.jandi.app.network.client.invitation;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
-import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
@@ -18,7 +16,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;

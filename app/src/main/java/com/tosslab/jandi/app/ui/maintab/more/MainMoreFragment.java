@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.maintab.more;
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.DialogFragment;
@@ -15,7 +17,6 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
-import com.tosslab.jandi.app.dialogs.TextViewDialogFragment;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -42,7 +43,10 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.List;
+
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 10. 11..
@@ -51,6 +55,14 @@ import de.greenrobot.event.EventBus;
 public class MainMoreFragment extends Fragment {
 
     public static final String SUPPORT_URL = "http://support.jandi.com";
+    public static final String PACKAGE_NAME_KAKAO = "com.kakao.talk";
+    public static final String PACKAGE_NAME_LINE = "jp.naver.line.android";
+    public static final String PACKAGE_NAME_WECHAT = "com.tencent.mm";
+    public static final String FACEBOOK_EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
+    public static final String FACEBOOK_EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
+    public static final int FACEBOOK_PROTOCOL_VERSION = 20150314;
+    public static final String FACEBOOK_REGISTRATION_APP_ID = "808900692521335";
+    public static final String PACKAGE_NAME_FACEBOOK_MESSENGER = "com.facebook.orca";
     protected Context mContext;
 
     IconWithTextView profileIconView;
@@ -129,17 +141,26 @@ public class MainMoreFragment extends Fragment {
     @Click(R.id.ly_more_invite)
     @Background
     public void invitationDisableCheck() {
+
+        List<FormattedEntity> users = EntityManager.getInstance(getActivity()).getFormattedUsers();
+        FormattedEntity tempDefaultEntity = new FormattedEntity();
+        FormattedEntity owner = Observable.from(users)
+                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
+                .firstOrDefault(tempDefaultEntity)
+                .toBlocking()
+                .first();
+
         try {
             resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
 
-            if (TextUtils.equals(resTeamDetailInfo.getInvitationStatus(), "enabled")) {
+            if (!TextUtils.equals(resTeamDetailInfo.getInvitationStatus(), "enabled")) {
                 moveToInvitationActivity();
             } else {
-                DialogFragment textViewDialog = new TextViewDialogFragment("You are a disabled member of this team");
-                textViewDialog.show(getFragmentManager(), "textViewDialog");
-
+                alertTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
             }
         } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -177,7 +198,7 @@ public class MainMoreFragment extends Fragment {
 
     }
 
-    public void kakaoLineWechatInvitation(Intent intent, String publicLink, String appPackageName) {
+    public void kakaoLineWechatInvitation(Intent intent, String publicLink, String invitationContents, String appPackageName) {
         try {
             intent.setPackage(appPackageName);
             intent.putExtra(Intent.EXTRA_TEXT, publicLink);
@@ -185,22 +206,21 @@ public class MainMoreFragment extends Fragment {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
-            copyLink(publicLink);
+            copyLink(publicLink, invitationContents);
+            alertTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
         }
 
     }
 
-    public void copyLink(String publicLink) {
-        ClipData clipData = ClipData.newPlainText("", publicLink);
+    public void copyLink(String publicLink, String invitationContents) {
+        ClipData clipData = ClipData.newPlainText("", publicLink + "\n" + invitationContents);
         clipboardManager.setPrimaryClip(clipData);
-
-        ColoredToast.show(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
     }
 
 
     public void onEvent(TeamInvitationsEvent event) {
         String publicLink = resTeamDetailInfo.getInvitationUrl();
-
+        String invitationContents = resTeamDetailInfo.getName() + getResources().getString(R.string.jandi_invite_contents);
         Intent intent = new Intent(Intent.ACTION_SEND);
 
         switch (event.type) {
@@ -210,35 +230,35 @@ public class MainMoreFragment extends Fragment {
                         .start();
                 break;
             case JandiConstants.TYPE_INVITATION_KAKAO:
-                kakaoLineWechatInvitation(intent, publicLink, "com.kakao.talk");
+                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_KAKAO);
                 break;
             case JandiConstants.TYPE_INVITATION_LINE:
-                kakaoLineWechatInvitation(intent, publicLink, "jp.naver.line.android");
+                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_LINE);
                 break;
             case JandiConstants.TYPE_INVITATION_WECHAT:
-                kakaoLineWechatInvitation(intent, publicLink, "com.tencent.mm");
+                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_WECHAT);
                 break;
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                String EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
-                String EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
-                int PROTOCOL_VERSION = 20150314;
-                String YOUR_APP_ID = "432811923545730";
-
-                //String mimeType = "text/plain";
                 String mimeType = "image/*";
 
+                try {
+                    intent.setPackage(PACKAGE_NAME_FACEBOOK_MESSENGER);
+                    intent.setType(mimeType);
+                    intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
+                    intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
+                    intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
 
-                intent.setPackage("com.facebook.orca");
-                intent.setType(mimeType);
-                //intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-                intent.putExtra(Intent.EXTRA_TEXT, "[TEST] ABCEFGHI  www.jandi.com");
-                intent.putExtra(EXTRA_PROTOCOL_VERSION, PROTOCOL_VERSION);
-                intent.putExtra(EXTRA_APP_ID, YOUR_APP_ID);
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                    copyLink(publicLink, invitationContents);
+                    alertTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
+                }
 
-                startActivity(intent);
                 break;
             case JandiConstants.TYPE_INVITATION_COPY_LINK:
-                copyLink(publicLink);
+                copyLink(publicLink, invitationContents);
+                ColoredToast.show(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
                 break;
             default:
                 break;
@@ -250,5 +270,26 @@ public class MainMoreFragment extends Fragment {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+    }
+
+    @UiThread
+    public void alertTextDialog(String alertText) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
+
+        alertDialogBuilder
+                .setMessage(alertText)
+                .setCancelable(false)
+                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                // 다이얼로그를 취소한다
+                                dialog.cancel();
+                            }
+                        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
     }
 }
