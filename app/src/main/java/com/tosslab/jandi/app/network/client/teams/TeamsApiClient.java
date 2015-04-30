@@ -20,6 +20,8 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 
+import java.util.List;
+
 /**
  * Created by Steve SeongUg Jung on 14. 12. 15..
  */
@@ -52,7 +54,7 @@ public interface TeamsApiClient {
 
     @Post("/teams/{teamId}/invitations")
     @RequiresAuthentication
-    ResInvitationMembers inviteToTeam(int teamId, ReqInvitationMembers invitationMembers);
+    List<ResInvitationMembers> inviteToTeam(int teamId, ReqInvitationMembers invitationMembers);
 
 
     @Get("/teams/{teamId}")

@@ -32,7 +32,7 @@ public class InviteModel {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public ResInvitationMembers inviteMembers(List<String> invites) throws JandiNetworkException {
+    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws JandiNetworkException {
 
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
 
