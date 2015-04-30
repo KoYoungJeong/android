@@ -161,6 +161,7 @@ public class JandiPushReceiverModel {
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
         builder.setPriority(Notification.PRIORITY_MAX);
         builder.setAutoCancel(true);
+        builder.setNumber(JandiPreference.getBadgeCount(context));
 
         // 노티를 터치할 경우엔 자동 삭제되나, 노티를 삭제하지 않고 앱으로 진입했을 때, 해당 채팅 방에 들어갈 때만
         // 이 노티가 삭제되도록...
