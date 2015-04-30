@@ -117,7 +117,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
         // Team Creation
         try {
-            ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain, myName, myEmail);
+            ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
             String distictId = newTeam.getInviteTeam().getId() + "-" + newTeam.getInviteTeam().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)

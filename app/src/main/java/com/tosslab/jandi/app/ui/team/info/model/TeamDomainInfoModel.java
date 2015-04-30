@@ -38,9 +38,9 @@ public class TeamDomainInfoModel {
 
     private Callback callback;
 
-    public ResTeamDetailInfo createNewTeam(String name, String teamDomain, String myName, String myEmail) throws JandiNetworkException {
+    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws JandiNetworkException {
 
-        ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain, myName, myEmail);
+        ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
         TeamCreateRequest teamCreateRequest = TeamCreateRequest.create(context, reqCreateNewTeam);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, teamCreateRequest);
 
