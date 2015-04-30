@@ -96,7 +96,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
             if (markerAnimState == AnimState.Idle) {
                 final View view = viewHolder.itemView;
                 Integer colorFrom = context.getResources().getColor(R.color.white);
-                Integer colorTo = context.getResources().getColor(R.color.jandi_message_search_item_highlight);
+                Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_b2);
                 final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
                 colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
                 colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
