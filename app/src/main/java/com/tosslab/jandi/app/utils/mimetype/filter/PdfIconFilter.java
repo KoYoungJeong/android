@@ -7,7 +7,7 @@ import android.text.TextUtils;
  */
 public class PdfIconFilter implements IconFilter {
 
-    private static final String INCLUDE_FILTER = "application/pdf";
+    private static final String INCLUDE_FILTER = "pdf";
 
     @Override
     public boolean isIconFilter(String iconType) {
