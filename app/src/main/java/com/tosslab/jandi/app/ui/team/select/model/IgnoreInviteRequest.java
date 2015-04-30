@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
+import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -39,7 +39,7 @@ public class IgnoreInviteRequest implements Request<ResTeamDetailInfo> {
         //ReqInvitationConfirm reqInvitationConfirm = new ReqInvitationConfirm(team.getToken(), ReqInvitationConfirm.Type.DECLINE.getType(), "", "");
         //return invitationApiClient.declineInvitation(reqInvitationConfirm);
 
-        ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore = new ReqInvitationConfirmOrIgnore(ReqInvitationConfirmOrIgnore.Type.DECLINE.getType());
-        return invitationApiClient.confirmOrDeclineInvitation(team.getInvitationId(), reqInvitationConfirmOrIgnore);
+        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
+        return invitationApiClient.confirmOrDeclineInvitation(team.getInvitationId(), reqInvitationAcceptOrIgnore);
     }
 }

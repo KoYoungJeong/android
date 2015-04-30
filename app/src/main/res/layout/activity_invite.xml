@@ -54,7 +54,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/jandi_invitation_successfully"
+        android:text="@string/jandi_invite_succes_send"
         android:textColor="@color/jandi_black_89"
         android:visibility="invisible" />
 

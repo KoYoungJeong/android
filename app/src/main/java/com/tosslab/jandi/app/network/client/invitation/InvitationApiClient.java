@@ -1,10 +1,8 @@
 package com.tosslab.jandi.app.network.client.invitation;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
-import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -13,7 +11,6 @@ import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Get;
-import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
@@ -63,7 +60,7 @@ public interface InvitationApiClient {
      */
     @Put("/account/invitations/{invitationId}")
     @RequiresAuthentication
-    ResTeamDetailInfo confirmOrDeclineInvitation(String invitationId, ReqInvitationConfirmOrIgnore reqInvitationConfirmOrIgnore);
+    ResTeamDetailInfo confirmOrDeclineInvitation(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
 
     /**
      * 초대된 목록 가져오기

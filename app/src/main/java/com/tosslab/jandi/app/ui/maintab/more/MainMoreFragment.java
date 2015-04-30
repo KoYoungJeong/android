@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.more;
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.DialogFragment;
@@ -17,6 +15,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
+import com.tosslab.jandi.app.dialogs.TextDialog;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -153,10 +152,10 @@ public class MainMoreFragment extends Fragment {
         try {
             resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
 
-            if (!TextUtils.equals(resTeamDetailInfo.getInvitationStatus(), "enabled")) {
+            if (TextUtils.equals(resTeamDetailInfo.getInvitationStatus(), "enabled")) {
                 moveToInvitationActivity();
             } else {
-                alertTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
+                showTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
             }
         } catch (JandiNetworkException e) {
             e.printStackTrace();
@@ -164,6 +163,13 @@ public class MainMoreFragment extends Fragment {
             e.printStackTrace();
         }
     }
+
+    @UiThread
+    public void showTextDialog(String alertText) {
+        TextDialog textDialog = new TextDialog(mContext);
+        textDialog.showDialog(alertText);
+    }
+
 
     @UiThread
     public void moveToInvitationActivity() {
@@ -207,13 +213,13 @@ public class MainMoreFragment extends Fragment {
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
             copyLink(publicLink, invitationContents);
-            alertTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
+            showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
         }
 
     }
 
     public void copyLink(String publicLink, String invitationContents) {
-        ClipData clipData = ClipData.newPlainText("", publicLink + "\n" + invitationContents);
+        ClipData clipData = ClipData.newPlainText("", invitationContents + "\n" + publicLink);
         clipboardManager.setPrimaryClip(clipData);
     }
 
@@ -252,7 +258,7 @@ public class MainMoreFragment extends Fragment {
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
                     copyLink(publicLink, invitationContents);
-                    alertTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
+                    showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
                 }
 
                 break;
@@ -270,26 +276,5 @@ public class MainMoreFragment extends Fragment {
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
-    }
-
-    @UiThread
-    public void alertTextDialog(String alertText) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-
-        alertDialogBuilder
-                .setMessage(alertText)
-                .setCancelable(false)
-                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
-                                // 다이얼로그를 취소한다
-                                dialog.cancel();
-                            }
-                        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
     }
 }

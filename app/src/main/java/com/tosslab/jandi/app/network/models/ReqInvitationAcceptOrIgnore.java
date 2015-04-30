@@ -3,11 +3,11 @@ package com.tosslab.jandi.app.network.models;
 /**
  * Created by Bill Minwook Heo on 15. 4. 27..
  */
-public class ReqInvitationConfirmOrIgnore {
+public class ReqInvitationAcceptOrIgnore {
 
     private final String type;
 
-    public ReqInvitationConfirmOrIgnore(String type) {
+    public ReqInvitationAcceptOrIgnore(String type) {
         this.type = type;
     }
 

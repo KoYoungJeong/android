@@ -13,9 +13,7 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.profile.account.model.AccountNameChangeRequest;
-import com.tosslab.jandi.app.ui.team.select.model.IgnoreInviteRequest;
 import com.tosslab.jandi.app.ui.team.select.model.PendingTeamListRequest;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -145,12 +143,6 @@ public class AccountHomeModel {
 
     public String getAccountName(Context context) {
         return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
-    }
-
-    public ResTeamDetailInfo ignorePendingTeam(Context context, Team team) throws JandiNetworkException {
-        IgnoreInviteRequest ignoreInviteRequest = IgnoreInviteRequest.create(context, team);
-        RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, ignoreInviteRequest);
-        return requestManager.request();
     }
 
 }

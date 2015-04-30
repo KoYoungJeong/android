@@ -359,4 +359,13 @@
     <string name="jandi_invite_succes_copy_link">"成员邀请的链接已复制到剪贴簿"</string>
     <string name="jandi_invite_succes_send">"邀请信发送至："</string>
     <string name="jandi_invite_contents">" 邀请你加入JANDI。 点击下列链接开启新帐户。"</string>
+
+    <string name="jandi_invite_many_people_explain">"想邀请超过100位成员？
+        让我们协助你！ support@tosslab.com"  </string>
+    <string name="jandi_invite_disabled">"邀请链接已关闭，请联络团队管理员%1$s请求协助。"</string>
+    <string name="jandi_deleted_team">"此团队已被删除"</string>
+    <string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>
+    <string name="jandi_joined_team">"你已加入%1$s，请再次确认团队列表。"</string>
+    <string name="jandi_expired_invitation_link">"此邀请链接已过期，请联络你的邀请人重新寄发新链接。"</string>
+    <string name="jandi_invite_app_not_installed">"JANDI应用程序尚未安装于你的行动装置，所以我们暂时将邀请链接复制到剪贴簿。"</string>
 </resources>

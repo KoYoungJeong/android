@@ -6,7 +6,8 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
@@ -27,6 +28,11 @@ import java.util.ArrayList;
  */
 @EBean
 public class AccountHomePresenterImpl implements AccountHomePresenter {
+    public static final int NOT_AVAILABLE_INVITATION_CODE = 40003;
+    public static final int DISABLED_MEMBER = 40301;
+    public static final int REMOVED_TEAM = 40302;
+    public static final int TEAM_INVITATION_DISABLED = 40303;
+    public static final int ENABLED_MEMBER = 40304;
 
     @Bean
     AccountHomeModel accountHomeModel;
@@ -135,9 +141,39 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         }
     }
 
+    @Background
     @Override
     public void onRequestJoin(Team selectedTeam) {
-        view.moveCreatedTeamDomain(selectedTeam);
+        view.showProgressWheel();
+
+        try {
+            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
+            teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
+            MixpanelMemberAnalyticsClient.getInstance(context, null)
+                    .pageViewMemberCreateSuccess();
+
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+
+            if (e.errCode == NOT_AVAILABLE_INVITATION_CODE) { // 초대 코드가 유효하지 않을때
+                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_expired_invitation_link));
+            } else if (e.errCode == DISABLED_MEMBER) { // disable된 유저일 때
+                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName()));
+            } else if (e.errCode == REMOVED_TEAM) { // 팀이 존재하지 않을 때
+                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_deleted_team));
+            } else if (e.errCode == TEAM_INVITATION_DISABLED) { // 팀의 초대 기능이 disable 일 때
+                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_invite_disabled));
+            } else if (e.errCode == ENABLED_MEMBER) { // 이미 팀에 등록된 유저 일 때
+                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName()));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            view.dismissProgressWheel();
+            view.removePendingTeamView(selectedTeam);
+        }
+        view.moveAfterinvitaionAccept();
     }
 
     @Background
@@ -146,9 +182,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            //accountHomeModel.ignorePendingTeam(context, selectedTeam);
-
-            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationConfirmOrIgnore.Type.DECLINE.getType());
+            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
         } catch (JandiNetworkException e) {
         } catch (Exception e) {
         } finally {
@@ -173,6 +207,4 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.showErrorToast(context.getString(R.string.err_network));
         }
     }
-
-
 }

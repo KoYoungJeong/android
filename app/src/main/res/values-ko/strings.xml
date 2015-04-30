@@ -377,4 +377,13 @@
     <string name="jandi_invite_succes_copy_link">"초대 링크가 클립보드에 복사되었습니다. 초대를 원하시는 멤버에게 이 링크를 보내세요!"</string>
     <string name="jandi_invite_succes_send">"아래 주소들로 초대장이 성공적으로 전송되었습니다."</string>
     <string name="jandi_invite_contents">" 잔디 팀에 초대받으셨습니다. 아래 링크를 통해 참여하실 수 있습니다."</string>
+
+    <string name="jandi_invite_many_people_explain">"100명 이상의 멤버를 초대하시나요?
+        저희에게 직접 연락 부탁드립니다: support@tosslab.com"</string>
+    <string name="jandi_invite_disabled">"멤버 초대 기능이 관리자에 의해 비활성화 되었습니다. 자세한 내용은 팀 관리자 %1$s에게 문의하세요."</string>
+    <string name="jandi_deleted_team">"이 팀은 잔디에서 삭제되었으며 더 이상 존재하지 않습니다."</string>
+    <string name="jandi_disabled_team">"%1$s에서 차단된 멤버입니다. 팀 관리자에게 문의하세요."</string>
+    <string name="jandi_joined_team">"이미 %1$s의 멤버입니다. 팀 리스트를 확인해주세요."</string>
+    <string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
+    <string name="jandi_invite_app_not_installed">"해당 앱이 설치되어 있지 않습니다. 초대 링크는 클립보드에 복사되었으므로 다른 곳에서 사용하실 수 있습니다."</string>
 </resources>

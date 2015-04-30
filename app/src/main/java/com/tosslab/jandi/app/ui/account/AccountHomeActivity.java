@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
+import com.tosslab.jandi.app.dialogs.TextDialog;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -21,7 +22,6 @@ import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
-import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -236,7 +236,7 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
 
-        if (firstJoin) {
+        if (firstJoin) { // 초대 수락 또는 팀 생성 후
             MemberProfileActivity_.intent(AccountHomeActivity.this)
                     .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     .start();
@@ -258,15 +258,11 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
 
     @Override
     public void moveCreatedTeamDomain(Team selectedTeam) {
-
-
         TeamDomainInfoActivity_.intent(AccountHomeActivity.this)
-                .mode(TeamDomainInfoActivity.Mode.JOIN.name())
                 .teamId(selectedTeam.getTeamId())
                 .teamName(selectedTeam.getName())
                 .domain(selectedTeam.getTeamDomain())
                 .token(selectedTeam.getToken())
-                .invitationId(selectedTeam.getInvitationId())
                 .startForResult(REQ_TEAM_JOIN);
     }
 
@@ -297,6 +293,18 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
         }
         customView.setPadding(0, 0, 0, 0);
         materialDialog.show();
+    }
+
+    @Override
+    public void moveAfterinvitaionAccept() {
+        accountHomePresenter.onTeamCreateResult();
+    }
+
+    @Override
+    @UiThread
+    public void showTextAlertDialog(String alertText) {
+        TextDialog textDialog = new TextDialog(this);
+        textDialog.showDialog(alertText);
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

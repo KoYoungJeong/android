@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.team.select.model.AcceptInviteRequest;
+import com.tosslab.jandi.app.ui.team.select.model.AcceptOrIgnoreInviteRequest;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -78,7 +78,7 @@ public class TeamDomainInfoModel {
             return null;
         }
 
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, invitationId, type);
+        AcceptOrIgnoreInviteRequest request = AcceptOrIgnoreInviteRequest.create(context, invitationId, type);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, request);
         ResTeamDetailInfo resTeamDetailInfos = requestManager.request();
         return resTeamDetailInfos;

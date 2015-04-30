@@ -369,4 +369,13 @@ JANDIへようこそ"</string>
     <string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
     <string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
     <string name="jandi_invite_contents">" があなたをJANDIに招待しました。以下のリンクをクリックしてチームに参加しましょう！"</string>
+
+    <string name="jandi_invite_many_people_explain">"100人以上のメンバーを追加したいですか？
+        サポートにご連絡はこちらまで support@tosslab.com"</string>
+    <string name="jandi_invite_disabled">"管理者によって招待が取り消されました。詳細は管理者%1$sにお問い合わせください"</string>
+    <string name="jandi_deleted_team">"このチームはJANDIで削除され、もう存在しません"</string>
+    <string name="jandi_disabled_team">"%1$sから無効化されました。チーム管理者にお問い合わせ下さい"</string>
+    <string name="jandi_joined_team">"すでに%1$sのメンバーです。チームリストを確認してください"</string>
+    <string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
+    <string name="jandi_invite_app_not_installed">"このアプリはインストールされていません。招待リンクをクリップボードにコピーしました"</string>
 </resources>

@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.team.info;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -10,7 +8,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirmOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -24,7 +21,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
@@ -35,14 +31,6 @@ import java.util.List;
 @OptionsMenu(R.menu.teamdomain_info)
 public class TeamDomainInfoActivity extends ActionBarActivity {
 
-    public static final int NOT_AVAILABLE_INVITATION_CODE = 40003;
-    public static final int DISABLED_MEMBER = 40301;
-    public static final int REMOVED_TEAM = 40302;
-    public static final int TEAM_INVITATION_DISABLED = 40303;
-    public static final int ENABLED_MEMBER = 40304;
-    @Extra
-    String mode = "CREATE";
-
     @Extra
     String token;
     @Extra
@@ -51,8 +39,6 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     String teamName;
     @Extra
     int teamId;
-    @Extra
-    String invitationId;
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
     @Bean
@@ -62,26 +48,11 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
     @AfterViews
     void initView() {
+        MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                .pageViewTeamCreate();
+        teamDomainInfoPresenter.setTeamCreatable(true);
 
-        Mode activityMode = Mode.valueOf(mode);
-
-
-        switch (activityMode) {
-            case CREATE:
-                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                        .pageViewTeamCreate();
-                teamDomainInfoPresenter.setTeamCreatable(true);
-                break;
-            case JOIN:
-                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                        .pageViewMemberCreate();
-                teamDomainInfoPresenter.setTeamDomain(domain);
-                teamDomainInfoPresenter.setTeamName(teamName);
-                teamDomainInfoPresenter.setTeamCreatable(false);
-                break;
-        }
-
-        setUpActionBar(activityMode);
+        setUpActionBar();
 
         teamDomainInfoModel.setCallback(new TeamDomainInfoModel.Callback() {
             @Override
@@ -128,26 +99,17 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     @Background
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
-        Mode activityMode = Mode.valueOf(mode);
-        if (activityMode == Mode.JOIN) {
+        String teamName = teamDomainInfoPresenter.getTeamName();
+        String teamDomain = teamDomainInfoPresenter.getTeamDomain();
+        String myName = userName;
+        String myEmail = userEmail;
 
-            joinTeam(invitationId);
-        } else {
-
-            String teamName = teamDomainInfoPresenter.getTeamName();
-            String teamDomain = teamDomainInfoPresenter.getTeamDomain();
-            String myName = userName;
-            String myEmail = userEmail;
-
-            if (TextUtils.isEmpty(teamDomain)) {
-                teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));
-                return;
-            }
-
-            createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
+        if (TextUtils.isEmpty(teamDomain)) {
+            teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));
+            return;
         }
 
-
+        createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
     }
 
     private void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
@@ -171,58 +133,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         }
     }
 
-    void joinTeam(String invitationId) {
-        teamDomainInfoPresenter.showProgressWheel();
-
-        try {
-            teamDomainInfoModel.acceptOrDclineInvite(invitationId, ReqInvitationConfirmOrIgnore.Type.ACCEPT.getType());
-            teamDomainInfoModel.updateTeamInfo(teamId);
-            teamDomainInfoPresenter.successJoinTeam();
-            MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                    .pageViewMemberCreateSuccess();
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-
-            if (e.errCode == NOT_AVAILABLE_INVITATION_CODE) {
-                alertTextDialog(getResources().getString(R.string.jandi_expired_invitation_link));
-            } else if (e.errCode == DISABLED_MEMBER) {
-                alertTextDialog(getResources().getString(R.string.jandi_disabled_team, teamName));
-            } else if (e.errCode == REMOVED_TEAM) {
-                alertTextDialog(getResources().getString(R.string.jandi_deleted_team));
-            } else if (e.errCode == TEAM_INVITATION_DISABLED) {
-                alertTextDialog(getResources().getString(R.string.jandi_invite_disabled));
-            } else if (e.errCode == ENABLED_MEMBER) {
-                alertTextDialog(getResources().getString(R.string.jandi_joined_team, teamName));
-            }
-            teamDomainInfoPresenter.failJoinTeam();
-        }
-
-        teamDomainInfoPresenter.dismissProgressWheel();
-
-    }
-
-    @UiThread
-    public void alertTextDialog(String alertText) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder
-                .setMessage(alertText)
-                .setCancelable(false)
-                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
-                                // 다이얼로그를 취소한다
-                                dialog.cancel();
-                            }
-                        });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-    }
-
-    private void setUpActionBar(Mode mode) {
+    private void setUpActionBar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -235,9 +146,4 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
     }
-
-    public enum Mode {
-        CREATE, JOIN
-    }
-
 }
