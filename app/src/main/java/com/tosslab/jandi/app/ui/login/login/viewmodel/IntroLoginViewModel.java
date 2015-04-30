@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;

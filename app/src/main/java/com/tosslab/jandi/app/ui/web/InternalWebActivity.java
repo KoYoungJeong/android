@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -37,7 +37,7 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_internal_web)
 @OptionsMenu(R.menu.internal_web)
-public class InternalWebActivity extends ActionBarActivity {
+public class InternalWebActivity extends AppCompatActivity {
 
     @Extra
     String url;

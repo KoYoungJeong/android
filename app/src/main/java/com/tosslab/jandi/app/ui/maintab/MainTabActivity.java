@@ -4,12 +4,12 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
@@ -123,11 +123,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     private void showInvitePopup() {
 
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(MainTabActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainTabActivity.this);
         View view = LayoutInflater.from(MainTabActivity.this).inflate(R.layout.dialog_invite_popup, null);
 
-        final MaterialDialog materialDialog = builder.customView(view, true)
-                .backgroundColor(getResources().getColor(R.color.white))
+        final AlertDialog materialDialog = builder.setView(view)
                 .show();
 
         view.findViewById(R.id.btn_invitation_popup_invite).setOnClickListener(new View.OnClickListener() {

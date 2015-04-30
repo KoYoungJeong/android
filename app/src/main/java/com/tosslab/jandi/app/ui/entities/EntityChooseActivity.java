@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.entities;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -19,7 +19,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
 @EActivity(R.layout.activity_entity_choose)
-public class EntityChooseActivity extends ActionBarActivity {
+public class EntityChooseActivity extends AppCompatActivity {
 
     @Extra
     String type = Type.ALL.name();

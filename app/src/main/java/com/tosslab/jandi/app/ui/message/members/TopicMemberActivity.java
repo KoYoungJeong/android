@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.message.members;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -31,7 +31,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EActivity(R.layout.activity_topic_member)
-public class TopicMemberActivity extends ActionBarActivity {
+public class TopicMemberActivity extends AppCompatActivity {
 
     @Bean
     TopicMemberPresenter topicMemberPresenter;

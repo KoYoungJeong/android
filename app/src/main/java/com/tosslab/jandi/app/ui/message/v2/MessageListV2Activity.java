@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -11,7 +11,7 @@ import org.androidannotations.annotations.FragmentArg;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EActivity
-public class MessageListV2Activity extends ActionBarActivity {
+public class MessageListV2Activity extends AppCompatActivity {
 
     @Extra
     int entityType;

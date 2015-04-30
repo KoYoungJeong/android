@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -18,7 +18,7 @@ import org.json.JSONException;
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
-public class BaseAnalyticsActivity extends ActionBarActivity {
+public class BaseAnalyticsActivity extends AppCompatActivity {
     public static String GA_PATH_CHANNEL = "Topic";
     public static String GA_PATH_DIRECT_MESSAGE = "Direct Message";
     public static String GA_PATH_PRIVATE_GROUP = "Private Group";

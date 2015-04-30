@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -34,7 +34,7 @@ import org.androidannotations.annotations.RootContext;
 public class FileHeadManager {
 
     @RootContext
-    ActionBarActivity activity;
+    AppCompatActivity activity;
 
     // in File Detail Header
     private ImageView imageViewUserProfile;

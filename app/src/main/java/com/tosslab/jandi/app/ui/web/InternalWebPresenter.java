@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.web;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;

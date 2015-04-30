@@ -7,7 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -47,7 +47,7 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 3. 10..
  */
 @EActivity(R.layout.activity_search)
-public class SearchActivity extends ActionBarActivity implements SearchPresenter.View {
+public class SearchActivity extends AppCompatActivity implements SearchPresenter.View {
 
     private static final int SPEECH_REQUEST_CODE = 201;
     @Bean(SearchPresenterImpl.class)

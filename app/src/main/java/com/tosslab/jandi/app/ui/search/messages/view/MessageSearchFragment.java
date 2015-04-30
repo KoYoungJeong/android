@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.search.messages.view;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.v4.app.Fragment;

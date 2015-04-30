@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.create;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.TextView;
@@ -31,7 +31,7 @@ import org.json.JSONException;
  */
 @EActivity(R.layout.activity_topic_create)
 @OptionsMenu(R.menu.add_topic_text)
-public class TopicCreateActivity extends ActionBarActivity {
+public class TopicCreateActivity extends AppCompatActivity {
 
     private static final Logger logger = Logger.getLogger(TopicCreateActivity.class);
 
