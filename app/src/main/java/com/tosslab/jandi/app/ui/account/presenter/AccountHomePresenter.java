@@ -20,7 +20,7 @@ public interface AccountHomePresenter {
 
     void onChangeName(String inputMessage);
 
-    void onTeamCreateResult();
+    void onTeamCreateAcceptResult();
 
     void onAccountEmailEditClick();
 

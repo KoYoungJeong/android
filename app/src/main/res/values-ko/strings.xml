@@ -386,4 +386,5 @@
     <string name="jandi_joined_team">"이미 %1$s의 멤버입니다. 팀 리스트를 확인해주세요."</string>
     <string name="jandi_expired_invitation_link">"이 초대 링크는 만료되었습니다. 새로운 링크를 요청하세요."</string>
     <string name="jandi_invite_app_not_installed">"해당 앱이 설치되어 있지 않습니다. 초대 링크는 클립보드에 복사되었으므로 다른 곳에서 사용하실 수 있습니다."</string>
+    <string name="jandi_invite_member">"멤버 초대하기"</string>
 </resources>
