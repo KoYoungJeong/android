@@ -57,15 +57,14 @@ public class InviteActivity extends BaseAnalyticsActivity {
                         try {
                             inviteModel.inviteMembers(Arrays.asList(o.getEmail()));
                             inviteView.updateSuccessInvite(o, 1);
-                            inviteView.addSendEmailSuccessText();
 
                         } catch (JandiNetworkException e) {
                             logger.debug("Email Sending Fail : " + e.getMessage());
-                            inviteView.updateSuccessInvite(o, -1);
+                            inviteView.deleteFailInvitation(o);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         } catch (Exception e) {
                             logger.debug("Email Sending Fail : " + e.getMessage());
-                            inviteView.updateSuccessInvite(o, -1);
+                            inviteView.deleteFailInvitation(o);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         }
                     }

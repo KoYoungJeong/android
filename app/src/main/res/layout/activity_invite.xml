@@ -24,12 +24,12 @@
             android:id="@+id/edit_invite_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
             android:layout_toLeftOf="@+id/btn_invite_send"
-            android:background="@drawable/edit_under_line" />
+            android:background="@drawable/edit_under_line"
+            android:inputType="textEmailAddress" />
 
 
         <Button
@@ -46,23 +46,44 @@
             android:textColor="@color/text_color_green_with_disable" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/invite_succes_text_display"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/jandi_border_gray" />
+
+    <LinearLayout
+        android:id="@+id/layout_invite_success_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="25dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/jandi_invite_succes_send"
-        android:textColor="@color/jandi_black_89"
-        android:visibility="invisible" />
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-    <ListView
-        android:id="@+id/lv_invite"
+        <TextView
+            android:id="@+id/invite_succes_text_display"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/jandi_invite_succes_send"
+            android:textColor="@color/jandi_black_89" />
+
+        <ListView
+            android:id="@+id/lv_invite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:paddingBottom="20dp" />
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="0.5dp"
+        android:background="@color/jandi_border_gray" />
+
 
     <TextView
         android:id="@+id/invite_footer_text"
