@@ -18,7 +18,9 @@ public class Team {
     private String userEmail;
     private String token;
 
-    private Team(int teamId, int memberId, String name, String teamDomain, Status status, int unread) {
+    private String invitationId;
+
+    private Team(int teamId, int memberId, String name, String teamDomain, Status status, int unread, String invitationId) {
         this.teamId = teamId;
         this.memberId = memberId;
         this.name = name;
@@ -26,21 +28,22 @@ public class Team {
         this.status = status;
         this.isSelected = false;
         this.unread = unread;
+        this.invitationId = invitationId;
     }
 
     public static Team createTeam(ResAccountInfo.UserTeam userTeam) {
-        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED, userTeam.getUnread());
+        return new Team(userTeam.getTeamId(), userTeam.getMemberId(), userTeam.getName(), userTeam.getTeamDomain(), Status.JOINED, userTeam.getUnread(), "");
     }
 
     public static Team createTeam(ResPendingTeamInfo resPendingTeamInfo) {
-        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING, -1);
+        Team team = new Team(resPendingTeamInfo.getTeamId(), resPendingTeamInfo.getMemberId(), resPendingTeamInfo.getTeamName(), resPendingTeamInfo.getTeamDomain(), Status.PENDING, -1, resPendingTeamInfo.getId());
         team.setUserEmail(resPendingTeamInfo.getToEmail());
         team.setToken(resPendingTeamInfo.getToken());
         return team;
     }
 
     public static Team createEmptyTeam() {
-        return new Team(0, 0, "", "", Status.CREATE, -1);
+        return new Team(0, 0, "", "", Status.CREATE, -1, "");
     }
 
     public String getUserEmail() {
@@ -91,6 +94,14 @@ public class Team {
         this.token = token;
     }
 
+    public String getInvitationId() {
+        return invitationId;
+    }
+
+    public void setInvitationId(String invitationId) {
+        this.invitationId = invitationId;
+    }
+
     @Override
     public String toString() {
         return "Team{" +
@@ -101,6 +112,7 @@ public class Team {
                 ", status=" + status +
                 ", isSelected=" + isSelected +
                 ", userEmail='" + userEmail + '\'' +
+                ", invitationId='" + invitationId + '\'' +
                 '}';
     }
 

@@ -6,14 +6,10 @@ package com.tosslab.jandi.app.network.models;
 public class ReqCreateNewTeam {
     private final String name;
     private final String teamDomain;
-    private final String memberName;
-    private final String memberEmail;
 
-    public ReqCreateNewTeam(String name, String teamDomain, String memberName, String memberEmail) {
+    public ReqCreateNewTeam(String name, String teamDomain) {
         this.name = name;
         this.teamDomain = teamDomain;
-        this.memberName = memberName;
-        this.memberEmail = memberEmail;
     }
 
     public String getName() {
@@ -24,11 +20,4 @@ public class ReqCreateNewTeam {
         return teamDomain;
     }
 
-    public String getMemberName() {
-        return memberName;
-    }
-
-    public String getMemberEmail() {
-        return memberEmail;
-    }
 }

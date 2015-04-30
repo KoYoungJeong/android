@@ -7,27 +7,29 @@ import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
-public class IgnoreInviteRequest implements Request<ResTeamDetailInfo> {
+public class AcceptOrIgnoreInviteRequest implements Request<ResTeamDetailInfo> {
 
     private final Context context;
     private final InvitationApiClient invitationApiClient;
-    private final Team team;
+    private final String invitationId;
+    private final String type;
 
-    private IgnoreInviteRequest(Context context, InvitationApiClient invitationApiClient, Team team) {
+
+    private AcceptOrIgnoreInviteRequest(Context context, InvitationApiClient invitationApiClient, String invitationId, String type) {
         this.context = context;
         this.invitationApiClient = invitationApiClient;
-        this.team = team;
+        this.invitationId = invitationId;
+        this.type = type;
     }
 
-    public static IgnoreInviteRequest create(Context context, Team team) {
-        return new IgnoreInviteRequest(context, new InvitationApiClient_(context), team);
+    public static AcceptOrIgnoreInviteRequest create(Context context, String invitationId, String type) {
+        return new AcceptOrIgnoreInviteRequest(context, new InvitationApiClient_(context), invitationId, type);
     }
 
 
@@ -36,10 +38,8 @@ public class IgnoreInviteRequest implements Request<ResTeamDetailInfo> {
 
         invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        //ReqInvitationConfirm reqInvitationConfirm = new ReqInvitationConfirm(team.getToken(), ReqInvitationConfirm.Type.DECLINE.getType(), "", "");
-        //return invitationApiClient.declineInvitation(reqInvitationConfirm);
+        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
+        return invitationApiClient.confirmOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore);
 
-        ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
-        return invitationApiClient.confirmOrDeclineInvitation(team.getInvitationId(), reqInvitationAcceptOrIgnore);
     }
 }

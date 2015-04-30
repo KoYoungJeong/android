@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.team.select.model.AcceptInviteRequest;
+import com.tosslab.jandi.app.ui.team.select.model.AcceptOrIgnoreInviteRequest;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
@@ -17,7 +17,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,8 +30,6 @@ import rx.Observable;
 @EBean
 public class TeamDomainInfoModel {
 
-    private final static Logger logger = Logger.getLogger(TeamDomainInfoModel.class);
-
     @RestService
     JandiRestClient jandiRestClient;
 
@@ -41,9 +38,9 @@ public class TeamDomainInfoModel {
 
     private Callback callback;
 
-    public ResTeamDetailInfo createNewTeam(String name, String teamDomain, String myName, String myEmail) throws JandiNetworkException {
+    public ResTeamDetailInfo createNewTeam(String name, String teamDomain) throws JandiNetworkException {
 
-        ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain, myName, myEmail);
+        ReqCreateNewTeam reqCreateNewTeam = new ReqCreateNewTeam(name, teamDomain);
         TeamCreateRequest teamCreateRequest = TeamCreateRequest.create(context, reqCreateNewTeam);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, teamCreateRequest);
 
@@ -73,7 +70,7 @@ public class TeamDomainInfoModel {
     }
 
     @SupposeBackground
-    public ResTeamDetailInfo acceptInvite(String token, String userEmail, String name) {
+    public ResTeamDetailInfo acceptOrDclineInvite(String invitationId, String type) throws JandiNetworkException {
 
         ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
 
@@ -81,17 +78,18 @@ public class TeamDomainInfoModel {
             return null;
         }
 
-        AcceptInviteRequest request = AcceptInviteRequest.create(context, token, userEmail, name);
+        AcceptOrIgnoreInviteRequest request = AcceptOrIgnoreInviteRequest.create(context, invitationId, type);
         RequestManager<ResTeamDetailInfo> requestManager = RequestManager.newInstance(context, request);
-        try {
-            ResTeamDetailInfo resTeamDetailInfos = requestManager.request();
-            return resTeamDetailInfos;
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-            return null;
-        }
+        ResTeamDetailInfo resTeamDetailInfos = requestManager.request();
+        return resTeamDetailInfos;
 
+    }
 
+    public ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId) throws JandiNetworkException {
+        TeamInfoRequest request = TeamInfoRequest.create(context, teamId);
+        RequestManager<ResTeamDetailInfo.InviteTeam> requestManager = RequestManager.newInstance(context, request);
+        ResTeamDetailInfo.InviteTeam resTeamDetailInfo = requestManager.request();
+        return resTeamDetailInfo;
     }
 
     public void updateTeamInfo(int teamId) {

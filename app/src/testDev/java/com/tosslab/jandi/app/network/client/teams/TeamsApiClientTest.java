@@ -96,4 +96,20 @@ public class TeamsApiClientTest {
         assertThat(resInvitationMemberses, is(notNullValue()));
 
     }
+
+    @Test
+    public void testGetTeamInfo() throws Exception {
+
+        JandiRestClient jandiRestClient_ = new JandiRestClient_(Robolectric.application);
+        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+        ResAccountInfo accountInfo = jandiRestClient_.getAccountInfo();
+
+        int teamId = accountInfo.getMemberships().get(0).getTeamId();
+
+        teamsApiClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
+
+        ResTeamDetailInfo.InviteTeam teamInfo = teamsApiClient_.getTeamInfo(teamId);
+
+        assertThat(teamInfo, is(notNullValue()));
+    }
 }
