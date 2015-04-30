@@ -32,7 +32,7 @@ public class NormalThumbLoader implements FileThumbLoader {
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
         String photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
 
-        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
         imageViewPhotoFile.setImageResource(MimeTypeUtil.getMimeTypePlaceholderImage(fileMessage.content.serverUrl, fileMessage.content.icon));
 
         if (TextUtils.isEmpty(photoUrl)) {

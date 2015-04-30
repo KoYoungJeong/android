@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class IconFilterUtil {
 
-    private static final IconFilter ETC_ICON_FILTER = new EtcIconFilter();
     private static Map<MimeTypeUtil.FilterType, IconFilter> mimeFilterMap;
 
     static {

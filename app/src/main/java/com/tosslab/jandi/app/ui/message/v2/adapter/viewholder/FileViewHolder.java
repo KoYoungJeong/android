@@ -113,7 +113,7 @@ public class FileViewHolder implements BodyViewHolder {
                 fileNameTextView.setText(fileMessage.content.title);
                 fileTypeTextView.setText(fileMessage.content.ext);
 
-                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
 
             }
         }

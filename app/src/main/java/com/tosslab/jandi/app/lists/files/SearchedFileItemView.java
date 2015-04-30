@@ -61,7 +61,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         textViewSearchedFileDate.setText(searchedFileDate);
         // 파일 타입에 해당하는 아이콘 연결
-        imageViewSearchedFileType.setImageResource(MimeTypeUtil.getMimeTypeImage(searchedFile.content.serverUrl, searchedFile.content.icon));
+        imageViewSearchedFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(searchedFile.content.serverUrl, searchedFile.content.icon));
 
         commentTextView.setText(String.valueOf(searchedFile.commentCount));
 

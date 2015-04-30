@@ -141,7 +141,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
                                 fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl)))));
                                 break;
                             default:
@@ -161,10 +161,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         }
 
                     } else {
-                        fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                        fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
                     }
                 } else {
-                    fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                    fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
                 }
             }
 

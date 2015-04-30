@@ -125,7 +125,7 @@ public class ImageViewHolder implements BodyViewHolder {
                         case Google:
                         case Dropbox:
                             fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl)))));
-                            fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+                            fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
                             break;
                         default:
                             Ion.with(fileImageView)
