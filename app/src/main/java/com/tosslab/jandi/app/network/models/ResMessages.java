@@ -158,7 +158,9 @@ public class ResMessages {
         public String title;
         public String name;
         public String type;
+        public String icon;
         public String serverUrl;
+        public String filterType;
         public String fileUrl;
         public String ext;
         public int size;
@@ -170,7 +172,9 @@ public class ResMessages {
                     "title='" + title + '\'' +
                     ", name='" + name + '\'' +
                     ", type='" + type + '\'' +
+                    ", icon='" + icon + '\'' +
                     ", serverUrl='" + serverUrl + '\'' +
+                    ", filterType='" + filterType + '\'' +
                     ", fileUrl='" + fileUrl + '\'' +
                     ", ext='" + ext + '\'' +
                     ", size=" + size +

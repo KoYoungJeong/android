@@ -309,11 +309,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
 
-    /**
-     * *********************************************************
-     * 검색
-     * **********************************************************
-     */
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
         searchedFileItemListAdapter.clearAdapter();
