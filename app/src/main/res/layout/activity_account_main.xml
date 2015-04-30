@@ -28,7 +28,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/jandi_entity_item_height"
-                android:background="@color/jandi_main"
+                android:background="@color/jandi_primary_color"
                 android:paddingLeft="72dp"
                 android:paddingRight="@dimen/jandi_account_home_layout_margin">
 
@@ -70,7 +70,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/jandi_main"
+                android:background="@color/jandi_primary_color"
                 android:paddingBottom="18dp"
                 android:paddingLeft="72dp"
                 android:paddingRight="@dimen/jandi_account_home_layout_margin"

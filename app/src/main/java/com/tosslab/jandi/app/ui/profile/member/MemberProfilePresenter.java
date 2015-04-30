@@ -165,7 +165,6 @@ public class MemberProfilePresenter {
     @UiThread
     void setTextAndChangeColor(TextView textView, String textToBeChanged) {
         textView.setText(textToBeChanged);
-//        textView.setTextColor(activity.getResources().getColor(R.color.jandi_profile_edited_text));
     }
 
     public void updateProfileTextColor(int actionType, String inputMessage) {

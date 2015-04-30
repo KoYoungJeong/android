@@ -57,7 +57,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     @Override
-    public void onJoinedTeamSelect(int teamId) {
+    public void onJoinedTeamSelect(int teamId, boolean firstJoin) {
         view.showProgressWheel();
 
         try {
@@ -72,7 +72,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         } finally {
             view.dismissProgressWheel();
 
-            view.moveSelectedTeam();
+            view.moveSelectedTeam(firstJoin);
         }
     }
 
@@ -112,8 +112,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     public void onTeamCreateResult() {
 
         ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
-        onJoinedTeamSelect(selectedTeamInfo.getTeamId());
+        onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
     }
+
 
     @Override
     public void onAccountEmailEditClick() {

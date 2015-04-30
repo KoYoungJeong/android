@@ -47,7 +47,7 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/jandi_send_invitation"
-            android:textColor="@color/jandi_border_green"
+            android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_medium"
             android:textStyle="bold" />
 
@@ -60,7 +60,7 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/jandi_later"
-            android:textColor="@color/jandi_border_green"
+            android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_medium"
             android:textStyle="bold" />
     </LinearLayout>

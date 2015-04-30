@@ -15,14 +15,18 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
+
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 27..
@@ -36,14 +40,41 @@ public class InviteActivity extends BaseAnalyticsActivity {
     InviteModel inviteModel;
 
     @Bean
-    InvitePresenter invitePresenter;
+    InviteView inviteView;
+    private PublishSubject<EmailTO> emailSendingSubject;
 
     @AfterViews
     void initView() {
 
+        setUpActionbar();
+
+        emailSendingSubject = PublishSubject.create();
+
+        emailSendingSubject.observeOn(Schedulers.io())
+                .subscribe(new Action1<EmailTO>() {
+                    @Override
+                    public void call(EmailTO o) {
+                        try {
+                            inviteModel.inviteMembers(Arrays.asList(o.getEmail()));
+                            inviteView.updateSuccessInvite(o, 1);
+                            inviteView.addSendEmailSuccessText();
+
+                        } catch (JandiNetworkException e) {
+                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            inviteView.updateSuccessInvite(o, -1);
+                            inviteView.showErrorToast(getString(R.string.err_invitation_failed));
+                        } catch (Exception e) {
+                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            inviteView.updateSuccessInvite(o, -1);
+                            inviteView.showErrorToast(getString(R.string.err_invitation_failed));
+                        }
+                    }
+                }, throwable -> logger.debug("Email Sending Fail : " + throwable.getMessage()));
+    }
+
+    private void setUpActionbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
-
 
         // Set up the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -51,8 +82,8 @@ public class InviteActivity extends BaseAnalyticsActivity {
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-
     }
+
 
     @Override
     protected void onResume() {
@@ -66,48 +97,48 @@ public class InviteActivity extends BaseAnalyticsActivity {
         finish();
     }
 
-    @AfterTextChange(R.id.et_invitation_email)
+    @AfterTextChange(R.id.edit_invite_email)
     void onEmailTextChange(Editable text) {
 
         String email = text.toString();
 
         if (!TextUtils.equals(email, email.toLowerCase())) {
-            invitePresenter.setEmailText(email.toLowerCase());
+            inviteView.setEmailText(email.toLowerCase());
             return;
         }
 
         boolean isValidEmail = inviteModel.isValidEmailFormat(email);
-        invitePresenter.setEnableAddButton(isValidEmail);
+        inviteView.setEnableAddButton(isValidEmail);
     }
 
-    @Background
-    @Click(R.id.btn_invitation_confirm)
+    @Click(R.id.btn_invite_send)
     void onInviteListAddClick() {
-        String emailText = invitePresenter.getEmailText();
-        if (!invitePresenter.getInvites().contains(emailText)) {
+        String emailText = inviteView.getEmailText();
+        if (!inviteView.getInvites().contains(emailText)) {
             if (!inviteModel.isInvitedEmail(emailText)) {
-                invitePresenter.showProgressWheel();
-                try {
-                    inviteModel.inviteMembers(Arrays.asList(emailText));
-                    invitePresenter.addEmailAtFirst(EmailTO.create(emailText));
-                    invitePresenter.showSuccessToast(getString(R.string.jandi_invite_success));
-                } catch (JandiNetworkException e) {
-                    logger.debug(e.getErrorInfo() + " : " + e.httpBody);
-                    invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
-                } catch (Exception e) {
-                    invitePresenter.showErrorToast(getString(R.string.err_invitation_failed));
-                } finally {
-                    invitePresenter.dismissProgressWheel();
+                EmailTO emailTO = EmailTO.create(emailText);
+                inviteView.addEmail(emailTO);
+                inviteView.moveToSelection(0);
 
-                }
+                emailSendingSubject.onNext(emailTO);
             } else {
-                invitePresenter.showWarnToast(getString(R.string.jandi_duplicate_email));
+                inviteView.showWarnToast(getString(R.string.jandi_duplicate_email));
             }
         } else {
-            invitePresenter.showWarnToast(getString(R.string.jandi_invitation_succeed));
+            inviteView.showWarnToast(getString(R.string.jandi_invitation_succeed));
         }
-        invitePresenter.clearEmailTextView();
+        inviteView.clearEmailTextView();
+    }
 
+    @ItemClick(R.id.lv_invite)
+    void onEmailItemClick(int position) {
+        EmailTO inviteEmail = inviteView.getInviteEmail(position);
+
+        if (inviteEmail.getSuccess() == -1) {
+            inviteEmail.setSuccess(0);
+            inviteView.notifyDatasetChanged();
+            emailSendingSubject.onNext(inviteEmail);
+        }
     }
 
 }

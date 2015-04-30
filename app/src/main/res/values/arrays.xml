@@ -12,4 +12,13 @@
         <item>@string/jandi_action_unshare</item>
         <item>@string/jandi_action_delete</item>
     </string-array>
+
+    <string-array name="types_invitations">
+        <item>@string/jandi_invite_email</item>
+        <item>@string/jandi_invite_kakao</item>
+        <item>@string/jandi_invite_line</item>
+        <item>@string/jandi_invite_wechat</item>
+        <item>@string/jandi_invite_facebook_messenger</item>
+        <item>@string/jandi_invite_copy_link</item>
+    </string-array>
 </resources>

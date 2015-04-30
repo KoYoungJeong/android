@@ -69,4 +69,9 @@
             android:drawable="@drawable/jandi_progress_anim_12"
             android:scaleGravity="center" />
     </item>
+    <item android:duration="50">
+        <scale
+            android:drawable="@drawable/jandi_progress_anim_13"
+            android:scaleGravity="center" />
+    </item>
 </animation-list>

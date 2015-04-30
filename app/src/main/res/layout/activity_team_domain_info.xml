@@ -17,7 +17,7 @@
             android:visibility="visible"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:background="?attr/colorPrimary"/>
+            android:background="?attr/colorPrimary" />
 
 
         <TextView
@@ -57,32 +57,6 @@
             style="@style/JandiTeam.TextView.Explain"
             android:layout_marginTop="16dp"
             android:text="@string/what_is_team_domain" />
-
-        <TextView
-            style="@style/JandiTeam.TextView.Title"
-            android:layout_marginTop="16dp"
-            android:text="@string/member_profile" />
-
-        <EditText
-            android:id="@+id/et_team_detail_info_member_name"
-            style="@style/JandiTeam.EditText"
-            android:hint="@string/jandi_title_name"
-            android:imeOptions="actionDone"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp" />
-
-        <Spinner
-            android:id="@+id/spinner_team_detail_info_member_email"
-            style="@style/JandiTeam.EditText"
-            android:layout_marginTop="1dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:prompt="@string/jandi_profile_email" />
-
-        <TextView
-            style="@style/JandiTeam.TextView.Explain"
-            android:layout_marginTop="16dp"
-            android:text="@string/what_is_member_profile" />
 
 
     </LinearLayout>

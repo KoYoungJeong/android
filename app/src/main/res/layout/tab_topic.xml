@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageView
             android:id="@+id/tab_icon_topic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/jandi_tab_selector_topic"/>
+            android:layout_marginTop="1dp"
+            android:src="@drawable/jandi_tab_selector_topic" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tab_icon_topic"
-            android:layout_marginTop="2dp"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
             android:text="@string/jandi_tab_topic"
-            android:textSize="@dimen/jandi_tab_text_size"
-            android:textColor="@drawable/jandi_selector_font"/>
+            android:textColor="@color/jandi_selector_font"
+            android:textSize="@dimen/jandi_tab_text_size" />
+
         <ImageView
             android:id="@+id/tab_badge_topic_new"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_toRightOf="@+id/tab_icon_topic"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
             android:layout_alignTop="@+id/tab_icon_topic"
-            android:src="@drawable/jandi_icon_tab_new"/>
+            android:layout_toRightOf="@+id/tab_icon_topic"
+            android:src="@drawable/circle_main_color"
+            android:visibility="invisible" />
     </RelativeLayout>
 </LinearLayout>

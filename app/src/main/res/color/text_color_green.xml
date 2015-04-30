@@ -3,6 +3,6 @@
 
     <item android:color="@color/white" android:state_pressed="true" />
 
-    <item android:color="@color/jandi_border_green" />
+    <item android:color="@color/jandi_accent_color" />
 
 </selector>

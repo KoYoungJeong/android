@@ -4,7 +4,7 @@
     <!-- CLICK -->
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@color/jandi_messages_button_bg_normal" />
+            <solid android:color="@color/jandi_accent_color_b2" />
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
                 android:right="0dp" android:top="0dp" />
@@ -25,7 +25,7 @@
     <!-- Default -->
     <item>
         <shape>
-            <solid android:color="@color/jandi_messages_button_bg_active" />
+            <solid android:color="@color/jandi_accent_color" />
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
             android:right="0dp" android:top="0dp" />

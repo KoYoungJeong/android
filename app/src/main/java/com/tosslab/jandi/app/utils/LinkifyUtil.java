@@ -36,7 +36,7 @@ public class LinkifyUtil {
 
         boolean hasLink = false;
 
-        int color = context.getResources().getColor(R.color.jandi_main);
+        int color = context.getResources().getColor(R.color.jandi_accent_color);
         while (m.find()) {
             int start = m.start();
             int end = m.end();

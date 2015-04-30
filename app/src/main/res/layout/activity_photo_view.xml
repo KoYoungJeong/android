@@ -14,10 +14,11 @@
 
     <ProgressBar
         android:id="@+id/progress_photo_view"
-        android:layout_width="@dimen/jandi_file_detail_image_height"
-        android:layout_height="@dimen/jandi_file_detail_image_height"
+        android:layout_width="@dimen/jandi_progress_size"
+        android:layout_height="@dimen/jandi_progress_size"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:indeterminateDrawable="@drawable/progress_wheel_animation" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"

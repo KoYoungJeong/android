@@ -2,10 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:background="@null" >
+    android:background="@null"
+    android:gravity="center">
+
     <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminateDrawable="@drawable/progress_wheel_animation"/>
+        android:layout_width="@dimen/jandi_progress_size"
+        android:layout_height="@dimen/jandi_progress_size"
+        android:indeterminateDrawable="@drawable/progress_wheel_animation"
+        android:indeterminateOnly="true" />
 </LinearLayout>
