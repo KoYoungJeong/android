@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +19,8 @@ import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -97,8 +101,11 @@ public class ImageViewHolder implements BodyViewHolder {
 
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
+
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
+
+            MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
 
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
@@ -113,18 +120,28 @@ public class ImageViewHolder implements BodyViewHolder {
                 }
 
                 if (!TextUtils.isEmpty(imageUrl)) {
-                    Ion.with(fileImageView)
-                            .placeholder(R.drawable.jandi_fl_icon_img)
-                            .error(R.drawable.jandi_fl_icon_img)
-                            .crossfade(true)
-                            .load(imageUrl);
 
-                    fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                            .intent(fileImageView.getContext())
-                            .imageUrl(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl))
-                            .imageName(fileMessage.content.name)
-                            .imageType(fileMessage.content.type)
-                            .start());
+                    switch (sourceType) {
+                        case Google:
+                        case Dropbox:
+                            fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl)))));
+                            fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+                            break;
+                        default:
+                            Ion.with(fileImageView)
+                                    .placeholder(R.drawable.jandi_fl_icon_img)
+                                    .error(R.drawable.jandi_fl_icon_img)
+                                    .crossfade(true)
+                                    .fitCenter()
+                                    .load(imageUrl);
+                            fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                                    .intent(fileImageView.getContext())
+                                    .imageUrl(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl))
+                                    .imageName(fileMessage.content.name)
+                                    .imageType(fileMessage.content.type)
+                                    .start());
+                            break;
+                    }
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }

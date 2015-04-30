@@ -12,7 +12,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
@@ -61,30 +61,7 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileDate = DateTransformator.getTimeString(searchedFile.createTime);
         textViewSearchedFileDate.setText(searchedFileDate);
         // 파일 타입에 해당하는 아이콘 연결
-        String fileType = searchedFile.content.type;
-        if (fileType != null) {
-            if (fileType.startsWith("image")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_img);
-            } else if (fileType.startsWith("audio")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_audio);
-            } else if (fileType.startsWith("video")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_video);
-            } else if (fileType.startsWith("application/pdf")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_pdf);
-            } else if (fileType.startsWith("text")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
-            } else if (TextUtils.equals(fileType, "application/x-hwp")) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_hwp);
-            } else if (FormatConverter.isDocmentMimeType(fileType)) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_txt);
-            } else if (FormatConverter.isPresentationMimeType(fileType)) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_ppt);
-            } else if (FormatConverter.isSpreadSheetMimeType(fileType)) {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_exel);
-            } else {
-                imageViewSearchedFileType.setImageResource(R.drawable.jandi_fl_icon_etc);
-            }
-        }
+        imageViewSearchedFileType.setImageResource(MimeTypeUtil.getMimeTypeImage(searchedFile.content.serverUrl, searchedFile.content.icon));
 
         commentTextView.setText(String.valueOf(searchedFile.commentCount));
 
