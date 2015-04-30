@@ -104,8 +104,8 @@
         <!-- 일반 파일일 경우 -->
         <ImageView
             android:id="@+id/img_message_common_file"
-            android:layout_width="@dimen/jandi_messages_file_icon_width"
-            android:layout_height="@dimen/jandi_messages_file_icon_height"
+            android:layout_width="@dimen/jandi_messages_image_size"
+            android:layout_height="@dimen/jandi_messages_image_size"
             android:layout_marginRight="8dp"
             android:layout_marginTop="5dp"
             android:src="@drawable/jandi_sicon_text" />

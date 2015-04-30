@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -21,6 +23,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
 import de.greenrobot.event.EventBus;
 
@@ -132,21 +135,33 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl);
                     }
                     if (!TextUtils.isEmpty(imageUrl)) {
-                        Ion.with(fileImageView)
-                                .placeholder(R.drawable.jandi_fl_icon_img)
-                                .error(R.drawable.jandi_fl_icon_img)
-                                .crossfade(true)
-                                .load(imageUrl);
 
-                        fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                .intent(fileImageView.getContext())
-                                .imageUrl(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl))
-                                .imageName(feedbackFileMessage.content.name)
-                                .imageType(feedbackFileMessage.content.type)
-                                .start());
+                        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(feedbackFileMessage.content.serverUrl);
+
+                        switch (sourceType) {
+                            case Google:
+                            case Dropbox:
+                                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                                fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl)))));
+                                break;
+                            default:
+                                Ion.with(fileImageView)
+                                        .placeholder(R.drawable.jandi_fl_icon_img)
+                                        .error(R.drawable.jandi_fl_icon_img)
+                                        .crossfade(true)
+                                        .fitCenter()
+                                        .load(imageUrl);
+                                fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                                        .intent(fileImageView.getContext())
+                                        .imageUrl(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl))
+                                        .imageName(feedbackFileMessage.content.name)
+                                        .imageType(feedbackFileMessage.content.type)
+                                        .start());
+                                break;
+                        }
 
                     } else {
-                        fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
+                        fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
                     }
                 } else {
                     fileImageView.setImageResource(MimeTypeUtil.getMimeTypeImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
