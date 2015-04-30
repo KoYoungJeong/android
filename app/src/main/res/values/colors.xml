@@ -165,7 +165,7 @@
 
     <color name="jandi_message_search_item_topic_txt_color">#FF404040</color>
     <color name="jandi_message_search_item_topic_txt_color_sub">#FF9A9A9A</color>
-    <color name="jandi_message_search_item_highlight">@color/jandi_background_highlight</color>
+    <color name="jandi_message_search_item_highlight">#FFFFFD38</color>
     <color name="jandi_pressed_gray_light_alpha">#4CE5E5E5</color>
 
 </resources>
