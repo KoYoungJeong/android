@@ -32,9 +32,6 @@ import java.util.List;
 public class TeamDomainInfoActivity extends ActionBarActivity {
 
     @Extra
-    String mode = "CREATE";
-
-    @Extra
     String token;
     @Extra
     String domain;
@@ -42,38 +39,20 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     String teamName;
     @Extra
     int teamId;
-
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+    @Bean
+    TeamDomainInfoPresenter teamDomainInfoPresenter;
     private String userEmail;
     private String userName;
 
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
-    @Bean
-    TeamDomainInfoPresenter teamDomainInfoPresenter;
-
     @AfterViews
     void initView() {
+        MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
+                .pageViewTeamCreate();
+        teamDomainInfoPresenter.setTeamCreatable(true);
 
-        Mode activityMode = Mode.valueOf(mode);
-
-
-        switch (activityMode) {
-            case CREATE:
-                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                        .pageViewTeamCreate();
-                teamDomainInfoPresenter.setTeamCreatable(true);
-                break;
-            case JOIN:
-                MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                        .pageViewMemberCreate();
-                teamDomainInfoPresenter.setTeamDomain(domain);
-                teamDomainInfoPresenter.setTeamName(teamName);
-                teamDomainInfoPresenter.setTeamCreatable(false);
-                break;
-        }
-
-        setUpActionBar(activityMode);
+        setUpActionBar();
 
         teamDomainInfoModel.setCallback(new TeamDomainInfoModel.Callback() {
             @Override
@@ -120,28 +99,17 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
     @Background
     @OptionsItem(R.id.action_confirm)
     void confirmTeamDomain() {
-        Mode activityMode = Mode.valueOf(mode);
-        if (activityMode == Mode.JOIN) {
+        String teamName = teamDomainInfoPresenter.getTeamName();
+        String teamDomain = teamDomainInfoPresenter.getTeamDomain();
+        String myName = userName;
+        String myEmail = userEmail;
 
-            String myName = userName;
-            String myEmail = userEmail;
-            joinTeam(token, myName, myEmail);
-        } else {
-
-            String teamName = teamDomainInfoPresenter.getTeamName();
-            String teamDomain = teamDomainInfoPresenter.getTeamDomain();
-            String myName = userName;
-            String myEmail = userEmail;
-
-            if (TextUtils.isEmpty(teamDomain)) {
-                teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));
-                return;
-            }
-
-            createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
+        if (TextUtils.isEmpty(teamDomain)) {
+            teamDomainInfoPresenter.showFailToast(getString(R.string.err_invalid_team_domain));
+            return;
         }
 
-
+        createTeam(teamName, teamDomain.toLowerCase(), myName, myEmail);
     }
 
     private void createTeam(String teamName, String teamDomain, String myName, String myEmail) {
@@ -149,7 +117,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
 
         // Team Creation
         try {
-            ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain, myName, myEmail);
+            ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
             String distictId = newTeam.getInviteTeam().getId() + "-" + newTeam.getInviteTeam().getTeamId();
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
@@ -165,25 +133,7 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
         }
     }
 
-    void joinTeam(String token, String myName, String myEmail) {
-        teamDomainInfoPresenter.showProgressWheel();
-
-        ResTeamDetailInfo resTeamDetailInfos = teamDomainInfoModel.acceptInvite(token, myEmail, myName);
-        if (resTeamDetailInfos != null) {
-            teamDomainInfoModel.updateTeamInfo(teamId);
-            teamDomainInfoPresenter.successJoinTeam();
-            String distictId = resTeamDetailInfos.getInviteTeamMember().getId() + "-" + resTeamDetailInfos.getInviteTeamMember().getTeamId();
-            MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
-                    .pageViewMemberCreateSuccess();
-        } else {
-            teamDomainInfoPresenter.failJoinTeam();
-        }
-
-        teamDomainInfoPresenter.dismissProgressWheel();
-
-    }
-
-    private void setUpActionBar(Mode mode) {
+    private void setUpActionBar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -196,9 +146,4 @@ public class TeamDomainInfoActivity extends ActionBarActivity {
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
     }
-
-    public enum Mode {
-        CREATE, JOIN
-    }
-
 }
