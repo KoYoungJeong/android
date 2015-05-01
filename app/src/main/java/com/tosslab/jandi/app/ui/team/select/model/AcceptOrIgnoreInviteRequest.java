@@ -39,7 +39,7 @@ public class AcceptOrIgnoreInviteRequest implements Request<ResTeamDetailInfo> {
         invitationApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
         ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
-        return invitationApiClient.confirmOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore);
+        return invitationApiClient.acceptOrDeclineInvitation(invitationId, reqInvitationAcceptOrIgnore);
 
     }
 }

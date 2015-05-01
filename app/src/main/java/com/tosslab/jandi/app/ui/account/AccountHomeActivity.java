@@ -297,7 +297,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
 
     @Override
     public void moveAfterinvitaionAccept() {
-        accountHomePresenter.onTeamCreateResult();
+        accountHomePresenter.onTeamCreateAcceptResult();
     }
 
     @Override
@@ -314,14 +314,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @OnActivityResult(REQ_TEAM_CREATE)
     void onTeamCreateResult(int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
-            accountHomePresenter.onTeamCreateResult();
-        }
-    }
-
-    @OnActivityResult(REQ_TEAM_JOIN)
-    void onTeamJoinResult(int resultCode) {
-        if (resultCode == Activity.RESULT_OK) {
-            accountHomePresenter.onTeamCreateResult();
+            accountHomePresenter.onTeamCreateAcceptResult();
         }
     }
 

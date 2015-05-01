@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.invites;
 import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.DataSetObserver;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -44,11 +45,11 @@ public class InviteView {
     @ViewById(R.id.lv_invite)
     ListView inviteListView;
 
-    @ViewById(R.id.invite_succes_text_display)
-    TextView displaySendEmailSuccesText;
-
     @ViewById(R.id.invite_footer_text)
     TextView manyPeopleInviteText;
+
+    @ViewById(R.id.layout_invite_success_items)
+    View successListLayout;
 
 
     @RootContext
@@ -60,6 +61,16 @@ public class InviteView {
     @AfterViews
     void initViews() {
         adapter = new InviteListAdapter(activity);
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                if (adapter.getCount() <= 0) {
+                    successListLayout.setVisibility(View.GONE);
+                } else {
+                    successListLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         inviteListView.setAdapter(adapter);
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
@@ -98,12 +109,6 @@ public class InviteView {
         adapter.add(0, emailTO);
         adapter.notifyDataSetChanged();
     }
-
-    @UiThread
-    public void addSendEmailSuccessText() {
-        displaySendEmailSuccesText.setVisibility(View.VISIBLE);
-    }
-
 
     @UiThread
     public void clearEmailTextView() {
@@ -207,5 +212,17 @@ public class InviteView {
 
     public EmailTO getInviteEmail(int position) {
         return adapter.getItem(position);
+    }
+
+    @UiThread
+    public void deleteFailInvitation(EmailTO o) {
+        for (int idx = adapter.getCount() - 1; idx >= 0; --idx) {
+            EmailTO item = adapter.getItem(idx);
+            if (item == o) {
+                adapter.remove(idx);
+                break;
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 }
