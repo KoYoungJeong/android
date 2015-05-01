@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.fileexplorer.to.FileItem;
+import com.tosslab.jandi.app.utils.FileExtensionCheck;
 
 import java.util.ArrayList;
 
-import static com.tosslab.jandi.app.utils.FileExtensionCheck.fileExtensionCheck;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 23..
@@ -42,7 +42,7 @@ public class FileItemAdapter extends ArrayAdapter<FileItem> {
                 iconImageView.setImageResource(R.drawable.tmp_directory_icon);
             } else {
 
-                iconImageView.setImageResource(fileExtensionCheck(item.getName()));
+                iconImageView.setImageResource(FileExtensionCheck.fileExtensionCheck(item.getName()));
             }
 
             fileNameTextView.setText(item.getName());
