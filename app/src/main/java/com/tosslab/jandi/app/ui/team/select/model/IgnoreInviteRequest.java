@@ -40,6 +40,6 @@ public class IgnoreInviteRequest implements Request<ResTeamDetailInfo> {
         //return invitationApiClient.declineInvitation(reqInvitationConfirm);
 
         ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore = new ReqInvitationAcceptOrIgnore(ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
-        return invitationApiClient.confirmOrDeclineInvitation(team.getInvitationId(), reqInvitationAcceptOrIgnore);
+        return invitationApiClient.acceptOrDeclineInvitation(team.getInvitationId(), reqInvitationAcceptOrIgnore);
     }
 }
