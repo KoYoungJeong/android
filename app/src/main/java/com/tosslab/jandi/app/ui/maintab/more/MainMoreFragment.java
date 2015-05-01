@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -77,10 +78,9 @@ public class MainMoreFragment extends Fragment {
 
     private EntityManager mEntityManager;
 
-    private ResTeamDetailInfo.InviteTeam resTeamDetailInfo;
-    private String invitationStatus;
     private String invitationUrl;
     private String teamName;
+    private ProgressWheel progressWheel;
 
     @AfterInject
     void init() {
@@ -144,6 +144,8 @@ public class MainMoreFragment extends Fragment {
     @Background
     public void onInvitationDisableCheck() {
 
+        showProgressWheel();
+
         List<FormattedEntity> users = EntityManager.getInstance(getActivity()).getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
@@ -153,9 +155,9 @@ public class MainMoreFragment extends Fragment {
                 .first();
 
         try {
-            resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
+            ResTeamDetailInfo.InviteTeam resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
 
-            invitationStatus = resTeamDetailInfo.getInvitationStatus();
+            String invitationStatus = resTeamDetailInfo.getInvitationStatus();
             invitationUrl = resTeamDetailInfo.getInvitationUrl();
             teamName = resTeamDetailInfo.getName();
 
@@ -169,6 +171,27 @@ public class MainMoreFragment extends Fragment {
             ColoredToast.showError(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            dismissProgresWheel();
+        }
+    }
+
+    @UiThread
+    void dismissProgresWheel() {
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
+        }
+    }
+
+    @UiThread
+    void showProgressWheel() {
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(getActivity());
+            progressWheel.init();
+        }
+
+        if (progressWheel != null && !progressWheel.isShowing()) {
+            progressWheel.show();
         }
     }
 
