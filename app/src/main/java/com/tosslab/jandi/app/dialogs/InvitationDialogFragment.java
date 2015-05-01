@@ -27,7 +27,7 @@ public class InvitationDialogFragment extends DialogFragment {
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.title_file_upload)
+        builder.setTitle(R.string.jandi_invite_member)
                 .setItems(R.array.types_invitations, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         int eventType;

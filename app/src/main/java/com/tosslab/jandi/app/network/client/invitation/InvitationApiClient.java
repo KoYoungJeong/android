@@ -60,7 +60,7 @@ public interface InvitationApiClient {
      */
     @Put("/account/invitations/{invitationId}")
     @RequiresAuthentication
-    ResTeamDetailInfo confirmOrDeclineInvitation(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
+    ResTeamDetailInfo acceptOrDeclineInvitation(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore);
 
     /**
      * 초대된 목록 가져오기

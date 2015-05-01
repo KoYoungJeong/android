@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
@@ -77,14 +78,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
+
+            view.moveSelectedTeam(firstJoin);
         } catch (JandiNetworkException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
-
-            view.moveSelectedTeam(firstJoin);
         }
     }
 
@@ -121,7 +122,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     }
 
     @Override
-    public void onTeamCreateResult() {
+    public void onTeamCreateAcceptResult() {
 
         ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
         onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
@@ -152,28 +153,45 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             MixpanelMemberAnalyticsClient.getInstance(context, null)
                     .pageViewMemberCreateSuccess();
 
+            view.removePendingTeamView(selectedTeam);
+            view.moveAfterinvitaionAccept();
+
         } catch (JandiNetworkException e) {
             e.printStackTrace();
 
-            if (e.errCode == NOT_AVAILABLE_INVITATION_CODE) { // 초대 코드가 유효하지 않을때
-                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_expired_invitation_link));
-            } else if (e.errCode == DISABLED_MEMBER) { // disable된 유저일 때
-                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName()));
-            } else if (e.errCode == REMOVED_TEAM) { // 팀이 존재하지 않을 때
-                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_deleted_team));
-            } else if (e.errCode == TEAM_INVITATION_DISABLED) { // 팀의 초대 기능이 disable 일 때
-                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_invite_disabled));
-            } else if (e.errCode == ENABLED_MEMBER) { // 이미 팀에 등록된 유저 일 때
-                view.showTextAlertDialog(context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName()));
+            String alertText = null;
+            switch (e.errCode) {
+                case NOT_AVAILABLE_INVITATION_CODE:
+                    alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
+                    break;
+                case DISABLED_MEMBER:
+                    alertText = context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
+                    break;
+                case REMOVED_TEAM:
+                    alertText = context.getResources().getString(R.string.jandi_deleted_team);
+                    break;
+                case TEAM_INVITATION_DISABLED:
+                    alertText = context.getResources().getString(R.string.jandi_invite_disabled);
+                    break;
+                case ENABLED_MEMBER:
+                    alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
+                    break;
+                default:
+                    alertText = context.getResources().getString(R.string.err_network);
+                    break;
+
             }
+
+            view.showTextAlertDialog(alertText);
+            onRequestIgnore(selectedTeam);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
-            view.removePendingTeamView(selectedTeam);
+
         }
-        view.moveAfterinvitaionAccept();
+
     }
 
     @Background
@@ -183,11 +201,12 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
         try {
             teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
+            view.removePendingTeamView(selectedTeam);
         } catch (JandiNetworkException e) {
+            ColoredToast.showError(context, context.getString(R.string.jandi_invite_succes_copy_link));
         } catch (Exception e) {
         } finally {
             view.dismissProgressWheel();
-            view.removePendingTeamView(selectedTeam);
         }
     }
 

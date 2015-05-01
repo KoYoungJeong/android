@@ -78,6 +78,9 @@ public class MainMoreFragment extends Fragment {
     private EntityManager mEntityManager;
 
     private ResTeamDetailInfo.InviteTeam resTeamDetailInfo;
+    private String invitationStatus;
+    private String invitationUrl;
+    private String teamName;
 
     @AfterInject
     void init() {
@@ -139,7 +142,7 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_invite)
     @Background
-    public void invitationDisableCheck() {
+    public void onInvitationDisableCheck() {
 
         List<FormattedEntity> users = EntityManager.getInstance(getActivity()).getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
@@ -152,13 +155,18 @@ public class MainMoreFragment extends Fragment {
         try {
             resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
 
-            if (TextUtils.equals(resTeamDetailInfo.getInvitationStatus(), "enabled")) {
+            invitationStatus = resTeamDetailInfo.getInvitationStatus();
+            invitationUrl = resTeamDetailInfo.getInvitationUrl();
+            teamName = resTeamDetailInfo.getName();
+
+            if (TextUtils.equals(invitationStatus, "enabled")) {
                 moveToInvitationActivity();
             } else {
                 showTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
             }
         } catch (JandiNetworkException e) {
             e.printStackTrace();
+            ColoredToast.showError(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,18 +212,23 @@ public class MainMoreFragment extends Fragment {
 
     }
 
-    public void kakaoLineWechatInvitation(Intent intent, String publicLink, String invitationContents, String appPackageName) {
+    public void snsAndMessengerInvitation(Intent intent, String publicLink, String invitationContents, String appPackageName, boolean facebookMessenger) {
+        if (facebookMessenger) {
+            intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
+            intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
+        }
+
+        intent.setPackage(appPackageName);
+        intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
+        intent.setType("text/plain");
+
         try {
-            intent.setPackage(appPackageName);
-            intent.putExtra(Intent.EXTRA_TEXT, publicLink);
-            intent.setType("text/plain");
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
             copyLink(publicLink, invitationContents);
             showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
         }
-
     }
 
     public void copyLink(String publicLink, String invitationContents) {
@@ -225,8 +238,8 @@ public class MainMoreFragment extends Fragment {
 
 
     public void onEvent(TeamInvitationsEvent event) {
-        String publicLink = resTeamDetailInfo.getInvitationUrl();
-        String invitationContents = resTeamDetailInfo.getName() + getResources().getString(R.string.jandi_invite_contents);
+        String publicLink = invitationUrl;
+        String invitationContents = teamName + getResources().getString(R.string.jandi_invite_contents);
         Intent intent = new Intent(Intent.ACTION_SEND);
 
         switch (event.type) {
@@ -236,39 +249,23 @@ public class MainMoreFragment extends Fragment {
                         .start();
                 break;
             case JandiConstants.TYPE_INVITATION_KAKAO:
-                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_KAKAO);
+                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_KAKAO, false);
                 break;
             case JandiConstants.TYPE_INVITATION_LINE:
-                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_LINE);
+                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_LINE, false);
                 break;
             case JandiConstants.TYPE_INVITATION_WECHAT:
-                kakaoLineWechatInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_WECHAT);
+                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_WECHAT, false);
                 break;
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                String mimeType = "image/*";
-
-                try {
-                    intent.setPackage(PACKAGE_NAME_FACEBOOK_MESSENGER);
-                    intent.setType(mimeType);
-                    intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
-                    intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
-                    intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
-
-                    startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                    copyLink(publicLink, invitationContents);
-                    showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
-                }
-
+                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_FACEBOOK_MESSENGER, true);
                 break;
             case JandiConstants.TYPE_INVITATION_COPY_LINK:
                 copyLink(publicLink, invitationContents);
-                ColoredToast.show(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
+                showTextDialog(getResources().getString(R.string.jandi_invite_succes_copy_link));
                 break;
             default:
                 break;
-
         }
     }
 
