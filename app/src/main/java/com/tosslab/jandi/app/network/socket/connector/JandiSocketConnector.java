@@ -30,6 +30,7 @@ public class JandiSocketConnector implements SocketConnector {
             try {
                 IO.Options options = new IO.Options();
                 options.reconnection = false;
+                options.multiplex = false;
                 options.forceNew = false;
 
                 socket = IO.socket(url, options);

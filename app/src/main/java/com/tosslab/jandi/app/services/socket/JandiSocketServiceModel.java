@@ -68,8 +68,18 @@ public class JandiSocketServiceModel {
 
     public ConnectTeam getConnectTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+
+        if (selectedTeamInfo == null) {
+            return null;
+        }
+
         EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity me = entityManager.getMe();
+
+        if (me == null) {
+            return null;
+        }
+
         String token = JandiPreference.getAccessToken(context);
         return new ConnectTeam(token, selectedTeamInfo.getTeamId(), selectedTeamInfo.getName(), selectedTeamInfo.getMemberId(), me.getName());
 

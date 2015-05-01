@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
+import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.socket.monitor.ConnectMonitor;
 
@@ -137,7 +138,13 @@ public class JandiSocketService extends Service {
 
         eventHashMap.put("check_connect_team", objects -> {
             jandiSocketServiceModel.refreshToken();
-            jandiSocketManager.sendByJson("connect_team", jandiSocketServiceModel.getConnectTeam());
+            ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
+            if (connectTeam != null) {
+                jandiSocketManager.sendByJson("connect_team", connectTeam);
+            } else {
+                connectMonitor.stop();
+                stopSelf();
+            }
         });
         eventHashMap.put("connect_team", objects -> connectMonitor.stop());
         eventHashMap.put("error_connect_team", objects -> connectMonitor.start());
