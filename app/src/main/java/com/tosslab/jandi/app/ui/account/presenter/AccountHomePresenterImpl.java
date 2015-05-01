@@ -212,7 +212,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onHelpOptionSelect() {
-        view.showHeloDialog();
+        view.showHelloDialog();
     }
 
     @Background

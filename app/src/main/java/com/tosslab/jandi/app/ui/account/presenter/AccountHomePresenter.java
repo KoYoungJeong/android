@@ -60,7 +60,7 @@ public interface AccountHomePresenter {
 
         void removePendingTeamView(Team selectedTeam);
 
-        void showHeloDialog();
+        void showHelloDialog();
 
         void moveAfterinvitaionAccept();
 

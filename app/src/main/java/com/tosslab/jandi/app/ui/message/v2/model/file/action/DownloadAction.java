@@ -3,14 +3,14 @@ package com.tosslab.jandi.app.ui.message.v2.model.file.action;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -62,13 +62,11 @@ public class DownloadAction implements FileAction {
     }
 
     private void showExecuteDialog(File result) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
-        builder.content("다운로드한 파일이 {} 에 저장되었습니다. 파일 바로보기를 하시겠습니까?")
-                .positiveText(R.string.jandi_confirm)
-                .negativeText(R.string.jandi_cancel)
-                .callback(new MaterialDialog.ButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("다운로드한 파일이 {} 에 저장되었습니다. 파일 바로보기를 하시겠습니까?")
+                .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialog, int which) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.fromFile(result));
                         try {
                             context.startActivity(intent);
@@ -76,8 +74,10 @@ public class DownloadAction implements FileAction {
                             e.printStackTrace();
                             ColoredToast.showError(context, "실행가능한 앱이 없습니다. 다운로드한 파일은 {} 에서 확인하실 수 있습니다.");
                         }
+
                     }
                 })
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .show();
     }
 }

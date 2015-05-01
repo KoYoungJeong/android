@@ -281,18 +281,23 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     }
 
     @Override
-    public void showHeloDialog() {
+    public void showHelloDialog() {
 
         View customView = LayoutInflater.from(AccountHomeActivity.this).inflate(R.layout.dialog_account_home_help, null);
         AlertDialog alertDialog = new AlertDialog.Builder(AccountHomeActivity.this)
                 .setView(customView)
-                .setPositiveButton(R.string.jandi_confirm, null).create();
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create();
 
         if (customView.getParent() != null) {
             ((View) customView.getParent()).setPadding(0, 0, 0, 0);
         }
         customView.setPadding(0, 0, 0, 0);
         alertDialog.show();
+        View buttonPanel = alertDialog.getWindow().getDecorView().findViewById(android.support.v7.appcompat.R.id.buttonPanel);
+        if (buttonPanel != null) {
+            buttonPanel.setBackgroundColor(getResources().getColor(R.color.white));
+        }
     }
 
     @Override

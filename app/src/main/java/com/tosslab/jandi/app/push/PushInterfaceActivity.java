@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.push;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -28,7 +28,7 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 1. 15..
  */
 @EActivity(R.layout.activity_intro)
-public class PushInterfaceActivity extends Activity {
+public class PushInterfaceActivity extends AppCompatActivity {
 
     @Extra(JandiConstants.EXTRA_ENTITY_ID)
     int entityId;

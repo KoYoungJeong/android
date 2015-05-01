@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/jandi_team_info_whole_background"
@@ -8,11 +7,11 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:visibility="visible"
-        android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:visibility="visible" />
 
 
     <FrameLayout
@@ -126,8 +125,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:paddingLeft="16dp"
-        android:text="@string/primary_email_info_msg"
-        android:paddingRight="16dp" />
+        android:paddingRight="16dp"
+        android:text="@string/primary_email_info_msg" />
 
     <Button
         android:id="@+id/btn_account_profile_sign_out"
