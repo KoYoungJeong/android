@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'android-apt'     // Android-Annotation
 apply plugin: 'newrelic'        // Analytics
 apply plugin: 'org.robolectric'     // Android-Test

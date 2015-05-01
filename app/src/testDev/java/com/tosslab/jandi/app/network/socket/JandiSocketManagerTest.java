@@ -1,10 +1,14 @@
 package com.tosslab.jandi.app.network.socket;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -14,11 +18,13 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static junit.framework.Assert.fail;
 
+@Ignore
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiSocketManagerTest {
 
@@ -33,6 +39,47 @@ public class JandiSocketManagerTest {
         JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(userTeam.getTeamId());
     }
 
+    @Test
+    public void testLegacyConnect() throws Exception {
+
+        final boolean[] isConnected = new boolean[1];
+
+        Socket socket = IO.socket("https://websocket-elb-1241156836.ap-northeast-1.elb.amazonaws.com/");
+
+        socket.connect();
+
+        socket.on("check_connect_team", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                System.out.println(args[0]);
+                JandiAccountDatabaseManager accountDatabaseManager = JandiAccountDatabaseManager.getInstance(Robolectric.application);
+                ResAccountInfo.UserTeam userTeam = accountDatabaseManager.getSelectedTeamInfo();
+                String name = accountDatabaseManager.getAccountInfo().getName();
+
+                ConnectTeam connectTeam = new ConnectTeam("", userTeam.getTeamId(), userTeam.getName(), userTeam.getMemberId(), name);
+                System.out.println("Connect Team Name : " + userTeam.getName());
+
+                try {
+                    socket.emit("connect_team", JacksonMapper.getInstance().getObjectMapper().writeValueAsString(connectTeam));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        socket.on("connect_team", args -> {
+            System.out.println(args[0]);
+            isConnected[0] = true;
+        });
+
+
+        Awaitility.await().until(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return isConnected[0];
+            }
+        });
+    }
 
     @Test
     public void testConnect() throws Exception {
