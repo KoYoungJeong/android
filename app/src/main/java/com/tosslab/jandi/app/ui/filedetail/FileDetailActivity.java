@@ -1,14 +1,15 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
@@ -364,13 +364,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void showMoveDialog(int entityIdToBeShared) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(FileDetailActivity.this);
-        builder.content(getString(R.string.jandi_move_entity_after_share))
-                .positiveText(R.string.jandi_confirm)
-                .negativeText(R.string.jandi_cancel)
-                .callback(new MaterialDialog.ButtonCallback() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(FileDetailActivity.this);
+        builder.setMessage(getString(R.string.jandi_move_entity_after_share))
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onPositive(MaterialDialog dialog) {
+                    public void onClick(DialogInterface dialog, int which) {
                         FormattedEntity entity = EntityManager.getInstance(FileDetailActivity.this)
                                 .getEntityById(entityIdToBeShared);
 
@@ -383,6 +382,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                                 .start();
                     }
                 })
+                .create()
                 .show();
 
     }

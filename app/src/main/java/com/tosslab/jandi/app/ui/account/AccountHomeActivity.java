@@ -4,13 +4,14 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.dialogs.TextDialog;
@@ -49,7 +50,7 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_account_main)
 @OptionsMenu(R.menu.account_home)
-public class AccountHomeActivity extends ActionBarActivity implements AccountHomePresenter.View {
+public class AccountHomeActivity extends AppCompatActivity implements AccountHomePresenter.View {
 
     private static final int REQ_TEAM_CREATE = 101;
     private static final int REQ_EMAIL_CHOOSE = 201;
@@ -280,19 +281,23 @@ public class AccountHomeActivity extends ActionBarActivity implements AccountHom
     }
 
     @Override
-    public void showHeloDialog() {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(AccountHomeActivity.this);
-        MaterialDialog materialDialog = builder.customView(R.layout.dialog_account_home_help, true)
-                .positiveText(R.string.jandi_confirm)
-                .backgroundColor(getResources().getColor(R.color.white))
-                .build();
+    public void showHelloDialog() {
 
-        View customView = materialDialog.getCustomView();
+        View customView = LayoutInflater.from(AccountHomeActivity.this).inflate(R.layout.dialog_account_home_help, null);
+        AlertDialog alertDialog = new AlertDialog.Builder(AccountHomeActivity.this)
+                .setView(customView)
+                .setPositiveButton(R.string.jandi_confirm, null)
+                .create();
+
         if (customView.getParent() != null) {
             ((View) customView.getParent()).setPadding(0, 0, 0, 0);
         }
         customView.setPadding(0, 0, 0, 0);
-        materialDialog.show();
+        alertDialog.show();
+        View buttonPanel = alertDialog.getWindow().getDecorView().findViewById(android.support.v7.appcompat.R.id.buttonPanel);
+        if (buttonPanel != null) {
+            buttonPanel.setBackgroundColor(getResources().getColor(R.color.white));
+        }
     }
 
     @Override

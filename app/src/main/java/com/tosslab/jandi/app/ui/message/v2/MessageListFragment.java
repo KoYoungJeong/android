@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.internal.view.menu.MenuBuilder;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -339,7 +339,7 @@ public class MessageListFragment extends Fragment {
 
     private void setUpActionbar() {
 
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity.getSupportActionBar() == null) {
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
             activity.setSupportActionBar(toolbar);
@@ -1006,7 +1006,7 @@ public class MessageListFragment extends Fragment {
 
     @UiThread
     void modifyEntitySucceed(String changedEntityName) {
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
 }

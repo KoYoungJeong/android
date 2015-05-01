@@ -56,7 +56,7 @@ public class TeamsApiClientTest {
     @Ignore
     @Test
     public void testCreateNewTeam() throws Exception {
-        ReqCreateNewTeam reqNewTeam = new ReqCreateNewTeam("Toss Lab, Inc2", "testab2", "좐수", "john@tosslab.com");
+        ReqCreateNewTeam reqNewTeam = new ReqCreateNewTeam("Toss Lab, Inc2", "testab2");
         ResTeamDetailInfo newTeam = null;
         try {
             newTeam = teamsApiClient_.createNewTeam(reqNewTeam);

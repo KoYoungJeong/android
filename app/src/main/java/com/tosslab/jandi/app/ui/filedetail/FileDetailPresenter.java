@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -10,7 +10,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -51,7 +51,7 @@ import de.greenrobot.event.EventBus;
 public class FileDetailPresenter {
 
     @RootContext
-    ActionBarActivity activity;
+    AppCompatActivity activity;
 
     @SystemService
     InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.

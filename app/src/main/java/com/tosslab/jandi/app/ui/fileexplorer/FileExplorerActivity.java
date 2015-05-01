@@ -8,7 +8,7 @@ import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +26,7 @@ import com.tosslab.jandi.app.views.listeners.SimpleOnItemSelectedListner;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileExplorerActivity extends ActionBarActivity {
+public class FileExplorerActivity extends AppCompatActivity {
     public static final String DATA_SCHEME_FILE = "file";
     public static final int SPINNER_POSION_SECOND = 1;
 

@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.intro;
 
-import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.newrelic.agent.android.NewRelic;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -29,7 +29,7 @@ import rx.Subscriber;
  */
 @Fullscreen
 @EActivity(R.layout.activity_intro)
-public class IntroActivity extends Activity {
+public class IntroActivity extends AppCompatActivity {
 
     private static final long MAX_DELAY_MS = 1500l;
 

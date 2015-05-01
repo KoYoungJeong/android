@@ -4,7 +4,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,7 +29,7 @@ import uk.co.senab.photoview.PhotoView;
  * Created by Steve SeongUg Jung on 14. 12. 9..
  */
 @EActivity(R.layout.activity_photo_view)
-public class PhotoViewActivity extends ActionBarActivity {
+public class PhotoViewActivity extends AppCompatActivity {
 
     public static final String TASK_ID_ACTIONBAR_HIDE = "actionbar_hide";
     @Extra

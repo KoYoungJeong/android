@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
@@ -87,6 +88,16 @@ class InviteCommand implements MenuCommand {
 
         final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(activity, unjoinedMembers);
         lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                UnjoinedUserListAdapter userListAdapter = (UnjoinedUserListAdapter) parent.getAdapter();
+                FormattedEntity item = userListAdapter.getItem(position);
+                item.isSelectedToBeJoined = !item.isSelectedToBeJoined;
+
+                userListAdapter.notifyDataSetChanged();
+            }
+        });
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
         dialog.setTitle(R.string.title_cdp_invite);

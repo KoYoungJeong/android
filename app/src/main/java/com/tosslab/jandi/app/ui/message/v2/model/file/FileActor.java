@@ -1,11 +1,10 @@
 package com.tosslab.jandi.app.ui.message.v2.model.file;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.message.v2.model.file.action.DeleteAction;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.DeleteAction_;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.DownloadAction;
 import com.tosslab.jandi.app.ui.message.v2.model.file.action.FileAction;
@@ -18,10 +17,9 @@ import com.tosslab.jandi.app.ui.message.v2.model.file.action.UnshareAction;
 public class FileActor {
 
     public void showFileActionDialog(Context context, ResMessages.Link link) {
-        MaterialDialog.Builder builder = new MaterialDialog.Builder(context);
-        builder.items(R.array.file_message_actions)
-                .negativeText(R.string.jandi_cancel)
-                .itemsCallback((dialog, itemView, which, text) -> getFileAction(context, which).action(link))
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setItems(R.array.file_message_actions, (dialog, which) -> getFileAction(context, which).action(link))
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .show();
 
     }

@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.ui.login;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
 import com.tosslab.jandi.app.R;
@@ -19,7 +18,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by justinygchoi on 14. 10. 23..
  */
 @EActivity(R.layout.activity_intro_tutorial)
-public class IntroMainActivity extends Activity {
+public class IntroMainActivity extends AppCompatActivity {
 
     @ViewById(R.id.btn_tutorial_first)
     Button buttonTutorialFirst;

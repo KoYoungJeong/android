@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.interfaces;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
 import com.tosslab.jandi.app.ui.interfaces.actions.ActionFactory;
@@ -15,7 +15,7 @@ import org.androidannotations.annotations.EActivity;
  * It's for {tosslabjandi://xxx?yyy=zzz} Intent
  */
 @EActivity
-public class JandiInterfaceActivity extends Activity {
+public class JandiInterfaceActivity extends AppCompatActivity {
 
     @AfterInject
     void initView() {

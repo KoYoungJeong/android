@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.settings;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -15,7 +15,7 @@ import org.androidannotations.annotations.EActivity;
  * Created by justinygchoi on 2014. 7. 18..
  */
 @EActivity(R.layout.activity_setting)
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
 
 
     @AfterViews

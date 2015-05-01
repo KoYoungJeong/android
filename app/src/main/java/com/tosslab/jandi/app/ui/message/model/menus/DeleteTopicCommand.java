@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.app.Activity;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
@@ -25,6 +25,6 @@ class DeleteTopicCommand implements MenuCommand {
 
     void requestToDeleteTopic() {
         DialogFragment newFragment = DeleteTopicDialogFragment.newInstance();
-        newFragment.show(((ActionBarActivity) activity).getSupportFragmentManager(), "dialog");
+        newFragment.show(((AppCompatActivity) activity).getSupportFragmentManager(), "dialog");
     }
 }

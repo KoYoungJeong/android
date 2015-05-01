@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.team.info;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
@@ -29,7 +29,7 @@ import java.util.List;
  */
 @EActivity(R.layout.activity_team_domain_info)
 @OptionsMenu(R.menu.teamdomain_info)
-public class TeamDomainInfoActivity extends ActionBarActivity {
+public class TeamDomainInfoActivity extends AppCompatActivity {
 
     @Extra
     String token;

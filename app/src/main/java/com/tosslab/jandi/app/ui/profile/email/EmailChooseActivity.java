@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.profile.email;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
@@ -36,7 +36,7 @@ import de.greenrobot.event.EventBus;
  */
 @EActivity(R.layout.activity_email_choose)
 @OptionsMenu(R.menu.email_choose)
-public class EmailChooseActivity extends ActionBarActivity {
+public class EmailChooseActivity extends AppCompatActivity {
 
     private static final Logger logger = Logger.getLogger(EmailChooseActivity.class);
 

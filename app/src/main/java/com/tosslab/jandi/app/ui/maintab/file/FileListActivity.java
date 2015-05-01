@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -16,7 +16,7 @@ import org.androidannotations.annotations.Extra;
  * Created by justinygchoi on 2014. 10. 13..
  */
 @EActivity(R.layout.activity_file_list)
-public class FileListActivity extends ActionBarActivity {
+public class FileListActivity extends AppCompatActivity {
 
     @Extra
     int entityId;
