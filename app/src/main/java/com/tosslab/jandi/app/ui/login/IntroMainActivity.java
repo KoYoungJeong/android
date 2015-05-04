@@ -2,7 +2,9 @@ package com.tosslab.jandi.app.ui.login;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -30,6 +32,9 @@ public class IntroMainActivity extends AppCompatActivity {
     Button buttonTutorialLast;
     private ViewPager mViewPager;
     private IntroMainPagerAdapter mAdapter;
+
+    @ViewById(R.id.layout_footer_tutorial)
+    LinearLayout tutorialFooterLayout;
 
     @AfterViews
     void init() {
@@ -69,7 +74,12 @@ public class IntroMainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                btnAction(position);
+                if (position > IntroTutorialFragment.LAST_PAGE) {
+                    tutorialFooterLayout.setVisibility(View.GONE);
+                } else {
+                    tutorialFooterLayout.setVisibility(View.VISIBLE);
+                    btnAction(position);
+                }
             }
         });
     }
