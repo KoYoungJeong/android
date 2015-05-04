@@ -37,7 +37,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 import uk.co.senab.photoview.PhotoView;
@@ -47,9 +46,6 @@ import uk.co.senab.photoview.PhotoView;
  */
 @EFragment
 public class UserInfoDialogFragment extends DialogFragment {
-
-
-    private static final Logger logger = Logger.getLogger(UserInfoDialogFragment.class);
 
     @FragmentArg
     int entityId;

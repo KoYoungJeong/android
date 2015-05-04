@@ -95,53 +95,53 @@
     <LinearLayout
         android:id="@+id/ly_user_info_mail"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24.67dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_action_user_info"
         android:gravity="center_vertical"
-        android:padding="4dp">
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp">
 
         <ImageView
             android:layout_width="9dp"
-            android:layout_height="9dp"
-            android:layout_marginLeft="8dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
             android:src="@drawable/jandi_icon_mail_bt" />
 
         <TextView
             android:id="@+id/txt_user_info_email"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
+            android:gravity="center"
             android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ly_user_info_phone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="24.67dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="20dp"
         android:background="@drawable/btn_action_user_info"
         android:gravity="center_vertical"
-        android:padding="4dp">
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp">
 
         <ImageView
             android:layout_width="9dp"
-            android:layout_height="9dp"
-            android:layout_marginLeft="8dp"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
             android:src="@drawable/jandi_icon_call_bt" />
 
         <TextView
             android:id="@+id/txt_user_info_phone"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="8dp"
+            android:gravity="center_vertical"
             android:textSize="14sp" />
     </LinearLayout>
 
