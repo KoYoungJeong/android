@@ -56,6 +56,7 @@ dependencies {
 
     apt 'org.androidannotations:androidannotations:3.2'
 
+    compile 'com.android.support:multidex:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // Google
@@ -140,6 +141,7 @@ android {
         dev {       // demo version
             applicationId 'com.tosslab.jandi.app.dev'
             versionName(defaultConfig.versionName + ".dev." + inhouse_version)
+            minSdkVersion 21
         }
 
         inhouse {

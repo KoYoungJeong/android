@@ -361,7 +361,7 @@
     <string name="jandi_invite_contents">" 邀请你加入JANDI。 点击下列链接开启新帐户。"</string>
 
     <string name="jandi_invite_many_people_explain">"想邀请超过100位成员？
-        让我们协助你！ support@tosslab.com"  </string>
+让我们协助你！ support@tosslab.com"  </string>
     <string name="jandi_invite_disabled">"邀请链接已关闭，请联络团队管理员%1$s请求协助。"</string>
     <string name="jandi_deleted_team">"此团队已被删除"</string>
     <string name="jandi_disabled_team">"你已被剔除%1$s。 进一步协助，请联络团队管理员。"</string>

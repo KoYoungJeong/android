@@ -362,7 +362,7 @@
     <string name="jandi_invite_contents">" 邀請你加入JANDI。點擊下列連結開啟新帳戶。"</string>
 
     <string name="jandi_invite_many_people_explain">"想邀請超過100位成員？
-        讓我們協助你！ support@tosslab.com"</string>
+讓我們協助你！ support@tosslab.com"</string>
     <string name="jandi_invite_disabled">"邀請連結已關閉，請聯絡團隊管理員%1$s請求協助。"</string>
     <string name="jandi_deleted_team">"此團隊已被刪除"</string>
     <string name="jandi_disabled_team">"你已被剔除%1$s。進一步訊息，請聯絡團隊管理員。"</string>
