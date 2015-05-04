@@ -161,6 +161,11 @@ public class MainMoreFragment extends Fragment {
             invitationUrl = resTeamDetailInfo.getInvitationUrl();
             teamName = resTeamDetailInfo.getName();
 
+            if (invitationUrl.contains("undefined")) {
+                ColoredToast.showError(mContext, getResources().getString(R.string.err_entity_invite));
+                return;
+            }
+
             if (TextUtils.equals(invitationStatus, "enabled")) {
                 moveToInvitationActivity();
             } else {
