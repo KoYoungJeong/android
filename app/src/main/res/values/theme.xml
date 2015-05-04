@@ -12,7 +12,14 @@
         <item name="colorAccent">@color/jandi_accent_color</item>
 
         <item name="alertDialogTheme">@style/JandiTheme.AlertDialog</item>
+
+        <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
     </style>
+
+    <style name="JandiTheme.Widget" />
+
+    <style name="JandiTheme.Widget.TextView" parent="android:Widget.TextView"></style>
+
 
     <style name="JandiTheme.AlertDialog" parent="@style/Theme.AppCompat.Light.Dialog">
         <item name="colorPrimary">@color/jandi_primary_color</item>
