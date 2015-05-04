@@ -1,15 +1,14 @@
 package com.tosslab.jandi.app.dialogs;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -51,17 +50,6 @@ public class FileUploadDialogFragment extends DialogFragment {
         args.putInt("currentEntityId", currentEntityId);
         frag.setArguments(args);
         return frag;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
-        // 회면 밖 터치시 다이얼로그 종료
-        Dialog me = getDialog();
-        me.setCanceledOnTouchOutside(true);
-        // 키보드 자동 올리기
-        me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-        me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override
@@ -142,6 +130,8 @@ public class FileUploadDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)
                 .setTitle(R.string.title_file_upload)
+                .setCancelable(true)
+                .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_upload,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -158,8 +148,7 @@ public class FileUploadDialogFragment extends DialogFragment {
                                 dismiss();
                             }
                         }
-                )
-                .setNegativeButton(R.string.jandi_cancel, null);
+                );
         return builder.create();
     }
 }
