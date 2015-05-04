@@ -19,7 +19,7 @@ public class UnreadCountUtil {
         List<ResRoomInfo.MarkerInfo> markers = JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
 
         int unreadCount = Observable.from(markers)
-                .filter(markerInfo -> markerInfo.getLastLinkId() < linkId && !(fromEntityId == myId && markerInfo.getMemberId() == myId))
+                .filter(markerInfo -> markerInfo.getLastLinkId() >= 0 && markerInfo.getLastLinkId() < linkId && !(fromEntityId == myId && markerInfo.getMemberId() == myId))
                 .count()
                 .toBlocking()
                 .first();
