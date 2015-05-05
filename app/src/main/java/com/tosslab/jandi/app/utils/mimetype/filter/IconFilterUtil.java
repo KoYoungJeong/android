@@ -18,17 +18,17 @@ public class IconFilterUtil {
     static {
         mimeFilterMap = new HashMap<MimeTypeUtil.FilterType, IconFilter>();
 
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Audio, new AudioIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Image, new ImageIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Video, new VideoIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Pdf, new PdfIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Hwp, new HwpIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Document, new DocumentIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.SpreadSheet, new SpreadSheetIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.Presentation, new PresentationIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleDocument, new GoogleDocumentIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, new GoogleSpreadSheetIconFilter());
-        mimeFilterMap.put(MimeTypeUtil.FilterType.GooglePresentation, new GooglePresentationIconFilter());
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Audio, iconType -> IconFilterUtil.isFilter(iconType, "audio"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Image, iconType -> IconFilterUtil.isFilter(iconType, "image"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Video, iconType -> IconFilterUtil.isFilter(iconType, "video"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Pdf, iconType -> IconFilterUtil.isFilter(iconType, "pdf"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Hwp, iconType -> IconFilterUtil.isFilter(iconType, "hwp"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Document, iconType -> IconFilterUtil.isFilter(iconType, "document"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.SpreadSheet, iconType -> IconFilterUtil.isFilter(iconType, "spreadsheet"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.Presentation, iconType -> IconFilterUtil.isFilter(iconType, "presentation"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleDocument, iconType -> IconFilterUtil.isFilter(iconType, "gdocument"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, iconType -> IconFilterUtil.isFilter(iconType, "gspreadsheet"));
+        mimeFilterMap.put(MimeTypeUtil.FilterType.GooglePresentation, iconType -> IconFilterUtil.isFilter(iconType, "gpresentation"));
 
     }
 
