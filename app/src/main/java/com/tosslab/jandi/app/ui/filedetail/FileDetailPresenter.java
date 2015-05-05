@@ -140,7 +140,7 @@ public class FileDetailPresenter {
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
         // 사용자
-        FormattedEntity writer = new FormattedEntity(fileMessage.writer);
+        FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writer.id);
         String profileUrl = writer.getUserSmallProfileUrl();
         Ion.with(imageViewUserProfile)
                 .placeholder(R.drawable.jandi_profile)

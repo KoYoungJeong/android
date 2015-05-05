@@ -142,8 +142,7 @@ public class EditTextDialogFragment extends DialogFragment {
 
 
         final EditText editTextInput = (EditText) mainView.findViewById(R.id.et_dialog_input_text);
-        final Button buttonConfirm
-                = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
+        final Button buttonConfirm = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
         final TextView title = (TextView) mainView.findViewById(R.id.txt_dialog_input_text);
         // 제목 설정
         title.setText(titleStringId);
@@ -153,46 +152,45 @@ public class EditTextDialogFragment extends DialogFragment {
         editTextInput.setText(currentMessage);
         editTextInput.setSelection(currentMessage.length());
 
+        buttonConfirm.setEnabled(false);
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (buttonConfirm.isSelected()) {
-                    String input = editTextInput.getText().toString();
-                    log.debug("length of input is " + input.length());
+                String input = editTextInput.getText().toString();
+                log.debug("length of input is " + input.length());
 
-                    switch (actionType) {
-                        case ACTION_CREATE_TOPIC:
-                            if (topicType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-                                EventBus.getDefault().post(new ConfirmCreatePublicTopicEvent(input));
-                            } else {
-                                EventBus.getDefault().post(new ConfirmCreatePrivateTopicEvent(input));
-                            }
-                            break;
-                        case ACTION_MODIFY_TOPIC:
-                            EventBus.getDefault().post(
-                                    new ConfirmModifyTopicEvent(topicType, topicId, input)
-                            );
-                            break;
-                        case ACTION_MODIFY_PROFILE_STATUS:
-                        case ACTION_MODIFY_PROFILE_PHONE:
-                        case ACTION_MODIFY_PROFILE_DIVISION:
-                        case ACTION_MODIFY_PROFILE_POSITION:
-                        case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
-                        case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                            EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
-                            break;
-                        case ACTION_FORGOT_PASSWORD:
-                            EventBus.getDefault().post(new ForgotPasswordEvent(input));
-                            break;
-                        case ACTION_NEW_EMAIL:
-                            EventBus.getDefault().post(new NewEmailEvent(input));
-                            break;
-                        default:
-                            // DO NOTHING
-                            break;
-                    }
-                    dismiss();
+                switch (actionType) {
+                    case ACTION_CREATE_TOPIC:
+                        if (topicType == JandiConstants.TYPE_PUBLIC_TOPIC) {
+                            EventBus.getDefault().post(new ConfirmCreatePublicTopicEvent(input));
+                        } else {
+                            EventBus.getDefault().post(new ConfirmCreatePrivateTopicEvent(input));
+                        }
+                        break;
+                    case ACTION_MODIFY_TOPIC:
+                        EventBus.getDefault().post(
+                                new ConfirmModifyTopicEvent(topicType, topicId, input)
+                        );
+                        break;
+                    case ACTION_MODIFY_PROFILE_STATUS:
+                    case ACTION_MODIFY_PROFILE_PHONE:
+                    case ACTION_MODIFY_PROFILE_DIVISION:
+                    case ACTION_MODIFY_PROFILE_POSITION:
+                    case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+                    case ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                        EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
+                        break;
+                    case ACTION_FORGOT_PASSWORD:
+                        EventBus.getDefault().post(new ForgotPasswordEvent(input));
+                        break;
+                    case ACTION_NEW_EMAIL:
+                        EventBus.getDefault().post(new NewEmailEvent(input));
+                        break;
+                    default:
+                        // DO NOTHING
+                        break;
                 }
+                dismiss();
             }
         });
 
@@ -257,23 +255,23 @@ public class EditTextDialogFragment extends DialogFragment {
                     case ACTION_MODIFY_TOPIC:
                         confirm.setEnabled((inputLength > 0)
                                 && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
-                                && (!inputText.equals(currentMessage)));
+                                && !inputText.equals(currentMessage));
                         break;
                     case ACTION_MODIFY_PROFILE_STATUS:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_STATUS);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_STATUS && !inputText.equals(currentMessage));
                         break;
                     case ACTION_MODIFY_PROFILE_PHONE:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_PHONE);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_PHONE && !inputText.equals(currentMessage));
                         break;
                     case ACTION_MODIFY_PROFILE_DIVISION:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_DIVISION);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_DIVISION && !inputText.equals(currentMessage));
                         break;
                     case ACTION_MODIFY_PROFILE_POSITION:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_POSITION);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_POSITION && !inputText.equals(currentMessage));
                         break;
                     case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                     case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME && !inputText.equals(currentMessage));
                         break;
                     case ACTION_FORGOT_PASSWORD:
                     case ACTION_NEW_EMAIL:
