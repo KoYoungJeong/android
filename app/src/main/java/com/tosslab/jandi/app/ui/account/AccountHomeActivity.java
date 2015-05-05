@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.account;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -14,7 +15,6 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
-import com.tosslab.jandi.app.dialogs.TextDialog;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -301,16 +301,21 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     }
 
     @Override
+    @UiThread
+    public void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        clickListener)
+                .create().show();
+    }
+
+    @Override
     public void moveAfterinvitaionAccept() {
         accountHomePresenter.onTeamCreateAcceptResult();
     }
 
-    @Override
-    @UiThread
-    public void showTextAlertDialog(String alertText) {
-        TextDialog textDialog = new TextDialog(this);
-        textDialog.showDialog(alertText);
-    }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
         accountHomePresenter.onChangeName(event.inputMessage);

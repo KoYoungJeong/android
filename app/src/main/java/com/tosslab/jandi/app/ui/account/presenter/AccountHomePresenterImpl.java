@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -21,6 +22,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 
@@ -155,8 +157,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
             view.removePendingTeamView(selectedTeam);
             view.moveAfterinvitaionAccept();
-
+            view.dismissProgressWheel();
         } catch (JandiNetworkException e) {
+            view.dismissProgressWheel();
             e.printStackTrace();
 
             String alertText = null;
@@ -171,7 +174,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     alertText = context.getResources().getString(R.string.jandi_deleted_team);
                     break;
                 case TEAM_INVITATION_DISABLED:
-                    alertText = context.getResources().getString(R.string.jandi_invite_disabled);
+                    alertText = context.getResources().getString(R.string.jandi_invite_disabled, "");
                     break;
                 case ENABLED_MEMBER:
                     alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
@@ -179,19 +182,17 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 default:
                     alertText = context.getResources().getString(R.string.err_network);
                     break;
-
             }
-
-            view.showTextAlertDialog(alertText);
-            onRequestIgnore(selectedTeam);
-
+            view.showTextAlertDialog(alertText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    view.dismissProgressWheel();
+                    onRequestIgnore(selectedTeam);
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            view.dismissProgressWheel();
-
         }
-
     }
 
     @Background
@@ -202,12 +203,18 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         try {
             teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.removePendingTeamView(selectedTeam);
-        } catch (JandiNetworkException e) {
-            ColoredToast.showError(context, context.getString(R.string.jandi_invite_succes_copy_link));
-        } catch (Exception e) {
-        } finally {
             view.dismissProgressWheel();
+        } catch (JandiNetworkException e) {
+            view.dismissProgressWheel();
+            e.printStackTrace();
+            showToastError(context.getString(R.string.jandi_invite_succes_copy_link));
+        } catch (Exception e) {
         }
+    }
+
+    @UiThread
+    public void showToastError(String msg) {
+        ColoredToast.showError(context, msg);
     }
 
     @Override
