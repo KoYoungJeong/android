@@ -165,8 +165,12 @@ public class FileHeadManager {
         } else {
 
             activity.getSupportActionBar().setTitle(fileMessage.content.title);
-            String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
-            textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+            if (fileMessage.content.size > 0) {
+                String fileSizeString = FormatConverter.formatFileSize(fileMessage.content.size);
+                textViewFileContentInfo.setText(fileSizeString + " " + fileMessage.content.ext);
+            } else {
+                textViewFileContentInfo.setText(fileMessage.content.ext);
+            }
 
             // 공유 CDP 이름
             drawFileSharedEntities(fileMessage);
