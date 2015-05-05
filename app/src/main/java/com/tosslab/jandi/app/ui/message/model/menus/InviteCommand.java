@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
+import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -26,6 +27,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,6 +86,8 @@ class InviteCommand implements MenuCommand {
             ColoredToast.showWarning(activity, activity.getString(R.string.warn_all_users_are_already_invited));
             return;
         }
+
+        Collections.sort(unjoinedMembers, new EntityComparator());
 
         final UnjoinedUserListAdapter adapter = new UnjoinedUserListAdapter(activity, unjoinedMembers);
         lv.setAdapter(adapter);

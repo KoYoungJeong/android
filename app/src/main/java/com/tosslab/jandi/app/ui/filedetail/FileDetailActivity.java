@@ -19,7 +19,6 @@ import android.widget.ListView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
@@ -373,9 +372,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                                 .getEntityById(entityIdToBeShared);
 
                         MessageListV2Activity_.intent(FileDetailActivity.this)
+                                .teamId(EntityManager.getInstance(FileDetailActivity.this).getTeamId())
                                 .entityId(entityIdToBeShared)
                                 .entityType(entity.type)
-                                .roomId(entity.type != JandiConstants.TYPE_DIRECT_MESSAGE ? entityIdToBeShared : -1)
+                                .roomId(entity.isUser() ? -1 : entityIdToBeShared)
                                 .isFavorite(entity.isStarred)
                                 .teamId(entity.getEntity().teamId)
                                 .start();
