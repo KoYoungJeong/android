@@ -152,7 +152,6 @@ public class EditTextDialogFragment extends DialogFragment {
         editTextInput.setText(currentMessage);
         editTextInput.setSelection(currentMessage.length());
 
-        buttonConfirm.setEnabled(false);
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
