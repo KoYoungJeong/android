@@ -72,14 +72,14 @@ Welcome to JANDI"</string>
 
     <!-- 튜토리얼 -->
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
-    <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable.
+    <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration.
 
 We combined everything you love about messaging apps and cloud storage with powerful search functionality, and are putting it all in the palm of your hand."</string>
     <string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
-    <string name="jandi_tutorial_topic_message">"Instantly connect with all your colleagues using Public Topics. The subject matter is up to you, whether it's a cross-departmental project or just some casual conversation. If you need privacy, you can invite members to Private Topics or exchange Direct Messages."</string>
-    <string name="jandi_tutorial_file">"Upload Files with a Few Taps"</string>
-    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer. You no longer need to use other storage services or send links to files.
-        
+    <string name="jandi_tutorial_topic_message">"Open communication channels across the organization with firm-wide topics. Share industry knowledge with functional topics. And centralize your communications around projects in private dedicated spaces."</string>
+    <string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
+    <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer.
+
 All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
 
     <!-- Manipulate Entity -->
@@ -317,9 +317,9 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_setting_summary_led">"Flash LED on incoming notifications"</string>
     <string name="jandi_service_maintenance">"JANDI is currently unavailable due to scheduled maintenance. We expect to be back in a couple of hours. Thanks for your patience."</string>
     <string name="jadi_account_home">"Account Home"</string>
-    <string name="jandi_account_home_help">"You can join multiple teams using one account.
+    <string name="jandi_account_home_help">"Join multiple teams using one account.
 
-An account can also hold multiple email addresses.
+Each account can also hold multiple email addresses.
 
 Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_go_to_main">"Go to\nAccount Home"</string>
