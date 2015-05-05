@@ -245,7 +245,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         int justGetFilesSize;
 
         fileListPresenter.showMoreProgressBar();
-        fileListPresenter.dismissProgressBarDelay();
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();
             reqSearchFile.teamId = selectedTeamId;
@@ -272,7 +271,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         } catch (Exception e) {
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
         } finally {
-            fileListPresenter.dismissProgressBar();
             fileListPresenter.dismissMoreProgressBar();
         }
 
@@ -366,6 +364,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
             fileListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
             fileListModel.trackUploadingFile(entityType, result);
+
+            initSearchSubject.onNext(ReqSearchFile.MAX);
+
         } catch (Exception e) {
             fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
         } finally {
