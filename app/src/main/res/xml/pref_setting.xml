@@ -19,14 +19,12 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="setting_push_alarm_vibration"
-            android:summaryOn="@string/jandi_setting_summary_vibrate"
-            android:summaryOff=""
+            android:summary="@string/jandi_setting_summary_vibrate"
             android:title="@string/jandi_vibrate" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="setting_push_alarm_led"
-            android:summaryOn="@string/jandi_setting_summary_led"
-            android:summaryOff=""
+            android:summary="@string/jandi_setting_summary_led"
             android:title="@string/jandi_phone_led" />
     </PreferenceCategory>
 
