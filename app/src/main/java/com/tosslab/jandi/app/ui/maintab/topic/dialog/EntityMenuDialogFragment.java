@@ -163,7 +163,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
             leaveEntity(entityId, entity.isPublicTopic(), entity.isUser());
         } else {
             showPrivateTopicLeaveDialog(entityId, entity.getName());
-            dismissOnUiThread();
         }
     }
 
@@ -184,6 +183,12 @@ public class EntityMenuDialogFragment extends DialogFragment {
     @Background
     void leaveEntity(int entityId, boolean publicTopic, boolean isUser) {
         try {
+            FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
+
+            if (entity != null) {
+                entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
+            }
+
             if (!isUser) {
                 entityMenuDialogModel.requestLeaveEntity(entityId, publicTopic);
             } else {
@@ -191,10 +196,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
                 entityMenuDialogModel.requestDeleteChat(memberId, entityId);
             }
             entityMenuDialogModel.refreshEntities();
-
-            FormattedEntity entity = entityMenuDialogModel.getEntity(entityId);
-
-            entityMenuDialogModel.leaveEntity(entity.isPublicTopic());
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
         } catch (JandiNetworkException e) {

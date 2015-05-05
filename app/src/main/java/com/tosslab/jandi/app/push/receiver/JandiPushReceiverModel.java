@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
@@ -30,6 +31,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -41,6 +43,9 @@ import java.util.List;
  */
 @EBean
 public class JandiPushReceiverModel {
+
+    @SystemService
+    AudioManager audioManager;
 
     public PendingIntent generatePendingIntent(Context context, int chatId, int chatType, int teamId) {
         Intent intent = new Intent(context, PushInterfaceActivity_.class);
@@ -148,7 +153,9 @@ public class JandiPushReceiverModel {
         int sound = 0;
 
         if (JandiPreference.isAlarmSound(context)) {
-            sound = Notification.DEFAULT_SOUND;
+            if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
+                sound = Notification.DEFAULT_SOUND;
+            }
         }
 
         int vibrate = 0;

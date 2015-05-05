@@ -19,7 +19,9 @@ public class UnreadCountUtil {
         List<ResRoomInfo.MarkerInfo> markers = JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
 
         int unreadCount = Observable.from(markers)
-                .filter(markerInfo -> markerInfo.getLastLinkId() >= 0 && markerInfo.getLastLinkId() < linkId && !(fromEntityId == myId && markerInfo.getMemberId() == myId))
+                .filter(markerInfo -> markerInfo.getLastLinkId() >= 0)  // -1 이면 읽음 처리
+                .filter(markerInfo -> markerInfo.getLastLinkId() < linkId)  // 유저의 마지막 마커가 크면 읽음 처리
+                .filter(markerInfo -> !(fromEntityId == myId && markerInfo.getMemberId() == myId))  // 내 메세지이면 읽음 처리
                 .count()
                 .toBlocking()
                 .first();

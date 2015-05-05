@@ -3,9 +3,10 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.tosslab.jandi.app.lists.entities.EntityManager;
+
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.FragmentArg;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -37,6 +38,10 @@ public class MessageListV2Activity extends AppCompatActivity {
     }
 
     void initViews() {
+
+        if (teamId <= 0) {
+            teamId = EntityManager.getInstance(MessageListV2Activity.this).getTeamId();
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()

@@ -255,29 +255,29 @@ public class EditTextDialogFragment extends DialogFragment {
                 switch (purpose) {
                     case ACTION_CREATE_TOPIC:
                     case ACTION_MODIFY_TOPIC:
-                        confirm.setSelected((inputLength > 0)
+                        confirm.setEnabled((inputLength > 0)
                                 && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
                                 && (!inputText.equals(currentMessage)));
                         break;
                     case ACTION_MODIFY_PROFILE_STATUS:
-                        confirm.setSelected(inputLength < MAX_LENGTH_OF_STATUS);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_STATUS);
                         break;
                     case ACTION_MODIFY_PROFILE_PHONE:
-                        confirm.setSelected(inputLength < MAX_LENGTH_OF_PHONE);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_PHONE);
                         break;
                     case ACTION_MODIFY_PROFILE_DIVISION:
-                        confirm.setSelected(inputLength < MAX_LENGTH_OF_DIVISION);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_DIVISION);
                         break;
                     case ACTION_MODIFY_PROFILE_POSITION:
-                        confirm.setSelected(inputLength < MAX_LENGTH_OF_POSITION);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_POSITION);
                         break;
                     case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
                     case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                        confirm.setSelected(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME);
+                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME);
                         break;
                     case ACTION_FORGOT_PASSWORD:
                     case ACTION_NEW_EMAIL:
-                        confirm.setSelected(!FormatConverter.isInvalidEmailString(inputText));
+                        confirm.setEnabled(!FormatConverter.isInvalidEmailString(inputText));
                         break;
                     default:
                         // DO NOTHING

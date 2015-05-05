@@ -222,7 +222,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(RefreshOldFileEvent event) {
-        getPreviousFile();
+        if (isForeground) {
+            getPreviousFile();
+        }
     }
 
     public void onEventMainThread(ShareFileEvent event) {

@@ -180,6 +180,7 @@ public class FileListPresenter {
                         mFileTypeSelectDialog.dismiss();
                     mCurrentFileTypeCategorizingAccodingBy = adapter.getItem(i);
                     textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
+                    textVewFileType.invalidate();
                     EventBus.getDefault().post(new CategorizedMenuOfFileType(i));
                 }
             });
@@ -253,6 +254,8 @@ public class FileListPresenter {
                         textViewUser.setText(mCurrentUserNameCategorizingAccodingBy);
                         EventBus.getDefault().post(new CategorizingAsOwner(owner.getId()));
                     }
+
+                    textViewUser.invalidate();
                 }
             });
             lv.addHeaderView(getHeaderViewAsAllUser());
@@ -317,6 +320,7 @@ public class FileListPresenter {
                         mCurrentEntityCategorizingAccodingBy = sharedEntity.getName();
                     }
                     textVew.setText(mCurrentEntityCategorizingAccodingBy);
+                    textVew.invalidate();
                     EventBus.getDefault().post(new CategorizingAsEntity(sharedEntityId));
                 }
             });
