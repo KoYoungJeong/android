@@ -79,7 +79,6 @@
             android:text="Justin"
             android:textColor="@color/jandi_file_search_item_owner_text"
             android:textSize="@dimen/jandi_file_search_item_owner_text" />
-        />
 
         <ImageView
             android:id="@+id/img_searched_file_name_line_through"

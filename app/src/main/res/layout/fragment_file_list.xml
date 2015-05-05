@@ -46,11 +46,6 @@
                     android:id="@+id/txt_file_list_where"
                     style="@style/JandiFileListCategoryTab.Text" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:src="@drawable/jandi_arrow_down_gray" />
             </LinearLayout>
 
             <View style="@style/JandiFileListCategoryTab.Border" />
@@ -63,11 +58,6 @@
                     android:id="@+id/txt_file_list_whom"
                     style="@style/JandiFileListCategoryTab.Text" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:src="@drawable/jandi_arrow_down_gray" />
             </LinearLayout>
 
             <View style="@style/JandiFileListCategoryTab.Border" />
@@ -80,11 +70,6 @@
                     android:id="@+id/txt_file_list_type"
                     style="@style/JandiFileListCategoryTab.Text" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:src="@drawable/jandi_arrow_down_gray" />
             </LinearLayout>
         </LinearLayout>
 
