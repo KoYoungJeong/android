@@ -10,11 +10,15 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -158,5 +162,29 @@ public class FileDetailModel {
             }
         }
         return false;
+    }
+
+    public ResCommon joinEntity(FormattedEntity entityId) throws JandiNetworkException {
+
+        return jandiEntityClient.joinChannel(entityId.getChannel());
+
+    }
+
+    public boolean refreshEntity() {
+        try {
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
+            JandiPreference.setBadgeCount(context, totalUnreadCount);
+            BadgeUtils.setBadge(context, totalUnreadCount);
+            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+
+            return true;
+        } catch (JandiNetworkException e) {
+            logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

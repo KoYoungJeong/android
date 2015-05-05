@@ -6,9 +6,10 @@ import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.view.View;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
+import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 12..
@@ -40,13 +41,7 @@ public class EntitySpannable extends ClickableSpan {
     @Override
     public void onClick(View widget) {
 
-        MessageListV2Activity_.intent(context)
-                .teamId(teamId)
-                .entityId(entityId)
-                .entityType(entityType)
-                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
-                .isFromPush(false)
-                .isFavorite(isStarred)
-                .start();
+        EventBus.getDefault().post(new MoveSharedEntityEvent(entityId));
+
     }
 }

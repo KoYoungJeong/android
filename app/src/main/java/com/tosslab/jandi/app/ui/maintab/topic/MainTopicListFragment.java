@@ -171,6 +171,7 @@ public class MainTopicListFragment extends Fragment {
 
         try {
             mainTopicModel.joinPublicTopic(entity.getChannel());
+            mainTopicModel.refreshEntity();
             EntityManager entityManager = EntityManager.getInstance(getActivity());
             if (entityManager != null) {
                 MixpanelMemberAnalyticsClient
