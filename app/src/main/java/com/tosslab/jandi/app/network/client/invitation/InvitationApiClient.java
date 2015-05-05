@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.client.invitation;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
-import com.tosslab.jandi.app.network.models.ReqInvitationConfirm;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
@@ -39,21 +38,6 @@ public interface InvitationApiClient {
     void setHeader(String name, String value);
 
     void setAuthentication(HttpAuthentication auth);
-
-
-    /**
-     * 초대 수락하기.
-     */
-    @Put("/invitations")
-    @RequiresAuthentication
-    ResTeamDetailInfo confirmInvitation(ReqInvitationConfirm reqInvitationConfirm);
-
-    /**
-     * 초대 거절하기
-     */
-    @Put("/invitations")
-    @RequiresAuthentication
-    List<ResPendingTeamInfo> declineInvitation(ReqInvitationConfirm reqInvitationConfirm);
 
     /**
      * 초대 수락 또는 거절
