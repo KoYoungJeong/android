@@ -43,6 +43,7 @@ public class IntroActivityModelTest {
 
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
+
     }
 
     @Ignore

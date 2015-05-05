@@ -4,13 +4,13 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
-import com.tosslab.jandi.app.ui.invites.InviteActivity_;
+import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.member.TeamInfoActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
@@ -31,7 +31,6 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -56,15 +55,7 @@ import rx.Observable;
 public class MainMoreFragment extends Fragment {
 
     public static final String SUPPORT_URL = "http://support.jandi.com";
-    public static final String PACKAGE_NAME_KAKAO = "com.kakao.talk";
-    public static final String PACKAGE_NAME_LINE = "jp.naver.line.android";
-    public static final String PACKAGE_NAME_WECHAT = "com.tencent.mm";
-    public static final String FACEBOOK_EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
-    public static final String FACEBOOK_EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
-    public static final int FACEBOOK_PROTOCOL_VERSION = 20150314;
-    public static final String FACEBOOK_REGISTRATION_APP_ID = "808900692521335";
-    public static final String PACKAGE_NAME_FACEBOOK_MESSENGER = "com.facebook.orca";
-    public static final int SHARE_TO_MESSENGER_REQUEST_CODE = 1;
+
     protected Context mContext;
 
     IconWithTextView profileIconView;
@@ -75,13 +66,13 @@ public class MainMoreFragment extends Fragment {
     @SystemService
     ClipboardManager clipboardManager;
 
+    private String invitationUrl;
+    private String teamName;
+
     @ViewById(R.id.txt_more_jandi_version)
     TextView textViewJandiVersion;
 
     private EntityManager mEntityManager;
-
-    private String invitationUrl;
-    private String teamName;
     private ProgressWheel progressWheel;
 
     @AfterInject
@@ -103,7 +94,6 @@ public class MainMoreFragment extends Fragment {
         super.onResume();
         EventBus.getDefault().register(this);
         showUserProfile();
-
     }
 
     private void showUserProfile() {
@@ -118,7 +108,6 @@ public class MainMoreFragment extends Fragment {
     }
 
     private void showJandiVersion() {
-
         try {
             String packageName = getActivity().getPackageName();
             String versionName = getActivity().getPackageManager().getPackageInfo(packageName, 0).versionName;
@@ -145,44 +134,77 @@ public class MainMoreFragment extends Fragment {
     @Click(R.id.ly_more_invite)
     @Background
     public void onInvitationDisableCheck() {
-
         showProgressWheel();
 
-        List<FormattedEntity> users = EntityManager.getInstance(getActivity()).getFormattedUsers();
+        Pair<InviteUtils.Result, ResTeamDetailInfo.InviteTeam> result =
+                InviteUtils.checkInvitationDisabled(teamDomainInfoModel, mEntityManager.getTeamId());
+
+        dismissProgressWheel();
+
+        switch (result.first) {
+            case NETWORK_ERROR:
+                showErrorToast(getResources().getString(R.string.err_network));
+                break;
+            case ERROR:
+                break;
+            case INVITATION_DISABLED:
+                showTextDialog(
+                        getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                break;
+            case UNDEFINED_URL:
+                showErrorToast(getResources().getString(R.string.err_entity_invite));
+                break;
+            case SUCCESS:
+                moveToInvitationActivity(result.second);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private String getOwnerName() {
+        List<FormattedEntity> users = EntityManager.getInstance(mContext).getFormattedUsers();
         FormattedEntity tempDefaultEntity = new FormattedEntity();
         FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity -> TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
+                .filter(formattedEntity ->
+                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
                 .firstOrDefault(tempDefaultEntity)
                 .toBlocking()
                 .first();
+        return owner.getUser().name;
+    }
 
-        try {
-            ResTeamDetailInfo.InviteTeam resTeamDetailInfo = teamDomainInfoModel.getTeamInfo(mEntityManager.getTeamId());
+    @UiThread
+    public void moveToInvitationActivity(ResTeamDetailInfo.InviteTeam inviteTeam) {
+        invitationUrl = inviteTeam.getInvitationUrl();
+        teamName = inviteTeam.getName();
+        DialogFragment invitationDialog = new InvitationDialogFragment();
+        invitationDialog.show(getFragmentManager(), "invitationsDialog");
+    }
 
-            String invitationStatus = resTeamDetailInfo.getInvitationStatus();
-            invitationUrl = resTeamDetailInfo.getInvitationUrl();
-            teamName = resTeamDetailInfo.getName();
-
-            dismissProgresWheel();
-
-            if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
-                showErrorToast(getResources().getString(R.string.err_entity_invite));
-                return;
+    public void onEvent(TeamInvitationsEvent event) {
+        String invitationContents =
+                teamName + getResources().getString(R.string.jandi_invite_contents);
+        int eventType = event.type;
+        if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
+            copyLink(invitationUrl, invitationContents);
+            showTextDialog(getResources().getString(R.string.jandi_invite_succes_copy_link));
+        } else {
+            Intent intent = InviteUtils.getInviteIntent(
+                    mContext, event, invitationUrl, invitationContents);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                copyLink(invitationUrl, invitationContents);
+                showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
             }
-
-            if (TextUtils.equals(invitationStatus, "enabled")) {
-                moveToInvitationActivity();
-            } else {
-                showTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
-            }
-        } catch (JandiNetworkException e) {
-            dismissProgresWheel();
-            e.printStackTrace();
-            showErrorToast(getResources().getString(R.string.err_network));
-        } catch (Exception e) {
-            dismissProgresWheel();
-            e.printStackTrace();
         }
+    }
+
+    public void copyLink(String publicLink, String contents) {
+        ClipData clipData = ClipData.newPlainText("", contents + "\n" + publicLink);
+        clipboardManager.setPrimaryClip(clipData);
     }
 
     @UiThread
@@ -191,7 +213,7 @@ public class MainMoreFragment extends Fragment {
     }
 
     @UiThread
-    void dismissProgresWheel() {
+    void dismissProgressWheel() {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
@@ -211,28 +233,12 @@ public class MainMoreFragment extends Fragment {
 
     @UiThread
     public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(mContext)
+        new AlertDialog.Builder(getActivity())
                 .setMessage(alertText)
                 .setCancelable(false)
-                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(
-                                    DialogInterface dialog, int id) {
-                                // 다이얼로그를 취소한다
-                                dialog.dismiss();
-                            }
-                        })
+                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> dialog.dismiss())
                 .create().show();
-    }
-
-
-    @UiThread
-    public void moveToInvitationActivity() {
-
-
-        DialogFragment invitationDialog = new InvitationDialogFragment();
-        invitationDialog.show(getFragmentManager(), "invitationsDialog");
-
     }
 
     @Click(R.id.ly_more_go_to_main)
@@ -250,74 +256,11 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_help)
     public void launchHelpPageOnBrowser() {
-
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .url(SUPPORT_URL)
                 .hideActionBar(true)
                 .start();
-
-    }
-
-    public void snsAndMessengerInvitation(Intent intent, String publicLink, String invitationContents, String appPackageName, boolean facebookMessenger) {
-
-        intent.setPackage(appPackageName);
-        intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
-        intent.setType("text/plain");
-
-        if (facebookMessenger) {
-            intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
-            intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
-            intent.setType("image/*");
-        }
-
-        try {
-            startActivity(intent);
-
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-            copyLink(publicLink, invitationContents);
-            showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
-        }
-
-    }
-
-    public void copyLink(String publicLink, String invitationContents) {
-        ClipData clipData = ClipData.newPlainText("", invitationContents + "\n" + publicLink);
-        clipboardManager.setPrimaryClip(clipData);
-    }
-
-
-    public void onEvent(TeamInvitationsEvent event) {
-        String publicLink = invitationUrl;
-        String invitationContents = teamName + getResources().getString(R.string.jandi_invite_contents);
-        Intent intent = new Intent(Intent.ACTION_SEND);
-
-        switch (event.type) {
-            case JandiConstants.TYPE_INVITATION_EMAIL:
-                InviteActivity_.intent(MainMoreFragment.this)
-                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        .start();
-                break;
-            case JandiConstants.TYPE_INVITATION_KAKAO:
-                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_KAKAO, false);
-                break;
-            case JandiConstants.TYPE_INVITATION_LINE:
-                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_LINE, false);
-                break;
-            case JandiConstants.TYPE_INVITATION_WECHAT:
-                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_WECHAT, false);
-                break;
-            case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                snsAndMessengerInvitation(intent, publicLink, invitationContents, PACKAGE_NAME_FACEBOOK_MESSENGER, true);
-                break;
-            case JandiConstants.TYPE_INVITATION_COPY_LINK:
-                copyLink(publicLink, invitationContents);
-                showTextDialog(getResources().getString(R.string.jandi_invite_succes_copy_link));
-                break;
-            default:
-                break;
-        }
     }
 
     @Override
@@ -325,4 +268,5 @@ public class MainMoreFragment extends Fragment {
         super.onPause();
         EventBus.getDefault().unregister(this);
     }
+
 }

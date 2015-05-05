@@ -108,12 +108,7 @@ public class MainChatListModel {
         List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
 
         ChatItem first = Observable.from(savedChatItems)
-                .filter(new Func1<ChatItem, Boolean>() {
-                    @Override
-                    public Boolean call(ChatItem chatItem) {
-                        return chatItem.getEntityId() == userId;
-                    }
-                })
+                .filter(chatItem -> chatItem.getEntityId() == userId)
                 .firstOrDefault(new ChatItem())
                 .toBlocking().first();
 
