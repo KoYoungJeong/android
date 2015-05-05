@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -52,16 +51,13 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_profile)
 public class MemberProfileActivity extends BaseAnalyticsActivity {
     private static final int REQ_CODE_PICK_IMAGE = 0;
-    private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
-    private final Logger log = Logger.getLogger(MemberProfileActivity.class);
+    private final Logger logger = Logger.getLogger(MemberProfileActivity.class);
 
     @Bean
     MemberProfileModel memberProfileModel;
 
     @Bean
     MemberProfilePresenter memberProfilePresenter;
-
-    private Context mContext;
 
     private File mTempPhotoFile;  // 프로필 사진 변경시 선택한 임시 파일
     private boolean attemptToUpdateData = false;
@@ -73,8 +69,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     void bindAdapter() {
 
         setupActionBar();
-
-        mContext = getApplicationContext();
 
         getProfileInBackground();
     }
@@ -147,10 +141,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfilePresenter.displayProfile(me);
         } catch (JandiNetworkException e) {
-            log.error("get profile failed", e);
+            logger.error("get profile failed", e);
             memberProfilePresenter.getProfileFailed();
         } catch (Exception e) {
-            log.error("get profile failed", e);
+            logger.error("get profile failed", e);
             memberProfilePresenter.getProfileFailed();
         } finally {
             memberProfilePresenter.dismissProgressWheel();
@@ -250,10 +244,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                 attemptToUpdatePhoto = false;
 
             } catch (ExecutionException e) {
-                log.error("uploadFileDone: FAILED", e);
+                logger.error("uploadFileDone: FAILED", e);
                 memberProfilePresenter.failPhotoUpload();
             } catch (InterruptedException e) {
-                log.error("uploadFileDone: FAILED", e);
+                logger.error("uploadFileDone: FAILED", e);
                 memberProfilePresenter.failPhotoUpload();
             }
 
@@ -270,7 +264,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                 trackUpdateProfile(getDistictId(), me);
                 memberProfilePresenter.displayProfile(me);
             } catch (JandiNetworkException e) {
-                log.error("get profile failed", e);
+                logger.error("get profile failed", e);
                 memberProfilePresenter.updateProfileFailed();
             }
         }
