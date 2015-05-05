@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -20,6 +21,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 
@@ -154,22 +156,25 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
             view.removePendingTeamView(selectedTeam);
             view.moveAfterinvitaionAccept();
-
+            view.dismissProgressWheel();
         } catch (JandiNetworkException e) {
+            view.dismissProgressWheel();
             e.printStackTrace();
 
             String alertText = getJoinErrorMessage(selectedTeam, e.errCode);
 
-            view.showTextAlertDialog(alertText);
+            view.showTextAlertDialog(alertText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    view.dismissProgressWheel();
+                    onRequestIgnore(selectedTeam);
+                }
+            });
             onRequestIgnore(selectedTeam);
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            view.dismissProgressWheel();
-
         }
-
     }
 
     private String getJoinErrorMessage(Team selectedTeam, int errCode) {
@@ -206,12 +211,13 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         try {
             teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.removePendingTeamView(selectedTeam);
+            view.dismissProgressWheel();
         } catch (JandiNetworkException e) {
+            view.dismissProgressWheel();
             view.showErrorToast(getJoinErrorMessage(selectedTeam, e.errCode));
             view.removePendingTeamView(selectedTeam);
         } catch (Exception e) {
         } finally {
-            view.dismissProgressWheel();
         }
     }
 

@@ -4,10 +4,12 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -15,7 +17,6 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
-import com.tosslab.jandi.app.dialogs.TextDialog;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -63,6 +64,7 @@ public class MainMoreFragment extends Fragment {
     public static final int FACEBOOK_PROTOCOL_VERSION = 20150314;
     public static final String FACEBOOK_REGISTRATION_APP_ID = "808900692521335";
     public static final String PACKAGE_NAME_FACEBOOK_MESSENGER = "com.facebook.orca";
+    public static final int SHARE_TO_MESSENGER_REQUEST_CODE = 1;
     protected Context mContext;
 
     IconWithTextView profileIconView;
@@ -161,8 +163,10 @@ public class MainMoreFragment extends Fragment {
             invitationUrl = resTeamDetailInfo.getInvitationUrl();
             teamName = resTeamDetailInfo.getName();
 
-            if (invitationUrl.contains("undefined")) {
-                ColoredToast.showError(mContext, getResources().getString(R.string.err_entity_invite));
+            dismissProgresWheel();
+
+            if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
+                showErrorToast(getResources().getString(R.string.err_entity_invite));
                 return;
             }
 
@@ -172,13 +176,18 @@ public class MainMoreFragment extends Fragment {
                 showTextDialog(getResources().getString(R.string.jandi_invite_disabled, owner.getUser().name));
             }
         } catch (JandiNetworkException e) {
-            e.printStackTrace();
-            ColoredToast.showError(mContext, getResources().getString(R.string.jandi_invite_succes_copy_link));
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             dismissProgresWheel();
+            e.printStackTrace();
+            showErrorToast(getResources().getString(R.string.err_network));
+        } catch (Exception e) {
+            dismissProgresWheel();
+            e.printStackTrace();
         }
+    }
+
+    @UiThread
+    void showErrorToast(String message) {
+        ColoredToast.showError(mContext, message);
     }
 
     @UiThread
@@ -202,8 +211,18 @@ public class MainMoreFragment extends Fragment {
 
     @UiThread
     public void showTextDialog(String alertText) {
-        TextDialog textDialog = new TextDialog(mContext);
-        textDialog.showDialog(alertText);
+        new AlertDialog.Builder(mContext)
+                .setMessage(alertText)
+                .setCancelable(false)
+                .setNegativeButton(getResources().getString(R.string.jandi_confirm),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(
+                                    DialogInterface dialog, int id) {
+                                // 다이얼로그를 취소한다
+                                dialog.dismiss();
+                            }
+                        })
+                .create().show();
     }
 
 
@@ -241,22 +260,26 @@ public class MainMoreFragment extends Fragment {
     }
 
     public void snsAndMessengerInvitation(Intent intent, String publicLink, String invitationContents, String appPackageName, boolean facebookMessenger) {
-        if (facebookMessenger) {
-            intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
-            intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
-        }
 
         intent.setPackage(appPackageName);
         intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
         intent.setType("text/plain");
 
+        if (facebookMessenger) {
+            intent.putExtra(FACEBOOK_EXTRA_PROTOCOL_VERSION, FACEBOOK_PROTOCOL_VERSION);
+            intent.putExtra(FACEBOOK_EXTRA_APP_ID, FACEBOOK_REGISTRATION_APP_ID);
+            intent.setType("image/*");
+        }
+
         try {
             startActivity(intent);
+
         } catch (ActivityNotFoundException e) {
             e.printStackTrace();
             copyLink(publicLink, invitationContents);
             showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
         }
+
     }
 
     public void copyLink(String publicLink, String invitationContents) {

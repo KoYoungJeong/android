@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.account.presenter;
 
+import android.content.DialogInterface;
+
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 
@@ -64,6 +66,6 @@ public interface AccountHomePresenter {
 
         void moveAfterinvitaionAccept();
 
-        void showTextAlertDialog(String alertText);
+        void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener);
     }
 }
