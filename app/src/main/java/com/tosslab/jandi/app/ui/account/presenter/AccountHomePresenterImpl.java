@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
@@ -159,28 +158,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         } catch (JandiNetworkException e) {
             e.printStackTrace();
 
-            String alertText = null;
-            switch (e.errCode) {
-                case NOT_AVAILABLE_INVITATION_CODE:
-                    alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
-                    break;
-                case DISABLED_MEMBER:
-                    alertText = context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
-                    break;
-                case REMOVED_TEAM:
-                    alertText = context.getResources().getString(R.string.jandi_deleted_team);
-                    break;
-                case TEAM_INVITATION_DISABLED:
-                    alertText = context.getResources().getString(R.string.jandi_invite_disabled);
-                    break;
-                case ENABLED_MEMBER:
-                    alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
-                    break;
-                default:
-                    alertText = context.getResources().getString(R.string.err_network);
-                    break;
-
-            }
+            String alertText = getJoinErrorMessage(selectedTeam, e.errCode);
 
             view.showTextAlertDialog(alertText);
             onRequestIgnore(selectedTeam);
@@ -194,6 +172,32 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     }
 
+    private String getJoinErrorMessage(Team selectedTeam, int errCode) {
+        String alertText;
+        switch (errCode) {
+            case NOT_AVAILABLE_INVITATION_CODE:
+                alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
+                break;
+            case DISABLED_MEMBER:
+                alertText = context.getResources().getString(R.string.jandi_disabled_team, selectedTeam.getName());
+                break;
+            case REMOVED_TEAM:
+                alertText = context.getResources().getString(R.string.jandi_deleted_team);
+                break;
+            case TEAM_INVITATION_DISABLED:
+                alertText = context.getResources().getString(R.string.jandi_invite_disabled, "");
+                break;
+            case ENABLED_MEMBER:
+                alertText = context.getResources().getString(R.string.jandi_joined_team, selectedTeam.getName());
+                break;
+            default:
+                alertText = context.getResources().getString(R.string.err_network);
+                break;
+
+        }
+        return alertText;
+    }
+
     @Background
     @Override
     public void onRequestIgnore(Team selectedTeam) {
@@ -203,7 +207,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.removePendingTeamView(selectedTeam);
         } catch (JandiNetworkException e) {
-            ColoredToast.showError(context, context.getString(R.string.jandi_invite_succes_copy_link));
+            view.showErrorToast(getJoinErrorMessage(selectedTeam, e.errCode));
+            view.removePendingTeamView(selectedTeam);
         } catch (Exception e) {
         } finally {
             view.dismissProgressWheel();

@@ -365,7 +365,7 @@ Assign one email to each team to let members know how to contact you."</string>
     <string name="jandi_invite_contents">" invited you to JANDI. Follow the link below to get started now!"</string>
     <string name="jandi_invite_many_people_explain">"Inviting over 100 members?
 Contact us at support@tosslab.com"</string>
-    <string name="jandi_invite_disabled">Invitation has been disabled by admin. Please contact your team admin %1$s for further detail.</string>
+    <string name="jandi_invite_disabled">"Invitations have been disabled. Please contact your team administrator, %1$s for further detail."</string>
     <string name="jandi_deleted_team">This team has been deleted from JANDI and no longer exists.</string>
     <string name="jandi_disabled_team">You are a disabled member of %1$s. Please contact the team administrator.</string>
     <string name="jandi_joined_team">You have already joined %1$s. Please check your team list.</string>
