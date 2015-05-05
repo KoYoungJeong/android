@@ -82,10 +82,11 @@ public class InternalWebActivity extends ActionBarActivity {
                     } else {
                         try {
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                            return true;
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
+                            return false;
                         }
-                        return true;
                     }
                 }
 
@@ -126,8 +127,10 @@ public class InternalWebActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
+        internalWebPresenter.pauseWebView();
         EventBus.getDefault().unregister(this);
+        super.onPause();
+
     }
 
     private void setUpActionBar() {
@@ -149,6 +152,7 @@ public class InternalWebActivity extends ActionBarActivity {
         if (internalWebPresenter.hasBackHistory()) {
             internalWebPresenter.moveBack();
         } else {
+            internalWebPresenter.loadUrl("about:blank");
             super.onBackPressed();
         }
     }

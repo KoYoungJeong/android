@@ -22,8 +22,11 @@ public class JandiMarkerDatabaseManager {
 
     private SQLiteOpenHelper jandiDatabaseOpenHelper;
 
+    private Object lockObject;
+
     private JandiMarkerDatabaseManager(Context context) {
         jandiDatabaseOpenHelper = JandiDatabaseOpenHelper.getInstance(context);
+        lockObject = new Object();
     }
 
     public static JandiMarkerDatabaseManager getInstance(Context context) {
@@ -44,58 +47,60 @@ public class JandiMarkerDatabaseManager {
 
     public int upsertMarkers(ResRoomInfo resRoomInfo) {
 
-        SQLiteDatabase database = getWriteableDatabase();
+        synchronized (lockObject) {
+            SQLiteDatabase database = getWriteableDatabase();
 
-        String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " = ?";
-        String[] whereArgs = {String.valueOf(resRoomInfo.getTeamId()), String.valueOf(resRoomInfo.getId())};
-        database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
+            String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " = ?";
+            String[] whereArgs = {String.valueOf(resRoomInfo.getTeamId()), String.valueOf(resRoomInfo.getId())};
+            database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
 
-        int teamId = resRoomInfo.getTeamId();
-        String type = resRoomInfo.getType();
-        int roomId = resRoomInfo.getId();
+            int teamId = resRoomInfo.getTeamId();
+            String type = resRoomInfo.getType();
+            int roomId = resRoomInfo.getId();
 
 
-        List<ResRoomInfo.MarkerInfo> markers = resRoomInfo.getMarkers();
-        if (markers == null || markers.isEmpty()) {
-            return 0;
-        }
-
-        List<ContentValues> contentValueses = new ArrayList<ContentValues>();
-
-        ContentValues tempValue;
-        for (ResRoomInfo.MarkerInfo markerInfo : markers) {
-
-            if (markerInfo.getMemberId() <= 0) {
-                continue;
+            List<ResRoomInfo.MarkerInfo> markers = resRoomInfo.getMarkers();
+            if (markers == null || markers.isEmpty()) {
+                return 0;
             }
 
-            tempValue = new ContentValues();
-            tempValue.put(DatabaseConsts.RoomsMarker.teamId.name(), teamId);
-            tempValue.put(DatabaseConsts.RoomsMarker.type.name(), type);
-            tempValue.put(DatabaseConsts.RoomsMarker.roomId.name(), roomId);
-            tempValue.put(DatabaseConsts.RoomsMarker.memberId.name(), markerInfo.getMemberId());
-            tempValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), markerInfo.getLastLinkId());
+            List<ContentValues> contentValueses = new ArrayList<ContentValues>();
 
-            contentValueses.add(tempValue);
-        }
+            ContentValues tempValue;
+            for (ResRoomInfo.MarkerInfo markerInfo : markers) {
 
-        int addedRow = 0;
+                if (markerInfo.getMemberId() <= 0) {
+                    continue;
+                }
 
-        try {
-            database.beginTransaction();
+                tempValue = new ContentValues();
+                tempValue.put(DatabaseConsts.RoomsMarker.teamId.name(), teamId);
+                tempValue.put(DatabaseConsts.RoomsMarker.type.name(), type);
+                tempValue.put(DatabaseConsts.RoomsMarker.roomId.name(), roomId);
+                tempValue.put(DatabaseConsts.RoomsMarker.memberId.name(), markerInfo.getMemberId());
+                tempValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), markerInfo.getLastLinkId());
 
-            for (ContentValues contentValuese : contentValueses) {
-                database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValuese);
-                ++addedRow;
+                contentValueses.add(tempValue);
             }
 
-            database.setTransactionSuccessful();
-        } finally {
-            database.endTransaction();
+            int addedRow = 0;
+
+            try {
+                database.beginTransaction();
+
+                for (ContentValues contentValuese : contentValueses) {
+                    database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValuese);
+                    ++addedRow;
+                }
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+
+
+            return addedRow;
         }
-
-
-        return addedRow;
     }
 
     public List<ResRoomInfo.MarkerInfo> getMarkers(int teamId, int roomId) {
@@ -151,24 +156,55 @@ public class JandiMarkerDatabaseManager {
 
     public long updateMarker(int teamId, int roomId, int memberId, int lastLinkId) {
 
-        if (teamId <= 0 || roomId <= 0 || memberId <= 0) {
-            return -1;
+        synchronized (lockObject) {
+            if (teamId <= 0 || roomId <= 0 || memberId <= 0) {
+                return -1;
+            }
+
+            SQLiteDatabase database = getWriteableDatabase();
+
+            String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " + ? AND " + DatabaseConsts.RoomsMarker.memberId + " = ?";
+            String[] whereArgs = {String.valueOf(teamId), String.valueOf(roomId), String.valueOf(memberId)};
+
+            Cursor query = database.query(DatabaseConsts.Table.rooms_marker.name(), null, where, whereArgs, null, null, null);
+
+            if (query != null && query.getCount() > 0) {
+
+                if (query.getCount() > 1) {
+                    database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
+
+                    ContentValues contentValue = new ContentValues();
+                    contentValue.put(DatabaseConsts.RoomsMarker.teamId.name(), teamId);
+                    contentValue.put(DatabaseConsts.RoomsMarker.type.name(), "");   // 임시 변수
+                    contentValue.put(DatabaseConsts.RoomsMarker.roomId.name(), roomId);
+                    contentValue.put(DatabaseConsts.RoomsMarker.memberId.name(), memberId);
+                    contentValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), lastLinkId);
+
+                    return database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValue);
+                } else {
+
+                    closeCursor(query);
+
+                    ContentValues contentValue = new ContentValues();
+                    contentValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), lastLinkId);
+
+                    return database.update(DatabaseConsts.Table.rooms_marker.name(), contentValue, where, whereArgs);
+                }
+
+
+            } else {
+
+                ContentValues contentValue = new ContentValues();
+                contentValue.put(DatabaseConsts.RoomsMarker.teamId.name(), teamId);
+                contentValue.put(DatabaseConsts.RoomsMarker.type.name(), "");   // 임시 변수
+                contentValue.put(DatabaseConsts.RoomsMarker.roomId.name(), roomId);
+                contentValue.put(DatabaseConsts.RoomsMarker.memberId.name(), memberId);
+                contentValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), lastLinkId);
+
+                return database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValue);
+            }
         }
 
-        SQLiteDatabase database = getWriteableDatabase();
-
-        String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " + ? AND " + DatabaseConsts.RoomsMarker.memberId + " = ?";
-        String[] whereArgs = {String.valueOf(teamId), String.valueOf(roomId), String.valueOf(memberId)};
-        database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
-
-        ContentValues contentValue = new ContentValues();
-        contentValue.put(DatabaseConsts.RoomsMarker.teamId.name(), teamId);
-        contentValue.put(DatabaseConsts.RoomsMarker.type.name(), "");   // 임시 변수
-        contentValue.put(DatabaseConsts.RoomsMarker.roomId.name(), roomId);
-        contentValue.put(DatabaseConsts.RoomsMarker.memberId.name(), memberId);
-        contentValue.put(DatabaseConsts.RoomsMarker.lastLinkId.name(), lastLinkId);
-
-        return database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValue);
     }
 
     public int deleteMarker(int teamId, int roomId, int memberId) {
