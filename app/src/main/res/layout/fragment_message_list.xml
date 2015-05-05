@@ -32,6 +32,8 @@
         android:id="@+id/layout_messages_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/ll_messages"
+        android:layout_below="@+id/layout_search_bar"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
