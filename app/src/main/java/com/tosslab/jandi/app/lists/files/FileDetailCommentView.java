@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,7 +57,7 @@ public class FileDetailCommentView extends LinearLayout {
 
     public void bind(ResMessages.CommentMessage commentMessage) {
         // 프로필
-        final FormattedEntity writer = new FormattedEntity(commentMessage.writer);
+        final FormattedEntity writer = EntityManager.getInstance(mContext).getEntityById(commentMessage.writer.id);
         String profileUrl = writer.getUserSmallProfileUrl();
         EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
         if (TextUtils.equals(entityManager.getEntityById(commentMessage.writerId).getUser().status, "enabled")) {

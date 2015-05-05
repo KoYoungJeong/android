@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class SearchedFileItemListAdapter extends RecyclerView.Adapter {
         searedFiles = new ArrayList<ResMessages.FileMessage>();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearAdapter() {
         searedFiles.clear();
         notifyDataSetChanged();

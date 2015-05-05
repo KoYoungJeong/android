@@ -293,7 +293,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     public void onResume() {
         super.onResume();
         isForeground = true;
-
     }
 
     @Override
