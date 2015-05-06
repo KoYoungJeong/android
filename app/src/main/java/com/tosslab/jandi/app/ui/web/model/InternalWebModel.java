@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
+import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.EBean;
@@ -40,11 +41,16 @@ public class InternalWebModel {
     }
 
     public List<FormattedEntity> getEntities() {
-        List<FormattedEntity> joinedChannels = EntityManager.getInstance(context).getJoinedChannels();
-        List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
+        EntityManager entityManager = EntityManager.getInstance(context);
+        List<FormattedEntity> joinedChannels = entityManager.getJoinedChannels();
+        List<FormattedEntity> groups = entityManager.getGroups();
+        List<FormattedEntity> formattedUsersWithoutMe = entityManager.getFormattedUsersWithoutMe();
 
         List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
         entities.addAll(joinedChannels);
+        entities.addAll(groups);
+
+        Collections.sort(entities, new EntityComparator());
 
         Iterator<FormattedEntity> enabledUsers = Observable.from(formattedUsersWithoutMe)
                 .filter(entity -> TextUtils.equals(entity.getUser().status, "enabled"))
