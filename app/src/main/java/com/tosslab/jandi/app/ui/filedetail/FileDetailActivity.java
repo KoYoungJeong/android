@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
+import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -36,6 +37,7 @@ import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -481,6 +483,65 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     public void onEvent(FileCommentRefreshEvent event) {
         if (fileId == event.getId()) {
             getFileDetail(false, false);
+        }
+    }
+
+    public void onEvent(MoveSharedEntityEvent event) {
+        int entityId = event.getEntityId();
+
+        EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
+
+        FormattedEntity entityById = entityManager.getEntityById(entityId);
+
+        int entityType = entityById.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entityById.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+
+        int teamId = entityManager.getTeamId();
+        boolean isStarred = entityById.isStarred;
+        if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
+            if (entityById.isJoined) {
+
+                moveMessageList(entityId, entityType, teamId, isStarred);
+            } else {
+                joinAndMove(entityById);
+            }
+        } else {
+            moveMessageList(entityId, entityType, teamId, isStarred);
+        }
+
+    }
+
+    private void moveMessageList(int entityId, int entityType, int teamId, boolean isStarred) {
+        MessageListV2Activity_.intent(FileDetailActivity.this)
+                .teamId(teamId)
+                .entityId(entityId)
+                .entityType(entityType)
+                .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityId : -1)
+                .isFromPush(false)
+                .isFavorite(isStarred)
+                .start();
+    }
+
+    @Background
+    void joinAndMove(FormattedEntity entityId) {
+        fileDetailPresenter.showProgressWheel();
+
+        try {
+            EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
+            fileDetailModel.joinEntity(entityId);
+            MixpanelMemberAnalyticsClient
+                    .getInstance(FileDetailActivity.this, entityManager.getDistictId())
+                    .trackJoinChannel();
+
+            int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+
+            fileDetailModel.refreshEntity();
+
+            moveMessageList(entityId.getId(), entityType, entityManager.getTeamId(), false);
+
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
         }
     }
 

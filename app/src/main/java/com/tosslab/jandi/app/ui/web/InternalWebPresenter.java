@@ -82,6 +82,10 @@ public class InternalWebPresenter {
         webSettings.setDisplayZoomControls(false);
         webSettings.setUserAgentString(webSettings.getUserAgentString() + " Jandi-Android-App");
 
+        loadUrl(url);
+    }
+
+    public void loadUrl(String url) {
         webView.loadUrl(url);
     }
 
@@ -224,5 +228,10 @@ public class InternalWebPresenter {
             context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void pauseWebView() {
+        webView.onPause();
     }
 }

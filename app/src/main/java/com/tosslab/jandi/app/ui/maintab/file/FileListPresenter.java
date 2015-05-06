@@ -375,6 +375,9 @@ public class FileListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissProgressBar() {
+
+        moreLoadingProgressBar.getAnimation().reset();
+
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
         moreLoadingProgressBar.setAnimation(animation);
         animation.setAnimationListener(new SimpleEndAnimationListener() {
@@ -442,7 +445,7 @@ public class FileListPresenter {
         ColoredToast.show(context, message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void dismissMoreProgressBar() {
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_out_bottom);
         animation.setAnimationListener(new SimpleEndAnimationListener() {

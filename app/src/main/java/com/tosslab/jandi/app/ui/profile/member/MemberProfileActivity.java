@@ -1,11 +1,13 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -50,8 +52,7 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_profile)
 public class MemberProfileActivity extends BaseAnalyticsActivity {
     private static final int REQ_CODE_PICK_IMAGE = 0;
-    private static final String TEMP_PHOTO_FILE = "temp.png";   // 임시 저장파일
-    private final Logger log = Logger.getLogger(MemberProfileActivity.class);
+    private final Logger logger = Logger.getLogger(MemberProfileActivity.class);
 
     @Bean
     MemberProfileModel memberProfileModel;

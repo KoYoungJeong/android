@@ -257,7 +257,7 @@
     <string name="jandi_privacy_policy">"隱私權條款 "</string>
     <string name="err_login_invalid_id_or_password">"帳號或密碼無效 "</string>
     <string name="jandi_topic_public">"公開"</string>
-    <string name="jandi_topic_private">"非公開"</string>
+    <string name="jandi_topic_private">"私人"</string>
     <string name="jandi_unstarred">"取消標記"</string>
     <string name="jandi_starred">"取消標記"</string>
     <string name="jandi_message_leave_private_topic">"離開私人議題後，未來希望能夠重新加入，必須先取得其它人的邀請。您確定要離開嗎？"</string>
@@ -336,11 +336,11 @@
     <string name="jandi_message_search_available_detail">"利用關鍵字輕鬆搜尋對話記錄，還可以根據議題或發送者縮小搜尋範圍，清楚瞭解對話或事件的來龍去脈！躍躍欲試嗎？馬上點擊右上角的放大鏡開始關鍵字搜尋！"</string>
     <string name="jandi_move_entity_after_share">"檔案已成功被分享。您想要現在跳轉到那對話中嗎？"</string>
     <string name="jandi_message_ask_about_delete_comment">"您確定要永久刪除這留言嗎？刪除的留言將無法回復。"</string>
-    <string name="jandi_message_no_member">"還未有其他成員加入您的團隊。現在就邀請他們以開始協作。"</string>
+    <string name="jandi_message_no_member">"不再單打獨鬥，現在就邀請所有夥伴加入你的團隊！"</string>
     <string name="jandi_file_delete_message">"您確定要刪除這檔案？ 請注意留言的部分不會被刪除。"</string>
     <string name="jandi_unshared_message">"這檔案已經從這私人議題中取消分享 "</string>
     <string name="jandi_nowhere_shared_file">"檔案沒有分享到其它群組"</string>
-    <string name="jandi_topic_no_member_1">"這個議題目前只有您一人。"</string>
+    <string name="jandi_topic_no_member_1">"此議題目前只有你一人"</string>
     <string name="jandi_topic_no_member_2">"輕觸按鈕邀請其他成員加入。"</string>
     <string name="jandi_invite_member_to_topic">"邀請成員至此議題"</string>
     <string name="jandi_shared_in_room">"曾經分享在哪個議題下"</string>
