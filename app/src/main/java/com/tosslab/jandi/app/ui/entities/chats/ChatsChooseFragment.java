@@ -207,6 +207,7 @@ public class ChatsChooseFragment extends Fragment {
                 showErrorToast(getResources().getString(R.string.err_network));
                 break;
             case ERROR:
+                showErrorToast(getResources().getString(R.string.err_entity_invite));
                 break;
             case INVITATION_DISABLED:
                 showTextDialog(

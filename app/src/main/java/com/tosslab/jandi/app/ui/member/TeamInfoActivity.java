@@ -166,8 +166,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 finish();
                 return true;
             case R.id.action_invitation:
-//                InviteActivity_.intent(TeamInfoActivity.this)
-//                        .start();
                 onInvitationDisableCheck();
                 return true;
         }
@@ -189,6 +187,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 showErrorToast(getResources().getString(R.string.err_network));
                 break;
             case ERROR:
+                showErrorToast(getResources().getString(R.string.err_entity_invite));
                 break;
             case INVITATION_DISABLED:
                 showTextDialog(

@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
+import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -282,6 +283,10 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         EventBus.getDefault().post(new RetrieveTopicListEvent());
     }
 
+    public void onEvent(InvitationDisableCheckEvent event) {
+        onInvitationDisableCheck();
+    }
+
     @Background
     public void onInvitationDisableCheck() {
         showProgressWheel();
@@ -296,6 +301,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 showErrorToast(getResources().getString(R.string.err_network));
                 break;
             case ERROR:
+                showErrorToast(getResources().getString(R.string.err_entity_invite));
                 break;
             case INVITATION_DISABLED:
                 showTextDialog(
