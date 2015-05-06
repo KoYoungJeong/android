@@ -142,8 +142,7 @@ public class JandiSocketService extends Service {
             if (connectTeam != null) {
                 jandiSocketManager.sendByJson("connect_team", connectTeam);
             } else {
-                connectMonitor.stop();
-                stopSelf();
+                connectMonitor.start();
             }
         });
         eventHashMap.put("connect_team", objects -> connectMonitor.stop());

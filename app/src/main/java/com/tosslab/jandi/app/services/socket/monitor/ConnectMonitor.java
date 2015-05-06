@@ -56,7 +56,7 @@ public class ConnectMonitor {
         public void run() {
             while (run) {
                 try {
-                    Thread.sleep(1000 * 30);
+                    Thread.sleep(1000 * 10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
