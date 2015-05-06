@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
@@ -12,15 +13,15 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
  */
 public class MenuCommandBuilder {
 
-    private Activity activity;
+    private AppCompatActivity activity;
     private JandiEntityClient mJandiEntityClient;
     private ChattingInfomations chattingInfomations;
 
-    public MenuCommandBuilder(Activity activity) {
+    public MenuCommandBuilder(AppCompatActivity activity) {
         this.activity = activity;
     }
 
-    public static MenuCommandBuilder init(Activity activity) {
+    public static MenuCommandBuilder init(AppCompatActivity activity) {
         return new MenuCommandBuilder(activity);
     }
 

@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
@@ -52,6 +54,7 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
+import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -61,6 +64,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -338,7 +342,6 @@ public class MessageListFragment extends Fragment {
     }
 
     private void setUpActionbar() {
-
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity.getSupportActionBar() == null) {
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.layout_search_bar);
@@ -555,6 +558,10 @@ public class MessageListFragment extends Fragment {
             messageListModel.startRefreshTimer();
             messageListPresenter.setGotoLatestLayoutVisibleGone();
         }
+    }
+
+    public void onEvent(TeamInvitationsEvent event) {
+        messageListPresenter.handleInviteEvent(event);
     }
 
     @Background

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
@@ -78,7 +79,7 @@ public class MessageListModel {
     @Bean
     MessageListTimer messageListTimer;
     @RootContext
-    Activity activity;
+    AppCompatActivity activity;
 
 
     public void setEntityInfo(int entityType, int entityId) {

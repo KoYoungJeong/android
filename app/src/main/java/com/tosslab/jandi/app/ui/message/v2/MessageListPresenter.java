@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -8,10 +9,12 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,25 +29,34 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
+import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InviteActivity_;
+import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
@@ -56,6 +68,7 @@ import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -119,6 +132,13 @@ public class MessageListPresenter {
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
 
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+
+    private EntityManager mEntityManager;
+    private String invitationUrl;
+    private String teamName;
+
     @AfterInject
     void initObject() {
         messageListAdapter = new MessageListAdapter(activity);
@@ -139,6 +159,8 @@ public class MessageListPresenter {
                 }
             }
         });
+
+        mEntityManager = EntityManager.getInstance(activity);
 
         progressWheel = new ProgressWheel(activity);
         progressWheel.init();
@@ -623,9 +645,95 @@ public class MessageListPresenter {
         }
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
+        View.OnClickListener onClickListener = v -> onInvitationDisableCheck();
+        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
+        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
+    }
 
-        view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
-        view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(v -> InviteActivity_.intent(activity).start());
+    @Background
+    public void onInvitationDisableCheck() {
+        showProgressWheel();
+
+        Pair<InviteUtils.Result, ResTeamDetailInfo.InviteTeam> result =
+                InviteUtils.checkInvitationDisabled(teamDomainInfoModel, mEntityManager.getTeamId());
+
+        dismissProgressWheel();
+
+        switch (result.first) {
+            case NETWORK_ERROR:
+                showErrorToast(activity.getResources().getString(R.string.err_network));
+                break;
+            case ERROR:
+                break;
+            case INVITATION_DISABLED:
+                showTextDialog(
+                        activity.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                break;
+            case UNDEFINED_URL:
+                showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
+                break;
+            case SUCCESS:
+                moveToInvitationActivity(result.second);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private String getOwnerName() {
+        List<FormattedEntity> users = EntityManager.getInstance(activity).getFormattedUsers();
+        FormattedEntity tempDefaultEntity = new FormattedEntity();
+        FormattedEntity owner = Observable.from(users)
+                .filter(formattedEntity ->
+                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
+                .firstOrDefault(tempDefaultEntity)
+                .toBlocking()
+                .first();
+        return owner.getUser().name;
+    }
+
+    @UiThread
+    public void moveToInvitationActivity(ResTeamDetailInfo.InviteTeam inviteTeam) {
+        invitationUrl = inviteTeam.getInvitationUrl();
+        teamName = inviteTeam.getName();
+        DialogFragment invitationDialog = new InvitationDialogFragment();
+        invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
+    }
+
+    @UiThread
+    public void handleInviteEvent(TeamInvitationsEvent event) {
+        String invitationContents =
+                teamName + activity.getResources().getString(R.string.jandi_invite_contents);
+        int eventType = event.type;
+        if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
+            copyToClipboard(invitationContents + "\n" + invitationUrl);
+            showTextDialog(activity.getResources().getString(R.string.jandi_invite_succes_copy_link));
+        } else {
+            Intent intent = InviteUtils.getInviteIntent(
+                    activity, event, invitationUrl, invitationContents);
+            try {
+                activity.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                e.printStackTrace();
+                copyToClipboard(invitationContents + "\n" + invitationUrl);
+                showTextDialog(activity.getResources().getString(R.string.jandi_invite_app_not_installed));
+            }
+        }
+    }
+
+    @UiThread
+    void showErrorToast(String message) {
+        ColoredToast.showError(activity, message);
+    }
+
+    @UiThread
+    public void showTextDialog(String alertText) {
+        new AlertDialog.Builder(activity)
+                .setMessage(alertText)
+                .setCancelable(false)
+                .setPositiveButton(activity.getResources().getString(R.string.jandi_confirm),
+                        (dialog, id) -> dialog.dismiss())
+                .create().show();
     }
 
     @UiThread
