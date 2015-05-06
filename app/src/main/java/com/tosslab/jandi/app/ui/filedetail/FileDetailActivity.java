@@ -491,18 +491,19 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
 
-        FormattedEntity entityById = entityManager.getEntityById(entityId);
+        FormattedEntity entity = entityManager.getEntityById(entityId);
 
-        int entityType = entityById.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entityById.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         int teamId = entityManager.getTeamId();
-        boolean isStarred = entityById.isStarred;
+        boolean isStarred = entity.isStarred;
         if (entityType != JandiConstants.TYPE_DIRECT_MESSAGE) {
-            if (entityById.isJoined) {
+            if (entity.isPublicTopic() && entity.isJoined
+                    || entity.isPrivateGroup()) {
 
                 moveMessageList(entityId, entityType, teamId, isStarred);
             } else {
-                joinAndMove(entityById);
+                joinAndMove(entity);
             }
         } else {
             moveMessageList(entityId, entityType, teamId, isStarred);
