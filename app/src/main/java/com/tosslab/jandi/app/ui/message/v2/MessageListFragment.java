@@ -797,7 +797,7 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
-        if (isForeground) {
+        if (!isForeground) {
             return ;
         }
 
@@ -950,7 +950,7 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(RequestUserInfoEvent event) {
 
-        if (isForeground) {
+        if (!isForeground) {
             return ;
         }
 

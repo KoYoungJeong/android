@@ -315,6 +315,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
+        if (!isForeground) {
+            return;
+        }
         Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
         searchedFileItemListAdapter.clearAdapter();
@@ -322,12 +325,18 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     public void onEvent(CategorizingAsOwner event) {
+        if (!isForeground) {
+            return;
+        }
         mSearchQuery.setWriter(event.userId);
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
     }
 
     public void onEvent(CategorizingAsEntity event) {
+        if (!isForeground) {
+            return;
+        }
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
