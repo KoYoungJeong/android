@@ -6,10 +6,10 @@ import android.view.View;
 /**
 * Created by Steve SeongUg Jung on 15. 3. 19..
 */
-public class RecyclerBodyViewHodler extends RecyclerView.ViewHolder {
+public class RecyclerBodyViewHolder extends RecyclerView.ViewHolder {
     private final BodyViewHolder viewHolder;
 
-    public RecyclerBodyViewHodler(View itemView, BodyViewHolder viewHolder) {
+    public RecyclerBodyViewHolder(View itemView, BodyViewHolder viewHolder) {
         super(itemView);
         this.viewHolder = viewHolder;
     }

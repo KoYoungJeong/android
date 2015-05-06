@@ -15,7 +15,7 @@ public interface BodyViewHolder {
 
     int getLayoutId();
 
-    public enum Type {
-        Message, File, Image, PureComment, FileComment, Dummy, Event
+    enum Type {
+        Message, PureMessage, File, Image, PureComment, FileComment, Dummy, Event
     }
 }

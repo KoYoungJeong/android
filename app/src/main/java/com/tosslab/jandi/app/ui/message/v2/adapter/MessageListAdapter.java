@@ -18,11 +18,12 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHodler;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -30,7 +31,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
-public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHodler> {
+public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHolder> {
 
     private Context context;
 
@@ -66,13 +67,8 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         return messageList.size();
     }
 
-    public int getViewTypeCount() {
-        return BodyViewHolder.Type.values().length;
-    }
-
-
     @Override
-    public RecyclerBodyViewHodler onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerBodyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
 
         BodyViewHolder viewHolder = BodyViewFactory.createViewHolder(viewType);
@@ -81,13 +77,13 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         viewHolder.initView(convertView);
 
 
-        RecyclerBodyViewHodler recyclerBodyViewHodler = new RecyclerBodyViewHodler(convertView, viewHolder);
+        RecyclerBodyViewHolder recyclerBodyViewHolder = new RecyclerBodyViewHolder(convertView, viewHolder);
 
-        return recyclerBodyViewHodler;
+        return recyclerBodyViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerBodyViewHodler viewHolder, int position) {
+    public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
 
         ResMessages.Link item = getItem(position);
         viewHolder.getViewHolder().bindData(item, teamId, roomId);
@@ -269,7 +265,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
         }
 
         if (message.message instanceof ResMessages.TextMessage) {
-            return BodyViewHolder.Type.Message;
+
+            if (beforeMessage != null
+                    && beforeMessage.message instanceof ResMessages.TextMessage
+                    && message.message.writerId == beforeMessage.message.writerId
+                    && isSince5min(message.message.updateTime, beforeMessage.message.updateTime)
+                    && isSameDay(message, beforeMessage)) {
+                return BodyViewHolder.Type.PureMessage;
+            } else {
+                return BodyViewHolder.Type.Message;
+            }
+
         } else if (message.message instanceof ResMessages.FileMessage) {
             String fileType = ((ResMessages.FileMessage) message.message).content.type;
             if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
@@ -292,6 +298,19 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHod
 
         }
         return BodyViewHolder.Type.Message;
+    }
+
+    private boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
+
+        long beforeTime = beforeMessageTime.getTime();
+        long currentTime = currentMessageTime.getTime();
+
+        double diffTime = currentTime - beforeTime;
+        if (diffTime / (1000l * 60l * 5) < 1d) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean isSameDay(ResMessages.Link message, ResMessages.Link beforeMessage) {

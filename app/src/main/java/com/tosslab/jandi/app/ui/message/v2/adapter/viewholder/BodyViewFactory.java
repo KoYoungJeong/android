@@ -16,6 +16,8 @@ public class BodyViewFactory {
         BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
 
         switch (type) {
+            case PureMessage:
+                return new PureMessageViewHolder();
             case File:
                 return FileViewHolder.createFileViewHolder();
             case Image:
