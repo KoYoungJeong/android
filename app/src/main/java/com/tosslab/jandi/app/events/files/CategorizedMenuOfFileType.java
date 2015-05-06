@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 public class CategorizedMenuOfFileType {
     public static final int[] stringTitleResourceList = {
             R.string.jandi_file_category_all,
+            R.string.jandi_google_docs,
             R.string.jandi_file_category_document,
             R.string.jandi_file_category_presentation,
             R.string.jandi_file_category_spreadsheet,
@@ -18,6 +19,7 @@ public class CategorizedMenuOfFileType {
     };
     public static final int[] drawableResourceList = {      // 위에랑 hash map으로 합칠까...
             R.drawable.jandi_fl_icon_etc,
+            R.drawable.jandi_fl_icon_set_googledocs,
             R.drawable.jandi_fl_icon_txt,
             R.drawable.jandi_fl_icon_ppt,
             R.drawable.jandi_fl_icon_exel,
@@ -30,6 +32,7 @@ public class CategorizedMenuOfFileType {
     // 서버 통신용 쿼리
     public static final String[] stringQueryList = {
             "all",
+            "googleDocs",
             "document",
             "presentation",
             "spreadsheet",

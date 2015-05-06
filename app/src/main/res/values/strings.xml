@@ -372,4 +372,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_expired_invitation_link">This invitation has expired. Please request a new invitation from the team member who invited you.</string>
     <string name="jandi_invite_app_not_installed">The app is not installed on your device. The invitation link has been copied to the clipboard. </string>
     <string name="jandi_invite_member">"Invite Members"</string>
+
+    <string name="jandi_google_docs">Google Docs</string>
 </resources>

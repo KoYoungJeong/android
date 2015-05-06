@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -128,10 +126,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfileView.displayProfile(me);
         } catch (JandiNetworkException e) {
-            log.error("get profile failed", e);
+            logger.error("get profile failed", e);
             memberProfileView.getProfileFailed();
         } catch (Exception e) {
-            log.error("get profile failed", e);
+            logger.error("get profile failed", e);
             memberProfileView.getProfileFailed();
         } finally {
             memberProfileView.dismissProgressWheel();
@@ -234,7 +232,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
         } catch (JandiNetworkException e) {
-            log.error("get profile failed", e);
+            logger.error("get profile failed", e);
             memberProfileView.updateProfileFailed();
         } finally {
             memberProfileView.dismissProgressWheel();
@@ -350,10 +348,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileView.successPhotoUpload();
 
         } catch (ExecutionException e) {
-            log.error("uploadFileDone: FAILED", e);
+            logger.error("uploadFileDone: FAILED", e);
             memberProfileView.failPhotoUpload();
         } catch (InterruptedException e) {
-            log.error("uploadFileDone: FAILED", e);
+            logger.error("uploadFileDone: FAILED", e);
             memberProfileView.failPhotoUpload();
         } finally {
             memberProfileView.dismissProgressWheel();
