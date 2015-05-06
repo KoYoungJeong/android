@@ -72,21 +72,27 @@ public class InviteUtils {
                                   String invitationUrl, String invitationContents) {
         switch (event.type) {
             case JandiConstants.TYPE_INVITATION_KAKAO:
-                return getInviteIntent(invitationUrl, invitationContents, PACKAGE_NAME_KAKAO, false);
+                return getInviteIntent(invitationUrl, invitationContents,
+                        PACKAGE_NAME_KAKAO, false);
             case JandiConstants.TYPE_INVITATION_LINE:
-                return getInviteIntent(invitationUrl, invitationContents, PACKAGE_NAME_LINE, false);
+                return getInviteIntent(invitationUrl, invitationContents,
+                        PACKAGE_NAME_LINE, false);
             case JandiConstants.TYPE_INVITATION_WECHAT:
-                return getInviteIntent(invitationUrl, invitationContents, PACKAGE_NAME_WECHAT, false);
+                return getInviteIntent(invitationUrl, invitationContents,
+                        PACKAGE_NAME_WECHAT, false);
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                return getInviteIntent(invitationUrl, invitationContents, PACKAGE_NAME_FACEBOOK_MESSENGER, false);
+                return getInviteIntent(invitationUrl, invitationContents,
+                        PACKAGE_NAME_FACEBOOK_MESSENGER, true);
             default:
             case JandiConstants.TYPE_INVITATION_EMAIL:
-                return InviteActivity_.intent(context).flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
+                return InviteActivity_
+                        .intent(context)
+                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
         }
     }
 
-    private static Intent getInviteIntent(String publicLink, String contents, String packageName,
-                                          boolean isFacebookMessenger) {
+    private static Intent getInviteIntent(String publicLink, String contents,
+                                          String packageName, boolean isFacebookMessenger) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setPackage(packageName);
         intent.putExtra(Intent.EXTRA_TEXT, contents + "\n" + publicLink);
