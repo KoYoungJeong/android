@@ -111,6 +111,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
+                fileImageView.setOnClickListener(null);
             } else {
                 String imageUrl = null;
                 if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
