@@ -176,8 +176,8 @@ public class MessageItemView extends LinearLayout {
             String imageUrl = item.getContentSmallThumbnailUrl();
             log.debug("load image thumnail : " + imageUrl);
             Ion.with(mImagePhoto)
-                    .placeholder(R.drawable.jandi_sicon_thumbnail)
-                    .error(R.drawable.jandi_sicon_thumbnail)
+                    .placeholder(R.drawable.jandi_fl_icon_img)
+                    .error(R.drawable.jandi_fl_icon_img)
                     .fitCenter()
                     .load(imageUrl);
         }
