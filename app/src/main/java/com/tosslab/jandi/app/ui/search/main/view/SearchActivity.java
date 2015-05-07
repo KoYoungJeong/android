@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
+import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
@@ -111,13 +112,25 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     private void addFragments() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fileListFragment = (FileListFragment) fragmentManager
+                .findFragmentByTag(FileListFragment.class.getName());
 
-        fileListFragment = FileListFragment_.builder().build();
-        fragmentTransaction.add(R.id.layout_search_content, fileListFragment);
+        messageSearchFragment = (MessageSearchFragment)
+                fragmentManager.findFragmentByTag(MessageListFragment.class.getName());
 
-        messageSearchFragment = MessageSearchFragment_.builder().build();
-        fragmentTransaction.add(R.id.layout_search_content, messageSearchFragment);
-
+        if (fileListFragment != null && messageSearchFragment != null) {
+            return;
+        }
+        if (fileListFragment == null) {
+            fileListFragment = FileListFragment_.builder().build();
+            fragmentTransaction.add(R.id.layout_search_content,
+                    fileListFragment, FileListFragment.class.getName());
+        }
+        if (messageSearchFragment == null) {
+            messageSearchFragment = MessageSearchFragment_.builder().build();
+            fragmentTransaction.add(R.id.layout_search_content,
+                    messageSearchFragment, MessageListFragment.class.getName());
+        }
         fragmentTransaction.commit();
     }
 

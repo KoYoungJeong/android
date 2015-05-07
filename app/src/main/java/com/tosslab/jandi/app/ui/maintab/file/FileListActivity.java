@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,16 +29,21 @@ public class FileListActivity extends AppCompatActivity {
     void attatchFragment() {
         setUpActionBar();
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(
-                        R.id.fl_content,
-                        FileListFragment_
-                                .builder()
-                                .entityIdForCategorizing(entityId)
-                                .mCurrentEntityCategorizingAccodingBy(entityName)
-                                .build())
-                .commit();
+        Fragment fileListFragment = getSupportFragmentManager()
+                .findFragmentByTag(FileListFragment.class.getName());
+        if (fileListFragment == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(
+                            R.id.fl_content,
+                            FileListFragment_
+                                    .builder()
+                                    .entityIdForCategorizing(entityId)
+                                    .mCurrentEntityCategorizingAccodingBy(entityName)
+                                    .build(),
+                            FileListFragment.class.getName())
+                    .commit();
+        }
     }
 
     private void setUpActionBar() {

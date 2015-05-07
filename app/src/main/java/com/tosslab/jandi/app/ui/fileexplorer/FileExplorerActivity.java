@@ -48,11 +48,12 @@ public class FileExplorerActivity extends AppCompatActivity {
                 toolbarRenewal = true;
                 invalidateOptionsMenu();
 
+                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                 getFragmentManager().beginTransaction()
                         .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
                         .commit();
 
-                getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
     };
