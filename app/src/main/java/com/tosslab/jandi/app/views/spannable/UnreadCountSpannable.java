@@ -34,7 +34,6 @@ public class UnreadCountSpannable extends ImageSpan {
 
         UnreadDrawable ninePatchDrawable = new UnreadDrawable(context.getResources(), ninePatch, count);
 
-
         return new UnreadCountSpannable(ninePatchDrawable);
     }
 

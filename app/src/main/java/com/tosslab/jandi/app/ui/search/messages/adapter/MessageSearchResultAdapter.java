@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.ui.search.messages.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +19,7 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
+import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +106,9 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
                 searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_search_ing, item.getQuery())));
                 searchHeaderViewHolder.progressBar.setVisibility(View.VISIBLE);
             } else if (item.getCount() < 1) {
-                searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_cannot_find_messages)));
+                SpannableStringBuilder builder = getNofoundMessage(item.getQuery());
+
+                searchHeaderViewHolder.textView.setText(builder);
                 searchHeaderViewHolder.progressBar.setVisibility(View.GONE);
             } else {
                 searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_search_result_summary, item.getQuery(), item.getCount())));
@@ -119,6 +126,24 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
             moreState = MoreState.Loading;
             EventBus.getDefault().post(new MoreSearchRequestEvent());
         }
+    }
+
+    private SpannableStringBuilder getNofoundMessage(String query) {
+        Resources resources = context.getResources();
+        int textSize = (int) resources.getDimension(R.dimen.jandi_message_search_item_small_txt_size);
+        int noFoundColor = resources.getColor(R.color.jandi_text_light);
+
+        String noFoundMessage = context.getString(R.string.jandi_cannot_find_messages);
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(noFoundMessage);
+        builder.setSpan(new MessageSpannable(textSize, noFoundColor), 0, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        int startIndex = builder.length();
+        builder.append(query);
+        int endIndex = builder.length();
+        int textColor = Color.BLACK;
+        MessageSpannable what = new MessageSpannable(textSize, textColor);
+        builder.setSpan(what, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return builder;
     }
 
     @Override
