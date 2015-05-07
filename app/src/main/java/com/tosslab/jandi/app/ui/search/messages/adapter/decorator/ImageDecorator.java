@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.search.messages.adapter.decorator;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.TypeImageSpannable;
+import com.tosslab.jandi.app.views.spannable.TypeImageSpannable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 13..
