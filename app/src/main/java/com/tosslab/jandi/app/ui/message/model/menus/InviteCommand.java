@@ -213,6 +213,7 @@ class InviteCommand implements MenuCommand {
                 showErrorToast(activity.getResources().getString(R.string.err_network));
                 break;
             case ERROR:
+                showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
                 break;
             case INVITATION_DISABLED:
                 showTextDialog(
