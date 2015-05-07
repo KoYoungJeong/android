@@ -596,7 +596,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
-        String comment = fileDetailPresenter.getCommentText();
+        String comment = fileDetailPresenter.getCommentText().trim();
         fileDetailPresenter.hideSoftKeyboard();
 
         if (comment.length() > 0) {

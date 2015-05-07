@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.messages.adapter.spannable;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
 import android.text.style.ImageSpan;

@@ -18,11 +18,11 @@ import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.filedetail.EntitySpannable;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.MessageSpannable;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.views.spannable.EntitySpannable;
+import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;

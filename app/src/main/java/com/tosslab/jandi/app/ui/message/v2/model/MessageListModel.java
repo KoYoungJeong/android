@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.model;
 
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,6 +12,7 @@ import com.google.android.gms.analytics.Tracker;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
+import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -206,11 +206,12 @@ public class MessageListModel {
             ionBuilder.setMultipartParameter("comment", event.comment);
         }
 
-        JsonObject userFile = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject()
-                .get();
+        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject();
 
-        return userFile;
+        progressDialog.setOnCancelListener(dialog -> requestFuture.cancel());
+
+        return requestFuture.get();
     }
 
     public void updateMarker(int lastUpdateLinkId) throws JandiNetworkException {

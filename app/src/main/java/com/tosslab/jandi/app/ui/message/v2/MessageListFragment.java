@@ -103,6 +103,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -496,7 +497,7 @@ public class MessageListFragment extends Fragment {
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = messageListPresenter.getSendEditText();
+        String message = messageListPresenter.getSendEditText().trim();
         if (!TextUtils.isEmpty(message)) {
             messageListPresenter.setSendEditText("");
             // insert to db
@@ -798,7 +799,7 @@ public class MessageListFragment extends Fragment {
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
         if (!isForeground) {
-            return ;
+            return;
         }
 
         EntityManager entityManager = EntityManager.getInstance(getActivity());
@@ -844,14 +845,20 @@ public class MessageListFragment extends Fragment {
                 logger.error("Upload Fail : Result : " + result);
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
-
-
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        } catch (ExecutionException e) {
+            if (getActivity() != null) {
+                messageListPresenter.showFailToast(getString(R.string.jandi_canceled));
+            }
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
-            messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+            if (getActivity() != null) {
+                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+            }
         } finally {
-            messageListPresenter.dismissProgressDialog(uploadProgressDialog);
+            if (getActivity() != null) {
+                messageListPresenter.dismissProgressDialog(uploadProgressDialog);
+            }
         }
     }
 
@@ -951,7 +958,7 @@ public class MessageListFragment extends Fragment {
     public void onEvent(RequestUserInfoEvent event) {
 
         if (!isForeground) {
-            return ;
+            return;
         }
 
         UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");

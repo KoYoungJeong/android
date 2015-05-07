@@ -22,8 +22,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHo
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -142,9 +140,9 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     @Override
     public int getItemViewType(int position) {
         if (position > 0) {
-            return getContentType(messageList.get(position), messageList.get(position - 1)).ordinal();
+            return BodyViewFactory.getContentType(messageList.get(position), messageList.get(position - 1)).ordinal();
         } else {
-            return getContentType(messageList.get(position), null).ordinal();
+            return BodyViewFactory.getContentType(messageList.get(position), null).ordinal();
         }
     }
 
@@ -252,83 +250,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 return idx;
         }
         return -1;
-    }
-
-    private BodyViewHolder.Type getContentType(ResMessages.Link message, ResMessages.Link beforeMessage) {
-
-        if (message instanceof DummyMessageLink) {
-            return BodyViewHolder.Type.Dummy;
-        }
-
-        if (TextUtils.equals(message.status, "event")) {
-            return BodyViewHolder.Type.Event;
-        }
-
-        if (message.message instanceof ResMessages.TextMessage) {
-
-            if (beforeMessage != null
-                    && beforeMessage.message instanceof ResMessages.TextMessage
-                    && message.message.writerId == beforeMessage.message.writerId
-                    && isSince5min(message.message.updateTime, beforeMessage.message.updateTime)
-                    && isSameDay(message, beforeMessage)) {
-                return BodyViewHolder.Type.PureMessage;
-            } else {
-                return BodyViewHolder.Type.Message;
-            }
-
-        } else if (message.message instanceof ResMessages.FileMessage) {
-            String fileType = ((ResMessages.FileMessage) message.message).content.type;
-            if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
-                return BodyViewHolder.Type.File;
-            }
-            if (fileType.startsWith("image")) {
-                return BodyViewHolder.Type.Image;
-            } else {
-                return BodyViewHolder.Type.File;
-            }
-        } else if (message.message instanceof ResMessages.CommentMessage) {
-
-            if ((beforeMessage == null ||
-                    message.feedbackId == beforeMessage.messageId ||
-                    message.feedbackId == beforeMessage.feedbackId) && isSameDay(message, beforeMessage)) {
-                return BodyViewHolder.Type.PureComment;
-            } else {
-                return BodyViewHolder.Type.FileComment;
-            }
-
-        }
-        return BodyViewHolder.Type.Message;
-    }
-
-    private boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
-
-        long beforeTime = beforeMessageTime.getTime();
-        long currentTime = currentMessageTime.getTime();
-
-        double diffTime = currentTime - beforeTime;
-        if (diffTime / (1000l * 60l * 5) < 1d) {
-            return true;
-        }
-
-        return false;
-    }
-
-    private boolean isSameDay(ResMessages.Link message, ResMessages.Link beforeMessage) {
-
-        if (message == null || beforeMessage == null) {
-            return false;
-        }
-
-        Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(message.message.createTime);
-
-        Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeMessage.message.createTime);
-
-        int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
-        int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);
-
-        return (messageDay == beforeMessageDay);
     }
 
     public void setOldNoMoreLoading() {

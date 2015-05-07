@@ -7,8 +7,8 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.HighlightSpannable;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.HighlightSpannable;
+import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

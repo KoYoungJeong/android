@@ -63,7 +63,7 @@ public class TextShareDialogFragment extends DialogFragment {
 
     @Click(R.id.btn_share_text_send)
     void onSendClick() {
-        String messageText = textSharePresenter.getMessageText();
+        String messageText = textSharePresenter.getMessageText().trim();
         EntityInfo selectedEntityInfo = textSharePresenter.getSelectedEntityInfo();
         sendMessage(selectedEntityInfo, messageText);
     }

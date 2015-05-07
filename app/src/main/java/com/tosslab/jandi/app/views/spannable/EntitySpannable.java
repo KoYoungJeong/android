@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.filedetail;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.content.Context;
 import android.graphics.Color;

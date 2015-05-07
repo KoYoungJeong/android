@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.search.messages.adapter.spannable;
+package com.tosslab.jandi.app.views.spannable;
 
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;

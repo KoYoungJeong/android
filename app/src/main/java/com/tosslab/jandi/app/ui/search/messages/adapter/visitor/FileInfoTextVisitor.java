@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
-import com.tosslab.jandi.app.ui.search.messages.adapter.spannable.NameSpannable;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 13..

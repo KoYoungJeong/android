@@ -141,10 +141,10 @@ public class FileUploadDialogFragment extends DialogFragment {
 
                                 EventBus.getDefault().post(
                                         new ConfirmFileUploadEvent(
-                                                editTextInputName.getText().toString(),
+                                                editTextInputName.getText().toString().trim(),
                                                 selectedEntityIdToBeShared,
                                                 realFilePath,
-                                                editTextFileComment.getText().toString()));
+                                                editTextFileComment.getText().toString().trim()));
                                 dismiss();
                             }
                         }

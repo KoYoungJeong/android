@@ -76,6 +76,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.schedulers.Schedulers;
@@ -370,6 +371,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             initSearchSubject.onNext(ReqSearchFile.MAX);
 
+        } catch (ExecutionException e) {
+            if (getActivity() != null) {
+                fileListPresenter.showErrorToast(getString(R.string.jandi_canceled));
+            }
         } catch (Exception e) {
             fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
         } finally {

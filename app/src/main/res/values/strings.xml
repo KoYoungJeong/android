@@ -374,5 +374,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_invite_member">"Invite Members"</string>
 
     <string name="jandi_google_docs">Google Docs</string>
+    <string name="jandi_canceled">"Canceled"</string>
     <string name="jandi_cannot_find_messages">"No messages found matching"</string>
 </resources>
