@@ -16,12 +16,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
@@ -515,18 +513,30 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(TopicInviteEvent event) {
+        if (!isForeground) {
+            return;
+        }
         onOptionsItemSelected(new MenuBuilder(getActivity()).add(0, R.id.action_entity_invite, 0, ""));
     }
 
     public void onEventMainThread(SendCompleteEvent event) {
+        if (!isForeground) {
+            return;
+        }
         messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
     }
 
     public void onEventMainThread(SendFailEvent event) {
+        if (!isForeground) {
+            return;
+        }
         messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
     }
 
     public void onEventMainThread(ChatModeChangeEvent event) {
+        if (!isForeground) {
+            return;
+        }
         isFromSearch = false;
         messageListPresenter.setMarker(-1);
         NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader(getActivity());
@@ -558,6 +568,9 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(TeamInvitationsEvent event) {
+        if (!isForeground) {
+            return;
+        }
         messageListPresenter.handleInviteEvent(event);
     }
 
@@ -571,6 +584,9 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RequestFileUploadEvent event) {
+        if (!isForeground) {
+            return;
+        }
         switch (event.type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
                 logger.info("RequestFileUploadEvent : from gallery");
@@ -757,6 +773,9 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(DummyRetryEvent event) {
+        if (!isForeground) {
+            return;
+        }
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setSendingState(SendingState.Sending);
         messageListPresenter.justRefresh();
@@ -764,38 +783,58 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(DummyDeleteEvent event) {
+        if (!isForeground) {
+            return;
+        }
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         messageListModel.deleteDummyMessageAtDatabase(dummyMessage.getLocalId());
         messageListPresenter.deleteDummyMessageAtList(event.getLocalId());
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, false);
         newFragment.show(getFragmentManager(), "dialog");
     }
 
     // 삭제 확인
     public void onEvent(ConfirmDeleteMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
         deleteMessage(event.messageType, event.messageId);
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         messageListPresenter.copyToClipboard(event.contentString);
     }
 
 
     public void onEvent(ConfirmFileUploadEvent event) {
+        if (!isForeground) {
+            return;
+        }
         ProgressDialog uploadProgress = messageListPresenter.getUploadProgress(event);
 
         uploadFile(event, uploadProgress);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
+        if (!isForeground) {
+            return;
+        }
         deleteTopic();
     }
 
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
+
 
         if (!isForeground) {
             return;
@@ -878,6 +917,9 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RefreshOldMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
 
         if (!messageState.isFirstMessage()) {
             sendMessagePublisherEvent(new OldMessageQueue(messageState));
@@ -885,10 +927,14 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(DeleteFileEvent event) {
+
         messageListPresenter.changeToArchive(event.getId());
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
@@ -938,10 +984,16 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(RoomMarkerEvent event) {
+        if (!isForeground) {
+            return;
+        }
         messageListPresenter.justRefresh();
     }
 
     public void onEvent(SocketRoomMarkerEvent event) {
+        if (!isForeground) {
+            return;
+        }
 
         if (isFromSearch) {
             return;
@@ -994,6 +1046,11 @@ public class MessageListFragment extends Fragment {
     }
 
     public void onEvent(ConfirmModifyTopicEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         modifyEntity(event);
     }
 
