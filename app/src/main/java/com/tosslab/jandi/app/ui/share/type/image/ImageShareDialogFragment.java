@@ -113,8 +113,8 @@ public class ImageShareDialogFragment extends DialogFragment {
 
         ProgressDialog uploadProgress = imageSharePresenter.getUploadProgress(getActivity(), imageFile.getParentFile().getAbsolutePath(), imageFile.getName());
 
-        String titleText = imageSharePresenter.getTitleText();
-        String commentText = imageSharePresenter.getCommentText();
+        String titleText = imageSharePresenter.getTitleText().trim();
+        String commentText = imageSharePresenter.getCommentText().trim();
         uploadFile(selectedEntity, imageFile, titleText, commentText, uploadProgress);
     }
 

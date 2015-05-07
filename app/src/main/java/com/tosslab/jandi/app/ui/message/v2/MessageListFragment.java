@@ -496,7 +496,7 @@ public class MessageListFragment extends Fragment {
     @Click(R.id.btn_send_message)
     void onSendClick() {
 
-        String message = messageListPresenter.getSendEditText();
+        String message = messageListPresenter.getSendEditText().trim();
         if (!TextUtils.isEmpty(message)) {
             messageListPresenter.setSendEditText("");
             // insert to db
@@ -798,7 +798,7 @@ public class MessageListFragment extends Fragment {
     public void onEvent(final RequestMoveDirectMessageEvent event) {
 
         if (!isForeground) {
-            return ;
+            return;
         }
 
         EntityManager entityManager = EntityManager.getInstance(getActivity());
@@ -951,7 +951,7 @@ public class MessageListFragment extends Fragment {
     public void onEvent(RequestUserInfoEvent event) {
 
         if (!isForeground) {
-            return ;
+            return;
         }
 
         UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
