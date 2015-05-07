@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -66,6 +67,30 @@ public class UserInfoDialogFragment extends DialogFragment {
         }
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        if (imgStarred == null || event.getId() != entityId) {
+            return;
+        }
+
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+
+        setProfileStarred(entity.isStarred);
+
+    }
+
 
     private Dialog createEnabledUserDialog(int userId, FormattedEntity entity) {
         final String userName = entity.getName();
@@ -236,7 +261,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     void setProfileStarred(boolean isStarred) {
         if (isStarred) {
             imgStarred.setImageResource(R.drawable.profile_fav_on);
