@@ -100,6 +100,9 @@ public class MessageSearchResultAdapter extends RecyclerView.Adapter {
             if (item.isLoading) {
                 searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_search_ing, item.getQuery())));
                 searchHeaderViewHolder.progressBar.setVisibility(View.VISIBLE);
+            } else if (item.getCount() < 1) {
+                searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_cannot_find_messages)));
+                searchHeaderViewHolder.progressBar.setVisibility(View.GONE);
             } else {
                 searchHeaderViewHolder.textView.setText(Html.fromHtml(context.getString(R.string.jandi_search_result_summary, item.getQuery(), item.getCount())));
                 searchHeaderViewHolder.progressBar.setVisibility(View.GONE);

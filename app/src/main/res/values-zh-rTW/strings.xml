@@ -370,4 +370,5 @@
     <string name="jandi_expired_invitation_link">"此邀請連結已過期，請聯絡你的邀請人重新寄發新連結。"</string>
     <string name="jandi_invite_app_not_installed">"JANDI應用程式尚未安裝於你的行動裝置，所以我們暫時將邀請連結複製到剪貼簿。"</string>
     <string name="jandi_invite_member">"邀請成員"</string>
+    <string name="jandi_cannot_find_messages">"搜尋沒有結果"</string>
 </resources>
