@@ -8,10 +8,10 @@ import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment;
 import com.tosslab.jandi.app.ui.maintab.file.FileListFragment_;
-import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.search.main.adapter.SearchQueryAdapter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenter;
 import com.tosslab.jandi.app.ui.search.main.presenter.SearchPresenterImpl;
@@ -245,9 +244,14 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
 
     @EditorAction(R.id.txt_search_keyword)
     void onSearchTextAction(TextView textView) {
-        searchPresenter.onSearchAction(textView.getText().toString());
+        String text = textView.getText().toString();
+        if (!TextUtils.isEmpty(text)) {
+            searchPresenter.onSearchAction(text);
 
-        sendNewQuery(textView.getText().toString());
+            sendNewQuery(text);
+        } else {
+            inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+        }
     }
 
     @Override

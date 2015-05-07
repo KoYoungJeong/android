@@ -11,7 +11,9 @@ import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -27,7 +29,6 @@ import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
-import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -39,6 +40,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.EditorAction;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.TextChange;
@@ -77,6 +79,10 @@ public class ChatsChooseFragment extends Fragment {
 
     @SystemService
     ClipboardManager clipboardManager;
+
+    @SystemService
+    InputMethodManager inputMethodManager;
+
 
     private String invitationUrl;
     private String teamName;
@@ -185,6 +191,13 @@ public class ChatsChooseFragment extends Fragment {
                     .isFavorite(chatChooseItem.isStarred())
                     .start();
         }
+    }
+
+    @EditorAction(R.id.et_chat_choose_search)
+    void onSearchTextImeAction(TextView textView) {
+
+        inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+
     }
 
     @TextChange(R.id.et_chat_choose_search)

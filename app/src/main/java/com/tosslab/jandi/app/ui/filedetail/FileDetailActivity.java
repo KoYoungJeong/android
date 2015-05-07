@@ -131,16 +131,25 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(RequestDeleteMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         DialogFragment newFragment = DeleteMessageDialogFragment.newInstance(event, true);
         newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     // 삭제 확인
     public void onEvent(ConfirmDeleteMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         deleteComment(event.messageType, event.messageId, event.feedbackId);
     }
 
     public void onEvent(ConfirmCopyMessageEvent event) {
+        if (!isForeground) {
+            return;
+        }
         fileDetailPresenter.copyToClipboard(event.contentString);
     }
 
@@ -473,10 +482,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(ConfirmDeleteFileEvent event) {
+        if (!isForeground) {
+            return;
+        }
         deleteFileInBackground(event.getFileId());
     }
 
     public void onEvent(DeleteFileEvent event) {
+
         if (fileId == event.getId()) {
             getFileDetail(false, false);
         }
@@ -495,6 +508,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(MoveSharedEntityEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         int entityId = event.getEntityId();
 
         EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
@@ -661,6 +679,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {
+
+        if (!isForeground) {
+            return;
+        }
+
         final ProgressDialog progressDialog = new ProgressDialog(FileDetailActivity.this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMessage("Downloading " + fileDownloadStartEvent.getFileName());
@@ -723,6 +746,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(final RequestMoveDirectMessageEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         EntityManager entityManager = EntityManager.getInstance(FileDetailActivity.this);
         MessageListV2Activity_.intent(FileDetailActivity.this)
                 .teamId(entityManager.getTeamId())
