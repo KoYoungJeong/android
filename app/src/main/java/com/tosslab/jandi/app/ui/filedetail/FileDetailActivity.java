@@ -90,6 +90,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     private boolean isMyFile;
     private boolean isDeleted = true;
+    private boolean isForeground;
 
     @AfterViews
     public void initForm() {
@@ -202,8 +203,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        isForeground = true;
         getFileDetail(false, true);
         trackGaFileDetail(mEntityManager);
+    }
+
+    @Override
+    protected void onPause() {
+        isForeground = false;
+        super.onPause();
     }
 
     @Override
@@ -685,6 +693,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
      * **********************************************************
      */
     public void onEvent(RequestUserInfoEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
         int userEntityId = event.userId;
         getProfileInBackground(userEntityId);
     }
