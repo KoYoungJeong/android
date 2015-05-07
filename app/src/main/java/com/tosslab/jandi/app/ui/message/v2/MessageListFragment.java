@@ -16,10 +16,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
@@ -264,7 +266,6 @@ public class MessageListFragment extends Fragment {
 
     @AfterViews
     void initViews() {
-
         setUpActionbar();
         setHasOptionsMenu(true);
 
@@ -354,7 +355,6 @@ public class MessageListFragment extends Fragment {
         actionBar.setTitle(EntityManager.getInstance(getActivity()).getEntityNameById(entityId));
     }
 
-
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -405,7 +405,6 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
         if (entityById != null ? entityById.isStarred : false) {

@@ -1,10 +1,16 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 
@@ -38,30 +44,28 @@ public class MessageListV2Activity extends AppCompatActivity {
     }
 
     void initViews() {
-
         if (teamId <= 0) {
             teamId = EntityManager.getInstance(MessageListV2Activity.this).getTeamId();
         }
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(
-                        android.R.id.content,
-                        MessageListFragment_
-                                .builder()
-                                .entityId(entityId)
-                                .roomId(roomId)
-                                .entityType(entityType)
-                                .isFavorite(isFavorite)
-                                .isFromPush(isFromPush)
-                                .teamId(teamId)
-                                .lastMarker(lastMarker)
-                                .isFromSearch(isFromSearch)
-                                .build(),
-                        MessageListFragment.class.getName()
+        Fragment messageListFragment = getSupportFragmentManager()
+                .findFragmentByTag(MessageListFragment.class.getName());
 
-                )
-                .commit();
-
+        if (messageListFragment == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(android.R.id.content,
+                            MessageListFragment_.builder()
+                                    .entityId(entityId)
+                                    .roomId(roomId)
+                                    .entityType(entityType)
+                                    .isFavorite(isFavorite)
+                                    .isFromPush(isFromPush)
+                                    .teamId(teamId)
+                                    .lastMarker(lastMarker)
+                                    .isFromSearch(isFromSearch)
+                                    .build(),
+                            MessageListFragment.class.getName())
+                    .commit();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.settings;
 
+import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,17 +18,21 @@ import org.androidannotations.annotations.EActivity;
 @EActivity(R.layout.activity_setting)
 public class SettingsActivity extends AppCompatActivity {
 
-
     @AfterViews
     void initView() {
         setUpActionBar();
 
-        getFragmentManager().beginTransaction().replace(R.id.fl_content,
-                new SettingsFragment_()).commit();
+        Fragment settingFragment =
+                getFragmentManager().findFragmentByTag(SettingsFragment.class.getName());
+        if (settingFragment == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.fl_content,
+                            new SettingsFragment_(), SettingsFragment.class.getName())
+                    .commit();
+        }
     }
 
     private void setUpActionBar() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
