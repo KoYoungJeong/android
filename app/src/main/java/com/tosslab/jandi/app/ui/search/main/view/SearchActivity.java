@@ -115,8 +115,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         fileListFragment = (FileListFragment) fragmentManager
                 .findFragmentByTag(FileListFragment.class.getName());
 
-        messageSearchFragment = (MessageSearchFragment)
-                fragmentManager.findFragmentByTag(MessageListFragment.class.getName());
+        messageSearchFragment = (MessageSearchFragment) fragmentManager
+                .findFragmentByTag(MessageSearchFragment.class.getName());
 
         if (fileListFragment != null && messageSearchFragment != null) {
             return;
@@ -129,7 +129,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         if (messageSearchFragment == null) {
             messageSearchFragment = MessageSearchFragment_.builder().build();
             fragmentTransaction.add(R.id.layout_search_content,
-                    messageSearchFragment, MessageListFragment.class.getName());
+                    messageSearchFragment, MessageSearchFragment.class.getName());
         }
         fragmentTransaction.commit();
     }
@@ -153,7 +153,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (messageSearchFragment == null) {
             messageSearchFragment = MessageSearchFragment_.builder().build();
-            fragmentTransaction.add(R.id.layout_search_content, messageSearchFragment);
+            fragmentTransaction.add(R.id.layout_search_content,
+                    messageSearchFragment, MessageSearchFragment.class.getName());
         } else {
             if (fileListFragment != null) {
                 fragmentTransaction.hide(fileListFragment);
@@ -179,7 +180,8 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         if (fileListFragment == null) {
 
             fileListFragment = FileListFragment_.builder().build();
-            fragmentTransaction.add(R.id.layout_search_content, fileListFragment);
+            fragmentTransaction.add(R.id.layout_search_content,
+                    fileListFragment, FileListFragment.class.getName());
         } else {
             if (messageSearchFragment != null) {
                 fragmentTransaction.hide(messageSearchFragment);
