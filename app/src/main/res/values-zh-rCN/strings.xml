@@ -369,4 +369,5 @@
     <string name="jandi_expired_invitation_link">"此邀请链接已过期，请联络你的邀请人重新寄发新链接。"</string>
     <string name="jandi_invite_app_not_installed">"JANDI应用程序尚未安装于你的行动装置，所以我们暂时将邀请链接复制到剪贴簿。"</string>
     <string name="jandi_invite_member">"邀請成員"</string>
+    <string name="jandi_canceled">"取消了"</string>
 </resources>

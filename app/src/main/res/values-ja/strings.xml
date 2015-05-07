@@ -379,4 +379,5 @@ JANDIへようこそ"</string>
     <string name="jandi_expired_invitation_link">"この招待リンクの有効期限が切れています。新しいリンクをリクエストしてください"</string>
     <string name="jandi_invite_app_not_installed">"このアプリはインストールされていません。招待リンクをクリップボードにコピーしました"</string>
     <string name="jandi_invite_member">"メンバーを招待する"</string>
+    <string name="jandi_canceled">"キャンセルされました"</string>
 </resources>

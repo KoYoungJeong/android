@@ -103,6 +103,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -844,14 +845,20 @@ public class MessageListFragment extends Fragment {
                 logger.error("Upload Fail : Result : " + result);
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
-
-
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        } catch (ExecutionException e) {
+            if (getActivity() != null) {
+                messageListPresenter.showFailToast(getString(R.string.jandi_canceled));
+            }
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
-            messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+            if (getActivity() != null) {
+                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
+            }
         } finally {
-            messageListPresenter.dismissProgressDialog(uploadProgressDialog);
+            if (getActivity() != null) {
+                messageListPresenter.dismissProgressDialog(uploadProgressDialog);
+            }
         }
     }
 

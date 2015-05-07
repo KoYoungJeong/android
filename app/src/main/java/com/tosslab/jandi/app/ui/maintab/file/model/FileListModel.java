@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
+import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -140,9 +141,11 @@ public class FileListModel {
             ionBuilder.setMultipartParameter("comment", event.comment);
         }
 
-        JsonObject userFile = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject()
-                .get();
+        ResponseFuture<JsonObject> responseFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject();
+
+        progressDialog.setOnCancelListener(dialog -> responseFuture.cancel());
+        JsonObject userFile = responseFuture.get();
 
         return userFile;
     }

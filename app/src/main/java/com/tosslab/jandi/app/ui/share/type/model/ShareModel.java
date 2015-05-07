@@ -7,8 +7,8 @@ import android.text.TextUtils;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
+import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -127,13 +127,7 @@ public class ShareModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .progress(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long downloaded, long total) {
-
-                        progressDialog.setProgress((int) (downloaded / total));
-                    }
-                })
+                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", titleText)
@@ -146,9 +140,11 @@ public class ShareModel {
             ionBuilder.setMultipartParameter("comment", commentText);
         }
 
-        JsonObject userFile = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
-                .asJsonObject()
-                .get();
+        ResponseFuture<JsonObject> responseFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject();
+
+        progressDialog.setOnCancelListener(dialog -> responseFuture.cancel());
+        JsonObject userFile = responseFuture.get();
 
         return userFile;
     }

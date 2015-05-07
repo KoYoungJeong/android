@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
@@ -137,6 +138,10 @@ public class ImageShareDialogFragment extends DialogFragment {
             }
 
             finishOnUiThread();
+        } catch (ExecutionException e) {
+            if (getActivity() != null) {
+                imageSharePresenter.showFailToast(getString(R.string.jandi_canceled));
+            }
         } catch (Exception e) {
             logger.error("Upload Error : ", e);
             imageSharePresenter.showFailToast(getString(R.string.err_file_upload_failed));
