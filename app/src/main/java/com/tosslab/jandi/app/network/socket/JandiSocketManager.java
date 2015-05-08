@@ -66,4 +66,7 @@ public class JandiSocketManager {
         return socketConnector.isConnectingOrConnected();
     }
 
+    public void release() {
+        jandiSocketManager = null;
+    }
 }

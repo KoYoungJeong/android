@@ -175,6 +175,7 @@ public class JandiSocketService extends Service {
         }
 
         jandiSocketManager.disconnect();
+        jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
         super.onDestroy();
     }

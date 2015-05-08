@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
+import android.util.Log;
+
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -60,10 +62,26 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public void disconnect() {
-        if (socket != null && socket.connected()) {
+
+        if (connectingOrConnected) {
             connectingOrConnected = false;
-            socket.disconnect();
         }
+
+        if (socket != null && socket.connected()) {
+            socket.off();
+            socket.disconnect();
+
+            while (socket.connected()) {
+                try {
+                    Thread.sleep(100);
+                    Log.d("INFO", "Waiting for Stop Socket!!");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
     }
 
     @Override

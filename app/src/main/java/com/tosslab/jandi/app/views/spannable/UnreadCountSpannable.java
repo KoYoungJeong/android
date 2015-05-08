@@ -12,7 +12,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.text.style.ImageSpan;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.tosslab.jandi.app.R;
@@ -42,6 +41,7 @@ public class UnreadCountSpannable extends ImageSpan {
         private final Resources res;
         private final String count;
         private Paint paint;
+        private Rect bounds;
 
         public UnreadDrawable(Resources res, NinePatch patch, String count) {
             super(res, patch);
@@ -75,9 +75,10 @@ public class UnreadCountSpannable extends ImageSpan {
         @Override
         public void draw(Canvas canvas) {
             super.draw(canvas);
-            Log.d("INFO", "hahahah");
 
-            Rect bounds = new Rect();
+            if (bounds == null) {
+                bounds = new Rect();
+            }
             paint.getTextBounds(count, 0, count.length(), bounds);
 
             Rect drawableSize = getBounds();

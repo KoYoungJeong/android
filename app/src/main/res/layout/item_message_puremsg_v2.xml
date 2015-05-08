@@ -2,8 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="58dp"
-    android:paddingBottom="12dp">
+    android:background="@drawable/message_list_selector"
+    android:descendantFocusability="blocksDescendants"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:paddingBottom="12dp"
+    android:paddingLeft="58dp">
 
     <TextView
         android:id="@+id/tv_message_content"
