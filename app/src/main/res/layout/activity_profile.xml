@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_profile_bg"
+    android:background="@drawable/jandi_default_background"
     android:orientation="vertical"
     android:paddingBottom="16dp">
 
@@ -27,7 +27,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center"
-            android:src="@drawable/jandi_icon_channel" />
+            android:src="@drawable/circle_default_background_color" />
 
         <ImageView
             android:layout_width="120dp"
