@@ -1,28 +1,15 @@
 package com.tosslab.jandi.app.ui.invites;
 
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.ProgressWheel;
-
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
 
 /**
  * Created by tonyjs on 15. 5. 5..
@@ -41,7 +28,7 @@ public class InviteUtils {
         UNDEFINED_URL, INVITATION_DISABLED, NETWORK_ERROR, ERROR, SUCCESS
     }
 
-    public static Pair<Result, ResTeamDetailInfo.InviteTeam> checkInvitationDisabled (
+    public static Pair<Result, ResTeamDetailInfo.InviteTeam> checkInvitationDisabled(
             TeamDomainInfoModel teamDomainInfoModel, int teamId) {
         try {
 
@@ -69,7 +56,7 @@ public class InviteUtils {
     }
 
     public static Intent getInviteIntent(Context context, TeamInvitationsEvent event,
-                                  String invitationUrl, String invitationContents) {
+                                         String invitationUrl, String invitationContents) {
         switch (event.type) {
             case JandiConstants.TYPE_INVITATION_KAKAO:
                 return getInviteIntent(invitationUrl, invitationContents,

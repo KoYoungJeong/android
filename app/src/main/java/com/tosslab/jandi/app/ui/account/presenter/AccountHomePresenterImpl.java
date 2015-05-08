@@ -164,8 +164,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.showTextAlertDialog(alertText, (dialog, which) -> {
                 view.dismissProgressWheel();
                 onRequestIgnore(selectedTeam);
+                view.removePendingTeamView(selectedTeam);
             });
-            onRequestIgnore(selectedTeam);
 
         } catch (Exception e) {
             view.dismissProgressWheel();
