@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +20,8 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.views.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -28,23 +32,18 @@ public class MessageViewHolder implements BodyViewHolder {
 
     private ImageView profileImageView;
     private TextView nameTextView;
-    private TextView dateTextView;
     private TextView messageTextView;
     private View disableCoverView;
     private View disableLineThroughView;
-    private TextView unreadTextView;
 
 
     @Override
     public void initView(View rootView) {
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
-
-        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
     }
 
     @Override
@@ -72,15 +71,6 @@ public class MessageViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
-
-        unreadTextView.setText(String.valueOf(unreadCount));
-        if (unreadCount <= 0) {
-            unreadTextView.setVisibility(View.GONE);
-        } else {
-            unreadTextView.setVisibility(View.VISIBLE);
-        }
-
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
@@ -89,22 +79,49 @@ public class MessageViewHolder implements BodyViewHolder {
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
 
         nameTextView.setText(fromEntity.name);
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(textMessage.content.body);
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+            messageStringBuilder.append(textMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), spannableStringBuilder);
-
+            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), messageStringBuilder);
             if (hasLink) {
-                messageTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
+                messageStringBuilder.setSpan(linkSpannable, 0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LinkifyUtil.setOnLinkClick(messageTextView);
-            } else {
-                messageTextView.setText(spannableStringBuilder);
             }
+
+            messageStringBuilder.append(" ");
+
+            Resources resources = messageTextView.getContext().getResources();
+
+            int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
+            int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
+
+            int startIndex = messageStringBuilder.length();
+            messageStringBuilder.append(DateTransformator.getTimeStringForSimple(link.message.updateTime));
+            int endIndex = messageStringBuilder.length();
+
+            MessageSpannable spannable =
+                    new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+            messageStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            int unreadCount1 = UnreadCountUtil.getUnreadCount(messageTextView.getContext(), teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance(messageTextView.getContext()).getMe().getId());
+
+            if (unreadCount1 > 0) {
+                UnreadCountSpannable unreadCountSpannable =
+                        UnreadCountSpannable.createUnreadCountSpannable(
+                                messageTextView.getContext(), String.valueOf(unreadCount1));
+                messageStringBuilder.append("   ")
+                        .setSpan(unreadCountSpannable, messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            messageTextView.setText(messageStringBuilder);
+
         }
         profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
