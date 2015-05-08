@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.view.View;
@@ -10,6 +12,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 
@@ -30,31 +33,45 @@ public class PureMessageViewHolder implements BodyViewHolder {
         String message = ((ResMessages.TextMessage) link.message).content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(message).append(" ");
+        builder.append(message);
 
-        Resources resources = tvMessage.getContext().getResources();
+        Context context = tvMessage.getContext();
 
-        int dimension = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int jandi_messages_date = R.color.jandi_messages_date;
+        boolean hasLink = LinkifyUtil.addLinks(context, builder);
+        if (hasLink) {
+            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(builder);
+            builder.setSpan(linkSpannable, 0, message.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            LinkifyUtil.setOnLinkClick(tvMessage);
+        }
+
+        builder.append(" ");
+
+        Resources resources = context.getResources();
+
+        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
+        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(link.message.updateTime));
         int endIndex = builder.length();
 
-        MessageSpannable spannable = new MessageSpannable(dimension, resources.getColor(jandi_messages_date));
+        MessageSpannable spannable =
+                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(tvMessage.getContext(), teamId, roomId, link.id, link.fromEntity, EntityManager.getInstance(tvMessage.getContext()).getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+                link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
         if (unreadCount > 0) {
-            UnreadCountSpannable unreadCountSpannable = UnreadCountSpannable.createUnreadCountSpannable(tvMessage.getContext(), String.valueOf(unreadCount));
+            UnreadCountSpannable unreadCountSpannable =
+                    UnreadCountSpannable.createUnreadCountSpannable(
+                            context, String.valueOf(unreadCount));
             builder.append("   ")
-                    .setSpan(unreadCountSpannable, builder.length() - 2, builder.length() - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    .setSpan(unreadCountSpannable, builder.length() - 2, builder.length() - 1,
+                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-
         tvMessage.setText(builder);
-
     }
 
     @Override
