@@ -79,7 +79,7 @@ public class SourceTypeUtil {
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
         value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.jandi_fl_icon_set_pr);
-        resourceMapper.put(MimeTypeUtil.FilterType.GoogleSpreadSheet, value);
+        resourceMapper.put(MimeTypeUtil.FilterType.GooglePresentation, value);
 
         value = new HashMap<MimeTypeUtil.SourceType, Source>();
         value.put(MimeTypeUtil.SourceType.Google, () -> R.drawable.jandi_fl_icon_set_ss);
