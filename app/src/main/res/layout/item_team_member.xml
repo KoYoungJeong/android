@@ -17,6 +17,18 @@
             android:layout_marginLeft="@dimen/jandi_entity_item_icon_margin_left"
             android:layout_centerVertical="true"
             android:src="@drawable/jandi_icon_channel"/>
+
+        <ImageView
+            android:id="@+id/img_team_member_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/team_member_icon"
+            android:layout_alignTop="@+id/team_member_icon"
+            android:layout_marginLeft="-3dp"
+            android:layout_marginTop="-1dp"
+            android:src="@drawable/jandi_icon_fav" />
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

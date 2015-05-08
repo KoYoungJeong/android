@@ -35,6 +35,9 @@ public class TeamMemberView extends LinearLayout {
     @ViewById(R.id.team_member_email)
     TextView textViewTeamMemberEmail;
 
+    @ViewById(R.id.img_team_member_fav)
+    ImageView imgStarred;
+
     private Context mContext;
 
     public TeamMemberView(Context context) {
@@ -81,6 +84,7 @@ public class TeamMemberView extends LinearLayout {
                 .load(teamMember.getUserSmallProfileUrl());
         textViewTeamMemberName.setText(teamMember.getName());
         textViewTeamMemberEmail.setText(teamMember.getUserEmail());
+        imgStarred.setVisibility(teamMember.isStarred ? View.VISIBLE : View.GONE);
         drawBackgroundAsActive();
     }
 

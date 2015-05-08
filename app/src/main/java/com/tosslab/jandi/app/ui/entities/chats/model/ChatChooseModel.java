@@ -63,17 +63,36 @@ public class ChatChooseModel {
 
     private Comparator<ChatChooseItem> getChatItemComparator() {
         return (lhs, rhs) -> {
+            int compareValue = 0;
             if (lhs.isEnabled()) {
                 if (rhs.isEnabled()) {
-                    return 0;
+                    compareValue = 0;
+                } else {
+                    compareValue = -1;
+                }
+            } else {
+                if (rhs.isEnabled()) {
+                    compareValue = 1;
+                } else {
+                    compareValue = 0;
+                }
+            }
+
+            if (compareValue != 0) {
+                return compareValue;
+            }
+
+            if (lhs.isStarred()) {
+                if (rhs.isStarred()) {
+                    return lhs.getName().compareTo(rhs.getName());
                 } else {
                     return -1;
                 }
             } else {
-                if (rhs.isEnabled()) {
+                if (rhs.isStarred()) {
                     return 1;
                 } else {
-                    return 0;
+                    return lhs.getName().compareTo(rhs.getName());
                 }
             }
         };

@@ -1029,16 +1029,22 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
-            setUpActionbar();
-            getActivity().invalidateOptionsMenu();
+            refreshActionbar();
         }
     }
 
     public void onEvent(MemberStarredEvent memberStarredEvent) {
         if (memberStarredEvent.getId() == entityId) {
-            setUpActionbar();
-            getActivity().invalidateOptionsMenu();
+            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            isFavorite = entity.isStarred;
+            refreshActionbar();
         }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void refreshActionbar() {
+        setUpActionbar();
+        getActivity().invalidateOptionsMenu();
     }
 
     public void onEvent(ProfileChangeEvent event) {

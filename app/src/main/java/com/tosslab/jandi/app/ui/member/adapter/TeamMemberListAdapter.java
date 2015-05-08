@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.team.TeamMemberView_;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,7 @@ public class TeamMemberListAdapter extends BaseAdapter {
         mMembers = new ArrayList<FormattedEntity>();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void retrieveList(List<FormattedEntity> formattedEntities) {
         mMembers.clear();
         mMembers.addAll(formattedEntities);

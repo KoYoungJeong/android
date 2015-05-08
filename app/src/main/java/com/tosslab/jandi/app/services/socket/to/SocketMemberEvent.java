@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -41,7 +40,6 @@ public class SocketMemberEvent {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class MemberInfo {
-        @JsonProperty("member")
         private int id;
         private String type;
 

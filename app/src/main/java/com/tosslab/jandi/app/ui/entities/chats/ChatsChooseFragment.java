@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -89,6 +90,7 @@ public class ChatsChooseFragment extends Fragment {
 
     private EntityManager mEntityManager;
     private ProgressWheel progressWheel;
+
     @AfterViews
     void initViews() {
         chatChooseAdapter = new ChatChooseAdapter(getActivity());
@@ -107,16 +109,19 @@ public class ChatsChooseFragment extends Fragment {
 
         chatListView.setAdapter(chatChooseAdapter);
 
-        chatChooseAdapter.clear();
-
-        List<ChatChooseItem> users = chatChooseModel.getUsers();
-        chatChooseAdapter.addAll(users);
-
-        chatChooseAdapter.notifyDataSetChanged();
+        setUpMember();
 
         initSearchTextObserver();
 
         mEntityManager = EntityManager.getInstance(getActivity());
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void setUpMember() {
+        chatChooseAdapter.clear();
+        List<ChatChooseItem> users = chatChooseModel.getUsers();
+        chatChooseAdapter.addAll(users);
+        chatChooseAdapter.notifyDataSetChanged();
     }
 
     private void initSearchTextObserver() {
@@ -255,6 +260,10 @@ public class ChatsChooseFragment extends Fragment {
         teamName = inviteTeam.getName();
         DialogFragment invitationDialog = new InvitationDialogFragment();
         invitationDialog.show(getFragmentManager(), "invitationsDialog");
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        setUpMember();
     }
 
     public void onEvent(TeamInvitationsEvent event) {

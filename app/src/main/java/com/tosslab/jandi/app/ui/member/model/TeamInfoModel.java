@@ -5,11 +5,13 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,6 +37,8 @@ public class TeamInfoModel {
         while (enabled.hasNext()) {
             users.add(enabled.next());
         }
+
+        Collections.sort(users, new EntityComparator());
 
         return users;
     }

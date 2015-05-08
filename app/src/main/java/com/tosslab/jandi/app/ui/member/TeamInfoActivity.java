@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -144,6 +145,11 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .start();
+    }
+
+    public void onEvent(MemberStarredEvent event) {
+        List<FormattedEntity> entities = teamInfoModel.retrieveTeamUserList();
+        teamUserListAdapter.retrieveList(entities);
     }
 
     @Override
