@@ -22,7 +22,7 @@ public class JandiMarkerDatabaseManager {
 
     private SQLiteOpenHelper jandiDatabaseOpenHelper;
 
-    private Object lockObject;
+    private final Object lockObject;
 
     private JandiMarkerDatabaseManager(Context context) {
         jandiDatabaseOpenHelper = JandiDatabaseOpenHelper.getInstance(context);

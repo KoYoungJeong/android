@@ -14,7 +14,7 @@
         android:id="@+id/menu_manipulate_my_entity"
         android:icon="@drawable/jandi_icon_actionbar_more"
         android:showAsAction="always"
-        android:title=""
+        android:title="@string/jandi_tab_more"
         app:showAsAction="always">
         <menu>
             <item

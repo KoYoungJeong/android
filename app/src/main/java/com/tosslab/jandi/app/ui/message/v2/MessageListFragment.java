@@ -370,8 +370,10 @@ public class MessageListFragment extends Fragment {
         MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
         if (isFavorite) {
             item.setIcon(R.drawable.jandi_icon_actionbar_fav);
+            item.setTitle(R.string.jandi_unstarred);
         } else {
             item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
+            item.setTitle(R.string.jandi_starred);
         }
 
         // DirectMessage의 경우 확장 메뉴가 없음.

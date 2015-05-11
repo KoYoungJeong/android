@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,6 +48,7 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
@@ -174,10 +176,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if (!(getActivity() instanceof FileListActivity)) {
-            getActivity().getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-        } else {
-            getActivity().getMenuInflater().inflate(R.menu.file_list_actionbar_menu, menu);
+        menu.clear();
+
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainTabActivity) {
+            activity.getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        } else if (activity instanceof FileListActivity) {
+            activity.getMenuInflater().inflate(R.menu.file_list_actionbar_menu, menu);
 
             MenuItem searchMenu = menu.findItem(R.id.action_file_list_search);
             SearchView sv = ((SearchView) searchMenu.getActionView());

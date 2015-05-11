@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
+import android.view.Menu;
 import android.widget.TextView;
+
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
@@ -18,12 +20,14 @@ import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+
 import de.greenrobot.event.EventBus;
 
 /**
@@ -75,6 +79,12 @@ public class MainMoreFragment extends Fragment {
                     .transform(new IonCircleTransform())
                     .load(me.getUserSmallProfileUrl());
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.clear();
     }
 
     private void showJandiVersion() {
