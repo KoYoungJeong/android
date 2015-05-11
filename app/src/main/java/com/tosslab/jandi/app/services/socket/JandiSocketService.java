@@ -36,8 +36,6 @@ public class JandiSocketService extends Service {
             trySocketConnect();
         }
     };
-    private ConnectMonitor connectMonitor = new ConnectMonitor(this::trySocketConnect);
-
 
     public static void startSocketServiceIfStop(Context context) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
@@ -142,11 +140,15 @@ public class JandiSocketService extends Service {
             if (connectTeam != null) {
                 jandiSocketManager.sendByJson("connect_team", connectTeam);
             } else {
-                connectMonitor.start();
+//                connectMonitor.start();
             }
         });
-        eventHashMap.put("connect_team", objects -> connectMonitor.stop());
-        eventHashMap.put("error_connect_team", objects -> connectMonitor.start());
+        eventHashMap.put("connect_team", objects -> {
+//            connectMonitor.stop()
+        });
+        eventHashMap.put("error_connect_team", objects -> {
+//            connectMonitor.start()
+        });
 
         EventListener messageRefreshListener = objects -> jandiSocketServiceModel.refreshMessage(objects[0]);
         eventHashMap.put("message", messageRefreshListener);
@@ -187,7 +189,9 @@ public class JandiSocketService extends Service {
         }
 
         if (!jandiSocketManager.isConnectingOrConnected()) {
-            jandiSocketManager.connect(objects -> connectMonitor.start());
+            jandiSocketManager.connect(objects -> {
+//                connectMonitor.start()
+            });
             jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
         } else {
             setUpSocketListener();
