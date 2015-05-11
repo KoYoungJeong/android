@@ -40,7 +40,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
-import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
@@ -786,4 +785,7 @@ public class MessageListPresenter {
         }
     }
 
+    public int getItemCount() {
+        return messageListAdapter.getItemCount();
+    }
 }

@@ -86,8 +86,8 @@ public class MessageListModel {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(int position) throws JandiNetworkException {
-        return messageManipulator.getMessages(position);
+    public ResMessages getOldMessage(int position, int count) throws JandiNetworkException {
+        return messageManipulator.getMessages(position, count);
     }
 
     public List<ResMessages.Link> sortById(List<ResMessages.Link> messages) {

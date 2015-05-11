@@ -91,7 +91,7 @@ public class MessagesApiClientTest {
     }
 
     private ResMessages.FileMessage getMyFileMessage(ResLeftSideMenu.Channel defaultChannel) {
-        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1);
+        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1, requestCount);
 
         ResMessages.FileMessage fileMessage = null;
         for (ResMessages.Link message : publicTopicMessages.records) {

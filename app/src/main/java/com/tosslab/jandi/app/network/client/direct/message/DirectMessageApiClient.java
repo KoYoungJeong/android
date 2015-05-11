@@ -43,9 +43,9 @@ public interface DirectMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Direct Message 리스트 정보 획득
-    @Get("/users/{userId}/messages?teamId={teamId}&linkId={fromId}&type=old")
+    @Get("/users/{userId}/messages?teamId={teamId}&linkId={fromId}&type=old&count={count}")
     @RequiresAuthentication
-    ResMessages getDirectMessages(int teamId, int userId, int fromId);
+    ResMessages getDirectMessages(int teamId, int userId, int fromId, int count);
 
     @Get("/users/{userId}/messages?teamId={teamId}&type=old")
     @RequiresAuthentication

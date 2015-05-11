@@ -43,9 +43,9 @@ public interface ChannelMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // 채널에서 Message 리스트 정보 획득
-    @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={fromId}&type=old")
+    @Get("/channels/{channelId}/messages?teamId={teamId}&linkId={fromId}&type=old&count={count}")
     @RequiresAuthentication
-    ResMessages getPublicTopicMessages(int teamId, int channelId, int fromId);
+    ResMessages getPublicTopicMessages(int teamId, int channelId, int fromId, int count);
 
     @Get("/channels/{channelId}/messages?teamId={teamId}&type=old")
     @RequiresAuthentication

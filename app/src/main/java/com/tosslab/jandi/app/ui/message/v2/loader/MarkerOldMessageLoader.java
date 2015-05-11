@@ -48,8 +48,11 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
 
             boolean isCallByMarker = messageListPresenter.getFirstVisibleItemLinkId() > 0;
             if (isCallByMarker) {
-                oldMessage = messageListModel.getOldMessage(linkId);
+                // 일반적인 Old Message 요청
+                int itemCount = messageListPresenter.getItemCount();
+                oldMessage = messageListModel.getOldMessage(linkId, itemCount);
             } else {
+                // 마커 기준으로 위 아래 요청
                 oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
             }
 

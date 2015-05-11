@@ -43,9 +43,9 @@ public interface GroupMessageApiClient {
     void setAuthentication(HttpAuthentication auth);
 
     // Private Group의 Message 리스트 정보 획득
-    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={fromId}&type=old")
+    @Get("/privateGroups/{groupId}/messages?teamId={teamId}&linkId={fromId}&type=old&count={count}")
     @RequiresAuthentication
-    ResMessages getGroupMessages(int teamId, int groupId, int fromId);
+    ResMessages getGroupMessages(int teamId, int groupId, int fromId, int count);
 
     @Get("/privateGroups/{groupId}/messages?teamId={teamId}&type=old")
     @RequiresAuthentication

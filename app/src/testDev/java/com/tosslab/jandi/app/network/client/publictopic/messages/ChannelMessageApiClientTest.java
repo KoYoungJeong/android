@@ -107,7 +107,7 @@ public class ChannelMessageApiClientTest {
 
         ResMessages publicTopicMessages = null;
         try {
-            publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, channel.id, 33391);
+            publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, channel.id, 33391, requestCount);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

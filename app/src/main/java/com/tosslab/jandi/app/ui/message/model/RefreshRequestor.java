@@ -38,7 +38,7 @@ public class RefreshRequestor {
 
     protected String doInBackground(Void... voids) {
         try {
-            ResMessages restResMessages = mJandiMessageClient.getMessages(messageState.getFirstItemId());
+            ResMessages restResMessages = mJandiMessageClient.getMessages(messageState.getFirstItemId(), 20);
             mMessageItemConverter.insertMessageItem(restResMessages);
             messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
             return null;

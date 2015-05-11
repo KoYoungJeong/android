@@ -515,7 +515,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 log.debug("complete get cached data");
             }
 
-            ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId());
+            ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId(), 20);
             log.debug("complete get server data");
 
             if (messageState.getFirstItemId() == -1) {

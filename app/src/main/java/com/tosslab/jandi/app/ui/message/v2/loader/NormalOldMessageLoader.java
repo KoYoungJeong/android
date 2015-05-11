@@ -59,7 +59,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         ResMessages oldMessage = null;
         try {
 
-            oldMessage = messageListModel.getOldMessage(linkId);
+            int itemCount = messageListPresenter.getItemCount();
+            oldMessage = messageListModel.getOldMessage(linkId, itemCount);
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 checkItemCountIfException(linkId);
