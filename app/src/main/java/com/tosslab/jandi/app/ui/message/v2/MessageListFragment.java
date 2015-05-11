@@ -950,7 +950,9 @@ public class MessageListFragment extends Fragment {
         }
 
         boolean isSameRoomId = false;
-        if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
+        String messageType = event.getMessageType();
+
+        if (!TextUtils.equals(messageType, "file_comment")) {
 
             isSameRoomId = event.getRoom().getId() == roomId;
         } else {
@@ -966,9 +968,9 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        if (TextUtils.equals(event.getMessageType(), "topic_leave") ||
-                TextUtils.equals(event.getMessageType(), "topic_join") ||
-                TextUtils.equals(event.getMessageType(), "topic_invite")) {
+        if (TextUtils.equals(messageType, "topic_leave") ||
+                TextUtils.equals(messageType, "topic_join") ||
+                TextUtils.equals(messageType, "topic_invite")) {
 
             updateRoomInfo();
         } else {
