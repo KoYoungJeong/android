@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -195,6 +197,21 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     public void onEvent(MemberEmailChangeEvent event) {
         memberProfileView.updateEmailTextColor(event.getEmail());
         uploadEmail(event.getEmail());
+    }
+
+    public void onEvent(ProfileChangeEvent event) {
+        if (event.getEntityId() == memberProfileModel.getMyEntityId()) {
+            memberProfileView.displayProfile(EntityManager.getInstance(MemberProfileActivity.this).getMe().getUser());
+            closeDialogFragment();
+        }
+    }
+
+    @UiThread
+    void closeDialogFragment() {
+        android.app.Fragment dialogFragment = getFragmentManager().findFragmentByTag("dialog");
+        if (dialogFragment != null && dialogFragment instanceof DialogFragment) {
+            ((DialogFragment) dialogFragment).dismiss();
+        }
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {

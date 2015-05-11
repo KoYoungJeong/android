@@ -102,7 +102,7 @@ public class JandiSocketService extends Service {
         EventListener chatLCloseListener = objects -> jandiSocketServiceModel.refreshChatCloseListener(objects[0]);
         eventHashMap.put("chat_close", chatLCloseListener);
 
-        EventListener memberProfileListener = objects -> jandiSocketServiceModel.refreshMemberProfile();
+        EventListener memberProfileListener = objects -> jandiSocketServiceModel.refreshMemberProfile(objects[0]);
         eventHashMap.put("member_profile_updated", memberProfileListener);
 
         EventListener topicDeleteListener = objects -> jandiSocketServiceModel.refreshTopicDelete(objects[0]);

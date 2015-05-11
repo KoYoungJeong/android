@@ -1034,6 +1034,17 @@ public class MessageListFragment extends Fragment {
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
             refreshActionbar();
+            if (isForeground) {
+                closeDialogFragment();
+            }
+        }
+    }
+
+    @UiThread
+    void closeDialogFragment() {
+        android.app.Fragment dialogFragment = getActivity().getFragmentManager().findFragmentByTag("dialog");
+        if (dialogFragment != null && dialogFragment instanceof android.app.DialogFragment) {
+            ((android.app.DialogFragment) dialogFragment).dismiss();
         }
     }
 

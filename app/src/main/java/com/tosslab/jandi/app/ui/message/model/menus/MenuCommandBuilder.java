@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 

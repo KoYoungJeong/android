@@ -25,6 +25,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
+import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -56,16 +57,26 @@ public class UserInfoDialogFragment extends DialogFragment {
     private ImageView imgStarred;
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        final int userId = entityId;
 
         FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
 
         if (TextUtils.equals(entity.getUser().status, "enabled")) {
-            return createEnabledUserDialog(userId, entity);
+            return createEnabledUserDialog();
         } else {
-            return createDisabledUserDialog(userId, entity);
+            return createDisabledUserDialog();
         }
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+
+        if (TextUtils.equals(entity.getUser().status, "enabled")) {
+            setUpEnabledProfile(entity);
+        } else {
+            setUpDisabledProfile(entity);
+        }
     }
 
     @Override
@@ -91,8 +102,16 @@ public class UserInfoDialogFragment extends DialogFragment {
 
     }
 
+    public void onEvent(ProfileChangeEvent event) {
+        if (event.getEntityId() == entityId) {
+            FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
 
-    private Dialog createEnabledUserDialog(int userId, FormattedEntity entity) {
+            setUpEnabledProfile(entityById);
+        }
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void setUpEnabledProfile(FormattedEntity entity) {
         final String userName = entity.getName();
         final String userStatusMessage = entity.getUserStatusMessage();
         final String userDivision = entity.getUserDivision();
@@ -100,11 +119,11 @@ public class UserInfoDialogFragment extends DialogFragment {
         final String userPhoneNumber = entity.getUserPhoneNumber();
         final String userEmail = entity.getUserEmail();
         final String userProfileUrl = entity.getUserLargeProfileUrl();
-        final boolean isMe = EntityManager.getInstance(getActivity()).isMe(userId);
+        final boolean isMe = EntityManager.getInstance(getActivity()).isMe(entityId);
         final boolean isStarred = entity.isStarred;
 
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View mainView = inflater.inflate(R.layout.dialog_user_profile, null);
+
+        View mainView = getDialog().getWindow().getDecorView();
 
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
         imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
@@ -125,14 +144,14 @@ public class UserInfoDialogFragment extends DialogFragment {
             imgStarred.setVisibility(View.GONE);
         }
 
-        imgStarred.setOnClickListener(v -> onStarClick(userId));
+        imgStarred.setOnClickListener(v -> onStarClick(entityId));
 
         if (isMe) {     // 본인의 정보면 1:1 대화 버튼을 보여주지 않는다.
             lyUserDirectMessage.setVisibility(View.GONE);
             borderUserDirectMessage.setVisibility(View.GONE);
         } else {
             lyUserDirectMessage.setOnClickListener(view -> {
-                EventBus.getDefault().post(new RequestMoveDirectMessageEvent(userId));
+                EventBus.getDefault().post(new RequestMoveDirectMessageEvent(entityId));
                 dismiss();
             });
         }
@@ -206,6 +225,13 @@ public class UserInfoDialogFragment extends DialogFragment {
                 }
             });
         }
+    }
+
+
+    private Dialog createEnabledUserDialog() {
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View mainView = inflater.inflate(R.layout.dialog_user_profile, null);
 
         // creating the fullscreen dialog
         final Dialog dialog = new Dialog(getActivity());
@@ -221,15 +247,32 @@ public class UserInfoDialogFragment extends DialogFragment {
         return dialog;
     }
 
-    private Dialog createDisabledUserDialog(int userId, FormattedEntity entity) {
+    private Dialog createDisabledUserDialog() {
 
+        View mainView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_disable_user_profile, null);
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setCancelable(true);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(mainView);
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams layoutParams = window.getAttributes();
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCanceledOnTouchOutside(true);
+
+        return dialog;
+    }
+
+    private View setUpDisabledProfile(FormattedEntity entity) {
         final String userName = entity.getName();
         final String userDivision = entity.getUserDivision();
         final String userPosition = entity.getUserPosition();
         final String userProfileUrl = entity.getUserLargeProfileUrl();
         final boolean isStarred = entity.isStarred;
 
-        View mainView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_disable_user_profile, null);
+        View mainView = getDialog().getWindow().getDecorView();
 
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
         imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
@@ -246,19 +289,7 @@ public class UserInfoDialogFragment extends DialogFragment {
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .load(userProfileUrl);
-
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(mainView);
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
-        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.setCanceledOnTouchOutside(true);
-
-        return dialog;
+        return mainView;
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

@@ -106,4 +106,9 @@ public class MemberProfileModel {
         EntityManager entityManager = EntityManager.getInstance(context);
         return mJandiEntityClient.updateMemberEmail(entityManager.getMe().getId(), email);
     }
+
+
+    public int getMyEntityId() {
+        return EntityManager.getInstance(context).getMe().getId();
+    }
 }

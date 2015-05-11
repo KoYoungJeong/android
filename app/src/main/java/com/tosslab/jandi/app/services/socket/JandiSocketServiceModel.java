@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
@@ -168,9 +169,15 @@ public class JandiSocketServiceModel {
         refreshEntity();
     }
 
-    public void refreshMemberProfile() {
+    public void refreshMemberProfile(Object object) {
         refreshEntity();
-        postEvent(new ProfileChangeEvent());
+        try {
+            SocketMemberProfileEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketMemberProfileEvent.class);
+            postEvent(new ProfileChangeEvent(socketTopicEvent.getMember().id));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void refreshTopicDelete(Object object) {
