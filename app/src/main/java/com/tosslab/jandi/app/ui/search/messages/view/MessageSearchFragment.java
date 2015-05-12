@@ -362,6 +362,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @Override
     public void onNewQuery(String query) {
+        if (TextUtils.isEmpty(query) || TextUtils.getTrimmedLength(query) <= 0) {
+            return;
+        }
         messageSearchPresenter.onSearchRequest(query);
     }
 

@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -164,11 +163,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
-
-        if (isInSearchActivity() && isSearchLayoutFirst) {
-            onSearchHeaderReset();
-            initSearchLayoutIfFirst();
+        if (isInSearchActivity()) {
+            resetFilterLayoutPosition();
+            if (isSearchLayoutFirst) {
+                initSearchLayoutIfFirst();
+            }
         }
+
         initSearchSubject.onNext(-1);
     }
 
@@ -185,7 +186,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             activity.getMenuInflater().inflate(R.menu.file_list_actionbar_menu, menu);
 
             MenuItem searchMenu = menu.findItem(R.id.action_file_list_search);
-            SearchView sv = ((SearchView) searchMenu.getActionView());
+            SearchView searchView = ((SearchView) searchMenu.getActionView());
 
             MenuItemCompat.setOnActionExpandListener(searchMenu, new MenuItemCompat.OnActionExpandListener() {
 
@@ -196,16 +197,16 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
                 @Override
                 public boolean onMenuItemActionCollapse(MenuItem item) {
-                    inputMethodManager.hideSoftInputFromWindow(sv.getWindowToken(), 0);
+                    inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                     onNewQuery("");
                     return true;
                 }
             });
 
-            sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
-                    inputMethodManager.hideSoftInputFromWindow(sv.getWindowToken(), 0);
+                    inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
                     onNewQuery(s);
                     return true;
                 }
@@ -313,39 +314,44 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         super.onDestroy();
     }
 
-
     void doKeywordSearch(String s) {
         mSearchQuery.setKeyword(s);
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
+        onSearchHeaderReset();
     }
 
     public void onEvent(CategorizedMenuOfFileType event) {
         if (!isForeground) {
             return;
         }
-        Log.d("INFO", "event setFileType" + event.getServerQuery());
+//        Log.d("INFO", "event setFileType" + event.getServerQuery());
         mSearchQuery.setFileType(event.getServerQuery());
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
+        onSearchHeaderReset();
     }
 
     public void onEvent(CategorizingAsOwner event) {
         if (!isForeground) {
             return;
         }
+//        Log.d("INFO", "event setOwnerType");
         mSearchQuery.setWriter(event.userId);
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
+        onSearchHeaderReset();
     }
 
     public void onEvent(CategorizingAsEntity event) {
         if (!isForeground) {
             return;
         }
+//        Log.d("INFO", "event setEntityType");
         mSearchQuery.setSharedEntity(event.sharedEntityId);
         searchedFileItemListAdapter.clearAdapter();
         initSearchSubject.onNext(-1);
+        onSearchHeaderReset();
     }
 
     public void onEventMainThread(ConfirmFileUploadEvent event) {
@@ -637,9 +643,23 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onSearchHeaderReset() {
-        if (headerView != null) {
-            headerView.setY((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics()));
+        if (!isForeground) {
+            return;
         }
+
+        resetFilterLayoutPosition();
+    }
+
+    private void resetFilterLayoutPosition() {
+        if (headerView == null) {
+            return;
+        }
+        int offset = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 64, getResources().getDisplayMetrics());
+        headerView.setY(offset);
+
+        EventBus.getDefault().post(
+                new SearchResultScrollEvent(FileListFragment.this.getClass(), -offset));
     }
 
     @Override
