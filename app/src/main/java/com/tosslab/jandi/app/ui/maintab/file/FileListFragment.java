@@ -57,6 +57,7 @@ import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -158,6 +159,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         // Empty View를 가진 ListView 설정
         actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        actualListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         actualListView.setAdapter(searchedFileItemListAdapter);
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();

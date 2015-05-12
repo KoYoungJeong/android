@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.ui.share.type.text;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.type.model.ShareModel;
