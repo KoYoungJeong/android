@@ -29,7 +29,7 @@ public class UnreadCountSpannable extends ImageSpan {
 
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.jandi_img_read_unread);
         byte[] ninePatchChunk = bitmap.getNinePatchChunk();
-        NinePatch ninePatch = new NinePatch(bitmap, ninePatchChunk);
+        NinePatch ninePatch = new NinePatch(bitmap, ninePatchChunk, null);
 
         UnreadDrawable ninePatchDrawable = new UnreadDrawable(context.getResources(), ninePatch, count);
 

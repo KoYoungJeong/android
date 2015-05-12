@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -8,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,7 +178,7 @@ public class FileListPresenter {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if (mFileTypeSelectDialog != null)
                         mFileTypeSelectDialog.dismiss();
-                    mCurrentFileTypeCategorizingAccodingBy = adapter.getItem(i);
+                    mCurrentFileTypeCategorizingAccodingBy = context.getString(adapter.getItem(i));
                     textVewFileType.setText(mCurrentFileTypeCategorizingAccodingBy);
                     textVewFileType.invalidate();
                     EventBus.getDefault().post(new CategorizedMenuOfFileType(i));

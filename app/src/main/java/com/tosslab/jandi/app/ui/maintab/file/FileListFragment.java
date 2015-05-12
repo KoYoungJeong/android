@@ -15,14 +15,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -744,8 +742,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             if (child instanceof ViewGroup) {
                 setHeaderImageViewImage(((ViewGroup) child), imageResourceId);
-            } else if (child instanceof ImageView) {
-                ((ImageView) child).setImageResource(imageResourceId);
+            } else if (child instanceof TextView) {
+
+                ((TextView) child).setCompoundDrawablesWithIntrinsicBounds(0, 0, imageResourceId, 0);
             }
         }
 

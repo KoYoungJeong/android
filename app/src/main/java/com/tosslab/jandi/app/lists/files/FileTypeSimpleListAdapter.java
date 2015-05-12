@@ -29,8 +29,8 @@ public class FileTypeSimpleListAdapter extends BaseAdapter {
     }
 
     @Override
-    public String getItem(int i) {
-        return mContext.getString(CategorizedMenuOfFileType.stringTitleResourceList[i]);
+    public Integer getItem(int i) {
+        return CategorizedMenuOfFileType.stringTitleResourceList[i];
     }
 
     @Override

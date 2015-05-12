@@ -60,7 +60,11 @@ public class EntitySelectDialogAdatper extends BaseAdapter {
         SimpleEntityInfo entity = getItem(position);
 
         // dummy entity는 이름이 없다. 지정된 string resource id 만 가져옴.
-        holder.textView.setText(entity.getName());
+        if (position == 0) {
+            holder.textView.setText(R.string.jandi_file_category_everywhere);
+        } else {
+            holder.textView.setText(entity.getName());
+        }
 
         // user 는 개별 프로필 사진이 존재하기에 별도로 가져온다.
         if (entity.getType() == JandiConstants.TYPE_DIRECT_MESSAGE) {

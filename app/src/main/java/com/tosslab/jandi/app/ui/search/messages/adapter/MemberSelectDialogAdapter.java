@@ -65,7 +65,11 @@ public class MemberSelectDialogAdapter extends BaseAdapter {
                 .transform(new IonCircleTransform())
                 .load(user.getPhoto());
 
-        holder.textView.setText(user.getName());
+        if (position == 0) {
+            holder.textView.setText(R.string.jandi_file_category_everyone);
+        } else {
+            holder.textView.setText(user.getName());
+        }
 
         return convertView;
     }
