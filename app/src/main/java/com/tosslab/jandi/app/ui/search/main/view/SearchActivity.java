@@ -245,7 +245,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @EditorAction(R.id.txt_search_keyword)
     void onSearchTextAction(TextView textView) {
         String text = textView.getText().toString();
-        if (!TextUtils.isEmpty(text)) {
+        if (!TextUtils.isEmpty(text) && TextUtils.getTrimmedLength(text) > 0) {
             searchPresenter.onSearchAction(text);
 
             sendNewQuery(text);
