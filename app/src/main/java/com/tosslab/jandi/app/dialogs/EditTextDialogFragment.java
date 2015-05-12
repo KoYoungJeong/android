@@ -2,18 +2,17 @@ package com.tosslab.jandi.app.dialogs;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.graphics.drawable.ColorDrawable;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -58,6 +57,10 @@ public class EditTextDialogFragment extends DialogFragment {
     private final static String ARG_TOPIC_ID = "topicId";
     private final static String ARG_CURRENT_MGS = "currentMessage";
     private final Logger log = Logger.getLogger(EditTextDialogFragment.class);
+    private int actionType;
+    private int topicType;
+    private int topicId;
+    private String currentMessage;
 
     /**
      * topic 생성에 사용되는 Dialog.
@@ -125,15 +128,16 @@ public class EditTextDialogFragment extends DialogFragment {
         me.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
         me.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
     }
 
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final int actionType = getArguments().getInt(ARG_ACTION_TYPE);
-        final int topicType = getArguments().getInt(ARG_TOPIC_TYPE);
-        final int topicId = getArguments().getInt(ARG_TOPIC_ID);
-        final String currentMessage = getArguments().getString(ARG_CURRENT_MGS, "");
+        actionType = getArguments().getInt(ARG_ACTION_TYPE);
+        topicType = getArguments().getInt(ARG_TOPIC_TYPE);
+        topicId = getArguments().getInt(ARG_TOPIC_ID);
+        currentMessage = getArguments().getString(ARG_CURRENT_MGS, "");
 
         int titleStringId = obtainTitleByPurpose(actionType, topicType);
 
@@ -142,72 +146,65 @@ public class EditTextDialogFragment extends DialogFragment {
 
 
         final EditText editTextInput = (EditText) mainView.findViewById(R.id.et_dialog_input_text);
-        final Button buttonConfirm = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
-        final TextView title = (TextView) mainView.findViewById(R.id.txt_dialog_input_text);
-        // 제목 설정
-        title.setText(titleStringId);
-        // 입력 상자 타입에 따른 설정
-        setEditTextByPurpose(editTextInput, buttonConfirm, currentMessage, actionType);
-        // 수정 대화상자의 경우 현재 메시지를 보여준다.
         editTextInput.setText(currentMessage);
         editTextInput.setSelection(currentMessage.length());
 
-        buttonConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String input = editTextInput.getText().toString();
-                log.debug("length of input is " + input.length());
-
-                switch (actionType) {
-                    case ACTION_CREATE_TOPIC:
-                        if (topicType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-                            EventBus.getDefault().post(new ConfirmCreatePublicTopicEvent(input));
-                        } else {
-                            EventBus.getDefault().post(new ConfirmCreatePrivateTopicEvent(input));
-                        }
-                        break;
-                    case ACTION_MODIFY_TOPIC:
-                        EventBus.getDefault().post(
-                                new ConfirmModifyTopicEvent(topicType, topicId, input)
-                        );
-                        break;
-                    case ACTION_MODIFY_PROFILE_STATUS:
-                    case ACTION_MODIFY_PROFILE_PHONE:
-                    case ACTION_MODIFY_PROFILE_DIVISION:
-                    case ACTION_MODIFY_PROFILE_POSITION:
-                    case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
-                    case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                        EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
-                        break;
-                    case ACTION_FORGOT_PASSWORD:
-                        EventBus.getDefault().post(new ForgotPasswordEvent(input));
-                        break;
-                    case ACTION_NEW_EMAIL:
-                        EventBus.getDefault().post(new NewEmailEvent(input));
-                        break;
-                    default:
-                        // DO NOTHING
-                        break;
-                }
-                dismiss();
-            }
-        });
-
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // creating the fullscreen dialog
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setCancelable(true);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(mainView);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        builder.setCancelable(true)
+                .setView(mainView)
+                .setTitle(titleStringId)
+                .setNegativeButton(R.string.jandi_cancel, null)
+                .setPositiveButton(R.string.jandi_confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String input = editTextInput.getText().toString();
+                        log.debug("length of input is " + input.length());
+
+                        switch (actionType) {
+                            case ACTION_CREATE_TOPIC:
+                                if (topicType == JandiConstants.TYPE_PUBLIC_TOPIC) {
+                                    EventBus.getDefault().post(new ConfirmCreatePublicTopicEvent(input));
+                                } else {
+                                    EventBus.getDefault().post(new ConfirmCreatePrivateTopicEvent(input));
+                                }
+                                break;
+                            case ACTION_MODIFY_TOPIC:
+                                EventBus.getDefault().post(
+                                        new ConfirmModifyTopicEvent(topicType, topicId, input)
+                                );
+                                break;
+                            case ACTION_MODIFY_PROFILE_STATUS:
+                            case ACTION_MODIFY_PROFILE_PHONE:
+                            case ACTION_MODIFY_PROFILE_DIVISION:
+                            case ACTION_MODIFY_PROFILE_POSITION:
+                            case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+                            case ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                                EventBus.getDefault().post(new ConfirmModifyProfileEvent(actionType, input));
+                                break;
+                            case ACTION_FORGOT_PASSWORD:
+                                EventBus.getDefault().post(new ForgotPasswordEvent(input));
+                                break;
+                            case ACTION_NEW_EMAIL:
+                                EventBus.getDefault().post(new NewEmailEvent(input));
+                                break;
+                            default:
+                                // DO NOTHING
+                                break;
+                        }
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialog1 -> setupPositiveButton(currentMessage, actionType, currentMessage));
+        setEditTextByPurpose(editTextInput, currentMessage, actionType);
+
         return dialog;
 
     }
 
-    private void setEditTextByPurpose(final EditText input, final Button confirm,
+    private void setEditTextByPurpose(final EditText input,
                                       final String currentMessage, final int purpose) {
-        confirm.setText(R.string.jandi_confirm);
-
         switch (purpose) {
             case ACTION_MODIFY_PROFILE_PHONE:
                 input.setInputType(InputType.TYPE_CLASS_PHONE);
@@ -245,44 +242,53 @@ public class EditTextDialogFragment extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String inputText = editable.toString();
-                int inputLength = inputText.length();
-
-
-                switch (purpose) {
-                    case ACTION_CREATE_TOPIC:
-                    case ACTION_MODIFY_TOPIC:
-                        confirm.setEnabled((inputLength > 0)
-                                && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
-                                && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_MODIFY_PROFILE_STATUS:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_STATUS && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_MODIFY_PROFILE_PHONE:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_PHONE && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_MODIFY_PROFILE_DIVISION:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_DIVISION && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_MODIFY_PROFILE_POSITION:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_POSITION && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
-                    case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                        confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME && !inputText.equals(currentMessage));
-                        break;
-                    case ACTION_FORGOT_PASSWORD:
-                    case ACTION_NEW_EMAIL:
-                        confirm.setEnabled(!FormatConverter.isInvalidEmailString(inputText));
-                        break;
-                    default:
-                        // DO NOTHING
-                        break;
-                }
+                setupPositiveButton(editable.toString(), purpose, currentMessage);
             }
         });
 
+    }
+
+    private void setupPositiveButton(String editable, int purpose, String currentMessage) {
+        Button confirm = ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
+
+        if (confirm == null) {
+            return;
+        }
+
+        int inputLength = editable.length();
+
+
+        switch (purpose) {
+            case ACTION_CREATE_TOPIC:
+            case ACTION_MODIFY_TOPIC:
+                confirm.setEnabled((inputLength > 0)
+                        && (inputLength < MAX_LENGTH_OF_TOPIC_NAME)
+                        && !editable.equals(currentMessage));
+                break;
+            case ACTION_MODIFY_PROFILE_STATUS:
+                confirm.setEnabled(inputLength < MAX_LENGTH_OF_STATUS && !editable.equals(currentMessage));
+                break;
+            case ACTION_MODIFY_PROFILE_PHONE:
+                confirm.setEnabled(inputLength < MAX_LENGTH_OF_PHONE && !editable.equals(currentMessage));
+                break;
+            case ACTION_MODIFY_PROFILE_DIVISION:
+                confirm.setEnabled(inputLength < MAX_LENGTH_OF_DIVISION && !editable.equals(currentMessage));
+                break;
+            case ACTION_MODIFY_PROFILE_POSITION:
+                confirm.setEnabled(inputLength < MAX_LENGTH_OF_POSITION && !editable.equals(currentMessage));
+                break;
+            case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+            case ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME && !editable.equals(currentMessage));
+                break;
+            case ACTION_FORGOT_PASSWORD:
+            case ACTION_NEW_EMAIL:
+                confirm.setEnabled(!FormatConverter.isInvalidEmailString(editable));
+                break;
+            default:
+                // DO NOTHING
+                break;
+        }
     }
 
     /**
