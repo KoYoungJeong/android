@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.share;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.R;
@@ -65,7 +65,7 @@ public class MainShareActivity extends AppCompatActivity {
         }
 
         if (fragment != null) {
-            fragment.show(getFragmentManager(), "dialog");
+            fragment.show(getSupportFragmentManager(), "dialog");
         } else {
             startIntro();
         }

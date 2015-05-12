@@ -14,6 +14,7 @@
         <item name="alertDialogTheme">@style/JandiTheme.AlertDialog</item>
 
         <item name="android:textViewStyle">@style/JandiTheme.Widget.TextView</item>
+
     </style>
 
     <style name="JandiTheme.Widget" />

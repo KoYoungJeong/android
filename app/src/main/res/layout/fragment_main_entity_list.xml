@@ -12,7 +12,5 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:choiceMode="singleChoice"
-        android:divider="@null"
-        android:dividerHeight="0dp"
         android:scrollbars="none" />
 </LinearLayout>

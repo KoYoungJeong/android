@@ -142,7 +142,7 @@ public class FormattedEntity {
         if (isPublicTopic()) {
             return R.drawable.jandi_icon_topic;
         } else if (isPrivateGroup()) {
-            return R.drawable.jandi_icon_privategroup;
+            return R.drawable.jandi_private_topic_icon;
         } else if (isDummy()) {
             return getDummyImageRes();
         } else {

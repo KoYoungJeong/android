@@ -11,12 +11,16 @@
     <EditText
         android:id="@+id/et_dialog_input_text"
         android:layout_width="match_parent"
-        android:layout_height="42dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edit_under_line"
+        android:gravity="bottom"
         android:hint="@string/jandi_profile_email"
         android:imeOptions="actionDone"
         android:inputType="textEmailAddress"
         android:maxLines="1"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:text="asdasd" />
 
 </LinearLayout>
