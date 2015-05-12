@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.dialogs.profile;
 
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -164,7 +165,11 @@ public class UserInfoDialogFragment extends DialogFragment {
             lyUserPhone.setOnClickListener(view -> {
                 String uri = "tel:" + userPhoneNumber.replaceAll("[^0-9|\\+]", "");
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(uri));
-                startActivity(intent);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                }
             });
         }
 

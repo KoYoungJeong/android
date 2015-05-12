@@ -307,7 +307,9 @@ public class EditTextDialogFragment extends DialogFragment {
                 break;
             case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
             case ACTION_MODIFY_PROFILE_MEMBER_NAME:
-                confirm.setEnabled(inputLength < MAX_LENGTH_OF_ACCOUNT_NAME && !editable.equals(currentMessage));
+                confirm.setEnabled(inputLength > 0
+                        && inputLength < MAX_LENGTH_OF_ACCOUNT_NAME
+                        && !editable.equals(currentMessage));
                 break;
             case ACTION_FORGOT_PASSWORD:
             case ACTION_NEW_EMAIL:
