@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="300dp"
@@ -14,12 +15,13 @@
         android:layout_height="48dp"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/edit_under_line"
+        android:background="@drawable/ab_transparent_dark_holo"
         android:gravity="bottom"
         android:hint="@string/jandi_profile_email"
         android:imeOptions="actionDone"
         android:inputType="textEmailAddress"
         android:maxLines="1"
+        android:paddingBottom="8dp"
         android:singleLine="true"
         android:text="asdasd" />
 

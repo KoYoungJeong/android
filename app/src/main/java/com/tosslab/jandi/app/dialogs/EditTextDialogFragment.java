@@ -246,6 +246,34 @@ public class EditTextDialogFragment extends DialogFragment {
             }
         });
 
+        int maxLength = getEditTextMaxLength(purpose);
+
+        if (maxLength > 0) {
+            input.setMaxEms(maxLength);
+        }
+
+    }
+
+    private int getEditTextMaxLength(int purpose) {
+
+        switch (purpose) {
+            case ACTION_CREATE_TOPIC:
+            case ACTION_MODIFY_TOPIC:
+                return MAX_LENGTH_OF_TOPIC_NAME;
+            case ACTION_MODIFY_PROFILE_STATUS:
+                return MAX_LENGTH_OF_STATUS;
+            case ACTION_MODIFY_PROFILE_PHONE:
+                return MAX_LENGTH_OF_PHONE;
+            case ACTION_MODIFY_PROFILE_DIVISION:
+                return MAX_LENGTH_OF_DIVISION;
+            case ACTION_MODIFY_PROFILE_POSITION:
+                return MAX_LENGTH_OF_POSITION;
+            case ACTION_MODIFY_PROFILE_ACCOUNT_NAME:
+            case ACTION_MODIFY_PROFILE_MEMBER_NAME:
+                return MAX_LENGTH_OF_ACCOUNT_NAME;
+            default:
+                return -1;
+        }
     }
 
     private void setupPositiveButton(String editable, int purpose, String currentMessage) {
@@ -343,4 +371,6 @@ public class EditTextDialogFragment extends DialogFragment {
         }
 
     }
+
+
 }
