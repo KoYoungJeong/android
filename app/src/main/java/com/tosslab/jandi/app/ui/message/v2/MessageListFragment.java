@@ -1033,6 +1033,8 @@ public class MessageListFragment extends Fragment {
 
     public void onEvent(TopicInfoUpdateEvent event) {
         if (event.getId() == entityId) {
+            FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            isFavorite = entity.isStarred;
             refreshActionbar();
             if (isForeground) {
                 closeDialogFragment();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -14,6 +15,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -41,13 +44,20 @@ class FavoriteTriggerCommand implements MenuCommand {
     private void triggerFavorite(JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations, MenuItem item) {
         if (chattingInfomations.isFavorite) {
             chattingInfomations.isFavorite = false;
-            disableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
         } else {
             chattingInfomations.isFavorite = true;
-            enableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
         }
+
+        EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred = chattingInfomations.isFavorite;
+        EventBus.getDefault().post(new TopicInfoUpdateEvent(chattingInfomations.entityId));
+
+
+        if (chattingInfomations.isFavorite) {
+            enableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
+        } else {
+            disableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
+        }
+
     }
 
     @Background
@@ -57,7 +67,6 @@ class FavoriteTriggerCommand implements MenuCommand {
                 mJandiEntityClient.enableFavorite(chattingInfomations.entityId);
             }
             enableFavoriteSucceed();
-            EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred = !EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred;
         } catch (RestClientException e) {
             log.error("enable favorite failed", e);
         } catch (Exception e) {
@@ -76,11 +85,10 @@ class FavoriteTriggerCommand implements MenuCommand {
             if (chattingInfomations.entityId > 0) {
                 mJandiEntityClient.disableFavorite(chattingInfomations.entityId);
             }
-            EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred = !EntityManager.getInstance(activity).getEntityById(chattingInfomations.entityId).isStarred;
         } catch (RestClientException e) {
-            log.error("enable favorite failed", e);
+            log.error("disable favorite failed", e);
         } catch (Exception e) {
-            log.error("enable favorite failed", e);
+            log.error("disable favorite failed", e);
         }
     }
 }
