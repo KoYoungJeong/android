@@ -166,11 +166,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
 
-        if (isInSearchActivity()) {
-            resetFilterLayoutPosition();
-            if (isSearchLayoutFirst) {
-                initSearchLayoutIfFirst();
-            }
+        resetFilterLayoutPosition();
+
+        if (isInSearchActivity() && isSearchLayoutFirst) {
+            initSearchLayoutIfFirst();
         }
 
         initSearchSubject.onNext(-1);
@@ -654,6 +653,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     }
 
     private void resetFilterLayoutPosition() {
+        if (!isInSearchActivity()) {
+            return;
+        }
         if (headerView == null) {
             return;
         }
