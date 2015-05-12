@@ -160,6 +160,7 @@ public class FileHeadManager {
         if (TextUtils.equals(fileMessage.status, "archived")) {
 
             imageViewPhotoFile.setImageResource(R.drawable.jandi_fl_icon_deleted);
+            imageViewPhotoFile.setOnClickListener(null);
             fileInfoLayout.setVisibility(View.GONE);
 
         } else {
