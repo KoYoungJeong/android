@@ -12,6 +12,8 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
@@ -22,11 +24,11 @@ public class JandiMarkerDatabaseManager {
 
     private SQLiteOpenHelper jandiDatabaseOpenHelper;
 
-    private final Object lockObject;
+    private final Lock lock;
 
     private JandiMarkerDatabaseManager(Context context) {
         jandiDatabaseOpenHelper = JandiDatabaseOpenHelper.getInstance(context);
-        lockObject = new Object();
+        lock = new ReentrantLock();
     }
 
     public static JandiMarkerDatabaseManager getInstance(Context context) {
@@ -47,7 +49,10 @@ public class JandiMarkerDatabaseManager {
 
     public int upsertMarkers(ResRoomInfo resRoomInfo) {
 
-        synchronized (lockObject) {
+        lock.lock();
+        try {
+
+
             SQLiteDatabase database = getWriteableDatabase();
 
             String where = DatabaseConsts.RoomsMarker.teamId + " = ? AND " + DatabaseConsts.RoomsMarker.roomId + " = ?";
@@ -97,10 +102,11 @@ public class JandiMarkerDatabaseManager {
             } finally {
                 database.endTransaction();
             }
-
-
             return addedRow;
+        } finally {
+            lock.unlock();
         }
+
     }
 
     public List<ResRoomInfo.MarkerInfo> getMarkers(int teamId, int roomId) {
@@ -156,7 +162,10 @@ public class JandiMarkerDatabaseManager {
 
     public long updateMarker(int teamId, int roomId, int memberId, int lastLinkId) {
 
-        synchronized (lockObject) {
+
+        lock.lock();
+
+        try {
             if (teamId <= 0 || roomId <= 0 || memberId <= 0) {
                 return -1;
             }
@@ -171,6 +180,8 @@ public class JandiMarkerDatabaseManager {
             if (query != null && query.getCount() > 0) {
 
                 if (query.getCount() > 1) {
+                    closeCursor(query);
+
                     database.delete(DatabaseConsts.Table.rooms_marker.name(), where, whereArgs);
 
                     ContentValues contentValue = new ContentValues();
@@ -203,6 +214,9 @@ public class JandiMarkerDatabaseManager {
 
                 return database.insert(DatabaseConsts.Table.rooms_marker.name(), null, contentValue);
             }
+        } finally {
+            lock.unlock();
+
         }
 
     }

@@ -137,12 +137,17 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
         eventHashMap.put("check_connect_team", objects -> {
-            jandiSocketServiceModel.refreshToken();
-            ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
-            if (connectTeam != null) {
-                jandiSocketManager.sendByJson("connect_team", connectTeam);
+            if (jandiSocketServiceModel.refreshToken()) {
+
+                ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
+                if (connectTeam != null) {
+                    jandiSocketManager.sendByJson("connect_team", connectTeam);
+                } else {
+                    connectMonitor.start();
+                }
             } else {
-                connectMonitor.start();
+                connectMonitor.stop();
+                stopSelf();
             }
         });
         eventHashMap.put("connect_team", objects -> connectMonitor.stop());
