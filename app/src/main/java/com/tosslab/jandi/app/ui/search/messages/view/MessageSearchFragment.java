@@ -157,10 +157,12 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     public void onEvent(SelectEntityEvent event) {
         messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName());
+        onSearchHeaderReset();
     }
 
     public void onEvent(SelectMemberEvent event) {
         messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName());
+        onSearchHeaderReset();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -372,6 +374,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     public void onSearchHeaderReset() {
         if (scopeView != null && !isFirstLayout) {
             scopeView.setY(scropMaxY);
+            EventBus.getDefault().post(
+                    new SearchResultScrollEvent(MessageSearchFragment.this.getClass(), -scropMaxY));
         }
     }
 
