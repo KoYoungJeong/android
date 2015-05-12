@@ -34,6 +34,8 @@ public class BodyViewFactory {
                 return new FileCommentViewHolder();
             case Dummy:
                 return new DummyViewHolder();
+            case DummyPure:
+                return new DummyPureViewHolder();
             case Event:
                 return new EventViewHolder();
             case Message:
@@ -92,24 +94,30 @@ public class BodyViewFactory {
 
     public static BodyViewHolder.Type getContentType(ResMessages.Link message, ResMessages.Link beforeMessage) {
 
-        if (message instanceof DummyMessageLink) {
-            return BodyViewHolder.Type.Dummy;
-        }
-
         if (TextUtils.equals(message.status, "event")) {
             return BodyViewHolder.Type.Event;
         }
 
         if (message.message instanceof ResMessages.TextMessage) {
 
+
             if (beforeMessage != null
                     && beforeMessage.message instanceof ResMessages.TextMessage
                     && message.message.writerId == beforeMessage.message.writerId
                     && isSince5min(message.message.updateTime, beforeMessage.message.updateTime)
                     && isSameDay(message, beforeMessage)) {
-                return BodyViewHolder.Type.PureMessage;
+
+                if (message instanceof DummyMessageLink) {
+                    return BodyViewHolder.Type.DummyPure;
+                } else {
+                    return BodyViewHolder.Type.PureMessage;
+                }
             } else {
-                return BodyViewHolder.Type.Message;
+                if (message instanceof DummyMessageLink) {
+                    return BodyViewHolder.Type.Dummy;
+                } else {
+                    return BodyViewHolder.Type.Message;
+                }
             }
 
         } else if (message.message instanceof ResMessages.FileMessage) {
@@ -156,10 +164,10 @@ public class BodyViewFactory {
         }
 
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(message.message.createTime);
+        messageCalendar.setTime(message.message.updateTime);
 
         Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeMessage.message.createTime);
+        beforeCalendar.setTime(beforeMessage.message.updateTime);
 
         int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);

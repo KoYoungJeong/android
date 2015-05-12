@@ -190,9 +190,9 @@ public class MessageListFragment extends Fragment {
                             break;
                         case Send:
                             SendingMessage data = (SendingMessage) messageQueue.getData();
-                            boolean isSuccess = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
-                            if (isSuccess) {
-                                messageListPresenter.deleteDummyMessageAtList(data.getLocalId());
+                            int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            if (linkId  > 0) {
+                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
                                 EventBus.getDefault().post(new RefreshNewMessageEvent());
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);

@@ -442,13 +442,16 @@ public class MessageListPresenter {
 
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
-
+        dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
+        dummyMessageLink.message.updateTime = new Date();
         dummyMessageLink.message.writer.name = name;
         dummyMessageLink.message.writer.u_photoUrl = userLargeProfileUrl;
 
 
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();
+
+        messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

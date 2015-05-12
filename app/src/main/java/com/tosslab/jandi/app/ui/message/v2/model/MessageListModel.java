@@ -157,22 +157,22 @@ public class MessageListModel {
         return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
-    public boolean sendMessage(long localId, String message) {
+    public int sendMessage(long localId, String message) {
         SendingMessage sendingMessage = new SendingMessage(localId, message);
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
-            return true;
+            return resCommon.id;
         } catch (JandiNetworkException e) {
             logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
-            return false;
+            return -1;
         } catch (Exception e) {
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
-            return false;
+            return -1;
         }
     }
 
