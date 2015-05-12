@@ -74,10 +74,10 @@ Welcome to JANDI"</string>
     <string name="jandi_tutorial_welcome">"Welcome to JANDI"</string>
     <string name="jandi_tutorial_welcome_message">"Our mission is to make your working life simpler, more productive, and more enjoyable, starting with collaboration.
 
-We combined everything you love about messaging apps and cloud storage with powerful search functionality, and are putting it all in the palm of your hand."</string>
-    <string name="jandi_tutorial_topic">"Bring Your Entire Team Together"</string>
+We combined everything you love about messaging apps and cloud storage with powerful search functionality, and put it in the palm of your hand."</string>
+    <string name="jandi_tutorial_topic">"Connect and Engage with Your Entire Team"</string>
     <string name="jandi_tutorial_topic_message">"Open communication channels across the organization with firm-wide topics. Share industry knowledge with functional topics. And centralize your communications around projects in private dedicated spaces."</string>
-    <string name="jandi_tutorial_file">"Upload Files with Just a Few Taps"</string>
+    <string name="jandi_tutorial_file">"Upload and Share Files with a Few Taps"</string>
     <string name="jandi_tutorial_file_message">"Share documents, images, and any other files right from your phone or JANDI file drawer.
 
 All of your content is stored and indexed automatically so you can easily find what you're looking for down the road."</string>
@@ -370,7 +370,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_disabled_team">You are a disabled member of %1$s. Please contact the team administrator.</string>
     <string name="jandi_joined_team">You have already joined %1$s. Please check your team list.</string>
     <string name="jandi_expired_invitation_link">This invitation has expired. Please request a new invitation from the team member who invited you.</string>
-    <string name="jandi_invite_app_not_installed">The app is not installed on your device. The invitation link has been copied to the clipboard. </string>
+    <string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
     <string name="jandi_invite_member">"Invite Members"</string>
 
     <string name="jandi_google_docs">Google Docs</string>
