@@ -42,13 +42,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/layout_search_bar"
-        android:background="@color/white" />
+        android:background="@color/white"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/list_chat_choose"
         android:layout_alignBottom="@+id/list_chat_choose"
+        android:layout_alignTop="@+id/list_chat_choose"
         android:gravity="center">
 
         <include

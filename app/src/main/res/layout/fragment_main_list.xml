@@ -4,15 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/jandi_entities_bg"
     android:orientation="vertical"
-    tools:context=".MainChannelListFragment" >
+    tools:context=".MainChannelListFragment">
+
     <ExpandableListView
         android:id="@+id/main_exlist_entities"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:groupIndicator="@null"
-        android:choiceMode="singleChoice"
         android:background="@color/white"
-        android:divider="@color/jandi_entities_divider"
-        android:dividerHeight="1dp"
+        android:choiceMode="singleChoice"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:groupIndicator="@null"
         android:scrollbars="none" />
 </LinearLayout>
