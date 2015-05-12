@@ -57,7 +57,7 @@ public class FileDetailCommentView extends LinearLayout {
 
     public void bind(ResMessages.CommentMessage commentMessage) {
         // 프로필
-        final FormattedEntity writer = EntityManager.getInstance(mContext).getEntityById(commentMessage.writer.id);
+        final FormattedEntity writer = EntityManager.getInstance(mContext).getEntityById(commentMessage.writerId);
         
         String profileUrl = writer.getUserSmallProfileUrl();
         EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());

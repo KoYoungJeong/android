@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.message.to;
 
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.Date;
@@ -19,8 +18,6 @@ public class DummyMessageLink extends ResMessages.Link {
         ResMessages.TextMessage textMessage = new ResMessages.TextMessage();
         textMessage.content = new ResMessages.TextContent();
         textMessage.content.body = message;
-
-        textMessage.writer = new ResLeftSideMenu.User();
 
         this.time = new Date(System.currentTimeMillis());
         this.message = textMessage;

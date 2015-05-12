@@ -300,11 +300,12 @@ public class MessageListModel {
 
     public List<ResMessages.Link> getDummyMessages(int teamId, int entityId, String name, String userLargeProfileUrl) {
         List<ResMessages.Link> sendMessage = JandiMessageDatabaseManager.getInstance(activity).getSendMessage(teamId, entityId);
+        int id = EntityManager.getInstance(activity).getMe().getId();
         for (ResMessages.Link link : sendMessage) {
-            link.message.writer = new ResLeftSideMenu.User();
-            link.message.writer.name = name;
+//            link.message.writer = new ResLeftSideMenu.User();
+//            link.message.writer.name = name;
 
-            link.message.writer.u_photoUrl = userLargeProfileUrl;
+            link.message.writerId = id;
         }
         return sendMessage;
     }

@@ -97,7 +97,6 @@ public class ResMessages {
     public static class OriginalMessage {
         public int id;
         public int teamId;
-        public ResLeftSideMenu.User writer;
         public int writerId;
         public Date createTime;
         public Date updateTime;
@@ -113,7 +112,6 @@ public class ResMessages {
             return "OriginalMessage{" +
                     "id=" + id +
                     ", teamId=" + teamId +
-                    ", writer=" + writer +
                     ", writerId=" + writerId +
                     ", createTime=" + createTime +
                     ", updateTime=" + updateTime +

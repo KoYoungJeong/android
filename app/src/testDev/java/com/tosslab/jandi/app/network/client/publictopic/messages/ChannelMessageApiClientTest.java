@@ -147,7 +147,7 @@ public class ChannelMessageApiClientTest {
         ResMessages.Link myMessage = null;
 
         for (ResMessages.Link message : publicTopicMessages.updateInfo.messages) {
-            if (message.message != null && message.message.writer.id == sideMenu.user.id) {
+            if (message.message != null && message.message.writerId == sideMenu.user.id) {
                 myMessage = message;
                 break;
             }
@@ -178,13 +178,11 @@ public class ChannelMessageApiClientTest {
         ResMessages.Link myMessage = null;
 
         for (ResMessages.Link message : publicTopicMessages.updateInfo.messages) {
-            if (message.message != null && message.message.writer.id == sideMenu.user.id) {
+            if (message.message != null && message.message.writerId == sideMenu.user.id) {
                 myMessage = message;
                 break;
             }
         }
-
-        System.out.printf("%s : %s\n", myMessage.message.writer.name, ((ResMessages.TextMessage) myMessage.message).content.body);
 
         ResCommon resCommon = null;
         try {

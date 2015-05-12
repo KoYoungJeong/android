@@ -276,7 +276,12 @@ public class MessageListPresenter {
     }
 
     public int getFirstVisibleItemTop() {
-        return messageListView.getLayoutManager().getChildAt(0).getTop();
+        View childAt = messageListView.getLayoutManager().getChildAt(0);
+        if (childAt != null) {
+            return childAt.getTop();
+        } else {
+            return 0;
+        }
     }
 
     @UiThread
@@ -444,9 +449,6 @@ public class MessageListPresenter {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
         dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
         dummyMessageLink.message.updateTime = new Date();
-        dummyMessageLink.message.writer.name = name;
-        dummyMessageLink.message.writer.u_photoUrl = userLargeProfileUrl;
-
 
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();
@@ -504,8 +506,10 @@ public class MessageListPresenter {
             return;
         }
 
-        previewNameView.setText(item.message.writer.name);
-        String url = item.message.writer.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl)) ? item.message.writer.u_photoThumbnailUrl.smallThumbnailUrl : item.message.writer.u_photoUrl;
+        FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(item.message.writerId);
+        previewNameView.setText(entityById.getName());
+
+        String url = entityById.getUser().u_photoThumbnailUrl != null && !(TextUtils.isEmpty(entityById.getUser().u_photoThumbnailUrl.smallThumbnailUrl)) ? entityById.getUser().u_photoThumbnailUrl.smallThumbnailUrl : entityById.getUser().u_photoUrl;
         Ion.with(previewProfileView)
                 .transform(new IonCircleTransform())
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);

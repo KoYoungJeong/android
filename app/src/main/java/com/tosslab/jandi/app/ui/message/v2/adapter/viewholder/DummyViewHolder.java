@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -40,7 +42,9 @@ public class DummyViewHolder implements BodyViewHolder {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        String profileUrl = ((dummyMessageLink.message.writer.u_photoThumbnailUrl != null) && TextUtils.isEmpty(dummyMessageLink.message.writer.u_photoThumbnailUrl.largeThumbnailUrl)) ? dummyMessageLink.message.writer.u_photoThumbnailUrl.largeThumbnailUrl : dummyMessageLink.message.writer.u_photoUrl;
+        FormattedEntity entity = EntityManager.getInstance(profileImageView.getContext()).getEntityById(dummyMessageLink.message.writerId);
+
+        String profileUrl = ((entity.getUser().u_photoThumbnailUrl != null) && TextUtils.isEmpty(entity.getUser().u_photoThumbnailUrl.largeThumbnailUrl)) ? entity.getUser().u_photoThumbnailUrl.largeThumbnailUrl : entity.getUser().u_photoUrl;
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
@@ -48,7 +52,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        nameTextView.setText(dummyMessageLink.message.writer.name);
+        nameTextView.setText(entity.getName());
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;

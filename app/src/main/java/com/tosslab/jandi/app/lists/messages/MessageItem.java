@@ -28,12 +28,10 @@ public class MessageItem {
     private ResMessages.Link mLink;
     private ResMessages.OriginalMessage mMessage;
     //    private ResLeftSideMenu.User mWriter;
-    private FormattedEntity mWriter;
 
     public MessageItem(ResMessages.Link message) {
         mLink = message;
         mMessage = mLink.message;
-        mWriter = new FormattedEntity(mMessage.writer);
         mCurrentDate = null;
         isDateDivider = false;
         isNested = false;
@@ -71,9 +69,6 @@ public class MessageItem {
     }
 
     public String getFeedbackWriterName() {
-        if (mLink.feedback != null) {
-            return mLink.feedback.writer.name;
-        }
         return null;
     }
 
@@ -85,19 +80,19 @@ public class MessageItem {
     }
 
     public FormattedEntity getUser() {
-        return mWriter;
+        return null;
     }
 
     public String getUserName() {
-        return mWriter.getName();
+        return null;
     }
 
     public int getUserId() {
-        return mWriter.getUser().id;
+        return -1;
     }
 
     public String getUserProfileUrl() {
-        return mWriter.getUserSmallProfileUrl();
+        return null;
     }
 
     public int getContentType() {

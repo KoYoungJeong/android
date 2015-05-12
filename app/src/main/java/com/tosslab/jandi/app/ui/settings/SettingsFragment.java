@@ -25,6 +25,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -130,6 +131,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             JandiSocketService.stopSocketServiceIfRunning(getActivity());
 
+            BadgeUtils.setBadge(getActivity(), 0);
             ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));
 
         } catch (Exception e) {

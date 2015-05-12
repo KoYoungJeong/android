@@ -140,7 +140,7 @@ public class FileHeadManager {
 
     public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
-        FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writer.id);
+        FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writerId);
         String profileUrl = writer.getUserSmallProfileUrl();
         Ion.with(imageViewUserProfile)
                 .placeholder(R.drawable.jandi_profile)
