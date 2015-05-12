@@ -365,7 +365,7 @@ JANDIへようこそ"</string>
     <string name="jandi_invite_line">LINE</string>
     <string name="jandi_invite_wechat">WeChat</string>
     <string name="jandi_invite_facebook_messenger">Facebookメッセンジャー</string>
-    <string name="jandi_invite_copy_link">Copy Link</string>
+    <string name="jandi_invite_copy_link">リンクをコピー</string>
     <string name="jandi_invite_succes_copy_link">"あなたのチームへの招待リンクがコピーされました。チームに招待したい人に送りましょう"</string>
     <string name="jandi_invite_succes_send">"招待メールが以下のアドレスに正常に送信されました"</string>
     <string name="jandi_invite_contents">" があなたをJANDIに招待しました。以下のリンクをクリックしてチームに参加しましょう！"</string>
