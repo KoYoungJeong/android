@@ -8,9 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        style="@style/Jandi.Default.ActionBar"
         android:visibility="visible" />
 
     <FrameLayout

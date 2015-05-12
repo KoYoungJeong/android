@@ -60,8 +60,8 @@ public class MemberSelectDialogAdapter extends BaseAdapter {
 
         // 프로필 사진
         Ion.with(holder.imageView)
-                .placeholder(R.drawable.jandi_icon_directmsg)
-                .error(R.drawable.jandi_icon_directmsg)
+                .placeholder(R.drawable.jandi_profile_comment)
+                .error(R.drawable.jandi_profile_comment)
                 .transform(new IonCircleTransform())
                 .load(user.getPhoto());
 

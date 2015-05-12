@@ -23,7 +23,7 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 11. 13..
  */
 public class TeamCreationDialogFragment extends DialogFragment {
-    private final static String ARG_EMAIL    = "email";
+    private final static String ARG_EMAIL = "email";
 
     public static TeamCreationDialogFragment newInstance(String email) {
         TeamCreationDialogFragment frag = new TeamCreationDialogFragment();
@@ -52,8 +52,8 @@ public class TeamCreationDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_fragment_input_text, null);
 
-        final Button buttonTeamCreate
-                = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
+        final Button buttonTeamCreate = null;
+//                = (Button) mainView.findViewById(R.id.btn_dialog_input_confirm);
         final EditText editTextId = (EditText) mainView.findViewById(R.id.et_dialog_input_text);
         if (email.length() > 0) {
             if (FormatConverter.isInvalidEmailString(email) == false) {
@@ -64,10 +64,12 @@ public class TeamCreationDialogFragment extends DialogFragment {
 
         editTextId.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
+            public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            }
 
             @Override
             public void afterTextChanged(Editable editable) {
