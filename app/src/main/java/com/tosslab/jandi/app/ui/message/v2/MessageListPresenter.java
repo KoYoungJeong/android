@@ -456,10 +456,9 @@ public class MessageListPresenter {
         messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void updateDummyMessageState(long localId, SendingState state) {
         messageListAdapter.updateDummyMessageState(localId, state);
-        messageListAdapter.notifyDataSetChanged();
+        justRefresh();
     }
 
     @UiThread
@@ -620,7 +619,7 @@ public class MessageListPresenter {
         return ((LinearLayoutManager) messageListView.getLayoutManager()).findLastVisibleItemPosition();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void justRefresh() {
         messageListAdapter.notifyDataSetChanged();
     }

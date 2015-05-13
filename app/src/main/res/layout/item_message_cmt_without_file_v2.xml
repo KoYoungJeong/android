@@ -79,13 +79,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txt_message_nested_comment_user_name"
+            android:layout_marginRight="30dp"
             android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@+id/iv_img_file_arrow"
             android:focusable="false"
             android:text="Nested comment"
             android:textColor="@color/jandi_messages_content"
             android:textSize="@dimen/jandi_messages_comment" />
 
         <ImageView
+            android:id="@+id/iv_img_file_arrow"
             android:layout_width="@dimen/jandi_messages_arrow_right_width"
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"

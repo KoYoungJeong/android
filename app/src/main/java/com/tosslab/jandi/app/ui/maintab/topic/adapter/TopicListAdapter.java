@@ -179,7 +179,7 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
 
         private void init() {
             imageViewFavorite.setVisibility(View.INVISIBLE);
-            textViewBadgeCount.setVisibility(View.INVISIBLE);
+            textViewBadgeCount.setVisibility(View.GONE);
             disableCoverView.setVisibility(View.INVISIBLE);
             imageViewIcon.setImageResource(R.drawable.jandi_topic_icon);
         }

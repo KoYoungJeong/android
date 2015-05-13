@@ -163,10 +163,22 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     public void addAll(int position, List<ResMessages.Link> messages) {
 
         // delete dummy message by same messageId
-        for (int idx = 0; idx < messages.size(); idx++) {
+        for (int idx = messages.size() - 1; idx >= 0; --idx) {
             int dummyMessagePosition = getDummyMessagePositionByMessageId(messages.get(idx).messageId);
             if (dummyMessagePosition >= 0) {
                 messageList.remove(dummyMessagePosition);
+            } else {
+                break;
+            }
+        }
+
+        for (int idx = messageList.size() - 1; idx >= 0; idx--) {
+            ResMessages.Link link = messageList.get(idx);
+            if (link instanceof DummyMessageLink) {
+                DummyMessageLink dummyLink = (DummyMessageLink) link;
+                if (dummyLink.getSendingState() == SendingState.Complete) {
+                    messageList.remove(idx);
+                }
             } else {
                 break;
             }
@@ -286,9 +298,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     }
 
     public void addDummyMessage(DummyMessageLink dummyMessageLink) {
-        synchronized (messageList) {
-            messageList.add(dummyMessageLink);
-        }
+        messageList.add(dummyMessageLink);
     }
 
     public void updateMessageId(long localId, int id) {
