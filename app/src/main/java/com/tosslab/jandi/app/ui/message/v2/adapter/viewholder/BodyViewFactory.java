@@ -104,7 +104,7 @@ public class BodyViewFactory {
             if (beforeMessage != null
                     && beforeMessage.message instanceof ResMessages.TextMessage
                     && message.message.writerId == beforeMessage.message.writerId
-                    && isSince5min(message.message.updateTime, beforeMessage.message.updateTime)
+                    && isSince5min(message.message.createTime, beforeMessage.message.createTime)
                     && isSameDay(message, beforeMessage)) {
 
                 if (message instanceof DummyMessageLink) {
@@ -164,10 +164,10 @@ public class BodyViewFactory {
         }
 
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(message.message.updateTime);
+        messageCalendar.setTime(message.message.createTime);
 
         Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeMessage.message.updateTime);
+        beforeCalendar.setTime(beforeMessage.message.createTime);
 
         int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);

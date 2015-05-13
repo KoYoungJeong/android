@@ -410,7 +410,7 @@ public class MessageListPresenter {
         if (position > 0) {
             ResMessages.Link item = messageListAdapter.getItem(position);
             item.message.status = archivedStatus;
-            item.message.updateTime = new Date();
+            item.message.createTime = new Date();
         }
 
         List<Integer> commentIndexes = messageListAdapter.indexByFeedbackId(messageId);
@@ -418,7 +418,7 @@ public class MessageListPresenter {
         for (Integer commentIndex : commentIndexes) {
             ResMessages.Link item = messageListAdapter.getItem(commentIndex);
             item.feedback.status = archivedStatus;
-            item.feedback.updateTime = new Date();
+            item.feedback.createTime = new Date();
         }
 
         if (position > 0 || commentIndexes.size() > 0) {
@@ -448,7 +448,7 @@ public class MessageListPresenter {
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
         dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
-        dummyMessageLink.message.updateTime = new Date();
+        dummyMessageLink.message.createTime = new Date();
 
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();

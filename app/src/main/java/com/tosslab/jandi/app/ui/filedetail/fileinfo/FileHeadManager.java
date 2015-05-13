@@ -154,7 +154,7 @@ public class FileHeadManager {
         textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
         // 파일
-        String createTime = DateTransformator.getTimeDifference(fileMessage.updateTime);
+        String createTime = DateTransformator.getTimeDifference(fileMessage.createTime);
         textViewFileCreateDate.setText(createTime);
         // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {

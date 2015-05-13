@@ -270,7 +270,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 }
             }
 
-            Collections.sort(resFileDetail.messageDetails, (lhs, rhs) -> lhs.updateTime.compareTo(rhs.updateTime));
+            Collections.sort(resFileDetail.messageDetails, (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
 
             getFileDetailSucceed(resFileDetail, isSendAction);
 
