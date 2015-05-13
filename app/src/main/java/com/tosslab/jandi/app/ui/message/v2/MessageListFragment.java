@@ -944,11 +944,6 @@ public class MessageListFragment extends Fragment {
         if (isFromSearch) {
             return;
         }
-
-        if (!isForeground) {
-            return;
-        }
-
         boolean isSameRoomId = false;
         String messageType = event.getMessageType();
 
@@ -972,8 +967,15 @@ public class MessageListFragment extends Fragment {
                 TextUtils.equals(messageType, "topic_join") ||
                 TextUtils.equals(messageType, "topic_invite")) {
 
+            if (!isForeground) {
+                return;
+            }
             updateRoomInfo();
         } else {
+            if (!isForeground) {
+                messageListModel.updateMarkerInfo(teamId, roomId);
+                return;
+            }
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
 
