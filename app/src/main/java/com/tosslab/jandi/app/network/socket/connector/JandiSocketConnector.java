@@ -25,6 +25,7 @@ public class JandiSocketConnector implements SocketConnector {
     public Emitter connect(String url, EventListener disconnectListener) {
         if (socket != null && socket.connected()) {
             connectingOrConnected = true;
+            return socket;
         }
 
         if (socket == null) {
