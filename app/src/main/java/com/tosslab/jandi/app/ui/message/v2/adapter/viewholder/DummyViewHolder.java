@@ -10,8 +10,10 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 
 /**
@@ -43,14 +45,15 @@ public class DummyViewHolder implements BodyViewHolder {
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
         FormattedEntity entity = EntityManager.getInstance(profileImageView.getContext()).getEntityById(dummyMessageLink.message.writerId);
+        ResLeftSideMenu.User user = entity.getUser();
 
-        String profileUrl = ((entity.getUser().u_photoThumbnailUrl != null) && TextUtils.isEmpty(entity.getUser().u_photoThumbnailUrl.largeThumbnailUrl)) ? entity.getUser().u_photoThumbnailUrl.largeThumbnailUrl : entity.getUser().u_photoUrl;
+        String profileUrl = ((user.u_photoThumbnailUrl != null) && TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl)) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl;
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
-                .load(profileUrl);
+                .load(BitmapUtil.getFileeUrl(profileUrl));
 
         nameTextView.setText(entity.getName());
 

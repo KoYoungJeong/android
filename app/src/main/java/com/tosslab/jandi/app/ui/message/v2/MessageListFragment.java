@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -179,6 +180,7 @@ public class MessageListFragment extends Fragment {
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
+                            Log.d("INFO", "New Start~!");
                             if (newsMessageLoader != null) {
                                 MessageState data = (MessageState) messageQueue.getData();
                                 int lastUpdateLinkId = data.getLastUpdateLinkId();
@@ -187,8 +189,10 @@ public class MessageListFragment extends Fragment {
                                 }
                                 newsMessageLoader.load(lastUpdateLinkId);
                             }
+                            Log.d("INFO", "New End~!");
                             break;
                         case Send:
+                            Log.d("INFO", "Send Start~!");
                             SendingMessage data = (SendingMessage) messageQueue.getData();
                             int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
                             if (linkId  > 0) {
@@ -197,6 +201,7 @@ public class MessageListFragment extends Fragment {
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
+                            Log.d("INFO", "Send End~!");
                             break;
                     }
                 }, throwable -> {
@@ -444,6 +449,7 @@ public class MessageListFragment extends Fragment {
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
+        messageListPresenter.justRefresh();
     }
 
     @Override
@@ -521,14 +527,14 @@ public class MessageListFragment extends Fragment {
         onOptionsItemSelected(new MenuBuilder(getActivity()).add(0, R.id.action_entity_invite, 0, ""));
     }
 
-    public void onEventMainThread(SendCompleteEvent event) {
+    public void onEvent(SendCompleteEvent event) {
         if (!isForeground) {
             return;
         }
         messageListPresenter.updateMessageIdAtSendingMessage(event.getLocalId(), event.getId());
     }
 
-    public void onEventMainThread(SendFailEvent event) {
+    public void onEvent(SendFailEvent event) {
         if (!isForeground) {
             return;
         }

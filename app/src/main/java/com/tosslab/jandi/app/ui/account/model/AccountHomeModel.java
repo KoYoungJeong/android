@@ -123,7 +123,7 @@ public class AccountHomeModel {
         BadgeUtils.setBadge(context, totalUnreadCount);
 
         EntityManager entityManager = EntityManager.getInstance(context);
-        entityManager.refreshEntity(context);
+        entityManager.refreshEntity(entityInfo);
         return entityManager;
     }
 

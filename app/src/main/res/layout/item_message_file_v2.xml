@@ -105,7 +105,9 @@
             android:id="@+id/txt_message_common_file_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="30dp"
             android:layout_marginTop="5dp"
+            android:layout_toLeftOf="@+id/iv_img_file_arrow"
             android:layout_toRightOf="@id/img_message_common_file"
             android:text="file name"
             android:textColor="@color/jandi_messages_file_name"
@@ -124,6 +126,7 @@
             android:textSize="12dp" />
 
         <ImageView
+            android:id="@+id/iv_img_file_arrow"
             android:layout_width="@dimen/jandi_messages_arrow_right_width"
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"

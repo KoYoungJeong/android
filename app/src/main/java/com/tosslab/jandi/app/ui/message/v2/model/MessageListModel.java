@@ -59,6 +59,7 @@ import java.io.File;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -302,10 +303,9 @@ public class MessageListModel {
         List<ResMessages.Link> sendMessage = JandiMessageDatabaseManager.getInstance(activity).getSendMessage(teamId, entityId);
         int id = EntityManager.getInstance(activity).getMe().getId();
         for (ResMessages.Link link : sendMessage) {
-//            link.message.writer = new ResLeftSideMenu.User();
-//            link.message.writer.name = name;
 
             link.message.writerId = id;
+            link.message.updateTime = new Date();
         }
         return sendMessage;
     }

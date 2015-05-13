@@ -52,7 +52,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = builder.length();
-        builder.append(DateTransformator.getTimeStringForSimple(link.message.updateTime));
+        builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
         int endIndex = builder.length();
 
         MessageSpannable spannable =
