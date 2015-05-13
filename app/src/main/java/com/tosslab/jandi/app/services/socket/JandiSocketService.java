@@ -172,8 +172,6 @@ public class JandiSocketService extends Service {
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
 
-//        unregisterReceiver(connectReceiver);
-
         for (String key : eventHashMap.keySet()) {
             jandiSocketManager.unregister(key, eventHashMap.get(key));
         }
@@ -183,8 +181,6 @@ public class JandiSocketService extends Service {
         jandiSocketServiceModel.stopMarkerObserver();
 
         super.onDestroy();
-        Intent intent = new Intent(SocketServiceBroadcastReceiver.ACTION);
-        sendBroadcast(intent);
     }
 
     synchronized private void trySocketConnect() {
