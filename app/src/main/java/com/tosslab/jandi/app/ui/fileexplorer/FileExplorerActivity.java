@@ -58,6 +58,7 @@ public class FileExplorerActivity extends AppCompatActivity {
         }
     };
     private FileExplorerModel fileExplorerModel;
+    private boolean initSpinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,9 @@ public class FileExplorerActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .add(R.id.file_explorer_container, FileExplorerFragment_.builder().build())
                 .commit();
+
+        initSpinner = true;
+
     }
 
     public void sdcardStateReciver() {
@@ -117,13 +121,16 @@ public class FileExplorerActivity extends AppCompatActivity {
 
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
+        } else if (item.getItemId() == R.id.file_explorer_switch_item) {
+            ((Spinner) findViewById(R.id.file_explorer_spinner_button)).performClick();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         menu.clear();
 
         getMenuInflater().inflate(R.menu.file_explorer_toolbar_switch, menu);
@@ -144,6 +151,10 @@ public class FileExplorerActivity extends AppCompatActivity {
         rootPathSpinner.setOnItemSelectedListener(new SimpleOnItemSelectedListner() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (initSpinner) {
+                    initSpinner = false;
+                    return;
+                }
 
                 if (!toolbarRenewal) {
                     String movePath = null;
@@ -157,11 +168,11 @@ public class FileExplorerActivity extends AppCompatActivity {
                             .currentPath(movePath)
                             .build();
 
+                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
                     getFragmentManager().beginTransaction()
                             .add(R.id.file_explorer_container, fragment, movePath)
                             .commit();
-
-                    getFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 }
 
                 toolbarRenewal = false;
@@ -171,6 +182,7 @@ public class FileExplorerActivity extends AppCompatActivity {
 
         return super.onPrepareOptionsMenu(menu);
     }
+
 
     @Override
     public void onBackPressed() {
