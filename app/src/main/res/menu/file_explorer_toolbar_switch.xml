@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/file_explorer_switch_item"
-        android:title="sdcard change"
-        app:showAsAction="always"
-        app:actionLayout="@layout/switch_toolbar_custom" />
+        android:title="@string/jandi_sdcard_storage"
+        app:actionLayout="@layout/switch_toolbar_custom"
+        app:showAsAction="always" />
 </menu>
