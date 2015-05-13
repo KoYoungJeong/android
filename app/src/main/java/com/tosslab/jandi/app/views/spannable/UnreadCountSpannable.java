@@ -62,7 +62,7 @@ public class UnreadCountSpannable extends ImageSpan {
 
             float contentHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, res.getDisplayMetrics());
             float contentWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3.67f, res.getDisplayMetrics());
-            float paddingHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, res.getDisplayMetrics());
+            float paddingHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7f, res.getDisplayMetrics());
             float paddingWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7.3f, res.getDisplayMetrics());
 
             int height = (int) (paddingHeight + Math.max(bounds.height(), contentHeight));

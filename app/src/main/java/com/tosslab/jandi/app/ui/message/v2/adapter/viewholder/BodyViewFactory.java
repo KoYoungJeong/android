@@ -146,6 +146,14 @@ public class BodyViewFactory {
 
     private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
 
+        if (beforeMessageTime == null) {
+            beforeMessageTime = new Date();
+        }
+
+        if (currentMessageTime == null) {
+            currentMessageTime = new Date();
+        }
+
         long beforeTime = beforeMessageTime.getTime();
         long currentTime = currentMessageTime.getTime();
 

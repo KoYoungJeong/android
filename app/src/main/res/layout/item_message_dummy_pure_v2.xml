@@ -16,6 +16,7 @@
         android:id="@+id/txt_message_fail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_message_content"
         android:layout_alignTop="@+id/txt_message_content"
         android:layout_marginLeft="20dp"
         android:text="!"
@@ -26,7 +27,8 @@
     <ProgressBar
         android:id="@+id/progress_message"
         android:layout_width="@dimen/jandi_messages_padding_left"
-        android:layout_height="@dimen/jandi_messages_padding_left"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txt_message_content"
         android:layout_alignLeft="@+id/txt_message_fail"
         android:layout_alignTop="@+id/txt_message_content" />
 
