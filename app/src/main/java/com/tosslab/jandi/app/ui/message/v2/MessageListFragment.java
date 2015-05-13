@@ -449,7 +449,6 @@ public class MessageListFragment extends Fragment {
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
-        messageListPresenter.justRefresh();
     }
 
     @Override
