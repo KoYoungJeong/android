@@ -108,13 +108,13 @@ public class MessageViewHolder implements BodyViewHolder {
                     new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
             messageStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            int unreadCount1 = UnreadCountUtil.getUnreadCount(messageTextView.getContext(), teamId, roomId,
+            int unreadCount = UnreadCountUtil.getUnreadCount(messageTextView.getContext(), teamId, roomId,
                     link.id, link.fromEntity, EntityManager.getInstance(messageTextView.getContext()).getMe().getId());
 
-            if (unreadCount1 > 0) {
+            if (unreadCount > 0) {
                 UnreadCountSpannable unreadCountSpannable =
                         UnreadCountSpannable.createUnreadCountSpannable(
-                                messageTextView.getContext(), String.valueOf(unreadCount1));
+                                messageTextView.getContext(), String.valueOf(unreadCount));
                 messageStringBuilder.append("   ")
                         .setSpan(unreadCountSpannable, messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
