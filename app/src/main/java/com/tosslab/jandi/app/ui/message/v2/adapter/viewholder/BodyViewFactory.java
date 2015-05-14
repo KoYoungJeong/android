@@ -171,6 +171,10 @@ public class BodyViewFactory {
             return false;
         }
 
+        if (message.message.createTime == null || beforeMessage.message.createTime == null) {
+            return false;
+        }
+
         Calendar messageCalendar = Calendar.getInstance();
         messageCalendar.setTime(message.message.createTime);
 

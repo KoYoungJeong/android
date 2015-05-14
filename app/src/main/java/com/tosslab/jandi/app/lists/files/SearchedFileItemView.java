@@ -53,9 +53,9 @@ public class SearchedFileItemView extends RelativeLayout {
         String searchedFileName = searchedFile.content.title;
         textViewSearchedFileName.setText(searchedFileName);
 
-        FormattedEntity entityById1 = EntityManager.getInstance(mContext).getEntityById(searchedFile.writerId);
+        FormattedEntity entityById = EntityManager.getInstance(mContext).getEntityById(searchedFile.writerId);
 
-        String searchedFileOwnerName = entityById1.getName();
+        String searchedFileOwnerName = entityById.getName();
         textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
         textViewSearchedFileType.setText(searchedFile.content.ext);
@@ -74,9 +74,6 @@ public class SearchedFileItemView extends RelativeLayout {
             commentImageView.setVisibility(View.INVISIBLE);
             commentTextView.setVisibility(View.INVISIBLE);
         }
-
-        EntityManager entityManager = EntityManager.getInstance(getContext());
-        FormattedEntity entityById = entityManager.getEntityById(searchedFile.writerId);
 
         if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
             textViewSearchedFileOwnerName.setTextColor(getResources().getColor(R.color.jandi_file_search_item_owner_text));

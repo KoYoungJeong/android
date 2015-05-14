@@ -449,6 +449,7 @@ public class MessageListPresenter {
         DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
         dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
         dummyMessageLink.message.createTime = new Date();
+        dummyMessageLink.message.updateTime = new Date();
 
         messageListAdapter.addDummyMessage(dummyMessageLink);
         messageListAdapter.notifyDataSetChanged();

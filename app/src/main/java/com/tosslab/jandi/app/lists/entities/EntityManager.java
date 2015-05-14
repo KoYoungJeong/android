@@ -56,7 +56,9 @@ public class EntityManager {
     private EntityManager(Context context) {
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
-        init(resLeftSideMenu);
+        if (resLeftSideMenu != null) {
+            init(resLeftSideMenu);
+        }
     }
 
     synchronized public static EntityManager getInstance(Context context) {

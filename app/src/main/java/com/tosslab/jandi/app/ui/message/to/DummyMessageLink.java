@@ -18,6 +18,8 @@ public class DummyMessageLink extends ResMessages.Link {
         ResMessages.TextMessage textMessage = new ResMessages.TextMessage();
         textMessage.content = new ResMessages.TextContent();
         textMessage.content.body = message;
+        textMessage.createTime = new Date(System.currentTimeMillis());
+        textMessage.updateTime = new Date(System.currentTimeMillis());
 
         this.time = new Date(System.currentTimeMillis());
         this.message = textMessage;

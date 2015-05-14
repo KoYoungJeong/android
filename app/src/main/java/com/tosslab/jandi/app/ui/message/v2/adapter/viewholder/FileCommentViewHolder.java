@@ -72,7 +72,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
+        String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && !TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
 
         EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
         if (TextUtils.equals(entityManager.getEntityById(fromEntity.id).getUser().status, "enabled")) {

@@ -305,7 +305,7 @@ public class MessageListModel {
         for (ResMessages.Link link : sendMessage) {
 
             link.message.writerId = id;
-            link.message.updateTime = new Date();
+            link.message.createTime = new Date();
         }
         return sendMessage;
     }

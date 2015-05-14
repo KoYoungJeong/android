@@ -7,12 +7,17 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 
+import org.apache.log4j.Logger;
+
 import java.net.URISyntaxException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
  */
 public class JandiSocketConnector implements SocketConnector {
+
+    private static final Logger logger = Logger.getLogger(JandiSocketConnector.class);
+
 
     private Socket socket;
     private boolean connectingOrConnected;
@@ -54,6 +59,14 @@ public class JandiSocketConnector implements SocketConnector {
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
+
+        logger.debug("Disconnect");
+        if (args != null) {
+            for (Object arg : args) {
+                logger.debug("Disconnect Reason : " + arg.toString());
+            }
+        }
+
         connectingOrConnected = false;
         if (disconnectListener != null) {
             disconnectListener.callback(args);
