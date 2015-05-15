@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceBroadcastReceiver;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenter;
 import com.tosslab.jandi.app.ui.account.presenter.AccountHomePresenterImpl;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
@@ -231,7 +232,8 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @Override
     public void moveSelectedTeam(boolean firstJoin) {
         JandiSocketService.stopSocketServiceIfRunning(AccountHomeActivity.this);
-        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
+//        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
+//        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.ACTION));
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

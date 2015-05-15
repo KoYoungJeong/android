@@ -221,7 +221,15 @@
         </activity>
 
         <service android:name=".services.socket.JandiSocketService" />
-
+        <receiver android:name=".services.socket.monitor.SocketServiceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART" />
+            </intent-filter>
+        </receiver>
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
         <receiver
@@ -233,6 +241,9 @@
         </receiver>
 
     </application>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--<uses-permission android:name="ANDROID.PERMISSION.CHANGE_NETWORK_STATE" />-->
 
     // for samsung or sony device to show badge
     <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
