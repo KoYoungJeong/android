@@ -142,8 +142,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             showInvitePopup();
         }
 
-//        JandiSocketService.startSocketServiceIfStop(MainTabActivity.this);
-        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.ACTION));
+        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
     }
 
     private void showInvitePopup() {
@@ -211,6 +210,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        JandiSocketService.stopSocketServiceIfRunning(this);
+        super.onDestroy();
+    }
+
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
@@ -250,7 +255,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @UiThread
     void stopJandiServiceInMainThread() {
         JandiSocketService.stopSocketServiceIfRunning(MainTabActivity.this);
-
     }
 
     @UiThread

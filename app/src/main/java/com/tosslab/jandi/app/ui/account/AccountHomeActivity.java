@@ -233,7 +233,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     public void moveSelectedTeam(boolean firstJoin) {
         JandiSocketService.stopSocketServiceIfRunning(AccountHomeActivity.this);
 //        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
-//        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.ACTION));
+//        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
