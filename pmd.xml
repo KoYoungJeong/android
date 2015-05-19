@@ -57,7 +57,6 @@
         <exclude name="UseLocaleWithCaseConversions" />
         <!-- 메소드에 synchronized 피하라 -->
         <exclude name="AvoidSynchronizedAtMethodLevel" />
-        <exclude name="UseSingleton" />
     </rule>
     <rule ref="rulesets/java/imports.xml">
         <!-- java.lang 이하 구문에 대한 제한..java.lang.Character.UnicodeBlock 때문에 예외 처리 함
