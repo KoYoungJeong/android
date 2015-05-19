@@ -48,6 +48,7 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 
@@ -61,7 +62,6 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.Collections;
@@ -75,7 +75,6 @@ import de.greenrobot.event.EventBus;
 @OptionsMenu(R.menu.file_detail_activity_menu)
 @EActivity(R.layout.activity_file_detail)
 public class FileDetailActivity extends BaseAnalyticsActivity {
-    private final Logger log = Logger.getLogger(FileDetailActivity.class);
     @Extra
     public int fileId;
 
@@ -259,7 +258,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         if (showDialog) {
             fileDetailPresenter.showProgressWheel();
         }
-        log.debug("try to get file detail having ID, " + fileId);
+        LogUtil.d("try to get file detail having ID, " + fileId);
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
 
@@ -278,7 +277,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             fileDetailPresenter.drawFileWriterState(enableUserFromUploder);
 
         } catch (JandiNetworkException e) {
-            log.error("fail to get file detail.", e);
+            LogUtil.e("fail to get file detail.", e);
             if (e.httpStatusCode == 403) {
                 getFileDetailFailed(getString(R.string.jandi_unshared_message));
             } else {
@@ -367,14 +366,14 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.shareMessage(fileId, entityIdToBeShared);
-            log.debug("success to share message");
+            LogUtil.d("success to share message");
             shareMessageSucceed(entityIdToBeShared);
             showMoveDialog(entityIdToBeShared);
         } catch (JandiNetworkException e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
             shareMessageFailed();
         } catch (Exception e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
             shareMessageFailed();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
@@ -459,17 +458,17 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
-            log.debug("success to unshare message");
+            LogUtil.d("success to unshare message");
             trackUnsharingFile(mEntityManager,
                     mEntityManager.getEntityById(entityIdToBeUnshared).type,
                     mResFileDetail);
             fileDetailPresenter.unshareMessageSucceed(entityIdToBeUnshared);
             getFileDetail(false, true);
         } catch (JandiNetworkException e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
             unshareMessageFailed();
         } catch (Exception e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
             unshareMessageFailed();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
@@ -582,10 +581,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         fileDetailPresenter.showProgressWheel();
         try {
             fileDetailModel.deleteFile(fileId);
-            log.debug("success to delete file");
+            LogUtil.d("success to delete file");
             deleteFileDone(true);
         } catch (JandiNetworkException e) {
-            log.error("delete file failed", e);
+            LogUtil.e("delete file failed", e);
             deleteFileDone(false);
         } catch (Exception e) {
             deleteFileDone(false);
@@ -638,11 +637,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             fileDetailModel.sendMessageComment(fileId, message);
 
             getFileDetail(true, true);
-            log.debug("success to send message");
+            LogUtil.d("success to send message");
         } catch (JandiNetworkException e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
         } catch (Exception e) {
-            log.error("fail to send message", e);
+            LogUtil.e("fail to send message", e);
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -704,7 +703,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
             fileDetailPresenter.downloadDone(result, fileType, progressDialog);
         } catch (Exception e) {
-            log.error("Download failed", e);
+            LogUtil.e("Download failed", e);
             fileDetailPresenter.showFailToast(getString(R.string.err_download));
         }
     }
@@ -730,10 +729,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User user = fileDetailModel.getUserProfile(userEntityId);
             fileDetailPresenter.showUserInfoDialog(new FormattedEntity(user));
         } catch (JandiNetworkException e) {
-            log.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {
-            log.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             getProfileFailed();
         }
     }

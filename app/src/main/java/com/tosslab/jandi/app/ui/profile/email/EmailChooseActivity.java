@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -25,7 +26,6 @@ import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -37,8 +37,6 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_email_choose)
 @OptionsMenu(R.menu.email_choose)
 public class EmailChooseActivity extends AppCompatActivity {
-
-    private static final Logger logger = Logger.getLogger(EmailChooseActivity.class);
 
     @Bean
     EmailChoosePresenter emailChoosePresenter;
@@ -86,7 +84,7 @@ public class EmailChooseActivity extends AppCompatActivity {
             emailChoosePresenter.finishWithResultOK();
         } catch (JandiNetworkException e) {
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-            logger.error("Request Choose Email Fail : " + e.getErrorInfo(), e);
+            LogUtil.e("Request Choose Email Fail : " + e.getErrorInfo(), e);
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -199,7 +197,7 @@ public class EmailChooseActivity extends AppCompatActivity {
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
         } catch (JandiNetworkException e) {
-            logger.error("Request Delete Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("Request Delete Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
         } finally {
             emailChoosePresenter.dismissProgressWheel();
@@ -216,7 +214,7 @@ public class EmailChooseActivity extends AppCompatActivity {
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
         } catch (JandiNetworkException e) {
             emailChoosePresenter.showFailToast(getString(R.string.err_team_creation_failed));
-            logger.error("Request New Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("Request New Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }

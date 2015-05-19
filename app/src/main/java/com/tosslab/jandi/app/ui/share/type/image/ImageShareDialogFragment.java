@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.type.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -22,7 +23,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -34,8 +34,6 @@ import java.util.concurrent.ExecutionException;
 @EFragment(R.layout.fragment_share_image)
 public class ImageShareDialogFragment extends DialogFragment {
 
-
-    private static final Logger logger = Logger.getLogger(ImageShareDialogFragment.class);
 
     @FragmentArg
     String uriString;
@@ -128,12 +126,12 @@ public class ImageShareDialogFragment extends DialogFragment {
             JsonObject result = shareModel.uploadFile(imageFile, titleText, commentText, selectedEntity, uploadProgress, isPublicTopic);
             if (result.get("code") == null) {
 
-                logger.error("Upload Success : " + result);
+                LogUtil.e("Upload Success : " + result);
                 imageSharePresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
                 int entityType = 0;
                 shareModel.trackUploadingFile(entityType, result);
             } else {
-                logger.error("Upload Fail : Result : " + result);
+                LogUtil.e("Upload Fail : Result : " + result);
                 imageSharePresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
 
@@ -143,7 +141,7 @@ public class ImageShareDialogFragment extends DialogFragment {
                 imageSharePresenter.showFailToast(getString(R.string.jandi_canceled));
             }
         } catch (Exception e) {
-            logger.error("Upload Error : ", e);
+            LogUtil.e("Upload Error : ", e);
             imageSharePresenter.showFailToast(getString(R.string.err_file_upload_failed));
         } finally {
             imageSharePresenter.dismissDialog(uploadProgress);

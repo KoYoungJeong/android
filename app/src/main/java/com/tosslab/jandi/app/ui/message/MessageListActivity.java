@@ -72,6 +72,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -83,7 +84,6 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -98,7 +98,7 @@ import de.greenrobot.event.EventBus;
 @Deprecated
 @EActivity(R.layout.activity_message_list)
 public class MessageListActivity extends BaseAnalyticsActivity {
-    private final Logger log = Logger.getLogger(MessageListActivity.class);
+
     private final String DIALOG_TAG = "dialog";
     public EntityManager mEntityManager;
     @Extra
@@ -398,13 +398,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
      */
 
     private void pauseUpdateTimer() {
-        log.info("pauseUpdateTimer");
+        LogUtil.i("pauseUpdateTimer");
         if (mTimer != null)
             mTimer.cancel();
     }
 
     private void resumeUpdateTimer() {
-        log.info("resumeUpdateTimer");
+        LogUtil.i("resumeUpdateTimer");
         TimerTask task = new UpdateTimerTask();
         if (mTimer != null) {
             mTimer.cancel();
@@ -433,7 +433,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         } catch (Exception e) {
             // TODO 에러 상황 나누기
             // TODO 네트웍 에러와 세션 만료.
-            log.error("Get entities failed", e);
+            LogUtil.e("Get entities failed", e);
             getEntitiesFailed(getString(R.string.err_expired_session));
         }
     }
@@ -447,7 +447,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             return;
         }
         mChattingInformations.loadExtraInfo();
-        log.debug("entity name from push : " + mChattingInformations.entityName);
+        LogUtil.d("entity name from push : " + mChattingInformations.entityName);
         showActionBarTitle(mChattingInformations.entityName);
         trackSigningInFromPush(mEntityManager);
 
@@ -512,11 +512,11 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 // 메세지를 가져온 기록이 없으면 캐싱된 데이터를 미리 보여줌
                 showCachedMessage();
                 dismissProgressWheel();
-                log.debug("complete get cached data");
+                LogUtil.d("complete get cached data");
             }
 
             ResMessages restResMessages = messageManipulator.getMessages(messageState.getFirstItemId(), 20);
-            log.debug("complete get server data");
+            LogUtil.d("complete get server data");
 
             if (messageState.getFirstItemId() == -1) {
 
@@ -534,12 +534,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 //            messageState.setFirstMessage(restResMessages.isFirst);
 //            // 지금 받은 리스트의 첫번째 entity의 ID를 저장한다.
 //            messageState.setFirstItemId(restResMessages.firstIdOfReceivedList);
-//            log.debug("getMessagesInBackground : " + restResMessages.messageCount
+//            LogUtil.d();("getMessagesInBackground : " + restResMessages.messageCount
 //                    + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
         } catch (JandiNetworkException e) {
-            log.error("getMessagesInBackground : FAILED" + e.httpBody, e);
-            log.error(e.getErrorInfo(), e);
+            LogUtil.e("getMessagesInBackground : FAILED" + e.httpBody, e);
+            LogUtil.e(e.getErrorInfo(), e);
             getMessagesFailed(getString(R.string.err_messages_get));
         } catch (Exception e) {
             getMessagesFailed(getString(R.string.err_messages_get));
@@ -599,7 +599,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         if (errMessage == null) {
             // Success
             int index = messageItemListAdapter.getCount() - lastMessageSize + 1;
-            log.debug("GetFutherMessagesTask : REFRESH at " + index);
+            LogUtil.d("GetFutherMessagesTask : REFRESH at " + index);
             actualListView.setSelectionFromTop(index, 0);
             refreshListAdapter();
             // 리스트에 아이템이 추가되더라도 현재 위치를 고수하도록 이동한다.
@@ -631,7 +631,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 ResUpdateMessages resUpdateMessages = messageManipulator.updateMessages(messageState.getLastUpdateLinkId());
                 int nMessages = resUpdateMessages.updateInfo.messages.size();
                 boolean isEmpty = true;
-                log.info("getUpdateMessagesInBackground : " + nMessages
+                LogUtil.i("getUpdateMessagesInBackground : " + nMessages
                         + " messages updated at ID, " + messageState.getLastUpdateLinkId());
 
                 // 가장 최신의 LinkId를 업데이트한다.
@@ -645,19 +645,19 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
                 getUpdateMessagesDone(isEmpty, doWithResumingUpdateTimer);
             } else {
-                log.warn("getUpdateMessagesInBackground : LastUpdateLinkId = " + messageState.getLastUpdateLinkId());
+                LogUtil.w("getUpdateMessagesInBackground : LastUpdateLinkId = " + messageState.getLastUpdateLinkId());
             }
         } catch (JandiNetworkException e) {
-            log.error("fail to get updated messages", e);
+            LogUtil.e("fail to get updated messages", e);
         } catch (Exception e) {
-            log.error("fail to get updated messages", e);
+            LogUtil.e("fail to get updated messages", e);
         }
 
     }
 
     @UiThread
     public void getUpdateMessagesDone(boolean isEmpty, boolean doWithResumingUpdateTimer) {
-        log.info("getUpdateMessagesDone : and resumeTimer? " + doWithResumingUpdateTimer);
+        LogUtil.i("getUpdateMessagesDone : and resumeTimer? " + doWithResumingUpdateTimer);
         if (isEmpty) {
             // DO NOTHING
             return;
@@ -690,10 +690,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void sendMessageInBackground(String message) {
         try {
             messageManipulator.sendMessage(message);
-            log.debug("sendMessageInBackground : succeed");
+            LogUtil.d("sendMessageInBackground : succeed");
             sendMessageSucceed();
         } catch (JandiNetworkException e) {
-            log.error("sendMessageInBackground : FAILED", e);
+            LogUtil.e("sendMessageInBackground : FAILED", e);
             sendMessageFailed(R.string.err_messages_send);
         } catch (Exception e) {
             sendMessageFailed(R.string.err_messages_send);
@@ -793,13 +793,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageManipulator.deleteMessage(messageId);
-                log.debug("deleteMessageInBackground : succeed");
+                LogUtil.d("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
                 mJandiEntityClient.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
         } catch (JandiNetworkException e) {
-            log.error("deleteMessageInBackground : FAILED", e);
+            LogUtil.e("deleteMessageInBackground : FAILED", e);
             deleteMessageDone(false, getString(R.string.err_messages_delete));
         } catch (Exception e) {
             deleteMessageDone(false, getString(R.string.err_messages_delete));
@@ -830,7 +830,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         Intent intent;
         switch (event.type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                log.info("RequestFileUploadEvent : from gallery");
+                LogUtil.i("RequestFileUploadEvent : from gallery");
                 // Gallery
                 intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -841,7 +841,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 getPictureFromCamera();
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                log.info("RequestFileUploadEvent : from explorer");
+                LogUtil.i("RequestFileUploadEvent : from explorer");
                 intent = new Intent(mContext, FileExplorerActivity.class);
                 startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
                 break;
@@ -853,7 +853,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        log.debug("onActivityResult : " + requestCode + " / " + resultCode);
+        LogUtil.d("onActivityResult : " + requestCode + " / " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
 
 
@@ -869,7 +869,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 }
                 break;
             case JandiConstants.TYPE_FILE_DETAIL_REFRESH:
-                log.info("onActivityResult : Come from FileDetailActivity");
+                LogUtil.i("onActivityResult : Come from FileDetailActivity");
                 // 파일 상세 Activity에서 넘어온 경우, 댓글이 달렸을 수도 있으니 바로 업데이트한다.
                 getUpdateMessagesWithoutResumingUpdateTimer();
                 break;
@@ -915,7 +915,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void uploadFileSucceed(JsonObject result) {
-        log.debug(result);
+        LogUtil.d(result.toString());
         trackUploadingFile(mEntityManager, mChattingInformations.entityType, result);
         ColoredToast.show(mContext, getString(R.string.jandi_file_upload_succeed));
         getUpdateMessagesAndResumeUpdateTimer();
@@ -992,7 +992,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
             modifyEntitySucceed(event.inputName);
         } catch (JandiNetworkException e) {
-            log.error("modify failed " + e.getErrorInfo(), e);
+            LogUtil.e("modify failed " + e.getErrorInfo(), e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 modifyEntityFailed(getString(R.string.err_entity_duplicated_name));
             } else {
@@ -1048,14 +1048,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void deleteTopicSucceed() {
-        log.debug("delete success");
+        LogUtil.d("delete success");
         trackDeletingEntity(mEntityManager, mChattingInformations.entityType);
         finish();
     }
 
     @UiThread
     public void deleteTopicFailed(String errMessage) {
-        log.error("delete failed");
+        LogUtil.e("delete failed");
         ColoredToast.showError(mContext, errMessage);
     }
 
@@ -1071,9 +1071,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 messageManipulator.setMarker(messageState.getLastUpdateLinkId());
             }
         } catch (JandiNetworkException e) {
-            log.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         } catch (Exception e) {
-            log.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         }
     }
 
@@ -1094,10 +1094,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
             getProfileSuccess(user);
         } catch (JandiNetworkException e) {
-            log.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {
-            log.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             getProfileFailed();
         }
     }

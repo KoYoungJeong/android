@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -15,11 +15,11 @@ import com.tosslab.jandi.app.ui.maintab.chat.model.ChatDeleteRequest;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 /**
@@ -27,9 +27,6 @@ import org.json.JSONException;
  */
 @EBean
 class LeaveEntityCommand implements MenuCommand {
-
-    private static final Logger log = Logger.getLogger(LeaveEntityCommand.class);
-
 
     private Activity activity;
     private JandiEntityClient mJandiEntityClient;
@@ -78,10 +75,10 @@ class LeaveEntityCommand implements MenuCommand {
             trackLeavingEntity(chattingInfomations.entityType);
             leaveEntitySucceed();
         } catch (JandiNetworkException e) {
-            log.error("fail to leave cdp");
+            LogUtil.e("fail to leave cdp");
             leaveEntityFailed(activity.getString(R.string.err_entity_leave));
         } catch (Exception e) {
-            log.error("fail to leave cdp");
+            LogUtil.e("fail to leave cdp");
             leaveEntityFailed(activity.getString(R.string.err_entity_leave));
         }
     }
@@ -93,7 +90,7 @@ class LeaveEntityCommand implements MenuCommand {
                     .getInstance(activity, distictId)
                     .trackLeavingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
         } catch (JSONException e) {
-            log.error("CANNOT MEET", e);
+            LogUtil.e("CANNOT MEET", e);
         }
     }
 

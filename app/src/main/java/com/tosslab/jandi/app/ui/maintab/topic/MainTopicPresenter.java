@@ -17,7 +17,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -26,8 +25,6 @@ import java.util.List;
  */
 @EBean
 public class MainTopicPresenter {
-
-    private static final Logger logger = Logger.getLogger(MainTopicPresenter.class);
 
     @RootContext
     Context context;

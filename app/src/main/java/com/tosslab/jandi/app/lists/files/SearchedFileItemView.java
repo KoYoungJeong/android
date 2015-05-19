@@ -16,14 +16,12 @@ import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 2014. 7. 5..
  */
 @EViewGroup(R.layout.item_searched_file)
 public class SearchedFileItemView extends RelativeLayout {
-    private final Logger log = Logger.getLogger(SearchedFileItemView.class);
     @ViewById(R.id.txt_searched_file_name)
     TextView textViewSearchedFileName;
     @ViewById(R.id.txt_searched_file_owner_name)

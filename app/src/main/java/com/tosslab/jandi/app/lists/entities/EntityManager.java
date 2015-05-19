@@ -9,8 +9,7 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +24,6 @@ import java.util.Map;
  * Created by justinygchoi on 2014. 8. 11..
  */
 public class EntityManager {
-    private static final Logger logger = Logger.getLogger(EntityManager.class);
 
     private static EntityManager entityManager;
 
@@ -94,7 +92,7 @@ public class EntityManager {
 
     public void refreshEntity(Context context) {
 
-        logger.debug("Refresh Entity~!");
+        LogUtil.d("Refresh Entity~!");
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
@@ -105,7 +103,7 @@ public class EntityManager {
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
-        logger.debug("Refresh Entity~!");
+        LogUtil.d("Refresh Entity~!");
         init(resLeftSideMenu);
     }
 
@@ -518,7 +516,7 @@ public class EntityManager {
             installation.removeAll(JandiConstants.PARSE_CHANNELS, getChannelsToBeUnsubscribed());
             installation.saveInBackground();
         } catch (Exception e) {
-            logger.error("Parse Error", e);
+            LogUtil.e("Parse Error", e);
         }
     }
 
@@ -535,7 +533,7 @@ public class EntityManager {
         ArrayList<String> channelsToBeSubscribed = new ArrayList<String>();
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
-        logger.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+        LogUtil.d("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
@@ -559,7 +557,7 @@ public class EntityManager {
         }
 
 
-        logger.debug(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
+        LogUtil.d(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
         return channelsToBeSubscribed;
     }
 
@@ -568,7 +566,7 @@ public class EntityManager {
     private List<String> getChannelsToBeUnsubscribed() {
         List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
 
-        logger.debug("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
+        LogUtil.d("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
 
         // Public Topic
         for (FormattedEntity publicTopic : getJoinedChannels()) {
@@ -587,7 +585,7 @@ public class EntityManager {
             String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
             subscribedChannelsFromParse.remove(channel);
         }
-        logger.debug(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
+        LogUtil.d(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
         return subscribedChannelsFromParse;
     }
 

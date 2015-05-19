@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -23,7 +24,6 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.TextChange;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 /**
@@ -32,8 +32,6 @@ import org.json.JSONException;
 @EActivity(R.layout.activity_topic_create)
 @OptionsMenu(R.menu.add_topic_text)
 public class TopicCreateActivity extends AppCompatActivity {
-
-    private static final Logger logger = Logger.getLogger(TopicCreateActivity.class);
 
     @Bean
     TopicCreateModel topicCreateModel;
@@ -98,7 +96,7 @@ public class TopicCreateActivity extends AppCompatActivity {
                             .trackCreatingEntity(true);
                 }
             } catch (JSONException e) {
-                logger.error("CAN NOT MEET", e);
+                LogUtil.e("CAN NOT MEET", e);
             }
 
             topicCreateModel.refreshEntity();
@@ -110,7 +108,7 @@ public class TopicCreateActivity extends AppCompatActivity {
             topicCreatePresenter.createTopicSuccess(teamId, topic.id, topicTitle, publicSelected);
 
         } catch (JandiNetworkException e) {
-            logger.error(e.getErrorInfo(), e);
+            LogUtil.e(e.getErrorInfo(), e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {

@@ -9,8 +9,8 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,7 +21,6 @@ import java.util.Date;
  */
 public class MixpanelMemberAnalyticsClient {
     private static final String PROP_PAGE_VIEW = "Page Viewed";
-    private static final Logger log = Logger.getLogger(MixpanelMemberAnalyticsClient.class);
     private static final String PROP_SIGN_IN = "Sign In";
     private static final String PROP_SIGN_UP = "Sign Up";
     private static final String PROP_SIGN_OUT = "Sign Out";
@@ -47,7 +46,7 @@ public class MixpanelMemberAnalyticsClient {
     private String mDistictId;
 
     private MixpanelMemberAnalyticsClient(Context context, String distictId) {
-        log.debug("Create instance of MixpanelAnalyticsClient");
+        LogUtil.d("Create instance of MixpanelAnalyticsClient");
         String memberMixpanelId = JandiConstantsForFlavors.MIXPANEL_MEMBER_TRACK_ID;
 
         memberMixpanel = MixpanelAPI.getInstance(context, memberMixpanelId);
@@ -278,7 +277,7 @@ public class MixpanelMemberAnalyticsClient {
         mDistictId = newIdentify;
         String distinctId = memberMixpanel.getDistinctId();
 
-        log.debug("Old Id : " + distinctId + " , new Id : " + newIdentify);
+        LogUtil.d("Old Id : " + distinctId + " , new Id : " + newIdentify);
 
         memberMixpanel.alias(newIdentify, distinctId);
         memberMixpanel.identify(newIdentify);

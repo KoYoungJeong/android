@@ -1,16 +1,14 @@
 package com.tosslab.jandi.app.dialogs;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
-
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -18,7 +16,6 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 2014. 6. 21..
  */
 public class FileUploadTypeDialogFragment extends DialogFragment {
-    private final Logger log = Logger.getLogger(FileUploadTypeDialogFragment.class);
 
     @Override
     public void onActivityCreated(Bundle bundle) {

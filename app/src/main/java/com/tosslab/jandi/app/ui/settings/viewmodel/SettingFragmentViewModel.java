@@ -1,8 +1,8 @@
 package com.tosslab.jandi.app.ui.settings.viewmodel;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
@@ -16,7 +16,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -25,8 +24,6 @@ import de.greenrobot.event.EventBus;
  */
 @EBean
 public class SettingFragmentViewModel {
-
-    private final Logger log = Logger.getLogger(SettingFragmentViewModel.class);
 
     @RootContext
     Context context;

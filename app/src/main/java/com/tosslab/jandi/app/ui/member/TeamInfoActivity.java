@@ -44,7 +44,6 @@ import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -56,8 +55,6 @@ import rx.Observable;
  */
 @EActivity(R.layout.activity_team_info)
 public class TeamInfoActivity extends BaseAnalyticsActivity {
-
-    private static final Logger log = Logger.getLogger(TeamInfoActivity.class);
 
     @ViewById(R.id.list_team_users)
     ListView listViewInvitation;

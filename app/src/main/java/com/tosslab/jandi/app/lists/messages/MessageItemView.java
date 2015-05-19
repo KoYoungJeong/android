@@ -12,10 +12,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -24,7 +24,6 @@ import de.greenrobot.event.EventBus;
  */
 @EViewGroup(R.layout.item_message)
 public class MessageItemView extends LinearLayout {
-    private final Logger log = Logger.getLogger(MessageItemView.class);
     // 날짜 경계선
     @ViewById(R.id.ly_message_date_devider)
     LinearLayout mLayoutDateDivider;
@@ -127,7 +126,7 @@ public class MessageItemView extends LinearLayout {
         // 프로필 사진
         mUserProfileImage.setVisibility(VISIBLE);
 
-        log.debug("User Profile Image : " + item.getUserProfileUrl());
+        LogUtil.d("User Profile Image : " + item.getUserProfileUrl());
 
         Ion.with(mUserProfileImage)
                 .placeholder(R.drawable.jandi_profile)
@@ -174,7 +173,7 @@ public class MessageItemView extends LinearLayout {
         mTextImageFileType.setText(item.getContentFileSize() + " " + item.getContentFileType());
         if (item.getContentSmallThumbnailUrl() != null) {
             String imageUrl = item.getContentSmallThumbnailUrl();
-            log.debug("load image thumnail : " + imageUrl);
+            LogUtil.d("load image thumnail : " + imageUrl);
             Ion.with(mImagePhoto)
                     .placeholder(R.drawable.jandi_fl_icon_img)
                     .error(R.drawable.jandi_fl_icon_img)

@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -26,7 +27,6 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -34,8 +34,6 @@ import org.springframework.http.HttpStatus;
  */
 @EBean
 public class IntroLoginModel {
-
-    private final Logger log = Logger.getLogger(IntroLoginModel.class);
 
     @Bean
     JandiAuthClient mJandiAuthClient;
@@ -83,7 +81,7 @@ public class IntroLoginModel {
         } catch (JandiNetworkException e) {
             return e.httpStatusCode;
         } catch (Exception e) {
-            log.error(e.toString(), e);
+            LogUtil.e(e.toString(), e);
             return 400;
         }
     }

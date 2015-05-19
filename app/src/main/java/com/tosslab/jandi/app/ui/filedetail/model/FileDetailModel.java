@@ -19,11 +19,11 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,8 +37,6 @@ import rx.Observable;
  */
 @EBean
 public class FileDetailModel {
-
-    private static final Logger logger = Logger.getLogger(FileDetailModel.class);
 
     @RootContext
     Context context;
@@ -181,7 +179,7 @@ public class FileDetailModel {
 
             return true;
         } catch (JandiNetworkException e) {
-            logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             return false;
         } catch (Exception e) {
             return false;

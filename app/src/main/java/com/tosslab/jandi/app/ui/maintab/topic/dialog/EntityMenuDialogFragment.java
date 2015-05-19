@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.ui.maintab.topic.dialog;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +27,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -36,8 +35,6 @@ import de.greenrobot.event.EventBus;
  */
 @EFragment(R.layout.fragment_entity_popup)
 public class EntityMenuDialogFragment extends DialogFragment {
-
-    private static final Logger logger = Logger.getLogger(EntityMenuDialogFragment.class);
 
     @FragmentArg
     int entityId;
