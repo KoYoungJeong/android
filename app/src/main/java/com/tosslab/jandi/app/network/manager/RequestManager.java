@@ -6,8 +6,8 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -16,7 +16,6 @@ import org.springframework.web.client.HttpStatusCodeException;
  * Created by Steve SeongUg Jung on 14. 12. 16..
  */
 public class RequestManager<ResponseObject> {
-    private final static Logger logger = Logger.getLogger(RequestManager.class);
 
     private final Context context;
     private Request<ResponseObject> request;
@@ -42,22 +41,22 @@ public class RequestManager<ResponseObject> {
                         return request.request();
                     } catch (HttpStatusCodeException e1) {
                         // unknown exception
-                        logger.error("Retry Fail" + request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString(), e1);
+                        LogUtil.e("Retry Fail" + request.getClass() + " : " + e1.getStatusCode().value() + " : " + e1.getResponseBodyAsString(), e1);
                         throw new JandiNetworkException(e1);
                     }
                 } else {
                     // unauthorized exception
-                    logger.error("Refresh Token Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
+                    LogUtil.e("Refresh Token Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                     throw new JandiNetworkException(e);
                 }
             } else {
                 // exception, not unauthorized
                 JandiSocketService.stopSocketServiceIfRunning(context);
-                logger.error("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
+                LogUtil.e("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                 throw new JandiNetworkException(e);
             }
         } catch (Exception e) {
-            logger.error("Unknown Request Error : " + request.getClass() + " : " + e.getMessage(), e);
+            LogUtil.e("Unknown Request Error : " + request.getClass() + " : " + e.getMessage(), e);
             throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
 
@@ -73,7 +72,7 @@ public class RequestManager<ResponseObject> {
                 // Request Access token, and save token
                 accessToken = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
             } catch (HttpStatusCodeException e) {
-                logger.error("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
+                LogUtil.e("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
                 if (e.getStatusCode() != HttpStatus.UNAUTHORIZED) {
                     return null;
                 }

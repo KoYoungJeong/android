@@ -55,6 +55,7 @@ import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -69,7 +70,6 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -88,7 +88,6 @@ import rx.subjects.PublishSubject;
  */
 @EFragment(R.layout.fragment_file_list)
 public class FileListFragment extends Fragment implements SearchActivity.SearchSelectView {
-    private final Logger log = Logger.getLogger(FileListFragment.class);
 
     @ViewById(R.id.list_searched_files)
     RecyclerView actualListView;
@@ -141,7 +140,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                     mSearchQuery.setToFirst();
                     searchedFileItemListAdapter.clearAdapter();
                     doSearchInBackground(index);
-                }, throwable -> log.debug("Search Fail : " + throwable.getMessage()));
+                }, throwable -> LogUtil.d("Search Fail : " + throwable.getMessage()));
     }
 
     @AfterViews
@@ -273,7 +272,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
 
         } catch (JandiNetworkException e) {
-            log.error("fail to get searched files.", e);
+            LogUtil.e("fail to get searched files.", e);
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
         } catch (Exception e) {
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
@@ -469,7 +468,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             searchSucceed(resSearchFile);
         } catch (JandiNetworkException e) {
-            log.error("fail to get searched files.", e);
+            LogUtil.e("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         } catch (Exception e) {
             searchFailed(R.string.err_file_search);
@@ -619,7 +618,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             searchedFileItemListAdapter.setReadyMore();
         }
 
-        log.debug("success to find " + resSearchFile.fileCount + " files.");
+        LogUtil.d("success to find " + resSearchFile.fileCount + " files.");
         searchedFileItemListAdapter.notifyDataSetChanged();
     }
 

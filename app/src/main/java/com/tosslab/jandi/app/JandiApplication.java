@@ -1,14 +1,10 @@
 package com.tosslab.jandi.app;
 
 import android.support.multidex.MultiDexApplication;
-import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
-import com.tosslab.jandi.app.utils.ConfigureLog4J;
-
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 
@@ -27,15 +23,6 @@ public class JandiApplication extends MultiDexApplication {
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
 
-        // For Log4J
-        try {
-            ConfigureLog4J.configure(getApplicationContext());
-
-            Logger logger = Logger.getLogger(JandiApplication.class);
-            logger.info("initialize log file");
-        } catch (Exception e) {
-            Log.e("android-log4j", e.getMessage());
-        }
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {

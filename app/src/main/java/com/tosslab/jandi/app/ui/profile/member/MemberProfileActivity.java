@@ -31,6 +31,7 @@ import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -39,7 +40,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -52,7 +52,6 @@ import de.greenrobot.event.EventBus;
 @EActivity(R.layout.activity_profile)
 public class MemberProfileActivity extends BaseAnalyticsActivity {
     private static final int REQ_CODE_PICK_IMAGE = 0;
-    private final Logger logger = Logger.getLogger(MemberProfileActivity.class);
 
     @Bean
     MemberProfileModel memberProfileModel;
@@ -128,10 +127,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfileView.displayProfile(me);
         } catch (JandiNetworkException e) {
-            logger.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             memberProfileView.getProfileFailed();
         } catch (Exception e) {
-            logger.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             memberProfileView.getProfileFailed();
         } finally {
             memberProfileView.dismissProgressWheel();
@@ -249,7 +248,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
         } catch (JandiNetworkException e) {
-            logger.error("get profile failed", e);
+            LogUtil.e("get profile failed", e);
             memberProfileView.updateProfileFailed();
         } finally {
             memberProfileView.dismissProgressWheel();
@@ -365,10 +364,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileView.successPhotoUpload();
 
         } catch (ExecutionException e) {
-            logger.error("uploadFileDone: FAILED", e);
+            LogUtil.e("uploadFileDone: FAILED", e);
             memberProfileView.failPhotoUpload();
         } catch (InterruptedException e) {
-            logger.error("uploadFileDone: FAILED", e);
+            LogUtil.e("uploadFileDone: FAILED", e);
             memberProfileView.failPhotoUpload();
         } finally {
             memberProfileView.dismissProgressWheel();

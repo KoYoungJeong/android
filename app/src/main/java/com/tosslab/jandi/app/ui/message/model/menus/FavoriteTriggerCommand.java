@@ -9,11 +9,11 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 import org.springframework.web.client.RestClientException;
 
 import de.greenrobot.event.EventBus;
@@ -23,8 +23,6 @@ import de.greenrobot.event.EventBus;
  */
 @EBean
 class FavoriteTriggerCommand implements MenuCommand {
-
-    private static final Logger log = Logger.getLogger(FavoriteTriggerCommand.class);
 
     private Activity activity;
     private JandiEntityClient mJandiEntityClient;
@@ -68,9 +66,9 @@ class FavoriteTriggerCommand implements MenuCommand {
             }
             enableFavoriteSucceed();
         } catch (RestClientException e) {
-            log.error("enable favorite failed", e);
+            LogUtil.e("enable favorite failed", e);
         } catch (Exception e) {
-            log.error("enable favorite failed", e);
+            LogUtil.e("enable favorite failed", e);
         }
     }
 
@@ -86,9 +84,9 @@ class FavoriteTriggerCommand implements MenuCommand {
                 mJandiEntityClient.disableFavorite(chattingInfomations.entityId);
             }
         } catch (RestClientException e) {
-            log.error("disable favorite failed", e);
+            LogUtil.e("disable favorite failed", e);
         } catch (Exception e) {
-            log.error("disable favorite failed", e);
+            LogUtil.e("disable favorite failed", e);
         }
     }
 }

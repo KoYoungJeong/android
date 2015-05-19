@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -36,7 +37,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -48,8 +48,6 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.fragment_topic_list)
 @OptionsMenu(R.menu.main_activity_menu)
 public class MainTopicListFragment extends Fragment {
-
-    private static final Logger logger = Logger.getLogger(MainTopicListFragment.class);
 
     @Bean
     MainTopicModel mainTopicModel;
@@ -182,10 +180,10 @@ public class MainTopicListFragment extends Fragment {
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
             mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
         } catch (JandiNetworkException e) {
-            logger.error("fail to join entity", e);
+            LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } catch (Exception e) {
-            logger.error("fail to join entity", e);
+            LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } finally {
             mainTopicPresenter.dismissProgressWheel();

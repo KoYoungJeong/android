@@ -9,8 +9,7 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +18,6 @@ import java.util.List;
  * Created by Steve SeongUg Jung on 15. 3. 17..
  */
 public class NormalOldMessageLoader implements OldMessageLoader {
-
-    private static final Logger logger = Logger.getLogger(NormalOldMessageLoader.class);
 
     private final Context context;
     MessageListModel messageListModel;
@@ -112,7 +109,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
 
         } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e(e.getErrorInfo() + " : " + e.httpBody, e);
             checkItemCountIfException(linkId);
         } catch (Exception e) {
             checkItemCountIfException(linkId);
@@ -139,9 +136,9 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 messageListModel.updateMarkerInfo(teamId, roomId);
             }
         } catch (JandiNetworkException e) {
-            logger.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         } catch (Exception e) {
-            logger.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         }
     }
 
