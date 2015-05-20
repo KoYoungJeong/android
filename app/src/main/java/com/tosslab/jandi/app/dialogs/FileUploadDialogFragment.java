@@ -22,8 +22,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import rx.Observable;
  */
 public class FileUploadDialogFragment extends DialogFragment {
     static private int selectedEntityIdToBeShared;    // Share 할 chat-room
-    private final Logger log = Logger.getLogger(FileUploadDialogFragment.class);
     private EntitySimpleListAdapter mEntityArrayAdapter;
 
     public static FileUploadDialogFragment newInstance(String realFilePath, int currentEntityId) {
@@ -116,7 +114,7 @@ public class FileUploadDialogFragment extends DialogFragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedEntityIdToBeShared
                         = ((FormattedEntity) adapterView.getItemAtPosition(i)).getEntity().id;
-                log.debug("Change to cdp ID to be shared : " + selectedEntityIdToBeShared);
+                LogUtil.d("Change to cdp ID to be shared : " + selectedEntityIdToBeShared);
             }
 
             @Override

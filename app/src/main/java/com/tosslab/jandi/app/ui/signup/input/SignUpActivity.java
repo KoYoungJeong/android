@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -25,15 +26,12 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
-import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 14. 12. 11..
  */
 @EActivity(R.layout.activity_signup)
 public class SignUpActivity extends AppCompatActivity {
-
-    private final static Logger logger = Logger.getLogger(SignUpActivity.class);
 
     @Bean
     SignUpViewModel signUpViewModel;
@@ -164,7 +162,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Click(R.id.btn_signup_confirm)
     void clickSignUp() {
 
-        logger.debug("Click : clickSignUp");
+        LogUtil.d("Click : clickSignUp");
 
         signUp();
     }
@@ -186,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
                     .pageViewAccountCreateSuccess();
 
         } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " , Response Body : " + e.httpBody);
+            LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             if (e.errCode == 40001) {
                 signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
             } else {

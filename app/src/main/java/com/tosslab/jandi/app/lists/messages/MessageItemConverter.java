@@ -2,8 +2,7 @@ package com.tosslab.jandi.app.lists.messages;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +18,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Deprecated
 public class MessageItemConverter {
-    private final Logger log = Logger.getLogger(MessageItemConverter.class);
 
     private final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyyMMdd");
     private CopyOnWriteArrayList<MessageItem> mOriginalMessageList;
@@ -93,7 +91,7 @@ public class MessageItemConverter {
         // 새로 추가하던가, 기존 리스트 item 에 동일한 항목을 대체, 혹은 삭제한다.
         synchronized (mOriginalMessageList) {
             for (ResMessages.Link link : sortedLinks) {
-                log.debug("patchMessageItem, LinkId:" + link.id + " / status:" + link.status);
+                LogUtil.d("patchMessageItem, LinkId:" + link.id + " / status:" + link.status);
                 if (link.status.equals("created") || link.status.equals("shared")) {
                     if (isDescendingOrder)
                         mOriginalMessageList.add(0, new MessageItem(link));
@@ -153,7 +151,7 @@ public class MessageItemConverter {
                             formattedMessages.add(new MessageItem(DATE_FORMATTER.parse(strDay), false));
                         formerMessageItem = null;   // 날짜 경계선이 바뀌면 다른 그룹핑은 초기화된다.
                     } catch (ParseException e) {
-                        log.error("Date Parse Error", e);
+                        LogUtil.e("Date Parse Error", e);
                     }
 
                 }

@@ -39,8 +39,8 @@ import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -54,7 +54,6 @@ import rx.subjects.PublishSubject;
  * Created by Steve SeongUg Jung on 15. 4. 6..
  */
 public class JandiSocketServiceModel {
-    private static final Logger logger = Logger.getLogger(JandiSocketServiceModel.class);
     private final Context context;
     private final ObjectMapper objectMapper;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
@@ -250,7 +249,7 @@ public class JandiSocketServiceModel {
                         e.printStackTrace();
                     }
 
-                }, throwable -> logger.debug(throwable.getMessage()));
+                }, throwable -> LogUtil.d(throwable.getMessage()));
     }
 
     public void stopMarkerObserver() {

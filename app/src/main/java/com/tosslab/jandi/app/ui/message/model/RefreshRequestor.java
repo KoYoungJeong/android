@@ -9,15 +9,13 @@ import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
 public class RefreshRequestor {
 
-    private static final Logger log = Logger.getLogger(RefreshRequestor.class);
     Context context;
     MessageItemListAdapter messageItemListAdapter;
     MessageManipulator mJandiMessageClient;
@@ -43,7 +41,7 @@ public class RefreshRequestor {
             messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
             return null;
         } catch (JandiNetworkException e) {
-            log.error("GetFutherMessagesTask : FAILED", e);
+            LogUtil.e("GetFutherMessagesTask : FAILED", e);
             return context.getString(R.string.err_messages_get);
         } catch (Exception e) {
             return context.getString(R.string.err_messages_get);

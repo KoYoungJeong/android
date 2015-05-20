@@ -34,13 +34,13 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,8 +52,6 @@ import rx.Observable;
  */
 @EBean
 class InviteCommand implements MenuCommand {
-
-    private static final Logger log = Logger.getLogger(InviteCommand.class);
 
     private AppCompatActivity activity;
     private JandiEntityClient mJandiEntityClient;
@@ -179,7 +177,7 @@ class InviteCommand implements MenuCommand {
 
             inviteSucceed(invitedUsers.size());
         } catch (JandiNetworkException e) {
-            log.error("fail to invite entity");
+            LogUtil.e("fail to invite entity");
             inviteFailed(activity.getString(R.string.err_entity_invite));
         } catch (Exception e) {
             inviteFailed(activity.getString(R.string.err_entity_invite));

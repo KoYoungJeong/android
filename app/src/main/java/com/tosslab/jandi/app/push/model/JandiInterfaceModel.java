@@ -15,11 +15,11 @@ import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -28,9 +28,6 @@ import java.util.List;
  */
 @EBean
 public class JandiInterfaceModel {
-
-    private static final Logger logger = Logger.getLogger(JandiInterfaceModel.class);
-
 
     @RootContext
     Context context;
@@ -76,7 +73,7 @@ public class JandiInterfaceModel {
                 }
 
             } catch (JandiNetworkException e) {
-                logger.error("Get Account Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+                LogUtil.e("Get Account Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
                 return false;
             }
 
@@ -121,7 +118,7 @@ public class JandiInterfaceModel {
 
             return true;
         } catch (JandiNetworkException e) {
-            logger.error("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             return false;
         } catch (Exception e) {
             return false;

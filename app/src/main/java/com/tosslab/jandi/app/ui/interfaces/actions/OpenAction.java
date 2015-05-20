@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -23,15 +24,12 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
  */
 @EBean
 public class OpenAction implements Action {
-
-    private static final Logger logger = Logger.getLogger(OpenAction.class);
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -82,7 +80,7 @@ public class OpenAction implements Action {
             TokenUtil.clearTokenInfo(context);
             JandiAccountDatabaseManager.getInstance(context).clearAllData();
             failAccessToken();
-            logger.debug(e.getMessage());
+            LogUtil.d(e.getMessage());
         } finally {
             startIntroActivity();
             dismissProgress();

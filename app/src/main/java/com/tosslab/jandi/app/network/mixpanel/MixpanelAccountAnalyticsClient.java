@@ -3,11 +3,10 @@ package com.tosslab.jandi.app.network.mixpanel;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.mixpanel.android.mpmetrics.MPConfig;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,7 +14,6 @@ import org.json.JSONObject;
  * Created by justinygchoi on 2014. 8. 22..
  */
 public class MixpanelAccountAnalyticsClient {
-    private static final Logger log = Logger.getLogger(MixpanelAccountAnalyticsClient.class);
     private static final String PROP_SIGN_IN = "Sign In";
     private static final String PROP_SIGN_OUT = "Sign Out";
     private static final String PROP_CREATE_ENTITY = "Chat Create";
@@ -43,7 +41,7 @@ public class MixpanelAccountAnalyticsClient {
     private String mDistictId;
 
     public MixpanelAccountAnalyticsClient(Context context, String accountId) {
-        log.debug("Create instance of MixpanelAnalyticsClient");
+        LogUtil.d("Create instance of MixpanelAnalyticsClient");
         String accountMixpanelId = JandiConstantsForFlavors.MIXPANEL_ACCOUNT_TRACK_ID;
 
         accountMixpanel = MixpanelAPI.getInstance(context, accountMixpanelId);

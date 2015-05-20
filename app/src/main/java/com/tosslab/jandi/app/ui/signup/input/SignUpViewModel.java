@@ -23,14 +23,12 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 /**
  * Created by justinygchoi on 14. 12. 12..
  */
 @EBean
 public class SignUpViewModel {
-    private final Logger log = Logger.getLogger(SignUpViewModel.class);
 
     @RootContext
     Activity activity;

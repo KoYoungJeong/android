@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.utils.PasswordChecker;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -22,8 +21,6 @@ import org.springframework.web.client.HttpStatusCodeException;
  */
 @EBean
 public class SignUpModel {
-
-    private static final Logger logger = Logger.getLogger(SignUpModel.class);
 
     CheckPointsHolder mCheckPointsHolder;
 

@@ -8,8 +8,7 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -18,7 +17,6 @@ import rx.Subscription;
  * Created by Steve SeongUg Jung on 15. 3. 17..
  */
 public class MarkerNewMessageLoader implements NewsMessageLoader {
-    private static final Logger logger = Logger.getLogger(MarkerNewMessageLoader.class);
 
     private final Context context;
     MessageListModel messageListModel;
@@ -76,7 +74,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
             }
 
         } catch (JandiNetworkException e) {
-            logger.debug(e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e(e.getErrorInfo() + " : " + e.httpBody, e);
         } catch (Exception e) {
         } finally {
         }

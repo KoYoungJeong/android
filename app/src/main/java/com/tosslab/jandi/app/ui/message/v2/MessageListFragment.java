@@ -84,6 +84,7 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -95,7 +96,6 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -119,8 +119,6 @@ public class MessageListFragment extends Fragment {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
-
-    private static final Logger logger = Logger.getLogger(MessageListFragment.class);
 
     @FragmentArg
     int entityType;
@@ -205,7 +203,7 @@ public class MessageListFragment extends Fragment {
                             break;
                     }
                 }, throwable -> {
-                    logger.error("Message Publish Fail!!", throwable);
+                    LogUtil.e("Message Publish Fail!!", throwable);
                 }, () -> {
 
                 });
@@ -472,9 +470,9 @@ public class MessageListFragment extends Fragment {
                 messageListModel.updateMarker(messageState.getLastUpdateLinkId());
             }
         } catch (JandiNetworkException e) {
-            logger.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         } catch (Exception e) {
-            logger.error("set marker failed", e);
+            LogUtil.e("set marker failed", e);
         }
     }
 
@@ -596,7 +594,7 @@ public class MessageListFragment extends Fragment {
         }
         switch (event.type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                logger.info("RequestFileUploadEvent : from gallery");
+                LogUtil.i("RequestFileUploadEvent : from gallery");
                 messageListPresenter.openAlbumForActivityResult(MessageListFragment.this);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
@@ -611,7 +609,7 @@ public class MessageListFragment extends Fragment {
 
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                logger.info("RequestFileUploadEvent : from explorer");
+                LogUtil.i("RequestFileUploadEvent : from explorer");
                 messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
                 break;
             default:
@@ -867,7 +865,7 @@ public class MessageListFragment extends Fragment {
             messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
         } catch (JandiNetworkException e) {
-            logger.error("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
         } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
@@ -883,11 +881,11 @@ public class MessageListFragment extends Fragment {
             JsonObject result = messageListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
             if (result.get("code") == null) {
 
-                logger.error("Upload Success : " + result);
+                LogUtil.e("Upload Success : " + result);
                 messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
                 messageListModel.trackUploadingFile(entityType, result);
             } else {
-                logger.error("Upload Fail : Result : " + result);
+                LogUtil.e("Upload Fail : Result : " + result);
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
@@ -896,7 +894,7 @@ public class MessageListFragment extends Fragment {
                 messageListPresenter.showFailToast(getString(R.string.jandi_canceled));
             }
         } catch (Exception e) {
-            logger.error("Upload Error : ", e);
+            LogUtil.e("Upload Error : ", e);
             if (getActivity() != null) {
                 messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
             }
@@ -913,12 +911,12 @@ public class MessageListFragment extends Fragment {
         try {
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
-                logger.debug("deleteMessageInBackground : succeed");
+                LogUtil.d("deleteMessageInBackground : succeed");
             }
         } catch (JandiNetworkException e) {
-            logger.error("deleteMessageInBackground : FAILED", e);
+            LogUtil.e("deleteMessageInBackground : FAILED", e);
         } catch (Exception e) {
-            logger.error("deleteMessageInBackground : FAILED", e);
+            LogUtil.e("deleteMessageInBackground : FAILED", e);
         }
         messageListPresenter.dismissProgressWheel();
     }
@@ -1097,7 +1095,7 @@ public class MessageListFragment extends Fragment {
             EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
 
         } catch (JandiNetworkException e) {
-            logger.error("modify failed " + e.getErrorInfo(), e);
+            LogUtil.e("modify failed " + e.getErrorInfo(), e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_duplicated_name));
             } else {

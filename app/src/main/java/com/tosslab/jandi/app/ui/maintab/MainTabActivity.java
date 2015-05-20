@@ -39,7 +39,6 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
-import com.tosslab.jandi.app.ui.invites.InviteActivity_;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -48,6 +47,7 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -55,7 +55,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
-import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -69,7 +68,6 @@ import rx.Observable;
  */
 @EActivity(R.layout.activity_main_tab)
 public class MainTabActivity extends BaseAnalyticsActivity {
-    private final Logger log = Logger.getLogger(MainTabActivity.class);
 
     @Bean
     JandiEntityClient mJandiEntityClient;
@@ -127,7 +125,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
             @Override
             public void onPageSelected(int position) {
-                log.debug("onPageSelected at " + position);
+                LogUtil.d("onPageSelected at " + position);
                 trackGaTab(mEntityManager, position);
             }
 
@@ -229,7 +227,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (JandiNetworkException e) {
-            log.error(e.getErrorInfo() + "get entity failed", e);
+            LogUtil.e(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
                 getEntitiesFailed(getString(R.string.err_expired_session));
                 stopJandiServiceInMainThread();
@@ -239,7 +237,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 getEntitiesFailed(getString(R.string.err_service_connection));
             }
         } catch (ResourceAccessException e) {
-            log.error("connect failed", e);
+            LogUtil.e("connect failed", e);
             getEntitiesFailed(getString(R.string.err_service_connection));
         } catch (Exception e) {
             getEntitiesFailed(getString(R.string.err_service_connection));
