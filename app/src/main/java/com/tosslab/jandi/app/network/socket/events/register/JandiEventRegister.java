@@ -69,8 +69,10 @@ public class JandiEventRegister implements EventRegister {
         registerIfPending();
     }
 
+    public static final String TAG = "SocketEventRegister";
     private void registerIfPending() {
         for (String event : eventMapper.keySet()) {
+            Log.d(TAG, event);
             if (socket != null && !socket.hasListeners(event)) {
                 socket.on(event, args -> {
                     for (EventListener listener : eventMapper.get(event)) {

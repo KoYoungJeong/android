@@ -51,7 +51,7 @@ public class RequestManager<ResponseObject> {
                 }
             } else {
                 // exception, not unauthorized
-                JandiSocketService.stopSocketServiceIfRunning(context);
+                JandiSocketService.startSocketServiceIfNeed(context);
                 LogUtil.e("Request Fail : " + request.getClass() + " : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString(), e);
                 throw new JandiNetworkException(e);
             }

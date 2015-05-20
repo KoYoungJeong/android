@@ -129,7 +129,7 @@ public class SettingsFragment extends PreferenceFragment {
                     .flush()
                     .clear();
 
-            JandiSocketService.stopSocketServiceIfRunning(getActivity());
+            JandiSocketService.startSocketServiceIfNeed(getActivity());
 
             BadgeUtils.setBadge(getActivity(), 0);
             ColoredToast.show(getActivity(), getString(R.string.jandi_message_logout));

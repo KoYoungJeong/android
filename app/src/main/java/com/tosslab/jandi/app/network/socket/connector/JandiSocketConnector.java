@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.socket.connector;
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -8,17 +7,12 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 
-import org.apache.log4j.Logger;
-
 import java.net.URISyntaxException;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 1..
  */
 public class JandiSocketConnector implements SocketConnector {
-
-    private static final Logger logger = Logger.getLogger(JandiSocketConnector.class);
-
 
     private Socket socket;
     private boolean connectingOrConnected;
@@ -51,12 +45,18 @@ public class JandiSocketConnector implements SocketConnector {
 
             socket.on(Socket.EVENT_CONNECT, args -> Log.e(TAG, Socket.EVENT_CONNECT))
                     .on(Socket.EVENT_ERROR, args -> Log.e(TAG, Socket.EVENT_ERROR))
-                    .on(Socket.EVENT_DISCONNECT, args ->
-                            disconnectCallback(disconnectListener, args))
-                    .on(Socket.EVENT_CONNECT_ERROR, args ->
-                            disconnectCallback(disconnectListener, args))
-                    .on(Socket.EVENT_CONNECT_TIMEOUT, args ->
-                            disconnectCallback(disconnectListener, args));
+                    .on(Socket.EVENT_DISCONNECT, args -> {
+                        Log.e(TAG, Socket.EVENT_DISCONNECT);
+                        disconnectCallback(disconnectListener, args);
+                    })
+                    .on(Socket.EVENT_CONNECT_ERROR, args -> {
+                        Log.e(TAG, Socket.EVENT_CONNECT_ERROR);
+                        disconnectCallback(disconnectListener, args);
+                    })
+                    .on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
+                        Log.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
+                        disconnectCallback(disconnectListener, args);
+                    });
 
             socket.connect();
             connectingOrConnected = true;
@@ -67,13 +67,11 @@ public class JandiSocketConnector implements SocketConnector {
 
 
     public static final String TAG = "SocketConnector";
-    private void disconnectCallback(EventListener disconnectListener, Object[] args) {
 
-        logger.debug("Disconnect");
+    private void disconnectCallback(EventListener disconnectListener, Object[] args) {
         Log.e(TAG, "Disconnect");
         if (args != null) {
             for (Object arg : args) {
-                logger.debug("Disconnect Reason : " + arg.toString());
                 Log.e(TAG, "Disconnect Reason : " + arg.toString());
             }
         }
@@ -86,20 +84,16 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public void disconnect() {
-
-//        if (connectingOrConnected) {
-            connectingOrConnected = false;
-//        }
+        connectingOrConnected = false;
 
         if (socket != null && socket.connected()) {
-//            Log.e(TAG, "disconnect");
             socket.off();
             socket.disconnect();
 
             while (socket.connected()) {
                 try {
                     Thread.sleep(100);
-                    Log.d(TAG, "Waiting for Stop Socket!!");
+                    Log.d(TAG, "Stop Socket ing...");
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

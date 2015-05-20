@@ -5,7 +5,6 @@ import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -91,7 +90,7 @@ public class IntroActivityViewModel {
     @UiThread
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        JandiSocketService.stopSocketServiceIfRunning(activity);
+        JandiSocketService.startSocketServiceIfNeed(activity);
 
         IntroMainActivity_.intent(activity).start();
         activity.finish();

@@ -135,12 +135,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         });
 
-
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
             showInvitePopup();
         }
 
+//        JandiSocketService.startSocketServiceIfNeed(this);
         sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
     }
 
@@ -211,7 +211,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Override
     protected void onDestroy() {
-        JandiSocketService.stopSocketServiceIfRunning(this);
+        JandiSocketService.startSocketServiceIfNeed(this);
         super.onDestroy();
     }
 
@@ -253,7 +253,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void stopJandiServiceInMainThread() {
-        JandiSocketService.stopSocketServiceIfRunning(MainTabActivity.this);
+        JandiSocketService.startSocketServiceIfNeed(MainTabActivity.this);
     }
 
     @UiThread

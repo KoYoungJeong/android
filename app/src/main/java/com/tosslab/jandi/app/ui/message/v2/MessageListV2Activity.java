@@ -3,16 +3,12 @@ package com.tosslab.jandi.app.ui.message.v2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceBroadcastReceiver;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 
@@ -42,6 +38,7 @@ public class MessageListV2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        JandiSocketService.startSocketServiceIfNeed(this);
         sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
         initViews();
     }

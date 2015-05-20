@@ -29,7 +29,7 @@ public class SocketServiceBroadcastReceiver extends BroadcastReceiver {
 //                if (connected) {
 //                    context.startService(new Intent(context, JandiSocketService.class));
 //                } else {
-//                    JandiSocketService.stopSocketServiceIfRunning(context);
+//                    JandiSocketService.startSocketServiceIfNeed(context);
 //                }
                 break;
             case ACTION_FROM_BOOT_COMPLETED:
