@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup;
+package com.tosslab.jandi.app.ui.signup.input;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
-import com.tosslab.jandi.app.ui.signup.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.signup.input.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -94,6 +94,7 @@ public class SignUpViewModel {
 
     boolean checkAllAgree() {
         boolean didAgreeAll;
+
         if (layoutSignUpAgreePrivate.isSelected() && layoutSignUpAgreeEULA.isSelected()) {
             didAgreeAll = true;
             toggleAllAgree(didAgreeAll);
@@ -141,7 +142,6 @@ public class SignUpViewModel {
 
     @UiThread
     public void finishWithEmail(String email) {
-
         Intent resultIntent = new Intent();
         resultIntent.putExtra(IntroLoginFragment.RES_EXTRA_EMAIL, email);
         activity.setResult(Activity.RESULT_OK, resultIntent);
@@ -190,7 +190,6 @@ public class SignUpViewModel {
 
     @UiThread
     public void dismissProgressWheel() {
-
         if (mProgressWheel != null && mProgressWheel.isShowing()) {
             mProgressWheel.dismiss();
         }

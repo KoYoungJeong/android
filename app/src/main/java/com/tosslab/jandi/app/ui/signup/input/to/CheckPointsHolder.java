@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.to;
+package com.tosslab.jandi.app.ui.signup.input.to;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 24..

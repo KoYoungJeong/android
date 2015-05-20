@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup;
+package com.tosslab.jandi.app.ui.signup.input;
 
 import android.content.Context;
 import android.util.AttributeSet;

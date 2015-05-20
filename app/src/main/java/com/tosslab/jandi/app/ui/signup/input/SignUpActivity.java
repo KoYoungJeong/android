@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup;
+package com.tosslab.jandi.app.ui.signup.input;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.signup.model.SignUpModel;
-import com.tosslab.jandi.app.ui.signup.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.signup.input.model.SignUpModel;
+import com.tosslab.jandi.app.ui.signup.input.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -196,8 +196,5 @@ public class SignUpActivity extends AppCompatActivity {
         } finally {
             signUpViewModel.dismissProgressWheel();
         }
-
-
     }
-
 }
