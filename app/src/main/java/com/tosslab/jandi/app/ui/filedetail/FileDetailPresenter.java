@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -10,10 +9,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,7 +29,6 @@ import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -185,21 +185,30 @@ public class FileDetailPresenter {
 
         progressDialog.dismiss();
 
-        // Success
-        Intent i = new Intent();
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        i.setAction(Intent.ACTION_VIEW);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        i.setDataAndType(Uri.fromFile(file), fileType);
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
         try {
-            activity.startActivity(i);
+            activity.startActivity(intent);
         } catch (ActivityNotFoundException e) {
             String rawString = activity.getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
             ColoredToast.showError(activity, formatString);
         }
 
+    }
+
+    private String getFileType(File file, String fileType) {
+
+        String fileName = file.getName();
+        int idx = fileName.lastIndexOf(".");
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        if (idx >= 0) {
+            return mimeTypeMap.getMimeTypeFromExtension(fileName.substring(idx + 1, fileName.length()).toLowerCase());
+        } else {
+            return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
+        }
     }
 
     @UiThread

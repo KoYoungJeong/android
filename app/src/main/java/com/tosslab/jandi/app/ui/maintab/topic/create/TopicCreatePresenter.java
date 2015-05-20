@@ -18,15 +18,12 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
  */
 @EBean
 public class TopicCreatePresenter {
-
-    private static final Logger logger = Logger.getLogger(TopicCreatePresenter.class);
 
     @RootContext
     Activity activity;

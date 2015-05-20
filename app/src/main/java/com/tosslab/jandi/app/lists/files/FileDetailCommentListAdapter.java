@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.List;
  */
 @EBean
 public class FileDetailCommentListAdapter extends BaseAdapter {
-    private final Logger log = Logger.getLogger(FileDetailCommentListAdapter.class);
     List<ResMessages.CommentMessage> mMessages;
 
     @RootContext
@@ -64,17 +62,18 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     /**
      * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
+     *
      * @param resFileDetail
      */
     public void updateFileComments(ResFileDetail resFileDetail) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.CommentMessage) {
                 if (fileDetail.status.equals("created") || fileDetail.status.equals("shared")) {
-                    mMessages.add((ResMessages.CommentMessage)fileDetail);
+                    mMessages.add((ResMessages.CommentMessage) fileDetail);
                 } else if (fileDetail.status.equals("edited")) {
                     int position = searchIndexOfMessages(fileDetail.id);
                     if (position >= 0) {
-                        mMessages.set(position, (ResMessages.CommentMessage)fileDetail);
+                        mMessages.set(position, (ResMessages.CommentMessage) fileDetail);
                     }
                 } else if (fileDetail.status.equals("archived")) {
                     int position = searchIndexOfMessages(fileDetail.id);
@@ -89,7 +88,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     // 현재 화면에 뿌려진 메시지들 중에 messageId와 동일한 놈의 index 반환
     private int searchIndexOfMessages(int commentId) {
-        for (int i=0; i< mMessages.size(); i++) {
+        for (int i = 0; i < mMessages.size(); i++) {
             if (mMessages.get(i).id == commentId)
                 return i;
         }

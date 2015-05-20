@@ -23,9 +23,9 @@ import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
 import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.utils.FormatConverter;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EFragment;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -56,7 +56,6 @@ public class EditTextDialogFragment extends DialogFragment {
     private final static String ARG_TOPIC_TYPE = "topicType";
     private final static String ARG_TOPIC_ID = "topicId";
     private final static String ARG_CURRENT_MGS = "currentMessage";
-    private final Logger log = Logger.getLogger(EditTextDialogFragment.class);
     private int actionType;
     private int topicType;
     private int topicId;
@@ -159,7 +158,7 @@ public class EditTextDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String input = editTextInput.getText().toString();
-                        log.debug("length of input is " + input.length());
+                        LogUtil.d("length of input is " + input.length());
 
                         switch (actionType) {
                             case ACTION_CREATE_TOPIC:

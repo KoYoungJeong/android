@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.model.InviteModel;
 import com.tosslab.jandi.app.ui.invites.to.EmailTO;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -20,7 +21,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
-import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 
@@ -33,8 +33,6 @@ import rx.subjects.PublishSubject;
  */
 @EActivity(R.layout.activity_invite)
 public class InviteActivity extends BaseAnalyticsActivity {
-
-    private static final Logger logger = Logger.getLogger(InviteActivity.class);
 
     @Bean
     InviteModel inviteModel;
@@ -59,16 +57,16 @@ public class InviteActivity extends BaseAnalyticsActivity {
                             inviteView.updateSuccessInvite(o, 1);
 
                         } catch (JandiNetworkException e) {
-                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            LogUtil.d("Email Sending Fail : " + e.getMessage());
                             inviteView.deleteFailInvitation(o);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         } catch (Exception e) {
-                            logger.debug("Email Sending Fail : " + e.getMessage());
+                            LogUtil.d("Email Sending Fail : " + e.getMessage());
                             inviteView.deleteFailInvitation(o);
                             inviteView.showErrorToast(getString(R.string.err_invitation_failed));
                         }
                     }
-                }, throwable -> logger.debug("Email Sending Fail : " + throwable.getMessage()));
+                }, throwable -> LogUtil.e("Email Sending Fail : " + throwable.getMessage()));
     }
 
     private void setUpActionbar() {

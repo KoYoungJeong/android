@@ -47,12 +47,12 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 import java.io.File;
@@ -72,7 +72,6 @@ import de.greenrobot.event.EventBus;
 public class MessageListModel {
 
     public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
-    private static final Logger logger = Logger.getLogger(MessageListModel.class);
     @Bean
     MessageManipulator messageManipulator;
     @Bean
@@ -166,7 +165,7 @@ public class MessageListModel {
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
         } catch (JandiNetworkException e) {
-            logger.error("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            LogUtil.e("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;

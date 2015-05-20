@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,6 @@ import de.greenrobot.event.EventBus;
 @Deprecated
 @EBean
 public class MessageItemListAdapter extends BaseAdapter {
-    private final Logger log = Logger.getLogger(MessageItemListAdapter.class);
     @RootContext
     Context mContext;
     private List<MessageItem> mFormattedMessages;

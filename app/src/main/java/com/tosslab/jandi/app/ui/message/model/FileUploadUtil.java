@@ -21,8 +21,7 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.TokenUtil;
-
-import org.apache.log4j.Logger;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,8 +31,6 @@ import java.net.URLConnection;
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
 public class FileUploadUtil {
-
-    private static final Logger log = Logger.getLogger(FileUploadUtil.class);
 
     public static void uploadStart(ConfirmFileUploadEvent event, Context context, ChattingInfomations chattingInfomations, final UploadCallback uploadCallback) {
 
@@ -76,13 +73,13 @@ public class FileUploadUtil {
                     public void onCompleted(Exception exception, JsonObject result) {
                         progressDialog.dismiss();
                         if (exception != null) {
-                            log.error("uploadFileDone: FAILED", exception);
+                            LogUtil.e("uploadFileDone: FAILED", exception);
 
                             if (uploadCallback != null) {
                                 uploadCallback.onUploadFail();
                             }
                         } else if (result.get("code") != null) {
-                            log.error("uploadFileDone: " + result.get("code").toString());
+                            LogUtil.e("uploadFileDone: " + result.get("code").toString());
                             if (uploadCallback != null) {
                                 uploadCallback.onUploadFail();
                             }
@@ -103,14 +100,14 @@ public class FileUploadUtil {
                 Uri targetUri = data.getData();
                 if (targetUri != null) {
                     realFilePath = getRealPathFromUri(context, targetUri);
-                    log.debug("onActivityResult : Photo URI : " + targetUri.toString()
+                    LogUtil.d("onActivityResult : Photo URI : " + targetUri.toString()
                             + ", FilePath : " + realFilePath);
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
                 String path = data.getStringExtra("GetPath");
                 realFilePath = path + File.separator + data.getStringExtra("GetFileName");
-                log.debug("onActivityResult : from Explorer : " + realFilePath);
+                LogUtil.d("onActivityResult : from Explorer : " + realFilePath);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
                 Uri imageUri = (cameraRequestPath != null)

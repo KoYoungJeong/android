@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 /**
@@ -31,8 +31,6 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
     private static String GA_PATH_DIRECT_MESSAGE_PANEL = "Direct Message Panel";
     private static String GA_PATH_PRIVATE_GROUP_PANEL = "Private Group Panel";
     private static String GA_PATH_FILE_PANEL = "File Panel";
-
-    private final Logger log = Logger.getLogger(BaseAnalyticsActivity.class);
 
     private boolean mDoneAnalizeTrackingSignIn = false;      // 로그인 상황을 MIXPANEL
     private MixpanelMemberAnalyticsClient mMixpanelMemberAnalyticsClient;
@@ -62,7 +60,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackInvitingToEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -73,7 +71,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackDeletingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -84,7 +82,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackChangingEntityName(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -95,7 +93,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackLeavingEntity(entityType == JandiConstants.TYPE_PUBLIC_TOPIC);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -107,7 +105,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackUploadingFile(entityType, fileInfo);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -118,7 +116,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackDownloadFile(fileInfo);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -130,7 +128,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackSharingFile(entityType, fileInfo);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -142,7 +140,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackUnsharingFile(entityType, fileInfo);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }
@@ -159,7 +157,7 @@ public class BaseAnalyticsActivity extends AppCompatActivity {
             try {
                 mMixpanelMemberAnalyticsClient.trackProfile(updatedMyProfile);
             } catch (JSONException e) {
-                log.error("CANNOT MEET", e);
+                LogUtil.e("CANNOT MEET", e);
             }
         }
     }

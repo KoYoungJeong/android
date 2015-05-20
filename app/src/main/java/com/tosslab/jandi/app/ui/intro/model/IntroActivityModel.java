@@ -21,12 +21,12 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.rest.RestService;
-import org.apache.log4j.Logger;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 @EBean
 public class IntroActivityModel {
 
-    private final Logger log = Logger.getLogger(IntroActivityModel.class);
     // check for Splash time (1500ms)
     private final long initTime = System.currentTimeMillis();
     @RootContext
@@ -59,7 +58,7 @@ public class IntroActivityModel {
             int latestVersion = getLatestVersionInBackground();
             if (thisVersion < latestVersion) {
                 isLatestVersion = false;
-                log.info("A new version of JANDI is available.");
+                LogUtil.i("A new version of JANDI is available.");
             }
         } catch (JandiNetworkException e) {
         } catch (Exception e) {

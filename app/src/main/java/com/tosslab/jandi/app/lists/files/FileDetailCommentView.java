@@ -22,7 +22,6 @@ import com.tosslab.jandi.app.utils.LinkifyUtil;
 
 import org.androidannotations.annotations.EViewGroup;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 
 import de.greenrobot.event.EventBus;
 
@@ -31,7 +30,6 @@ import de.greenrobot.event.EventBus;
  */
 @EViewGroup(R.layout.item_file_detail_comment)
 public class FileDetailCommentView extends LinearLayout {
-    private final Logger log = Logger.getLogger(FileDetailCommentView.class);
 
     @ViewById(R.id.img_file_detail_comment_user_profile)
     ImageView imageViewCommentUserProfile;
@@ -58,7 +56,7 @@ public class FileDetailCommentView extends LinearLayout {
     public void bind(ResMessages.CommentMessage commentMessage) {
         // 프로필
         final FormattedEntity writer = EntityManager.getInstance(mContext).getEntityById(commentMessage.writerId);
-        
+
         String profileUrl = writer.getUserSmallProfileUrl();
         EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
         if (TextUtils.equals(entityManager.getEntityById(commentMessage.writerId).getUser().status, "enabled")) {

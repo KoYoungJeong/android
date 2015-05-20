@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.BaseChatListFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -29,7 +30,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 /**
@@ -37,7 +37,6 @@ import org.json.JSONException;
  */
 @EFragment(R.layout.fragment_main_list)
 public class MainPrivateListFragment extends BaseChatListFragment {
-    private final Logger log = Logger.getLogger(MainPrivateListFragment.class);
 
     @ViewById(R.id.main_exlist_entities)
     ExpandableListView mListViewEntities;
@@ -172,7 +171,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
             ResCommon restResId = mJandiEntityClient.createPrivateGroup(entityName);
             createGroupSucceed(restResId.id, entityName);
         } catch (JandiNetworkException e) {
-            log.error("Create Fail", e);
+            LogUtil.e("Create Fail", e);
             if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
                 createGroupFailed(R.string.err_entity_duplicated_name);
             } else {
@@ -192,7 +191,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
                         .trackCreatingEntity(false);
             }
         } catch (JSONException e) {
-            log.error("CAN NOT MEET", e);
+            LogUtil.e("CAN NOT MEET", e);
         }
         moveToPrivateTopicMessageActivity(entityId);
     }
