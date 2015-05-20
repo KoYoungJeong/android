@@ -795,4 +795,8 @@ public class MessageListPresenter {
     public int getItemCount() {
         return messageListAdapter.getItemCount();
     }
+
+    public int getRoomId() {
+        return messageListAdapter.getRoomId();
+    }
 }

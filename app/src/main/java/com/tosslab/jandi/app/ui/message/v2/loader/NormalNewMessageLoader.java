@@ -60,6 +60,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
+                messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
                 updateMarker();
 
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);

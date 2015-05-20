@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -81,5 +82,49 @@ public class JandiMarkerDatabaseManagerTest {
         List<ResRoomInfo.MarkerInfo> markers = databaseManager.getMarkers(teamId, chatList.get(0).getEntityId());
 
         assertThat(markers.size(), is(2));
+    }
+
+    @Test
+    public void testUpdateMarker() throws Exception {
+
+        int exampleKey = 1;
+        int currentMarker = 100;
+        int oldMarker = 99;
+        int newMarker = 101;
+
+        // 현재 마커 추가
+        long count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, currentMarker);
+
+        assertThat(count, not(0));
+
+        List<ResRoomInfo.MarkerInfo> markers = databaseManager.getMarkers(exampleKey, exampleKey);
+
+        // 현재 마커 확인
+        assertThat(markers.size(), is(1));
+        assertThat(markers.get(0).getLastLinkId(), is(currentMarker));
+
+        // 예전 마커 추가
+        count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, oldMarker);
+        assertThat(count, not(0));
+
+        markers = databaseManager.getMarkers(exampleKey, exampleKey);
+
+        // 예전 마커 갱신 안됐는지 확인
+        assertThat(markers.size(), is(1));
+        assertThat(markers.get(0).getLastLinkId(), is(currentMarker));
+
+
+        // 새로운 마커 추가
+        count = databaseManager.updateMarker(exampleKey, exampleKey, exampleKey, newMarker);
+
+        assertThat(count, not(0));
+
+        markers = databaseManager.getMarkers(exampleKey, exampleKey);
+
+        // 새로운 마커 확인
+        assertThat(markers.size(), is(1));
+        assertThat(markers.get(0).getLastLinkId(), is(newMarker));
+
+
     }
 }

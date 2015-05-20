@@ -402,4 +402,10 @@ public class MessageListModel {
             e.printStackTrace();
         }
     }
+
+    public void upsertMyMarker(int roomId, int lastLinkId) {
+        int myId = EntityManager.getInstance(activity).getMe().getId();
+        int teamId = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId();
+        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
+    }
 }
