@@ -46,7 +46,7 @@ public class IntroMainActivity extends AppCompatActivity {
             mViewPager.setCurrentItem(mAdapter.getCount() - 1);
         }
 
-        JandiSocketService.startSocketServiceIfNeed(IntroMainActivity.this);
+        JandiSocketService.stopService(IntroMainActivity.this);
 
 
     }

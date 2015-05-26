@@ -140,7 +140,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             showInvitePopup();
         }
 
-//        JandiSocketService.startSocketServiceIfNeed(this);
+//        JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
     }
 
@@ -211,7 +211,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Override
     protected void onDestroy() {
-        JandiSocketService.startSocketServiceIfNeed(this);
+        JandiSocketService.stopService(this);
         super.onDestroy();
     }
 
@@ -253,7 +253,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void stopJandiServiceInMainThread() {
-        JandiSocketService.startSocketServiceIfNeed(MainTabActivity.this);
+        JandiSocketService.stopService(MainTabActivity.this);
     }
 
     @UiThread

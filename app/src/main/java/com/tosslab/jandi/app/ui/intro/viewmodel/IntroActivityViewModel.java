@@ -90,7 +90,7 @@ public class IntroActivityViewModel {
     @UiThread
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        JandiSocketService.startSocketServiceIfNeed(activity);
+        JandiSocketService.stopService(activity);
 
         IntroMainActivity_.intent(activity).start();
         activity.finish();

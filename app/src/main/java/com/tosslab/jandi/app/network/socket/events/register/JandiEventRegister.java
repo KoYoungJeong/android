@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Map;
 import java.util.Queue;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by Steve SeongUg Jung on 15. 4. 2..
  */
 public class JandiEventRegister implements EventRegister {
+    public static final String TAG = "SocketEventRegister";
 
     private Emitter socket;
 
@@ -26,7 +28,6 @@ public class JandiEventRegister implements EventRegister {
 
     @Override
     public void register(String event, EventListener eventListener) {
-
         if (TextUtils.isEmpty(event) || eventListener == null) {
             return;
         }
@@ -44,7 +45,7 @@ public class JandiEventRegister implements EventRegister {
         if (socket != null && !socket.hasListeners(event)) {
             socket.on(event, args -> {
                 if (args != null && args[0] != null) {
-                    Log.d("INFO", event + " = " + args[0].toString());
+                    LogUtil.d(TAG, event + " = " + args[0].toString());
                 }
                 for (EventListener listener : eventMapper.get(event)) {
                     listener.callback(args);
@@ -69,10 +70,8 @@ public class JandiEventRegister implements EventRegister {
         registerIfPending();
     }
 
-    public static final String TAG = "SocketEventRegister";
     private void registerIfPending() {
         for (String event : eventMapper.keySet()) {
-            Log.d(TAG, event);
             if (socket != null && !socket.hasListeners(event)) {
                 socket.on(event, args -> {
                     for (EventListener listener : eventMapper.get(event)) {

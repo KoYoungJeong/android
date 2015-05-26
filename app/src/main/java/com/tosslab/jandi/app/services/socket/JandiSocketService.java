@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceBroadcastReceiver;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,8 @@ public class JandiSocketService extends Service {
 
     public static final String TAG = "SocketService";
     public static final String STOP_FORCIBLY = "stop_forcibly";
+    public static final String ACTION_CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
+
     private JandiSocketManager jandiSocketManager;
     private JandiSocketServiceModel jandiSocketServiceModel;
     private Map<String, EventListener> eventHashMap;
@@ -35,16 +38,9 @@ public class JandiSocketService extends Service {
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "receive connect status has changed. register ? - " + register);
-//            if (intent != null) {
-//                String action = intent.getAction();
-//                if ("register".equals(action)) {
-//                    Log.d(TAG, "register flow");
-//                    return;
-//                }
-//            }
-            if (register) {
-                register = false;
+            LogUtil.e(TAG, "Received connect status has changed. isRegister ? - " + isRegister);
+            if (isRegister) {
+                isRegister = false;
                 return;
             }
 
@@ -52,15 +48,15 @@ public class JandiSocketService extends Service {
         }
     };
 
-    private boolean register = true;
+    private boolean isRegister = true;
 
-    private boolean stopForcibly = false;
+    private boolean isStopForcibly = false;
 
     public void setStopForcibly(boolean forcibly) {
-        stopForcibly = forcibly;
+        isStopForcibly = forcibly;
     }
 
-    public static void startSocketServiceIfNeed(Context context) {
+    public static void stopService(Context context) {
         ActivityManager activityManager =
                 (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningServiceInfo> runningServices =
@@ -71,7 +67,7 @@ public class JandiSocketService extends Service {
             String className = runningService.service.getClassName();
             if (TextUtils.equals(packageName, context.getPackageName())
                     && TextUtils.equals(className, JandiSocketService.class.getName())) {
-                Log.e(TAG, "startSocketServiceIfNeed");
+                LogUtil.e(TAG, "stopService");
 
                 Intent intent = new Intent(context, JandiSocketService.class);
                 intent.putExtra(STOP_FORCIBLY, true);
@@ -81,19 +77,20 @@ public class JandiSocketService extends Service {
         }
     }
 
-    private boolean running = false;
+    private boolean isRunning = false;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand - already running ? " + running);
-        boolean stopForcibly = intent.getBooleanExtra(STOP_FORCIBLY, false);
-        setStopForcibly(stopForcibly);
-        if (stopForcibly) {
+        LogUtil.d(TAG, "onStartCommand");
+        boolean isStopForcibly = intent.getBooleanExtra(STOP_FORCIBLY, false);
+        LogUtil.i(TAG, "isRunning ? " + isRunning + " & stopForce ? " + isStopForcibly);
+        setStopForcibly(isStopForcibly);
+        if (isStopForcibly) {
             stopSelf();
             return START_NOT_STICKY;
         }
 
-        if (running) {
+        if (isRunning) {
             return START_NOT_STICKY;
         }
 
@@ -109,10 +106,9 @@ public class JandiSocketService extends Service {
         trySocketConnect();
         setUpSocketListener();
 
-        running = true;
+        isRunning = true;
 
-        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-//        filter.addAction("register");
+        IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
         registerReceiver(connectReceiver, filter);
         return START_NOT_STICKY;
     }
@@ -173,23 +169,32 @@ public class JandiSocketService extends Service {
         eventHashMap.put("file_comment_deleted", fileCommentRefreshListener);
 
         eventHashMap.put("check_connect_team", objects -> {
-            if (jandiSocketServiceModel.refreshToken()) {
+            LogUtil.d(TAG, "check_connect_team");
+
+            long last = System.currentTimeMillis();
+            LogUtil.i(TAG, "start time = " + last);
+            boolean refreshToken = jandiSocketServiceModel.refreshToken();
+            long current = System.currentTimeMillis();
+
+            LogUtil.i(TAG, "end time - " + current + " gap = " + (current - last));
+
+            if (refreshToken) {
                 ConnectTeam connectTeam = jandiSocketServiceModel.getConnectTeam();
                 if (connectTeam != null) {
-                    Log.d(TAG, "check_connect_team - connectTeam != null");
                     jandiSocketManager.sendByJson("connect_team", connectTeam);
                 } else {
-                    sendBroadcastForRestart();
+                    stopSelf();
                 }
             } else {
-                sendBroadcastForRestart();
+                LogUtil.e(TAG, "can not refreshToken");
+                stopSelf();
             }
         });
         eventHashMap.put("connect_team", objects -> {
-            Log.d(TAG, "connect_team");
+            LogUtil.d(TAG, "connect_team");
         });
         eventHashMap.put("error_connect_team", objects -> {
-            Log.e(TAG, "Get Error - error_connect_team");
+            LogUtil.e(TAG, "Get Error - error_connect_team");
             sendBroadcastForRestart();
         });
 
@@ -211,31 +216,31 @@ public class JandiSocketService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        Log.e(TAG, "onTaskRemoved - " + jandiSocketManager.isConnectingOrConnected());
+        LogUtil.e(TAG, "onTaskRemoved - " + jandiSocketManager.isConnectingOrConnected());
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        Log.e(TAG, "onTrimMemory - " + level);
+        LogUtil.e(TAG, "onTrimMemory - " + level);
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Log.e(TAG, "onLowMemory");
+        LogUtil.e(TAG, "onLowMemory");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy forcibly stop ? " + stopForcibly);
+        LogUtil.d(TAG, "onDestroy forcibly stop ? " + isStopForcibly);
 
         closeAll();
 
-        running = false;
+        isRunning = false;
         unregisterReceiver(connectReceiver);
         super.onDestroy();
-        if (!stopForcibly) {
+        if (!isStopForcibly) {
             sendBroadcastForRestart();
         }
     }
@@ -251,7 +256,7 @@ public class JandiSocketService extends Service {
     }
 
     private void sendBroadcastForRestart() {
-        Log.e(TAG, "sendBroadcastForRestart");
+//        LogUtil.e(TAG, "sendBroadcastForRestart");
         sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
     }
 
@@ -264,24 +269,24 @@ public class JandiSocketService extends Service {
 
     synchronized private void trySocketConnect() {
         if (!isActiveNetwork()) {
-            Log.e(TAG, "can not networking");
+            LogUtil.e(TAG, "Can not networking");
             closeAll();
             return;
         }
 
         if (!jandiSocketManager.isConnectingOrConnected()) {
-            Log.e(TAG, "trySocketConnect");
+            LogUtil.e(TAG, "trySocketConnect");
             jandiSocketManager.connect(objects -> {
                 StringBuilder sb = new StringBuilder();
                 for (Object o : objects) {
                     sb.append(o.toString() + "\n");
                 }
-                startSocketServiceIfNeed(getBaseContext());
+                stopService(getBaseContext());
                 sendBroadcastForRestart();
             });
             jandiSocketManager.register("check_connect_team", eventHashMap.get("check_connect_team"));
         } else {
-            Log.e(TAG, "socket is connected");
+            LogUtil.d(TAG, "Socket is connected");
             setUpSocketListener();
         }
     }

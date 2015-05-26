@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.manager.RequestFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -39,7 +41,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class},
-        interceptors = {LoggerInterceptor.class}
+        interceptors = {LoggerInterceptor.class},
+        requestFactory = RequestFactory.class
 )
 
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)

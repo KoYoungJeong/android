@@ -230,7 +230,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @UiThread
     @Override
     public void moveSelectedTeam(boolean firstJoin) {
-        JandiSocketService.startSocketServiceIfNeed(AccountHomeActivity.this);
+        JandiSocketService.stopService(AccountHomeActivity.this);
 //        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
 //        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
 
