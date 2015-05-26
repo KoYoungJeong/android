@@ -12,8 +12,9 @@ public class SignUpAuthorizeModel {
 
     public static final int AUTHORIZED = -1;
 
-    public boolean isValidVerifyCode(String verifyCode) {
-        return TextUtils.isEmpty(verifyCode) && (TextUtils.getTrimmedLength(verifyCode) == 4);
+    public boolean isValidAuthorizationCode(String authorizationCode) {
+        return TextUtils.isEmpty(authorizationCode)
+                && (TextUtils.getTrimmedLength(authorizationCode) == 4);
     }
 
     public int getAuthorizeTryCount(String authorizationCode) {

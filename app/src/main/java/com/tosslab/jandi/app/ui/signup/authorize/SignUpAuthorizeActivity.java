@@ -40,13 +40,13 @@ public class SignUpAuthorizeActivity extends AppCompatActivity implements SignUp
     @ViewById(R.id.btn_authorize)
     Button btnAuthorize;
 
-    private ProgressWheel mProgressWheel;
+    private ProgressWheel progressWheel;
 
     @AfterViews
     void init() {
         presenter.setView(this);
-        mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
+        progressWheel = new ProgressWheel(this);
+        progressWheel.init();
     }
 
     @Override
@@ -71,18 +71,19 @@ public class SignUpAuthorizeActivity extends AppCompatActivity implements SignUp
     @UiThread
     @Override
     public void showProgress() {
-        if (mProgressWheel != null && !mProgressWheel.isShowing()) {
-            mProgressWheel.show();
+        if (progressWheel == null || progressWheel.isShowing()) {
+            return;
         }
+        progressWheel.show();
     }
 
     @UiThread
     @Override
     public void hideProgress() {
-        if (mProgressWheel == null) {
+        if (progressWheel == null || !progressWheel.isShowing()) {
             return;
         }
-        mProgressWheel.dismiss();
+        progressWheel.dismiss();
     }
 
     @UiThread
@@ -92,7 +93,7 @@ public class SignUpAuthorizeActivity extends AppCompatActivity implements SignUp
     }
 
     @Click(R.id.btn_authorize)
-    public void authorize() {
+    void authorize() {
         presenter.verifyAuthorizationCode();
     }
 

@@ -13,5 +13,4 @@ public interface SignUpAuthorizeView {
     void hideProgress();
 
     void showInvalidAuthorizationCode(int count);
-
 }

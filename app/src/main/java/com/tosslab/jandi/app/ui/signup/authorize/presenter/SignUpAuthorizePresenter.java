@@ -24,7 +24,7 @@ public class SignUpAuthorizePresenter {
 
     public void validateAuthorizationCode() {
         String verifyCode = view.getAuthorizationCode();
-        boolean verified = model.isValidVerifyCode(verifyCode);
+        boolean verified = model.isValidAuthorizationCode(verifyCode);
         view.setVerifyButtonEnabled(verified);
     }
 
