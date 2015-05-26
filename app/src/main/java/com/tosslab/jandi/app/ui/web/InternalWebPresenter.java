@@ -1,12 +1,15 @@
 package com.tosslab.jandi.app.ui.web;
 
-import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -52,6 +55,8 @@ public class InternalWebPresenter {
     private String url;
     private ProgressWheel progressWheel;
 
+    public static final String SUPPORT_URL = "http://support.jandi.com";
+
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(context);
@@ -60,6 +65,10 @@ public class InternalWebPresenter {
 
     @AfterViews
     void initViews() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(true);
+        }
+
         WebSettings webSettings = webView.getSettings();
 
         if (webViewClient != null) {
@@ -233,5 +242,13 @@ public class InternalWebPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void pauseWebView() {
         webView.onPause();
+    }
+
+    public void zendeskCookieRemove() {
+        CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(context);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.removeAllCookie();
+        cookieSyncManager.sync();
     }
 }
