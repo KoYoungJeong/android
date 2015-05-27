@@ -2,9 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ly_message_date_devider"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="14dp"
-    android:paddingRight="14dp">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
