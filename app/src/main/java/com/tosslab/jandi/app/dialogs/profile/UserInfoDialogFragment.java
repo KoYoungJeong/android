@@ -232,6 +232,7 @@ public class UserInfoDialogFragment extends DialogFragment {
         });
     }
 
+    // TODO Profile Image 를 업로드 했는지 안 했는지에 대한 판단이 명확해질 필요가 있음.
     private boolean hasProfileUrl(String url) {
         return !TextUtils.isEmpty(url) && url.contains("files-profile");
     }
