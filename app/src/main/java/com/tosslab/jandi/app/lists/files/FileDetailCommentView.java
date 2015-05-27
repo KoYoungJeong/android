@@ -60,7 +60,6 @@ public class FileDetailCommentView extends LinearLayout {
         String profileUrl = writer.getUserSmallProfileUrl();
         EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
         if (TextUtils.equals(entityManager.getEntityById(commentMessage.writerId).getUser().status, "enabled")) {
-
             disableLineThrougView.setVisibility(View.GONE);
             disableCoverView.setVisibility(View.GONE);
             textViewCommentUserName.setTextColor(Color.BLACK);

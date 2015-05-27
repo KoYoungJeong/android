@@ -138,7 +138,8 @@ public class BodyViewFactory {
                     || message.feedbackId == beforeMessage.feedbackId)
                     && isSameDay(message, beforeMessage)) {
                 if (isSince5min(message.message.createTime, beforeMessage.message.createTime)
-                        && message.message.writerId == beforeMessage.message.writerId) {
+                        && message.message.writerId == beforeMessage.message.writerId
+                        && message.feedbackId != beforeMessage.messageId) {
                     return BodyViewHolder.Type.CollapseComment;
                 } else {
                     return BodyViewHolder.Type.PureComment;
