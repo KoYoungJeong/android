@@ -10,18 +10,23 @@ import java.util.Locale;
  */
 public class LanguageUtil {
 
-    private static final String[] LANGS = {"en", "ja", "ko", "zh-cn", "zh-tw"};
+    public static final String LANG_EN = "en";
+    public static final String LANG_JA = "ja";
+    public static final String LANG_ZH_CN = "zh-cn";
+    public static final String LANG_ZH_TW = "zh-tw";
+    public static final String LANG_KO = "ko";
+    private static final String[] LANGS = {LANG_EN, LANG_JA, LANG_KO, LANG_ZH_CN, LANG_ZH_TW};
 
     public static String getLanguage(Context context) {
 
         if (context == null) {
-            return "en";
+            return LANG_EN;
         }
 
         Locale locale = context.getResources().getConfiguration().locale;
 
         if (locale == null) {
-            return "en";
+            return LANG_EN;
         }
 
         String language = locale.getLanguage();
@@ -31,7 +36,7 @@ public class LanguageUtil {
         boolean countryEmpty = TextUtils.isEmpty(country);
 
         if (languageEmpty) {
-            return "en";
+            return LANG_EN;
         }
 
         if (countryEmpty) {
@@ -45,12 +50,12 @@ public class LanguageUtil {
             buffer.append("-").append(country);
         }
 
-        String langCode = buffer.toString();
+        String langCode = buffer.toString().toLowerCase();
 
         if (includeLangCode(langCode)) {
             return langCode;
         } else {
-            return "en";
+            return LANG_EN;
         }
 
     }

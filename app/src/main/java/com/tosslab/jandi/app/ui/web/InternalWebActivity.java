@@ -45,6 +45,9 @@ public class InternalWebActivity extends AppCompatActivity {
     @Extra
     boolean hideActionBar;
 
+    @Extra
+    boolean helpSite;
+
     @Bean
     InternalWebPresenter internalWebPresenter;
 
@@ -220,5 +223,13 @@ public class InternalWebActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.origin_activity_close_enter, R.anim.origin_activity_close_exit);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (helpSite) {
+            internalWebPresenter.zendeskCookieRemove();
+        }
+        super.onDestroy();
     }
 }
