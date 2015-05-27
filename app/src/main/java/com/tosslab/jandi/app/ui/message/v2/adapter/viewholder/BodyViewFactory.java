@@ -22,6 +22,8 @@ public class BodyViewFactory {
         BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
 
         switch (type) {
+            case CollapseComment:
+                return new CollapseCommentViewHolder();
             case PureMessage:
                 return new PureMessageViewHolder();
             case File:
@@ -132,10 +134,15 @@ public class BodyViewFactory {
             }
         } else if (message.message instanceof ResMessages.CommentMessage) {
 
-            if ((beforeMessage == null ||
-                    message.feedbackId == beforeMessage.messageId ||
-                    message.feedbackId == beforeMessage.feedbackId) && isSameDay(message, beforeMessage)) {
-                return BodyViewHolder.Type.PureComment;
+            if ((beforeMessage == null || message.feedbackId == beforeMessage.messageId
+                    || message.feedbackId == beforeMessage.feedbackId)
+                    && isSameDay(message, beforeMessage)) {
+                if (isSince5min(message.message.createTime, beforeMessage.message.createTime)
+                        && message.message.writerId == beforeMessage.message.writerId) {
+                    return BodyViewHolder.Type.CollapseComment;
+                } else {
+                    return BodyViewHolder.Type.PureComment;
+                }
             } else {
                 return BodyViewHolder.Type.FileComment;
             }
