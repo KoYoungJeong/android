@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -194,44 +196,45 @@ public class UserInfoDialogFragment extends DialogFragment {
                 .transform(new IonCircleTransform())
                 .load(userProfileUrl);
 
-        if (!TextUtils.isEmpty(userProfileUrl)) {
-            imgUserPhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Dialog alertDialog = new Dialog(getActivity());
-                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_profile_view, null);
-                    PhotoView profileView = (PhotoView) view.findViewById(R.id.photo_dialog_profile_view);
-                    ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_dialog_profile_view);
-
-                    alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    alertDialog.setContentView(view);
-
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    Window alertWindow = alertDialog.getWindow();
-
-                    DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-                    WindowManager.LayoutParams attributes = alertWindow.getAttributes();
-                    attributes.width = displayMetrics.widthPixels;
-                    attributes.height = displayMetrics.heightPixels;
-                    alertWindow.setAttributes(attributes);
-                    alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    alertDialog.show();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Ion.with(profileView)
-                                    .deepZoom()
-                                    .load(userProfileUrl)
-                                    .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
-                        }
-                    }, 500);
-                }
-            });
+        LogUtil.i("user profile url = " + userProfileUrl);
+        Log.i("JANDI", "user profile url = " + userProfileUrl);
+        if (!hasProfileUrl(userProfileUrl)) {
+            return;
         }
+
+        imgUserPhoto.setOnClickListener(v -> {
+            Dialog alertDialog = new Dialog(getActivity());
+            View view =
+                    LayoutInflater.from(getActivity()).inflate(R.layout.dialog_profile_view, null);
+            PhotoView profileView = (PhotoView) view.findViewById(R.id.photo_dialog_profile_view);
+            ProgressBar progressBar =
+                    (ProgressBar) view.findViewById(R.id.progress_dialog_profile_view);
+
+            alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            alertDialog.setContentView(view);
+
+            alertDialog.setCanceledOnTouchOutside(false);
+            Window alertWindow = alertDialog.getWindow();
+
+            DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+            WindowManager.LayoutParams attributes = alertWindow.getAttributes();
+            attributes.width = displayMetrics.widthPixels;
+            attributes.height = displayMetrics.heightPixels;
+            alertWindow.setAttributes(attributes);
+            alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.show();
+
+            new Handler().postDelayed(() ->
+                    Ion.with(profileView)
+                            .deepZoom()
+                            .load(userProfileUrl)
+                            .setCallback((e, result) -> progressBar.setVisibility(View.GONE)), 500);
+        });
     }
 
+    private boolean hasProfileUrl(String url) {
+        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+    }
 
     private Dialog createEnabledUserDialog() {
 
