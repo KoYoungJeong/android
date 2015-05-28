@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.DrawableCrossFadeFactory;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -146,20 +150,11 @@ public class ImageViewHolder implements BodyViewHolder {
                         });
                     } else {
                         String optimizedImageUrl =
-                                getOptimizedImageUrl(context,
-                                        smallThumbnailUrl, mediumThumbnailUrl,
+                                getOptimizedImageUrl(context, smallThumbnailUrl, mediumThumbnailUrl,
                                         largeThumbnailUrl, originalFileUrl);
+
                         String imageUrl = BitmapUtil.getFileUrl(optimizedImageUrl);
-
-                        LogUtil.e(imageUrl);
-                        Log.i("JANDI", imageUrl);
-
-                        Ion.with(fileImageView)
-                                .placeholder(R.drawable.jandi_fl_icon_img)
-                                .error(R.drawable.jandi_fl_icon_img)
-                                .crossfade(true)
-                                .fitCenter()
-                                .load(imageUrl);
+                        Log.d("JANDI", "imageUrl - " + imageUrl);
 
                         fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(fileImageView.getContext())
@@ -167,6 +162,24 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .imageName(fileContent.name)
                                 .imageType(fileContent.type)
                                 .start());
+
+                        String smallThumb = !TextUtils.isEmpty(smallThumbnailUrl)
+                                ? BitmapUtil.getFileUrl(smallThumbnailUrl) : imageUrl;
+
+                        Log.d("JANDI", "small thumb - " + smallThumb);
+//                        Glide.with(context)
+//                                .load(smallThumb)
+//                                .asBitmap()
+//                                .placeholder(R.drawable.jandi_fl_icon_img)
+//                                .error(R.drawable.jandi_fl_icon_img)
+//                                .fitCenter()
+//                                .into(fileImageView);
+                        Ion.with(fileImageView)
+                                .placeholder(R.drawable.jandi_fl_icon_img)
+                                .error(R.drawable.jandi_fl_icon_img)
+                                .crossfade(true)
+                                .fitCenter()
+                                .load(smallThumb);
                     }
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);

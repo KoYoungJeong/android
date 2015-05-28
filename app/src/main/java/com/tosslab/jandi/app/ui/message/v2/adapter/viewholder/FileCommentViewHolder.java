@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -73,6 +74,8 @@ public class FileCommentViewHolder implements BodyViewHolder {
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
+
+        LogUtil.e("profileUrl - " + profileUrl);
 
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
