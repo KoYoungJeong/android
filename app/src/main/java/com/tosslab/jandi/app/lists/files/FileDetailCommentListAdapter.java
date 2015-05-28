@@ -52,25 +52,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return distinguishCommentView(position, convertView);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position > 0 && getItem(position).writerId == getItem(position - 1).writerId
-                && isSince5min(getItem(position).createTime, getItem(position - 1).createTime)) {
-            return viewType.PureComment.ordinal();
-        } else {
-            return viewType.Comment.ordinal();
-        }
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return viewType.values().length;
-    }
-
-    private View distinguishCommentView(int position, View convertView) {
         FileDetailCommentView fileDetailView;
         FileDetailCollapseCommentView fileDetailCollapseCommentView;
 
@@ -82,7 +63,6 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
             }
 
             fileDetailCollapseCommentView.bind(getItem(position));
-
             return fileDetailCollapseCommentView;
         } else {
             if (convertView == null) {
@@ -92,10 +72,33 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
             }
 
             fileDetailView.bind(getItem(position));
-
             return fileDetailView;
         }
+    }
 
+    @Override
+    public int getItemViewType(int position) {
+        ResMessages.CommentMessage currentMessage = getItem(position);
+        ResMessages.CommentMessage beforeMessage = null;
+
+        if (position > 0) {
+            beforeMessage = getItem(position - 1);
+        } else {
+            return viewType.Comment.ordinal();
+        }
+
+        if (position > 0
+                && currentMessage.writerId == beforeMessage.writerId
+                && isSince5min(currentMessage.createTime, beforeMessage.createTime)) {
+            return viewType.PureComment.ordinal();
+        } else {
+            return viewType.Comment.ordinal();
+        }
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return viewType.values().length;
     }
 
     private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
