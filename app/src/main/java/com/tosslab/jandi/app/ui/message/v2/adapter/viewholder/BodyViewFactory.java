@@ -135,11 +135,17 @@ public class BodyViewFactory {
         } else if (currentMessage instanceof ResMessages.CommentMessage) {
             int messageFeedbackId = message.feedbackId;
 
-            boolean isFeedbackMessage =
-                    messageFeedbackId == beforeMessage.messageId
-                            || messageFeedbackId == beforeMessage.feedbackId;
+            boolean isFeedbackMessage = false;
+
+            if (beforeMessage != null) {
+                isFeedbackMessage = messageFeedbackId == beforeMessage.messageId
+                        || messageFeedbackId == beforeMessage.feedbackId;
+            }
 
             /*
+             * Comment는 파일 바로 밑에 달리는 PureComment, CollapseComment
+             * 그리고 다른 날짜나 이전 메세지가 해당 파일이나 해당 파일의 Comment가 아닌 경우 FileComment 사용
+             *
              * 1. 이전 메세지가 null이 아니여서 comment형태가 될 수 있는 경우
              * 2. 현 메세지의 feedbackId와 이전 메세지의 Id가 같거나
              * 현 메세지의 feedbackId와 이전 메세지의 feedbackId가 같은 경우
