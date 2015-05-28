@@ -64,7 +64,6 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @AfterViews
     void initView() {
-        LogUtil.i("imageUrl - " + imageUrl);
         Log.i("JANDI", "imageUrl - " + imageUrl);
         setupActionBar();
 
@@ -105,39 +104,39 @@ public class PhotoViewActivity extends AppCompatActivity {
     @UiThread
     void downloadImageFile() {
         // deep zoom 시 exif 정보를 토대로 회전 시켜보여주지 않음....
-        Ion.with(this)
-                .load(imageUrl)
-                .withBitmap()
-                .crossfade(true)
-                .fitCenter()
-                .error(R.drawable.jandi_fl_icon_deleted)
-                .intoImageView(photoView)
-                .setCallback((e, result) -> {
-                    progressBar.setVisibility(View.GONE);
-                });
-
-//        Glide.with(this).load(imageUrl)
-//                .asBitmap()
+//        Ion.with(this)
+//                .load(imageUrl)
+//                .withBitmap()
+//                .crossfade(true)
 //                .fitCenter()
 //                .error(R.drawable.jandi_fl_icon_deleted)
-//                .listener(new RequestListener<String, Bitmap>() {
-//                    @Override
-//                    public boolean onException(Exception e,
-//                                               String model, Target<Bitmap> target,
-//                                               boolean isFirstResource) {
-//                        e.printStackTrace();
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(Bitmap resource,
-//                                                   String model, Target<Bitmap> target,
-//                                                   boolean isFromMemoryCache,
-//                                                   boolean isFirstResource) {
-//                        progressBar.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//                }).into(photoView);
+//                .intoImageView(photoView)
+//                .setCallback((e, result) -> {
+//                    progressBar.setVisibility(View.GONE);
+//                });
+
+        Glide.with(this).load(imageUrl)
+                .asBitmap()
+                .fitCenter()
+                .error(R.drawable.jandi_fl_icon_deleted)
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e,
+                                               String model, Target<Bitmap> target,
+                                               boolean isFirstResource) {
+                        e.printStackTrace();
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource,
+                                                   String model, Target<Bitmap> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(photoView);
 //        String directoryPath = getFilesDir() + File.separator + "/images";
 //        File directory = new File(directoryPath);
 //        if (!directory.exists()) {
