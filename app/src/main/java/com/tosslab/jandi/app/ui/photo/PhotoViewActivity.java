@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.photo;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -13,15 +14,22 @@ import android.widget.ProgressBar;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.photo.model.PhotoViewModel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.api.BackgroundExecutor;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import uk.co.senab.photoview.PhotoView;
 
@@ -41,6 +49,9 @@ public class PhotoViewActivity extends AppCompatActivity {
     @Extra
     String imageName;
 
+    @Bean
+    PhotoViewModel model;
+
     @ViewById(R.id.photo_photo_view)
     PhotoView photoView;
 
@@ -49,7 +60,8 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @AfterViews
     void initView() {
-
+        LogUtil.i("imageUrl - " + imageUrl);
+        Log.i("JANDI", "imageUrl - " + imageUrl);
         setupActionBar();
 
         photoView.setOnPhotoTapListener((view, v, v2) -> toggleActionbar());
@@ -57,14 +69,19 @@ public class PhotoViewActivity extends AppCompatActivity {
         if (isGif()) {
             loadGif();
         } else {
-            loadImageDeepZoom();
+            downloadImageFile();
         }
 
         autoHideActionBar();
     }
 
-    private void setupActionBar() {
+    @Override
+    protected void onDestroy() {
+        model.deleteImageFile();
+        super.onDestroy();
+    }
 
+    private void setupActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
 
@@ -81,39 +98,93 @@ public class PhotoViewActivity extends AppCompatActivity {
         finish();
     }
 
-    private void loadImageDeepZoom() {
-        Ion.with(PhotoViewActivity.this)
-                .load(imageUrl)
-                .setLogging("INFO", Log.INFO)
-                .withBitmap()
-                .crossfade(true)
-                .fitCenter()
-                .deepZoom()
-                .intoImageView(photoView)
-                .setCallback((e, result) -> {
+    @Background
+    void downloadImageFile() {
+        String directoryPath = getFilesDir() + File.separator + "/images";
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
 
-                    if (e != null) {
-                        loadImagePlain();
-                    } else {
+        File tempFile = null;
+        try {
+            tempFile = File.createTempFile("image", ".jpg", directory);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
 
-                        Drawable drawable = result.getDrawable();
-                        int intrinsicWidth = drawable.getIntrinsicWidth();
-                        int intrinsicHeight = drawable.getIntrinsicHeight();
-                        if (intrinsicHeight <= 0 || intrinsicWidth <= 0) {
-                            loadImagePlain();
-                        } else {
-                            progressBar.setVisibility(View.GONE);
-                        }
+        LogUtil.i(tempFile.getAbsolutePath());
 
+        File file = null;
+        try {
+            file = Ion.with(this).load(imageUrl).write(tempFile).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return;
+        }
+        if (file == null || !file.exists()) {
+            LogUtil.e("file is not exists");
+            return;
+        }
 
-                    }
-                });
+        rotateBitmapAndShowImage(file);
+    }
+
+    @Background
+    void rotateBitmapAndShowImage(File file) {
+        String downloadedFilePath = file.getAbsolutePath();
+
+        int degree = model.getExifOrientationDegree(downloadedFilePath);
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = Ion.with(this).load(file).asBitmap().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        if (bitmap == null) {
+            LogUtil.e("bitmap is null");
+            return;
+        }
+//        Bitmap bitmap = model.getBitmapFromFileAvoidOOM(downloadedFilePath);
+        Bitmap rotateBitmap = model.getRotateBitmap(bitmap, degree);
+
+        file = model.getFileFromBitmap(rotateBitmap, downloadedFilePath);
+
+        showImage(file);
     }
 
     @UiThread
-    void loadImagePlain() {
-        Ion.with(PhotoViewActivity.this)
+    void showImage(File file) {
+        model.setImageFile(file);
+
+        // Deep Zoom 시 메모리 누수로 인한 앱 종료를 막기 위함.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            loadImagePlain(file);
+            return;
+        }
+
+        loadImageDeepZoom(file);
+    }
+
+    private void loadGif() {
+        Ion.with(photoView)
                 .load(imageUrl)
+                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
+    }
+
+    void loadImagePlain(File file) {
+        Ion.with(PhotoViewActivity.this)
+                .load(file)
                 .setLogging("INFO", Log.INFO)
                 .withBitmap()
                 .crossfade(true)
@@ -125,10 +196,29 @@ public class PhotoViewActivity extends AppCompatActivity {
                 });
     }
 
-    private void loadGif() {
-        Ion.with(photoView)
-                .load(imageUrl)
-                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
+    private void loadImageDeepZoom(File file) {
+        Ion.with(PhotoViewActivity.this)
+                .load(file)
+                .setLogging("INFO", Log.INFO)
+                .withBitmap()
+                .crossfade(true)
+                .fitCenter()
+                .deepZoom()
+                .intoImageView(photoView)
+                .setCallback((e, result) -> {
+                    if (e != null) {
+                        loadImagePlain(file);
+                    } else {
+                        Drawable drawable = result.getDrawable();
+                        int intrinsicWidth = drawable.getIntrinsicWidth();
+                        int intrinsicHeight = drawable.getIntrinsicHeight();
+                        if (intrinsicHeight <= 0 || intrinsicWidth <= 0) {
+                            loadImagePlain(file);
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
     }
 
     private boolean isGif() {
@@ -171,8 +261,5 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
 
         getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-
     }
-
-
 }
