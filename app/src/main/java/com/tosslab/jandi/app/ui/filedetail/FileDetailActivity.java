@@ -661,7 +661,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         switch (placeholderType) {
             case Google:
             case Dropbox:
-                String photoUrl = BitmapUtil.getFileeUrl(mResFileDetail.content.fileUrl);
+                String photoUrl = BitmapUtil.getFileUrl(mResFileDetail.content.fileUrl);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(photoUrl)));
                 return;
         }
@@ -674,7 +674,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         progressDialog.setMessage("Downloading " + fileName);
         progressDialog.show();
 
-        downloadInBackground(BitmapUtil.getFileeUrl(mResFileDetail.content.fileUrl), mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
+        downloadInBackground(BitmapUtil.getFileUrl(mResFileDetail.content.fileUrl), mResFileDetail.content.name, mResFileDetail.content.type, progressDialog);
     }
 
     public void onEvent(FileDownloadStartEvent fileDownloadStartEvent) {

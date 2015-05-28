@@ -53,7 +53,7 @@ public class DummyViewHolder implements BodyViewHolder {
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
-                .load(BitmapUtil.getFileeUrl(profileUrl));
+                .load(BitmapUtil.getFileUrl(profileUrl));
 
         nameTextView.setText(entity.getName());
 

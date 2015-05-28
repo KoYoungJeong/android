@@ -30,16 +30,16 @@ public class ImageThumbLoader implements FileThumbLoader {
     @Override
     public void loadThumb(ResMessages.FileMessage fileMessage) {
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-        String photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+        String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
 
         iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
 
         String thumbnailPhotoUrl = null;
         if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
 
-            thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
+            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
         } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
-            thumbnailPhotoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
         }
 
         if (!TextUtils.isEmpty(thumbnailPhotoUrl) && !TextUtils.isEmpty(photoUrl)) {

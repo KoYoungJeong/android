@@ -92,7 +92,7 @@ public class PhotoViewModel {
 
     public Bitmap getRotateBitmap(Bitmap originalBitmap, int degree) {
         Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
+        matrix.setRotate(degree);
 
         Bitmap rotateBitmap = Bitmap.createBitmap(originalBitmap,
                 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(),
@@ -111,7 +111,7 @@ public class PhotoViewModel {
         try {
             file = new File(filePath);
             fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.flush();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

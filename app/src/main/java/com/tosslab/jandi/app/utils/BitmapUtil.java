@@ -32,7 +32,7 @@ public class BitmapUtil {
         return bitmap;
     }
 
-    public static String getFileeUrl(String url) {
+    public static String getFileUrl(String url) {
 
         if (TextUtils.isEmpty(url)) {
             return url;

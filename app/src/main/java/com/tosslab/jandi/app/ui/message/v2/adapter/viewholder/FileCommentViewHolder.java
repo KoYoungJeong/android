@@ -72,7 +72,14 @@ public class FileCommentViewHolder implements BodyViewHolder {
         FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && !TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
+        String profileUrl = entity.getUserLargeProfileUrl();
+
+        Ion.with(profileImageView)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(profileUrl);
 
         EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
         if (TextUtils.equals(entityManager.getEntityById(fromEntity.id).getUser().status, "enabled")) {
@@ -96,13 +103,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
             unreadTextView.setVisibility(View.VISIBLE);
         }
 
-
-        Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
         nameTextView.setText(fromEntity.name);
 
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
@@ -130,10 +130,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
                     if (feedbackFileMessage.content.extraInfo != null &&
                             !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
 
-                        imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
+                        imageUrl = BitmapUtil.getFileUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
 
                     } else if (!TextUtils.isEmpty(feedbackFileMessage.content.fileUrl)) {
-                        imageUrl = BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl);
+                        imageUrl = BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl);
                     }
                     if (!TextUtils.isEmpty(imageUrl)) {
 
@@ -143,7 +143,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                             case Google:
                             case Dropbox:
                                 fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
-                                fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl)))));
+                                fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl)))));
                                 break;
                             default:
                                 Ion.with(fileImageView)
@@ -154,7 +154,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                         .load(imageUrl);
                                 fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                         .intent(fileImageView.getContext())
-                                        .imageUrl(BitmapUtil.getFileeUrl(feedbackFileMessage.content.fileUrl))
+                                        .imageUrl(BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl))
                                         .imageName(feedbackFileMessage.content.name)
                                         .imageType(feedbackFileMessage.content.type)
                                         .start());

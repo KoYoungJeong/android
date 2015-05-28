@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.animation.GlideAnimationFactory;
+import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.photo.model.PhotoViewModel;
@@ -98,67 +102,105 @@ public class PhotoViewActivity extends AppCompatActivity {
         finish();
     }
 
-    @Background
+    @UiThread
     void downloadImageFile() {
-        String directoryPath = getFilesDir() + File.separator + "/images";
-        File directory = new File(directoryPath);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
+        // deep zoom 시 exif 정보를 토대로 회전 시켜보여주지 않음....
+//        Ion.with(this)
+//                .load(imageUrl)
+//                .withBitmap()
+//                .crossfade(true)
+//                .fitCenter()
+//                .error(R.drawable.jandi_fl_icon_deleted)
+//                .intoImageView(photoView)
+//                .setCallback((e, result) -> {
+//                    progressBar.setVisibility(View.GONE);
+//                });
 
-        File tempFile = null;
-        try {
-            tempFile = File.createTempFile("image", ".jpg", directory);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
+        Glide.with(this).load(imageUrl)
+                .asBitmap()
+                .fitCenter()
+                .error(R.drawable.jandi_fl_icon_deleted)
+                .listener(new RequestListener<String, Bitmap>() {
+                    @Override
+                    public boolean onException(Exception e,
+                                               String model, Target<Bitmap> target,
+                                               boolean isFirstResource) {
+                        return true;
+                    }
 
-        LogUtil.i(tempFile.getAbsolutePath());
-
-        File file = null;
-        try {
-            file = Ion.with(this).load(imageUrl).write(tempFile).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return;
-        }
-        if (file == null || !file.exists()) {
-            LogUtil.e("file is not exists");
-            return;
-        }
-
-        rotateBitmapAndShowImage(file);
+                    @Override
+                    public boolean onResourceReady(Bitmap resource,
+                                                   String model, Target<Bitmap> target,
+                                                   boolean isFromMemoryCache,
+                                                   boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return true;
+                    }
+                }).into(photoView);
+//        String directoryPath = getFilesDir() + File.separator + "/images";
+//        File directory = new File(directoryPath);
+//        if (!directory.exists()) {
+//            directory.mkdir();
+//        }
+//
+//        File tempFile = null;
+//        try {
+//            tempFile = File.createTempFile("image", ".jpg", directory);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        LogUtil.i(tempFile.getAbsolutePath());
+//
+//        File file = null;
+//        try {
+//            file = Ion.with(this).load(imageUrl).noCache().write(tempFile).get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            return;
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//        if (file == null || !file.exists()) {
+//            LogUtil.e("file is not exists");
+//            return;
+//        }
+//
+//        rotateBitmapAndShowImage(file);
     }
 
     @Background
     void rotateBitmapAndShowImage(File file) {
         String downloadedFilePath = file.getAbsolutePath();
 
-        int degree = model.getExifOrientationDegree(downloadedFilePath);
-
-        Bitmap bitmap = null;
-        try {
-            bitmap = Ion.with(this).load(file).asBitmap().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return;
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        if (bitmap == null) {
-            LogUtil.e("bitmap is null");
-            return;
-        }
-//        Bitmap bitmap = model.getBitmapFromFileAvoidOOM(downloadedFilePath);
-        Bitmap rotateBitmap = model.getRotateBitmap(bitmap, degree);
-
-        file = model.getFileFromBitmap(rotateBitmap, downloadedFilePath);
+//        int degree = model.getExifOrientationDegree(downloadedFilePath);
+//        LogUtil.e("degree !! = " + degree);
+//        Bitmap bitmap = null;
+//        try {
+//            bitmap = Ion.with(this).load(file).noCache().asBitmap().get();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//            return;
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//
+//        if (bitmap == null) {
+//            LogUtil.e("bitmap is null");
+//            return;
+//        }
+//
+//        LogUtil.e("original width = " + bitmap.getWidth());
+//        file.delete();
+////        Bitmap bitmap = model.getBitmapFromFileAvoidOOM(downloadedFilePath);
+//        Bitmap rotateBitmap = model.getRotateBitmap(bitmap, degree);
+//
+//        LogUtil.e("rotate width = " + rotateBitmap.getWidth());
+//
+//        file = model.getFileFromBitmap(rotateBitmap, downloadedFilePath);
 
         showImage(file);
     }
