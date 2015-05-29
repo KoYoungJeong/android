@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -38,6 +42,7 @@ public class ImageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private Context context;
 
     @Override
     public void initView(View rootView) {
@@ -52,7 +57,7 @@ public class ImageViewHolder implements BodyViewHolder {
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
-
+        context = rootView.getContext();
     }
 
     @Override
