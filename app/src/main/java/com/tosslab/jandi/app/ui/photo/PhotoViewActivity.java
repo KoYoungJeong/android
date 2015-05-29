@@ -18,7 +18,6 @@ import com.bumptech.glide.request.animation.GlideAnimationFactory;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.photo.model.PhotoViewModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -53,9 +52,6 @@ public class PhotoViewActivity extends AppCompatActivity {
     @Extra
     String imageName;
 
-    @Bean
-    PhotoViewModel model;
-
     @ViewById(R.id.photo_photo_view)
     PhotoView photoView;
 
@@ -76,12 +72,6 @@ public class PhotoViewActivity extends AppCompatActivity {
         }
 
         autoHideActionBar();
-    }
-
-    @Override
-    protected void onDestroy() {
-        model.deleteImageFile();
-        super.onDestroy();
     }
 
     private void setupActionBar() {
