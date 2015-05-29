@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -49,11 +48,6 @@ public class FileUploadDialogFragment extends DialogFragment {
         args.putInt("currentEntityId", currentEntityId);
         frag.setArguments(args);
         return frag;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -153,10 +147,6 @@ public class FileUploadDialogFragment extends DialogFragment {
                             }
                         }
                 );
-
-        //키보드 내리기
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editTextFileComment.getWindowToken(), 0);
 
         return builder.create();
     }

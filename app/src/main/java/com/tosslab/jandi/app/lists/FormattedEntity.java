@@ -205,41 +205,41 @@ public class FormattedEntity {
     }
 
     public String getUserSmallProfileUrl() {
-        String userPhofileUrl;
+        String userProfileUrl;
         if (getUser().u_photoThumbnailUrl != null) {
-            userPhofileUrl = getUser().u_photoThumbnailUrl.smallThumbnailUrl;
+            userProfileUrl = getUser().u_photoThumbnailUrl.smallThumbnailUrl;
         } else {
-            userPhofileUrl = getUser().u_photoUrl;
+            userProfileUrl = getUser().u_photoUrl;
         }
 
-        if (hasProtocol(userPhofileUrl)) {
-            return userPhofileUrl;
-        }
-
-        if (TextUtils.isEmpty(userPhofileUrl)) {
+        if (TextUtils.isEmpty(userProfileUrl)) {
             return null;
         }
 
-        return JandiConstantsForFlavors.SERVICE_FILE_URL + userPhofileUrl;
+        if (hasProtocol(userProfileUrl)) {
+            return userProfileUrl;
+        }
+
+        return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
     }
 
     public String getUserLargeProfileUrl() {
-        String userPhofileUrl;
+        String userProfileUrl;
         if (getUser().u_photoThumbnailUrl != null) {
-            userPhofileUrl = getUser().u_photoThumbnailUrl.largeThumbnailUrl;
+            userProfileUrl = getUser().u_photoThumbnailUrl.largeThumbnailUrl;
         } else {
-            userPhofileUrl = getUser().u_photoUrl;
+            userProfileUrl = getUser().u_photoUrl;
         }
 
-        if (hasProtocol(userPhofileUrl)) {
-            return userPhofileUrl;
-        }
-
-        if (TextUtils.isEmpty(userPhofileUrl)) {
+        if (TextUtils.isEmpty(userProfileUrl)) {
             return null;
         }
 
-        return JandiConstantsForFlavors.SERVICE_FILE_URL + userPhofileUrl;
+        if (hasProtocol(userProfileUrl)) {
+            return userProfileUrl;
+        }
+
+        return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
     }
 
     private boolean hasProtocol(String url) {

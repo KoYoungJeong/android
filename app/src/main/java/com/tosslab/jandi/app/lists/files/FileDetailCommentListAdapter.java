@@ -13,6 +13,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -24,6 +25,10 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @RootContext
     Context mContext;
+
+    enum viewType {
+        Comment, PureComment
+    }
 
     @AfterInject
     void initAdapter() {
@@ -47,18 +52,75 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         FileDetailCommentView fileDetailView;
-        if (convertView == null) {
-            fileDetailView = FileDetailCommentView_.build(mContext);
+        FileDetailCollapseCommentView fileDetailCollapseCommentView;
+
+        if (getItemViewType(position) == viewType.PureComment.ordinal()) {
+            if (convertView == null) {
+                fileDetailCollapseCommentView = FileDetailCollapseCommentView_.build(mContext);
+            } else {
+                fileDetailCollapseCommentView = (FileDetailCollapseCommentView) convertView;
+            }
+
+            fileDetailCollapseCommentView.bind(getItem(position));
+            return fileDetailCollapseCommentView;
         } else {
-            fileDetailView = (FileDetailCommentView) convertView;
+            if (convertView == null) {
+                fileDetailView = FileDetailCommentView_.build(mContext);
+            } else {
+                fileDetailView = (FileDetailCommentView) convertView;
+            }
+
+            fileDetailView.bind(getItem(position));
+            return fileDetailView;
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        ResMessages.CommentMessage currentMessage = getItem(position);
+        ResMessages.CommentMessage beforeMessage = null;
+
+        if (position > 0) {
+            beforeMessage = getItem(position - 1);
+        } else {
+            return viewType.Comment.ordinal();
         }
 
-        fileDetailView.bind(getItem(position));
-
-        return fileDetailView;
+        if (position > 0
+                && currentMessage.writerId == beforeMessage.writerId
+                && isSince5min(currentMessage.createTime, beforeMessage.createTime)) {
+            return viewType.PureComment.ordinal();
+        } else {
+            return viewType.Comment.ordinal();
+        }
     }
+
+    @Override
+    public int getViewTypeCount() {
+        return viewType.values().length;
+    }
+
+    private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
+        if (beforeMessageTime == null) {
+            beforeMessageTime = new Date();
+        }
+
+        if (currentMessageTime == null) {
+            currentMessageTime = new Date();
+        }
+
+        long beforeTime = beforeMessageTime.getTime();
+        long currentTime = currentMessageTime.getTime();
+
+        double diffTime = currentTime - beforeTime;
+        if (diffTime / (1000l * 60l * 5) < 1d) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * TODO : 로직을 언젠가는 MessageItemListAdapter와 합칠 필요가 있겠음.
