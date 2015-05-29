@@ -30,7 +30,7 @@ public class NormalThumbLoader implements FileThumbLoader {
     public void loadThumb(ResMessages.FileMessage fileMessage) {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-        String photoUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
+        String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
 
         iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
         imageViewPhotoFile.setImageResource(MimeTypeUtil.getMimeTypePlaceholderImage(fileMessage.content.serverUrl, fileMessage.content.icon));
@@ -48,7 +48,7 @@ public class NormalThumbLoader implements FileThumbLoader {
                 imageViewPhotoFile.setOnClickListener(view -> imageViewPhotoFile.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(photoUrl))));
                 break;
             default:
-                imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new FileDownloadStartEvent(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl), fileMessage.content.name, fileMessage.content.type)));
+                imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new FileDownloadStartEvent(BitmapUtil.getFileUrl(fileMessage.content.fileUrl), fileMessage.content.name, fileMessage.content.type)));
                 break;
         }
 

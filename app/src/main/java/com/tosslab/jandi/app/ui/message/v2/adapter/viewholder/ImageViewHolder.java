@@ -1,12 +1,19 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.DrawableCrossFadeFactory;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
@@ -19,6 +26,7 @@ import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -38,9 +46,11 @@ public class ImageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private Context context;
 
     @Override
     public void initView(View rootView) {
+        context = rootView.getContext();
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
@@ -52,7 +62,6 @@ public class ImageViewHolder implements BodyViewHolder {
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
-
     }
 
     @Override
@@ -60,27 +69,37 @@ public class ImageViewHolder implements BodyViewHolder {
 
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity =
+                EntityManager.getInstance(context).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        String profileUrl = ((fromEntity.u_photoThumbnailUrl != null) && TextUtils.isEmpty(fromEntity.u_photoThumbnailUrl.largeThumbnailUrl)) ? fromEntity.u_photoThumbnailUrl.largeThumbnailUrl : fromEntity.u_photoUrl;
-        EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
+        String profileUrl = entity.getUserLargeProfileUrl();
+
+        LogUtil.e("profileUrl - " + profileUrl);
+
+        Ion.with(profileImageView)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .crossfade(true)
+                .load(profileUrl);
+
+        EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
-
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
-
+        ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+        if (user != null && TextUtils.equals(user.status, "enabled")) {
+            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
             disableLineThroughView.setVisibility(View.GONE);
         } else {
-
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
-
+            nameTextView.setTextColor(
+                    context.getResources().getColor(R.color.deactivate_text_color));
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -89,23 +108,15 @@ public class ImageViewHolder implements BodyViewHolder {
             unreadTextView.setVisibility(View.VISIBLE);
         }
 
-        Ion.with(profileImageView)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .crossfade(true)
-                .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileUrl);
-
-
         nameTextView.setText(fromEntity.name);
-
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
-
 
         if (link.message instanceof ResMessages.FileMessage) {
             ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) link.message;
 
-            MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
+            ResMessages.FileContent fileContent = fileMessage.content;
+            MimeTypeUtil.SourceType sourceType =
+                    SourceTypeUtil.getSourceType(fileContent.serverUrl);
 
             if (TextUtils.equals(fileMessage.status, "archived")) {
 
@@ -113,47 +124,103 @@ public class ImageViewHolder implements BodyViewHolder {
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
-                String imageUrl = null;
-                if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.smallThumbnailUrl)) {
-                    imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.extraInfo.smallThumbnailUrl);
-                } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
-                    imageUrl = BitmapUtil.getFileeUrl(fileMessage.content.fileUrl);
-                }
+                ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
+                String smallThumbnailUrl = extraInfo != null ? extraInfo.smallThumbnailUrl : null;
+                String mediumThumbnailUrl = extraInfo != null ? extraInfo.mediumThumbnailUrl : null;
+                String largeThumbnailUrl = extraInfo != null ? extraInfo.largeThumbnailUrl : null;
+                String originalFileUrl = fileContent.fileUrl;
 
-                if (!TextUtils.isEmpty(imageUrl)) {
+                if (hasImageUrl(smallThumbnailUrl, largeThumbnailUrl, originalFileUrl)) {
+                    // Google, Dropbox 파일이 인 경우
+                    if (sourceType == MimeTypeUtil.SourceType.Google
+                            || sourceType == MimeTypeUtil.SourceType.Dropbox) {
+                        int mimeTypeIconImage =
+                                MimeTypeUtil.getMimeTypeIconImage(
+                                        fileContent.serverUrl, fileContent.icon);
+                        fileImageView.setImageResource(mimeTypeIconImage);
+                        fileImageView.setOnClickListener(view -> {
+                            Intent intent = new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse(BitmapUtil.getFileUrl(originalFileUrl)));
+                            fileImageView.getContext().startActivity(intent);
+                        });
+                    } else {
+                        String optimizedImageUrl =
+                                getOptimizedImageUrl(context, smallThumbnailUrl, mediumThumbnailUrl,
+                                        largeThumbnailUrl, originalFileUrl);
 
-                    switch (sourceType) {
-                        case Google:
-                        case Dropbox:
-                            fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl)))));
-                            fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
-                            break;
-                        default:
-                            Ion.with(fileImageView)
-                                    .placeholder(R.drawable.jandi_fl_icon_img)
-                                    .error(R.drawable.jandi_fl_icon_img)
-                                    .crossfade(true)
-                                    .fitCenter()
-                                    .load(imageUrl);
-                            fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                    .intent(fileImageView.getContext())
-                                    .imageUrl(BitmapUtil.getFileeUrl(fileMessage.content.fileUrl))
-                                    .imageName(fileMessage.content.name)
-                                    .imageType(fileMessage.content.type)
-                                    .start());
-                            break;
+                        String imageUrl = BitmapUtil.getFileUrl(optimizedImageUrl);
+                        Log.d("JANDI", "imageUrl - " + imageUrl);
+
+                        fileImageView.setOnClickListener(view -> PhotoViewActivity_
+                                .intent(fileImageView.getContext())
+                                .imageUrl(imageUrl)
+                                .imageName(fileContent.name)
+                                .imageType(fileContent.type)
+                                .start());
+
+                        // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
+                        String mediumThumb = !TextUtils.isEmpty(mediumThumbnailUrl)
+                                ? BitmapUtil.getFileUrl(mediumThumbnailUrl) : imageUrl;
+
+                        Log.d("JANDI", "small thumb - " + mediumThumb);
+                        Ion.with(fileImageView)
+                                .placeholder(R.drawable.jandi_fl_icon_img)
+                                .error(R.drawable.jandi_fl_icon_img)
+                                .crossfade(true)
+                                .fitCenter()
+                                .load(mediumThumb);
                     }
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }
 
-                fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(fileMessage.content.ext);
+                fileNameTextView.setText(fileContent.title);
+                fileTypeTextView.setText(fileContent.ext);
             }
 
         }
-        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        profileImageView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        nameTextView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    private boolean hasImageUrl(String small, String large, String original) {
+        return !TextUtils.isEmpty(small)
+                || !TextUtils.isEmpty(large)
+                || !TextUtils.isEmpty(original);
+    }
+
+    private String getOptimizedImageUrl(Context context,
+                                        String small, String medium,
+                                        String large, String original) {
+        // XXHDPI 이상인 기기에서만 오리지널 파일을 로드
+        int dpi = context.getResources().getDisplayMetrics().densityDpi;
+        if (dpi > DisplayMetrics.DENSITY_XHIGH) {
+            String url = original;
+            return !TextUtils.isEmpty(url) ? url : getImageUrl(small, medium, large, original);
+        }
+
+        return getImageUrl(small, medium, large, original);
+    }
+
+    private String getImageUrl(String small, String medium, String large, String original) {
+        // 라지 사이즈부터 조회(640 x 640)
+        if (!TextUtils.isEmpty(large)) {
+            return large;
+        }
+
+        // 중간 사이즈 (360 x 360)
+        if (!TextUtils.isEmpty(medium)) {
+            return medium;
+        }
+
+        // 원본 파일
+        if (!TextUtils.isEmpty(original)) {
+            return original;
+        }
+
+        return small;
     }
 
     @Override

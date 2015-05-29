@@ -42,7 +42,7 @@ public class DownloadAction implements FileAction {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
-        String url = BitmapUtil.getFileeUrl(fileUrl);
+        String url = BitmapUtil.getFileUrl(fileUrl);
         Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)

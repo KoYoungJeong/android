@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -27,6 +28,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
     private TextView commentTextView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private Context context;
 
     @Override
     public void initView(View rootView) {
@@ -34,33 +36,33 @@ public class PureCommentViewHolder implements BodyViewHolder {
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_create_date);
         commentTextView = (TextView) rootView.findViewById(R.id.txt_message_nested_comment_content);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
-
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        context = rootView.getContext();
     }
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId) {
-
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
-        EntityManager entityManager = EntityManager.getInstance(nameTextView.getContext());
+        EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
-
+        ResLeftSideMenu.User user = entityById.getUser();
+        if (entityById != null && user != null && TextUtils.equals(user.status, "enabled")) {
             disableLineThroughView.setVisibility(View.GONE);
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
+            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
         } else {
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
+            nameTextView.setTextColor(context.getResources().getColor(R.color.deactivate_text_color));
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -76,17 +78,19 @@ public class PureCommentViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(commentMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
+            boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
             if (hasLink) {
-                commentTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                commentTextView.setText(
+                        Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
                 LinkifyUtil.setOnLinkClick(commentTextView);
             } else {
                 commentTextView.setText(spannableStringBuilder);
             }
         }
 
-        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        nameTextView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override

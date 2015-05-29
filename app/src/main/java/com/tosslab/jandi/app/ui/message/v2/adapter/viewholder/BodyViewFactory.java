@@ -94,7 +94,8 @@ public class BodyViewFactory {
         return null;
     }
 
-    public static BodyViewHolder.Type getContentType(ResMessages.Link message, ResMessages.Link beforeMessage) {
+    public static BodyViewHolder.Type getContentType(ResMessages.Link message,
+                                                     ResMessages.Link beforeMessage) {
 
         if (TextUtils.equals(message.status, "event")) {
             return BodyViewHolder.Type.Event;
