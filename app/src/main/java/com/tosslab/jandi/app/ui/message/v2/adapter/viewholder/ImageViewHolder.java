@@ -163,23 +163,17 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .imageType(fileContent.type)
                                 .start());
 
-                        String smallThumb = !TextUtils.isEmpty(smallThumbnailUrl)
-                                ? BitmapUtil.getFileUrl(smallThumbnailUrl) : imageUrl;
+                        // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
+                        String mediumThumb = !TextUtils.isEmpty(mediumThumbnailUrl)
+                                ? BitmapUtil.getFileUrl(mediumThumbnailUrl) : imageUrl;
 
-                        Log.d("JANDI", "small thumb - " + smallThumb);
-//                        Glide.with(context)
-//                                .load(smallThumb)
-//                                .asBitmap()
-//                                .placeholder(R.drawable.jandi_fl_icon_img)
-//                                .error(R.drawable.jandi_fl_icon_img)
-//                                .fitCenter()
-//                                .into(fileImageView);
+                        Log.d("JANDI", "small thumb - " + mediumThumb);
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
                                 .crossfade(true)
                                 .fitCenter()
-                                .load(smallThumb);
+                                .load(mediumThumb);
                     }
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);

@@ -72,7 +72,7 @@ public class PhotoViewActivity extends AppCompatActivity {
         if (isGif()) {
             loadGif();
         } else {
-            downloadImageFile();
+            loadImage();
         }
 
         autoHideActionBar();
@@ -102,19 +102,7 @@ public class PhotoViewActivity extends AppCompatActivity {
     }
 
     @UiThread
-    void downloadImageFile() {
-        // deep zoom 시 exif 정보를 토대로 회전 시켜보여주지 않음....
-//        Ion.with(this)
-//                .load(imageUrl)
-//                .withBitmap()
-//                .crossfade(true)
-//                .fitCenter()
-//                .error(R.drawable.jandi_fl_icon_deleted)
-//                .intoImageView(photoView)
-//                .setCallback((e, result) -> {
-//                    progressBar.setVisibility(View.GONE);
-//                });
-
+    void loadImage() {
         Glide.with(this).load(imageUrl)
                 .asBitmap()
                 .fitCenter()
@@ -137,130 +125,12 @@ public class PhotoViewActivity extends AppCompatActivity {
                         return false;
                     }
                 }).into(photoView);
-//        String directoryPath = getFilesDir() + File.separator + "/images";
-//        File directory = new File(directoryPath);
-//        if (!directory.exists()) {
-//            directory.mkdir();
-//        }
-//
-//        File tempFile = null;
-//        try {
-//            tempFile = File.createTempFile("image", ".jpg", directory);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        LogUtil.i(tempFile.getAbsolutePath());
-//
-//        File file = null;
-//        try {
-//            file = Ion.with(this).load(imageUrl).noCache().write(tempFile).get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//            return;
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//        if (file == null || !file.exists()) {
-//            LogUtil.e("file is not exists");
-//            return;
-//        }
-//
-//        rotateBitmapAndShowImage(file);
-    }
-
-    @Background
-    void rotateBitmapAndShowImage(File file) {
-        String downloadedFilePath = file.getAbsolutePath();
-
-//        int degree = model.getExifOrientationDegree(downloadedFilePath);
-//        LogUtil.e("degree !! = " + degree);
-//        Bitmap bitmap = null;
-//        try {
-//            bitmap = Ion.with(this).load(file).noCache().asBitmap().get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//            return;
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-//
-//        if (bitmap == null) {
-//            LogUtil.e("bitmap is null");
-//            return;
-//        }
-//
-//        LogUtil.e("original width = " + bitmap.getWidth());
-//        file.delete();
-////        Bitmap bitmap = model.getBitmapFromFileAvoidOOM(downloadedFilePath);
-//        Bitmap rotateBitmap = model.getRotateBitmap(bitmap, degree);
-//
-//        LogUtil.e("rotate width = " + rotateBitmap.getWidth());
-//
-//        file = model.getFileFromBitmap(rotateBitmap, downloadedFilePath);
-
-        showImage(file);
-    }
-
-    @UiThread
-    void showImage(File file) {
-        model.setImageFile(file);
-
-        // Deep Zoom 시 메모리 누수로 인한 앱 종료를 막기 위함.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            loadImagePlain(file);
-            return;
-        }
-
-        loadImageDeepZoom(file);
     }
 
     private void loadGif() {
         Ion.with(photoView)
                 .load(imageUrl)
                 .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
-    }
-
-    void loadImagePlain(File file) {
-        Ion.with(PhotoViewActivity.this)
-                .load(file)
-                .setLogging("INFO", Log.INFO)
-                .withBitmap()
-                .crossfade(true)
-                .fitCenter()
-                .error(R.drawable.jandi_fl_icon_deleted)
-                .intoImageView(photoView)
-                .setCallback((e, result) -> {
-                    progressBar.setVisibility(View.GONE);
-                });
-    }
-
-    private void loadImageDeepZoom(File file) {
-        Ion.with(PhotoViewActivity.this)
-                .load(file)
-                .setLogging("INFO", Log.INFO)
-                .withBitmap()
-                .crossfade(true)
-                .fitCenter()
-                .deepZoom()
-                .intoImageView(photoView)
-                .setCallback((e, result) -> {
-                    if (e != null) {
-                        loadImagePlain(file);
-                    } else {
-                        Drawable drawable = result.getDrawable();
-                        int intrinsicWidth = drawable.getIntrinsicWidth();
-                        int intrinsicHeight = drawable.getIntrinsicHeight();
-                        if (intrinsicHeight <= 0 || intrinsicWidth <= 0) {
-                            loadImagePlain(file);
-                        } else {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    }
-                });
     }
 
     private boolean isGif() {
