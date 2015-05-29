@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 8. 12..
  */
-public class  FormattedEntity {
+public class FormattedEntity {
     // 채널 일 경우
     public static final int TYPE_REAL_CHANNEL = JandiConstants.TYPE_PUBLIC_TOPIC;
     public static final int TYPE_REAL_USER = JandiConstants.TYPE_DIRECT_MESSAGE;
