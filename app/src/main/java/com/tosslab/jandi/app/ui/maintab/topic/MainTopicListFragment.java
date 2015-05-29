@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -68,6 +67,18 @@ public class MainTopicListFragment extends Fragment {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        EventBus.getDefault().unregister(this);
+//        super.onStop();
+//    }
 
     @Click(R.id.btn_main_topic_fab)
     void onAddTopicClick() {
@@ -202,11 +213,11 @@ public class MainTopicListFragment extends Fragment {
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
     }
 
-    public void onEvent(MessagePushEvent event) {
-        if (!TextUtils.equals(event.getEntityType(), "user")) {
-
-        }
-    }
+//    public void onEvent(MessagePushEvent event) {
+//        if (!TextUtils.equals(event.getEntityType(), "user")) {
+//
+//        }
+//    }
 
     public void onEvent(SocketMessageEvent event) {
         if (TextUtils.equals(event.getMessageType(), "chat")) {

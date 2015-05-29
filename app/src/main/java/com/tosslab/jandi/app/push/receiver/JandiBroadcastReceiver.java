@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -44,9 +45,9 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         String type = pushTO.getType();
         PushTO.PushInfo pushTOInfo = pushTO.getInfo();
 
-        // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
         if (type.equals(JSON_VALUE_TYPE_PUSH)) {
             PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTOInfo;
+            // writerId 가 본인 ID 면 작성자가 본인인 노티이기 때문에 무시한다.
             if (jandiPushReceiverModel.isMyEntityId(context, messagePush.getWriterId())) {
                 return;
             }
@@ -57,6 +58,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
             EventBus eventBus = EventBus.getDefault();
             if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
+                Log.e(JandiBroadcastReceiver.class.getSimpleName(), "Event has subscribe");
                 eventBus.post(new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
             } else {
                 jandiPushReceiverModel.updateEntityAndBadge(context);

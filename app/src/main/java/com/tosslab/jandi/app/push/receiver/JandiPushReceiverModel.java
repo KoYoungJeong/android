@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
@@ -25,6 +26,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
+import com.tosslab.jandi.app.services.EntityService;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -82,18 +84,20 @@ public class JandiPushReceiverModel {
 
     @Background
     public void updateEntityAndBadge(Context context) {
-
-        try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-            BadgeUtils.setBadge(context, totalUnreadCount);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-        }
+        Log.d(JandiPushReceiverModel.class.getSimpleName(), "updateEntityAndBadge");
+        Intent intent = new Intent(context, EntityService.class);
+        context.startService(intent);
+//        try {
+//            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+//            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+//            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+//            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+//            BadgeUtils.setBadge(context, totalUnreadCount);
+//            JandiPreference.setBadgeCount(context, totalUnreadCount);
+//            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+//        } catch (JandiNetworkException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public PushTO parsingPushTO(Bundle extras) {

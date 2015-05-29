@@ -126,5 +126,14 @@ public class ResLeftSideMenu {
         public int lastLinkId;
         public int alarmCount;
 
+        @Override
+        public String toString() {
+            return "AlarmInfo{" +
+                    "entityType='" + entityType + '\'' +
+                    ", entityId=" + entityId +
+                    ", lastLinkId=" + lastLinkId +
+                    ", alarmCount=" + alarmCount +
+                    '}';
+        }
     }
 }
