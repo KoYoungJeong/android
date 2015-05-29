@@ -96,20 +96,19 @@ public class BodyViewFactory {
 
     public static BodyViewHolder.Type getContentType(ResMessages.Link message,
                                                      ResMessages.Link beforeMessage) {
+        ResMessages.OriginalMessage currentMessage = message.message;
 
         if (TextUtils.equals(message.status, "event")) {
             return BodyViewHolder.Type.Event;
         }
 
-        if (message.message instanceof ResMessages.TextMessage) {
-
+        if (currentMessage instanceof ResMessages.TextMessage) {
 
             if (beforeMessage != null
                     && beforeMessage.message instanceof ResMessages.TextMessage
-                    && message.message.writerId == beforeMessage.message.writerId
-                    && isSince5min(message.message.createTime, beforeMessage.message.createTime)
+                    && currentMessage.writerId == beforeMessage.message.writerId
+                    && isSince5min(currentMessage.createTime, beforeMessage.message.createTime)
                     && isSameDay(message, beforeMessage)) {
-
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
@@ -123,8 +122,8 @@ public class BodyViewFactory {
                 }
             }
 
-        } else if (message.message instanceof ResMessages.FileMessage) {
-            String fileType = ((ResMessages.FileMessage) message.message).content.type;
+        } else if (currentMessage instanceof ResMessages.FileMessage) {
+            String fileType = ((ResMessages.FileMessage) currentMessage).content.type;
             if (TextUtils.isEmpty(fileType) || fileType.equals("null")) {
                 return BodyViewHolder.Type.File;
             }
@@ -133,14 +132,41 @@ public class BodyViewFactory {
             } else {
                 return BodyViewHolder.Type.File;
             }
-        } else if (message.message instanceof ResMessages.CommentMessage) {
+        } else if (currentMessage instanceof ResMessages.CommentMessage) {
+            int messageFeedbackId = message.feedbackId;
 
-            if ((beforeMessage == null || message.feedbackId == beforeMessage.messageId
-                    || message.feedbackId == beforeMessage.feedbackId)
+            boolean isFeedbackMessage = false;
+
+            if (beforeMessage != null) {
+                isFeedbackMessage = messageFeedbackId == beforeMessage.messageId
+                        || messageFeedbackId == beforeMessage.feedbackId;
+            }
+
+            /*
+             * Comment는 파일 바로 밑에 달리는 PureComment, CollapseComment
+             * 그리고 다른 날짜나 이전 메세지가 해당 파일이나 해당 파일의 Comment가 아닌 경우 FileComment 사용
+             *
+             * 1. 이전 메세지가 null이 아니여서 comment형태가 될 수 있는 경우
+             * 2. 현 메세지의 feedbackId와 이전 메세지의 Id가 같거나
+             * 현 메세지의 feedbackId와 이전 메세지의 feedbackId가 같은 경우
+             * 3. 같은 날짜에 작성된 경우
+             * 1,2,3 모두 해당될때 PureComment나 CollapseComment의 view를 보여준다.
+             */
+            if (beforeMessage != null
+                    && isFeedbackMessage
                     && isSameDay(message, beforeMessage)) {
-                if (isSince5min(message.message.createTime, beforeMessage.message.createTime)
-                        && message.message.writerId == beforeMessage.message.writerId
-                        && message.feedbackId != beforeMessage.messageId) {
+
+                ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
+
+                /*
+                 * 1. 5분이내에 작성된 경우
+                 * 2. 현재 메세지와 이전 메세지의 작성자가 같은 경우
+                 * 3. 현재 메세지의 feedbackId와 이전 메세지의 Id가 다른 경우
+                 * 1,2,3 모두 해당 할때 CollapseComment
+                 */
+                if (isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
+                        && currentMessage.writerId == beforeOriginalMessage.writerId
+                        && messageFeedbackId != beforeMessage.messageId) {
                     return BodyViewHolder.Type.CollapseComment;
                 } else {
                     return BodyViewHolder.Type.PureComment;
@@ -148,13 +174,11 @@ public class BodyViewFactory {
             } else {
                 return BodyViewHolder.Type.FileComment;
             }
-
         }
         return BodyViewHolder.Type.Message;
     }
 
     private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
-
         if (beforeMessageTime == null) {
             beforeMessageTime = new Date();
         }
@@ -175,20 +199,22 @@ public class BodyViewFactory {
     }
 
     private static boolean isSameDay(ResMessages.Link message, ResMessages.Link beforeMessage) {
-
         if (message == null || beforeMessage == null) {
             return false;
         }
 
-        if (message.message.createTime == null || beforeMessage.message.createTime == null) {
+        ResMessages.OriginalMessage beforeOriginalMessage = beforeMessage.message;
+        ResMessages.OriginalMessage originalMessage = message.message;
+
+        if (originalMessage.createTime == null || beforeOriginalMessage.createTime == null) {
             return false;
         }
 
         Calendar messageCalendar = Calendar.getInstance();
-        messageCalendar.setTime(message.message.createTime);
+        messageCalendar.setTime(originalMessage.createTime);
 
         Calendar beforeCalendar = Calendar.getInstance();
-        beforeCalendar.setTime(beforeMessage.message.createTime);
+        beforeCalendar.setTime(beforeOriginalMessage.createTime);
 
         int messageDay = messageCalendar.get(Calendar.DAY_OF_YEAR);
         int beforeMessageDay = beforeCalendar.get(Calendar.DAY_OF_YEAR);

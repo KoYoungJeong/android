@@ -35,14 +35,18 @@ public class FileDetailCollapseCommentView extends LinearLayout {
         String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
         // 댓글 내용
         String comment = commentMessage.content.body;
+
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(comment);
 
-        boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
+        boolean hasLink =
+                LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
 
         if (hasLink) {
-            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
-            spannableStringBuilder.setSpan(linkSpannable, 0, comment.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            Spannable linkSpannable =
+                    Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
+            spannableStringBuilder.setSpan(linkSpannable,
+                    0, comment.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             LinkifyUtil.setOnLinkClick(textViewCommentContent);
         }
 
@@ -59,7 +63,9 @@ public class FileDetailCollapseCommentView extends LinearLayout {
 
         MessageSpannable spannable =
                 new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
-        spannableStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableStringBuilder.setSpan(spannable,
+                startIndex, endIndex,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         textViewCommentContent.setText(spannableStringBuilder);
     }
