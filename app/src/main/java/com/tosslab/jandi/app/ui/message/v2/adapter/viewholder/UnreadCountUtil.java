@@ -14,17 +14,29 @@ import rx.Observable;
  */
 public class UnreadCountUtil {
 
-    public static int getUnreadCount(Context context, int teamId, int roomId, int linkId, int fromEntityId, int myId) {
+    public static int getUnreadCount(Context context,
+                                     int teamId, int roomId, int linkId,
+                                     int fromEntityId, int myId) {
 
-        List<ResRoomInfo.MarkerInfo> markers = JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
+        List<ResRoomInfo.MarkerInfo> markers =
+                JandiMarkerDatabaseManager.getInstance(context).getMarkers(teamId, roomId);
 
-        int unreadCount = Observable.from(markers)
-                .filter(markerInfo -> markerInfo.getLastLinkId() >= 0)  // -1 이면 읽음 처리
-                .filter(markerInfo -> markerInfo.getLastLinkId() < linkId)  // 유저의 마지막 마커가 크면 읽음 처리
-                .filter(markerInfo -> !(fromEntityId == myId && markerInfo.getMemberId() == myId))  // 내 메세지이면 읽음 처리
-                .count()
-                .toBlocking()
-                .first();
+        int unreadCount =
+                Observable.from(markers)
+                        .filter(markerInfo ->
+                                // -1 이면 읽음 처리
+                                markerInfo.getLastLinkId() >= 0)
+
+                        .filter(markerInfo ->
+                                // 유저의 마지막 마커가 크면 읽음 처리
+                                markerInfo.getLastLinkId() < linkId)
+
+                        .filter(markerInfo ->
+                                // 내 메세지이면 읽음 처리
+                                !(fromEntityId == myId && markerInfo.getMemberId() == myId))
+                        .count()
+                        .toBlocking()
+                        .first();
 
         return unreadCount;
     }

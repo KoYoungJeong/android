@@ -140,7 +140,7 @@ public class MessageItem {
             if (message.content.extraInfo == null) {
                 return null;
             }
-            return BitmapUtil.getFileeUrl(message.content.extraInfo.smallThumbnailUrl);
+            return BitmapUtil.getFileUrl(message.content.extraInfo.smallThumbnailUrl);
         }
         return null;
     }

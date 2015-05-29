@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,12 +16,12 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
  */
 public class DummyViewHolder implements BodyViewHolder {
-
 
     private ImageView profileImageView;
     private TextView nameTextView;
@@ -35,25 +36,26 @@ public class DummyViewHolder implements BodyViewHolder {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
         failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
-
     }
-
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
-        FormattedEntity entity = EntityManager.getInstance(profileImageView.getContext()).getEntityById(dummyMessageLink.message.writerId);
-        ResLeftSideMenu.User user = entity.getUser();
+        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext())
+                .getEntityById(dummyMessageLink.message.writerId);
 
-        String profileUrl = ((user.u_photoThumbnailUrl != null) && TextUtils.isEmpty(user.u_photoThumbnailUrl.largeThumbnailUrl)) ? user.u_photoThumbnailUrl.largeThumbnailUrl : user.u_photoUrl;
+        String profileUrl = entity.getUserLargeProfileUrl();
+
+        LogUtil.e("profileUrl - " + profileUrl);
+
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
                 .transform(new IonCircleTransform())
                 .crossfade(true)
-                .load(BitmapUtil.getFileeUrl(profileUrl));
+                .load(profileUrl);
 
         nameTextView.setText(entity.getName());
 
