@@ -60,7 +60,6 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @AfterViews
     void initView() {
-        Log.i("JANDI", "imageUrl - " + imageUrl);
         setupActionBar();
 
         photoView.setOnPhotoTapListener((view, v, v2) -> toggleActionbar());

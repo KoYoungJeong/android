@@ -5,9 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.DrawableCrossFadeFactory;
+import com.bumptech.glide.request.animation.ViewPropertyAnimation;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -64,8 +70,12 @@ public class ImageThumbLoader implements FileThumbLoader {
                             .load(thumbnailPhotoUrl)
                             .placeholder(R.drawable.jandi_down_placeholder_img)
                             .error(R.drawable.jandi_down_img_disable)
+                            .animate(view -> {
+                                AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
+                                anim.setDuration(300);
+                                view.setAnimation(anim);
+                            })  // Avoid doesn't working 'fitCenter'
                             .fitCenter()
-                            .crossFade()
                             .into(imageViewPhotoFile);
 
                     // 계단현상...
@@ -87,14 +97,19 @@ public class ImageThumbLoader implements FileThumbLoader {
                                     .ACTION_VIEW, Uri.parse(originalFileUrl))));
                     break;
                 default:
-                    imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                            .intent(context)
-                            .imageUrl(getOptimizedImageUrl(context,
-                                    smallThumbnailUrl, mediumThumbnailUrl,
-                                    largeThumbnailUrl, originalFileUrl))
-                            .imageName(content.name)
-                            .imageType(content.type)
-                            .start());
+                    imageViewPhotoFile.setOnClickListener(view -> {
+                        String optimizedImageUrl = getOptimizedImageUrl(context,
+                                smallThumbnailUrl, mediumThumbnailUrl,
+                                largeThumbnailUrl, originalFileUrl);
+
+                        String imageUrl = BitmapUtil.getFileUrl(optimizedImageUrl);
+                        PhotoViewActivity_
+                                .intent(context)
+                                .imageUrl(imageUrl)
+                                .imageName(content.name)
+                                .imageType(content.type)
+                                .start();
+                    });
                     break;
             }
 
