@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ public class FileViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private Context context;
 
     private FileViewHolder() {
     }
@@ -57,6 +59,7 @@ public class FileViewHolder implements BodyViewHolder {
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        context = rootView.getContext();
     }
 
     @Override
@@ -64,7 +67,7 @@ public class FileViewHolder implements BodyViewHolder {
 
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -78,22 +81,22 @@ public class FileViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
-        if (TextUtils.equals(entityManager.getEntityById(fromEntity.id).getUser().status, "enabled")) {
-
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
+        EntityManager entityManager = EntityManager.getInstance(context);
+        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
+        ResLeftSideMenu.User user = entityById.getUser();
+        if (TextUtils.equals(user.status, "enabled")) {
+            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
             disableLineThroughView.setVisibility(View.GONE);
-
         } else {
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
-
+            nameTextView.setTextColor(
+                    context.getResources().getColor(R.color.deactivate_text_color));
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
-
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -116,13 +119,17 @@ public class FileViewHolder implements BodyViewHolder {
                 fileNameTextView.setText(fileMessage.content.title);
                 fileTypeTextView.setText(fileMessage.content.ext);
 
-                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
-
+                int mimeTypeIconImage =
+                        MimeTypeUtil.getMimeTypeIconImage(
+                                fileMessage.content.serverUrl, fileMessage.content.icon);
+                fileImageView.setImageResource(mimeTypeIconImage);
             }
         }
 
-        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        profileImageView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        nameTextView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
