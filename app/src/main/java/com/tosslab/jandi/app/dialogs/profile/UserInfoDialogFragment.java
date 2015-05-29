@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -105,7 +107,8 @@ public class UserInfoDialogFragment extends DialogFragment {
 
     public void onEvent(ProfileChangeEvent event) {
         if (event.getEntityId() == entityId) {
-            FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+            FormattedEntity entityById =
+                    EntityManager.getInstance(getActivity()).getEntityById(entityId);
 
             setUpEnabledProfile(entityById);
         }
@@ -129,15 +132,20 @@ public class UserInfoDialogFragment extends DialogFragment {
         final ImageView imgUserPhoto = (ImageView) mainView.findViewById(R.id.img_user_info_photo);
         imgStarred = (ImageView) mainView.findViewById(R.id.img_user_info_starred);
         final TextView txtUserName = (TextView) mainView.findViewById(R.id.txt_user_info_name);
-        final TextView txtUserStatusMessage = (TextView) mainView.findViewById(R.id.txt_user_info_statusmessage);
-        final TextView txtUserDivision = (TextView) mainView.findViewById(R.id.txt_user_info_division);
-        final TextView txtUserPosition = (TextView) mainView.findViewById(R.id.txt_user_info_position);
+        final TextView txtUserStatusMessage =
+                (TextView) mainView.findViewById(R.id.txt_user_info_statusmessage);
+        final TextView txtUserDivision =
+                (TextView) mainView.findViewById(R.id.txt_user_info_division);
+        final TextView txtUserPosition =
+                (TextView) mainView.findViewById(R.id.txt_user_info_position);
         final TextView txtUserEmail = (TextView) mainView.findViewById(R.id.txt_user_info_email);
         final TextView txtUserPhone = (TextView) mainView.findViewById(R.id.txt_user_info_phone);
         final LinearLayout lyUserEmail = (LinearLayout) mainView.findViewById(R.id.ly_user_info_mail);
         final LinearLayout lyUserPhone = (LinearLayout) mainView.findViewById(R.id.ly_user_info_phone);
-        final LinearLayout lyUserDirectMessage = (LinearLayout) mainView.findViewById(R.id.ly_user_info_direct_message);
-        final View borderUserDirectMessage = mainView.findViewById(R.id.border_user_info_direct_message);
+        final LinearLayout lyUserDirectMessage =
+                (LinearLayout) mainView.findViewById(R.id.ly_user_info_direct_message);
+        final View borderUserDirectMessage =
+                mainView.findViewById(R.id.border_user_info_direct_message);
 
         if (!isMe) {
             setProfileStarred(isStarred);
@@ -194,44 +202,46 @@ public class UserInfoDialogFragment extends DialogFragment {
                 .transform(new IonCircleTransform())
                 .load(userProfileUrl);
 
-        if (!TextUtils.isEmpty(userProfileUrl)) {
-            imgUserPhoto.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    Dialog alertDialog = new Dialog(getActivity());
-                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_profile_view, null);
-                    PhotoView profileView = (PhotoView) view.findViewById(R.id.photo_dialog_profile_view);
-                    ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress_dialog_profile_view);
-
-                    alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    alertDialog.setContentView(view);
-
-                    alertDialog.setCanceledOnTouchOutside(false);
-                    Window alertWindow = alertDialog.getWindow();
-
-                    DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
-                    WindowManager.LayoutParams attributes = alertWindow.getAttributes();
-                    attributes.width = displayMetrics.widthPixels;
-                    attributes.height = displayMetrics.heightPixels;
-                    alertWindow.setAttributes(attributes);
-                    alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    alertDialog.show();
-
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Ion.with(profileView)
-                                    .deepZoom()
-                                    .load(userProfileUrl)
-                                    .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
-                        }
-                    }, 500);
-                }
-            });
+        LogUtil.i("user profile url = " + userProfileUrl);
+        Log.i("JANDI", "user profile url = " + userProfileUrl);
+        if (!hasChangedProfileUrl(userProfileUrl)) {
+            return;
         }
+
+        imgUserPhoto.setOnClickListener(v -> {
+            Dialog alertDialog = new Dialog(getActivity());
+            View view =
+                    LayoutInflater.from(getActivity()).inflate(R.layout.dialog_profile_view, null);
+            PhotoView profileView = (PhotoView) view.findViewById(R.id.photo_dialog_profile_view);
+            ProgressBar progressBar =
+                    (ProgressBar) view.findViewById(R.id.progress_dialog_profile_view);
+
+            alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            alertDialog.setContentView(view);
+
+            alertDialog.setCanceledOnTouchOutside(false);
+            Window alertWindow = alertDialog.getWindow();
+
+            DisplayMetrics displayMetrics = getActivity().getResources().getDisplayMetrics();
+            WindowManager.LayoutParams attributes = alertWindow.getAttributes();
+            attributes.width = displayMetrics.widthPixels;
+            attributes.height = displayMetrics.heightPixels;
+            alertWindow.setAttributes(attributes);
+            alertWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.show();
+
+            new Handler().postDelayed(() ->
+                    Ion.with(profileView)
+                            .deepZoom()
+                            .load(userProfileUrl)
+                            .setCallback((e, result) -> progressBar.setVisibility(View.GONE)), 500);
+        });
     }
 
+    // TODO Profile Image 를 수정 했는지에 대한 판단이 명확해질 필요가 있음.
+    private boolean hasChangedProfileUrl(String url) {
+        return !TextUtils.isEmpty(url) && url.contains("files-profile");
+    }
 
     private Dialog createEnabledUserDialog() {
 
@@ -245,7 +255,8 @@ public class UserInfoDialogFragment extends DialogFragment {
         dialog.setContentView(mainView);
         Window window = dialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCanceledOnTouchOutside(true);
@@ -253,8 +264,8 @@ public class UserInfoDialogFragment extends DialogFragment {
     }
 
     private Dialog createDisabledUserDialog() {
-
-        View mainView = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_disable_user_profile, null);
+        View mainView =
+                LayoutInflater.from(getActivity()).inflate(R.layout.dialog_disable_user_profile, null);
 
         final Dialog dialog = new Dialog(getActivity());
         dialog.setCancelable(true);
@@ -262,7 +273,8 @@ public class UserInfoDialogFragment extends DialogFragment {
         dialog.setContentView(mainView);
         Window window = dialog.getWindow();
         WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
+        layoutParams.width = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 260, getActivity().getResources().getDisplayMetrics());
         layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCanceledOnTouchOutside(true);
@@ -313,9 +325,11 @@ public class UserInfoDialogFragment extends DialogFragment {
 
         try {
             if (entity.isStarred) {
-                RequestManager.newInstance(getActivity(), () -> jandiEntityClient.disableFavorite(entityId)).request();
+                RequestManager.newInstance(getActivity(), () ->
+                        jandiEntityClient.disableFavorite(entityId)).request();
             } else {
-                RequestManager.newInstance(getActivity(), () -> jandiEntityClient.enableFavorite(entityId)).request();
+                RequestManager.newInstance(getActivity(), () ->
+                        jandiEntityClient.enableFavorite(entityId)).request();
             }
 
 

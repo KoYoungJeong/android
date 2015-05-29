@@ -415,6 +415,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     }
 
+    public int getRoomId() {
+        return roomId;
+    }
+
     private enum MoreState {
         Idle, Loading, Nope
     }

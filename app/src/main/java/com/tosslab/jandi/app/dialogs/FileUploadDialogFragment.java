@@ -147,6 +147,7 @@ public class FileUploadDialogFragment extends DialogFragment {
                             }
                         }
                 );
+
         return builder.create();
     }
 }

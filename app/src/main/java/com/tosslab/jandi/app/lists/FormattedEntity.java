@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.lists;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -14,18 +15,18 @@ import java.util.List;
  */
 public class FormattedEntity {
     // 채널 일 경우
-    public static final int TYPE_REAL_CHANNEL           = JandiConstants.TYPE_PUBLIC_TOPIC;
-    public static final int TYPE_REAL_USER              = JandiConstants.TYPE_DIRECT_MESSAGE;
-    public static final int TYPE_REAL_PRIVATE_GROUP     = JandiConstants.TYPE_PRIVATE_TOPIC;
+    public static final int TYPE_REAL_CHANNEL = JandiConstants.TYPE_PUBLIC_TOPIC;
+    public static final int TYPE_REAL_USER = JandiConstants.TYPE_DIRECT_MESSAGE;
+    public static final int TYPE_REAL_PRIVATE_GROUP = JandiConstants.TYPE_PRIVATE_TOPIC;
 
     // Dummy Entity
     // TODO 통합
-    public static final int TYPE_TITLE_JOINED_CHANNEL   = 4;
+    public static final int TYPE_TITLE_JOINED_CHANNEL = 4;
     public static final int TYPE_TITLE_UNJOINED_CHANNEL = 5;
-    public static final int TYPE_EVERYWHERE             = 6;
+    public static final int TYPE_EVERYWHERE = 6;
 
-    public static final boolean JOINED      = true;
-    public static final boolean UNJOINED    = false;
+    public static final boolean JOINED = true;
+    public static final boolean UNJOINED = false;
 
     private ResLeftSideMenu.Entity entity;
 
@@ -96,19 +97,24 @@ public class FormattedEntity {
     public boolean isPublicTopic() {
         return (type == FormattedEntity.TYPE_REAL_CHANNEL);
     }
+
     public boolean isPrivateGroup() {
         return (type == FormattedEntity.TYPE_REAL_PRIVATE_GROUP);
     }
+
     public boolean isUser() {
         return (type == FormattedEntity.TYPE_REAL_USER);
     }
+
     public boolean isDummy() {
         return (!isPublicTopic() && !isPrivateGroup() && !isUser());
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 공통 Getter
-     ************************************************************/
+     * **********************************************************
+     */
     public ResLeftSideMenu.Entity getEntity() {
         return entity;
     }
@@ -151,9 +157,11 @@ public class FormattedEntity {
         }
     }
 
-    /************************************************************
+    /**
+     * *********************************************************
      * 개별 Getter
-     ************************************************************/
+     * **********************************************************
+     */
     public ResLeftSideMenu.Channel getChannel() {
         return (entity instanceof ResLeftSideMenu.Channel)
                 ? (ResLeftSideMenu.Channel) entity
@@ -197,23 +205,45 @@ public class FormattedEntity {
     }
 
     public String getUserSmallProfileUrl() {
-        String userPhofileUrl;
+        String userProfileUrl;
         if (getUser().u_photoThumbnailUrl != null) {
-            userPhofileUrl = getUser().u_photoThumbnailUrl.smallThumbnailUrl;
+            userProfileUrl = getUser().u_photoThumbnailUrl.smallThumbnailUrl;
         } else {
-            userPhofileUrl = getUser().u_photoUrl;
+            userProfileUrl = getUser().u_photoUrl;
         }
-        return JandiConstantsForFlavors.SERVICE_ROOT_URL + userPhofileUrl;
+
+        if (TextUtils.isEmpty(userProfileUrl)) {
+            return null;
+        }
+
+        if (hasProtocol(userProfileUrl)) {
+            return userProfileUrl;
+        }
+
+        return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
     }
 
     public String getUserLargeProfileUrl() {
-        String userPhofileUrl;
+        String userProfileUrl;
         if (getUser().u_photoThumbnailUrl != null) {
-            userPhofileUrl = getUser().u_photoThumbnailUrl.largeThumbnailUrl;
+            userProfileUrl = getUser().u_photoThumbnailUrl.largeThumbnailUrl;
         } else {
-            userPhofileUrl = getUser().u_photoUrl;
+            userProfileUrl = getUser().u_photoUrl;
         }
-        return JandiConstantsForFlavors.SERVICE_ROOT_URL + userPhofileUrl;
+
+        if (TextUtils.isEmpty(userProfileUrl)) {
+            return null;
+        }
+
+        if (hasProtocol(userProfileUrl)) {
+            return userProfileUrl;
+        }
+
+        return JandiConstantsForFlavors.SERVICE_FILE_URL + userProfileUrl;
+    }
+
+    private boolean hasProtocol(String url) {
+        return !TextUtils.isEmpty(url) && url.startsWith("http");
     }
 
     public String getUserPhoneNumber() {

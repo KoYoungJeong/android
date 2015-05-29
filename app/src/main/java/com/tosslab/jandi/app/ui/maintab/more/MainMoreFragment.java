@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -36,7 +38,11 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.fragment_main_more)
 public class MainMoreFragment extends Fragment {
 
-    public static final String SUPPORT_URL = "http://support.jandi.com";
+    protected static final String SUPPORT_URL_KO = "https://jandi.zendesk.com/hc/ko";
+    protected static final String SUPPORT_URL_JA = "https://jandi.zendesk.com/hc/ja";
+    protected static final String SUPPORT_URL_ZH_CH = "https://jandi.zendesk.com/hc/zh-cn";
+    protected static final String SUPPORT_URL_ZH_TW = "https://jandi.zendesk.com/hc/zh-tw";
+    protected static final String SUPPORT_URL_EN = "https://jandi.zendesk.com/hc/en-us";
 
     protected Context mContext;
 
@@ -133,8 +139,26 @@ public class MainMoreFragment extends Fragment {
     public void launchHelpPageOnBrowser() {
         InternalWebActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .url(SUPPORT_URL)
+                .url(getSupportUrlEachLanguage())
                 .hideActionBar(true)
+                .helpSite(true)
                 .start();
+    }
+
+    String getSupportUrlEachLanguage() {
+        String language = LanguageUtil.getLanguage(mContext);
+        String supportUrl;
+        if (TextUtils.equals(language, LanguageUtil.LANG_KO)) {
+            supportUrl = SUPPORT_URL_KO;
+        } else if (TextUtils.equals(language, LanguageUtil.LANG_JA)) {
+            supportUrl = SUPPORT_URL_EN; //일본어 컨텐츠가 없어서 영어버전 사용
+        } else if (TextUtils.equals(language, LanguageUtil.LANG_ZH_CN)) {
+            supportUrl = SUPPORT_URL_ZH_CH;
+        } else if (TextUtils.equals(language, LanguageUtil.LANG_ZH_TW)) {
+            supportUrl = SUPPORT_URL_ZH_TW;
+        } else {
+            supportUrl = SUPPORT_URL_EN;
+        }
+        return supportUrl;
     }
 }

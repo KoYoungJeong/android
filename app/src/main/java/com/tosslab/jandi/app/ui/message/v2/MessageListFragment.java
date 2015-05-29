@@ -119,6 +119,7 @@ public class MessageListFragment extends Fragment {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
+    public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
 
     @FragmentArg
     int entityType;
@@ -193,7 +194,7 @@ public class MessageListFragment extends Fragment {
                             Log.d("INFO", "Send Start~!");
                             SendingMessage data = (SendingMessage) messageQueue.getData();
                             int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
-                            if (linkId  > 0) {
+                            if (linkId > 0) {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
                                 EventBus.getDefault().post(new RefreshNewMessageEvent());
                             } else {
@@ -429,6 +430,15 @@ public class MessageListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        if (savedInstanceState != null) {
+            photoFileByCamera = (File) savedInstanceState.getSerializable(EXTRA_NEW_PHOTO_FILE);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(EXTRA_NEW_PHOTO_FILE, photoFileByCamera);
     }
 
     @Override
@@ -649,9 +659,15 @@ public class MessageListFragment extends Fragment {
                 break;
 
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                if (photoFileByCamera != null && photoFileByCamera.exists()) {
-                    showFileUploadDialog(photoFileByCamera.getAbsolutePath());
+                if (photoFileByCamera == null) {
+                    LogUtil.e("photoFileByCamera object is null...");
+                    return;
                 }
+                if (!photoFileByCamera.exists()) {
+                    LogUtil.e("photoFileByCamera is not exists");
+                    return;
+                }
+                showFileUploadDialog(photoFileByCamera.getAbsolutePath());
 
                 break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:

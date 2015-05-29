@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
  */
 public class DummyPureViewHolder implements BodyViewHolder {
 
-
     private TextView messageTextView;
     private ProgressBar progressBar;
     private TextView failAlertTextView;
@@ -23,9 +22,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
         failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
         progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
-
     }
-
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId) {

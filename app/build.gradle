@@ -113,7 +113,7 @@ android {
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 50
-        versionName '1.0.2'
+        versionName '1.0.3'
 
         // Enabling multidex support.
         multiDexEnabled true

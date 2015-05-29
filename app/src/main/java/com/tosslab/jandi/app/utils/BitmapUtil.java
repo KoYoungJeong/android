@@ -32,7 +32,7 @@ public class BitmapUtil {
         return bitmap;
     }
 
-    public static String getFileeUrl(String url) {
+    public static String getFileUrl(String url) {
 
         if (TextUtils.isEmpty(url)) {
             return url;
@@ -41,7 +41,7 @@ public class BitmapUtil {
         if (url.startsWith("http")) {
             return url.replaceAll(" ", "%20");
         } else {
-            return JandiConstantsForFlavors.SERVICE_ROOT_URL + url.replaceAll(" ", "%20");
+            return JandiConstantsForFlavors.SERVICE_FILE_URL + url.replaceAll(" ", "%20");
         }
     }
 }

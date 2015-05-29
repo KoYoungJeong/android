@@ -15,6 +15,5 @@ public class HeaderViewHolder extends RecyclerView.ViewHolder {
     public HeaderViewHolder(View itemView) {
         super(itemView);
         dateTextView = (TextView) itemView.findViewById(R.id.txt_message_date_devider);
-
     }
 }
