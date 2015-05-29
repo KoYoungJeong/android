@@ -130,7 +130,8 @@ public class ImageViewHolder implements BodyViewHolder {
                 String largeThumbnailUrl = extraInfo != null ? extraInfo.largeThumbnailUrl : null;
                 String originalFileUrl = fileContent.fileUrl;
 
-                if (hasImageUrl(smallThumbnailUrl, largeThumbnailUrl, originalFileUrl)) {
+                if (hasImageUrl(smallThumbnailUrl, mediumThumbnailUrl,
+                        largeThumbnailUrl, originalFileUrl)) {
                     // Google, Dropbox 파일이 인 경우
                     if (sourceType == MimeTypeUtil.SourceType.Google
                             || sourceType == MimeTypeUtil.SourceType.Dropbox) {
@@ -141,7 +142,7 @@ public class ImageViewHolder implements BodyViewHolder {
                         fileImageView.setOnClickListener(view -> {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
                                     Uri.parse(BitmapUtil.getFileUrl(originalFileUrl)));
-                            fileImageView.getContext().startActivity(intent);
+                            context.startActivity(intent);
                         });
                     } else {
                         String optimizedImageUrl =
@@ -149,7 +150,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                         largeThumbnailUrl, originalFileUrl);
 
                         String imageUrl = BitmapUtil.getFileUrl(optimizedImageUrl);
-                        Log.d("JANDI", "imageUrl - " + imageUrl);
+                        LogUtil.i("imageUrl - " + imageUrl);
 
                         fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(fileImageView.getContext())
@@ -162,7 +163,7 @@ public class ImageViewHolder implements BodyViewHolder {
                         String mediumThumb = !TextUtils.isEmpty(mediumThumbnailUrl)
                                 ? BitmapUtil.getFileUrl(mediumThumbnailUrl) : imageUrl;
 
-                        Log.d("JANDI", "small thumb - " + mediumThumb);
+                        LogUtil.i("small thumb - " + mediumThumb);
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
@@ -185,8 +186,9 @@ public class ImageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
-    private boolean hasImageUrl(String small, String large, String original) {
+    private boolean hasImageUrl(String small, String medium, String large, String original) {
         return !TextUtils.isEmpty(small)
+                || !TextUtils.isEmpty(medium)
                 || !TextUtils.isEmpty(large)
                 || !TextUtils.isEmpty(original);
     }
@@ -226,7 +228,6 @@ public class ImageViewHolder implements BodyViewHolder {
     @Override
     public int getLayoutId() {
         return R.layout.item_message_img_v2;
-
     }
 
 }

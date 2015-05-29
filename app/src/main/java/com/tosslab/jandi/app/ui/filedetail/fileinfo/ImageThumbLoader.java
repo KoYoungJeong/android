@@ -1,10 +1,13 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -20,29 +23,33 @@ public class ImageThumbLoader implements FileThumbLoader {
 
     private final ImageView iconFileType;
     private final ImageView imageViewPhotoFile;
+    private Context context;
 
     public ImageThumbLoader(ImageView iconFileType, ImageView imageViewPhotoFile) {
-
         this.iconFileType = iconFileType;
         this.imageViewPhotoFile = imageViewPhotoFile;
+        context = imageViewPhotoFile.getContext();
     }
 
     @Override
     public void loadThumb(ResMessages.FileMessage fileMessage) {
-        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-        String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
+        ResMessages.FileContent content = fileMessage.content;
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
+        iconFileType.setImageResource(
+                MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
 
-        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+        ResMessages.ThumbnailUrls extraInfo = content.extraInfo;
 
-        String thumbnailPhotoUrl = null;
-        if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
+        String smallThumbnailUrl = extraInfo != null ? extraInfo.smallThumbnailUrl : null;
+        String mediumThumbnailUrl = extraInfo != null ? extraInfo.mediumThumbnailUrl : null;
+        String largeThumbnailUrl = extraInfo != null ? extraInfo.largeThumbnailUrl : null;
+        String originalFileUrl = content.fileUrl;
 
-            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
-        } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
-            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
-        }
+        String thumbnailPhotoUrl = !TextUtils.isEmpty(largeThumbnailUrl)
+                ? BitmapUtil.getFileUrl(largeThumbnailUrl) : BitmapUtil.getFileUrl(originalFileUrl);
 
-        if (!TextUtils.isEmpty(thumbnailPhotoUrl) && !TextUtils.isEmpty(photoUrl)) {
+        if (hasImageUrl(
+                smallThumbnailUrl, mediumThumbnailUrl, largeThumbnailUrl, originalFileUrl)) {
             imageViewPhotoFile.setEnabled(true);
 
             switch (sourceType) {
@@ -53,29 +60,40 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    Ion.with(imageViewPhotoFile)
+                    Glide.with(context)
+                            .load(thumbnailPhotoUrl)
                             .placeholder(R.drawable.jandi_down_placeholder_img)
                             .error(R.drawable.jandi_down_img_disable)
                             .fitCenter()
-                            .crossfade(true)
-                            .load(thumbnailPhotoUrl);
+                            .crossFade()
+                            .into(imageViewPhotoFile);
+
+                    // 계단현상...
+//                    Ion.with(imageViewPhotoFile)
+//                            .placeholder(R.drawable.jandi_down_placeholder_img)
+//                            .error(R.drawable.jandi_down_img_disable)
+//                            .fitCenter()
+//                            .crossfade(true)
+//                            .load(thumbnailPhotoUrl);
                     break;
             }
 
-
-            final String finalPhotoUrl = photoUrl;
             switch (sourceType) {
 
                 case Google:
                 case Dropbox:
-                    imageViewPhotoFile.setOnClickListener(view -> imageViewPhotoFile.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalPhotoUrl))));
+                    imageViewPhotoFile.setOnClickListener(view ->
+                            context.startActivity(new Intent(Intent
+                                    .ACTION_VIEW, Uri.parse(originalFileUrl))));
                     break;
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                            .intent(imageViewPhotoFile.getContext())
-                            .imageUrl(finalPhotoUrl)
-                            .imageName(fileMessage.content.name)
-                            .imageType(fileMessage.content.type)
+                            .intent(context)
+                            .imageUrl(getOptimizedImageUrl(context,
+                                    smallThumbnailUrl, mediumThumbnailUrl,
+                                    largeThumbnailUrl, originalFileUrl))
+                            .imageName(content.name)
+                            .imageType(content.type)
                             .start());
                     break;
             }
@@ -95,6 +113,44 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
             }
         }
+    }
 
+    private boolean hasImageUrl(String small, String medium, String large, String original) {
+        return !TextUtils.isEmpty(small)
+                || !TextUtils.isEmpty(medium)
+                || !TextUtils.isEmpty(large)
+                || !TextUtils.isEmpty(original);
+    }
+
+    private String getOptimizedImageUrl(Context context,
+                                        String small, String medium,
+                                        String large, String original) {
+        // XXHDPI 이상인 기기에서만 오리지널 파일을 로드
+        int dpi = context.getResources().getDisplayMetrics().densityDpi;
+        if (dpi > DisplayMetrics.DENSITY_XHIGH) {
+            String url = original;
+            return !TextUtils.isEmpty(url) ? url : getImageUrl(small, medium, large, original);
+        }
+
+        return getImageUrl(small, medium, large, original);
+    }
+
+    private String getImageUrl(String small, String medium, String large, String original) {
+        // 라지 사이즈부터 조회(640 x 640)
+        if (!TextUtils.isEmpty(large)) {
+            return large;
+        }
+
+        // 중간 사이즈 (360 x 360)
+        if (!TextUtils.isEmpty(medium)) {
+            return medium;
+        }
+
+        // 원본 파일
+        if (!TextUtils.isEmpty(original)) {
+            return original;
+        }
+
+        return small;
     }
 }
