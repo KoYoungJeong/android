@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.input;
+package com.tosslab.jandi.app.ui.signup.account;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +12,8 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
-import com.tosslab.jandi.app.ui.signup.input.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.signup.verify.SignUpVerifyActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -140,10 +141,14 @@ public class SignUpViewModel {
 
     @UiThread
     public void finishWithEmail(String email) {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(IntroLoginFragment.RES_EXTRA_EMAIL, email);
-        activity.setResult(Activity.RESULT_OK, resultIntent);
-        activity.finish();
+//        Intent resultIntent = new Intent();
+//        resultIntent.putExtra(IntroLoginFragment.RES_EXTRA_EMAIL, email);
+//        activity.setResult(Activity.RESULT_OK, resultIntent);
+//        activity.finish();
+
+        SignUpVerifyActivity_.intent(activity)
+                .email(email)
+                .startForResult(SignUpActivity.REQUEST_SIGN_UP_VERIFY);
 
     }
 

@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
-import com.tosslab.jandi.app.ui.signup.SignUpActivity_;
+import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.input;
+package com.tosslab.jandi.app.ui.signup.account;
 
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.signup.input.model.SignUpModel;
-import com.tosslab.jandi.app.ui.signup.input.to.CheckPointsHolder;
+import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
+import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -32,6 +32,7 @@ import org.androidannotations.annotations.OptionsItem;
  */
 @EActivity(R.layout.activity_signup)
 public class SignUpActivity extends AppCompatActivity {
+    public static final int REQUEST_SIGN_UP_VERIFY = 1000;
 
     @Bean
     SignUpViewModel signUpViewModel;

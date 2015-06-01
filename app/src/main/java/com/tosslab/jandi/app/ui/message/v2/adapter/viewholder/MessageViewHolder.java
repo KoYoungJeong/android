@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -36,7 +37,7 @@ public class MessageViewHolder implements BodyViewHolder {
     private TextView messageTextView;
     private View disableCoverView;
     private View disableLineThroughView;
-
+    private Context context;
 
     @Override
     public void initView(View rootView) {
@@ -45,14 +46,14 @@ public class MessageViewHolder implements BodyViewHolder {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        context = rootView.getContext();
     }
 
     @Override
     public void bindData(ResMessages.Link link, int teamId, int roomId) {
-
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -66,17 +67,16 @@ public class MessageViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
+        EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
-        if (entityById != null && entityById.getUser() != null && TextUtils.equals(entityById.getUser().status, "enabled")) {
-
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
-
+        ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+        if (user != null && TextUtils.equals(user.status, "enabled")) {
+            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
             disableLineThroughView.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
-
+            nameTextView.setTextColor(
+                    nameTextView.getResources().getColor(R.color.deactivate_text_color));
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
@@ -89,51 +89,56 @@ public class MessageViewHolder implements BodyViewHolder {
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
             messageStringBuilder.append(textMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(messageTextView.getContext(), messageStringBuilder);
+            boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
             if (hasLink) {
-                Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
-                messageStringBuilder.setSpan(linkSpannable, 0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Spannable linkSpannable =
+                        Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
+                messageStringBuilder.setSpan(linkSpannable,
+                        0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 LinkifyUtil.setOnLinkClick(messageTextView);
             }
 
             messageStringBuilder.append(" ");
 
-            Resources resources = messageTextView.getContext().getResources();
+            Resources resources = context.getResources();
 
             int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
             int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
             int startIndex = messageStringBuilder.length();
-            messageStringBuilder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+            messageStringBuilder.append(
+                    DateTransformator.getTimeStringForSimple(link.message.createTime));
             int endIndex = messageStringBuilder.length();
 
             MessageSpannable spannable =
                     new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
-            messageStringBuilder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            messageStringBuilder.setSpan(spannable,
+                    startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            int unreadCount = UnreadCountUtil.getUnreadCount(messageTextView.getContext(), teamId, roomId,
-                    link.id, link.fromEntity, EntityManager.getInstance(messageTextView.getContext()).getMe().getId());
+            int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
             if (unreadCount > 0) {
                 UnreadCountSpannable unreadCountSpannable =
                         UnreadCountSpannable.createUnreadCountSpannable(
-                                messageTextView.getContext(), String.valueOf(unreadCount));
+                                context, String.valueOf(unreadCount));
                 messageStringBuilder.append("   ")
-                        .setSpan(unreadCountSpannable, messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
+                        .setSpan(unreadCountSpannable,
+                                messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
             messageTextView.setText(messageStringBuilder);
 
         }
-        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        profileImageView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        nameTextView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override
     public int getLayoutId() {
         return R.layout.item_message_msg_v2;
-
     }
-
 }

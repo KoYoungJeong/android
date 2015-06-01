@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV4HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -66,6 +68,7 @@ public interface JandiRestClient {
     ResAccountInfo getAccountInfo();
 
     @Post("/accounts")
+    @Accept(JandiV4HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);
 
     @Put("/account")

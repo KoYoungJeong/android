@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/jandi_primary_color"
+    android:background="@color/jandi_background_default"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
@@ -12,56 +12,51 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:scaleType="center"
+            android:layout_width="95dp"
+            android:layout_height="103dp"
+            android:layout_marginTop="46dp"
+            android:scaleType="fitXY"
             android:src="@android:drawable/ic_dialog_email"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:gravity="center"
+            android:lineSpacingExtra="8dp"
             android:text="We sent a code to your inbox. Enter it here to verify your account."
+            android:textColor="#404040"
+            android:textSize="16dp"/>
+
+        <com.tosslab.jandi.app.ui.signup.verify.VerificationCodeView
+            android:id="@+id/vg_verification_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="35dp"/>
+
+        <Button
+            android:id="@+id/btn_verify"
+            style="@style/JandiStyle.Button.Dynamic"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="27dp"
+            android:background="@drawable/jandi_btn_dynamic_selector_v2"
+            android:enabled="false"
+            android:text="Launch JANDI"
             android:textColor="@android:color/white"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp">
-
-        <EditText
-            android:id="@+id/et_authorization_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="1234"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="24dp"/>
-
-        <Button
-            android:id="@+id/btn_authorize"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/darker_gray"
-            android:text="Launch JANDI"/>
-    </LinearLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -83,7 +78,6 @@
                 android:text="Resend..."
                 android:textColor="@android:color/holo_orange_dark"/>
         </LinearLayout>
-
     </FrameLayout>
 
 </LinearLayout>
