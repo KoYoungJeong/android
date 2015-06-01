@@ -1,10 +1,11 @@
-package com.tosslab.jandi.app.ui.signup.input.model;
+package com.tosslab.jandi.app.ui.signup.account.model;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.signup.input.to.CheckPointsHolder;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.PasswordChecker;
@@ -127,7 +128,8 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResAccountInfo requestSignUp(String email, String password, String name, String lang) throws JandiNetworkException {
+    public ResCommon requestSignUp(String email, String password, String name, String lang)
+            throws JandiNetworkException {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
@@ -136,7 +138,8 @@ public class SignUpModel {
         } catch (HttpStatusCodeException e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(
+                    new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
 
     }

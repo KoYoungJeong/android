@@ -35,6 +35,14 @@
     <string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
     <string name="jandi_signup_agree_tos">I have reviewed and agree to the<u><b> Terms of Service</b></u></string>
     <string name="jandi_signup_agree_pp">I have reviewed and agree to the <u><b>Privacy Policy</b></u></string>
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"Code Verification"</string>
+    <string name="jandi_signup_resend_email">Didn't receive the email? <u>Resend</u></string>
+    <string name="jandi_signup_verification_code">We sent a code to your inbox.\n
+        Enter it here to verify your account.</string>
+    <string name="jandi_signup_invalidate_code">You entered an incorrect passcode. (%d/5)\n
+        Please try again</string>
+
     <string name="jandi_password_strength_too_short">"Must be at least 8 characters"</string>
     <string name="jandi_password_strength_weak">"Must contain at least one number, capitalized letter, or special character."</string>
     <string name="jandi_password_strength_average">"Average"</string>

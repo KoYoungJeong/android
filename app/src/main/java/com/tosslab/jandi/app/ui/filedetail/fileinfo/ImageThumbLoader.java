@@ -1,11 +1,12 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.TextUtils;
+import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
@@ -20,29 +21,25 @@ public class ImageThumbLoader implements FileThumbLoader {
 
     private final ImageView iconFileType;
     private final ImageView imageViewPhotoFile;
+    private Context context;
 
     public ImageThumbLoader(ImageView iconFileType, ImageView imageViewPhotoFile) {
-
         this.iconFileType = iconFileType;
         this.imageViewPhotoFile = imageViewPhotoFile;
+        context = imageViewPhotoFile.getContext();
     }
 
     @Override
     public void loadThumb(ResMessages.FileMessage fileMessage) {
-        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
-        String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
+        ResMessages.FileContent content = fileMessage.content;
+        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
+        iconFileType.setImageResource(
+                MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
 
-        iconFileType.setImageResource(MimeTypeUtil.getMimeTypeIconImage(fileMessage.content.serverUrl, fileMessage.content.icon));
+        String thumbnailPhotoUrl =
+                BitmapUtil.getThumbnailUrlOrOriginal(content, BitmapUtil.Thumbnails.LARGE);
 
-        String thumbnailPhotoUrl = null;
-        if (fileMessage.content.extraInfo != null && !TextUtils.isEmpty(fileMessage.content.extraInfo.largeThumbnailUrl)) {
-
-            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.extraInfo.largeThumbnailUrl);
-        } else if (!TextUtils.isEmpty(fileMessage.content.fileUrl)) {
-            thumbnailPhotoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);
-        }
-
-        if (!TextUtils.isEmpty(thumbnailPhotoUrl) && !TextUtils.isEmpty(photoUrl)) {
+        if (BitmapUtil.hasImageUrl(content)) {
             imageViewPhotoFile.setEnabled(true);
 
             switch (sourceType) {
@@ -53,30 +50,50 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    Ion.with(imageViewPhotoFile)
+                    Glide.with(context)
+                            .load(thumbnailPhotoUrl)
                             .placeholder(R.drawable.jandi_down_placeholder_img)
                             .error(R.drawable.jandi_down_img_disable)
+                            .animate(view -> {
+                                AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
+                                anim.setDuration(300);
+                                view.setAnimation(anim);
+                            })  // Avoid doesn't working 'fitCenter'
                             .fitCenter()
-                            .crossfade(true)
-                            .load(thumbnailPhotoUrl);
+                            .into(imageViewPhotoFile);
+
+                    // 계단현상...
+//                    Ion.with(imageViewPhotoFile)
+//                            .placeholder(R.drawable.jandi_down_placeholder_img)
+//                            .error(R.drawable.jandi_down_img_disable)
+//                            .fitCenter()
+//                            .crossfade(true)
+//                            .load(thumbnailPhotoUrl);
                     break;
             }
 
-
-            final String finalPhotoUrl = photoUrl;
             switch (sourceType) {
 
                 case Google:
                 case Dropbox:
-                    imageViewPhotoFile.setOnClickListener(view -> imageViewPhotoFile.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalPhotoUrl))));
+                    imageViewPhotoFile.setOnClickListener(view -> {
+                        String originalUrl =
+                                BitmapUtil.getThumbnailUrlOrOriginal(
+                                        content, BitmapUtil.Thumbnails.ORIGINAL);
+                        context.startActivity(
+                                new Intent(Intent.ACTION_VIEW, Uri.parse(originalUrl)));
+                    });
                     break;
                 default:
-                    imageViewPhotoFile.setOnClickListener(view -> PhotoViewActivity_
-                            .intent(imageViewPhotoFile.getContext())
-                            .imageUrl(finalPhotoUrl)
-                            .imageName(fileMessage.content.name)
-                            .imageType(fileMessage.content.type)
-                            .start());
+                    imageViewPhotoFile.setOnClickListener(view -> {
+                        String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(context, content);
+                        PhotoViewActivity_
+                                .intent(context)
+                                .imageUrl(optimizedImageUrl)
+                                .imageName(content.name)
+                                .imageType(content.type)
+                                .start();
+                    });
                     break;
             }
 
@@ -95,6 +112,5 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
             }
         }
-
     }
 }
