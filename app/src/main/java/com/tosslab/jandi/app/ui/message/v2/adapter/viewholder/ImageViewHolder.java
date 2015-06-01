@@ -4,14 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -120,14 +117,7 @@ public class ImageViewHolder implements BodyViewHolder {
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
-                ResMessages.ThumbnailUrls extraInfo = fileContent.extraInfo;
-                String smallThumbnailUrl = extraInfo != null ? extraInfo.smallThumbnailUrl : null;
-                String mediumThumbnailUrl = extraInfo != null ? extraInfo.mediumThumbnailUrl : null;
-                String largeThumbnailUrl = extraInfo != null ? extraInfo.largeThumbnailUrl : null;
-                String originalFileUrl = fileContent.fileUrl;
-
-                if (hasImageUrl(smallThumbnailUrl, mediumThumbnailUrl,
-                        largeThumbnailUrl, originalFileUrl)) {
+                if (BitmapUtil.hasImageUrl(fileContent)) {
                     // Google, Dropbox 파일이 인 경우
                     if (sourceType == MimeTypeUtil.SourceType.Google
                             || sourceType == MimeTypeUtil.SourceType.Dropbox) {
@@ -137,29 +127,29 @@ public class ImageViewHolder implements BodyViewHolder {
                         fileImageView.setImageResource(mimeTypeIconImage);
                         fileImageView.setOnClickListener(view -> {
                             Intent intent = new Intent(Intent.ACTION_VIEW,
-                                    Uri.parse(BitmapUtil.getFileUrl(originalFileUrl)));
+                                    Uri.parse(
+                                            BitmapUtil.getThumbnailUrlOrOriginal(
+                                                    fileContent, BitmapUtil.Thumbnails.ORIGINAL)));
                             context.startActivity(intent);
                         });
                     } else {
                         String optimizedImageUrl =
-                                getOptimizedImageUrl(context, smallThumbnailUrl, mediumThumbnailUrl,
-                                        largeThumbnailUrl, originalFileUrl);
-
-                        String imageUrl = BitmapUtil.getFileUrl(optimizedImageUrl);
-                        LogUtil.i("imageUrl - " + imageUrl);
+                                BitmapUtil.getOptimizedImageUrl(context, fileContent);
 
                         fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                 .intent(fileImageView.getContext())
-                                .imageUrl(imageUrl)
+                                .imageUrl(optimizedImageUrl)
                                 .imageName(fileContent.name)
                                 .imageType(fileContent.type)
                                 .start());
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
-                        String mediumThumb = !TextUtils.isEmpty(mediumThumbnailUrl)
-                                ? BitmapUtil.getFileUrl(mediumThumbnailUrl) : imageUrl;
+                        String mediumThumb =
+                                BitmapUtil.getThumbnailUrlOrOriginal(
+                                        fileContent, BitmapUtil.Thumbnails.MEDIUM);
 
                         LogUtil.i("small thumb - " + mediumThumb);
+
                         Ion.with(fileImageView)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
@@ -180,45 +170,6 @@ public class ImageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-    }
-
-    private boolean hasImageUrl(String small, String medium, String large, String original) {
-        return !TextUtils.isEmpty(small)
-                || !TextUtils.isEmpty(medium)
-                || !TextUtils.isEmpty(large)
-                || !TextUtils.isEmpty(original);
-    }
-
-    private String getOptimizedImageUrl(Context context,
-                                        String small, String medium,
-                                        String large, String original) {
-        // XXHDPI 이상인 기기에서만 오리지널 파일을 로드
-        int dpi = context.getResources().getDisplayMetrics().densityDpi;
-        if (dpi > DisplayMetrics.DENSITY_XHIGH) {
-            String url = original;
-            return !TextUtils.isEmpty(url) ? url : getImageUrl(small, medium, large, original);
-        }
-
-        return getImageUrl(small, medium, large, original);
-    }
-
-    private String getImageUrl(String small, String medium, String large, String original) {
-        // 라지 사이즈부터 조회(640 x 640)
-        if (!TextUtils.isEmpty(large)) {
-            return large;
-        }
-
-        // 중간 사이즈 (360 x 360)
-        if (!TextUtils.isEmpty(medium)) {
-            return medium;
-        }
-
-        // 원본 파일
-        if (!TextUtils.isEmpty(original)) {
-            return original;
-        }
-
-        return small;
     }
 
     @Override
