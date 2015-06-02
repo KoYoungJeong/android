@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -125,7 +126,7 @@ public class JandiRestClientTest {
     public void testSignUp() throws Exception {
 
         ReqSignUpInfo reqSignUp = new ReqSignUpInfo("test.test@tosslab.com", "123456Ab~", "test test", "en");
-        ResAccountInfo resCommon = jandiRestClient_.signUpAccount(reqSignUp);
+        ResCommon resCommon = jandiRestClient_.signUpAccount(reqSignUp);
 
         assertNotNull(resCommon);
 
@@ -139,9 +140,9 @@ public class JandiRestClientTest {
         // Cannot test.
 
         ReqAccountActivate reqAccountActivate = new ReqAccountActivate("aa", "aa");
-        ResAccountInfo resCommon = jandiRestClient_.activateAccount(reqAccountActivate);
+        ResAccountActivate resAccountActivate = jandiRestClient_.activateAccount(reqAccountActivate);
 
-        assertNull(resCommon);
+        assertNull(resAccountActivate);
 
     }
 

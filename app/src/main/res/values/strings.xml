@@ -31,7 +31,6 @@
     <!--Sign Up-->
     <string name="jandi_signup_required">"Required"</string>
     <string name="jandi_signup_title">"Sign Up"</string>
-    <string name="jandi_signup_verify_title">"Code Verification"</string>
     <string name="jandi_signup_confirm">"SIGN UP NOW"</string>
     <string name="jandi_signup_input_email">"Primary email address"</string>
     <string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
