@@ -164,7 +164,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 String optimizedUrl =
                                         BitmapUtil.getOptimizedImageUrl(context, content);
                                 fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                        .intent(fileImageView.getContext())
+                                        .intent(context)
                                         .imageUrl(optimizedUrl)
                                         .imageName(content.name)
                                         .imageType(content.type)

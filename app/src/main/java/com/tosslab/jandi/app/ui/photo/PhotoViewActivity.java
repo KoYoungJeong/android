@@ -92,6 +92,11 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @UiThread
     void loadImage() {
+        Log.i("JANDI", imageUrl);
+//        Ion.with(photoView)
+//                .crossfade(true)
+//                .load(imageUrl)
+//                .setCallback((e, result) -> progressBar.setVisibility(View.GONE));
         Glide.with(this).load(imageUrl)
                 .asBitmap()
                 .fitCenter()
@@ -102,6 +107,7 @@ public class PhotoViewActivity extends AppCompatActivity {
                                                String model, Target<Bitmap> target,
                                                boolean isFirstResource) {
                         e.printStackTrace();
+                        progressBar.setVisibility(View.GONE);
                         return false;
                     }
 
