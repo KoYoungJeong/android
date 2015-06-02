@@ -83,6 +83,12 @@ public class SignUpVerifyActivity extends AppCompatActivity
         tvResendEmail.setText(Html.fromHtml(resendEmailText));
     }
 
+    @Override
+    protected void onStop() {
+        verificationCodeView.hideKeyboard();
+        super.onStop();
+    }
+
     private void setUpActionBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -204,7 +210,8 @@ public class SignUpVerifyActivity extends AppCompatActivity
     @Override
     public void moveToAccountHome() {
         AccountHomeActivity_.intent(this)
-                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        | Intent.FLAG_ACTIVITY_NEW_TASK)
                 .start();
         overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         finish();

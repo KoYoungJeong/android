@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 /**
  * Created by tonyjs on 15. 6. 1..
