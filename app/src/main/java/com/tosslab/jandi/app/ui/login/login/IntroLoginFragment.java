@@ -37,8 +37,6 @@ import de.greenrobot.event.EventBus;
 @EFragment(R.layout.fragment_intro_input_id)
 public class IntroLoginFragment extends Fragment {
 
-    public static final String RES_EXTRA_EMAIL = "res_email";
-
     private static final int REQ_SIGNUP = 1081;
 
     @Bean
@@ -58,17 +56,13 @@ public class IntroLoginFragment extends Fragment {
             introLoginViewModel.loginSuccess(email);
             JandiPreference.setFirstLogin(getActivity());
 
-
             ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(getActivity()).getAccountInfo();
             MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
             mixpanelAccountAnalyticsClient.trackAccountSingingIn();
-
-
         } else if (httpCode == JandiNetworkException.DATA_NOT_FOUND) {
             introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
         } else {
             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
-
         }
     }
 
@@ -109,11 +103,10 @@ public class IntroLoginFragment extends Fragment {
      */
     @Click(R.id.btn_getting_started)
     void onClickSignUp() {
-
         String emailText = introLoginViewModel.getEmailText();
         SignUpActivity_.intent(IntroLoginFragment.this)
                 .email(emailText)
-                .startForResult(REQ_SIGNUP);
+                .start();
     }
 
     /**
@@ -121,7 +114,6 @@ public class IntroLoginFragment extends Fragment {
      */
     @Click(R.id.btn_intro_action_signin_start)
     void onClickLogin() {
-
         introLoginViewModel.hideKeypad();
         introLoginViewModel.showProgressDialog();
 
@@ -149,21 +141,5 @@ public class IntroLoginFragment extends Fragment {
         } catch (Exception e) {
             introLoginViewModel.showFailPasswordResetToast();
         }
-    }
-
-    @OnActivityResult(REQ_SIGNUP)
-    void activityResultSignUp(int resultCode, Intent dataIntent) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-
-        String signedEmail;
-        if (dataIntent != null) {
-            signedEmail = dataIntent.getStringExtra(RES_EXTRA_EMAIL);
-        } else {
-            signedEmail = "";
-        }
-        String emailHost = introLoginModel.getEmailHost(signedEmail);
-        introLoginViewModel.showSuccessSignUp(signedEmail, emailHost);
     }
 }

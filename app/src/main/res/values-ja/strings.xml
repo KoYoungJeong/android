@@ -14,6 +14,7 @@
     <string name="err_network">"ネットワーク接続を確認してください"</string>
     <string name="jandi_help">"ヘルプ"</string>
     <string name="jandi_about">"JANDIについて"</string>
+    <string name="jandi_launch">"JANDIを利用する"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"古いバージョン"</string>
@@ -33,8 +34,7 @@
     <string name="jandi_select_team">"チームを選択してください"</string>
     <string name="jandi_user_id">"メールアドレス"</string>
     <string name="jandi_user_password">"パスワード"</string>
-<string name="jandi_welcome_message">"こんにちは！
-JANDIへようこそ"</string>
+    <string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
     <string name="err_login">"ログインに失敗しました"</string>
     <string name="err_login_unregistered_id">"このメールアドレスはまだJANDIに登録されていません"</string>
     <string name="err_login_invalid_id">"メールアドレスが正しくありません"</string>
@@ -43,6 +43,14 @@ JANDIへようこそ"</string>
     <string name="err_expired_token">"トークンの有効期限が切れました"</string>
     <string name="err_expired_session">"セッションが切れました。再度ログインしてください"</string>
     <string name="err_service_connection">"接続が切れました。再度実行してください"</string>
+
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"Code Verification"</string>
+    <string name="jandi_signup_resend_email">"<![CDATA[認証コードが届いていない場合 <font color="#00a4e6"><u>再送信</u></font>]]>"</string>
+    <string name="jandi_signup_verification_code">"認証コードを送信しました。入力してアカウントを認証してください"</string>
+    <string name="jandi_signup_invalidate_code">""間違ったパスワードが入力されました (%d/5)\n正しいパスワードを入力してください""</string>
+    <string name="jandi_signup_send_new_verification_code">"%sに新しい認証コードを送信しました。ボックスに認証コードを入力してください。"</string>
+    <string name="jandi_signup_expired_verification_code">"認証コードの有効期限が切れました。新しい認証コードを送信しますか？"</string>
 
     <!-- Push -->
     <string name="err_push_registration">"通知サーバーでエラーが発生しました。再度実行してください"</string>

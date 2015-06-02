@@ -18,14 +18,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="#c2c2c2"
+                android:textColor="@color/jandi_signup_valid"
                 android:textSize="24dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="6dp"
-                android:background="#c2c2c2"/>
+                android:background="@color/jandi_signup_valid"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="28dp"
@@ -38,14 +38,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="#c2c2c2"
+                android:textColor="@color/jandi_signup_valid"
                 android:textSize="24dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="6dp"
-                android:background="#c2c2c2"/>
+                android:background="@color/jandi_signup_valid"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="28dp"
@@ -58,14 +58,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="#c2c2c2"
+                android:textColor="@color/jandi_signup_valid"
                 android:textSize="24dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="6dp"
-                android:background="#c2c2c2"/>
+                android:background="@color/jandi_signup_valid"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="28dp"
@@ -78,14 +78,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textColor="#c2c2c2"
+                android:textColor="@color/jandi_signup_valid"
                 android:textSize="24dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginTop="6dp"
-                android:background="#c2c2c2"/>
+                android:background="@color/jandi_signup_valid"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -99,7 +99,5 @@
         android:imeOptions="actionDone"
         android:inputType="number"
         android:maxLength="4"
-        android:textColor="@android:color/black"/>
-    <!--android:visibility="invisible"-->
-    <!--android:textColor="@android:color/transparent"-->
+        android:textColor="@android:color/transparent"/>
 </FrameLayout>

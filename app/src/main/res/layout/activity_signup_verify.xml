@@ -55,14 +55,15 @@
                 android:minHeight="36dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="Launch JANDI"/>
+                android:text="@string/jandi_launch"/>
 
             <FrameLayout
                 android:id="@+id/vg_invalidate_code"
-                android:alpha="0"
+                android:layout_marginTop="27dp"
                 android:layout_width="match_parent"
                 android:layout_height="66dp"
-                android:layoutAnimation="@anim/abc_fade_in">
+                android:alpha="0.0"
+                android:background="@color/bg_message_input_panel">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -97,7 +98,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/jandi_signup_resend_email"
                     android:textColor="@android:color/black"
                     android:textSize="14dp"/>
             </FrameLayout>

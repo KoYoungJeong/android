@@ -68,18 +68,15 @@ public class IntroLoginViewModel {
         ViewGroup.LayoutParams topLayoutParams = topLayout.getLayoutParams();
         topLayoutParams.height = rootHeight / 2;
         topLayout.setLayoutParams(topLayoutParams);
-
     }
 
     public void showProgressDialog() {
-
         dissmissProgressDialog();
         mProgressWheel.show();
 
     }
 
     public void dissmissProgressDialog() {
-
         if (mProgressWheel.isShowing()) {
             mProgressWheel.dismiss();
         }
@@ -113,7 +110,6 @@ public class IntroLoginViewModel {
         activity.finish();
     }
 
-
     @UiThread
     public void loginFail(int errMessageResId) {
         mProgressWheel.dismiss();
@@ -137,18 +133,9 @@ public class IntroLoginViewModel {
         imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
     }
 
-    public void showSuccessSignUp(String signedEmail, final String emailHost) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(activity.getString(R.string.sent_auth_email, signedEmail));
-        builder.setPositiveButton(R.string.jandi_confirm, null)
-                .create().show();
-
-    }
-
     @UiThread
     public void showFailPasswordResetToast() {
         ColoredToast.show(activity, activity.getString(R.string.jandi_fail_send_password_reset_email));
-
     }
 
     @UiThread

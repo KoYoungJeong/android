@@ -14,6 +14,7 @@
     <string name="err_network">"請檢查您的網路連線"</string>
     <string name="jandi_help">"説明"</string>
     <string name="jandi_about">"有關"</string>
+    <string name="jandi_launch">"開啓JANDI"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"舊版"</string>
@@ -33,7 +34,7 @@
     <string name="jandi_select_team">"選擇您的團隊"</string>
     <string name="jandi_user_id">"電子郵件"</string>
     <string name="jandi_user_password">"密碼"</string>
-    <string name="jandi_welcome_message">"您好！歡迎使用JANDI"</string>
+    <string name="jandi_welcome_message">"歡迎使用JANDI!"</string>
     <string name="err_login">"登入失敗"</string>
     <string name="err_login_unregistered_id">"我們在JANDI找不到您的帳號"</string>
     <string name="err_login_invalid_id">"電子郵件地址無效"</string>
@@ -42,6 +43,14 @@
     <string name="err_expired_token">"憑證已經過期"</string>
     <string name="err_expired_session">"登入期限失效，請重新登入。"</string>
     <string name="err_service_connection">"連線中斷，請再試一次。"</string>
+
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"Code Verification"</string>
+    <string name="jandi_signup_resend_email">"<![CDATA[尚未收到電子郵件? <font color="#00a4e6"><u>重新傳送</u></font>]]>"</string>
+    <string name="jandi_signup_verification_code">""我們寄送了一組密碼至你的電子郵箱\n請在此處輸入密碼進行帳戶驗證""</string>
+    <string name="jandi_signup_invalidate_code">"驗證碼不正確 (1/5)\n請重試一次"</string>
+    <string name="jandi_signup_send_new_verification_code">""新的驗證碼已傳送至%s\n請收到新的驗證碼後，在此處輸入""</string>
+    <string name="jandi_signup_expired_verification_code">"驗證碼已過期。重新寄發新的驗證碼？"</string>
 
     <!-- Push -->
     <string name="err_push_registration">"推播功能出現錯誤，請再試一次。"</string>

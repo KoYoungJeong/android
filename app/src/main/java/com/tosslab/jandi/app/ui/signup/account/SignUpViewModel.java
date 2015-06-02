@@ -141,11 +141,9 @@ public class SignUpViewModel {
 
     @UiThread
     public void requestSignUpVerify(String email) {
-
         SignUpVerifyActivity_.intent(activity)
                 .email(email)
-                .startForResult(SignUpActivity.REQUEST_SIGN_UP_VERIFY);
-
+                .start();
     }
 
     public void setDefaultEmail(String email) {

@@ -36,7 +36,6 @@ import org.androidannotations.annotations.OptionsItem;
  */
 @EActivity(R.layout.activity_signup)
 public class SignUpActivity extends AppCompatActivity {
-    public static final int REQUEST_SIGN_UP_VERIFY = 1000;
 
     @Bean
     SignUpViewModel signUpViewModel;
@@ -197,16 +196,4 @@ public class SignUpActivity extends AppCompatActivity {
             }
         }
     }
-
-    @OnActivityResult(REQUEST_SIGN_UP_VERIFY)
-    void result(int resultCode) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
-        }
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(IntroLoginFragment.RES_EXTRA_EMAIL, email);
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }
-
 }

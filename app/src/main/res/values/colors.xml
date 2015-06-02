@@ -42,6 +42,9 @@
     <color name="jandi_agree_policy_pressed">#551A9B6A</color>
     <color name="jandi_agree_policy_selected_all">#221A9B6A</color>
     <color name="jandi_agree_policy_selected">#111A9B6A</color>
+    <!-- Sign Up Verification -->
+    <color name="jandi_signup_invalid">#FE5555</color>
+    <color name="jandi_signup_valid">#C2C2C2</color>
 
     <!-- Team Select -->
     <color name="jandi_team_select_pendning_name">#999999</color>

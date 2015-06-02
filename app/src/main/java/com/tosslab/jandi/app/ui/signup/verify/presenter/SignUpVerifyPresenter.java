@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.signup.verify.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.signup.verify.to.VerifyNetworkException;
@@ -43,28 +44,36 @@ public class SignUpVerifyPresenter {
 
     @Background
     public void verifyCode(String email) {
+        view.setValidateTextColor();
+        view.hideInvalidVerificationCode();
+
         view.showProgress();
 
         String verificationCode = view.getVerificationCode();
 
         try {
-            ResAccountInfo accountInfo = model.requestSignUpVerify(email, verificationCode);
-
+            ResAccountActivate accountActivate = model.requestSignUpVerify(email, verificationCode);
+            LogUtil.e(accountActivate.toString());
             view.hideProgress();
-            view.setResult(accountInfo);
+            view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
+            model.setResult(accountActivate);
+            view.moveToAccountHome();
         } catch (VerifyNetworkException e) {
             view.hideProgress();
 
             LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             int errCode = e.errCode;
             if (errCode == EXPIRED_VERIFICATION_CODE) {
-                view.showErrorToast("인증 코드가 만료되었습니다. 이메일을 다시 보내주세요.");
+                view.hideResend();
+
+                view.showExpiredVerificationCode();
             } else if (errCode == INVALIDATE_VERIFICATION_CODE) {
                 int tryCount = e.getTryCount();
                 if (tryCount == VerifyNetworkException.NONE_TRY_COUNT) {
                     view.showErrorToast(context.getResources().getString(R.string.err_network));
                     return;
                 }
+                view.setInvalidateTextColor();
                 view.showInvalidVerificationCode(tryCount);
             } else {
                 view.showErrorToast(context.getResources().getString(R.string.err_network));
@@ -74,11 +83,19 @@ public class SignUpVerifyPresenter {
 
     @Background
     public void requestNewVerificationCode(String email) {
+        view.hideInvalidVerificationCode();
+        view.clearVerificationCode();
+
         view.showProgress();
 
         try {
             model.requestNewVerificationCode(email);
             view.hideProgress();
+            view.showResend();
+            String successEmailText = context.getResources()
+                    .getString(R.string.jandi_signup_send_new_verification_code);
+            successEmailText = String.format(successEmailText, email);
+            view.showToast(successEmailText);
         } catch (JandiNetworkException e) {
             view.hideProgress();
             LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);

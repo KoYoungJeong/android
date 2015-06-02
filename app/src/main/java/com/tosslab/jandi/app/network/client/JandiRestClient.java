@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -79,7 +80,7 @@ public interface JandiRestClient {
 
     @Post("/accounts/activate")
     @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
-    ResAccountInfo activateAccount(ReqAccountActivate reqAccountActivate);
+    ResAccountActivate activateAccount(ReqAccountActivate reqAccountActivate);
 
     @Post("/accounts/verification")
     ResCommon accountVerification(ReqAccountVerification reqAccountVerification);
