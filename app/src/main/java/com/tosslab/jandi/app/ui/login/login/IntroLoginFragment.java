@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.login.login;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
-import android.content.Intent;
 import android.text.Editable;
 import android.text.TextUtils;
 
@@ -25,9 +23,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.OnActivityResult;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import de.greenrobot.event.EventBus;
 

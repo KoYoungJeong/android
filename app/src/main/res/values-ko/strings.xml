@@ -215,7 +215,7 @@
     <string name="jandi_message_join_entity">"%1$s에 참여합니다"</string>
     <string name="err_unsupported_file_type">"%1$s 을 확인할 수 있는 앱이 설치되지 않았습니다"</string>
     <string name="jandi_input_password">"선택한 팀 계정의 비밀번호를 입력하세요"</string>
-    <string name="jandi_forgot_password"><b><u>비밀번호 찾기</u></b></string>
+    <string name="jandi_forgot_password"><u>비밀번호 찾기</u></string>
     <string name="jandi_message_ask_about_deleting">"이 메시지를 삭제하시겠습니까? 삭제하시면 복구하실 수 없습니다."</string>
     <string name="jandi_topic_ask_about_deleting">"이 토픽을 정말 삭제하시겠습니까?"</string>
     <string name="jandi_profile_phone_number_hint">"전화번호"</string>

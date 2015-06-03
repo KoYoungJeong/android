@@ -205,7 +205,7 @@
     <string name="jandi_message_join_entity">"%1$s が参加しました"</string>
     <string name="err_unsupported_file_type">"%1$s このファイルを開くためのアプリケーションがインストールされていません"</string>
     <string name="jandi_input_password">"選択したチームのパスワードを入力してください"</string>
-    <string name="jandi_forgot_password"><b><u>パスワードを忘れた場合</u></b></string>
+    <string name="jandi_forgot_password"><u>パスワードを忘れた場合</u></string>
     <string name="jandi_message_ask_about_deleting">"本当に削除しますか？元には戻せません"</string>
     <string name="jandi_profile_phone_number_hint">"電話番号"</string>
     <string name="jandi_profile_division_hint">"部署"</string>

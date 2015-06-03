@@ -200,7 +200,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
     <string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
-    <string name="jandi_forgot_password"><b><u>忘記密碼？</u></b></string>
+    <string name="jandi_forgot_password"><u>忘記密碼？</u></string>
     <string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
     <string name="jandi_profile_phone_number_hint">"電話號碼"</string>
     <string name="jandi_profile_division_hint">"部門"</string>

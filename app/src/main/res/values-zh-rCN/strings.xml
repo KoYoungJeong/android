@@ -199,7 +199,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
-    <string name="jandi_forgot_password"><b><u>忘记密码？</u></b></string>
+    <string name="jandi_forgot_password"><u>忘记密码？</u></string>
     <string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
