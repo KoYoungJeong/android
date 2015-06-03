@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.signup.verify.model;
 
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
 import com.tosslab.jandi.app.ui.search.main.model.SearchModel_;
 import com.tosslab.jandi.app.ui.signup.verify.SignUpVerifyActivity_;
 

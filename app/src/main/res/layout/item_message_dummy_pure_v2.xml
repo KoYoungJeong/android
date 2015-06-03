@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/ly_message_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
@@ -18,19 +19,19 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/txt_message_content"
         android:layout_alignTop="@+id/txt_message_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="27dp"
         android:text="!"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="@dimen/jandi_messages_content"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <ProgressBar
         android:id="@+id/progress_message"
         android:layout_width="@dimen/jandi_messages_padding_left"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/txt_message_content"
-        android:layout_alignLeft="@+id/txt_message_fail"
-        android:layout_alignTop="@+id/txt_message_content" />
+        android:layout_alignTop="@+id/txt_message_content"
+        android:layout_marginLeft="17dp"/>
 
     <!-- 실제 메시지 내용 -->
     <TextView
@@ -42,6 +43,6 @@
         android:autoLink="web"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content" />
+        android:textSize="@dimen/jandi_messages_content"/>
 
 </RelativeLayout>
