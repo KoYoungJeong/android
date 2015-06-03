@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -89,6 +90,9 @@ public class MessageListPresenter {
 
     @SystemService
     ClipboardManager clipboardManager;
+
+    @SystemService
+    InputMethodManager inputMethodManager;
 
     @ViewById(R.id.layout_messages_preview_last_item)
     View previewLayout;
@@ -798,5 +802,17 @@ public class MessageListPresenter {
 
     public int getRoomId() {
         return messageListAdapter.getRoomId();
+    }
+
+    public EditText getSendEditTextView() {
+        return messageEditText;
+    }
+
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+    }
+
+    public void showKeyboard() {
+        inputMethodManager.showSoftInput(messageEditText, InputMethodManager.SHOW_IMPLICIT);
     }
 }

@@ -20,6 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.gson.JsonObject;
@@ -80,10 +82,13 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.model.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.model.StickerViewModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -143,6 +148,13 @@ public class MessageListFragment extends Fragment {
 
     @Bean
     MessageListModel messageListModel;
+
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+
+    @Bean
+    StickerViewModel stickerViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -248,6 +260,7 @@ public class MessageListFragment extends Fragment {
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListModel.updateMarkerInfo(teamId, roomId);
 
+        JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
 
@@ -484,6 +497,41 @@ public class MessageListFragment extends Fragment {
         } catch (Exception e) {
             LogUtil.e("set marker failed", e);
         }
+    }
+
+    @Click(R.id.btn_message_sticker)
+    void onStickerClick(View view) {
+        boolean selected = view.isSelected();
+
+        if (selected) {
+            stickerViewModel.dismissStickerSelector();
+        } else {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
+            if (keyboardHeight > 0) {
+                messageListPresenter.hideKeyboard();
+                stickerViewModel.showStickerSelector(keyboardHeight);
+            } else {
+                initKeyboardHeight();
+            }
+        }
+    }
+
+
+    private void initKeyboardHeight() {
+        EditText etMessage = messageListPresenter.getSendEditTextView();
+        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
+            onStickerClick(getView().findViewById(R.id.btn_message_sticker));
+            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
+
+            keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                if (isShow) {
+                    stickerViewModel.dismissStickerSelector();
+                }
+            });
+        });
+
+        etMessage.requestFocus();
+        messageListPresenter.showKeyboard();
     }
 
     @Click(R.id.ll_messages_go_to_latest)
