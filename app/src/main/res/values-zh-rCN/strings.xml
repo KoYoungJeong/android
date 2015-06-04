@@ -35,7 +35,7 @@
     <string name="jandi_user_id">"电子邮件"</string>
     <string name="jandi_user_password">"密码"</string>
     <string name="jandi_welcome_message">"欢迎使用JANDI!"</string>
-    <string name="jandi_sign_up_question">"Don't have an account?"</string>
+    <string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
     <string name="err_login">"登录期限失效，请重新登录。"</string>
     <string name="err_login_unregistered_id">"我们在JANDI找不到您的账号"</string>
     <string name="err_login_invalid_id">"电子邮件地址无效"</string>

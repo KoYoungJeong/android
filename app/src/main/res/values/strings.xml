@@ -57,7 +57,7 @@
     <string name="jandi_user_id">"Email"</string>
     <string name="jandi_user_password">"Password"</string>
     <string name="jandi_welcome_message">"Welcome to JANDI"</string>
-    <string name="jandi_sign_up_question">"Don't have an account?"</string>
+    <string name="jandi_is_newcomer">"New to JANDI?"</string>
     <string name="err_login">"Sign in unsuccessful"</string>
     <string name="err_login_unregistered_id">"We could not find your account on JANDI"</string>
     <string name="err_login_invalid_id">"Email address is not valid"</string>

@@ -49,9 +49,14 @@ public class VerificationCodeView extends LinearLayout
     private TextView[] arrTvCode;
     private InputMethodManager inputMethodManager;
 
+    private int colorValid;
+    private int colorInvalid;
+
     private void init() {
         inputMethodManager =
                 (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        colorValid = getContext().getResources().getColor(R.color.jandi_signup_valid);
+        colorInvalid = getContext().getResources().getColor(R.color.jandi_signup_invalid);
 
         inflate(getContext(), R.layout.item_sign_up_verification_code, this);
         etInputCode = (EditText) findViewById(R.id.et_code);
@@ -107,7 +112,7 @@ public class VerificationCodeView extends LinearLayout
         for (int i = 0; i < arrTvCode.length; i++) {
             TextView tv = arrTvCode[i];
             tv.setText("");
-            tv.setTextColor(getContext().getResources().getColor(R.color.jandi_signup_valid));
+            tv.setTextColor(colorValid);
         }
     }
 
@@ -116,11 +121,11 @@ public class VerificationCodeView extends LinearLayout
     }
 
     public void setTextColorInvalidate() {
-        setTextColor(getContext().getResources().getColor(R.color.jandi_signup_invalid));
+        setTextColor(colorInvalid);
     }
 
     public void setTextColorValidate() {
-        setTextColor(getContext().getResources().getColor(R.color.jandi_signup_valid));
+        setTextColor(colorValid);
     }
 
     private void setTextColor(int color) {

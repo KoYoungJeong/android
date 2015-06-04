@@ -83,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="18dp"
-                android:text="@string/jandi_sign_up_question"/>
+                android:text="@string/jandi_is_newcomer"/>
 
             <Button
                 android:id="@+id/btn_getting_started"

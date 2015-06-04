@@ -35,7 +35,7 @@
     <string name="jandi_user_id">"メールアドレス"</string>
     <string name="jandi_user_password">"パスワード"</string>
     <string name="jandi_welcome_message">"JANDIへようこそ!!"</string>
-    <string name="jandi_sign_up_question">"Don't have an account?"</string>
+    <string name="jandi_is_newcomer">"初めてJANDIを使いますか？"</string>
     <string name="err_login">"ログインに失敗しました"</string>
     <string name="err_login_unregistered_id">"このメールアドレスはまだJANDIに登録されていません"</string>
     <string name="err_login_invalid_id">"メールアドレスが正しくありません"</string>
