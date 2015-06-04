@@ -4,15 +4,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/vg_sticker_default_items"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager_sticker_default_items"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" />
+
+            <LinearLayout
+                android:id="@+id/vg_sticker_default_items_no_item"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/icon_sticker_recent_no_items" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/vg_sticker_default_items_page_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"
+            android:layout_marginBottom="10dp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/deactivate_text_color" />
 
     <HorizontalScrollView
-        android:id="@+id/vg_sticker_default_groups"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/vg_sticker_default_groups"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/btn_sticker_group_default_recent"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_recent" />
+
+            <ImageView
+                android:id="@+id/btn_sticker_group_default_mozzi"
+                style="@style/JandiSticker.Group"
+                android:src="@drawable/btn_sticker_group_mozzi" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </LinearLayout>

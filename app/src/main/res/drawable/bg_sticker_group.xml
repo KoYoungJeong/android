@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_selected="true">
+        <layer-list>
+            <item>
+                <color android:color="@color/deactivate_text_color" />
+            </item>
+            <item android:right="1dp">
+                <color android:color="#FFDDE4E9" />
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item>
+                <color android:color="@color/deactivate_text_color" />
+            </item>
+            <item android:right="1dp">
+                <color android:color="@color/white" />
+            </item>
+        </layer-list>
+
+    </item>
+
+</selector>

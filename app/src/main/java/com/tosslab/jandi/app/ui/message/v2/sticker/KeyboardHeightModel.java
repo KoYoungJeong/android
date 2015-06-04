@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.model;
+package com.tosslab.jandi.app.ui.message.v2.sticker;
 
 import android.app.Activity;
 import android.content.Context;

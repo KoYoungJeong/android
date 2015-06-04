@@ -17,7 +17,8 @@ public class DatabaseConsts {
 
         search_keyword,
 
-        rooms_marker
+        rooms_marker,
+        sticker_items, sticker_recent
     }
 
     public enum Account {
@@ -103,5 +104,13 @@ public class DatabaseConsts {
 
     public enum RoomsMarker {
         _id, type, teamId, roomId, memberId, lastLinkId
+    }
+
+    public enum StickerItem {
+        _id, id, groupId, mobile, web
+    }
+
+    public enum StickerRecent {
+        _id, id, groupId
     }
 }
