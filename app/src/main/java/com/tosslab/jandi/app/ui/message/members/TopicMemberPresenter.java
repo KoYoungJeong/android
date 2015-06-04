@@ -1,9 +1,11 @@
 package com.tosslab.jandi.app.ui.message.members;
 
 import android.content.Context;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.message.members.adapter.TopicMemberAdapter;
 
@@ -15,6 +17,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -39,6 +43,15 @@ public class TopicMemberPresenter {
     @AfterViews
     void initViews() {
         memberListView.setAdapter(topicMemberAdapter);
+        memberListView.setOnItemClickListener(
+                getRequestMoveDirectMessageEventListener()
+        );
+    }
+
+    private AdapterView.OnItemClickListener getRequestMoveDirectMessageEventListener(){
+        return (parent, view, position, id) -> {
+            EventBus.getDefault().post(new RequestMoveDirectMessageEvent(topicMemberAdapter.getItem(position).getEntityId()));
+        };
     }
 
 
