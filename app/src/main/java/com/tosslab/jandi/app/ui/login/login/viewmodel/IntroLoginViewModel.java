@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -57,10 +56,6 @@ public class IntroLoginViewModel {
     void initObject() {
         mProgressWheel = new ProgressWheel(activity);
         mProgressWheel.init();
-    }
-
-    @AfterViews
-    void initView() {
     }
 
     public void showProgressDialog() {
