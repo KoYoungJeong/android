@@ -4,9 +4,8 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
-import com.tosslab.jandi.app.ui.signup.verify.to.VerifyNetworkException;
+import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -36,47 +35,53 @@ public class SignUpVerifyPresenter {
         view = signUpVerifyView;
     }
 
-    public void validateVerificationCode() {
-        String verifyCode = view.getVerificationCode();
-        boolean verified = model.isValidVerificationCode(verifyCode);
+    public void validateVerificationCode(String verificationCode) {
+        boolean verified = model.isValidVerificationCode(verificationCode);
         view.setVerifyButtonEnabled(verified);
     }
 
     @Background
-    public void verifyCode(String email) {
+    public void verifyCode(String email, String verificationCode) {
         view.setValidateTextColor();
         view.hideInvalidVerificationCode();
 
         view.showProgress();
 
-        String verificationCode = view.getVerificationCode();
-
         try {
             ResAccountActivate accountActivate = model.requestSignUpVerify(email, verificationCode);
             LogUtil.e(accountActivate.toString());
+
             view.hideProgress();
             view.showToast(context.getResources().getString(R.string.jandi_welcome_message));
-            model.setResult(accountActivate);
+
+            model.setAccountInfo(accountActivate);
+            model.addTrackingCodeSignUp(accountActivate.getAccount());
+
             view.moveToAccountHome();
         } catch (VerifyNetworkException e) {
             view.hideProgress();
 
             LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             int errCode = e.errCode;
-            if (errCode == EXPIRED_VERIFICATION_CODE) {
-                view.hideResend();
+            switch (errCode) {
+                case EXPIRED_VERIFICATION_CODE:
+                    view.hideResend();
 
-                view.showExpiredVerificationCode();
-            } else if (errCode == INVALIDATE_VERIFICATION_CODE) {
-                int tryCount = e.getTryCount();
-                if (tryCount == VerifyNetworkException.NONE_TRY_COUNT) {
+                    view.showExpiredVerificationCode();
+                    break;
+                case INVALIDATE_VERIFICATION_CODE:
+                    int tryCount = e.getTryCount();
+                    if (tryCount == VerifyNetworkException.NONE_TRY_COUNT) {
+                        view.showErrorToast(context.getResources().getString(R.string.err_network));
+                        return;
+                    }
+                    view.setInvalidateTextColor();
+                    view.showInvalidVerificationCode(tryCount);
+                    break;
+                default:
+                    e.printStackTrace();
                     view.showErrorToast(context.getResources().getString(R.string.err_network));
-                    return;
-                }
-                view.setInvalidateTextColor();
-                view.showInvalidVerificationCode(tryCount);
-            } else {
-                view.showErrorToast(context.getResources().getString(R.string.err_network));
+                    break;
             }
         }
     }
@@ -92,9 +97,9 @@ public class SignUpVerifyPresenter {
             model.requestNewVerificationCode(email);
             view.hideProgress();
             view.showResend();
+
             String successEmailText = context.getResources()
-                    .getString(R.string.jandi_signup_send_new_verification_code);
-            successEmailText = String.format(successEmailText, email);
+                    .getString(R.string.jandi_signup_send_new_verification_code, email);
             view.showToast(successEmailText);
         } catch (JandiNetworkException e) {
             view.hideProgress();

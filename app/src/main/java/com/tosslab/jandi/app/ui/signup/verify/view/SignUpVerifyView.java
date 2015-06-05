@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.ui.signup.verify.view;
 
+import android.widget.TextView;
+
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
@@ -7,8 +9,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
  * Created by tonyjs on 15. 5. 19..
  */
 public interface SignUpVerifyView {
-    String getVerificationCode();
-
     void setVerifyButtonEnabled(boolean valid);
 
     void showProgress();
@@ -32,6 +32,8 @@ public interface SignUpVerifyView {
     void showResend();
 
     void hideResend();
+
+    void hideKeyboard();
 
     void showErrorToast(String msg);
 

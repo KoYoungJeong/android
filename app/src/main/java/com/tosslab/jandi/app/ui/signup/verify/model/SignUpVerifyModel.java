@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.signup.verify.to.VerifyNetworkException;
+import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -43,7 +43,7 @@ public class SignUpVerifyModel {
     }
 
     public ResAccountActivate requestSignUpVerify(String email, String verificationCode)
-            throws VerifyNetworkException {
+            throws VerifyNetworkException, HttpStatusCodeException {
         ReqAccountActivate accountActivate = new ReqAccountActivate(email, verificationCode);
 
         try {
@@ -71,12 +71,8 @@ public class SignUpVerifyModel {
         }
     }
 
-    public void setResult(ResAccountActivate accountActivate) {
+    public void setAccountInfo(ResAccountActivate accountActivate) {
         ResAccountInfo accountInfo = accountActivate.getAccount();
-
-        MixpanelAccountAnalyticsClient
-                .getInstance(context, accountInfo.getId())
-                .pageViewAccountCreateSuccess();
 
         TokenUtil.saveTokenInfoByPassword(context, accountActivate.getAccessToken(),
                 accountActivate.getRefreshToken(), accountActivate.getTokenType());
@@ -84,6 +80,13 @@ public class SignUpVerifyModel {
         JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
 
         JandiPreference.setFirstLogin(context);
+
+    }
+
+    public void addTrackingCodeSignUp(ResAccountInfo accountInfo) {
+        MixpanelAccountAnalyticsClient
+                .getInstance(context, accountInfo.getId())
+                .pageViewAccountCreateSuccess();
 
         MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient =
                 MixpanelAccountAnalyticsClient.getInstance(context, accountInfo.getId());

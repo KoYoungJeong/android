@@ -237,7 +237,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
-//        setResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
+//        setAccountInfo(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }

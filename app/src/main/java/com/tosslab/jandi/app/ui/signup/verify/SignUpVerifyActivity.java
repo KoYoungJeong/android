@@ -13,18 +13,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.network.models.ResAccountActivate;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.signup.verify.presenter.SignUpVerifyPresenter;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
+import com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -32,7 +26,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -41,8 +34,7 @@ import org.androidannotations.annotations.ViewById;
  * Created by tonyjs on 15. 5. 19..
  */
 @EActivity(R.layout.activity_signup_verify)
-public class SignUpVerifyActivity extends AppCompatActivity
-        implements SignUpVerifyView, VerificationCodeView.OnVerificationCodeChangeListener {
+public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVerifyView {
 
     @Extra("email")
     String email;
@@ -74,18 +66,20 @@ public class SignUpVerifyActivity extends AppCompatActivity
     void init() {
         setUpActionBar();
 
+        String resendEmailText = getString(R.string.jandi_signup_resend_email);
+        tvResendEmail.setText(Html.fromHtml(resendEmailText));
+
         presenter.setView(this);
         progressWheel = new ProgressWheel(this);
         progressWheel.init();
-        verificationCodeView.setListener(this);
-
-        String resendEmailText = getString(R.string.jandi_signup_resend_email);
-        tvResendEmail.setText(Html.fromHtml(resendEmailText));
+        verificationCodeView.setOnVerificationCodeChangedListener(() ->
+                presenter.validateVerificationCode(verificationCodeView.getVerificationCode()));
+        verificationCodeView.setOnActionDoneListener(() -> hideKeyboard());
     }
 
     @Override
     protected void onStop() {
-        verificationCodeView.hideKeyboard();
+        hideKeyboard();
         super.onStop();
     }
 
@@ -98,17 +92,12 @@ public class SignUpVerifyActivity extends AppCompatActivity
         actionBar.setTitle(getString(R.string.jandi_signup_verify_title));
     }
 
-    @Override
-    public String getVerificationCode() {
-        return verificationCodeView.getVerificationCode();
-    }
-
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setVerifyButtonEnabled(boolean valid) {
         btnVerify.setEnabled(valid);
         if (valid) {
-            verificationCodeView.hideKeyboard();
+            hideKeyboard();
         }
     }
 
@@ -175,6 +164,12 @@ public class SignUpVerifyActivity extends AppCompatActivity
         tvResendEmail.setVisibility(View.INVISIBLE);
     }
 
+    @Override
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(
+                verificationCodeView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
+
     @UiThread
     @Override
     public void showResend() {
@@ -217,17 +212,12 @@ public class SignUpVerifyActivity extends AppCompatActivity
         finish();
     }
 
-    @Override
-    public void onChanged() {
-        presenter.validateVerificationCode();
-    }
-
     @Click(R.id.btn_verify)
     void verify(View v) {
         if (!v.isEnabled()) {
             return;
         }
-        presenter.verifyCode(email);
+        presenter.verifyCode(email, verificationCodeView.getVerificationCode());
     }
 
     @Click(R.id.tv_resend_email)
@@ -240,4 +230,5 @@ public class SignUpVerifyActivity extends AppCompatActivity
     public void finish() {
         super.finish();
     }
+
 }

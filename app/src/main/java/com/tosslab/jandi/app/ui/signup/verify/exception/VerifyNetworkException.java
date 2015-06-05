@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.signup.verify.to;
+package com.tosslab.jandi.app.ui.signup.verify.exception;
 
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.logger.LogUtil;

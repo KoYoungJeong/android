@@ -37,7 +37,7 @@
                 android:textColor="#404040"
                 android:textSize="16dp"/>
 
-            <com.tosslab.jandi.app.ui.signup.verify.VerificationCodeView
+            <com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView
                 android:id="@+id/vg_verification_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
