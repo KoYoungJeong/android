@@ -1,13 +1,11 @@
-package com.tosslab.jandi.app.ui.signup.verify;
+package com.tosslab.jandi.app.ui.signup.verify.widget;
 
 import android.content.Context;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,9 +18,13 @@ import com.tosslab.jandi.app.R;
 public class VerificationCodeView extends LinearLayout
         implements TextWatcher, TextView.OnEditorActionListener {
 
-    public interface OnVerificationCodeChangeListener {
-        public void onChanged();
-    }
+    private OnVerificationCodeChangeListener listener;
+    private EditText etInputCode;
+    private TextView[] arrTvCode;
+    private int colorValid;
+    private int colorInvalid;
+    private OnActionDoneListener onActionDoneListener;
+    private String verificationCode;
 
     public VerificationCodeView(Context context) {
         super(context);
@@ -39,29 +41,32 @@ public class VerificationCodeView extends LinearLayout
         init();
     }
 
-    private OnVerificationCodeChangeListener listener;
+    @Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        if (actionId == EditorInfo.IME_ACTION_DONE) {
+            if (onActionDoneListener != null) {
+                onActionDoneListener.onActionDone();
+            }
+            return true;
+        }
+        return false;
+    }
 
-    public void setListener(OnVerificationCodeChangeListener listener) {
+    public void setOnActionDoneListener(OnActionDoneListener onActionDoneListener) {
+        this.onActionDoneListener = onActionDoneListener;
+    }
+
+    public void setOnVerificationCodeChangedListener(OnVerificationCodeChangeListener listener) {
         this.listener = listener;
     }
 
-    private EditText etInputCode;
-    private TextView[] arrTvCode;
-    private InputMethodManager inputMethodManager;
-
-    private int colorValid;
-    private int colorInvalid;
-
     private void init() {
-        inputMethodManager =
-                (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         colorValid = getContext().getResources().getColor(R.color.jandi_signup_valid);
         colorInvalid = getContext().getResources().getColor(R.color.jandi_signup_invalid);
 
         inflate(getContext(), R.layout.item_sign_up_verification_code, this);
         etInputCode = (EditText) findViewById(R.id.et_code);
         etInputCode.addTextChangedListener(this);
-        etInputCode.setOnEditorActionListener(this);
 
         arrTvCode = new TextView[]{
                 (TextView) findViewById(R.id.text1),
@@ -69,17 +74,6 @@ public class VerificationCodeView extends LinearLayout
                 (TextView) findViewById(R.id.text3),
                 (TextView) findViewById(R.id.text4)};
     }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            hideKeyboard();
-            return true;
-        }
-        return false;
-    }
-
-    private String verificationCode;
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -135,11 +129,6 @@ public class VerificationCodeView extends LinearLayout
         }
     }
 
-    public void hideKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(
-                etInputCode.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-    }
-
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -148,5 +137,13 @@ public class VerificationCodeView extends LinearLayout
     @Override
     public void afterTextChanged(Editable s) {
 
+    }
+
+    public interface OnActionDoneListener {
+        void onActionDone();
+    }
+
+    public interface OnVerificationCodeChangeListener {
+        void onChanged();
     }
 }
