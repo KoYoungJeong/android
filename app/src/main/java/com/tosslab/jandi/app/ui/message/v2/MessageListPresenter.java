@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -17,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
@@ -44,6 +48,7 @@ import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
@@ -126,6 +131,13 @@ public class MessageListPresenter {
 
     @ViewById(R.id.progress_go_to_latest)
     View progressGoToLatestView;
+
+    @ViewById(R.id.vg_messages_preview_sticker)
+    ViewGroup vgStickerPreview;
+
+    @ViewById(R.id.iv_messages_preview_sticker_image)
+    ImageView imgStickerPreview;
+
 
     private MessageListAdapter messageListAdapter;
 
@@ -814,5 +826,24 @@ public class MessageListPresenter {
 
     public void showKeyboard() {
         inputMethodManager.showSoftInput(messageEditText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    public void showStickerPreview(StickerInfo stickerInfo) {
+        String fileName = stickerInfo.getStickerGroupId() + "_" + stickerInfo.getStickerId();
+
+        imgStickerPreview.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+
+        Glide.with(activity)
+                .load(Uri.parse("file:///android_asset/stickers/default/mozzi/" + fileName + ".png"))
+                .into(imgStickerPreview);
+
+        vgStickerPreview.setVisibility(View.VISIBLE);
+    }
+
+    public void dismissStickerPreview() {
+
+        vgStickerPreview.setVisibility(View.GONE);
+
     }
 }

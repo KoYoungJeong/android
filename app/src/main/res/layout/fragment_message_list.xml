@@ -59,6 +59,35 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/vg_messages_preview_sticker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_messages_preview_last_item"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@color/jandi_black_89"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_messages_preview_sticker_image"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_centerInParent="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/jandi_ic_launcher" />
+
+        <ImageView
+            android:id="@+id/iv_messages_preview_sticker_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:padding="15dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/com_mixpanel_android_close" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/layout_messages_preview_last_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

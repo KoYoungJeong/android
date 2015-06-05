@@ -10,22 +10,23 @@ import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 4..
  */
-public class StickerViewPagerAdapter extends PagerAdapter {
+class StickerViewPagerAdapter extends PagerAdapter {
 
     public static final int STICKER_MAX_VIEW = 8;
     private final Context context;
     private List<ResSticker> stickers;
+    private final StickerViewModel.OnStickerClick onStickerClick;
 
-    public StickerViewPagerAdapter(Context context, List<ResSticker> stickers) {
+    protected StickerViewPagerAdapter(Context context, List<ResSticker> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.context = context;
         this.stickers = stickers;
+        this.onStickerClick = onStickerClick;
     }
 
     @Override
@@ -81,9 +82,7 @@ public class StickerViewPagerAdapter extends PagerAdapter {
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
         layoutParams.weight = 1;
-        LogUtil.d("getStickerItemLayout Start, Page : " + page + ", Size : " + size);
         for (int idx = 0; idx < size; idx++) {
-            LogUtil.d("getStickerItemLayout : " + idx);
             ImageView child = new ImageView(context);
             child.setLayoutParams(layoutParams);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -94,13 +93,19 @@ public class StickerViewPagerAdapter extends PagerAdapter {
                 childBottom.addView(child);
             }
 
-            ResSticker resSticker = stickers.get(idx + page * STICKER_MAX_VIEW);
+            final ResSticker resSticker = stickers.get(idx + page * STICKER_MAX_VIEW);
+
+            child.setOnClickListener(v -> {
+                if (onStickerClick != null) {
+                    onStickerClick.onStickerClick(resSticker.getGroupId(), resSticker.getId());
+                }
+            });
+
             String fileName = resSticker.getGroupId() + "_" + resSticker.getId();
 
             Glide.with(context)
                     .load(Uri.parse("file:///android_asset/stickers/default/mozzi/" + fileName + ".png"))
                     .into(child);
-
 
         }
 

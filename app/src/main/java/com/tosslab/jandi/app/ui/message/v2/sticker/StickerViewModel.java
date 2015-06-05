@@ -39,6 +39,8 @@ public class StickerViewModel {
     private ViewPager pagerStickerItems;
     private ViewGroup vgNoItemsLayout;
 
+    private OnStickerClick onStickerClick;
+
     @AfterViews
     void initViews() {
         LayoutInflater.from(context).inflate(R.layout.layout_stickers_default, vgStickerSelector, true);
@@ -86,7 +88,7 @@ public class StickerViewModel {
             vgNoItemsLayout.setVisibility(View.GONE);
         }
 
-        vgStickerItems.setAdapter(new StickerViewPagerAdapter(context, stickers));
+        vgStickerItems.setAdapter(new StickerViewPagerAdapter(context, stickers, onStickerClick));
 
     }
 
@@ -120,5 +122,12 @@ public class StickerViewModel {
         btnStickerShow.setSelected(false);
     }
 
+    public void setOnStickerClick(OnStickerClick onStickerClick) {
+        this.onStickerClick = onStickerClick;
+    }
 
+
+    public interface OnStickerClick {
+        void onStickerClick(int groupId, String stickerId);
+    }
 }

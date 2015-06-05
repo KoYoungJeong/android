@@ -71,6 +71,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -126,6 +127,8 @@ public class MessageListFragment extends Fragment {
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
 
+    private static final StickerInfo NULL_STICKER = new StickerInfo();
+
     @FragmentArg
     int entityType;
     @FragmentArg
@@ -162,6 +165,7 @@ public class MessageListFragment extends Fragment {
     private Subscription messageSubscription;
     private boolean isForeground;
     private File photoFileByCamera;
+    private StickerInfo stickerInfo;
 
     @AfterInject
     void initObject() {
@@ -325,7 +329,27 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.disableChat();
         }
 
+        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(stickerInfo);
+            }
+        });
+
         insertEmptyMessage();
+    }
+
+    private void showStickerPreview(StickerInfo stickerInfo) {
+        messageListPresenter.showStickerPreview(stickerInfo);
+    }
+
+    @Click(R.id.iv_messages_preview_sticker_close)
+    void onStickerPreviewClose() {
+        MessageListFragment.this.stickerInfo = NULL_STICKER;
+        messageListPresenter.dismissStickerPreview();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
