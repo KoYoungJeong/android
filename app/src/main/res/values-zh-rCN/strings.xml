@@ -46,7 +46,7 @@
     <string name="err_service_connection">"连线中断，请再试一次。"</string>
 
     <!-- Sign Up Verification -->
-    <string name="jandi_signup_verify_title">"Code Verification"</string>
+    <string name="jandi_signup_verify_title">"验证码认证"</string>
     <string name="jandi_signup_resend_email">"<![CDATA[尚未收到电子邮件? <font color="#00a4e6"><u>重新传送</u></font>]]>"</string>
     <string name="jandi_signup_verification_code">""我们寄送了一组密码至你的电子邮箱\n请在此处输入密码进行帐户验证""</string>
     <string name="jandi_signup_invalidate_code">""验证码不正确 (%d/5)\n请重试一次""</string>
