@@ -26,6 +26,10 @@ public class BodyViewFactory {
                 return new CollapseCommentViewHolder();
             case PureMessage:
                 return new PureMessageViewHolder();
+            case Sticker:
+                return new StickerViewHolder();
+            case PureSticker:
+                return new PureStickerViewHolder();
             case File:
                 return FileViewHolder.createFileViewHolder();
             case Image:
@@ -102,23 +106,25 @@ public class BodyViewFactory {
             return BodyViewHolder.Type.Event;
         }
 
-        if (currentMessage instanceof ResMessages.TextMessage) {
+        if (currentMessage instanceof ResMessages.TextMessage || currentMessage instanceof ResMessages.StickerMessage) {
 
             if (beforeMessage != null
-                    && beforeMessage.message instanceof ResMessages.TextMessage
+                    &&
+                    (beforeMessage.message instanceof ResMessages.TextMessage
+                            || beforeMessage.message instanceof ResMessages.StickerMessage)
                     && currentMessage.writerId == beforeMessage.message.writerId
                     && isSince5min(currentMessage.createTime, beforeMessage.message.createTime)
                     && isSameDay(message, beforeMessage)) {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
-                    return BodyViewHolder.Type.PureMessage;
+                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.PureMessage : BodyViewHolder.Type.PureSticker;
                 }
             } else {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
-                    return BodyViewHolder.Type.Message;
+                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.Message : BodyViewHolder.Type.Sticker;
                 }
             }
 

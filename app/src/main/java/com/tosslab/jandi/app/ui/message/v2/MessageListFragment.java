@@ -16,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -84,8 +83,8 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.ui.message.v2.sticker.KeyboardHeightModel;
-import com.tosslab.jandi.app.ui.message.v2.sticker.StickerViewModel;
+import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -121,7 +120,7 @@ import rx.subjects.PublishSubject;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EFragment(R.layout.fragment_message_list)
-public class MessageListFragment extends Fragment {
+public class MessageListFragment extends Fragment implements MessageListV2Activity.OnBackPressedListener {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
@@ -165,7 +164,7 @@ public class MessageListFragment extends Fragment {
     private Subscription messageSubscription;
     private boolean isForeground;
     private File photoFileByCamera;
-    private StickerInfo stickerInfo;
+    private StickerInfo stickerInfo = NULL_STICKER;
 
     @AfterInject
     void initObject() {
@@ -195,7 +194,6 @@ public class MessageListFragment extends Fragment {
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
-                            Log.d("INFO", "New Start~!");
                             if (newsMessageLoader != null) {
                                 MessageState data = (MessageState) messageQueue.getData();
                                 int lastUpdateLinkId = data.getLastUpdateLinkId();
@@ -204,19 +202,21 @@ public class MessageListFragment extends Fragment {
                                 }
                                 newsMessageLoader.load(lastUpdateLinkId);
                             }
-                            Log.d("INFO", "New End~!");
                             break;
                         case Send:
-                            Log.d("INFO", "Send Start~!");
                             SendingMessage data = (SendingMessage) messageQueue.getData();
-                            int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            int linkId;
+                            if (data.getStickerInfo() != null) {
+                                linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+                            } else {
+                                linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            }
                             if (linkId > 0) {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
                                 EventBus.getDefault().post(new RefreshNewMessageEvent());
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
-                            Log.d("INFO", "Send End~!");
                             break;
                     }
                 }, throwable -> {
@@ -336,6 +336,7 @@ public class MessageListFragment extends Fragment {
                 stickerInfo.setStickerGroupId(groupId);
                 stickerInfo.setStickerId(stickerId);
                 showStickerPreview(stickerInfo);
+                messageListPresenter.setEnableSendButton(true);
             }
         });
 
@@ -350,6 +351,8 @@ public class MessageListFragment extends Fragment {
     void onStickerPreviewClose() {
         MessageListFragment.this.stickerInfo = NULL_STICKER;
         messageListPresenter.dismissStickerPreview();
+        messageListPresenter.setEnableSendButton(false);
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -582,8 +585,13 @@ public class MessageListFragment extends Fragment {
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText().trim();
-        if (!TextUtils.isEmpty(message)) {
-            messageListPresenter.setSendEditText("");
+        messageListPresenter.setSendEditText("");
+
+        if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
+
+        } else if (!TextUtils.isEmpty(message)) {
             // insert to db
             long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
 
@@ -596,6 +604,10 @@ public class MessageListFragment extends Fragment {
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, message)));
 
         }
+
+        messageListPresenter.dismissStickerPreview();
+        stickerInfo = NULL_STICKER;
+        messageListPresenter.setEnableSendButton(false);
 
     }
 
@@ -1201,6 +1213,16 @@ public class MessageListFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
+    @Override
+    public boolean onBackPressed() {
+
+        if (stickerViewModel.isShowStickerLayout()) {
+            stickerViewModel.dismissStickerSelector();
+            return true;
+        }
+
+        return false;
+    }
 }
 
 

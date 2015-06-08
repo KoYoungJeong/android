@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.sticker;
+package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
@@ -124,6 +124,10 @@ public class StickerViewModel {
 
     public void setOnStickerClick(OnStickerClick onStickerClick) {
         this.onStickerClick = onStickerClick;
+    }
+
+    public boolean isShowStickerLayout() {
+        return vgStickerSelector.getVisibility() == View.VISIBLE;
     }
 
 

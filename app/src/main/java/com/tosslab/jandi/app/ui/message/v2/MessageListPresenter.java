@@ -846,4 +846,5 @@ public class MessageListPresenter {
         vgStickerPreview.setVisibility(View.GONE);
 
     }
+
 }

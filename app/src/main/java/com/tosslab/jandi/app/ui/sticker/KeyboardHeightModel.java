@@ -1,9 +1,11 @@
-package com.tosslab.jandi.app.ui.message.v2.sticker;
+package com.tosslab.jandi.app.ui.sticker;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
@@ -68,9 +70,13 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         LogUtil.d(r.toString());
 
         int statusbarHeight = getStatusbarHeight(KeyboardHeightModel.this.activity);
-        int navigationHeight = getNavigationHeight();
 
-        int keyboardHeight = rootView.getRootView().getHeight() - r.height() - statusbarHeight - navigationHeight;
+        int keyboardHeight = rootView.getRootView().getHeight() - r.height() - statusbarHeight;
+
+        if (!hasNoNavigationBar()) {
+            int navigationHeight = getNavigationHeight();
+            keyboardHeight -= navigationHeight;
+        }
 
         LogUtil.d("Keyboard Height : " + keyboardHeight);
 
@@ -95,6 +101,12 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             }
         }
 
+    }
+
+    private boolean hasNoNavigationBar() {
+        // 기기에 백키/홈키가 있다면 네비게이션바가 없는 기기로 간주...
+        return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+                && KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
     }
 
     public void setOnKeyboardShowListener(OnKeybardShowListener onKeyboardShowListener) {

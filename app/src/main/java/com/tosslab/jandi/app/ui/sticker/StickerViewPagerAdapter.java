@@ -1,14 +1,12 @@
-package com.tosslab.jandi.app.ui.message.v2.sticker;
+package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
 
 import java.util.List;
@@ -101,11 +99,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
                 }
             });
 
-            String fileName = resSticker.getGroupId() + "_" + resSticker.getId();
-
-            Glide.with(context)
-                    .load(Uri.parse("file:///android_asset/stickers/default/mozzi/" + fileName + ".png"))
-                    .into(child);
+            StickerManager.getInstance().loadSticker(context, child, resSticker.getGroupId(), resSticker.getId());
 
         }
 

@@ -17,6 +17,7 @@ public interface BodyViewHolder {
 
     enum Type {
         Message, PureMessage,
+        Sticker, PureSticker,
         File,
         Image,
         FileComment, PureComment, CollapseComment,

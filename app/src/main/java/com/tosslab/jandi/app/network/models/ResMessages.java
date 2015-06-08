@@ -93,6 +93,7 @@ public class ResMessages {
     @JsonSubTypes({
             @JsonSubTypes.Type(value = TextMessage.class, name = "text"),
             @JsonSubTypes.Type(value = FileMessage.class, name = "file"),
+            @JsonSubTypes.Type(value = StickerMessage.class, name = "sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
     public static class OriginalMessage {
         public int id;
@@ -149,6 +150,15 @@ public class ResMessages {
     public static class TextContent {
         public String body;
     }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class StickerMessage extends OriginalMessage {
+        public StickerContent content;
+        public int version;
+    }
+
+
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -255,5 +265,13 @@ public class ResMessages {
         public boolean isDefault;
         @JsonProperty("pg_members")
         public List<Integer> members;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class StickerContent {
+        public int groupId;
+        public String stickerId;
+        public String url;
     }
 }

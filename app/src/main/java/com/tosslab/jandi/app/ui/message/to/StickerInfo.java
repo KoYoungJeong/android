@@ -7,6 +7,14 @@ public class StickerInfo {
     private String stickerId;
     private int stickerGroupId;
 
+    public StickerInfo() {
+    }
+
+    public StickerInfo(StickerInfo stickerInfo) {
+        this.stickerGroupId = stickerInfo.getStickerGroupId();
+        this.stickerId = stickerInfo.getStickerId();
+    }
+
     public String getStickerId() {
         return stickerId;
     }
