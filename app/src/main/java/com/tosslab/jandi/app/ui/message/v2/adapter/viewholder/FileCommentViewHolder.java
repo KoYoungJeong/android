@@ -121,7 +121,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
-                fileImageView.setVisibility(View.VISIBLE);
+                fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
                 fileOwnerTextView.setText(entity.getName());
