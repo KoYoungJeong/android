@@ -85,7 +85,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
             child.setLayoutParams(layoutParams);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
-            if ((idx - 0) / 4 < 1) {
+            if (idx / 4 < 1) {
                 childTop.addView(child);
             } else {
                 childBottom.addView(child);
