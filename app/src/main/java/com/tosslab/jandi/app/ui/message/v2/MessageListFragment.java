@@ -60,6 +60,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -537,6 +538,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (keyboardHeight > 0) {
                 messageListPresenter.hideKeyboard();
                 stickerViewModel.showStickerSelector(keyboardHeight);
+                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
+                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                        if (isShow) {
+                            stickerViewModel.dismissStickerSelector();
+                        }
+                    });
+                }
             } else {
                 initKeyboardHeight();
             }
@@ -550,11 +558,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             onStickerClick(getView().findViewById(R.id.btn_message_sticker));
             keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
 
-            keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
-                if (isShow) {
-                    stickerViewModel.dismissStickerSelector();
-                }
-            });
         });
 
         etMessage.requestFocus();
@@ -588,6 +591,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setSendEditText("");
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+
+            JandiStickerDatabaseManager.getInstance(getActivity()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
 
@@ -1216,7 +1221,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public boolean onBackPressed() {
 
-        if (stickerViewModel.isShowStickerLayout()) {
+        if (stickerViewModel.isShowStickerSelector()) {
             stickerViewModel.dismissStickerSelector();
             return true;
         }

@@ -50,6 +50,20 @@ public class StickerManager {
         }
     }
 
+    public void loadSticker(ImageView view, int groupId, String stickerId) {
+
+        if (isLocalSticker(groupId)) {
+            Context context = view.getContext();
+            String stickerAssetPath = getStickerAssetPath(context, groupId, stickerId);
+
+            Glide.with(context)
+                    .load(Uri.parse(stickerAssetPath))
+                    .into(view);
+        } else {
+
+        }
+    }
+
     private boolean isLocalSticker(int groupId) {
         return localStickerGroupIds.contains(groupId);
     }

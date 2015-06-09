@@ -1,13 +1,11 @@
-package com.tosslab.jandi.app.lists.files;
+package com.tosslab.jandi.app.lists.files.viewholder;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -20,42 +18,39 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
-
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
-@EViewGroup(R.layout.item_file_detail_comment)
-public class FileDetailCommentView extends LinearLayout {
+public class FileDetailCommentView implements CommentViewHolder {
 
-    @ViewById(R.id.img_file_detail_comment_user_profile)
     ImageView imageViewCommentUserProfile;
-    @ViewById(R.id.txt_file_detail_comment_user_name)
     TextView textViewCommentUserName;
-    @ViewById(R.id.txt_file_detail_comment_create_date)
     TextView textViewCommentFileCreateDate;
-    @ViewById(R.id.txt_file_detail_comment_content_2)
     TextView textViewCommentContent;
 
-    @ViewById(R.id.img_entity_listitem_line_through)
     View disableLineThrougView;
 
-    @ViewById(R.id.view_entity_listitem_warning)
     View disableCoverView;
 
-    Context mContext;
-
-    public FileDetailCommentView(Context context) {
-        super(context);
-        mContext = context;
+    @Override
+    public void init(View rootView) {
+        imageViewCommentUserProfile = (ImageView) rootView.findViewById(R.id.img_file_detail_comment_user_profile);
+        textViewCommentUserName = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_user_name);
+        textViewCommentFileCreateDate = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_create_date);
+        textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_content_2);
+        disableLineThrougView = rootView.findViewById(R.id.img_entity_listitem_line_through);
+        disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
     }
 
-    public void bind(ResMessages.CommentMessage commentMessage) {
+    @Override
+    public void bind(ResMessages.OriginalMessage originalMessage) {
+
+        ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) originalMessage;
+
         // 프로필
-        final FormattedEntity writer = EntityManager.getInstance(mContext).getEntityById(commentMessage.writerId);
+        final FormattedEntity writer = EntityManager.getInstance(imageViewCommentUserProfile.getContext()).getEntityById(commentMessage.writerId);
 
         String profileUrl = writer.getUserSmallProfileUrl();
         EntityManager entityManager = EntityManager.getInstance(imageViewCommentUserProfile.getContext());
@@ -66,7 +61,7 @@ public class FileDetailCommentView extends LinearLayout {
         } else {
             disableLineThrougView.setVisibility(View.VISIBLE);
             disableCoverView.setVisibility(View.VISIBLE);
-            textViewCommentUserName.setTextColor(getResources().getColor(R.color.deactivate_text_color));
+            textViewCommentUserName.setTextColor(textViewCommentUserName.getContext().getResources().getColor(R.color.deactivate_text_color));
         }
 
         Ion.with(imageViewCommentUserProfile)
@@ -94,5 +89,10 @@ public class FileDetailCommentView extends LinearLayout {
         } else {
             textViewCommentContent.setText(spannableStringBuilder);
         }
+    }
+
+    @Override
+    public int getLayoutResourceId() {
+        return R.layout.item_file_detail_comment;
     }
 }

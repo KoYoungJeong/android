@@ -29,8 +29,15 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
     View rootView;
     private OnKeybardCaptureLisnter onKeyboardHeightCapture;
     private OnKeybardShowListener onKeyboardShowListener;
-
     private boolean isOpened;
+
+    public OnKeybardShowListener getOnKeyboardShowListener() {
+        return onKeyboardShowListener;
+    }
+
+    public void setOnKeyboardShowListener(OnKeybardShowListener onKeyboardShowListener) {
+        this.onKeyboardShowListener = onKeyboardShowListener;
+    }
 
     @AfterViews
     void initViews() {
@@ -107,10 +114,6 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         // 기기에 백키/홈키가 있다면 네비게이션바가 없는 기기로 간주...
         return KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
                 && KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
-    }
-
-    public void setOnKeyboardShowListener(OnKeybardShowListener onKeyboardShowListener) {
-        this.onKeyboardShowListener = onKeyboardShowListener;
     }
 
     public interface OnKeybardCaptureLisnter {

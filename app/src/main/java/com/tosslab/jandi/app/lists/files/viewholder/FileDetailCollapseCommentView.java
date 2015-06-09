@@ -1,11 +1,10 @@
-package com.tosslab.jandi.app.lists.files;
+package com.tosslab.jandi.app.lists.files.viewholder;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.widget.LinearLayout;
+import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -14,23 +13,19 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
-import org.androidannotations.annotations.EViewGroup;
-import org.androidannotations.annotations.ViewById;
+public class FileDetailCollapseCommentView implements CommentViewHolder {
 
-@EViewGroup(R.layout.item_file_detail_collapse_comment)
-public class FileDetailCollapseCommentView extends LinearLayout {
-
-    @ViewById(R.id.txt_file_detail_collapse_comment_content)
     TextView textViewCommentContent;
 
-    Context mContext;
-
-    public FileDetailCollapseCommentView(Context context) {
-        super(context);
-        mContext = context;
+    @Override
+    public void init(View rootView) {
+        textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_collapse_comment_content);
     }
 
-    public void bind(ResMessages.CommentMessage commentMessage) {
+    @Override
+    public void bind(ResMessages.OriginalMessage originalMessage) {
+
+        ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) originalMessage;
         // 날짜
         String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
         // 댓글 내용
@@ -52,7 +47,7 @@ public class FileDetailCollapseCommentView extends LinearLayout {
 
         spannableStringBuilder.append(" ");
 
-        Resources resources = mContext.getResources();
+        Resources resources = textViewCommentContent.getResources();
 
         int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
         int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
@@ -68,5 +63,10 @@ public class FileDetailCollapseCommentView extends LinearLayout {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         textViewCommentContent.setText(spannableStringBuilder);
+    }
+
+    @Override
+    public int getLayoutResourceId() {
+        return R.layout.item_file_detail_collapse_comment;
     }
 }

@@ -38,4 +38,8 @@ public interface StickerApiClient {
     @RequiresAuthentication
     ResCommon sendSticker(SendSticker sendSticker);
 
+    @Post("/stickers/comment")
+    @RequiresAuthentication
+    ResCommon sendStickerComment(SendSticker sendSticker);
+
 }

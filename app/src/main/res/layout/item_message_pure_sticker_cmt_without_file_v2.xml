@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/message_list_selector"
+    android:descendantFocusability="blocksDescendants"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:paddingBottom="12dp"
+    android:paddingLeft="58dp">
+
+    <ImageView
+        android:id="@+id/iv_pure_sticker_comment_content"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/tv_pure_sticker_comment_create_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_pure_sticker_comment_content"
+        android:layout_marginLeft="6dp"
+        android:layout_toRightOf="@+id/iv_pure_sticker_comment_content"
+        android:text="AM ??:??"
+        android:textColor="@color/jandi_messages_date"
+        android:textSize="@dimen/jandi_messages_date" />
+
+    <TextView
+        android:id="@+id/tv_pure_sticker_comment_unread"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_pure_sticker_comment_create_date"
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@+id/tv_pure_sticker_comment_create_date"
+        android:background="@drawable/jandi_img_read_unread"
+        android:text="10"
+        android:textColor="@color/white"
+        android:textSize="@dimen/jandi_text_size_smaller"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

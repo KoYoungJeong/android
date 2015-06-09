@@ -126,7 +126,7 @@ public class StickerViewModel {
         this.onStickerClick = onStickerClick;
     }
 
-    public boolean isShowStickerLayout() {
+    public boolean isShowStickerSelector() {
         return vgStickerSelector.getVisibility() == View.VISIBLE;
     }
 

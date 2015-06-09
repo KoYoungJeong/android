@@ -53,13 +53,13 @@ public class StickerSendRequest implements Request<ResCommon> {
 
         FormattedEntity entity = EntityManager.getInstance(context).getEntityById(share);
 
-        // FIXME
-        String type = entity.isPublicTopic() ? "channels" : entity.isPrivateGroup() ? "privateGroups" : "users";
 
         if (!TextUtils.isEmpty(message)) {
-            return SendSticker.create(stickerId, stickerGroupId, teamId, share, type, message);
+            // FIXME
+            String type = entity.isPublicTopic() ? "channels" : entity.isPrivateGroup() ? "privateGroups" : "users";
+            return SendSticker.create(stickerGroupId, stickerId, teamId, share, type, message);
         } else {
-            return SendSticker.create(stickerId, stickerGroupId, teamId, share, type, "");
+            return SendSticker.create(stickerGroupId, stickerId, teamId, share, null, null);
         }
 
     }

@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,10 +16,10 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -29,16 +27,15 @@ import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 import de.greenrobot.event.EventBus;
 
 /**
- * Created by Steve SeongUg Jung on 15. 1. 21..
+ * Created by Steve SeongUg Jung on 15. 6. 9..
  */
-public class FileCommentViewHolder implements BodyViewHolder {
-
+public class FileStickerCommentViewHolder implements BodyViewHolder {
     private ImageView profileImageView;
     private TextView nameTextView;
     private TextView dateTextView;
     private TextView fileOwnerTextView;
     private TextView fileNameTextView;
-    private TextView commentTextView;
+    private ImageView ivSticker;
     private TextView fileOwnerPostfixTextView;
     private ImageView fileImageView;
     private View disableCoverView;
@@ -55,7 +52,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         fileOwnerTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_owner);
         fileOwnerPostfixTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_postfix);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_file_name);
-        commentTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_content);
+        ivSticker = (ImageView) rootView.findViewById(R.id.iv_sticker_message_commented_content);
 
         fileImageView = (ImageView) rootView.findViewById(R.id.img_message_commented_photo);
 
@@ -184,21 +181,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         }
 
-        if (link.message instanceof ResMessages.CommentMessage) {
-            ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
+        if (link.message instanceof ResMessages.CommentStickerMessage) {
+            ResMessages.CommentStickerMessage commentStickerMessage = (ResMessages.CommentStickerMessage) link.message;
+            StickerManager.getInstance().loadSticker(ivSticker, commentStickerMessage.content.groupId, commentStickerMessage.content.stickerId);
 
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
-
-            boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
-
-            if (hasLink) {
-                commentTextView.setText(
-                        Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
-                LinkifyUtil.setOnLinkClick(commentTextView);
-            } else {
-                commentTextView.setText(spannableStringBuilder);
-            }
         }
 
         profileImageView.setOnClickListener(v ->
@@ -209,7 +195,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
     @Override
     public int getLayoutId() {
-        return R.layout.item_message_cmt_with_file_v2;
+        return R.layout.item_message_sticker_cmt_with_file_v2;
     }
-
 }

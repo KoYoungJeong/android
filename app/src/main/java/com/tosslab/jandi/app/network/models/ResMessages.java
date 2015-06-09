@@ -94,6 +94,7 @@ public class ResMessages {
             @JsonSubTypes.Type(value = TextMessage.class, name = "text"),
             @JsonSubTypes.Type(value = FileMessage.class, name = "file"),
             @JsonSubTypes.Type(value = StickerMessage.class, name = "sticker"),
+            @JsonSubTypes.Type(value = CommentStickerMessage.class, name = "comment_sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
     public static class OriginalMessage {
         public int id;
@@ -158,6 +159,12 @@ public class ResMessages {
         public int version;
     }
 
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class CommentStickerMessage extends OriginalMessage {
+        public StickerContent content;
+        public int version;
+    }
 
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

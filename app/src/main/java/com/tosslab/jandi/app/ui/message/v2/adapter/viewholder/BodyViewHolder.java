@@ -20,7 +20,7 @@ public interface BodyViewHolder {
         Sticker, PureSticker,
         File,
         Image,
-        FileComment, PureComment, CollapseComment,
+        FileComment, PureComment, CollapseComment, FileStickerComment, PureStickerComment, CollapseStickerComment,
         Dummy, DummyPure,
         Event
     }

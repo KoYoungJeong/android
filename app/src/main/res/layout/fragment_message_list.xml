@@ -178,6 +178,7 @@
             android:layout_alignBottom="@+id/et_message"
             android:layout_alignRight="@+id/et_message"
             android:layout_alignTop="@+id/et_message"
+            android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:scaleType="centerInside"
             android:src="@drawable/btn_sticker" />

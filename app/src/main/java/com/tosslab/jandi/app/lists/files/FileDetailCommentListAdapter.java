@@ -1,19 +1,25 @@
 package com.tosslab.jandi.app.lists.files;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.tosslab.jandi.app.lists.files.viewholder.CommentViewHolder;
+import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCollapseCommentView;
+import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCollapseStickerCommentView;
+import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentStickerView;
+import com.tosslab.jandi.app.lists.files.viewholder.FileDetailCommentView;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,18 +27,18 @@ import java.util.List;
  */
 @EBean
 public class FileDetailCommentListAdapter extends BaseAdapter {
-    List<ResMessages.CommentMessage> mMessages;
+    List<ResMessages.OriginalMessage> mMessages;
 
     @RootContext
     Context mContext;
 
-    enum viewType {
-        Comment, PureComment
+    enum CommentViewType {
+        Comment, PureComment, Sticker, PureSticker
     }
 
     @AfterInject
     void initAdapter() {
-        mMessages = new ArrayList<ResMessages.CommentMessage>();
+        mMessages = new ArrayList<ResMessages.OriginalMessage>();
     }
 
     @Override
@@ -41,7 +47,7 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ResMessages.CommentMessage getItem(int position) {
+    public ResMessages.OriginalMessage getItem(int position) {
         return mMessages.get(position);
     }
 
@@ -52,73 +58,94 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        FileDetailCommentView fileDetailView;
-        FileDetailCollapseCommentView fileDetailCollapseCommentView;
 
-        if (getItemViewType(position) == viewType.PureComment.ordinal()) {
-            if (convertView == null) {
-                fileDetailCollapseCommentView = FileDetailCollapseCommentView_.build(mContext);
-            } else {
-                fileDetailCollapseCommentView = (FileDetailCollapseCommentView) convertView;
-            }
+        ViewHolder viewHolder = null;
+        int itemViewType = getItemViewType(position);
 
-            fileDetailCollapseCommentView.bind(getItem(position));
-            return fileDetailCollapseCommentView;
-        } else {
-            if (convertView == null) {
-                fileDetailView = FileDetailCommentView_.build(mContext);
-            } else {
-                fileDetailView = (FileDetailCommentView) convertView;
-            }
+        CommentViewType commentViewType = CommentViewType.values()[itemViewType];
 
-            fileDetailView.bind(getItem(position));
-            return fileDetailView;
+        switch (commentViewType) {
+            default:
+            case Comment:
+                if (convertView == null) {
+                    viewHolder = new ViewHolder();
+                    viewHolder.commentViewHolder = new FileDetailCommentView();
+                }
+                break;
+            case PureComment:
+                if (convertView == null) {
+                    viewHolder = new ViewHolder();
+                    viewHolder.commentViewHolder = new FileDetailCollapseCommentView();
+                }
+                break;
+            case Sticker:
+                if (convertView == null) {
+                    viewHolder = new ViewHolder();
+                    viewHolder.commentViewHolder = new FileDetailCommentStickerView();
+                }
+                break;
+            case PureSticker:
+                if (convertView == null) {
+                    viewHolder = new ViewHolder();
+                    viewHolder.commentViewHolder = new FileDetailCollapseStickerCommentView();
+                }
+                break;
         }
+
+        if (convertView == null) {
+            convertView = LayoutInflater.from(mContext).inflate(viewHolder.commentViewHolder.getLayoutResourceId(), parent, false);
+            viewHolder.commentViewHolder.init(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+
+        viewHolder.commentViewHolder.bind(getItem(position));
+
+        return convertView;
+    }
+
+    private static class ViewHolder {
+        CommentViewHolder commentViewHolder;
     }
 
     @Override
     public int getItemViewType(int position) {
-        ResMessages.CommentMessage currentMessage = getItem(position);
-        ResMessages.CommentMessage beforeMessage = null;
+        ResMessages.OriginalMessage currentMessage = getItem(position);
+        ResMessages.OriginalMessage beforeMessage;
 
         if (position > 0) {
             beforeMessage = getItem(position - 1);
         } else {
-            return viewType.Comment.ordinal();
+
+            if (currentMessage instanceof ResMessages.CommentMessage) {
+                return CommentViewType.Comment.ordinal();
+            } else {
+                return CommentViewType.Sticker.ordinal();
+            }
+
         }
 
         if (position > 0
                 && currentMessage.writerId == beforeMessage.writerId
-                && isSince5min(currentMessage.createTime, beforeMessage.createTime)) {
-            return viewType.PureComment.ordinal();
+                && DateComparatorUtil.isSince5min(currentMessage.createTime, beforeMessage.createTime)) {
+            if (currentMessage instanceof ResMessages.CommentMessage) {
+                return CommentViewType.PureComment.ordinal();
+            } else {
+                return CommentViewType.PureSticker.ordinal();
+            }
         } else {
-            return viewType.Comment.ordinal();
+            if (currentMessage instanceof ResMessages.CommentMessage) {
+                return CommentViewType.Comment.ordinal();
+            } else {
+                return CommentViewType.Sticker.ordinal();
+            }
         }
     }
 
     @Override
     public int getViewTypeCount() {
-        return viewType.values().length;
-    }
-
-    private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
-        if (beforeMessageTime == null) {
-            beforeMessageTime = new Date();
-        }
-
-        if (currentMessageTime == null) {
-            currentMessageTime = new Date();
-        }
-
-        long beforeTime = beforeMessageTime.getTime();
-        long currentTime = currentMessageTime.getTime();
-
-        double diffTime = currentTime - beforeTime;
-        if (diffTime / (1000l * 60l * 5) < 1d) {
-            return true;
-        }
-
-        return false;
+        return CommentViewType.values().length;
     }
 
 
@@ -129,21 +156,22 @@ public class FileDetailCommentListAdapter extends BaseAdapter {
      */
     public void updateFileComments(ResFileDetail resFileDetail) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
-            if (fileDetail instanceof ResMessages.CommentMessage) {
-                if (fileDetail.status.equals("created") || fileDetail.status.equals("shared")) {
-                    mMessages.add((ResMessages.CommentMessage) fileDetail);
-                } else if (fileDetail.status.equals("edited")) {
-                    int position = searchIndexOfMessages(fileDetail.id);
-                    if (position >= 0) {
-                        mMessages.set(position, (ResMessages.CommentMessage) fileDetail);
-                    }
-                } else if (fileDetail.status.equals("archived")) {
-                    int position = searchIndexOfMessages(fileDetail.id);
-                    if (position >= 0) {
-                        mMessages.remove(position);
-                    }
-                }
+            if (fileDetail instanceof ResMessages.FileMessage) {
+                continue;
+            }
 
+            if (fileDetail.status.equals("created") || fileDetail.status.equals("shared")) {
+                mMessages.add(fileDetail);
+            } else if (fileDetail.status.equals("edited")) {
+                int position = searchIndexOfMessages(fileDetail.id);
+                if (position >= 0) {
+                    mMessages.set(position, fileDetail);
+                }
+            } else if (fileDetail.status.equals("archived")) {
+                int position = searchIndexOfMessages(fileDetail.id);
+                if (position >= 0) {
+                    mMessages.remove(position);
+                }
             }
         }
     }
