@@ -117,30 +117,34 @@ public class CircleProgress extends View {
     }
 
     public void setBgStrokeWidth(int bgStrokeWidth) {
-        if (bgStrokeWidth >= 0 && bgStrokeWidth != this.bgStrokeWidth) {
-            this.bgStrokeWidth = bgStrokeWidth;
-            invalidate();
+        if (this.bgStrokeWidth == bgStrokeWidth) {
+            return;
         }
+        this.bgStrokeWidth = bgStrokeWidth;
+        invalidate();
     }
 
     public void setProgressStrokeWidth(int progressStrokeWidth) {
-        if (progressStrokeWidth >= 0 && progressStrokeWidth != this.progressStrokeWidth) {
-            this.progressStrokeWidth = progressStrokeWidth;
-            invalidate();
+        if (this.progressStrokeWidth == progressStrokeWidth) {
+            return;
         }
+        this.progressStrokeWidth = progressStrokeWidth;
+        invalidate();
     }
 
     public void setBgColor(int bgColor) {
-        if (bgColor >= 0 && bgColor != this.bgColor) {
-            this.bgColor = bgColor;
-            invalidate();
+        if (this.bgColor == bgColor) {
+            return;
         }
+        this.bgColor = bgColor;
+        invalidate();
     }
 
     public void setProgressColor(int progressColor) {
-        if (progressColor >= 0 && progressColor != this.progressColor) {
-            this.progressColor = progressColor;
-            invalidate();
+        if (this.progressColor == progressColor) {
+            return;
         }
+        this.progressColor = progressColor;
+        invalidate();
     }
 }
