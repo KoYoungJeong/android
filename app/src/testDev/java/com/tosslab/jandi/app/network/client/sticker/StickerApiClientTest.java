@@ -11,8 +11,8 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
-import com.tosslab.jandi.app.network.models.sticker.SendSticker;
 import com.tosslab.jandi.app.ui.maintab.file.model.FileSearchRequest;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -68,11 +68,11 @@ public class StickerApiClientTest {
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        ResCommon resCommon = stickerApiClient.sendSticker(SendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
+        ResCommon resCommon = stickerApiClient.sendSticker(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
         assertNotNull(resCommon);
 
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
-        resCommon = stickerApiClient.sendSticker(SendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
+        resCommon = stickerApiClient.sendSticker(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
         assertNotNull(resCommon);
     }
 
@@ -104,7 +104,7 @@ public class StickerApiClientTest {
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        stickerApiClient.sendStickerComment(SendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
+        stickerApiClient.sendStickerComment(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
 
     }
 }

@@ -6,7 +6,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * Created by Steve SeongUg Jung on 15. 6. 3..
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SendSticker {
+public class ReqSendSticker {
     private String stickerId;
     private int groupId;
     private int teamId;
@@ -14,7 +14,7 @@ public class SendSticker {
     private String type;
     private String content;
 
-    private SendSticker(int groupId, String stickerId, int teamId, int share, String type, String content) {
+    private ReqSendSticker(int groupId, String stickerId, int teamId, int share, String type, String content) {
         this.stickerId = stickerId;
         this.groupId = groupId;
         this.teamId = teamId;
@@ -23,8 +23,8 @@ public class SendSticker {
         this.content = content;
     }
 
-    public static SendSticker create(int groupId, String sitkcerId, int teamId, int share, String type, String content) {
-        return new SendSticker(groupId, sitkcerId, teamId, share, type, content);
+    public static ReqSendSticker create(int groupId, String sitkcerId, int teamId, int share, String type, String content) {
+        return new ReqSendSticker(groupId, sitkcerId, teamId, share, type, content);
     }
 
     public String getStickerId() {

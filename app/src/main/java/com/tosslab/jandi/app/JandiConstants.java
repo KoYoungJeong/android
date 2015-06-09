@@ -37,4 +37,11 @@ public class JandiConstants {
     public static final int TYPE_INVITATION_COPY_LINK           = 0x06;
 
     public static final int NOTIFICATION_ID = 100;
+
+    public static class RoomType {
+        public static final String TYPE_USER = "users";
+        public static final String TYPE_PUBLIC = "channels";
+        public static final String TYPE_PRIVATE = "privateGroups";
+
+    }
 }

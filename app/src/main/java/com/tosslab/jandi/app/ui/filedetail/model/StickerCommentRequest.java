@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.network.client.sticker.StickerApiClient;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.sticker.SendSticker;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -42,12 +42,19 @@ public class StickerCommentRequest implements Request<ResCommon> {
         StickerApiClient stickerApiClient = new StickerApiClient_(context);
         stickerApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        SendSticker sendSticker;
+        ReqSendSticker reqSendSticker = getSendSticker(message);
+        return stickerApiClient.sendStickerComment(reqSendSticker);
+    }
+
+    private ReqSendSticker getSendSticker(String message) {
+        ReqSendSticker reqSendSticker;
+        String type = null;
+        String messageContent = null;
         if (!TextUtils.isEmpty(message)) {
-            sendSticker = SendSticker.create(stickerGroupId, stickerId, teamId, feedbackId, "", message);
-        } else {
-            sendSticker = SendSticker.create(stickerGroupId, stickerId, teamId, feedbackId, null, null);
+            type = "";
+            messageContent = message;
         }
-        return stickerApiClient.sendStickerComment(sendSticker);
+        reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, feedbackId, type, messageContent);
+        return reqSendSticker;
     }
 }

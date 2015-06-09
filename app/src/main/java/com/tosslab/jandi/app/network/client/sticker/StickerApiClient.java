@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client.sticker;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.sticker.SendSticker;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
@@ -36,10 +36,10 @@ public interface StickerApiClient {
 
     @Post("/stickers")
     @RequiresAuthentication
-    ResCommon sendSticker(SendSticker sendSticker);
+    ResCommon sendSticker(ReqSendSticker reqSendSticker);
 
     @Post("/stickers/comment")
     @RequiresAuthentication
-    ResCommon sendStickerComment(SendSticker sendSticker);
+    ResCommon sendStickerComment(ReqSendSticker reqSendSticker);
 
 }

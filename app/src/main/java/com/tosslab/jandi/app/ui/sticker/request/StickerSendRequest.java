@@ -3,13 +3,14 @@ package com.tosslab.jandi.app.ui.sticker.request;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiClient;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.network.models.sticker.SendSticker;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -45,22 +46,21 @@ public class StickerSendRequest implements Request<ResCommon> {
         StickerApiClient stickerApiClient = new StickerApiClient_(context);
         stickerApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 
-        SendSticker sendSticker = getSendSticker();
-        return stickerApiClient.sendSticker(sendSticker);
+        ReqSendSticker reqSendSticker = getSendSticker();
+        return stickerApiClient.sendSticker(reqSendSticker);
     }
 
-    private SendSticker getSendSticker() {
+    private ReqSendSticker getSendSticker() {
 
         FormattedEntity entity = EntityManager.getInstance(context).getEntityById(share);
 
-
+        String type = null;
+        String messageContent = null;
         if (!TextUtils.isEmpty(message)) {
-            // FIXME
-            String type = entity.isPublicTopic() ? "channels" : entity.isPrivateGroup() ? "privateGroups" : "users";
-            return SendSticker.create(stickerGroupId, stickerId, teamId, share, type, message);
-        } else {
-            return SendSticker.create(stickerGroupId, stickerId, teamId, share, null, null);
+            type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
+            messageContent = message;
         }
+        return ReqSendSticker.create(stickerGroupId, stickerId, teamId, share, type, messageContent);
 
     }
 }
