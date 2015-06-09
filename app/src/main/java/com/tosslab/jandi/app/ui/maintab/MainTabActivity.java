@@ -36,7 +36,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.services.socket.monitor.SocketServiceBroadcastReceiver;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
@@ -141,7 +141,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
 
 //        JandiSocketService.stopService(this);
-        sendBroadcast(new Intent(SocketServiceBroadcastReceiver.START_SOCKET_SERVICE));
+        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
     }
 
     private void showInvitePopup() {

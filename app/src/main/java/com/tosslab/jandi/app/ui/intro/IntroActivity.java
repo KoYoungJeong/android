@@ -47,6 +47,11 @@ public class IntroActivity extends AppCompatActivity {
     @AfterViews
     void startOn() {
 
+        if (!introModel.availableNetworking()) {
+            introViewModel.showUnavailableNetworkingDialog();
+            return;
+        }
+
         checkNewVersion();
 
     }

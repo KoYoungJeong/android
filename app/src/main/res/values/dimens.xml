@@ -23,7 +23,7 @@
     <dimen name="jandi_entity_item_title_font">16sp</dimen>
     <dimen name="jandi_entity_item_title_margin_left">75dp</dimen>
     <dimen name="jandi_entity_item_title_margin_bottom">6dp</dimen>
-    <dimen name="jandi_entity_item_subtitle_font">13sp</dimen>
+    <dimen name="jandi_entity_item_subtitle_font">13dp</dimen>
     <dimen name="jandi_entity_badge_font">13sp</dimen>
 
 

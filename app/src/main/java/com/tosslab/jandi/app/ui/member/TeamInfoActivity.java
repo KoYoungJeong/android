@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.member;
+package com.tosslab.jandi.app.ui.member; 
 
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -90,6 +90,12 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
         List<FormattedEntity> entities = teamInfoModel.retrieveTeamUserList();
         teamUserListAdapter.retrieveList(entities);
+
+        listViewInvitation.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    EventBus.getDefault().post(new RequestMoveDirectMessageEvent(entities.get(position).getId()));
+                }
+        );
     }
 
     @SupposeUiThread

@@ -53,6 +53,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         if (!jandiInterfaceModel.hasTeamInfo(teamId)) {
             moveIntroActivity();
+            return;
         }
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {

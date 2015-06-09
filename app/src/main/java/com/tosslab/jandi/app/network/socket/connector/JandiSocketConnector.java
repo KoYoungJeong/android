@@ -15,17 +15,12 @@ import java.net.URISyntaxException;
  */
 public class JandiSocketConnector implements SocketConnector {
 
+    public static final String TAG = "SocketConnector";
     private Socket socket;
-    private boolean connectingOrConnected;
-
-    public JandiSocketConnector() {
-        connectingOrConnected = false;
-    }
 
     @Override
     public Emitter connect(String url, EventListener disconnectListener) {
         if (socket != null && socket.connected()) {
-            connectingOrConnected = true;
             return socket;
         }
 
@@ -63,13 +58,10 @@ public class JandiSocketConnector implements SocketConnector {
                     });
 
             socket.connect();
-            connectingOrConnected = true;
         }
 
         return socket;
     }
-
-    public static final String TAG = "SocketConnector";
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
         if (args != null) {
@@ -78,7 +70,6 @@ public class JandiSocketConnector implements SocketConnector {
             }
         }
 
-        connectingOrConnected = false;
         if (disconnectListener != null) {
             disconnectListener.callback(args);
         }
@@ -86,8 +77,6 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public void disconnect() {
-        connectingOrConnected = false;
-
         if (socket != null && socket.connected()) {
             socket.off();
             socket.disconnect();
@@ -105,7 +94,7 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public boolean isConnectingOrConnected() {
-        return (connectingOrConnected = socket != null && socket.connected());
+        return socket != null && socket.connected();
     }
 
 }

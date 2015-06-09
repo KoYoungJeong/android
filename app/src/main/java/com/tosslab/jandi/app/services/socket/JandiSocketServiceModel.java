@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -28,7 +26,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
-import com.tosslab.jandi.app.services.EntityService;
+import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
@@ -91,24 +89,14 @@ public class JandiSocketServiceModel {
     }
 
     public void refreshEntity() {
-        Log.d(TAG, "refreshEntity");
-        Intent intent = new Intent(context, EntityService.class);
-        intent.putExtra(EntityService.KEY_POST_EVENT, true);
+        refreshEntity(true, null);
+    }
+
+    public void refreshEntity(boolean postRetrieveEvent, String socketMessageEventContent) {
+        Intent intent = new Intent(context, BadgeHandleService.class);
+        intent.putExtra(BadgeHandleService.KEY_POST_RETRIEVE_TOPIC_EVENT, postRetrieveEvent);
+        intent.putExtra(BadgeHandleService.KEY_SOCKET_MESSAGE_EVENT, socketMessageEventContent);
         context.startService(intent);
-//        try {
-//            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-//            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-//            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
-//            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-//            JandiPreference.setBadgeCount(context, totalUnreadCount);
-//            BadgeUtils.setBadge(context, totalUnreadCount);
-//            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-//
-//            postEvent(new RetrieveTopicListEvent());
-//
-//        } catch (JandiNetworkException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public void refreshAccountInfo() {
@@ -124,7 +112,6 @@ public class JandiSocketServiceModel {
         } catch (JandiNetworkException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -147,19 +134,19 @@ public class JandiSocketServiceModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void refreshMessage(Object object) {
         try {
+            String content = object.toString();
             SocketMessageEvent socketMessageEvent =
-                    objectMapper.readValue(object.toString(), SocketMessageEvent.class);
+                    objectMapper.readValue(content, SocketMessageEvent.class);
 
             String messageType = socketMessageEvent.getMessageType();
             if (TextUtils.equals(messageType, "topic_leave")
                     || TextUtils.equals(messageType, "topic_join")
                     || TextUtils.equals(messageType, "topic_invite")) {
-                refreshEntity();
+                refreshEntity(true, content);
             } else {
                 postEvent(socketMessageEvent);
             }
