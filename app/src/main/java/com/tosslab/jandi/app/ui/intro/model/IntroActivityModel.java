@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.ui.intro.model;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -26,6 +28,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.rest.RestService;
 
 /**
@@ -176,4 +179,5 @@ public class IntroActivityModel {
     public ResConfig getConfigInfo() throws JandiNetworkException {
         return jandiAuthClient.getConfig();
     }
+
 }

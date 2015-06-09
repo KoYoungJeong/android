@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -19,8 +18,6 @@ import rx.Observable;
  */
 public class BadgeUtils {
 
-    public static final String TAG = BadgeUtils.class.getSimpleName();
-
     public static void setBadge(Context context, int count) {
         setBadgeSamsung(context, count);
         setBadgeSony(context, count);
@@ -31,7 +28,6 @@ public class BadgeUtils {
         int totalUnread = 0;
 
         List<ResLeftSideMenu.AlarmInfo> alarmInfos = resLeftSideMenu.alarmInfos;
-        Log.e(TAG, alarmInfos.toString());
         Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(alarmInfos)
                 .filter(alarmInfo -> {
 
@@ -61,7 +57,6 @@ public class BadgeUtils {
         setBadgeSamsung(context, 0);
         clearBadgeSony(context);
     }
-
 
     private static void setBadgeSamsung(Context context, int count) {
         String launcherClassName = getLauncherClassName(context);

@@ -201,7 +201,8 @@ public class EventViewHolder implements BodyViewHolder {
                     builder.setSpan(eventTextAppearance,
                             0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    int dateTextSize = eventContentView.getResources().getDimensionPixelSize(R.dimen.jandi_messages_date);
+                    int dateTextSize = context.getResources()
+                            .getDimensionPixelSize(R.dimen.jandi_messages_date);
                     builder.append(" ").append(DateTransformator.getTimeStringForSimple(link.time));
                     TextAppearanceSpan dateTextAppearance =
                             new TextAppearanceSpan(null, Typeface.NORMAL,

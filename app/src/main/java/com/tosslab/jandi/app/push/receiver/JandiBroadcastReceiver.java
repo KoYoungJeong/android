@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
@@ -52,14 +50,15 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
 
-            if (!PushMonitor.getInstance().hasEntityId(messagePush.getChatId()) && jandiPushReceiverModel.isPushOn()) {
+            boolean hasEntityId = PushMonitor.getInstance().hasEntityId(messagePush.getChatId());
+            if (!hasEntityId && jandiPushReceiverModel.isPushOn()) {
                 jandiPushReceiverModel.sendNotificationWithProfile(context, messagePush);
             }
 
             EventBus eventBus = EventBus.getDefault();
             if (eventBus.hasSubscriberForEvent(MessagePushEvent.class)) {
-                Log.e(JandiBroadcastReceiver.class.getSimpleName(), "Event has subscribe");
-                eventBus.post(new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
+                eventBus.post(
+                        new MessagePushEvent(messagePush.getChatId(), messagePush.getChatType()));
             } else {
                 jandiPushReceiverModel.updateEntityAndBadge(context);
             }
@@ -77,11 +76,9 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
     private void subscribeTopic(String chatId) {
         ParsePush.subscribeInBackground(chatId);
-
     }
 
     private void unsubscribeTopic(String chatId) {
         ParsePush.unsubscribeInBackground(chatId);
-
     }
 }

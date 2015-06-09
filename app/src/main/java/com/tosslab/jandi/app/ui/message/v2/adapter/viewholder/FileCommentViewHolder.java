@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.Spannable;
@@ -10,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -44,6 +44,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private TextView unreadTextView;
+    private Context context;
 
     @Override
     public void initView(View rootView) {
@@ -62,7 +63,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
-
+        context = rootView.getContext();
     }
 
     @Override
@@ -70,7 +71,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         int fromEntityId = link.fromEntity;
 
-        FormattedEntity entity = EntityManager.getInstance(nameTextView.getContext()).getEntityById(fromEntityId);
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(fromEntityId);
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
@@ -84,20 +85,22 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 .crossfade(true)
                 .load(profileUrl);
 
-        EntityManager entityManager = EntityManager.getInstance(profileImageView.getContext());
-        if (TextUtils.equals(entityManager.getEntityById(fromEntity.id).getUser().status, "enabled")) {
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.jandi_messages_name));
-
+        EntityManager entityManager = EntityManager.getInstance(context);
+        FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
+        ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+        if (user != null && TextUtils.equals(user.status, "enabled")) {
+            nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
             disableLineThroughView.setVisibility(View.GONE);
         } else {
-            nameTextView.setTextColor(nameTextView.getResources().getColor(R.color.deactivate_text_color));
-
+            nameTextView.setTextColor(
+                    context.getResources().getColor(R.color.deactivate_text_color));
             disableCoverView.setVisibility(View.VISIBLE);
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(), teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
+        int unreadCount = UnreadCountUtil.getUnreadCount(context,
+                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));
         if (unreadCount <= 0) {
@@ -118,35 +121,37 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
-                fileImageView.setVisibility(View.VISIBLE);
+                fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
                 fileOwnerTextView.setText(entity.getName());
-                fileNameTextView.setText(feedbackFileMessage.content.title);
+                ResMessages.FileContent content = feedbackFileMessage.content;
+                fileNameTextView.setText(content.title);
 
                 fileOwnerTextView.setVisibility(View.VISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.VISIBLE);
 
-                String fileType = feedbackFileMessage.content.type;
+                String fileType = content.type;
                 if (fileType.startsWith("image/")) {
-                    String imageUrl = null;
-                    if (feedbackFileMessage.content.extraInfo != null &&
-                            !TextUtils.isEmpty(feedbackFileMessage.content.extraInfo.smallThumbnailUrl)) {
-
-                        imageUrl = BitmapUtil.getFileUrl(feedbackFileMessage.content.extraInfo.smallThumbnailUrl);
-
-                    } else if (!TextUtils.isEmpty(feedbackFileMessage.content.fileUrl)) {
-                        imageUrl = BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl);
-                    }
-                    if (!TextUtils.isEmpty(imageUrl)) {
-
-                        MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(feedbackFileMessage.content.serverUrl);
-
+                    if (BitmapUtil.hasImageUrl(content)) {
+                        String thumbnailUrl = BitmapUtil.getThumbnailUrlOrOriginal(
+                                content, BitmapUtil.Thumbnails.SMALL);
+                        MimeTypeUtil.SourceType sourceType =
+                                SourceTypeUtil.getSourceType(content.serverUrl);
                         switch (sourceType) {
                             case Google:
                             case Dropbox:
-                                fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
-                                fileImageView.setOnClickListener(view -> fileImageView.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl)))));
+                                int mimeTypeIconImage =
+                                        MimeTypeUtil.getMimeTypeIconImage(
+                                                content.serverUrl, content.icon);
+                                fileImageView.setImageResource(mimeTypeIconImage);
+                                fileImageView.setOnClickListener(view -> {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW,
+                                            Uri.parse(
+                                                    BitmapUtil.getThumbnailUrlOrOriginal(
+                                                            content, BitmapUtil.Thumbnails.ORIGINAL)));
+                                    context.startActivity(intent);
+                                });
                                 break;
                             default:
                                 Ion.with(fileImageView)
@@ -154,21 +159,26 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                         .error(R.drawable.jandi_fl_icon_img)
                                         .crossfade(true)
                                         .fitCenter()
-                                        .load(imageUrl);
+                                        .load(thumbnailUrl);
+
+                                String optimizedUrl =
+                                        BitmapUtil.getOptimizedImageUrl(context, content);
                                 fileImageView.setOnClickListener(view -> PhotoViewActivity_
                                         .intent(fileImageView.getContext())
-                                        .imageUrl(BitmapUtil.getFileUrl(feedbackFileMessage.content.fileUrl))
-                                        .imageName(feedbackFileMessage.content.name)
-                                        .imageType(feedbackFileMessage.content.type)
+                                        .imageUrl(optimizedUrl)
+                                        .imageName(content.name)
+                                        .imageType(content.type)
                                         .start());
                                 break;
                         }
 
                     } else {
-                        fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                        fileImageView.setImageResource(
+                                MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                     }
                 } else {
-                    fileImageView.setImageResource(MimeTypeUtil.getMimeTypeIconImage(feedbackFileMessage.content.serverUrl, feedbackFileMessage.content.icon));
+                    fileImageView.setImageResource(
+                            MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                 }
             }
 
@@ -180,18 +190,21 @@ public class FileCommentViewHolder implements BodyViewHolder {
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
             spannableStringBuilder.append(commentMessage.content.body);
 
-            boolean hasLink = LinkifyUtil.addLinks(commentTextView.getContext(), spannableStringBuilder);
+            boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 
             if (hasLink) {
-                commentTextView.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                commentTextView.setText(
+                        Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
                 LinkifyUtil.setOnLinkClick(commentTextView);
             } else {
                 commentTextView.setText(spannableStringBuilder);
             }
         }
 
-        profileImageView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
-        nameTextView.setOnClickListener(v -> EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        profileImageView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+        nameTextView.setOnClickListener(v ->
+                EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
     }
 
     @Override

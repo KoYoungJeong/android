@@ -86,7 +86,7 @@ dependencies {
     compile 'com.github.nkzawa:socket.io-client:0.5.0'
 
     // Cache
-    compile 'com.github.bumptech.glide:glide:3.5.1'
+    compile 'com.github.bumptech.glide:glide:3.6.0' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
     // Analytics & report
     compile 'com.newrelic.agent.android:android-agent:4.+'
@@ -112,7 +112,7 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 50
+        versionCode 51
         versionName '1.0.3'
 
         // Enabling multidex support.
@@ -255,13 +255,21 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
     // I have added rules to Ignore Dagger/Butterknife
     classDirectories = fileTree(
             dir: 'build/intermediates/classes/dev/debug',
-            excludes: ['**/R.class', '**/*Presenter*.class', '**/*ViewModel*.class', '**/*_*.class', '**/android/support/v7/appcompat/*.class', '**/com/github/johnpersano/supertoasts/*.class', '**/com/google/android/gms/*.class', '**/com/mixpanel/android/*.class', '**/se/emilsjolander/stickylistheaders/*.class'])
+            excludes: ['**/R.class',
+                       '**/*Presenter*.class',
+                       '**/*ViewModel*.class',
+                       '**/*_*.class',
+                       '**/android/support/v7/appcompat/*.class',
+                       '**/com/github/johnpersano/supertoasts/*.class',
+                       '**/com/google/android/gms/*.class',
+                       '**/com/mixpanel/android/*.class',
+                       '**/se/emilsjolander/stickylistheaders/*.class'])
     sourceDirectories = files(coverageSourceDirs)
     executionData = files('build/jacoco/testDevDebug.exec')
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.
     doFirst {
-        new File('app/build/intermediates/classes/dev').eachFileRecurse { file ->
+        new File('build/intermediates/classes/dev').eachFileRecurse { file ->
             if (file.name.contains('$$')) {
                 file.renameTo(file.path.replace('$$', '$'))
             }

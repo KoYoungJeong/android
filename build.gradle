@@ -13,7 +13,7 @@ buildscript {
         // Roblectric > v0.12 need to Gradle 2.x
         classpath 'org.robolectric:robolectric-gradle-plugin:1.0.1'
         // RetroLambda
-        classpath 'me.tatarka:gradle-retrolambda:3.0.1'
+        classpath 'me.tatarka:gradle-retrolambda:3.1.0'
 
         // aarLinkSource
         classpath 'com.github.xujiaao:aarLinkSources:1.0.0'
