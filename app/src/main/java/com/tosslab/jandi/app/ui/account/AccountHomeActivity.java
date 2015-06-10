@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import com.tosslab.jandi.app.views.AccountPendingTeamRowView;
 import com.tosslab.jandi.app.views.AccountTeamRowView;
 
@@ -232,6 +233,8 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     public void moveSelectedTeam(boolean firstJoin) {
         JandiSocketService.stopSocketServiceIfRunning(AccountHomeActivity.this);
         JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
+
+        ParseUpdateUtil.updateParseWithoutSelectedTeam(AccountHomeActivity.this.getApplicationContext());
 
         MainTabActivity_.intent(AccountHomeActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

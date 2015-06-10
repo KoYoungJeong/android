@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.lists.entities;
 
 import android.content.Context;
 
-import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -219,11 +218,6 @@ public class EntityManager {
         // Sort 도 다시해야 하기 때문에 해당 List 들을 초기화
         zeroizeSortedEntityList();
         // Parse 에 등록된 채널들과 동기화
-        try {
-            subscribeChannelForParse();
-        } catch (Exception e) {
-
-        }
     }
 
     private void zeroizeSortedEntityList() {
@@ -499,94 +493,6 @@ public class EntityManager {
             return mUsers.get(userId);
         }
         return null;
-    }
-
-    /**
-     * *********************************************************
-     * Parse subscription
-     * **********************************************************
-     */
-    public void subscribeChannelForParse() {
-
-        try {
-            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            installation.put(JandiConstants.PARSE_MY_ENTITY_ID, mMe.id);
-            installation.addAllUnique(JandiConstants.PARSE_CHANNELS, getChannelsToBeSubscribed());
-            installation.saveInBackground();
-            installation.removeAll(JandiConstants.PARSE_CHANNELS, getChannelsToBeUnsubscribed());
-            installation.saveInBackground();
-        } catch (Exception e) {
-            LogUtil.e("Parse Error", e);
-        }
-    }
-
-    // Parse 에 등록된 구독 채널 리스트
-    private List<String> getSubscribedChannelsFromParse() {
-        List<String> parseList = ParseInstallation.getCurrentInstallation().getList(JandiConstants.PARSE_CHANNELS);
-        // Parse 에서 등록한 필드가 없으면 빈 리스트를 넘긴다.
-        return (parseList == null) ? new ArrayList<String>() : parseList;
-    }
-
-    // Parse 에 추가로 등록해야할 채널 리스트 획득
-    // 현재 가입된 채널 중에서 Parse 에 등록된 구독 채널을 제외
-    private List<String> getChannelsToBeSubscribed() {
-        ArrayList<String> channelsToBeSubscribed = new ArrayList<String>();
-        List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
-
-        LogUtil.d("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
-
-        // Public Topic
-        for (FormattedEntity publicTopic : getJoinedChannels()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
-            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
-                channelsToBeSubscribed.add(channel);
-        }
-
-        // Private Topic
-        for (FormattedEntity privateTopic : getGroups()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
-            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
-                channelsToBeSubscribed.add(channel);
-        }
-
-        FormattedEntity me = getMe();
-        for (FormattedEntity member : getFormattedUsers()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
-            if (subscribedChannelsFromParse == null || !subscribedChannelsFromParse.contains(channel))
-                channelsToBeSubscribed.add(channel);
-        }
-
-
-        LogUtil.d(channelsToBeSubscribed.size() + " channels are needed to be subscribed");
-        return channelsToBeSubscribed;
-    }
-
-    // Parse 에 구독을 해제해야할 채널 리스트 획득
-    // 현재 내가 JANDI 에 Join 한 Topic 이 아니면 삭제해야 한다.
-    private List<String> getChannelsToBeUnsubscribed() {
-        List<String> subscribedChannelsFromParse = getSubscribedChannelsFromParse();
-
-        LogUtil.d("PARSE has " + subscribedChannelsFromParse.size() + " subscribed channels");
-
-        // Public Topic
-        for (FormattedEntity publicTopic : getJoinedChannels()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + publicTopic.getId();
-            subscribedChannelsFromParse.remove(channel);
-        }
-
-        // Private Topic
-        for (FormattedEntity privateTopic : getGroups()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + privateTopic.getId();
-            subscribedChannelsFromParse.remove(channel);
-        }
-
-        FormattedEntity me = getMe();
-        for (FormattedEntity member : getFormattedUsers()) {
-            String channel = JandiConstants.PUSH_CHANNEL_PREFIX + member.getId() + "-" + me.getId();
-            subscribedChannelsFromParse.remove(channel);
-        }
-        LogUtil.d(subscribedChannelsFromParse.size() + " channels are needed to be unsubscribed");
-        return subscribedChannelsFromParse;
     }
 
     /**

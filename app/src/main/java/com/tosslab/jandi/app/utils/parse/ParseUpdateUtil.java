@@ -3,6 +3,8 @@ package com.tosslab.jandi.app.utils.parse;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
@@ -17,9 +19,8 @@ import java.util.List;
 
 import rx.Observable;
 import rx.functions.Action1;
-import rx.functions.Action2;
-import rx.functions.Func0;
 import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 9..
@@ -31,6 +32,7 @@ public class ParseUpdateUtil {
         List<ResAccountInfo.UserTeam> userTeams = getUnselectedTeam(context);
 
         Observable.from(userTeams)
+                .observeOn(Schedulers.io())
                 .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {
                     @Override
                     public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
@@ -67,28 +69,38 @@ public class ParseUpdateUtil {
                     }
 
                 })
-                .collect(new Func0<List<String>>() {
-                    @Override
-                    public List<String> call() {
-                        return new ArrayList<String>();
-                    }
-                }, new Action2<List<String>, List<String>>() {
-                    @Override
-                    public void call(List<String> collector, List<String> values) {
-
-                    }
-                })
+                .collect(() -> new ArrayList<String>(), (collector, values) -> collector.addAll(values))
                 .subscribe(new Action1<List<String>>() {
                     @Override
                     public void call(List<String> subscriber) {
+                        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+                        int memberId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
+                        currentInstallation.put(JandiConstants.PARSE_MY_ENTITY_ID, memberId);
+                        if (currentInstallation.containsKey(JandiConstants.PARSE_CHANNELS)) {
+                            List<String> savedChannels = (List<String>) currentInstallation.get(JandiConstants.PARSE_CHANNELS);
+                            List<String> removeChannles = new ArrayList<String>();
+                            for (int idx = savedChannels.size() - 1; idx >= 0; idx--) {
+                                String savedChannel = savedChannels.get(idx);
+                                if (!subscriber.contains(savedChannel)) {
+                                    removeChannles.add(savedChannel);
+                                }
+                            }
+                            currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
+                            try {
+                                currentInstallation.save();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
 
+                        currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
+                        try {
+                            currentInstallation.save();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        LogUtil.e("Parse Error", throwable);
-                    }
-                });
+                }, throwable -> LogUtil.e("Parse Error", throwable));
 
     }
 
