@@ -91,6 +91,7 @@ public class InvitationDialogFragment extends DialogFragment {
     private void startInvitation(int eventType) {
         if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
             copyLink();
+            showTextDialog(getActivity().getResources().getString(R.string.jandi_invite_succes_copy_link));
         } else {
             Intent intent = getInviteIntent(eventType);
             try {
@@ -108,7 +109,6 @@ public class InvitationDialogFragment extends DialogFragment {
         ClipData clipData = ClipData.newPlainText("",
                 invitationContents + "\n" + inviteTeam.getInvitationUrl());
         clipboardManager.setPrimaryClip(clipData);
-        showTextDialog(getActivity().getResources().getString(R.string.jandi_invite_succes_copy_link));
     }
 
     private Intent getInviteIntent(int eventType) {
