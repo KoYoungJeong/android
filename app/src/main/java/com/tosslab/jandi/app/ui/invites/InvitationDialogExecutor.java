@@ -41,20 +41,16 @@ public class InvitationDialogExecutor {
     private ProgressWheel mProgressWheel;
     private EntityManager entityManager;
 
-
-    @AfterViews
-    private void init(){
+    @Background
+    public void execute(){
         initProgressWheel();
         entityManager = EntityManager.getInstance(context);
-    }
-
-    public void execute(){
         showProgressWheel();
         ResTeamDetailInfo.InviteTeam inviteTeam = getInviteTeam();
         dismissProgressWheel();
         if(inviteTeam != null && availableCheck(inviteTeam)){
-            InvitationDialogFragment invitationDialog = new InvitationDialogFragment();
-            invitationDialog.setInit(inviteTeam);
+            InvitationDialogFragment invitationDialog =
+                    InvitationDialogFragment.newInstance(inviteTeam.getName(),inviteTeam.getInvitationUrl());
             invitationDialog.show(context.getSupportFragmentManager(), "invitationsDialog");
         }
     }

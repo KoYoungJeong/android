@@ -26,9 +26,19 @@ import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
 
 public class InvitationDialogFragment extends DialogFragment {
 
-    private ResTeamDetailInfo.InviteTeam inviteTeam;
-    private String invitationContents;
+    private static final String INVITE_TEAM_NAME = "invite_team_name";
+    private static final String INVITATION_URL = "invite_url";
+
     ClipboardManager clipboardManager;
+
+    public static InvitationDialogFragment newInstance(String inviteTeamName, String invitationUrl) {
+        InvitationDialogFragment fragment = new InvitationDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(INVITE_TEAM_NAME, inviteTeamName);
+        args.putString(INVITATION_URL, invitationUrl);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,14 +46,7 @@ public class InvitationDialogFragment extends DialogFragment {
         me.setCanceledOnTouchOutside(true);
         clipboardManager = (ClipboardManager)getActivity()
                 .getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        invitationContents = inviteTeam.getName()+
-                getActivity().getApplicationContext().getResources().getString(R.string.jandi_invite_contents);
-
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    public void setInit(ResTeamDetailInfo.InviteTeam inviteTeam){
-        this.inviteTeam = inviteTeam;
     }
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -106,7 +109,7 @@ public class InvitationDialogFragment extends DialogFragment {
 
     private Intent getInviteIntent(int eventType) {
 
-        String publicLink = inviteTeam.getInvitationUrl();
+        String publicLink = getArguments().getString(INVITATION_URL);
         String packageName;
 
         switch (eventType) {
@@ -131,7 +134,7 @@ public class InvitationDialogFragment extends DialogFragment {
 
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setPackage(packageName);
-        intent.putExtra(Intent.EXTRA_TEXT, invitationContents + "\n" + publicLink);
+        intent.putExtra(Intent.EXTRA_TEXT, getInvitationContents() + "\n" + publicLink);
         intent.setType("text/plain");
         if (packageName.equals(JandiConstants.INVITE_URL_FACEBOOK_MESSENGER)) {
             intent.putExtra(JandiConstants.INVITE_FACEBOOK_EXTRA_PROTOCOL_VERSION,
@@ -147,7 +150,7 @@ public class InvitationDialogFragment extends DialogFragment {
 
     private void copyLink() {
         ClipData clipData = ClipData.newPlainText("",
-                invitationContents + "\n" + inviteTeam.getInvitationUrl());
+                getInvitationContents() + "\n" + getArguments().getString(INVITATION_URL));
         clipboardManager.setPrimaryClip(clipData);
     }
 
@@ -159,6 +162,11 @@ public class InvitationDialogFragment extends DialogFragment {
                                 .getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> dialog.dismiss())
                 .create().show();
+    }
+
+    public String getInvitationContents(){
+        return getArguments().getString(INVITE_TEAM_NAME)+
+                getActivity().getApplicationContext().getResources().getString(R.string.jandi_invite_contents);
     }
 
 }
