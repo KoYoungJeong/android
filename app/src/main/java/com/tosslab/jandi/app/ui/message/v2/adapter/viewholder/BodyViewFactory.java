@@ -40,58 +40,12 @@ public class BodyViewFactory {
                 return new DummyPureViewHolder();
             case Event:
                 return new EventViewHolder();
+            case SocialSnippetMessage:
+                return new SocialSnippetMessageViewHolder();
             case Message:
             default:
                 return new MessageViewHolder();
         }
-    }
-
-    public static int getViewHolderId(int viewType) {
-        BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
-
-        switch (type) {
-            case File:
-                return R.id.message_file;
-            case Image:
-                return R.id.message_img;
-            case PureComment:
-                return R.id.message_cmt_without_file;
-            case FileComment:
-                return R.id.message_cmt_with_file;
-            case Dummy:
-                return R.id.message_dummy;
-            case Event:
-                return R.id.message_event;
-            case Message:
-            default:
-                return R.id.message_msg;
-        }
-    }
-
-    public static View createItemView(Context context, ViewGroup parent, int viewType) {
-
-        BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
-
-        int layoutId = 0;
-
-        switch (type) {
-            case Message:
-                break;
-            case File:
-                break;
-            case Image:
-                break;
-            case PureComment:
-                break;
-            case FileComment:
-                break;
-            case Dummy:
-                break;
-            case Event:
-                break;
-        }
-
-        return null;
     }
 
     public static BodyViewHolder.Type getContentType(ResMessages.Link message,
@@ -112,12 +66,20 @@ public class BodyViewFactory {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
+                    ResMessages.TextMessage textMessage = (ResMessages.TextMessage) currentMessage;
+                    if (textMessage.socialSnippet != null) {
+                        return BodyViewHolder.Type.SocialSnippetMessage;
+                    }
                     return BodyViewHolder.Type.PureMessage;
                 }
             } else {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
+                    ResMessages.TextMessage textMessage = (ResMessages.TextMessage) currentMessage;
+                    if (textMessage.socialSnippet != null) {
+                        return BodyViewHolder.Type.SocialSnippetMessage;
+                    }
                     return BodyViewHolder.Type.Message;
                 }
             }

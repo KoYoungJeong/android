@@ -129,6 +129,8 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
+        @JsonProperty("linkPreview")
+        public SocialSnippet socialSnippet;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -256,4 +258,15 @@ public class ResMessages {
         @JsonProperty("pg_members")
         public List<Integer> members;
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class SocialSnippet {
+        public String linkUrl;
+        public String description;
+        public String title;
+        public String imageUrl;
+        public String domain;
+    }
+
 }
