@@ -40,6 +40,8 @@ public class BodyViewFactory {
                 return new DummyPureViewHolder();
             case Event:
                 return new EventViewHolder();
+            case SocialSnippetMessage:
+                return new SocialSnippetMessageViewHolder();
             case Message:
             default:
                 return new MessageViewHolder();
@@ -118,6 +120,10 @@ public class BodyViewFactory {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
+                    ResMessages.TextMessage textMessage = (ResMessages.TextMessage) currentMessage;
+                    if (textMessage.content instanceof ResMessages.SocialSnippetContent) {
+                        return BodyViewHolder.Type.SocialSnippetMessage;
+                    }
                     return BodyViewHolder.Type.Message;
                 }
             }

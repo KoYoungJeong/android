@@ -146,8 +146,25 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.NAME,
+            include = JsonTypeInfo.As.PROPERTY,
+            property = "title")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = SocialSnippetContent.class, name = "")
+    })
     public static class TextContent {
         public String body;
+    }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class SocialSnippetContent extends TextContent {
+        public String title;
+        public String author;
+        public String content;
+        public String thumbnail;
+        public String url;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
