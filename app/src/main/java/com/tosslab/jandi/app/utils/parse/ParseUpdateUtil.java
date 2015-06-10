@@ -29,7 +29,7 @@ public class ParseUpdateUtil {
 
 
     public static void updateParseWithoutSelectedTeam(Context context) {
-        List<ResAccountInfo.UserTeam> userTeams = getUnselectedTeam(context);
+        List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
         Observable.from(userTeams)
                 .observeOn(Schedulers.io())
@@ -54,8 +54,6 @@ public class ParseUpdateUtil {
                                 parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
                             } else if (joinEntity instanceof ResLeftSideMenu.PrivateGroup) {
                                 parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
-                            } else if (joinEntity instanceof ResLeftSideMenu.User) {
-                                parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id + "-" + myId;
                             } else {
                                 parseChannel = "";
                             }
@@ -63,6 +61,14 @@ public class ParseUpdateUtil {
                             if (!TextUtils.isEmpty(parseChannel)) {
                                 subscribeList.add(parseChannel);
                             }
+                        }
+
+                        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
+                            if (entity instanceof ResLeftSideMenu.User) {
+                                parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + entity.id + "-" + myId;
+                                subscribeList.add(parseChannel);
+                            }
+
                         }
 
                         return subscribeList;
@@ -104,7 +110,7 @@ public class ParseUpdateUtil {
 
     }
 
-    private static List<ResAccountInfo.UserTeam> getUnselectedTeam(Context context) {
+    private static List<ResAccountInfo.UserTeam> getUserTeams(Context context) {
         return JandiAccountDatabaseManager.getInstance(context).getUserTeams();
     }
 
