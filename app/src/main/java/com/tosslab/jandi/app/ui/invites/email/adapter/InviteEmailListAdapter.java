@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.invites.adapter;
+package com.tosslab.jandi.app.ui.invites.email.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.invites.to.EmailTO;
+import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
-public class InviteListAdapter extends BaseAdapter {
+public class InviteEmailListAdapter extends BaseAdapter {
 
     private Context context;
-    private List<EmailTO> inviteList;
+    private List<EmailVO> inviteList;
 
-    public InviteListAdapter(Context context) {
+    public InviteEmailListAdapter(Context context) {
         this.context = context;
-        this.inviteList = new ArrayList<EmailTO>();
+        this.inviteList = new ArrayList<EmailVO>();
     }
 
     @Override
@@ -34,8 +34,16 @@ public class InviteListAdapter extends BaseAdapter {
     }
 
     @Override
-    public EmailTO getItem(int position) {
+    public EmailVO getItem(int position) {
         return inviteList.get(position);
+    }
+
+    public List<String> getEmailLists() {
+        List<String> emailList = new ArrayList<String>();
+        for(int i=inviteList.size()-1;i>=0;i--){
+                emailList.add(inviteList.get(i).getEmail());
+        }
+        return emailList;
     }
 
     @Override
@@ -53,13 +61,12 @@ public class InviteListAdapter extends BaseAdapter {
             viewHolder.emailView = (TextView) convertView.findViewById(R.id.txt_invite_email);
             viewHolder.sendingProgress = (ProgressBar) convertView.findViewById(R.id.progress_invite_processing);
             viewHolder.successImageView = (ImageView) convertView.findViewById(R.id.img_invite_success);
-
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        EmailTO item = getItem(position);
+        EmailVO item = getItem(position);
 
         viewHolder.emailView.setText(item.getEmail());
 
@@ -82,7 +89,7 @@ public class InviteListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void add(int position, EmailTO emailText) {
+    public void add(int position, EmailVO emailText) {
         inviteList.add(position, emailText);
     }
 
@@ -94,7 +101,7 @@ public class InviteListAdapter extends BaseAdapter {
         inviteList.clear();
     }
 
-    public int add(EmailTO emailTO) {
+    public int add(EmailVO emailTO) {
         inviteList.add(emailTO);
 
         return inviteList.size() - 1;

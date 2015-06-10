@@ -1,18 +1,18 @@
-package com.tosslab.jandi.app.ui.invites.to;
+package com.tosslab.jandi.app.ui.invites.email.model.bean;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
-public class EmailTO {
+public class EmailVO {
     private final String email;
-    private int isSuccess;
+    private int isSuccess = 0;
 
-    private EmailTO(String email, int i) {
+    private EmailVO(String email) {
         this.email = email;
     }
 
-    public static EmailTO create(String email) {
-        return new EmailTO(email, 0);
+    public static EmailVO create(String email) {
+        return new EmailVO(email);
     }
 
     public String getEmail() {
@@ -30,7 +30,9 @@ public class EmailTO {
      *
      * @param isSuccess
      */
+
     public void setSuccess(int isSuccess) {
         this.isSuccess = isSuccess;
     }
+
 }

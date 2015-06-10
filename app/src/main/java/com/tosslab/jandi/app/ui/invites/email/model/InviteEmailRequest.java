@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.invites.model;
+package com.tosslab.jandi.app.ui.invites.email.model;
 
 import android.content.Context;
 
@@ -16,13 +16,13 @@ import java.util.List;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
  */
-public class InviteRequest implements Request<List<ResInvitationMembers>> {
+public class InviteEmailRequest implements Request<List<ResInvitationMembers>> {
 
     private final Context context;
     private final int teamId;
     private final List<String> invites;
 
-    public InviteRequest(Context context, int teamId, List<String> invites) {
+    public InviteEmailRequest(Context context, int teamId, List<String> invites) {
         this.context = context;
         this.teamId = teamId;
         this.invites = invites;

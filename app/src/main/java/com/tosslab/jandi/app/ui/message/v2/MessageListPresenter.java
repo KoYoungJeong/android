@@ -40,6 +40,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
@@ -122,6 +123,9 @@ public class MessageListPresenter {
 
     @ViewById(R.id.progress_go_to_latest)
     View progressGoToLatestView;
+
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
 
     private MessageListAdapter messageListAdapter;
 
@@ -651,40 +655,9 @@ public class MessageListPresenter {
         }
         emptyMessageView.removeAllViews();
         View view = LayoutInflater.from(activity).inflate(R.layout.view_team_member_empty, emptyMessageView, true);
-        View.OnClickListener onClickListener = v -> onInvitationDisableCheck();
+        View.OnClickListener onClickListener = v -> invitationDialogExecutor.execute();
         view.findViewById(R.id.img_chat_choose_member_empty).setOnClickListener(onClickListener);
         view.findViewById(R.id.btn_chat_choose_member_empty).setOnClickListener(onClickListener);
-    }
-
-    @Background
-    public void onInvitationDisableCheck() {
-        showProgressWheel();
-
-        Pair<InviteUtils.Result, ResTeamDetailInfo.InviteTeam> result =
-                InviteUtils.checkInvitationDisabled(teamDomainInfoModel, mEntityManager.getTeamId());
-
-        dismissProgressWheel();
-
-        switch (result.first) {
-            case NETWORK_ERROR:
-                showErrorToast(activity.getResources().getString(R.string.err_network));
-                break;
-            case ERROR:
-                showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
-                break;
-            case INVITATION_DISABLED:
-                showTextDialog(
-                        activity.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
-                break;
-            case UNDEFINED_URL:
-                showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
-                break;
-            case SUCCESS:
-                moveToInvitationActivity(result.second);
-                break;
-            default:
-                break;
-        }
     }
 
     private String getOwnerName() {
@@ -697,50 +670,6 @@ public class MessageListPresenter {
                 .toBlocking()
                 .first();
         return owner.getUser().name;
-    }
-
-    @UiThread
-    public void moveToInvitationActivity(ResTeamDetailInfo.InviteTeam inviteTeam) {
-        invitationUrl = inviteTeam.getInvitationUrl();
-        teamName = inviteTeam.getName();
-        DialogFragment invitationDialog = new InvitationDialogFragment();
-        invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
-    }
-
-    @UiThread
-    public void handleInviteEvent(TeamInvitationsEvent event) {
-        String invitationContents =
-                teamName + activity.getResources().getString(R.string.jandi_invite_contents);
-        int eventType = event.type;
-        if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
-            copyToClipboard(invitationContents + "\n" + invitationUrl);
-            showTextDialog(activity.getResources().getString(R.string.jandi_invite_succes_copy_link));
-        } else {
-            Intent intent = InviteUtils.getInviteIntent(
-                    activity, event, invitationUrl, invitationContents);
-            try {
-                activity.startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                e.printStackTrace();
-                copyToClipboard(invitationContents + "\n" + invitationUrl);
-                showTextDialog(activity.getResources().getString(R.string.jandi_invite_app_not_installed));
-            }
-        }
-    }
-
-    @UiThread
-    void showErrorToast(String message) {
-        ColoredToast.showError(activity, message);
-    }
-
-    @UiThread
-    public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(activity)
-                .setMessage(alertText)
-                .setCancelable(false)
-                .setPositiveButton(activity.getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> dialog.dismiss())
-                .create().show();
     }
 
     @UiThread

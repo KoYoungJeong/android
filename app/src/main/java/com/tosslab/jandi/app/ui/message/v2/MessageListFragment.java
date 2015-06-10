@@ -582,11 +582,13 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    //FIXME
     public void onEvent(TeamInvitationsEvent event) {
         if (!isForeground) {
             return;
         }
-        messageListPresenter.handleInviteEvent(event);
+
+//        messageListPresenter.handleInviteEvent(event);
     }
 
     @Background
