@@ -28,7 +28,6 @@ public class InvitationDialogFragment extends DialogFragment {
 
     private ResTeamDetailInfo.InviteTeam inviteTeam;
     private String invitationContents;
-
     ClipboardManager clipboardManager;
 
     @Override
@@ -37,7 +36,7 @@ public class InvitationDialogFragment extends DialogFragment {
         me.setCanceledOnTouchOutside(true);
         clipboardManager = (ClipboardManager)getActivity()
                 .getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        this.invitationContents = inviteTeam.getName()+
+        invitationContents = inviteTeam.getName()+
                 getActivity().getApplicationContext().getResources().getString(R.string.jandi_invite_contents);
 
         return super.onCreateView(inflater, container, savedInstanceState);
@@ -105,12 +104,6 @@ public class InvitationDialogFragment extends DialogFragment {
         }
     }
 
-    private void copyLink() {
-        ClipData clipData = ClipData.newPlainText("",
-                invitationContents + "\n" + inviteTeam.getInvitationUrl());
-        clipboardManager.setPrimaryClip(clipData);
-    }
-
     private Intent getInviteIntent(int eventType) {
 
         String publicLink = inviteTeam.getInvitationUrl();
@@ -150,6 +143,12 @@ public class InvitationDialogFragment extends DialogFragment {
 
         return intent;
 
+    }
+
+    private void copyLink() {
+        ClipData clipData = ClipData.newPlainText("",
+                invitationContents + "\n" + inviteTeam.getInvitationUrl());
+        clipboardManager.setPrimaryClip(clipData);
     }
 
     public void showTextDialog(String alertText) {

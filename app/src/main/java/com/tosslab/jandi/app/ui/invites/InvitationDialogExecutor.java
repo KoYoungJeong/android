@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -40,10 +41,14 @@ public class InvitationDialogExecutor {
     private ProgressWheel mProgressWheel;
     private EntityManager entityManager;
 
-    @Background
-    public void execute(){
+
+    @AfterViews
+    private void init(){
         initProgressWheel();
         entityManager = EntityManager.getInstance(context);
+    }
+
+    public void execute(){
         showProgressWheel();
         ResTeamDetailInfo.InviteTeam inviteTeam = getInviteTeam();
         dismissProgressWheel();
