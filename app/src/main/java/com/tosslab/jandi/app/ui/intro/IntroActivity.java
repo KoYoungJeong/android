@@ -119,7 +119,12 @@ public class IntroActivity extends AppCompatActivity {
         }), (o, o2) -> o).subscribe(o -> {
             if (o == 200) {
                 introModel.sleep(initTime, MAX_DELAY_MS);
-                introViewModel.moveMainOrTeamSelectActivity();
+                if (introModel.hasSelectedTeam()) {
+                    introViewModel.moveToMainActivity();
+                } else {
+                    introViewModel.moveTeamSelectActivity();
+                }
+                introModel.updateParseForAllTeam();
             } else if (o == 401) {
                 introModel.clearTokenInfo();
                 introModel.clearAccountInfo();
