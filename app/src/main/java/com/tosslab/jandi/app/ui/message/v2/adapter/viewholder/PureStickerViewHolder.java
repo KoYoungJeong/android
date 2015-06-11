@@ -36,7 +36,7 @@ public class PureStickerViewHolder implements BodyViewHolder {
 
         ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
         ResMessages.StickerContent content = stickerMessage.content;
-        StickerManager.getInstance().loadSticker(context, ivSticker, content.groupId, content.stickerId);
+        StickerManager.getInstance().loadSticker(ivSticker, content.groupId, content.stickerId);
 
         tvDate.setText(DateTransformator.getTimeStringForSimple(link.message.createTime));
 

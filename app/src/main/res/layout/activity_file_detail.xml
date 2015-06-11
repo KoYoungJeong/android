@@ -41,8 +41,7 @@
             android:layout_width="140dp"
             android:layout_height="140dp"
             android:layout_centerInParent="true"
-            android:scaleType="fitCenter"
-            android:src="@drawable/jandi_ic_launcher" />
+            android:scaleType="fitCenter" />
 
         <ImageView
             android:id="@+id/iv_file_detail_preview_sticker_close"
@@ -51,7 +50,7 @@
             android:layout_alignParentRight="true"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/com_mixpanel_android_close" />
+            android:src="@drawable/jandi_icon_sticker_close" />
 
 
     </RelativeLayout>
@@ -82,7 +81,8 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btn_file_detail_send_comment"
-            android:hint="@string/comment" />
+            android:hint="@string/comment"
+            android:paddingRight="34dp" />
 
         <ImageView
             android:id="@+id/btn_message_sticker"

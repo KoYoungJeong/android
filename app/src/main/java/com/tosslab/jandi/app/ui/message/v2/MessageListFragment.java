@@ -333,10 +333,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
             @Override
             public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
                 stickerInfo = new StickerInfo();
                 stickerInfo.setStickerGroupId(groupId);
                 stickerInfo.setStickerId(stickerId);
-                showStickerPreview(stickerInfo);
+                showStickerPreview(oldSticker, stickerInfo);
                 messageListPresenter.setEnableSendButton(true);
             }
         });
@@ -344,8 +345,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         insertEmptyMessage();
     }
 
-    private void showStickerPreview(StickerInfo stickerInfo) {
+    private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
+
         messageListPresenter.showStickerPreview(stickerInfo);
+        if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
+            messageListPresenter.loadSticker(stickerInfo);
+        }
     }
 
     @Click(R.id.iv_messages_preview_sticker_close)

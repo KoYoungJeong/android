@@ -82,7 +82,7 @@ public class StickerViewHolder implements BodyViewHolder {
         ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
         ResMessages.StickerContent content = stickerMessage.content;
 
-        StickerManager.getInstance().loadSticker(ivSticker.getContext(), ivSticker, content.groupId, content.stickerId);
+        StickerManager.getInstance().loadSticker(ivSticker, content.groupId, content.stickerId);
 
         profileImageView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));

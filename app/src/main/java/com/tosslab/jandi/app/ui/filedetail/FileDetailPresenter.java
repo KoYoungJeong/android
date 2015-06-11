@@ -275,10 +275,12 @@ public class FileDetailPresenter {
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showStickerPreview(StickerInfo stickerInfo) {
+    public void showStickerPreview() {
         vgStickerPreview.setVisibility(View.VISIBLE);
+    }
 
-        StickerManager.getInstance().loadSticker(activity, ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+    public void loadSticker(StickerInfo stickerInfo) {
+        StickerManager.getInstance().loadSticker(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

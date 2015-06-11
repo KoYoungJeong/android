@@ -7,7 +7,7 @@
                 <color android:color="@color/deactivate_text_color" />
             </item>
             <item android:right="1dp">
-                <color android:color="#FFDDE4E9" />
+                <color android:color="@color/jandi_sticker_view_selector" />
             </item>
         </layer-list>
     </item>
@@ -17,7 +17,7 @@
                 <color android:color="@color/deactivate_text_color" />
             </item>
             <item android:right="1dp">
-                <color android:color="@color/white" />
+                <color android:color="@color/jandi_sticker_view_background" />
             </item>
         </layer-list>
 

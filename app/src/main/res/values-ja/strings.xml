@@ -381,4 +381,5 @@ JANDIへようこそ"</string>
     <string name="jandi_invite_member">"メンバーを招待する"</string>
     <string name="jandi_canceled">"キャンセルされました"</string>
     <string name="jandi_cannot_find_messages">"一致するメッセージがありません: "</string>
+    <string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
 </resources>

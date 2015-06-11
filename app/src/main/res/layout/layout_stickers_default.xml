@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/jandi_sticker_view_background"
     android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/deactivate_text_color" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +27,8 @@
                 android:id="@+id/pager_sticker_default_items"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:overScrollMode="never" />
 
             <LinearLayout
                 android:id="@+id/vg_sticker_default_items_no_item"
@@ -34,14 +42,30 @@
                     android:layout_height="wrap_content"
                     android:scaleType="centerInside"
                     android:src="@drawable/icon_sticker_recent_no_items" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="21dp"
+                    android:textColor="#FF97989A"
+                    android:text="@string/jandi_no_recent_stickers"
+                    android:layout_marginTop="15dp" />
             </LinearLayout>
         </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/vg_sticker_default_items_page_indicator"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="10dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp">
+
+            <com.tosslab.jandi.app.views.ViewPagerIndicator
+                android:id="@+id/indicator_sticker_default_items_page_indicator"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:indicatorMargin="@dimen/jandi_view_pager_indicator_margin"
+                app:indicatorWidth="@dimen/jandi_view_pager_indicator_size" />
+        </LinearLayout>
 
     </LinearLayout>
 

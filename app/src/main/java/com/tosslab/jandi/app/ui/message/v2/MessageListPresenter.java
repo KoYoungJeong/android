@@ -5,8 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersBuilder;
 import com.eowise.recyclerview.stickyheaders.StickyHeadersItemDecoration;
 import com.koushikdutta.ion.Ion;
@@ -53,6 +50,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -829,16 +827,12 @@ public class MessageListPresenter {
     }
 
     public void showStickerPreview(StickerInfo stickerInfo) {
-        String fileName = stickerInfo.getStickerGroupId() + "_" + stickerInfo.getStickerId();
-
-        imgStickerPreview.setImageDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
-        Glide.with(activity)
-                .load(Uri.parse("file:///android_asset/stickers/default/mozzi/" + fileName + ".png"))
-                .into(imgStickerPreview);
 
         vgStickerPreview.setVisibility(View.VISIBLE);
+    }
+
+    public void loadSticker(StickerInfo stickerInfo) {
+        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     public void dismissStickerPreview() {

@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -113,10 +114,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
             @Override
             public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
                 stickerInfo = new StickerInfo();
                 stickerInfo.setStickerGroupId(groupId);
                 stickerInfo.setStickerId(stickerId);
-                fileDetailPresenter.showStickerPreview(stickerInfo);
+                fileDetailPresenter.showStickerPreview();
+
+                if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
+                    fileDetailPresenter.loadSticker(stickerInfo);
+                }
                 fileDetailPresenter.setSendButtonSelected(true);
             }
         });
@@ -691,6 +697,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             fileDetailPresenter.dismissStickerPreview();
+            JandiStickerDatabaseManager.getInstance(FileDetailActivity.this.getApplicationContext()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+
             sendCommentWithSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), comment);
             stickerInfo = NULL_STICKER;
         } else if (!TextUtils.isEmpty(comment)) {

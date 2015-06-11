@@ -2,11 +2,13 @@ package com.tosslab.jandi.app.ui.sticker;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
 
 import java.util.List;
@@ -18,8 +20,8 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
     public static final int STICKER_MAX_VIEW = 8;
     private final Context context;
-    private List<ResSticker> stickers;
     private final StickerViewModel.OnStickerClick onStickerClick;
+    private List<ResSticker> stickers;
 
     protected StickerViewPagerAdapter(Context context, List<ResSticker> stickers, StickerViewModel.OnStickerClick onStickerClick) {
         this.context = context;
@@ -57,10 +59,13 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
     private LinearLayout getStickerItemLayout(int page, int size) {
 
+        int padding = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_padding);
 
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        linearLayout.setPadding(padding / 2 + 1, 0, padding / 2 + 1, 0);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setGravity(Gravity.CENTER);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
         params.weight = 1;
@@ -80,9 +85,15 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
         layoutParams.weight = 1;
+        layoutParams.leftMargin = padding / 2;
+        layoutParams.rightMargin = padding / 2;
+
+        int maxWidth = context.getResources().getDimensionPixelSize(R.dimen.jandi_sticker_view_pager_items_max_width);
+
         for (int idx = 0; idx < size; idx++) {
             ImageView child = new ImageView(context);
             child.setLayoutParams(layoutParams);
+            child.setMaxWidth(maxWidth);
             child.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 
             if (idx / 4 < 1) {
@@ -99,7 +110,10 @@ class StickerViewPagerAdapter extends PagerAdapter {
                 }
             });
 
-            StickerManager.getInstance().loadSticker(context, child, resSticker.getGroupId(), resSticker.getId());
+            StickerManager.LoadOptions options = new StickerManager.LoadOptions();
+            options.isClickImage = true;
+            options.isFadeAnimation = false;
+            StickerManager.getInstance().loadSticker(child, resSticker.getGroupId(), resSticker.getId(), options);
 
         }
 

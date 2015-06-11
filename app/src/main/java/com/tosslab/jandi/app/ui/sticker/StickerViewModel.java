@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
+import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
@@ -38,6 +39,7 @@ public class StickerViewModel {
     private LinearLayout vgStickerGroups;
     private ViewPager pagerStickerItems;
     private ViewGroup vgNoItemsLayout;
+    private ViewPagerIndicator viewPagerIndicator;
 
     private OnStickerClick onStickerClick;
 
@@ -47,6 +49,7 @@ public class StickerViewModel {
         vgStickerGroups = (LinearLayout) vgStickerSelector.findViewById(R.id.vg_sticker_default_groups);
         pagerStickerItems = (ViewPager) vgStickerSelector.findViewById(R.id.pager_sticker_default_items);
         vgNoItemsLayout = (ViewGroup) vgStickerSelector.findViewById(R.id.vg_sticker_default_items_no_item);
+        viewPagerIndicator = (ViewPagerIndicator) vgStickerSelector.findViewById(R.id.indicator_sticker_default_items_page_indicator);
 
         initClicks();
     }
@@ -84,11 +87,26 @@ public class StickerViewModel {
 
         if (size <= 0) {
             vgNoItemsLayout.setVisibility(View.VISIBLE);
+            viewPagerIndicator.setVisibility(View.GONE);
         } else {
             vgNoItemsLayout.setVisibility(View.GONE);
+            viewPagerIndicator.setVisibility(View.VISIBLE);
         }
 
-        vgStickerItems.setAdapter(new StickerViewPagerAdapter(context, stickers, onStickerClick));
+        StickerViewPagerAdapter adapter = new StickerViewPagerAdapter(context, stickers, onStickerClick);
+        vgStickerItems.setAdapter(adapter);
+        viewPagerIndicator.setCurrentPosition(0);
+        viewPagerIndicator.setIndicatorCount(adapter.getCount());
+        viewPagerIndicator.invalidate();
+
+        vgStickerItems.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            @Override
+            public void onPageSelected(int position) {
+                if (viewPagerIndicator != null) {
+                    viewPagerIndicator.setCurrentPosition(position);
+                }
+            }
+        });
 
     }
 

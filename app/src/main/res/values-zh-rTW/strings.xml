@@ -372,4 +372,5 @@
     <string name="jandi_invite_member">"邀請成員"</string>
     <string name="jandi_canceled">"取消了"</string>
     <string name="jandi_cannot_find_messages">"搜尋沒有結果: "</string>
+    <string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 </resources>
