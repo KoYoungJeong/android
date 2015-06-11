@@ -27,15 +27,15 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
     Activity activity;
 
     View rootView;
-    private OnKeybardCaptureLisnter onKeyboardHeightCapture;
-    private OnKeybardShowListener onKeyboardShowListener;
+    private OnKeyboardCaptureListener onKeyboardHeightCapture;
+    private OnKeyboardShowListener onKeyboardShowListener;
     private boolean isOpened;
 
-    public OnKeybardShowListener getOnKeyboardShowListener() {
+    public OnKeyboardShowListener getOnKeyboardShowListener() {
         return onKeyboardShowListener;
     }
 
-    public void setOnKeyboardShowListener(OnKeybardShowListener onKeyboardShowListener) {
+    public void setOnKeyboardShowListener(OnKeyboardShowListener onKeyboardShowListener) {
         this.onKeyboardShowListener = onKeyboardShowListener;
     }
 
@@ -45,7 +45,7 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
 
-    public void setOnKeyboardHeightCaptureListener(OnKeybardCaptureLisnter onKeyboardHeightCapture) {
+    public void setOnKeyboardHeightCaptureListener(OnKeyboardCaptureListener onKeyboardHeightCapture) {
         this.onKeyboardHeightCapture = onKeyboardHeightCapture;
     }
 
@@ -116,11 +116,11 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
                 && KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
     }
 
-    public interface OnKeybardCaptureLisnter {
+    public interface OnKeyboardCaptureListener {
         void onCapture();
     }
 
-    public interface OnKeybardShowListener {
+    public interface OnKeyboardShowListener {
         void onShow(boolean isShow);
     }
 }
