@@ -77,7 +77,12 @@ public class StickerViewHolder implements BodyViewHolder {
 
         int unreadCount = UnreadCountUtil.getUnreadCount(tvUnread.getContext(), teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance(tvUnread.getContext()).getMe().getId());
-        tvUnread.setText(String.valueOf(unreadCount));
+
+        if (unreadCount > 0) {
+            tvUnread.setVisibility(View.VISIBLE);
+        } else {
+            tvUnread.setVisibility(View.GONE);
+        }
 
         ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
         ResMessages.StickerContent content = stickerMessage.content;
