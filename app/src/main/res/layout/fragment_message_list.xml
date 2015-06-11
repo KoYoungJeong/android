@@ -186,7 +186,9 @@
         <Button
             android:id="@+id/btn_send_message"
             style="@style/JandiChat.Button.Dynamic"
+            android:layout_alignBottom="@+id/et_message"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
             android:layout_marginRight="10dp"

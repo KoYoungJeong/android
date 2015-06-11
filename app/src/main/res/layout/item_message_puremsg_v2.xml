@@ -6,6 +6,7 @@
     android:descendantFocusability="blocksDescendants"
     android:foreground="?android:attr/selectableItemBackground"
     android:paddingBottom="12dp"
+    android:paddingRight="@dimen/jandi_messages_padding_right"
     android:paddingLeft="58dp">
 
     <TextView

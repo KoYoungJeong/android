@@ -63,7 +63,7 @@ class StickerViewPagerAdapter extends PagerAdapter {
 
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        linearLayout.setPadding(padding / 2 + 1, 0, padding / 2 + 1, 0);
+        linearLayout.setPadding(padding / 2 + 1, padding / 2 + 1, padding / 2 + 1, 0);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setGravity(Gravity.CENTER);
 

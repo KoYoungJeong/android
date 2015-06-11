@@ -29,7 +29,7 @@
         android:id="@+id/txt_entity_listitem_unread"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txt_message_create_date"
+        android:layout_alignBottom="@+id/txt_message_create_date"
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/txt_message_create_date"
         android:background="@drawable/jandi_img_read_unread"

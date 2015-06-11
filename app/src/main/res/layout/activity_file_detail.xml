@@ -100,7 +100,9 @@
         <Button
             android:id="@+id/btn_file_detail_send_comment"
             style="@style/JandiChat.Button.Dynamic"
+            android:layout_alignBottom="@+id/et_file_detail_comment"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/et_file_detail_comment"
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
             android:text="@string/jandi_message_send" />
