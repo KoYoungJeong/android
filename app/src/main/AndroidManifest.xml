@@ -128,6 +128,12 @@
             android:label="@string/jandi_topic_paricipants"
             android:screenOrientation="portrait" />
 
+
+        <activity
+            android:name=".ui.album.ImageAlbumActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.search.main.view.SearchActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
