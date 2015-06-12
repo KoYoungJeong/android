@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
@@ -50,30 +51,11 @@ public class ImageThumbLoader implements FileThumbLoader {
                     imageViewPhotoFile.setImageResource(R.drawable.jandi_down_placeholder_dropbox);
                     break;
                 default:
-                    Glide.with(context)
-                            .load(thumbnailPhotoUrl)
-                            .placeholder(R.drawable.jandi_down_placeholder_img)
-                            .error(R.drawable.jandi_down_img_disable)
-                            .animate(view -> {
-                                AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
-                                anim.setDuration(300);
-                                view.setAnimation(anim);
-                            })  // Avoid doesn't working 'fitCenter'
-                            .fitCenter()
-                            .into(imageViewPhotoFile);
-
-                    // 계단현상...
-//                    Ion.with(imageViewPhotoFile)
-//                            .placeholder(R.drawable.jandi_down_placeholder_img)
-//                            .error(R.drawable.jandi_down_img_disable)
-//                            .fitCenter()
-//                            .crossfade(true)
-//                            .load(thumbnailPhotoUrl);
+                    loadImage(thumbnailPhotoUrl);
                     break;
             }
 
             switch (sourceType) {
-
                 case Google:
                 case Dropbox:
                     imageViewPhotoFile.setOnClickListener(view -> {
@@ -112,5 +94,30 @@ public class ImageThumbLoader implements FileThumbLoader {
                     break;
             }
         }
+    }
+
+    private void loadImage(String url) {
+        if (url.toLowerCase().endsWith("gif")) {
+            Ion.with(imageViewPhotoFile)
+                    .fitCenter()
+                    .placeholder(R.drawable.jandi_down_placeholder_img)
+                    .error(R.drawable.jandi_down_img_disable)
+                    .crossfade(true)
+                    .load(url);
+            return;
+        }
+
+        Glide.with(context)
+                .load(url)
+                .placeholder(R.drawable.jandi_down_placeholder_img)
+                .error(R.drawable.jandi_down_img_disable)
+                .animate(view -> {
+                    view.setAlpha(0.0f);
+                    view.animate()
+                            .alpha(1.0f)
+                            .setDuration(300);
+                })  // Avoid doesn't working 'fitCenter with crossfade'
+                .fitCenter()
+                .into(imageViewPhotoFile);
     }
 }
