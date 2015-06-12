@@ -319,11 +319,6 @@ public class MessageListPresenter {
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
     }
 
-    public void exceedMaxFileSizeError() {
-
-        ColoredToast.showError(activity, activity.getString(R.string.err_file_upload_failed));
-    }
-
     public String getSendEditText() {
         return messageEditText.getText().toString();
     }
@@ -364,13 +359,6 @@ public class MessageListPresenter {
     @UiThread
     public void showSuccessToast(String message) {
         ColoredToast.show(activity, message);
-    }
-
-    @UiThread
-    public void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
-        if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
-            uploadProgressDialog.dismiss();
-        }
     }
 
     @UiThread

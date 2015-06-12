@@ -15,6 +15,7 @@ import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
@@ -24,7 +25,6 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -101,7 +101,7 @@ public class FileListModel {
 
     public boolean isOverSize(String realFilePath) {
         File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > MessageListModel.MAX_FILE_SIZE;
+        return uploadFile.exists() && uploadFile.length() > FilePickerModel.MAX_FILE_SIZE;
     }
 
     public boolean isDefaultSearchQuery(ReqSearchFile searchFile) {

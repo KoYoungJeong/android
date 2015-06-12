@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -24,10 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.events.files.CategorizedMenuOfFileType;
 import com.tosslab.jandi.app.events.files.CategorizingAsEntity;
@@ -38,8 +33,8 @@ import com.tosslab.jandi.app.events.files.RefreshOldFileEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -51,8 +46,6 @@ import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -72,12 +65,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.schedulers.Schedulers;
@@ -107,6 +95,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Bean
     FileListPresenter fileListPresenter;
+
+    @Bean(value = EntityFileUploadViewModelImpl.class)
+    FilePickerViewModel filePickerViewModel;
 
     @SystemService
     InputMethodManager inputMethodManager;
@@ -359,37 +350,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        ProgressDialog uploadProgress = fileListPresenter.getUploadProgress(event);
+        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
 
-        uploadFile(event, uploadProgress);
-
-    }
-
-    @Background
-    void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
-
-        int entityId = event.entityId;
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-
-        boolean isPublicTopic = entity.isPublicTopic();
-        try {
-            JsonObject result = fileListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
-
-            int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
-            fileListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
-            fileListModel.trackUploadingFile(entityType, result);
-
-            initSearchSubject.onNext(ReqSearchFile.MAX);
-
-        } catch (ExecutionException e) {
-            if (getActivity() != null) {
-                fileListPresenter.showErrorToast(getString(R.string.jandi_canceled));
-            }
-        } catch (Exception e) {
-            fileListPresenter.showErrorToast(getString(R.string.err_file_upload_failed));
-        } finally {
-            fileListPresenter.dismissProgressDialog(uploadProgressDialog);
-        }
     }
 
     public void onEvent(DeleteFileEvent event) {
@@ -485,24 +447,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (!isForeground) {
             return;
         }
-        switch (event.type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
-                fileListPresenter.openAlbumForActivityResult(FileListFragment.this);
-                break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                try {
-                    photoFileByCamera = File.createTempFile("camera", ".jpg", new File(GoogleImagePickerUtil.getDownloadPath()));
-                    fileListPresenter.openCameraForActivityResult(FileListFragment.this, Uri.fromFile(photoFileByCamera));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                fileListPresenter.openExplorerForActivityResult(FileListFragment.this);
-                break;
-            default:
-                break;
-        }
+        filePickerViewModel.selectFileSelector(event.type, FileListFragment.this);
     }
 
     @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
@@ -511,68 +456,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        String realFilePath;
-        Uri data = intent.getData();
-        Bundle extras = intent.getExtras();
-
-
-        if (data != null) {
-            realFilePath = ImageFilePath.getPath(getActivity(), data);
-            if (GoogleImagePickerUtil.isUrl(realFilePath)) {
-
-                String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                String downloadName = GoogleImagePickerUtil.getWebImageName();
-                ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-                downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-            } else {
-                showFileUploadDialog(realFilePath);
-            }
-        } else if (extras != null && extras.containsKey("data")) {
-
-            Object data1 = extras.get("data");
-
-            if (data1 instanceof Bitmap) {
-                Bitmap bitmap = (Bitmap) data1;
-                saveAndShowFileUploadDialog(bitmap);
-            }
-
-        }
-    }
-
-    @Background
-    void saveAndShowFileUploadDialog(Bitmap bitmap) {
-
-        String path = GoogleImagePickerUtil.getDownloadPath() + "/camera.jpg";
-        OutputStream stream = null;
-        try {
-            stream = new FileOutputStream(path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            showFileUploadDialog(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @UiThread
-    void showFileUploadDialog(String realFilePath) {
-        if (fileListModel.isOverSize(realFilePath)) {
-            fileListPresenter.exceedMaxFileSizeError();
-        } else {
-            DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, mSearchQuery.mSearchEntity);
-            newFragment.show(getFragmentManager(), "dialog");
-
-        }
-    }
-
-    @Background
-    void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
-
-        try {
-            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, realFilePath, downloadDir, downloadName);
-            fileListPresenter.dismissProgressDialog(downloadProgress);
-            showFileUploadDialog(file.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
+        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_GALLERY, intent);
+        if (!TextUtils.isEmpty(filePath)) {
+            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
         }
     }
 
@@ -581,8 +467,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if (photoFileByCamera != null && photoFileByCamera.exists()) {
-            showFileUploadDialog(photoFileByCamera.getAbsolutePath());
+        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        if (!TextUtils.isEmpty(filePath)) {
+            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
         }
 
     }
@@ -594,9 +481,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        String realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-        if (!TextUtils.isEmpty(realFilePath)) {
-            showFileUploadDialog(realFilePath);
+        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_EXPLORER, intent);
+        if (!TextUtils.isEmpty(filePath)) {
+            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
         }
     }
 

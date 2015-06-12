@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -22,12 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -54,6 +48,8 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
+import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -81,8 +77,6 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -98,13 +92,7 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -143,6 +131,10 @@ public class MessageListFragment extends Fragment {
 
     @Bean
     MessageListModel messageListModel;
+
+    @Bean(value = EntityFileUploadViewModelImpl.class)
+    FilePickerViewModel filePickerViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -502,8 +494,7 @@ public class MessageListFragment extends Fragment {
 
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
-        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+        filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
     }
 
     @Click(R.id.btn_send_message)
@@ -602,30 +593,7 @@ public class MessageListFragment extends Fragment {
         if (!isForeground) {
             return;
         }
-        switch (event.type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
-                LogUtil.i("RequestFileUploadEvent : from gallery");
-                messageListPresenter.openAlbumForActivityResult(MessageListFragment.this);
-                break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-
-                try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
-                    photoFileByCamera = File.createTempFile("camera", ".jpg", directory);
-                    messageListPresenter.openCameraForActivityResult(MessageListFragment.this, Uri.fromFile(photoFileByCamera));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                LogUtil.i("RequestFileUploadEvent : from explorer");
-                messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
-                break;
-            default:
-                break;
-
-        }
+        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this);
     }
 
     @Override
@@ -635,103 +603,19 @@ public class MessageListFragment extends Fragment {
             return;
         }
 
-        String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-
-                if (intent == null) {
-                    return;
-                }
-                Uri data = intent.getData();
-
-                if (data != null) {
-                    realFilePath = ImageFilePath.getPath(getActivity(), data);
-                    if (GoogleImagePickerUtil.isUrl(realFilePath)) {
-
-                        String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                        String downloadName = GoogleImagePickerUtil.getWebImageName();
-                        ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-                        downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-                    } else {
-                        showFileUploadDialog(realFilePath);
-                    }
-                }
-                break;
-
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                if (photoFileByCamera == null) {
-                    LogUtil.e("photoFileByCamera object is null...");
-                    return;
-                }
-                if (!photoFileByCamera.exists()) {
-                    LogUtil.e("photoFileByCamera is not exists");
-                    return;
-                }
-                showFileUploadDialog(photoFileByCamera.getAbsolutePath());
-
-                break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-
-                realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                if (!TextUtils.isEmpty(realFilePath)) {
-                    showFileUploadDialog(realFilePath);
+                String filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (!TextUtils.isEmpty(filePath)) {
+                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, entityId);
                 }
                 break;
             default:
                 break;
         }
 
-    }
-
-    @Background
-    void saveAndShowFileUploadDialog(Bitmap bitmap) {
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHssmm");
-
-        String path = GoogleImagePickerUtil.getDownloadPath() + "/camera" + dateFormat.format(System.currentTimeMillis()) + ".jpg";
-        new File(path).delete();
-        OutputStream stream = null;
-        try {
-            stream = new FileOutputStream(path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            showFileUploadDialog(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Background
-    void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
-
-        try {
-            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, realFilePath, downloadDir, downloadName);
-            messageListPresenter.dismissProgressDialog(downloadProgress);
-            showFileUploadDialog(file.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // File Upload 대화상자 보여주기
-    @UiThread
-    void showFileUploadDialog(String realFilePath) {
-        // 업로드 파일 용량 체크
-
-        if (messageListModel.isOverSize(realFilePath)) {
-            messageListPresenter.exceedMaxFileSizeError();
-        } else {
-            DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
-            newFragment.show(getFragmentManager(), "dialog");
-        }
     }
 
     @TextChange(R.id.et_message)
@@ -841,9 +725,8 @@ public class MessageListFragment extends Fragment {
         if (!isForeground) {
             return;
         }
-        ProgressDialog uploadProgress = messageListPresenter.getUploadProgress(event);
 
-        uploadFile(event, uploadProgress);
+        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
@@ -887,38 +770,6 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.dismissProgressWheel();
         }
 
-    }
-
-
-    @Background
-    void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
-        boolean isPublicTopic = entityType == JandiConstants.TYPE_PUBLIC_TOPIC;
-        try {
-            JsonObject result = messageListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
-            if (result.get("code") == null) {
-
-                LogUtil.e("Upload Success : " + result);
-                messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
-                messageListModel.trackUploadingFile(entityType, result);
-            } else {
-                LogUtil.e("Upload Fail : Result : " + result);
-                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
-            }
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
-        } catch (ExecutionException e) {
-            if (getActivity() != null) {
-                messageListPresenter.showFailToast(getString(R.string.jandi_canceled));
-            }
-        } catch (Exception e) {
-            LogUtil.e("Upload Error : ", e);
-            if (getActivity() != null) {
-                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
-            }
-        } finally {
-            if (getActivity() != null) {
-                messageListPresenter.dismissProgressDialog(uploadProgressDialog);
-            }
-        }
     }
 
     @Background
