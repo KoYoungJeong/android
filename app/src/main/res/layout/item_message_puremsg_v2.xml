@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/message_list_selector"
-    android:descendantFocusability="blocksDescendants"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:paddingBottom="12dp"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingLeft="58dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/message_list_selector"
+                android:descendantFocusability="blocksDescendants"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:paddingBottom="15dp"
+                android:paddingLeft="58dp"
+                android:paddingRight="@dimen/jandi_messages_padding_right">
 
     <TextView
         android:id="@+id/tv_message_content"
@@ -16,6 +16,6 @@
         android:focusable="false"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
-        android:textSize="@dimen/jandi_messages_content" />
+        android:textSize="@dimen/jandi_messages_content"/>
 
 </RelativeLayout>

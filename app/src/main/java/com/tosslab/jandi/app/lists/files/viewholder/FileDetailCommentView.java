@@ -1,8 +1,10 @@
 package com.tosslab.jandi.app.lists.files.viewholder;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
+import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -27,7 +30,6 @@ public class FileDetailCommentView implements CommentViewHolder {
 
     ImageView imageViewCommentUserProfile;
     TextView textViewCommentUserName;
-    TextView textViewCommentFileCreateDate;
     TextView textViewCommentContent;
 
     View disableLineThrougView;
@@ -38,7 +40,6 @@ public class FileDetailCommentView implements CommentViewHolder {
     public void init(View rootView) {
         imageViewCommentUserProfile = (ImageView) rootView.findViewById(R.id.img_file_detail_comment_user_profile);
         textViewCommentUserName = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_user_name);
-        textViewCommentFileCreateDate = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_create_date);
         textViewCommentContent = (TextView) rootView.findViewById(R.id.txt_file_detail_comment_content_2);
         disableLineThrougView = rootView.findViewById(R.id.img_entity_listitem_line_through);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
@@ -76,7 +77,6 @@ public class FileDetailCommentView implements CommentViewHolder {
         textViewCommentUserName.setText(userName);
         // 날짜
         String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
-        textViewCommentFileCreateDate.setText(createTime);
         // 댓글 내용
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
@@ -84,11 +84,36 @@ public class FileDetailCommentView implements CommentViewHolder {
         boolean hasLink = LinkifyUtil.addLinks(textViewCommentContent.getContext(), spannableStringBuilder);
 
         if (hasLink) {
-            textViewCommentContent.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+            Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
+            spannableStringBuilder.setSpan(linkSpannable, 0, commentMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             LinkifyUtil.setOnLinkClick(textViewCommentContent);
-        } else {
-            textViewCommentContent.setText(spannableStringBuilder);
+
+
+//            textViewCommentContent.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+//            LinkifyUtil.setOnLinkClick(textViewCommentContent);
         }
+//        } else {
+//            textViewCommentContent.setText(spannableStringBuilder);
+//        }
+
+        spannableStringBuilder.append(" ");
+
+        Resources resources = imageViewCommentUserProfile.getContext().getResources();
+
+        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
+        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
+
+        int startIndex = spannableStringBuilder.length();
+        spannableStringBuilder.append(createTime);
+        int endIndex = spannableStringBuilder.length();
+
+        MessageSpannable spannable =
+                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+        spannableStringBuilder.setSpan(spannable,
+                startIndex, endIndex,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        textViewCommentContent.setText(spannableStringBuilder);
     }
 
     @Override
