@@ -87,19 +87,12 @@ public class FileDetailCommentView implements CommentViewHolder {
             Spannable linkSpannable = Spannable.Factory.getInstance().newSpannable(spannableStringBuilder);
             spannableStringBuilder.setSpan(linkSpannable, 0, commentMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             LinkifyUtil.setOnLinkClick(textViewCommentContent);
-
-
-//            textViewCommentContent.setText(Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
-//            LinkifyUtil.setOnLinkClick(textViewCommentContent);
         }
-//        } else {
-//            textViewCommentContent.setText(spannableStringBuilder);
-//        }
 
         spannableStringBuilder.append(" ");
 
         Resources resources = imageViewCommentUserProfile.getContext().getResources();
-
+        //날짜
         int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
         int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
