@@ -5,11 +5,12 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * Created by tonyjs on 14. 11. 18..
+ * Created by tonyjs on 15. 06. 16..
  */
 public class AutoScaleImageView extends ImageView {
 
     public static final int NONE = -1;
+    private float ratio = NONE;
 
     public AutoScaleImageView(Context context) {
         super(context);
@@ -23,10 +24,9 @@ public class AutoScaleImageView extends ImageView {
         super(context, attrs, defStyleAttr);
     }
 
-    private float ratio = NONE;
-
     public void setRatio(int width, int height) {
         ratio = height / (float) width;
+        requestLayout();
     }
 
     @Override

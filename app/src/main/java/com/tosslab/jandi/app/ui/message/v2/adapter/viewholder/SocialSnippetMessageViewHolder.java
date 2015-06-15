@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.views.AutoScaleImageView;
 
 /**
  * Created by tonyjs on 15. 6. 10..
@@ -20,7 +21,7 @@ public class SocialSnippetMessageViewHolder extends MessageViewHolder {
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
-    private ImageView ivThumb;
+    private AutoScaleImageView ivThumb;
     private OnSnippetClickListener onSnippetClickListener;
 
     @Override
@@ -33,7 +34,8 @@ public class SocialSnippetMessageViewHolder extends MessageViewHolder {
         tvTitle = (TextView) rootView.findViewById(R.id.tv_snippet_title);
         tvDomain = (TextView) rootView.findViewById(R.id.tv_snippet_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_snippet_description);
-        ivThumb = (ImageView) rootView.findViewById(R.id.iv_snippet_thumb);
+        ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_snippet_thumb);
+        ivThumb.setRatio(274, 115);
     }
 
     @Override
