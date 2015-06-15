@@ -27,6 +27,7 @@ public class AutoScaleImageView extends ImageView {
 
     public void setRatio(int width, int height) {
         ratio = height / (float) width;
+        requestLayout();
     }
 
     @Override
