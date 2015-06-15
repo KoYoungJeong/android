@@ -6,12 +6,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
+import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
 /**
@@ -23,8 +28,14 @@ public class ImageAlbumActivity extends AppCompatActivity {
     @ViewById(R.id.vg_image_album_content)
     ViewGroup contentLayout;
 
+    @ViewById(R.id.iv_image_album_preview)
+    ImageView ivPreview;
+
+
     @AfterViews
     void initViews() {
+
+        SelectPictures.getSelectPictures().clear();
 
         setupActionbar();
 
@@ -38,17 +49,34 @@ public class ImageAlbumActivity extends AppCompatActivity {
     private void setupActionbar() {
 
         if (getSupportActionBar() == null) {
-            Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_image_album);
             setSupportActionBar(toolbar);
+
+            ActionBar actionBar = getSupportActionBar();
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        actionBar.setTitle("Image Album");
+        actionBar.setTitle(R.string.jandI_gallery);
 
     }
 
+    @Override
+    public void onBackPressed() {
+        if (ivPreview.getVisibility() != View.VISIBLE) {
+            super.onBackPressed();
+        } else {
+            ivPreview.setVisibility(View.GONE);
+            ivPreview.setAnimation(null);
+            ivPreview.setOnClickListener(null);
+        }
+    }
+
+    @OptionsItem(android.R.id.home)
+    void onHomeMenuClick() {
+        onBackPressed();
+    }
 }
 
