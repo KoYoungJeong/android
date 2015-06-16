@@ -321,7 +321,7 @@ public class MessageListPresenter {
 
     public void exceedMaxFileSizeError() {
 
-        ColoredToast.showError(activity, activity.getString(R.string.err_file_upload_failed));
+        ColoredToast.showError(activity, activity.getString(R.string.jandi_file_size_large_error));
     }
 
     public String getSendEditText() {

@@ -174,6 +174,8 @@
     <string name="jandi_title_activity_file_explorer">"파일 탐색기"</string>
     <string name="title_file_detail">"파일 상세 정보"</string>
     <string name="comment">"댓글"</string>
+    <string name="jandi_file_size_large_error">"현재 100MB 이상의 파일은 업로드 할 수 없습니다."</string>
+
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"공유할 대화방을 선택하세요"</string>

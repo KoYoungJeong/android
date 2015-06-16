@@ -419,7 +419,7 @@ public class FileListPresenter {
     }
 
     public void exceedMaxFileSizeError() {
-        ColoredToast.showError(context, context.getString(R.string.err_file_upload_failed));
+        ColoredToast.showError(context, context.getString(R.string.jandi_file_size_large_error));
 
     }
 

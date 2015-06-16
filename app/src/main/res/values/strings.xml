@@ -176,6 +176,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_title_activity_file_explorer">"File Explore "</string>
     <string name="title_file_detail">"Description"</string>
     <string name="comment">"Comment"</string>
+    <string name="jandi_file_size_large_error">"Currently you cannot upload a file that exceeds 100MB."</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
