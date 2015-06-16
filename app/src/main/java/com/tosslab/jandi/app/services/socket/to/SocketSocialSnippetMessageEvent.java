@@ -1,25 +1,23 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonSubTypes;
-import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.List;
 
 /**
- * Created by Steve SeongUg Jung on 15. 4. 9..
+ * Created by tonyjs on 15. 6. 17..
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SocketMessageEvent {
+public class SocketSocialSnippetMessageEvent {
     private String event;
     private String messageType;
 
     private MessageRoom room;
-    private int writer;
-    private List<MessageRoom> rooms;
-    private CommentInfo comment;
+    private Writer writer;
+
+    private Message message;
 
     public MessageRoom getRoom() {
         return room;
@@ -37,22 +35,6 @@ public class SocketMessageEvent {
         this.event = event;
     }
 
-    public List<MessageRoom> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<MessageRoom> rooms) {
-        this.rooms = rooms;
-    }
-
-    public CommentInfo getComment() {
-        return comment;
-    }
-
-    public void setComment(CommentInfo comment) {
-        this.comment = comment;
-    }
-
     public String getMessageType() {
         return messageType;
     }
@@ -61,23 +43,30 @@ public class SocketMessageEvent {
         this.messageType = messageType;
     }
 
-    public int getWriter() {
+    public Writer getWriter() {
         return writer;
     }
 
-    public void setWriter(int writer) {
+    public void setWriter(Writer writer) {
         this.writer = writer;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     @Override
     public String toString() {
-        return "SocketMessageEvent{" +
+        return "SocketSocialSnippetMessageEvent{" +
                 "event='" + event + '\'' +
                 ", messageType='" + messageType + '\'' +
                 ", room=" + room +
                 ", writer=" + writer +
-                ", rooms=" + rooms +
-                ", comment=" + comment +
+                ", message=" + message +
                 '}';
     }
 
@@ -124,6 +113,62 @@ public class SocketMessageEvent {
 
         public void setId(int id) {
             this.id = id;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Message {
+        private int id = -1;
+        private String type;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public boolean isEmpty() {
+            return id == -1;
+        }
+
+        @Override
+        public String toString() {
+            return "Message{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    '}';
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class Writer {
+        private int id;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        @Override
+        public String toString() {
+            return "Writter{" +
+                    "id=" + id +
+                    '}';
         }
     }
 

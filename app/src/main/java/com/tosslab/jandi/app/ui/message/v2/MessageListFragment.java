@@ -63,16 +63,19 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketSocialSnippetMessageEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.UpdateMessage;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
@@ -120,6 +123,7 @@ public class MessageListFragment extends Fragment {
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
+    public static final String TAG = "INFO";
 
     @FragmentArg
     int entityType;
@@ -167,7 +171,8 @@ public class MessageListFragment extends Fragment {
                             break;
                         case Old:
                             if (oldMessageLoader != null) {
-                                ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+                                MessageState data = (MessageState) messageQueue.getData();
+                                ResMessages resMessages = oldMessageLoader.load(data.getFirstItemId());
 
                                 if (roomId <= 0) {
                                     roomId = resMessages.entityId;
@@ -179,19 +184,21 @@ public class MessageListFragment extends Fragment {
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
-                            Log.d("INFO", "New Start~!");
+                            Log.d(TAG, "New Start~!");
                             if (newsMessageLoader != null) {
                                 MessageState data = (MessageState) messageQueue.getData();
                                 int lastUpdateLinkId = data.getLastUpdateLinkId();
                                 if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                                    Log.i(TAG, "oldMessageLoad");
                                     oldMessageLoader.load(lastUpdateLinkId);
                                 }
+                                Log.i(TAG, "newMessageLoad");
                                 newsMessageLoader.load(lastUpdateLinkId);
                             }
-                            Log.d("INFO", "New End~!");
+                            Log.d(TAG, "New End~!");
                             break;
                         case Send:
-                            Log.d("INFO", "Send Start~!");
+                            Log.d(TAG, "Send Start~!");
                             SendingMessage data = (SendingMessage) messageQueue.getData();
                             int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
                             if (linkId > 0) {
@@ -200,7 +207,15 @@ public class MessageListFragment extends Fragment {
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
-                            Log.d("INFO", "Send End~!");
+                            Log.d(TAG, "Send End~!");
+                            break;
+                        case Update:
+                            Log.d(TAG, "Update Start~!");
+                            UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
+                            ResMessages.OriginalMessage message =
+                                    messageListModel.getMessage(teamId, updateMessage.getMessageId());
+                            messageListPresenter.updateMessage(message);
+                            Log.d(TAG, "Update End~!");
                             break;
                     }
                 }, throwable -> {
@@ -995,9 +1010,20 @@ public class MessageListFragment extends Fragment {
                 messageListModel.updateMarkerInfo(teamId, roomId);
                 return;
             }
+
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+    }
 
+    public void onEvent(SocketSocialSnippetMessageEvent event) {
+        SocketSocialSnippetMessageEvent.Message message = event.getMessage();
+        if (message == null || message.isEmpty()) {
+            return;
+        }
+
+        Log.i(TAG, "social snippet message event has occurred");
+
+        sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
     }
 
     @Background

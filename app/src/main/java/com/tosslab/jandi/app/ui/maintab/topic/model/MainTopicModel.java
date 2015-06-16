@@ -86,10 +86,13 @@ public class MainTopicModel {
                     public Boolean call(FormattedEntity entity) {
                         if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
                             return entity.getId() == event.getRoom().getId();
+                        } else if(TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                            // 단순 메세지 업데이트인 경우
+                            return false;
                         } else {
                             for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                                 if (entity.getId() == messageRoom.getId()) {
-                                    return true;
+                                        return true;
                                 }
                             }
                             return false;

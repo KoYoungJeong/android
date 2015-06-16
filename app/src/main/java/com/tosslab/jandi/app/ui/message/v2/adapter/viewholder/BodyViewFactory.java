@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -67,7 +68,8 @@ public class BodyViewFactory {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
                     ResMessages.TextMessage textMessage = (ResMessages.TextMessage) currentMessage;
-                    if (textMessage.socialSnippet != null) {
+                    ResMessages.SocialSnippet socialSnippet = textMessage.socialSnippet;
+                    if (socialSnippet != null && !socialSnippet.isEmpty()) {
                         return BodyViewHolder.Type.SocialSnippetMessage;
                     }
                     return BodyViewHolder.Type.PureMessage;
@@ -77,7 +79,8 @@ public class BodyViewFactory {
                     return BodyViewHolder.Type.Dummy;
                 } else {
                     ResMessages.TextMessage textMessage = (ResMessages.TextMessage) currentMessage;
-                    if (textMessage.socialSnippet != null) {
+                    ResMessages.SocialSnippet socialSnippet = textMessage.socialSnippet;
+                    if (socialSnippet != null && !socialSnippet.isEmpty()) {
                         return BodyViewHolder.Type.SocialSnippetMessage;
                     }
                     return BodyViewHolder.Type.Message;
