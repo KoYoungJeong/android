@@ -82,53 +82,54 @@ public class MessageViewHolder implements BodyViewHolder {
         }
 
         nameTextView.setText(fromEntity.name);
+        if (link.message instanceof ResMessages.TextMessage) {
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
-        ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+            SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+            messageStringBuilder.append(textMessage.content.body);
 
-        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-        messageStringBuilder.append(textMessage.content.body);
+            boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
+            if (hasLink) {
+                Spannable linkSpannable =
+                        Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
+                messageStringBuilder.setSpan(linkSpannable,
+                        0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                LinkifyUtil.setOnLinkClick(messageTextView);
+            }
 
-        boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
-        if (hasLink) {
-            Spannable linkSpannable =
-                    Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
-            messageStringBuilder.setSpan(linkSpannable,
-                    0, textMessage.content.body.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            LinkifyUtil.setOnLinkClick(messageTextView);
+            messageStringBuilder.append(" ");
+
+            Resources resources = context.getResources();
+
+            int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
+            int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
+
+            int startIndex = messageStringBuilder.length();
+            messageStringBuilder.append(
+                    DateTransformator.getTimeStringForSimple(link.message.createTime));
+            int endIndex = messageStringBuilder.length();
+
+            MessageSpannable spannable =
+                    new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+            messageStringBuilder.setSpan(spannable,
+                    startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+
+            if (unreadCount > 0) {
+                UnreadCountSpannable unreadCountSpannable =
+                        UnreadCountSpannable.createUnreadCountSpannable(
+                                context, String.valueOf(unreadCount));
+                messageStringBuilder.append("   ")
+                        .setSpan(unreadCountSpannable,
+                                messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
+
+            messageTextView.setText(messageStringBuilder);
+
         }
-
-        messageStringBuilder.append(" ");
-
-        Resources resources = context.getResources();
-
-        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
-
-        int startIndex = messageStringBuilder.length();
-        messageStringBuilder.append(
-                DateTransformator.getTimeStringForSimple(link.message.createTime));
-        int endIndex = messageStringBuilder.length();
-
-        MessageSpannable spannable =
-                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
-        messageStringBuilder.setSpan(spannable,
-                startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
-                link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
-
-        if (unreadCount > 0) {
-            UnreadCountSpannable unreadCountSpannable =
-                    UnreadCountSpannable.createUnreadCountSpannable(
-                            context, String.valueOf(unreadCount));
-            messageStringBuilder.append("   ")
-                    .setSpan(unreadCountSpannable,
-                            messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
-                            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-
-        messageTextView.setText(messageStringBuilder);
-
         profileImageView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->

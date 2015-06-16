@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
+import android.text.TextUtils;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
@@ -106,6 +108,7 @@ public class ResMessages {
         public int permission;
         public int feedbackId;
         public FileMessage feedback;
+        public String linkPreviewId;
 
         @Override
         public String toString() {
@@ -121,6 +124,7 @@ public class ResMessages {
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", feedback=" + feedback +
+                    ", linkPreviewId=" + linkPreviewId +
                     '}';
         }
     }
@@ -131,6 +135,26 @@ public class ResMessages {
         public TextContent content;
         @JsonProperty("linkPreview")
         public SocialSnippet socialSnippet;
+
+        @Override
+        public String toString() {
+            return "TextMessage{" +
+                    "id=" + id +
+                    ", teamId=" + teamId +
+                    ", writerId=" + writerId +
+                    ", createTime=" + createTime +
+                    ", updateTime=" + updateTime +
+                    ", contentType='" + contentType + '\'' +
+                    ", status='" + status + '\'' +
+                    ", shareEntities=" + shareEntities +
+                    ", permission=" + permission +
+                    ", feedbackId=" + feedbackId +
+                    ", feedback=" + feedback +
+                    ", linkPreviewId=" + linkPreviewId +
+                    ". content=" + content +
+                    ", socialSnippet=" + socialSnippet +
+                    '}';
+        }
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -150,6 +174,13 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextContent {
         public String body;
+
+        @Override
+        public String toString() {
+            return "TextContent{" +
+                    "body='" + body + '\'' +
+                    '}';
+        }
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -267,6 +298,21 @@ public class ResMessages {
         public String title;
         public String imageUrl;
         public String domain;
+
+        public boolean isEmpty() {
+            return TextUtils.isEmpty(linkUrl);
+        }
+
+        @Override
+        public String toString() {
+            return "SocialSnippet{" +
+                    ", linkUrl='" + linkUrl + '\'' +
+                    ", description='" + description + '\'' +
+                    ", title='" + title + '\'' +
+                    ", imageUrl='" + imageUrl + '\'' +
+                    ", domain='" + domain + '\'' +
+                    '}';
+        }
     }
 
 }

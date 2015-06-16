@@ -96,17 +96,16 @@
             android:layout_alignBottom="@+id/vg_snippet_summary"
             android:layout_alignTop="@+id/vg_snippet_summary"
             android:layout_below="@id/iv_snippet_thumb"
-            android:layout_marginTop="8dp"
             android:background="#E6E6E6"/>
 
         <LinearLayout
             android:id="@+id/vg_snippet_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/iv_snippet_thumb"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="8dp"
             android:layout_toRightOf="@id/v_snippet_line"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView

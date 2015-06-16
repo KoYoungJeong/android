@@ -8,7 +8,9 @@ import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -112,4 +114,20 @@ public class TeamsApiClientTest {
 
         assertThat(teamInfo, is(notNullValue()));
     }
+
+    @Test
+    public void testGetMessage() throws Exception {
+        int teamId = 11158788;
+        int messageId = 349521;
+
+        JandiV2HttpAuthentication authentication =
+                new JandiV2HttpAuthentication("bearer", "e2d09601-3af2-4457-aa67-391fe94a31c2");
+        teamsApiClient_.setAuthentication(authentication);
+        ResMessages.OriginalMessage message = teamsApiClient_.getMessage(teamId, messageId);
+
+        System.out.println(message.toString());
+
+        assertThat(message, is(notNullValue()));
+    }
+
 }
