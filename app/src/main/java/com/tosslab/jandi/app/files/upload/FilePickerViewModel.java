@@ -13,6 +13,7 @@ public interface FilePickerViewModel {
     void showFileUploadTypeDialog(FragmentManager fragmentManager);
 
     void selectFileSelector(int type, Fragment fragment);
+
     void selectFileSelector(int type, Activity activity);
 
     String getFilePath(Context context, int requestCode, Intent intent);
@@ -21,4 +22,6 @@ public interface FilePickerViewModel {
 
 
     void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, int entityId);
+
+    void moveInsertFileCommnetActivity(Context context, String realFilePath, int entityId);
 }

@@ -403,11 +403,7 @@ public class MessageListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
-        if (entityById != null ? entityById.isStarred : false) {
-            isStarred = true;
-        } else {
-            isStarred = false;
-        }
+        isStarred = entityById != null ? entityById.isStarred : false;
         MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
@@ -598,13 +594,18 @@ public class MessageListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
+                String imagePath = filePickerViewModel.getFilePath(getActivity(), requestCode,
+                        intent);
+                if (!TextUtils.isEmpty(imagePath)) {
+                    filePickerViewModel.moveInsertFileCommnetActivity(getActivity(), imagePath, entityId);
+                }
+                break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
                 String filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
@@ -722,10 +723,10 @@ public class MessageListFragment extends Fragment {
 
 
     public void onEvent(ConfirmFileUploadEvent event) {
+        LogUtil.d("List fragment onEvent");
         if (!isForeground) {
             return;
         }
-
         filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
     }
 

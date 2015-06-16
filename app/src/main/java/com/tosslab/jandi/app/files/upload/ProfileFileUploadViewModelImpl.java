@@ -172,4 +172,9 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     public void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, int entityId) {
 
     }
+
+    @Override
+    public void moveInsertFileCommnetActivity(Context context, String realFilePath, int entityId) {
+
+    }
 }
