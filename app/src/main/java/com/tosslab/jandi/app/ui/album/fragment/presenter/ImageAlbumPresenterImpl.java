@@ -70,6 +70,7 @@ public class ImageAlbumPresenterImpl implements ImageAlbumPresenter {
         }
 
         view.notifyItemRangeChanged(position, 1);
+        view.notifyItemOptionMenus();
 
     }
 

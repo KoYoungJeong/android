@@ -23,6 +23,8 @@ import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -75,8 +77,8 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public String getFilePath(Context context, int requestCode, Intent intent) {
-        return filePickerModel.getFilePath(context, requestCode, intent, file);
+    public List<String> getFilePath(Context context, int requestCode, Intent intent) {
+        return Arrays.asList(filePickerModel.getFilePath(context, requestCode, intent, file));
     }
 
     @Override
@@ -174,7 +176,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void moveInsertFileCommnetActivity(Context context, String realFilePath, int entityId) {
+    public void moveInsertFileCommnetActivity(Context context, List<String> realFilePath, int entityId) {
 
     }
 }

@@ -32,5 +32,7 @@ public interface ImageAlbumPresenter {
         void moveImagePicture(int bucketId);
 
         void showWarningToast(String message);
+
+        void notifyItemOptionMenus();
     }
 }

@@ -328,7 +328,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             return;
         }
 
-        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData);
+        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);
         if (!TextUtils.isEmpty(filePath)) {
 
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);

@@ -600,17 +600,16 @@ public class MessageListFragment extends Fragment {
 
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                String imagePath = filePickerViewModel.getFilePath(getActivity(), requestCode,
-                        intent);
-                if (!TextUtils.isEmpty(imagePath)) {
+                List<String> imagePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (imagePath != null && imagePath.size() > 0) {
                     filePickerViewModel.moveInsertFileCommnetActivity(getActivity(), imagePath, entityId);
                 }
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                String filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
-                if (!TextUtils.isEmpty(filePath)) {
-                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, entityId);
+                List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (filePath != null && filePath.size() > 0) {
+                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
                 }
                 break;
             default:

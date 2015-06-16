@@ -11,7 +11,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -456,9 +455,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_GALLERY, intent);
-        if (!TextUtils.isEmpty(filePath)) {
-            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_GALLERY, intent);
+        if (filePath != null && filePath.size() > 0) {
+            filePickerViewModel.moveInsertFileCommnetActivity(getActivity(), filePath, mSearchQuery.mSearchEntity);
         }
     }
 
@@ -467,9 +466,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_TAKE_PHOTO, intent);
-        if (!TextUtils.isEmpty(filePath)) {
-            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        if (filePath != null && filePath.size() > 0) {
+            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
         }
 
     }
@@ -481,9 +480,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             return;
         }
 
-        String filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_EXPLORER, intent);
-        if (!TextUtils.isEmpty(filePath)) {
-            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath, mSearchQuery.mSearchEntity);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_EXPLORER, intent);
+        if (filePath != null && filePath.size() > 0) {
+            filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
         }
     }
 

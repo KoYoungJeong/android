@@ -19,6 +19,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -30,6 +31,8 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -83,6 +86,7 @@ public class FilePickerModel {
         Intent intent = new Intent(fragment.getActivity().getApplicationContext(), FileExplorerActivity.class);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
     }
+
     public void openExplorerForActivityResult(Activity activity) {
         Intent intent = new Intent(activity, FileExplorerActivity.class);
         activity.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
@@ -114,9 +118,38 @@ public class FilePickerModel {
         activity.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
     }
 
-    public boolean isOverSize(String realFilePath) {
-        File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
+    public boolean isOverSize(String... realFilePath) {
+
+        File uploadFile;
+        int totalSize = 0;
+        for (String filePath : realFilePath) {
+            uploadFile = new File(filePath);
+            if (uploadFile.exists()) {
+                totalSize += uploadFile.length();
+                if (totalSize > MAX_FILE_SIZE) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
+    }
+
+    public boolean isOverSize(List<String> realFilePath) {
+
+        File uploadFile;
+        int totalSize = 0;
+        for (String filePath : realFilePath) {
+            uploadFile = new File(filePath);
+            if (uploadFile.exists()) {
+                totalSize += uploadFile.length();
+                if (totalSize > MAX_FILE_SIZE) {
+                    return true;
+                }
+            }
+
+        }
+        return false;
     }
 
     public boolean isPublicEntity(Context context, int entityId) {
@@ -194,4 +227,7 @@ public class FilePickerModel {
                 .get();
     }
 
+    public ArrayList<String> getFilePathsFromInnerGallery(Intent intent) {
+        return intent.getStringArrayListExtra(ImageAlbumActivity.EXTRA_DATAS);
+    }
 }

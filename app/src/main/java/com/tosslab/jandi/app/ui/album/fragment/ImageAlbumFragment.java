@@ -151,4 +151,9 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         ColoredToast.showWarning(getActivity(), message);
     }
 
+    @Override
+    public void notifyItemOptionMenus() {
+        getActivity().invalidateOptionsMenu();
+    }
+
 }

@@ -29,6 +29,7 @@ import org.androidannotations.annotations.UiThread;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -53,8 +54,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     public void selectFileSelector(int type, Fragment fragment) {
         switch (type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-//                filePickerModel.openAlbumForActivityResult(fragment);
-                ImageAlbumActivity_.intent(fragment).start();
+                ImageAlbumActivity_.intent(fragment).startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
@@ -80,7 +80,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                filePickerModel.openAlbumForActivityResult(activity);
+                ImageAlbumActivity_.intent(activity).startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 
@@ -104,8 +104,18 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public String getFilePath(Context context, int requestCode, Intent intent) {
-        return filePickerModel.getFilePath(context, requestCode, intent, filePath);
+    public List<String> getFilePath(Context context, int requestCode, Intent intent) {
+        ArrayList<String> filePaths = new ArrayList<>();
+        switch (requestCode) {
+            case JandiConstants.TYPE_UPLOAD_GALLERY:
+                filePaths.addAll(filePickerModel.getFilePathsFromInnerGallery(intent));
+                break;
+            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+                filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
+                break;
+        }
+        return filePaths;
     }
 
     @Override
@@ -206,16 +216,12 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
     @Override
     @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void moveInsertFileCommnetActivity(Context context, String realFilePath, int entityId) {// 업로드 파일 용량 체크
+    public void moveInsertFileCommnetActivity(Context context, List<String> realFilePath, int entityId) {// 업로드 파일 용량 체크
         if (filePickerModel.isOverSize(realFilePath)) {
             exceedMaxFileSizeError(context);
         } else {
-            ArrayList<String> realFilePathTest = new ArrayList<>();
-            realFilePathTest.add(realFilePath);
-            realFilePathTest.add("/storage/extSdCard/Music/꾸미기/개개비/Gallery.png");
-
             FileUploadActivity_.intent(context)
-                    .realFilePathList(realFilePathTest)
+                    .realFilePathList(new ArrayList<String>(realFilePath))
                     .selectedEntityIdToBeShared(entityId)
                     .start();
         }
