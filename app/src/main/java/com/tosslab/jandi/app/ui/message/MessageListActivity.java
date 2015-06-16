@@ -563,12 +563,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     public void getMessagesSucceed(ResMessages resMessages) {
-        if (messageState.isFirstMessage()) {
-            // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
-            isRefreshDisable = true;
-        } else {
-            isRefreshDisable = false;
-        }
+        // 현재 entity에서 더 이상 가져올 메시지가 없다면 pull to refresh를 끈다.
+        isRefreshDisable = messageState.isFirstMessage();
         mMessageItemConverter.insertMessageItem(resMessages);
         messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
         refreshListAdapter();

@@ -16,6 +16,7 @@ import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
+import com.tosslab.jandi.app.ui.file.upload.FileUploadActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -27,6 +28,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -198,6 +200,24 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
                 newFragment.show(fragmentManager, "dialog");
             }
+        }
+
+    }
+
+    @Override
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveInsertFileCommnetActivity(Context context, String realFilePath, int entityId) {// 업로드 파일 용량 체크
+        if (filePickerModel.isOverSize(realFilePath)) {
+            exceedMaxFileSizeError(context);
+        } else {
+            ArrayList<String> realFilePathTest = new ArrayList<>();
+            realFilePathTest.add(realFilePath);
+            realFilePathTest.add("/storage/extSdCard/Music/꾸미기/개개비/Gallery.png");
+
+            FileUploadActivity_.intent(context)
+                    .realFilePathList(realFilePathTest)
+                    .selectedEntityIdToBeShared(entityId)
+                    .start();
         }
 
     }
