@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -23,6 +24,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.TextChange;
 import org.json.JSONException;
 
@@ -38,6 +40,9 @@ public class TopicCreateActivity extends AppCompatActivity {
 
     @Bean
     TopicCreatePresenter topicCreatePresenter;
+
+    @OptionsMenuItem(R.id.action_add_topic)
+    MenuItem menuCreatTopic;
 
     @AfterViews
     void initViews() {
@@ -79,6 +84,12 @@ public class TopicCreateActivity extends AppCompatActivity {
         if (topicCreateModel.isOverMaxLength(text)) {
 
             textView.setText(text.subSequence(0, TopicCreateModel.TITLE_MAX_LENGTH));
+        }
+
+        if (TextUtils.isEmpty(textView.getText())) {
+            menuCreatTopic.setEnabled(false);
+        } else {
+            menuCreatTopic.setEnabled(true);
         }
     }
 
