@@ -6,9 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
@@ -27,10 +25,6 @@ public class ImageAlbumActivity extends AppCompatActivity {
 
     @ViewById(R.id.vg_image_album_content)
     ViewGroup contentLayout;
-
-    @ViewById(R.id.iv_image_album_preview)
-    ImageView ivPreview;
-
 
     @AfterViews
     void initViews() {
@@ -59,19 +53,8 @@ public class ImageAlbumActivity extends AppCompatActivity {
         }
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.jandI_gallery);
+        actionBar.setTitle(R.string.jandI_select_gallery);
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (ivPreview.getVisibility() != View.VISIBLE) {
-            super.onBackPressed();
-        } else {
-            ivPreview.setVisibility(View.GONE);
-            ivPreview.setAnimation(null);
-            ivPreview.setOnClickListener(null);
-        }
     }
 
     @OptionsItem(android.R.id.home)

@@ -1,9 +1,6 @@
 package com.tosslab.jandi.app.ui.album.fragment;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -12,13 +9,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.adapter.DefaultAlbumAdapter;
 import com.tosslab.jandi.app.ui.album.fragment.adapter.ImagePictureAdapter;
@@ -27,6 +19,7 @@ import com.tosslab.jandi.app.ui.album.fragment.presenter.ImageAlbumPresenterImpl
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImageAlbum;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.utils.AnimationModel;
+import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -34,6 +27,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
@@ -46,8 +40,6 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     public static final int BUCKET_ALBUM_LIST = -1;
     @ViewById(R.id.rv_image_album)
     RecyclerView recyclerView;
-
-    ImageView ivPreview;
 
     AnimationModel animationModel;
 
@@ -67,7 +59,6 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
     void initViews() {
         imageAlbumPresenter.onLoadImageAlbum(buckerId);
         imageAlbumPresenter.onSetupActionbar(buckerId);
-        ivPreview = (ImageView) getActivity().findViewById(R.id.iv_image_album_preview);
     }
 
     @Override
@@ -124,8 +115,8 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         adapter.setOnRecyclerItemImageClickListener((view, adapter1, position) -> {
             ImagePicture item = ((ImagePictureAdapter) adapter1).getItem(position);
 
-
-            imageAlbumPresenter.onPreviewImage(view, item.getImagePath());
+            imageAlbumPresenter.onSelectPicture(item, position);
+            imageAlbumPresenter.onSetupActionbar(buckerId);
 
         });
         recyclerView.setAdapter(adapter);
@@ -154,23 +145,10 @@ public class ImageAlbumFragment extends Fragment implements ImageAlbumPresenter.
         fragmentTransaction.commit();
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showPreview(View thumbView, String imagePath) {
-        Glide.with(ImageAlbumFragment.this)
-                .load(imagePath)
-                .asBitmap()
-                .placeholder(new ColorDrawable(Color.TRANSPARENT))
-                .fitCenter()
-                .into(new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-
-                        ivPreview.setVisibility(View.VISIBLE);
-                        animationModel.zoomImageFromThumb(getActivity().findViewById(android.R.id.content), thumbView, ivPreview, resource);
-                        ivPreview.setImageBitmap(resource);
-
-                    }
-                });
-
+    public void showWarningToast(String message) {
+        ColoredToast.showWarning(getActivity(), message);
     }
+
 }

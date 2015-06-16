@@ -12,6 +12,13 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:id="@+id/iv_item_image_picture_selected"
+        android:background="@color/jandi_black_89"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="match_parent" />
+
+    <ImageView
         android:id="@+id/iv_item_image_picture_selector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

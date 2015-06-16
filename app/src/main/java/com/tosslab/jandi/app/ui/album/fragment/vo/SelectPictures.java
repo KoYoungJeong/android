@@ -13,6 +13,7 @@ import rx.Observable;
  */
 public class SelectPictures {
 
+    public static final int MAX_PICKER_COUNT = 20;
     private static final ImagePicture NULL_OBJECT = new ImagePicture.ImagePictureBuilder().createImagePicture();
 
     private static SelectPictures selectPictures;
@@ -32,17 +33,23 @@ public class SelectPictures {
         return selectPictures;
     }
 
-    public void addPicture(ImagePicture path) {
-        pictures.add(path);
+    public boolean addPicture(ImagePicture path) {
+        if (pictures != null && pictures.size() < MAX_PICKER_COUNT) {
+            pictures.add(path);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public void removePicture(ImagePicture path) {
+    public boolean removePicture(ImagePicture path) {
         for (int idx = pictures.size() - 1; idx >= 0; idx--) {
             if (TextUtils.equals(pictures.get(idx).getImagePath(), path.getImagePath())) {
                 pictures.remove(idx);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public boolean contains(String path) {

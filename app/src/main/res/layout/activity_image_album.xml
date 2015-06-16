@@ -19,10 +19,4 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/toolbar_image_album" />
 
-    <ImageView
-        android:id="@+id/iv_image_album_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
 </RelativeLayout>

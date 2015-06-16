@@ -19,8 +19,6 @@ public interface ImageAlbumPresenter {
 
     void onSelectAlbum(ImageAlbum item);
 
-    void onPreviewImage(android.view.View view, String imagePath);
-
     interface View {
 
         void showDefaultAlbumList(List<ImageAlbum> defaultAlbumList);
@@ -33,6 +31,6 @@ public interface ImageAlbumPresenter {
 
         void moveImagePicture(int bucketId);
 
-        void showPreview(android.view.View thumbView, String imagePath);
+        void showWarningToast(String message);
     }
 }

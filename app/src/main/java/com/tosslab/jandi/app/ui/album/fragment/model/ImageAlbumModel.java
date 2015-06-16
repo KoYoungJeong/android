@@ -2,11 +2,8 @@ package com.tosslab.jandi.app.ui.album.fragment.model;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.view.View;
-import android.view.ViewParent;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment;
@@ -161,13 +158,9 @@ public class ImageAlbumModel {
 
     }
 
-    public void toggleImagePath(ImagePicture imagePicture) {
+    public boolean isSelectedPicture(ImagePicture imagePicture) {
         SelectPictures selectPictures = SelectPictures.getSelectPictures();
-        if (selectPictures.contains(imagePicture.getImagePath())) {
-            selectPictures.removePicture(imagePicture);
-        } else {
-            selectPictures.addPicture(imagePicture);
-        }
+        return selectPictures.contains(imagePicture.getImagePath());
     }
 
 
@@ -184,8 +177,12 @@ public class ImageAlbumModel {
 
         // which image properties are we querying
         String COUNT_COLUMN = "count";
-        String[] projection = {String.format("COUNT(%s) as %s", MediaStore.Images.ImageColumns.DATA, COUNT_COLUMN)};
+        String[] projection = {
+                String.format("COUNT(%s) as %s", MediaStore.Images.ImageColumns.DATA, COUNT_COLUMN),
+                MediaStore.Images.ImageColumns.DATA
+        };
 
+        String orderBy = String.format("MAX(%s) DESC", MediaStore.Images.ImageColumns.DATE_TAKEN);
         // Get the base URI for the People table in the Contacts content provider.
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
@@ -194,7 +191,7 @@ public class ImageAlbumModel {
                 projection, // Which columns to return
                 null,       // Which rows to return (all rows)
                 null,       // Selection arguments (none)
-                null        // Ordering
+                orderBy        // Ordering
         );
 
         if (cursor == null || cursor.getCount() <= 0) {
@@ -205,9 +202,11 @@ public class ImageAlbumModel {
         }
 
         int idxCount = cursor.getColumnIndex(COUNT_COLUMN);
+        int idxData = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
 
         cursor.moveToFirst();
         albumCount = cursor.getInt(idxCount);
+        String firstImagePath = cursor.getString(idxData);
 
         cursor.close();
 
@@ -215,6 +214,7 @@ public class ImageAlbumModel {
                 .bucketId(ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM)
                 .buckerName(context.getString(R.string.jandi_view_all))
                 .count(albumCount)
+                .imagePath(firstImagePath)
                 .createImageAlbum();
     }
 
@@ -272,18 +272,11 @@ public class ImageAlbumModel {
 
     }
 
-    public int getSelectedBucketImages(int buckerId) {
-        return SelectPictures.getSelectPictures().getCountOfBucket(buckerId);
+    public boolean removeSelectedPicture(ImagePicture item) {
+        return SelectPictures.getSelectPictures().removePicture(item);
     }
 
-    public Rect getAbsoluteOffset(View childView, Rect rect) {
-        ViewParent parent = childView.getParent();
-        if (parent != null && parent instanceof View) {
-            View parentView = (View) parent;
-            rect.set(rect.left + (int) childView.getX(), rect.top + (int) childView.getY(), rect.right + (int) childView.getX(), rect.bottom + (int) childView.getY());
-            return getAbsoluteOffset(parentView, rect);
-        } else {
-            return rect;
-        }
+    public boolean addSelectedPicture(ImagePicture item) {
+        return SelectPictures.getSelectPictures().addPicture(item);
     }
 }

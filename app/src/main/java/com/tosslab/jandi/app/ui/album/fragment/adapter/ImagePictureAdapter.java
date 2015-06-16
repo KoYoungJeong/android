@@ -38,6 +38,7 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
         PictureViewHolder viewHolder = new PictureViewHolder(view);
         viewHolder.ivPicture = (ImageView) view.findViewById(R.id.iv_item_image_picture_thumb);
         viewHolder.ivSelector = (ImageView) view.findViewById(R.id.iv_item_image_picture_selector);
+        viewHolder.ivSelected = (ImageView) view.findViewById(R.id.iv_item_image_picture_selected);
         return viewHolder;
     }
 
@@ -50,8 +51,10 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
 
         if (SelectPictures.getSelectPictures().contains(item.getImagePath())) {
             viewHolder.ivSelector.setSelected(true);
+            viewHolder.ivSelected.setVisibility(View.VISIBLE);
         } else {
             viewHolder.ivSelector.setSelected(false);
+            viewHolder.ivSelected.setVisibility(View.GONE);
         }
 
         Glide.with(context)
@@ -98,6 +101,8 @@ public class ImagePictureAdapter extends RecyclerView.Adapter {
     private static class PictureViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPicture;
         ImageView ivSelector;
+        ImageView ivSelected;
+
 
         public PictureViewHolder(View itemView) {
             super(itemView);
