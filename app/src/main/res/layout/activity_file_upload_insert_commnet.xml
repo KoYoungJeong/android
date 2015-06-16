@@ -1,20 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_file_upload_insert_commnet_bar"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"
-        android:visibility="visible"/>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/vp_preview_file_comment"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/vp_file_upload_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v4.view.ViewPager>
+        android:layout_height="match_parent" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_file_upload_preview_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:padding="5dp"
+        android:src="@drawable/jandi_image_left" />
+
+    <ImageView
+        android:id="@+id/iv_file_upload_preview_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="5dp"
+        android:src="@drawable/jandi_image_right" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/jandi_bg_upload"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/jandi_topic_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/jandi_text_size_large"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/tv_file_upload_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="@color/transparent"
+                android:enabled="false"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="asdasdadasd"
+                android:textColor="@color/jandi_text_light"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_entities_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:weightSum="5">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="12dp"
+                android:text="@string/jandi_action_share"
+                android:textColor="@color/black"
+                android:textSize="@dimen/jandi_text_size_large"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_file_upload_entity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center_vertical"
+                android:text="@string/jandi_topic_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/jandi_text_size_large"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_entities_divider" />
+
+        <EditText
+            android:id="@+id/et_file_upload_comment"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:background="@color/transparent"
+            android:gravity="top|left"
+            android:hint="@string/file_upload_comment"
+            android:inputType="textMultiLine"
+            android:padding="12dp" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/actionbar_file_upload"
+        style="@style/Jandi.Default.ActionBar"
+        android:layout_width="match_parent"
+        android:visibility="visible" />
+
+</RelativeLayout>

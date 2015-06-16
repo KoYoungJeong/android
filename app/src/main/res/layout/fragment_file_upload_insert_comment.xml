@@ -1,89 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
+
+    <ImageView
+        android:id="@+id/iv_file_upload_preview"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
-
-        <ImageView
-            android:id="@+id/iv_file_preview"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true"
-            />
-
-        <TextView
-            android:id="@+id/tv_file_preview_left_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:gravity="center"
-            android:text="   left   "/>
-
-        <TextView
-            android:id="@+id/tv_file_preview_right_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:text="   right   "/>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="file name :"/>
-
-        <TextView
-            android:id="@+id/tv_file_preview_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="share : "/>
-
-        <Spinner
-            android:id="@+id/spinner_cdps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/edittext_vertical_margin"/>
-    </LinearLayout>
-
-
-    <EditText
-        android:id="@+id/et_comment_with_file_upload"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/edittext_vertical_margin"
-        android:gravity="top"
-        android:hint="@string/file_upload_comment"
-        android:inputType="textMultiLine"
-        android:maxLines="2"/>
-
-    <Button
-        android:id="@+id/btn_file_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="send"/>
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter" />
 
 </LinearLayout>
