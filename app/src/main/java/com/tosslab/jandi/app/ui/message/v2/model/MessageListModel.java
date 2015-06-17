@@ -132,6 +132,14 @@ public class MessageListModel {
         return message instanceof ResMessages.CommentMessage;
     }
 
+    public boolean isStickerType(ResMessages.OriginalMessage message) {
+        return message instanceof ResMessages.StickerMessage;
+    }
+
+    public boolean isStickerCommentType(ResMessages.OriginalMessage message) {
+        return message instanceof ResMessages.CommentStickerMessage;
+    }
+
     public boolean isPublicTopic(int entityType) {
         return (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) ? true : false;
     }

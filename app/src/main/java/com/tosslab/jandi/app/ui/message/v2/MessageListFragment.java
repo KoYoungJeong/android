@@ -457,11 +457,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public boolean onOptionsItemSelected(MenuItem item) {
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
-        if (entityById != null ? entityById.isStarred : false) {
-            isStarred = true;
-        } else {
-            isStarred = false;
-        }
+        isStarred = entityById != null ? entityById.isStarred : false;
         MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
 
         if (menuCommand != null) {
@@ -837,7 +833,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     void onMessageItemClick(ResMessages.Link link) {
-
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -849,6 +844,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (messageListModel.isFileType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId);
         } else if (messageListModel.isCommentType(link.message)) {
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
+        } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
         }
     }

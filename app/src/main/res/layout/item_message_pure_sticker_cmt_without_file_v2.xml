@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
     android:descendantFocusability="blocksDescendants"
     android:foreground="?android:attr/selectableItemBackground"
     android:paddingBottom="12dp"
-    android:paddingLeft="58dp">
+    android:paddingLeft="58dp"
+    android:paddingRight="@dimen/jandi_messages_padding_right">
 
     <ImageView
         android:id="@+id/iv_pure_sticker_comment_content"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:focusable="false" />
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/tv_pure_sticker_comment_create_date"
@@ -23,7 +25,7 @@
         android:layout_toRightOf="@+id/iv_pure_sticker_comment_content"
         android:text="AM ??:??"
         android:textColor="@color/jandi_messages_date"
-        android:textSize="@dimen/jandi_messages_date" />
+        android:textSize="@dimen/jandi_messages_date"/>
 
     <TextView
         android:id="@+id/tv_pure_sticker_comment_unread"
@@ -36,7 +38,14 @@
         android:text="10"
         android:textColor="@color/white"
         android:textSize="@dimen/jandi_text_size_smaller"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
+    <ImageView
+        android:id="@+id/iv_img_file_arrow"
+        android:layout_width="@dimen/jandi_messages_arrow_right_width"
+        android:layout_height="@dimen/jandi_messages_arrow_right_height"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/jandi_arrow_right"/>
 
 </RelativeLayout>
