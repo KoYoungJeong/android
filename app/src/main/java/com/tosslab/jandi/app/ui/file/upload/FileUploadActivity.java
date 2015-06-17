@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
 
@@ -75,19 +76,20 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
     private PublishSubject<Object> scrollButtonPublishSubject;
+    private Subscription subscribe;
 
 
     @AfterViews
     void initView() {
+        setupActionbar();
 
         fileUploadPresenter.setView(this);
         fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
         fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared);
 
-        setupActionbar();
 
         scrollButtonPublishSubject = PublishSubject.create();
-        scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
+        subscribe = scrollButtonPublishSubject.throttleWithTimeout(3000, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(o -> {
                     for (ImageView scrollButton : scrollButtons) {
@@ -109,6 +111,13 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        if (subscribe != null && !subscribe.isUnsubscribed()) {
+            subscribe.unsubscribe();
+        }
+        super.onDestroy();
+    }
 
     @OptionsItem(android.R.id.home)
     void onGoBackOptionSelect() {
@@ -127,10 +136,16 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.title_file_upload);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(
                     new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        }
+    }
+
+    private void setupActionbarTitle(int current, int max) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(String.format("%s (%d/%d)", getString(R.string.title_file_upload), current, max));
         }
     }
 
@@ -147,6 +162,8 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
                 fileUploadPresenter.onPagerSelect(position);
 
                 setVisibleScrollButton(position);
+                setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
+
             }
 
             @Override
@@ -162,6 +179,7 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
 
 
         setVisibleScrollButton(0);
+        setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
     }
 
     private void setVisibleScrollButton(int position) {

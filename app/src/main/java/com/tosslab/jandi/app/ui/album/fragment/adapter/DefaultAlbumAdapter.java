@@ -1,8 +1,6 @@
 package com.tosslab.jandi.app.ui.album.fragment.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +59,6 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
         if (item.getBucketId() != ImageAlbumFragment.BUCKET_ALL_IMAGE_ALBUM) {
             countOfBucket = SelectPictures.getSelectPictures().getCountOfBucket(item.getBucketId());
         } else {
-//            countOfBucket = SelectPictures.getSelectPictures().getPictures().size();
             countOfBucket = 0;
         }
         viewHolder.tvSelectCount.setText(String.valueOf(countOfBucket));
@@ -82,7 +79,8 @@ public class DefaultAlbumAdapter extends RecyclerView.Adapter {
 
         Glide.with(context)
                 .load(imagePath)
-                .placeholder(new ColorDrawable(Color.TRANSPARENT))
+                .placeholder(R.drawable.jandi_icon_list_thumbnail)
+                .error(R.drawable.jandi_icon_list_thumbnail)
                 .centerCrop()
                 .into(viewHolder.ivSample);
 
