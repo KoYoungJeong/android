@@ -7,6 +7,7 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_file_upload_preview"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -29,6 +30,7 @@
         android:src="@drawable/jandi_image_right" />
 
     <LinearLayout
+        android:id="@+id/vg_file_upload_preview_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

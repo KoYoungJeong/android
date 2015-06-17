@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.file.upload;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -10,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -19,6 +21,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.ui.file.upload.adapter.FileUploadPagerAdapter;
@@ -41,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.greenrobot.event.EventBus;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
@@ -50,7 +54,7 @@ import rx.subjects.PublishSubject;
  */
 @EActivity(R.layout.activity_file_upload_insert_commnet)
 @OptionsMenu(R.menu.file_insert_comment_menu)
-public class FileUploadActivity extends AppCompatActivity implements FileUploadPresenter.View {
+public class FileUploadPreviewActivity extends AppCompatActivity implements FileUploadPresenter.View {
 
     @Extra
     int selectedEntityIdToBeShared;    // Share 할 chat-room
@@ -72,6 +76,9 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
 
     @ViewById(R.id.et_file_upload_comment)
     EditText etComment;
+
+    @ViewById(R.id.vg_file_upload_preview_content)
+    ViewGroup vgFileInfo;
 
     @ViewsById({R.id.iv_file_upload_preview_previous, R.id.iv_file_upload_preview_next})
     List<ImageView> scrollButtons;
@@ -109,6 +116,39 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
                     }
                 }, throwable -> {
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
+        ActionBar actionBar = getSupportActionBar();
+        if (vgFileInfo.getVisibility() != View.VISIBLE) {
+            // 보이도록 하기, 배경 흰색
+            vgFileInfo.setVisibility(View.VISIBLE);
+            vpFilePreview.setBackgroundColor(Color.WHITE);
+            if (actionBar != null) {
+                actionBar.show();
+            }
+        } else {
+            // 안보이게 하기, 배경 검정
+            vgFileInfo.setVisibility(View.GONE);
+            vpFilePreview.setBackgroundColor(Color.BLACK);
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+        }
+
+
     }
 
     @Override
@@ -177,7 +217,6 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
             }
         });
 
-
         setVisibleScrollButton(0);
         setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
     }
@@ -234,6 +273,7 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
     @Override
     public void setComment(String comment) {
         etComment.setText(comment);
+        etComment.setSelection(etComment.getText().length());
     }
 
     @Override
@@ -251,7 +291,7 @@ public class FileUploadActivity extends AppCompatActivity implements FileUploadP
         ListView lv = (ListView) view.findViewById(R.id.lv_cdp_select);
         final EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(getApplicationContext(), entityList);
 
-        Dialog dialog = new AlertDialog.Builder(FileUploadActivity.this)
+        Dialog dialog = new AlertDialog.Builder(FileUploadPreviewActivity.this)
                 .setTitle(R.string.jandi_file_search_user)
                 .setView(view)
                 .create();

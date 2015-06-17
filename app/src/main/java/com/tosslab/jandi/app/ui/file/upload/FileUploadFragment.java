@@ -5,11 +5,15 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ViewById;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Bill MinWook Heo on 15. 6. 15..
@@ -30,6 +34,11 @@ public class FileUploadFragment extends Fragment {
                 .load(realFilePath)
                 .fitCenter()
                 .into(ivFileImage);
+
     }
 
+    @Click(R.id.iv_file_upload_preview)
+    void onImageClick() {
+        EventBus.getDefault().post(new FileUploadPreviewImageClickEvent());
+    }
 }

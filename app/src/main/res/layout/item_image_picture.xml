@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/iv_item_image_picture_thumb"
         android:layout_alignRight="@+id/iv_item_image_picture_thumb"
-        android:padding="10dp"
+        android:padding="5dp"
         android:scaleType="centerInside"
         android:src="@drawable/btn_check_selector"
         android:visibility="visible" />
