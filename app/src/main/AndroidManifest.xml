@@ -130,7 +130,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui.file.upload.FileUploadPreviewActivity_"
+            android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"/>
 

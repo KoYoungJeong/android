@@ -1,10 +1,12 @@
-package com.tosslab.jandi.app.ui.file.upload.presenter;
+package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import android.content.Context;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.ui.file.upload.model.FileUploadModel;
-import com.tosslab.jandi.app.ui.file.upload.to.FileUploadInfo;
+import com.tosslab.jandi.app.services.upload.FileUploadManager;
+import com.tosslab.jandi.app.services.upload.to.FileUploadDTO;
+import com.tosslab.jandi.app.ui.file.upload.preview.model.FileUploadModel;
+import com.tosslab.jandi.app.ui.file.upload.preview.to.FileUploadVO;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -24,7 +26,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     FileUploadModel fileUploadModel;
     private View view;
 
-    private List<FileUploadInfo> fileUploadInfos;
+    private List<FileUploadVO> fileUploadVOs;
 
     @Override
     public void setView(View view) {
@@ -41,7 +43,7 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     @Override
     public void onEntitySelect(int currentItem) {
 
-        int entity = fileUploadInfos.get(currentItem).getEntity();
+        int entity = fileUploadVOs.get(currentItem).getEntity();
 
         List<FormattedEntity> entityList = fileUploadModel.getEntityInfoWithoutMe(context);
 
@@ -51,25 +53,36 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
     @Override
     public void onCommentTextChange(String text, int currentItemPosition) {
-        fileUploadInfos.get(currentItemPosition).setComment(text);
+        fileUploadVOs.get(currentItemPosition).setComment(text);
     }
 
     @Override
     public void onEntityUpdate(FormattedEntity item) {
         int id = item.getId();
-        for (FileUploadInfo fileUploadInfo : fileUploadInfos) {
-            fileUploadInfo.setEntity(id);
+        for (FileUploadVO fileUploadVO : fileUploadVOs) {
+            fileUploadVO.setEntity(id);
         }
 
         view.setEntityInfo(fileUploadModel.getEntityString(context, id));
     }
 
     @Override
+    public void onUploadStartFile() {
+        FileUploadManager instance = FileUploadManager.getInstance(context);
+
+        for (FileUploadVO fileUploadVO : fileUploadVOs) {
+            instance.add(new FileUploadDTO(fileUploadVO));
+        }
+
+        view.exitOnOK();
+    }
+
+    @Override
     public void onInitViewPager(int selectedEntityIdToBeShared, ArrayList<String> realFilePathList) {
-        fileUploadInfos = new ArrayList<FileUploadInfo>();
+        fileUploadVOs = new ArrayList<FileUploadVO>();
 
         for (String filePath : realFilePathList) {
-            fileUploadInfos.add(new FileUploadInfo.Builder()
+            fileUploadVOs.add(new FileUploadVO.Builder()
                     .entity(selectedEntityIdToBeShared)
                     .filePath(filePath)
                     .fileName(fileUploadModel.getFileName(filePath))
@@ -81,10 +94,10 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
 
     @Override
     public void onPagerSelect(int position) {
-        FileUploadInfo fileUploadInfo = fileUploadInfos.get(position);
+        FileUploadVO fileUploadVO = fileUploadVOs.get(position);
 
-        view.setFileName(fileUploadInfo.getFileName());
-        view.setComment(fileUploadInfo.getComment());
-        view.setEntityInfo(fileUploadModel.getEntityString(context, fileUploadInfo.getEntity()));
+        view.setFileName(fileUploadVO.getFileName());
+        view.setComment(fileUploadVO.getComment());
+        view.setEntityInfo(fileUploadModel.getEntityString(context, fileUploadVO.getEntity()));
     }
 }

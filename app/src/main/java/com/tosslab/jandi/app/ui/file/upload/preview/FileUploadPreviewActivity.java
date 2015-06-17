@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.file.upload;
+package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -24,9 +24,9 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.FileUploadPreviewImageClickEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
-import com.tosslab.jandi.app.ui.file.upload.adapter.FileUploadPagerAdapter;
-import com.tosslab.jandi.app.ui.file.upload.presenter.FileUploadPresenter;
-import com.tosslab.jandi.app.ui.file.upload.presenter.FileUploadPresenterImpl;
+import com.tosslab.jandi.app.ui.file.upload.preview.adapter.FileUploadPagerAdapter;
+import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenter;
+import com.tosslab.jandi.app.ui.file.upload.preview.presenter.FileUploadPresenterImpl;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -56,6 +56,7 @@ import rx.subjects.PublishSubject;
 @OptionsMenu(R.menu.file_insert_comment_menu)
 public class FileUploadPreviewActivity extends AppCompatActivity implements FileUploadPresenter.View {
 
+    public static final int REQUEST_CODE = 17863;
     @Extra
     int selectedEntityIdToBeShared;    // Share 할 chat-room
 
@@ -166,7 +167,7 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
     @OptionsItem(R.id.action_confirm)
     void onSendFile() {
-
+        fileUploadPresenter.onUploadStartFile();
     }
 
     private void setupActionbar() {
@@ -308,6 +309,12 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
             fileUploadPresenter.onEntityUpdate(item);
         });
         lv.setAdapter(adapter);
+    }
+
+    @Override
+    public void exitOnOK() {
+        setResult(RESULT_OK);
+        finish();
     }
 
 }

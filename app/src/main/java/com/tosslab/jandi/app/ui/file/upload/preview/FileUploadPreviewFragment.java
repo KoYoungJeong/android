@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.file.upload;
+package com.tosslab.jandi.app.ui.file.upload.preview;
 
 import android.support.v4.app.Fragment;
 import android.widget.ImageView;
@@ -19,7 +19,7 @@ import de.greenrobot.event.EventBus;
  * Created by Bill MinWook Heo on 15. 6. 15..
  */
 @EFragment(R.layout.fragment_file_upload_insert_comment)
-public class FileUploadFragment extends Fragment {
+public class FileUploadPreviewFragment extends Fragment {
 
     @FragmentArg
     String realFilePath;

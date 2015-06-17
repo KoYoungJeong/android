@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="42.5dp"
+    android:layout_height="40dp">
+
+    <ImageView
+        android:id="@+id/iv_item_message_file_upload_state_photo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true" />
+
+    <ImageView
+        android:id="@+id/iv_item_message_file_upload_state_state"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:background="@color/jandi_black_b2"
+        android:scaleType="centerInside" />
+
+</RelativeLayout>

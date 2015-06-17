@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.file.upload.presenter;
+package com.tosslab.jandi.app.ui.file.upload.preview.presenter;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 
@@ -21,6 +21,8 @@ public interface FileUploadPresenter {
 
     void onEntityUpdate(FormattedEntity item);
 
+    void onUploadStartFile();
+
     interface View {
 
         void initViewPager(List<String> realFilePathList);
@@ -32,5 +34,8 @@ public interface FileUploadPresenter {
         void setEntityInfo(String entity);
 
         void showEntitySelectDialog(List<FormattedEntity> entityList);
+
+        void exitOnOK();
+
     }
 }

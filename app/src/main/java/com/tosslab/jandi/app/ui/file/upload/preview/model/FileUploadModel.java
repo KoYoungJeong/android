@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.file.upload.model;
+package com.tosslab.jandi.app.ui.file.upload.preview.model;
 
 import android.content.Context;
 import android.text.TextUtils;

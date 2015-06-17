@@ -59,6 +59,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -77,6 +78,7 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -134,6 +136,9 @@ public class MessageListFragment extends Fragment {
 
     @Bean(value = EntityFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
+
+    @Bean
+    FileUploadStateViewModel fileUploadStateViewModel;
 
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
@@ -239,6 +244,7 @@ public class MessageListFragment extends Fragment {
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListModel.updateMarkerInfo(teamId, roomId);
+        fileUploadStateViewModel.setEntityId(entityId);
 
     }
 
@@ -441,15 +447,18 @@ public class MessageListFragment extends Fragment {
         super.onResume();
         isForeground = true;
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
-
+        fileUploadStateViewModel.registerEventBus();
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
+        fileUploadStateViewModel.initDownloadState();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
+
+        fileUploadStateViewModel.unregisterEventBus();
+
         isForeground = false;
 
         if (!isFromSearch) {
@@ -459,6 +468,8 @@ public class MessageListFragment extends Fragment {
         messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
         PushMonitor.getInstance().unregister(entityId);
+
+        super.onPause();
     }
 
     @Background
@@ -611,6 +622,8 @@ public class MessageListFragment extends Fragment {
                 if (filePath != null && filePath.size() > 0) {
                     filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
                 }
+                break;
+            case FileUploadPreviewActivity.REQUEST_CODE:
                 break;
             default:
                 break;

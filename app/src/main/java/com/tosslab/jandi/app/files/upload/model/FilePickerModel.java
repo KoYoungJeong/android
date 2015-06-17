@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 
 import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
@@ -166,7 +167,7 @@ public class FilePickerModel {
                 .with(context)
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
-                .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
+                .uploadProgress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", title)
@@ -183,6 +184,34 @@ public class FilePickerModel {
                 .asJsonObject();
 
         progressDialog.setOnCancelListener(dialog -> requestFuture.cancel());
+
+        return requestFuture.get();
+
+    }
+
+    public JsonObject uploadFile(Context context, String realFilePath, boolean isPublicTopic, String title, int entityId, String comment, ProgressCallback progressCallback) throws ExecutionException, InterruptedException {
+        File uploadFile = new File(realFilePath);
+        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String permissionCode = (isPublicTopic) ? "744" : "740";
+        Builders.Any.M ionBuilder
+                = Ion
+                .with(context)
+                .load(requestURL)
+                .uploadProgress(progressCallback)
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setMultipartParameter("title", title)
+                .setMultipartParameter("share", String.valueOf(entityId))
+                .setMultipartParameter("permission", permissionCode)
+                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+
+        // Comment가 함께 등록될 경우 추가
+        if (comment != null && !comment.isEmpty()) {
+            ionBuilder.setMultipartParameter("comment", comment);
+        }
+
+        ResponseFuture<JsonObject> requestFuture = ionBuilder.setMultipartFile("userFile", URLConnection.guessContentTypeFromName(uploadFile.getName()), uploadFile)
+                .asJsonObject();
 
         return requestFuture.get();
 

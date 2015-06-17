@@ -1,15 +1,15 @@
-package com.tosslab.jandi.app.ui.file.upload.to;
+package com.tosslab.jandi.app.ui.file.upload.preview.to;
 
 /**
  * Created by Steve SeongUg Jung on 15. 6. 16..
  */
-public class FileUploadInfo {
+public class FileUploadVO {
     private final String filePath;
     private final String fileName;
     private int entity;
     private String comment;
 
-    public FileUploadInfo(String filePath, String fileName, int entity, String comment) {
+    public FileUploadVO(String filePath, String fileName, int entity, String comment) {
         this.filePath = filePath;
         this.fileName = fileName;
         this.entity = entity;
@@ -28,7 +28,7 @@ public class FileUploadInfo {
         return entity;
     }
 
-    public FileUploadInfo setEntity(int entity) {
+    public FileUploadVO setEntity(int entity) {
         this.entity = entity;
         return this;
     }
@@ -37,7 +37,7 @@ public class FileUploadInfo {
         return comment;
     }
 
-    public FileUploadInfo setComment(String comment) {
+    public FileUploadVO setComment(String comment) {
         this.comment = comment;
         return this;
     }
@@ -68,8 +68,8 @@ public class FileUploadInfo {
             return this;
         }
 
-        public FileUploadInfo createFileUploadInfo() {
-            return new FileUploadInfo(filePath, fileName, entity, comment);
+        public FileUploadVO createFileUploadInfo() {
+            return new FileUploadVO(filePath, fileName, entity, comment);
         }
     }
 }

@@ -16,7 +16,8 @@ import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity_;
-import com.tosslab.jandi.app.ui.file.upload.FileUploadPreviewActivity_;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -223,7 +224,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
             FileUploadPreviewActivity_.intent(context)
                     .realFilePathList(new ArrayList<String>(realFilePath))
                     .selectedEntityIdToBeShared(entityId)
-                    .start();
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
         }
 
     }

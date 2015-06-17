@@ -1,10 +1,10 @@
-package com.tosslab.jandi.app.ui.file.upload.adapter;
+package com.tosslab.jandi.app.ui.file.upload.preview.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.tosslab.jandi.app.ui.file.upload.FileUploadFragment_;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewFragment_;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class FileUploadPagerAdapter extends FragmentStatePagerAdapter {
         if (fragmentMap.get(position) != null) {
             return fragmentMap.get(position);
         } else {
-            Fragment fragment = FileUploadFragment_
+            Fragment fragment = FileUploadPreviewFragment_
                     .builder()
                     .realFilePath(realFilePath.get(position))
                     .build();
