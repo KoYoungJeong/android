@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -42,6 +43,9 @@ public class FileDetailModel {
 
     @RootContext
     Context context;
+
+    @Bean
+    MessageManipulator messageManipulator;
 
     @Bean
     JandiEntityClient jandiEntityClient;
@@ -94,6 +98,11 @@ public class FileDetailModel {
 
     public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {
         jandiEntityClient.deleteMessageComment(messageId, feedbackId);
+
+    }
+
+    public void deleteStickerComment(int messageId, int messageType) throws JandiNetworkException {
+        messageManipulator.deleteSticker(messageId, messageType);
 
     }
 

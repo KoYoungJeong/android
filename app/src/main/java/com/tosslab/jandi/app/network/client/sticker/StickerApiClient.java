@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Delete;
 import org.androidannotations.annotations.rest.Post;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
@@ -42,4 +43,11 @@ public interface StickerApiClient {
     @RequiresAuthentication
     ResCommon sendStickerComment(ReqSendSticker reqSendSticker);
 
+    @Delete("/stickers/comments/{commentId}?teamId={teamId}")
+    @RequiresAuthentication
+    ResCommon deleteStickerComment(int commentId, int teamId);
+
+    @Delete("/stickers/messages/{messageId}?teamId={teamId}")
+    @RequiresAuthentication
+    ResCommon deleteSticker(int messageId, int teamId);
 }

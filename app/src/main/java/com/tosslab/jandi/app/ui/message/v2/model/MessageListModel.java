@@ -124,6 +124,10 @@ public class MessageListModel {
         messageManipulator.deleteMessage(messageId);
     }
 
+    public void deleteSticker(int messageId, int messageType) throws JandiNetworkException {
+        messageManipulator.deleteSticker(messageId, messageType);
+    }
+
     public boolean isFileType(ResMessages.OriginalMessage message) {
         return message instanceof ResMessages.FileMessage;
     }

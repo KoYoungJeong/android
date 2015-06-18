@@ -883,6 +883,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
+        } else if (messageListModel.isStickerType(link.message)) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
+            boolean isMyMessage = messageListModel.isMyMessage(stickerMessage.writerId) && !isFromSearch;
+
+            if (!isMyMessage) {
+                return;
+            }
+            messageListPresenter.showStickerMessageMenuDialog(isMyMessage, stickerMessage);
         }
     }
 
@@ -1021,6 +1029,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
                 LogUtil.d("deleteMessageInBackground : succeed");
+            } else if (messageType == MessageItem.TYPE_STICKER
+                    || messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                messageListModel.deleteSticker(messageId, messageType);
+                LogUtil.d("deleteStickerInBackground : succeed");
             }
         } catch (JandiNetworkException e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
