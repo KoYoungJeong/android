@@ -1,30 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_photo_view"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_dark">
 
     <uk.co.senab.photoview.PhotoView
-        android:id="@+id/photo_photo_view"
+        android:id="@+id/pv_photoview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="true" />
+        android:layout_alignWithParentIfMissing="true"/>
 
-    <ProgressBar
-        android:id="@+id/progress_photo_view"
-        android:layout_width="@dimen/jandi_progress_size"
-        android:layout_height="@dimen/jandi_progress_size"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:indeterminateDrawable="@drawable/progress_wheel_animation" />
+    <LinearLayout
+        android:id="@+id/vg_photoview_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:layout_gravity="center">
+
+            <com.tosslab.jandi.app.ui.photo.widget.CircleProgress
+                android:id="@+id/progress_photoview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/tv_photoview_percentage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="0%"
+                android:textColor="@color/white"
+                android:textSize="21dp"/>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Downloading..."
+            android:textColor="@color/white"
+            android:textSize="21dp"/>
+
+    </LinearLayout>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/layout_search_bar"
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent"
-        android:visibility="visible" />
-
+        android:visibility="visible"/>
 
 </RelativeLayout>
 
