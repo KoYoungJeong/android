@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.utils.regex.Regex;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,17 +33,32 @@ public class LinkifyUtil {
 
     public static final boolean addLinks(Context context, Spannable text) {
 
-        Matcher m = Patterns.WEB_URL.matcher(text);
+        Matcher matcher = Regex.VALID_URL.matcher(text);
 
         boolean hasLink = false;
 
         int color = context.getResources().getColor(R.color.jandi_accent_color);
-        while (m.find()) {
-            int start = m.start();
-            int end = m.end();
+        while (matcher.find()) {
+
+            if (matcher.group(Regex.VALID_URL_GROUP_PROTOCOL) == null) {
+                // skip if protocol is not present and 'extractURLWithoutProtocol' is false
+                // or URL is preceded by invalid character.
+                if (Regex.INVALID_URL_WITHOUT_PROTOCOL_MATCH_BEGIN
+                        .matcher(matcher.group(Regex.VALID_URL_GROUP_BEFORE)).matches()) {
+                    continue;
+                }
+            }
+            String url = matcher.group(Regex.VALID_URL_GROUP_URL);
+            int start = matcher.start(Regex.VALID_URL_GROUP_URL);
+            int end = matcher.end(Regex.VALID_URL_GROUP_URL);
+            Matcher tco_matcher = Regex.VALID_TCO_URL.matcher(url);
+            if (tco_matcher.find()) {
+                // In the case of t.co URLs, don't allow additional path characters.
+                url = tco_matcher.group();
+                end = start + url.length();
+            }
 
             hasLink = true;
-            String url = m.group(0);
 
             JandiURLSpan span = new JandiURLSpan(context, url, color);
 
