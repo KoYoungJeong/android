@@ -1,5 +1,7 @@
-package com.tosslab.jandi.app.ui.signup;
+package com.tosslab.jandi.app.ui.signup.account;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +11,10 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.ui.signup.model.SignUpModel;
-import com.tosslab.jandi.app.ui.signup.to.CheckPointsHolder;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.ui.login.login.IntroLoginFragment;
+import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
+import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -25,6 +28,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 
 /**
@@ -176,26 +180,20 @@ public class SignUpActivity extends AppCompatActivity {
 
         signUpViewModel.showProgressWheel();
         try {
-            ResAccountInfo resAccountInfo = signUpModel.requestSignUp(email, password, name, lang);
-            signUpViewModel.finishWithEmail(email);
+            signUpModel.requestSignUp(email, password, name, lang);
 
-            MixpanelAccountAnalyticsClient
-                    .getInstance(SignUpActivity.this, resAccountInfo.getId())
-                    .pageViewAccountCreateSuccess();
+            signUpViewModel.dismissProgressWheel();
 
+            signUpViewModel.requestSignUpVerify(email);
         } catch (JandiNetworkException e) {
             LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
+            signUpViewModel.dismissProgressWheel();
+
             if (e.errCode == 40001) {
                 signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
             } else {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
-            signUpViewModel.dismissProgressWheel();
-        } finally {
-            signUpViewModel.dismissProgressWheel();
         }
-
-
     }
-
 }

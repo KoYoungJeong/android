@@ -14,6 +14,7 @@
     <string name="err_network">"请检查您的网路连线"</string>
     <string name="jandi_help">"说明"</string>
     <string name="jandi_about">"有关"</string>
+    <string name="jandi_launch">"开启JANDI"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"旧版"</string>
@@ -33,7 +34,8 @@
     <string name="jandi_select_team">"选择您的团队"</string>
     <string name="jandi_user_id">"电子邮件"</string>
     <string name="jandi_user_password">"密码"</string>
-    <string name="jandi_welcome_message">"您好！欢迎使用JANDI"</string>
+    <string name="jandi_welcome_message">"欢迎使用JANDI!"</string>
+    <string name="jandi_is_newcomer">"还没使用过JANDI吗?"</string>
     <string name="err_login">"登录期限失效，请重新登录。"</string>
     <string name="err_login_unregistered_id">"我们在JANDI找不到您的账号"</string>
     <string name="err_login_invalid_id">"电子邮件地址无效"</string>
@@ -42,6 +44,14 @@
     <string name="err_expired_token">"凭证已经过期"</string>
     <string name="err_expired_session">"登录期限失效，请重新登录。"</string>
     <string name="err_service_connection">"连线中断，请再试一次。"</string>
+
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"验证码认证"</string>
+    <string name="jandi_signup_resend_email">"<![CDATA[尚未收到电子邮件? <font color="#00a4e6"><u>重新传送</u></font>]]>"</string>
+    <string name="jandi_signup_verification_code">""我们寄送了一组密码至你的电子邮箱\n请在此处输入密码进行帐户验证""</string>
+    <string name="jandi_signup_invalidate_code">""验证码不正确 (%d/5)\n请重试一次""</string>
+    <string name="jandi_signup_send_new_verification_code">""新的验证码已传送至%s\n请收到新的验证码后，在此处输入""</string>
+    <string name="jandi_signup_expired_verification_code">"验证码已过期。 重新寄发新的验证码？"</string>
 
     <!-- Push -->
     <string name="err_push_registration">"推播功能出现错误，请再试一次。"</string>
@@ -191,7 +201,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"没有安装的应用程序可以支持%1$s"</string>
     <string name="jandi_input_password">"请为选择的团队输入您的密码"</string>
-    <string name="jandi_forgot_password"><b><u>忘记密码？</u></b></string>
+    <string name="jandi_forgot_password"><u>忘记密码？</u></string>
     <string name="jandi_message_ask_about_deleting">"您确定要删除此信息吗？删除的信息将无法复原。"</string>
     <string name="jandi_profile_phone_number_hint">"电话号码"</string>
     <string name="jandi_profile_division_hint">"部门"</string>
