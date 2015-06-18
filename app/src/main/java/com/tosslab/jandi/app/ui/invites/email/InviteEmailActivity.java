@@ -40,7 +40,7 @@ import org.androidannotations.annotations.ViewById;
  */
 @EActivity(R.layout.activity_invite)
 public class InviteEmailActivity extends BaseAnalyticsActivity
-        implements InviteEmailPresenter.View{
+        implements InviteEmailPresenter.View {
 
     @Bean
     InviteEmailModel inviteModel;
@@ -133,13 +133,13 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
     }
 
     @Override
-    public InviteEmailListAdapter getAdapter(){
+    public InviteEmailListAdapter getAdapter() {
         return adapter;
     }
 
     @Override
     public void addEmailToList(EmailVO emailVO) {
-        adapter.add(0,emailVO);
+        adapter.add(0, emailVO);
         adapter.notifyDataSetChanged();
     }
 
@@ -177,7 +177,7 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
         inviteListView.smoothScrollToPosition(position);
     }
 
-    private void registerItemListViewFoldingObserver(){
+    private void registerItemListViewFoldingObserver() {
         adapter.registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -190,7 +190,7 @@ public class InviteEmailActivity extends BaseAnalyticsActivity
         });
     }
 
-    private void setManyPeopleInviteText(){
+    private void setManyPeopleInviteText() {
         String inviteText = getApplicationContext().getString(R.string.jandi_invite_many_people_explain);
         int index = inviteText.indexOf("support");
         SpannableStringBuilder builder = new SpannableStringBuilder(inviteText);

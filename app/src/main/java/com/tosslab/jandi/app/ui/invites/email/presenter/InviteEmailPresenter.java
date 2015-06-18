@@ -13,7 +13,7 @@ public interface InviteEmailPresenter {
 
     void onEmailTextChanged(String email);
 
-    public interface View{
+    public interface View {
         void setEmailTextView(String email);
 
         void clearEmailTextView();

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.invites.email.presenter;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
 import com.tosslab.jandi.app.ui.invites.email.model.bean.EmailVO;
@@ -11,11 +10,9 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.UiThread;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +25,7 @@ import rx.subjects.PublishSubject;
  */
 
 @EBean
-public class InviteEmailPresenterImpl implements InviteEmailPresenter{
+public class InviteEmailPresenterImpl implements InviteEmailPresenter {
 
     @Bean
     InviteEmailModel inviteModel;
@@ -39,31 +36,31 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter{
     private PublishSubject<EmailVO> emailSendingSubject;
 
     @AfterViews
-    void initView(){
+    void initView() {
         initEmailSendingSubject();
     }
 
-    public void initEmailSendingSubject(){
+    public void initEmailSendingSubject() {
         emailSendingSubject = PublishSubject.create();
         emailSendingSubject.observeOn(Schedulers.io()).subscribe(object -> {
-                try {
-                    inviteModel.inviteMembers(Arrays.asList(object.getEmail()));
-                    view.updateSuccessInvite(object, 1);
-                    view.addSendEmailSuccessText();
-                } catch (JandiNetworkException e) {
-                    LogUtil.d("Email Sending Fail : " + e.getMessage());
-                    view.removeEmailFromList(object);
-                    view.showToast(view.getString(R.string.err_invitation_failed));
-                } catch (Exception e) {
-                    LogUtil.d("Email Sending Fail : " + e.getMessage());
-                    view.removeEmailFromList(object);
-                    view.showToast(view.getString(R.string.err_invitation_failed));
-                }
-            }, throwable -> LogUtil.e("Email Sending Fail : " + throwable.getMessage())
+                    try {
+                        inviteModel.inviteMembers(Arrays.asList(object.getEmail()));
+                        view.updateSuccessInvite(object, 1);
+                        view.addSendEmailSuccessText();
+                    } catch (JandiNetworkException e) {
+                        LogUtil.d("Email Sending Fail : " + e.getMessage());
+                        view.removeEmailFromList(object);
+                        view.showToast(view.getString(R.string.err_invitation_failed));
+                    } catch (Exception e) {
+                        LogUtil.d("Email Sending Fail : " + e.getMessage());
+                        view.removeEmailFromList(object);
+                        view.showToast(view.getString(R.string.err_invitation_failed));
+                    }
+                }, throwable -> LogUtil.e("Email Sending Fail : " + throwable.getMessage())
         );
     }
 
-    public void onInviteListAddClick(String email){
+    public void onInviteListAddClick(String email) {
 
         List<String> emailLists = view.getAdapter().getEmailLists();
         if (!emailLists.contains(email)) {
@@ -83,7 +80,7 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter{
     }
 
     @Override
-    public void onEmailTextChanged(String email){
+    public void onEmailTextChanged(String email) {
         if (!TextUtils.equals(email, email.toLowerCase())) {
             view.setEmailTextView(email.toLowerCase());
             return;
