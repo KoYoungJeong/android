@@ -246,6 +246,8 @@ public class ResMessages {
         public List<Integer> members;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class PrivateCreateInfo extends CreateInfo {
         @JsonProperty("pg_creatorId")
         public int creatorId;
