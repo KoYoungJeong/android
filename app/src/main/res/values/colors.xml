@@ -17,7 +17,7 @@
     <color name="jandi_primary_color_transparent_11">#11003658</color>
     <color name="jandi_primary_color_transparent_b2">#B2003658</color>
 
-    <color name="jandi_accent_color_b2">#B200A4E6</color>
+    <color name="jandi_accent_color_b2">#007eb0</color>
 
     <color name="jandi_black_89">#89000000</color>
 
@@ -31,6 +31,7 @@
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
 
+
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>
 
@@ -42,6 +43,9 @@
     <color name="jandi_agree_policy_pressed">#551A9B6A</color>
     <color name="jandi_agree_policy_selected_all">#221A9B6A</color>
     <color name="jandi_agree_policy_selected">#111A9B6A</color>
+    <!-- Sign Up Verification -->
+    <color name="jandi_signup_invalid">#FE5555</color>
+    <color name="jandi_signup_valid">#C2C2C2</color>
 
     <!-- Team Select -->
     <color name="jandi_team_select_pendning_name">#999999</color>
@@ -53,6 +57,12 @@
 
     <!--Log in-->
     <color name="jandi_login_message_bg">#ddf0e9</color>
+    <color name="jandi_sign_in_text">#144a66</color>
+    <color name="jandi_sign_in_edit_text_hint_bg">#727272</color>
+    <color name="jandi_sign_in_edit_text">#000000</color>
+    <color name="jandi_sign_in_button_default">#144a66</color>
+    <color name="jandi_sign_in_button_tab">#082a3b</color>
+    <color name="jandi_sign_in_under_line">#000000</color>
     <!-- Main Tab -->
     <color name="jandi_tab_background">@color/white</color>
     <color name="jandi_tab_text">#1a9b6a</color>
@@ -167,5 +177,12 @@
     <color name="jandi_message_search_item_topic_txt_color_sub">#FF9A9A9A</color>
     <color name="jandi_message_search_item_highlight">#FFFFFD38</color>
     <color name="jandi_pressed_gray_light_alpha">#4CE5E5E5</color>
+
+    <color name="jandi_view_pager_indicator_selector">#FF4D738A</color>
+    <color name="jandi_view_pager_indicator_unselector">#FFDDE4E9</color>
+
+    <color name="jandi_sticker_view_background">#FFEFF2F6</color>
+    <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
+
 
 </resources>

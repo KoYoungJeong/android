@@ -14,6 +14,7 @@
     <string name="err_network">"Please check your network connection"</string>
     <string name="jandi_help">"Help"</string>
     <string name="jandi_about">"About"</string>
+    <string name="jandi_launch">"LAUNCH JANDI"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"Old Version"</string>
@@ -35,6 +36,15 @@
     <string name="jandi_signup_agree_all">"Accept all of JANDI's usage policies"</string>
     <string name="jandi_signup_agree_tos">I have reviewed and agree to the<u><b> Terms of Service</b></u></string>
     <string name="jandi_signup_agree_pp">I have reviewed and agree to the <u><b>Privacy Policy</b></u></string>
+
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"Code Verification"</string>
+    <string name="jandi_signup_resend_email">"<![CDATA[Didn't receive the email? <font color="#00a4e6"><u>Resend</u></font>]]>"</string>
+    <string name="jandi_signup_verification_code">"We sent a code to your inbox.\nEnter it here to verify your account."</string>
+    <string name="jandi_signup_invalidate_code">"You entered an incorrect passcode. (%d/5)\nPlease try again."</string>
+    <string name="jandi_signup_send_new_verification_code">"We sent you a new verification code to %s. Please enter the new code into the box."</string>
+    <string name="jandi_signup_expired_verification_code">"Your verification code has expired. Resend a new email with a new passcode?"</string>
+
     <string name="jandi_password_strength_too_short">"Must be at least 8 characters"</string>
     <string name="jandi_password_strength_weak">"Must contain at least one number, capitalized letter, or special character."</string>
     <string name="jandi_password_strength_average">"Average"</string>
@@ -46,8 +56,8 @@
     <string name="jandi_select_team">"Choose Your Team"</string>
     <string name="jandi_user_id">"Email"</string>
     <string name="jandi_user_password">"Password"</string>
-<string name="jandi_welcome_message">"Hello!
-Welcome to JANDI"</string>
+    <string name="jandi_welcome_message">"Welcome to JANDI"</string>
+    <string name="jandi_is_newcomer">"New to JANDI?"</string>
     <string name="err_login">"Sign in unsuccessful"</string>
     <string name="err_login_unregistered_id">"We could not find your account on JANDI"</string>
     <string name="err_login_invalid_id">"Email address is not valid"</string>
@@ -176,6 +186,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_title_activity_file_explorer">"File Explore "</string>
     <string name="title_file_detail">"Description"</string>
     <string name="comment">"Comment"</string>
+    <string name="jandi_file_size_large_error">"Currently you cannot upload a file that exceeds 100MB."</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"Select where to share in"</string>
@@ -214,7 +225,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_message_join_entity">"Joining %1$s"</string>
     <string name="err_unsupported_file_type">"There is no installed app that supports %1$s"</string>
     <string name="jandi_input_password">"Input your password for selected team"</string>
-    <string name="jandi_forgot_password"><b><u>Forgot Your Password?</u></b></string>
+    <string name="jandi_forgot_password"><u>Forgot Your Password?</u></string>
     <string name="jandi_message_ask_about_deleting">"Are you sure you want to delete this message? It cannot be undone."</string>
     <string name="jandi_profile_phone_number_hint">"Number"</string>
     <string name="jandi_profile_division_hint">"Department"</string>
@@ -376,4 +387,5 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_google_docs">Google Docs</string>
     <string name="jandi_canceled">"Canceled"</string>
     <string name="jandi_cannot_find_messages">"No messages found matching: "</string>
+    <string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
 </resources>

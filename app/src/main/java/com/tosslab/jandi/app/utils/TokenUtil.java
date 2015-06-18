@@ -11,6 +11,22 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
  */
 public class TokenUtil {
 
+    public static void saveTokenInfoByPassword(Context context,
+                                               String accessToken, String refreshToken,
+                                               String tokenType) {
+        if (!TextUtils.isEmpty(accessToken)) {
+            JandiPreference.setAccessToken(context, accessToken);
+        }
+
+        if (!TextUtils.isEmpty(refreshToken)) {
+            JandiPreference.setRefreshToken(context, refreshToken);
+        }
+
+        if (!TextUtils.isEmpty(tokenType)) {
+            JandiPreference.setAccessTokenType(context, tokenType);
+        }
+    }
+
     public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
 //        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
 //        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());

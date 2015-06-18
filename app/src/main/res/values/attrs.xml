@@ -19,4 +19,12 @@
         <attr name="pstsDeactivateTextColor" format="color" />
     </declare-styleable>
 
+    <declare-styleable name="ViewPagerIndicator">
+        <attr name="selectorColor" format="color" />
+        <attr name="unselectorColor" format="color" />
+        <attr name="indicatorCount" format="integer" />
+        <attr name="indicatorMargin" format="dimension" />
+        <attr name="indicatorWidth" format="dimension" />
+    </declare-styleable>
+
 </resources>

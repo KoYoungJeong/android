@@ -54,6 +54,7 @@
 
     <!-- File Detail -->
     <!--// 상단 작성자 프로필 부-->
+    <dimen name="jandi_file_detail_padding_rightside">15dp</dimen>
     <dimen name="jandi_file_detail_padding_sides">11dp</dimen>
     <dimen name="jandi_file_detail_uploder_layout_height">48dp</dimen>
     <dimen name="jandi_file_detail_uploder_profile_size">32dp</dimen>
@@ -76,6 +77,7 @@
     <dimen name="jandi_file_detail_comment_date_text">12sp</dimen>
     <dimen name="jandi_file_detail_comment_name_text">14dp</dimen>
     <dimen name="jandi_file_detail_comment_name_margin_right">6dp</dimen>
+    <dimen name="jandi_file_detail_comment_message_margin_top">12dp</dimen>
 
     <!-- File Search -->
     <dimen name="jandi_file_search_tab_height">50dp</dimen>
@@ -111,5 +113,11 @@
     <dimen name="jandi_text_size_small">12sp</dimen>
     <dimen name="jandi_text_size_smaller">10sp</dimen>
     <dimen name="jandi_progress_size">100dp</dimen>
+
+    <dimen name="jandi_sticker_view_pager_items_max_width">70dp</dimen>
+    <dimen name="jandi_sticker_view_pager_padding">15dp</dimen>
+    <dimen name="jandi_view_pager_indicator_margin">8dp</dimen>
+    <dimen name="jandi_view_pager_indicator_size">6dp</dimen>
+
 
 </resources>

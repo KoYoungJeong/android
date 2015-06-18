@@ -28,7 +28,7 @@
         <item name="pstsDeactivateTextColor">@color/jandi_text_light</item>
     </style>
 
-    <style name="JandiStyle" />
+    <style name="JandiStyle"/>
 
     <style name="JandiStyle.Button.Dynamic" parent="JandiStyle">
         <item name="android:layout_width">match_parent</item>
@@ -74,16 +74,18 @@
 
     <style name="JandiTutorial.Button" parent="JandiTutorial">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:textColor">@color/text_color_white_all</item>
         <item name="android:background">@drawable/jandi_btn_selector</item>
+        <item name="android:text">@string/jandi_action_start</item>
+        <item name="android:textSize">14dp</item>
     </style>
 
     <style name="JandiTutorial.Button.Dynamic" parent="JandiTutorial">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">42dp</item>
+        <item name="android:layout_width">84dp</item>
+        <item name="android:layout_height">88dp</item>
         <item name="android:textColor">@color/text_color_white_all</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">14dp</item>
         <item name="android:background">@drawable/jandi_btn_dynamic_selector_v2</item>
     </style>
     <!-- 튜토리얼 페이지 안의 이메일 주소 창 -->
@@ -93,6 +95,13 @@
         <item name="android:inputType">textEmailAddress</item>
         <item name="android:hint">@string/jandi_profile_email</item>
         <item name="android:background">@drawable/jandi_intro_edittext</item>
+        <item name="android:paddingBottom">11dp</item>
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingTop">11dp</item>
+        <item name="android:textColor">@color/jandi_sign_in_edit_text</item>
+        <item name="android:textColorHint">@color/jandi_sign_in_edit_text_hint_bg</item>
+        <item name="android:textSize">14dp</item>
     </style>
 
     <style name="JandiTutorial.EditText.Dialog" parent="JandiTutorial">
@@ -128,7 +137,14 @@
         <item name="android:lineSpacingExtra">3dip</item>
     </style>
 
-    <style name="JandiSignUp" />
+    <style name="JandiSignIn.Text" parent="JandiTutorial">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/jandi_sign_in_text</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="JandiSignUp"/>
 
     <style name="JandiSignUp.EditText" parent="JandiSignUp">
         <item name="android:layout_width">wrap_content</item>
@@ -228,7 +244,7 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="JandiTopic" />
+    <style name="JandiTopic"/>
 
     <style name="JandiTopic.Create.TextView.RowLayout" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
@@ -263,7 +279,7 @@
     </style>
 
 
-    <style name="JandiMemberProfile" />
+    <style name="JandiMemberProfile"/>
 
     <style name="JandiMemberProfile.Layout.Default" parent="JandiMemberProfile">
         <item name="android:layout_width">match_parent</item>
@@ -313,6 +329,15 @@
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
+    </style>
+
+    <style name="JandiSticker" />
+
+    <style name="JandiSticker.Group" parent="JandiSticker">
+        <item name="android:layout_width">63dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:background">@drawable/bg_sticker_group</item>
     </style>
 
 </resources>

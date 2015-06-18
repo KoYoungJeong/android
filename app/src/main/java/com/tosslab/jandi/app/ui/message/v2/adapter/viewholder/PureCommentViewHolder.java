@@ -76,7 +76,7 @@ public class PureCommentViewHolder implements BodyViewHolder {
             commentTextView.setText(commentMessage.content.body);
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(commentMessage.content.body);
+            spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
-    android:paddingRight="@dimen/jandi_file_detail_padding_sides">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+                android:paddingRight="@dimen/jandi_file_detail_padding_rightside">
 
 
     <TextView
@@ -12,11 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="34dp"
-        android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_right"
+        android:layout_marginTop="@dimen/jandi_file_detail_comment_message_margin_top"
         android:autoLink="web"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
+        android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
 
 
 </RelativeLayout>

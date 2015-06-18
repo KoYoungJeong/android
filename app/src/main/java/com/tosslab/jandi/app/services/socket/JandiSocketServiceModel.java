@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -98,6 +99,8 @@ public class JandiSocketServiceModel {
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
             postEvent(new RetrieveTopicListEvent());
+
+            ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
 
         } catch (JandiNetworkException e) {
             e.printStackTrace();
@@ -186,6 +189,8 @@ public class JandiSocketServiceModel {
         try {
             SocketTopicEvent socketTopicEvent = objectMapper.readValue(object.toString(), SocketTopicEvent.class);
             postEvent(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
+
+            ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
         } catch (IOException e) {
             e.printStackTrace();
         }

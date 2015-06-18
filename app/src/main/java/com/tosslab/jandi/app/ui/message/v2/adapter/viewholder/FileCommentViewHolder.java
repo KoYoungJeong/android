@@ -88,6 +88,10 @@ public class FileCommentViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+
+        FormattedEntity feedbackEntityById = entityManager.getEntityById(link.feedback.writerId);
+        ResLeftSideMenu.User feedbackUser = feedbackEntityById != null ? feedbackEntityById.getUser() : null;
+
         if (user != null && TextUtils.equals(user.status, "enabled")) {
             nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
@@ -124,7 +128,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
-                fileOwnerTextView.setText(entity.getName());
+                fileOwnerTextView.setText(feedbackUser.name);
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 fileNameTextView.setText(content.title);
 
@@ -164,7 +168,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 String optimizedUrl =
                                         BitmapUtil.getOptimizedImageUrl(context, content);
                                 fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                        .intent(fileImageView.getContext())
+                                        .intent(context)
                                         .imageUrl(optimizedUrl)
                                         .imageName(content.name)
                                         .imageType(content.type)
@@ -188,7 +192,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
 
             SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(commentMessage.content.body);
+            spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
 
             boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
 

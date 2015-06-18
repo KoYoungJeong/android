@@ -43,6 +43,8 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.sticker.request.StickerSendRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -78,6 +80,7 @@ public class MessageListModel {
     JandiEntityClient jandiEntityClient;
     @Bean
     MessageListTimer messageListTimer;
+
     @RootContext
     AppCompatActivity activity;
 
@@ -137,6 +140,14 @@ public class MessageListModel {
 
     public boolean isCommentType(ResMessages.OriginalMessage message) {
         return message instanceof ResMessages.CommentMessage;
+    }
+
+    public boolean isStickerType(ResMessages.OriginalMessage message) {
+        return message instanceof ResMessages.StickerMessage;
+    }
+
+    public boolean isStickerCommentType(ResMessages.OriginalMessage message) {
+        return message instanceof ResMessages.CommentStickerMessage;
     }
 
     public boolean isPublicTopic(int entityType) {
@@ -417,5 +428,20 @@ public class MessageListModel {
         int myId = EntityManager.getInstance(activity).getMe().getId();
         int teamId = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId();
         JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
+    }
+
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
+
+        try {
+            StickerSendRequest request = StickerSendRequest.create(activity, stickerInfo.getStickerId(), stickerInfo.getStickerGroupId(), teamId, entityId, message);
+            RequestManager<ResCommon> resCommonRequestManager = RequestManager.newInstance(activity, request);
+
+            resCommonRequestManager.request();
+            return 1;
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
     }
 }

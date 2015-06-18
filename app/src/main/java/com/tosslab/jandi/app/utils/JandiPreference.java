@@ -25,6 +25,7 @@ public class JandiPreference {
     private static final String PREF_ALARM_VIBRATE = "setting_push_alarm_vibration";
     private static final String PREF_ALARM_LED = "setting_push_alarm_led";
     private static final String PREF_INVITE_POPUP = "invite_popup";
+    private static final String PREF_KEYBOARD_HEIGHT = "keyboard_height";
 
     public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -161,4 +162,11 @@ public class JandiPreference {
         getSharedPreferences(context).edit().putBoolean(PREF_INVITE_POPUP, false).commit();
     }
 
+    public static void setKeyboardHeight(Context context, int keyboardHeight) {
+        getSharedPreferences(context).edit().putInt(PREF_KEYBOARD_HEIGHT, keyboardHeight).commit();
+    }
+
+    public static int getKeyboardHeight(Context context) {
+        return getSharedPreferences(context).getInt(PREF_KEYBOARD_HEIGHT, 0);
+    }
 }

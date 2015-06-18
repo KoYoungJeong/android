@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -16,6 +17,8 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
 import com.tosslab.jandi.app.ui.member.TeamInfoActivity_;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
+import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -112,8 +115,9 @@ public class MainMoreFragment extends Fragment {
 
     @Click(R.id.ly_more_team_member)
     public void moveToTeamMemberActivity() {
-        TeamInfoActivity_.intent(mContext)
+        MembersListActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                .type(JandiConstants.TYPE_MEMBERS_LIST_TEAM)
                 .start();
     }
 

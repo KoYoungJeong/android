@@ -4,20 +4,20 @@
     <!-- CLICK -->
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="@color/jandi_accent_color_b2" />
+            <solid android:color="@color/jandi_sign_in_button_tab"/>
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
-                android:right="0dp" android:top="0dp" />
+                     android:right="0dp" android:top="0dp"/>
         </shape>
     </item>
 
     <!-- Disable -->
     <item android:state_enabled="false">
         <shape>
-            <solid android:color="@color/jandi_inactive_button" />
+            <solid android:color="@color/jandi_inactive_button"/>
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
-                android:right="0dp" android:top="0dp" />
+                     android:right="0dp" android:top="0dp"/>
         </shape>
     </item>
 
@@ -25,10 +25,10 @@
     <!-- Default -->
     <item>
         <shape>
-            <solid android:color="@color/jandi_accent_color" />
+            <solid android:color="@color/jandi_sign_in_button_default"/>
             <corners android:radius="3dip"/>
             <padding android:bottom="0dp" android:left="0dp"
-            android:right="0dp" android:top="0dp" />
+                     android:right="0dp" android:top="0dp"/>
         </shape>
     </item>
 

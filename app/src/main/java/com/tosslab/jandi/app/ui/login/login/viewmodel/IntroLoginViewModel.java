@@ -1,9 +1,7 @@
 package com.tosslab.jandi.app.ui.login.login.viewmodel;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,7 +13,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeUiThread;
@@ -61,25 +58,13 @@ public class IntroLoginViewModel {
         mProgressWheel.init();
     }
 
-    @AfterViews
-    void initView() {
-        int rootHeight = ((View) topLayout.getParent().getParent().getParent()).getMeasuredHeight();
-
-        ViewGroup.LayoutParams topLayoutParams = topLayout.getLayoutParams();
-        topLayoutParams.height = rootHeight / 2;
-        topLayout.setLayoutParams(topLayoutParams);
-
-    }
-
     public void showProgressDialog() {
-
         dissmissProgressDialog();
         mProgressWheel.show();
 
     }
 
     public void dissmissProgressDialog() {
-
         if (mProgressWheel.isShowing()) {
             mProgressWheel.dismiss();
         }
@@ -113,7 +98,6 @@ public class IntroLoginViewModel {
         activity.finish();
     }
 
-
     @UiThread
     public void loginFail(int errMessageResId) {
         mProgressWheel.dismiss();
@@ -137,18 +121,9 @@ public class IntroLoginViewModel {
         imm.hideSoftInputFromWindow(editTextEmail.getWindowToken(), 0);
     }
 
-    public void showSuccessSignUp(String signedEmail, final String emailHost) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(activity.getString(R.string.sent_auth_email, signedEmail));
-        builder.setPositiveButton(R.string.jandi_confirm, null)
-                .create().show();
-
-    }
-
     @UiThread
     public void showFailPasswordResetToast() {
         ColoredToast.show(activity, activity.getString(R.string.jandi_fail_send_password_reset_email));
-
     }
 
     @UiThread
