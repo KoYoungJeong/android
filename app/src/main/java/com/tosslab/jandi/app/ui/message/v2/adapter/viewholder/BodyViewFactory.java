@@ -1,11 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
@@ -34,8 +30,7 @@ public class BodyViewFactory {
             case PureStickerComment:
                 return new PureStickerCommentViewHolder();
             case FileStickerComment:
-            return new FileStickerCommentViewHolder();
-
+                return new FileStickerCommentViewHolder();
             case PureMessage:
                 return new PureMessageViewHolder();
             case Sticker:

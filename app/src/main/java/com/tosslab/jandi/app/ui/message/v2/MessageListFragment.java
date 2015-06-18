@@ -225,12 +225,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             }
                             break;
                         case Update:
-                            Log.d(TAG, "Update Start~!");
                             UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
                             ResMessages.OriginalMessage message =
                                     messageListModel.getMessage(teamId, updateMessage.getMessageId());
                             messageListPresenter.updateMessage(message);
-                            Log.d(TAG, "Update End~!");
                             break;
                     }
                 }, throwable -> {
@@ -1111,8 +1109,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (message == null || message.isEmpty()) {
             return;
         }
-
-        Log.i(TAG, "social snippet message event has occurred");
 
         sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
     }

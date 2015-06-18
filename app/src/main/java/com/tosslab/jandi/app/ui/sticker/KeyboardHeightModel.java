@@ -85,8 +85,6 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             keyboardHeight -= navigationHeight;
         }
 
-        LogUtil.d("Keyboard Height : " + keyboardHeight);
-
         if (keyboardHeight > MIN_KEYBOARD_HEIGHT) {
             JandiPreference.setKeyboardHeight(activity, keyboardHeight);
             if (!isOpened) {
