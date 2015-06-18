@@ -183,7 +183,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         if (link.message instanceof ResMessages.CommentStickerMessage) {
             ResMessages.CommentStickerMessage commentStickerMessage = (ResMessages.CommentStickerMessage) link.message;
-            StickerManager.getInstance().loadSticker(ivSticker, commentStickerMessage.content.groupId, commentStickerMessage.content.stickerId);
+            StickerManager.getInstance().loadStickerNoOption(ivSticker, commentStickerMessage.content.groupId, commentStickerMessage.content.stickerId);
 
         }
 

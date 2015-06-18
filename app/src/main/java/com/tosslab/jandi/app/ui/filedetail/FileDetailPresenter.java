@@ -280,7 +280,7 @@ public class FileDetailPresenter {
     }
 
     public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadSticker(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        StickerManager.getInstance().loadStickerDefaultOption(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

@@ -30,7 +30,7 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
     public void bindData(ResMessages.Link link, int teamId, int roomId) {
         ResMessages.CommentStickerMessage message = (ResMessages.CommentStickerMessage) link.message;
 
-        StickerManager.getInstance().loadSticker(ivSticker, message.content.groupId, message.content.stickerId);
+        StickerManager.getInstance().loadStickerNoOption(ivSticker, message.content.groupId, message.content.stickerId);
 
         tvCreatedTime.setText(DateTransformator.getTimeStringForSimple(message.createTime));
         int unreadCount = UnreadCountUtil.getUnreadCount(tvUnreadCount.getContext(), teamId, roomId,
