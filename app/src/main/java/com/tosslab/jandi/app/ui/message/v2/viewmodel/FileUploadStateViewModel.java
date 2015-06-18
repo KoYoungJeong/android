@@ -179,8 +179,10 @@ public class FileUploadStateViewModel {
                 case FAIL:
                     holder.ivState.setImageResource(R.drawable.jandi_upload_error);
                     holder.ivState.setVisibility(View.VISIBLE);
-                    holder.ivState.setOnClickListener(view ->
-                            FileUploadManager.getInstance(context).retryAsFailed(item));
+                    holder.ivState.setOnClickListener(view -> {
+                        FileUploadManager.getInstance(context).retryAsFailed(item);
+                        FileUploadInfoAdapter.this.notifyDataSetChanged();
+                    });
                     break;
             }
         }

@@ -37,7 +37,8 @@ public class FileUploadManager {
         fileUploadDTOList = new CopyOnWriteArrayList<FileUploadDTO>();
 
         objectPublishSubject = PublishSubject.create();
-        objectPublishSubject.observeOn(Schedulers.io())
+        objectPublishSubject.onBackpressureBuffer()
+                .observeOn(Schedulers.io())
                 .subscribe(fileUploadDTO -> {
                     fileUploadDTO.setUploadState(FileUploadDTO.UploadState.PROGRESS);
                     EventBus.getDefault().post(new FileUploadStartEvent(fileUploadDTO.getEntity()));
