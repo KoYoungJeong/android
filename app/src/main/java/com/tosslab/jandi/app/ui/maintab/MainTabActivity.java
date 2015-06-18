@@ -254,7 +254,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     public void getEntitiesSucceed(ResLeftSideMenu resLeftSideMenu) {
         mProgressWheel.dismiss();
         mEntityManager = EntityManager.getInstance(MainTabActivity.this);
-        mEntityManager.subscribeChannelForParse();
         trackSigningIn(mEntityManager);
         getSupportActionBar().setTitle(mEntityManager.getTeamName());
         JandiPreference.setMyEntityId(this, mEntityManager.getMe().getId());

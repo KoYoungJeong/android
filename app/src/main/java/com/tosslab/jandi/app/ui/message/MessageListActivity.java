@@ -925,7 +925,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void exceedMaxFileSizeError() {
-        ColoredToast.showError(mContext, getString(R.string.err_file_upload_failed));
+        ColoredToast.showError(mContext, getString(R.string.jandi_file_size_large_error));
         getUpdateMessagesAndResumeUpdateTimer();
     }
 

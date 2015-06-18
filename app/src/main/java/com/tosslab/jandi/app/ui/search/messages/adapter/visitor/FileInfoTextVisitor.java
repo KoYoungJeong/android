@@ -15,6 +15,8 @@ import com.tosslab.jandi.app.views.spannable.NameSpannable;
  */
 public class FileInfoTextVisitor implements TextVisitor {
 
+    private static final String TYPE_TEXT = "text";
+    private static final String TYPE_STICKER = "sticker";
     private Context context;
     private int textColor;
 
@@ -25,8 +27,8 @@ public class FileInfoTextVisitor implements TextVisitor {
 
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
-
-        if (TextUtils.equals(record.getType(), "text")) {
+        if (TextUtils.equals(record.getType(), TYPE_TEXT)
+                || TextUtils.equals(record.getType(), TYPE_STICKER)) {
             return;
         }
 

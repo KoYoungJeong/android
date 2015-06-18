@@ -25,8 +25,13 @@
             android:resource="@xml/global_tracker" />
         -->
         <activity
-            android:name=".ui.signup.SignUpActivity_"
+            android:name=".ui.signup.account.SignUpActivity_"
             android:label="@string/jandi_signup_title"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.signup.verify.SignUpVerifyActivity_"
+            android:label="@string/jandi_signup_verify_title"
+            android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.intro.IntroActivity_"

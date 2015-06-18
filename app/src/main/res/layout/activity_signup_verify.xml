@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/jandi_background_default"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/layout_search_bar"
+        style="@style/Jandi.Default.ActionBar"
+        android:layout_width="match_parent"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="95dp"
+                android:layout_height="103dp"
+                android:layout_marginTop="46dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_signin"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:lineSpacingExtra="8dp"
+                android:text="@string/jandi_signup_verification_code"
+                android:textColor="#404040"
+                android:textSize="16dp"/>
+
+            <com.tosslab.jandi.app.ui.signup.verify.widget.VerificationCodeView
+                android:id="@+id/vg_verification_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="35dp"/>
+
+            <Button
+                android:id="@+id/btn_verify"
+                style="@style/JandiStyle.Button.Dynamic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="27dp"
+                android:background="@drawable/jandi_btn_dynamic_selector_v2"
+                android:enabled="false"
+                android:minHeight="36dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:text="@string/jandi_launch"/>
+
+            <FrameLayout
+                android:id="@+id/vg_invalidate_code"
+                android:layout_marginTop="27dp"
+                android:layout_width="match_parent"
+                android:layout_height="66dp"
+                android:alpha="0.0"
+                android:background="@color/bg_message_input_panel">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:background="@drawable/icon_warning"/>
+
+                    <TextView
+                        android:id="@+id/tv_invalidate_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:gravity="center"
+                        android:text="@string/jandi_signup_invalidate_code"
+                        android:textColor="#fe5555"
+                        android:textSize="14dp"/>
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="53dp">
+                <TextView
+                    android:id="@+id/tv_resend_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="14dp"/>
+            </FrameLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

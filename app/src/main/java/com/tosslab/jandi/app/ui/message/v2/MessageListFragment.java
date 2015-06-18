@@ -13,10 +13,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
@@ -55,6 +56,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -66,6 +68,7 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -78,8 +81,13 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
+import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
+import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
+import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -105,11 +113,13 @@ import rx.subjects.PublishSubject;
  * Created by Steve SeongUg Jung on 15. 1. 20..
  */
 @EFragment(R.layout.fragment_message_list)
-public class MessageListFragment extends Fragment {
+public class MessageListFragment extends Fragment implements MessageListV2Activity.OnBackPressedListener {
 
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
+
+    private static final StickerInfo NULL_STICKER = new StickerInfo();
 
     @FragmentArg
     int entityType;
@@ -134,6 +144,13 @@ public class MessageListFragment extends Fragment {
     @Bean
     MessageListModel messageListModel;
 
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+
+    @Bean
+    StickerViewModel stickerViewModel;
+
+
     @Bean(value = EntityFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
 
@@ -147,6 +164,7 @@ public class MessageListFragment extends Fragment {
     private Subscription messageSubscription;
     private boolean isForeground;
     private File photoFileByCamera;
+    private StickerInfo stickerInfo = NULL_STICKER;
 
     @AfterInject
     void initObject() {
@@ -176,7 +194,6 @@ public class MessageListFragment extends Fragment {
                             messageListModel.trackGetOldMessage(entityType);
                             break;
                         case New:
-                            Log.d("INFO", "New Start~!");
                             if (newsMessageLoader != null) {
                                 MessageState data = (MessageState) messageQueue.getData();
                                 int lastUpdateLinkId = data.getLastUpdateLinkId();
@@ -185,19 +202,21 @@ public class MessageListFragment extends Fragment {
                                 }
                                 newsMessageLoader.load(lastUpdateLinkId);
                             }
-                            Log.d("INFO", "New End~!");
                             break;
                         case Send:
-                            Log.d("INFO", "Send Start~!");
                             SendingMessage data = (SendingMessage) messageQueue.getData();
-                            int linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            int linkId;
+                            if (data.getStickerInfo() != null) {
+                                linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+                            } else {
+                                linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+                            }
                             if (linkId > 0) {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
                                 EventBus.getDefault().post(new RefreshNewMessageEvent());
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
-                            Log.d("INFO", "Send End~!");
                             break;
                     }
                 }, throwable -> {
@@ -246,6 +265,7 @@ public class MessageListFragment extends Fragment {
         messageListModel.updateMarkerInfo(teamId, roomId);
         fileUploadStateViewModel.setEntityId(entityId);
 
+        JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
 
@@ -310,7 +330,35 @@ public class MessageListFragment extends Fragment {
             messageListPresenter.disableChat();
         }
 
+        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(oldSticker, stickerInfo);
+                messageListPresenter.setEnableSendButton(true);
+            }
+        });
+
         insertEmptyMessage();
+    }
+
+    private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
+
+        messageListPresenter.showStickerPreview(stickerInfo);
+        if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
+            messageListPresenter.loadSticker(stickerInfo);
+        }
+    }
+
+    @Click(R.id.iv_messages_preview_sticker_close)
+    void onStickerPreviewClose() {
+        MessageListFragment.this.stickerInfo = NULL_STICKER;
+        messageListPresenter.dismissStickerPreview();
+        messageListPresenter.setEnableSendButton(false);
+
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -485,6 +533,43 @@ public class MessageListFragment extends Fragment {
         }
     }
 
+    @Click(R.id.btn_message_sticker)
+    void onStickerClick(View view) {
+        boolean selected = view.isSelected();
+
+        if (selected) {
+            stickerViewModel.dismissStickerSelector();
+        } else {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(getActivity());
+            if (keyboardHeight > 0) {
+                messageListPresenter.hideKeyboard();
+                stickerViewModel.showStickerSelector(keyboardHeight);
+                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
+                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                        if (isShow) {
+                            stickerViewModel.dismissStickerSelector();
+                        }
+                    });
+                }
+            } else {
+                initKeyboardHeight();
+            }
+        }
+    }
+
+
+    private void initKeyboardHeight() {
+        EditText etMessage = messageListPresenter.getSendEditTextView();
+        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
+            onStickerClick(getView().findViewById(R.id.btn_message_sticker));
+            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
+
+        });
+
+        etMessage.requestFocus();
+        messageListPresenter.showKeyboard();
+    }
+
     @Click(R.id.ll_messages_go_to_latest)
     void onGotoLatestClick() {
         if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
@@ -508,8 +593,15 @@ public class MessageListFragment extends Fragment {
     void onSendClick() {
 
         String message = messageListPresenter.getSendEditText().trim();
-        if (!TextUtils.isEmpty(message)) {
-            messageListPresenter.setSendEditText("");
+        messageListPresenter.setSendEditText("");
+
+        if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+
+            JandiStickerDatabaseManager.getInstance(getActivity()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
+
+        } else if (!TextUtils.isEmpty(message)) {
             // insert to db
             long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
 
@@ -522,6 +614,10 @@ public class MessageListFragment extends Fragment {
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, message)));
 
         }
+
+        messageListPresenter.dismissStickerPreview();
+        stickerInfo = NULL_STICKER;
+        messageListPresenter.setEnableSendButton(false);
 
     }
 
@@ -640,7 +736,6 @@ public class MessageListFragment extends Fragment {
     }
 
     void onMessageItemClick(ResMessages.Link link) {
-
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -652,6 +747,8 @@ public class MessageListFragment extends Fragment {
         if (messageListModel.isFileType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId);
         } else if (messageListModel.isCommentType(link.message)) {
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
+        } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
         }
     }
@@ -993,6 +1090,16 @@ public class MessageListFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
+    @Override
+    public boolean onBackPressed() {
+
+        if (stickerViewModel.isShowStickerSelector()) {
+            stickerViewModel.dismissStickerSelector();
+            return true;
+        }
+
+        return false;
+    }
 }
 
 

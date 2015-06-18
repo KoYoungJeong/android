@@ -34,6 +34,8 @@ public class MessageListV2Activity extends AppCompatActivity {
     @Extra
     int roomId;
 
+    private OnBackPressedListener onBackPressedListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,20 +51,25 @@ public class MessageListV2Activity extends AppCompatActivity {
                 .findFragmentByTag(MessageListFragment.class.getName());
 
         if (messageListFragment == null) {
+            messageListFragment = MessageListFragment_.builder()
+                    .entityId(entityId)
+                    .roomId(roomId)
+                    .entityType(entityType)
+                    .isFavorite(isFavorite)
+                    .isFromPush(isFromPush)
+                    .teamId(teamId)
+                    .lastMarker(lastMarker)
+                    .isFromSearch(isFromSearch)
+                    .build();
             getSupportFragmentManager().beginTransaction()
                     .add(android.R.id.content,
-                            MessageListFragment_.builder()
-                                    .entityId(entityId)
-                                    .roomId(roomId)
-                                    .entityType(entityType)
-                                    .isFavorite(isFavorite)
-                                    .isFromPush(isFromPush)
-                                    .teamId(teamId)
-                                    .lastMarker(lastMarker)
-                                    .isFromSearch(isFromSearch)
-                                    .build(),
+                            messageListFragment,
                             MessageListFragment.class.getName())
                     .commit();
+        }
+
+        if (messageListFragment instanceof OnBackPressedListener) {
+            onBackPressedListener = (OnBackPressedListener) messageListFragment;
         }
     }
 
@@ -73,7 +80,15 @@ public class MessageListV2Activity extends AppCompatActivity {
                     .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .start();
         } else {
-            super.onBackPressed();
+            if (onBackPressedListener != null && onBackPressedListener.onBackPressed()) {
+                // Do Nothing
+            } else {
+                super.onBackPressed();
+            }
         }
+    }
+
+    public interface OnBackPressedListener {
+        boolean onBackPressed();
     }
 }
