@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
@@ -31,11 +30,11 @@ import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileUnsharedEvent;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
-import com.tosslab.jandi.app.services.socket.to.SocketSocialSnippetMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
@@ -229,12 +228,12 @@ public class JandiSocketServiceModel {
         }
     }
 
-    public void updateSocialSnippetMessage(Object object) {
+    public void updateLinkPreviewMessage(Object object) {
         try {
-            SocketSocialSnippetMessageEvent socketSocialSnippetMessageEvent =
-                    objectMapper.readValue(object.toString(), SocketSocialSnippetMessageEvent.class);
+            SocketLinkPreviewMessageEvent socketLinkPreviewMessageEvent =
+                    objectMapper.readValue(object.toString(), SocketLinkPreviewMessageEvent.class);
 
-            postEvent(socketSocialSnippetMessageEvent);
+            postEvent(socketLinkPreviewMessageEvent);
         } catch (Exception e) {
             e.printStackTrace();
         }

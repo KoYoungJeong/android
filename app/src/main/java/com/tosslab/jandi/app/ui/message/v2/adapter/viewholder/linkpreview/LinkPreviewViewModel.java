@@ -1,11 +1,11 @@
-package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
+package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,46 +15,58 @@ import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.views.AutoScaleImageView;
 
 /**
- * Created by tonyjs on 15. 6. 10..
+ * Created by Steve SeongUg Jung on 15. 6. 18..
  */
-public class SocialSnippetMessageViewHolder extends MessageViewHolder {
+public class LinkPreviewViewModel {
+
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
     private AutoScaleImageView ivThumb;
-    private OnSnippetClickListener onSnippetClickListener;
+    private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
-    @Override
+    private Context context;
+    private ViewGroup vgLinkPreview;
+
+    public LinkPreviewViewModel(Context context) {
+        this.context = context;
+    }
+
     public void initView(View rootView) {
-        super.initView(rootView);
+        vgLinkPreview = (ViewGroup) rootView.findViewById(R.id.vg_linkpreview);
+        vgLinkPreview.setOnClickListener(
+                onLinkPreviewClickListener = new OnLinkPreviewClickListener(context));
 
-        ViewGroup vgSnippet = (ViewGroup) rootView.findViewById(R.id.vg_snippet);
-        vgSnippet.setOnClickListener(onSnippetClickListener = new OnSnippetClickListener());
-
-        tvTitle = (TextView) rootView.findViewById(R.id.tv_snippet_title);
-        tvDomain = (TextView) rootView.findViewById(R.id.tv_snippet_domain);
-        tvDescription = (TextView) rootView.findViewById(R.id.tv_snippet_description);
-        ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_snippet_thumb);
+        tvTitle = (TextView) rootView.findViewById(R.id.tv_linkpreview_title);
+        tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
+        tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
+        ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
         ivThumb.setRatio(274, 115);
     }
 
-    @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
-        super.bindData(link, teamId, roomId);
+    public void bindData(ResMessages.Link link) {
 
         ResMessages.TextMessage message = (ResMessages.TextMessage) link.message;
-        ResMessages.SocialSnippet snippet = message.socialSnippet;
 
-        tvTitle.setText(snippet.title);
-        tvDomain.setText(snippet.domain);
+        if (message.linkPreview == null || TextUtils.isEmpty(message.linkPreview.linkUrl)) {
+            vgLinkPreview.setVisibility(View.GONE);
+            return ;
+        } else {
+            vgLinkPreview.setVisibility(View.VISIBLE);
+        }
 
-        String description = snippet.description;
+        ResMessages.LinkPreview linkPreview = message.linkPreview;
+
+        tvTitle.setText(linkPreview.title);
+        tvDomain.setText(linkPreview.domain);
+
+        String description = linkPreview.description;
         tvDescription.setText(TextUtils.isEmpty(description) ? "" : description);
         tvDescription.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
 
-        onSnippetClickListener.setLinkUrl(snippet.linkUrl);
+        onLinkPreviewClickListener.setLinkUrl(linkPreview.linkUrl);
 
-        String imageUrl = snippet.imageUrl;
+        String imageUrl = linkPreview.imageUrl;
         if (TextUtils.isEmpty(imageUrl)) {
             ivThumb.setVisibility(View.GONE);
             ivThumb.setImageDrawable(null);
@@ -68,8 +80,14 @@ public class SocialSnippetMessageViewHolder extends MessageViewHolder {
         }
     }
 
-    private class OnSnippetClickListener implements View.OnClickListener {
+    private static class OnLinkPreviewClickListener implements View.OnClickListener {
+        private final Context context;
         private String linkUrl;
+
+        public OnLinkPreviewClickListener(Context context) {
+
+            this.context = context;
+        }
 
         public void setLinkUrl(String linkUrl) {
             this.linkUrl = linkUrl;
@@ -93,10 +111,5 @@ public class SocialSnippetMessageViewHolder extends MessageViewHolder {
             }
 
         }
-    }
-
-    @Override
-    public int getLayoutId() {
-        return R.layout.item_message_msg_snippet_v2;
     }
 }

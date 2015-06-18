@@ -16,7 +16,7 @@ public interface BodyViewHolder {
     int getLayoutId();
 
     enum Type {
-        Message, PureMessage,
+        Message, PureMessage, PureLinkPreviewMessage,
         Sticker, PureSticker,
         File,
         Image,

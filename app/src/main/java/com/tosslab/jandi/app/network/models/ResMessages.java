@@ -48,6 +48,16 @@ public class ResMessages {
         public OriginalMessage feedback;
         public OriginalMessage message;
 
+        public boolean hasLinkPreview() {
+            boolean isTextMessage = message != null && message instanceof TextMessage;
+            if (!isTextMessage) {
+                return false;
+            }
+            TextMessage textMessage = (TextMessage) message;
+            LinkPreview linkPreview = textMessage.linkPreview;
+            return linkPreview != null && !linkPreview.isEmpty();
+        }
+
         @Override
         public String toString() {
             return "Link{" +
@@ -135,8 +145,7 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
-        @JsonProperty("linkPreview")
-        public SocialSnippet socialSnippet;
+        public LinkPreview linkPreview;
 
         @Override
         public String toString() {
@@ -154,7 +163,7 @@ public class ResMessages {
                     ", feedback=" + feedback +
                     ", linkPreviewId=" + linkPreviewId +
                     ". content=" + content +
-                    ", socialSnippet=" + socialSnippet +
+                    ", linkPreview=" + linkPreview +
                     '}';
         }
     }
@@ -319,7 +328,7 @@ public class ResMessages {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class SocialSnippet {
+    public static class LinkPreview {
         public String linkUrl;
         public String description;
         public String title;
@@ -332,7 +341,7 @@ public class ResMessages {
 
         @Override
         public String toString() {
-            return "SocialSnippet{" +
+            return "LinkPreview{" +
                     ", linkUrl='" + linkUrl + '\'' +
                     ", description='" + description + '\'' +
                     ", title='" + title + '\'' +
