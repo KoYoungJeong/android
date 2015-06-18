@@ -28,6 +28,7 @@ import org.springframework.http.HttpAuthentication;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 /**
  * Created by justinygchoi on 2014. 5. 27..
@@ -44,6 +45,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface JandiRestClient {
+
     void setHeader(String name, String value);
 
     void setAuthentication(HttpAuthentication auth);

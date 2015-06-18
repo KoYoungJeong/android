@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -58,13 +59,14 @@ public class MainMoreFragment extends Fragment {
 
     @AfterInject
     void init() {
+        LogUtil.d("MainMoreFragment");
         mContext = getActivity();
         mEntityManager = EntityManager.getInstance(getActivity());
     }
 
     @AfterViews
     void initView() {
-
+        LogUtil.d("initView MainMoreFragment");
         profileIconView = (IconWithTextView) getView().findViewById(R.id.ly_more_profile);
 
         showJandiVersion();
@@ -72,6 +74,7 @@ public class MainMoreFragment extends Fragment {
 
     @Override
     public void onResume() {
+        LogUtil.d("MainMoreFragment onResume");
         super.onResume();
         showUserProfile();
     }

@@ -2,15 +2,20 @@ package com.tosslab.jandi.app.network.manager;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.logging.Logger;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 16..
@@ -19,10 +24,16 @@ public class RequestManager<ResponseObject> {
 
     private final Context context;
     private Request<ResponseObject> request;
+    int selectedTeamId;
 
     private RequestManager(Context context, Request<ResponseObject> request) {
         this.context = context;
         this.request = request;
+    }
+
+    public RequestManager(Context context,int selectedTeamId) {
+        this.context = context;
+        this.selectedTeamId = selectedTeamId;
     }
 
     public static <ResponseObject> RequestManager<ResponseObject> newInstance(Context context, Request<ResponseObject> request) {
@@ -32,6 +43,7 @@ public class RequestManager<ResponseObject> {
     public ResponseObject request() throws JandiNetworkException {
         try {
             return request.request();
+            //return
         } catch (HttpStatusCodeException e) {
             if (e.getStatusCode().value() == 401) {
 

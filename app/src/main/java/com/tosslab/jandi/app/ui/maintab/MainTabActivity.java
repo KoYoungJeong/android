@@ -91,14 +91,15 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     void initView() {
+        LogUtil.d("시작은 여기");
         mContext = getApplicationContext();
-        mEntityManager = EntityManager.getInstance(MainTabActivity.this);
+        mEntityManager = EntityManager.getInstance(mContext);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(mContext).getSelectedTeamInfo();
 
         setupActionBar(selectedTeamInfo.getName());
 
@@ -187,6 +188,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.d("MainTabAcitivity.onResume");
+
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
         getEntities();
@@ -218,14 +221,23 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Background
     public void getEntitiesInBackground() {
+        LogUtil.d("MainTabActivity.getEntitiesInBackground");
         try {
             ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            LogUtil.d("MainTabActivity.getEntitiesInBackground1");
             JandiEntityDatabaseManager.getInstance(MainTabActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground2");
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground3");
             BadgeUtils.setBadge(MainTabActivity.this, totalUnreadCount);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground4");
             JandiPreference.setBadgeCount(MainTabActivity.this, totalUnreadCount);
-            EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground5");
+           //EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
+            mEntityManager.refreshEntity(resLeftSideMenu);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground6");
             getEntitiesSucceed(resLeftSideMenu);
+            LogUtil.d("MainTabActivity.getEntitiesInBackground7");
         } catch (JandiNetworkException e) {
             LogUtil.e(e.getErrorInfo() + "get entity failed", e);
             if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
@@ -395,6 +407,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(MessagePushEvent event) {
+        LogUtil.d("MainTabAcitivity.MessagePushEventCall");
         if (!TextUtils.equals(event.getEntityType(), "user")) {
             getEntities();
         }

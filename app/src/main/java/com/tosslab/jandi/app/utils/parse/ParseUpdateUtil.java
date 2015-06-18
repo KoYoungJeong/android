@@ -36,7 +36,7 @@ public class ParseUpdateUtil {
                 .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {
                     @Override
                     public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
-
+                        LogUtil.d("UpdateParseWithoutSelectedTeam");
                         JandiRestClient jandiRestClient = new JandiRestClient_(context);
                         jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
                         return jandiRestClient.getInfosForSideMenu(userTeam.getTeamId());

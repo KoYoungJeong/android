@@ -11,6 +11,13 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
  */
 public class TokenUtil {
 
+    private static Context context;
+
+    public static void setContext(Context context){
+       TokenUtil.context = context;
+    }
+
+    @Deprecated
     public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
 //        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
 //        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
@@ -18,7 +25,13 @@ public class TokenUtil {
         saveTokenInfoByRefresh(context, accessToken);
     }
 
-    public static void saveTokenInfoByRefresh(Context context, ResAccessToken accessToken) {
+    public static void saveTokenInfoByPassword(ResAccessToken accessToken) {
+        saveTokenInfoByRefresh(context, accessToken);
+    }
+
+
+    @Deprecated
+    public static void saveTokenInfoByRefresh(Context context ,ResAccessToken accessToken) {
         if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
             JandiPreference.setAccessToken(context, accessToken.getAccessToken());
         }
@@ -32,13 +45,40 @@ public class TokenUtil {
         }
     }
 
+    public static void saveTokenInfoByRefresh(ResAccessToken accessToken) {
+        if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
+            JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+        }
+
+        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
+            JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+        }
+
+        if (!TextUtils.isEmpty(accessToken.getTokenType())) {
+            JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
+        }
+    }
+
+    @Deprecated
     public static void clearTokenInfo(Context context) {
         JandiPreference.setAccessToken(context, "");
         JandiPreference.setAccessTokenType(context, "");
         JandiPreference.setRefreshToken(context, "");
     }
 
+    public static void clearTokenInfo() {
+        JandiPreference.setAccessToken(context, "");
+        JandiPreference.setAccessTokenType(context, "");
+        JandiPreference.setRefreshToken(context, "");
+    }
+
+    @Deprecated
     public static JandiV2HttpAuthentication getRequestAuthentication(Context context) {
         return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(context), JandiPreference.getAccessToken(context));
     }
+
+    public static JandiV2HttpAuthentication getRequestAuthentication() {
+        return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(context), JandiPreference.getAccessToken(context));
+    }
+
 }

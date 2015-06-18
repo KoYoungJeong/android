@@ -27,6 +27,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -57,12 +58,14 @@ public class MainChatListFragment extends Fragment {
 
     @AfterViews
     void initViews() {
+        LogUtil.d("MainChatListFragment");
         FAButtonUtil.setFAButtonController(((AbsListView) getView().findViewById(R.id.lv_main_chat_list)), getView().findViewById(R.id.btn_main_chat_fab));
     }
 
 
     @Override
     public void onResume() {
+        LogUtil.d("MainChatListFragment onResume");
         super.onResume();
         EventBus.getDefault().register(this);
         getChatList();

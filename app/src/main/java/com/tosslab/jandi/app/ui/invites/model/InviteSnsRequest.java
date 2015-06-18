@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.utils.JandiNetworkException;
 /**
  * Created by Bill Minwook Heo on 15. 4. 22..
  */
+@Deprecated
 public class InviteSnsRequest implements Request<String> {
 
     private final Context context;

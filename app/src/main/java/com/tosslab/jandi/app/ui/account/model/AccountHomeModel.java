@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 
@@ -116,7 +117,7 @@ public class AccountHomeModel {
     }
 
     public EntityManager updateEntityInfo(Context context, ResLeftSideMenu entityInfo) {
-
+        LogUtil.d("AccountHomeModel.updateEntityInfo");
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entityInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entityInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);

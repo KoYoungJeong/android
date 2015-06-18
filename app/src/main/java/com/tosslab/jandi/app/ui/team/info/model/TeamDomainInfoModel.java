@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -29,9 +28,6 @@ import rx.Observable;
  */
 @EBean
 public class TeamDomainInfoModel {
-
-    @RestService
-    JandiRestClient jandiRestClient;
 
     @RootContext
     Context context;

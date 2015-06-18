@@ -126,6 +126,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterInject
     void init() {
+        LogUtil.d("FileListFragment");
         mContext = getActivity();
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
@@ -145,6 +146,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterViews
     void bindAdapter() {
+        LogUtil.d("FileListFragment AfterViews");
         setHasOptionsMenu(true);
 
         // myToken 획득
@@ -297,6 +299,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onResume() {
+        LogUtil.d("FileListFragment onResume");
         super.onResume();
         isForeground = true;
     }

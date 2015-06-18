@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -121,7 +122,7 @@ public class IntroActivity extends AppCompatActivity {
             if (o == 200) {
                 introModel.sleep(initTime, MAX_DELAY_MS);
                 if (introModel.hasSelectedTeam()) {
-                    ParseUpdateUtil.updateParseWithoutSelectedTeam(IntroActivity.this.getApplicationContext());
+                    //ParseUpdateUtil.updateParseWithoutSelectedTeam(IntroActivity.this.getApplicationContext());
                     introViewModel.moveToMainActivity();
                 } else {
                     introViewModel.moveTeamSelectActivity();

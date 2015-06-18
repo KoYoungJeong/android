@@ -5,6 +5,7 @@ import android.support.multidex.MultiDexApplication;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import java.util.HashMap;
 
@@ -17,6 +18,8 @@ public class JandiApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        TokenUtil.setContext(getApplicationContext());
 
         // For Parse Push Notification
         Parse.initialize(this,

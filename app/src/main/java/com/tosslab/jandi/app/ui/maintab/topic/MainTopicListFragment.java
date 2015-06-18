@@ -81,6 +81,8 @@ public class MainTopicListFragment extends Fragment {
     @AfterInject
     void initObject() {
 
+        LogUtil.d("MainTopicListFragment");
+
         EntityManager entityManager = EntityManager.getInstance(getActivity());
 
         List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
@@ -91,6 +93,8 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterViews
     void initView() {
+
+        LogUtil.d("MainTopicListFragment initView");
         topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {

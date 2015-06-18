@@ -35,6 +35,7 @@ import org.json.JSONException;
 /**
  * Created by justinygchoi on 2014. 10. 2..
  */
+@Deprecated
 @EFragment(R.layout.fragment_main_list)
 public class MainPrivateListFragment extends BaseChatListFragment {
 

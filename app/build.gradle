@@ -54,7 +54,7 @@ dependencies {
         jcenter()
     }
 
-    apt 'org.androidannotations:androidannotations:3.2'
+    apt 'org.androidannotations:androidannotations:3.3.1'
 
     compile 'com.android.support:multidex:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -78,10 +78,10 @@ dependencies {
 
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
-    compile 'org.androidannotations:androidannotations-api:3.2'
+    compile 'org.androidannotations:androidannotations-api:3.3.1'
     // Network
     compile 'org.springframework.android:spring-android-core:1.0.+'
-    compile 'org.springframework.android:spring-android-rest-template:1.0.+'
+    compile 'org.springframework.android:spring-android-rest-template:1.0+'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile 'com.github.nkzawa:socket.io-client:0.5.0'
 
@@ -101,6 +101,13 @@ dependencies {
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
+
+    //Retrofit
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+
+    //OKHTTP
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
 
 }
 

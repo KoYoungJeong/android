@@ -8,6 +8,11 @@ public class JandiConstants {
     public static final String PUSH_CHANNEL_PREFIX = "c";
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";
 
+
+    public static final String HTTP_ACCEPT_HEADER_V2 =  "application/vnd.tosslab.jandi-v2+json";
+    public static final String HTTP_ACCEPT_HEADER_V3 =  "application/vnd.tosslab.jandi-v3+json";
+    public static final String HTTP_ACCEPT_HEADER_DEFAULT = HTTP_ACCEPT_HEADER_V2;
+
     // Push로 부터 넘어온 MainActivity의 Extra
     public static final String EXTRA_ENTITY_TYPE    = "entityType";
     public static final String EXTRA_ENTITY_ID      = "entityId";

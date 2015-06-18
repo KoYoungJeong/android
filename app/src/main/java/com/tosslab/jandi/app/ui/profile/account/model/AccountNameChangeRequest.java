@@ -4,11 +4,17 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.network.client.settings.AccountProfileClient;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileClient_;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
+
+import org.codehaus.jackson.map.ObjectMapper;
+
+import retrofit.RestAdapter;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 23..
@@ -18,9 +24,21 @@ public class AccountNameChangeRequest implements Request<ResAccountInfo> {
     private final Context context;
     private final String name;
 
+    RestAdapter restAdapter;
+
     private AccountNameChangeRequest(Context context, String name) {
         this.context = context;
         this.name = name;
+
+        JacksonConverter converter = new JacksonConverter(new ObjectMapper());
+
+        restAdapter = new RestAdapter.Builder()
+                .setRequestInterceptor(request -> {
+                    request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
+                })
+                .setConverter(converter)
+                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .build();
     }
 
     public static AccountNameChangeRequest create(Context context, String name) {
@@ -30,10 +48,11 @@ public class AccountNameChangeRequest implements Request<ResAccountInfo> {
     @Override
     public ResAccountInfo request() throws JandiNetworkException {
 
-        AccountProfileClient accountProfileClient = new AccountProfileClient_(context);
-        accountProfileClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-
-        return accountProfileClient.changeName(new ReqProfileName(name));
+//        AccountProfileClient accountProfileClient = new AccountProfileClient_(context);
+//        accountProfileClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+//
+//        return accountProfileClient.changeName(new ReqProfileName(name));
+        return restAdapter.create(AccountProfileV2Client.class).changeName(new ReqProfileName(name));
 
     }
 }
