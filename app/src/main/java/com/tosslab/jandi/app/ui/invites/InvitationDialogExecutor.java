@@ -42,8 +42,6 @@ public class InvitationDialogExecutor {
 
     @Background
     public void execute() {
-        mProgressWheel = new ProgressWheel(context);
-        mProgressWheel.init();
         entityManager = EntityManager.getInstance(context);
         showProgressWheel();
 
