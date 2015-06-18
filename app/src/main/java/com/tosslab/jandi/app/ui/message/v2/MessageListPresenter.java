@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -9,12 +8,10 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,19 +28,15 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
@@ -59,7 +52,6 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -360,12 +352,21 @@ public class MessageListPresenter {
     }
 
     public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, myMessage);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage
+                (textMessage, myMessage);
+        newFragment.show(activity.getSupportFragmentManager(), "dioalog");
+    }
+
+    public void showStickerMessageMenuDialog(
+            boolean myMessage, ResMessages.StickerMessage StickerMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByStickerMessage
+                (StickerMessage, myMessage);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
     public void showMessageMenuDialog(ResMessages.CommentMessage commentMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, false);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage
+                (commentMessage, false);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 

@@ -37,6 +37,7 @@ import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -157,12 +158,23 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     }
 
     @ItemLongClick(R.id.list_file_detail_comments)
-    void onCommentLongClick(ResMessages.CommentMessage item) {
+    void onCommentLongClick(ResMessages.OriginalMessage item) {
         if (item == null) {
             return;
         }
         boolean isMine = fileDetailModel.isMyComment(item.writerId);
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(item, isMine);
+
+        DialogFragment newFragment = null;
+        if (item instanceof ResMessages.CommentMessage) {
+            newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(
+                    (ResMessages.CommentMessage) item, isMine);
+        } else {
+            if (!isMine) {
+                return;
+            }
+            newFragment = ManipulateMessageDialogFragment.newInstanceByStickerCommentMessage(
+                    (ResMessages.CommentStickerMessage) item, isMine);
+        }
         newFragment.show(getSupportFragmentManager(), "dioalog");
     }
 
@@ -193,7 +205,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     void deleteComment(int messageType, int messageId, int feedbackId) {
         fileDetailPresenter.showProgressWheel();
         try {
-            fileDetailModel.deleteComment(messageId, feedbackId);
+            if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
+            } else {
+                fileDetailModel.deleteComment(messageId, feedbackId);
+            }
+
             getFileDetail(false, true);
         } catch (JandiNetworkException e) {
         } catch (Exception e) {
@@ -342,17 +359,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
 
-                if (TextUtils.equals(fileDetail.status, "archived")) {
-                    isDeleted = true;
-                } else {
-                    isDeleted = false;
-                }
+                isDeleted = TextUtils.equals(fileDetail.status, "archived");
 
-                if (fileDetail.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId()) {
-                    isMyFile = true;
-                } else {
-                    isMyFile = false;
-                }
+                isMyFile = fileDetail.writerId == EntityManager.getInstance(FileDetailActivity.this).getMe().getId();
 
                 invalidateOptionsMenu();
                 break;
