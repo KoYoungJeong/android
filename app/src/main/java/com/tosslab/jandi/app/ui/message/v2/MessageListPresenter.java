@@ -17,6 +17,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,10 +45,12 @@ import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -90,6 +94,9 @@ public class MessageListPresenter {
     @SystemService
     ClipboardManager clipboardManager;
 
+    @SystemService
+    InputMethodManager inputMethodManager;
+
     @ViewById(R.id.layout_messages_preview_last_item)
     View previewLayout;
 
@@ -122,6 +129,13 @@ public class MessageListPresenter {
 
     @ViewById(R.id.progress_go_to_latest)
     View progressGoToLatestView;
+
+    @ViewById(R.id.vg_messages_preview_sticker)
+    ViewGroup vgStickerPreview;
+
+    @ViewById(R.id.iv_messages_preview_sticker_image)
+    ImageView imgStickerPreview;
+
 
     private MessageListAdapter messageListAdapter;
 
@@ -799,4 +813,32 @@ public class MessageListPresenter {
     public int getRoomId() {
         return messageListAdapter.getRoomId();
     }
+
+    public EditText getSendEditTextView() {
+        return messageEditText;
+    }
+
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(messageEditText.getWindowToken(), 0);
+    }
+
+    public void showKeyboard() {
+        inputMethodManager.showSoftInput(messageEditText, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    public void showStickerPreview(StickerInfo stickerInfo) {
+
+        vgStickerPreview.setVisibility(View.VISIBLE);
+    }
+
+    public void loadSticker(StickerInfo stickerInfo) {
+        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+    }
+
+    public void dismissStickerPreview() {
+
+        vgStickerPreview.setVisibility(View.GONE);
+
+    }
+
 }

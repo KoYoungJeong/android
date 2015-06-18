@@ -313,6 +313,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public int getDummeMessagePositionByLocalId(long localId) {
 
+        if (localId <= 0) {
+            return -1;
+        }
+
         int size = getCount();
 
         for (int idx = size - 1; idx >= 0; --idx) {

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,7 +34,7 @@ public class PureMessageViewHolder implements BodyViewHolder {
         String message = ((ResMessages.TextMessage) link.message).content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(message);
+        builder.append(!TextUtils.isEmpty(message) ? message : "");
 
         Context context = tvMessage.getContext();
 

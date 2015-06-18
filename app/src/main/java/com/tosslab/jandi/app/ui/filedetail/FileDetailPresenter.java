@@ -13,11 +13,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
@@ -28,6 +29,8 @@ import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
+import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
@@ -54,7 +57,7 @@ public class FileDetailPresenter {
     AppCompatActivity activity;
 
     @SystemService
-    InputMethodManager imm;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
+    InputMethodManager inputMethodManager;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
 
     @SystemService
     ClipboardManager clipboardManager;
@@ -69,12 +72,18 @@ public class FileDetailPresenter {
     ListView listFileDetailComments;
 
     @ViewById(R.id.ly_file_detail_input_comment)
-    LinearLayout inputCommentLayout;
+    ViewGroup inputCommentLayout;
 
     @ViewById(R.id.et_file_detail_comment)
     EditText editTextComment;
     @ViewById(R.id.btn_file_detail_send_comment)
     Button buttonSendComment;
+
+    @ViewById(R.id.vg_file_detail_preview_sticker)
+    ViewGroup vgStickerPreview;
+
+    @ViewById(R.id.iv_file_detail_preview_sticker_image)
+    ImageView ivStickerPreview;
 
     private ProgressWheel mProgressWheel;
 
@@ -176,7 +185,7 @@ public class FileDetailPresenter {
 
 
     public void hideSoftKeyboard() {
-        imm.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
+        inputMethodManager.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
         editTextComment.setText("");
     }
 
@@ -250,5 +259,32 @@ public class FileDetailPresenter {
     @UiThread
     public void showFailToast(String message) {
         ColoredToast.showError(activity, message);
+    }
+
+    public void hideKeyboard() {
+        inputMethodManager.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
+    }
+
+    public EditText getSendEditTextView() {
+        return editTextComment;
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showKeyboard() {
+        inputMethodManager.showSoftInput(editTextComment, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void showStickerPreview() {
+        vgStickerPreview.setVisibility(View.VISIBLE);
+    }
+
+    public void loadSticker(StickerInfo stickerInfo) {
+        StickerManager.getInstance().loadSticker(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void dismissStickerPreview() {
+        vgStickerPreview.setVisibility(View.GONE);
     }
 }

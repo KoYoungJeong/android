@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import java.util.Collections;
+
 import rx.Subscription;
 
 /**
@@ -58,6 +60,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
+                Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
