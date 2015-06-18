@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.invites.model;
+package com.tosslab.jandi.app.ui.invites.email.model;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -23,7 +23,7 @@ import rx.Observable;
  * Created by Steve SeongUg Jung on 14. 12. 27..
  */
 @EBean
-public class InviteModel {
+public class InviteEmailModel {
 
     @RootContext
     Context context;
@@ -36,7 +36,7 @@ public class InviteModel {
 
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
 
-        return RequestManager.newInstance(context, new InviteRequest(context, teamId, invites)).request();
+        return RequestManager.newInstance(context, new InviteEmailRequest(context, teamId, invites)).request();
     }
 
     public boolean isInvitedEmail(String emailText) {
@@ -56,12 +56,7 @@ public class InviteModel {
                 .toBlocking()
                 .first();
 
-
         return isContain;
     }
 
-    public String invitationSNS() throws JandiNetworkException {
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-        return "";
-    }
 }

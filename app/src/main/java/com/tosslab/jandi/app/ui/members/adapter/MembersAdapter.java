@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.members.adapter;
+package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -22,12 +22,13 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
-public class TopicMemberAdapter extends BaseAdapter {
+public class MembersAdapter extends BaseAdapter {
 
     private Context context;
+
     private List<ChatChooseItem> chatChooseItems;
 
-    public TopicMemberAdapter(Context context) {
+    public MembersAdapter(Context context) {
         this.context = context;
         chatChooseItems = new ArrayList<ChatChooseItem>();
     }
@@ -62,8 +63,6 @@ public class TopicMemberAdapter extends BaseAdapter {
             viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
             viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
             viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-
-
             convertView.setTag(viewHolder);
 
         } else {
@@ -114,7 +113,6 @@ public class TopicMemberAdapter extends BaseAdapter {
         };
     }
 
-
     public void addAll(List<ChatChooseItem> chatListWithoutMe) {
         chatChooseItems.addAll(chatListWithoutMe);
     }
@@ -122,7 +120,6 @@ public class TopicMemberAdapter extends BaseAdapter {
     public void clear() {
         chatChooseItems.clear();
     }
-
 
     static class ViewHolder {
         public Context context;
@@ -134,6 +131,6 @@ public class TopicMemberAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
-
     }
+
 }

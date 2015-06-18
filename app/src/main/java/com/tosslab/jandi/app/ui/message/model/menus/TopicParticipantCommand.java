@@ -4,7 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.MenuItem;
 
-import com.tosslab.jandi.app.ui.message.members.TopicMemberActivity_;
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -21,8 +22,9 @@ public class TopicParticipantCommand implements MenuCommand {
 
     @Override
     public void execute(MenuItem menuItem) {
-        TopicMemberActivity_.intent(context)
+        MembersListActivity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .type(JandiConstants.TYPE_MEMBERS_LIST_TOPIC)
                 .entityId(entityId)
                 .start();
 
