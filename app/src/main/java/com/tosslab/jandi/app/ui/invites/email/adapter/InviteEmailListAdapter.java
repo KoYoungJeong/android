@@ -40,8 +40,8 @@ public class InviteEmailListAdapter extends BaseAdapter {
 
     public List<String> getEmailLists() {
         List<String> emailList = new ArrayList<String>();
-        for(int i=inviteList.size()-1;i>=0;i--){
-                emailList.add(inviteList.get(i).getEmail());
+        for (int i = inviteList.size() - 1; i >= 0; i--) {
+            emailList.add(inviteList.get(i).getEmail());
         }
         return emailList;
     }

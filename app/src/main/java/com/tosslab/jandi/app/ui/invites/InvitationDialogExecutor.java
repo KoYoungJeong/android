@@ -14,7 +14,6 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -42,46 +41,49 @@ public class InvitationDialogExecutor {
     private EntityManager entityManager;
 
     @Background
-    public void execute(){
-        initProgressWheel();
+    public void execute() {
+        mProgressWheel = new ProgressWheel(context);
+        mProgressWheel.init();
         entityManager = EntityManager.getInstance(context);
         showProgressWheel();
-        ResTeamDetailInfo.InviteTeam inviteTeam = getInviteTeam();
-        dismissProgressWheel();
-        if(inviteTeam != null && availableCheck(inviteTeam)){
-            InvitationDialogFragment invitationDialog =
-                    InvitationDialogFragment.newInstance(inviteTeam.getName(),inviteTeam.getInvitationUrl());
-            invitationDialog.show(context.getSupportFragmentManager(), "invitationsDialog");
+
+        try {
+            ResTeamDetailInfo.InviteTeam inviteTeam = teamDomainInfoModel.getTeamInfo(entityManager.getTeamId());
+            AvailableState availableState = availableState(inviteTeam);
+            switch (availableState) {
+                case AVAIL:
+                    InvitationDialogFragment invitationDialog =
+                            InvitationDialogFragment.newInstance(inviteTeam.getName(), inviteTeam.getInvitationUrl());
+                    invitationDialog.show(context.getSupportFragmentManager(), "invitationsDialog");
+                    break;
+                case UNDEFINE:
+                    showErrorToast(context.getResources().getString(R.string.err_entity_invite));
+                    break;
+                case DISABLE:
+                    showTextDialog(context.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                    break;
+            }
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+            showErrorToast(context.getResources().getString(R.string.err_network));
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorToast(context.getResources().getString(R.string.err_entity_invite));
         }
+
+        dismissProgressWheel();
     }
 
-    private boolean availableCheck(ResTeamDetailInfo.InviteTeam inviteTeam){
+    private AvailableState availableState(ResTeamDetailInfo.InviteTeam inviteTeam) {
         String invitationUrl = inviteTeam.getInvitationUrl();
         String invitationStatus = inviteTeam.getInvitationStatus();
         if (!TextUtils.isEmpty(invitationUrl) && invitationUrl.contains("undefined")) {
-            showErrorToast(context.getResources().getString(R.string.err_entity_invite));
-            return false;
+            return AvailableState.UNDEFINE;
         }
         if (TextUtils.isEmpty(invitationStatus) || TextUtils.equals(invitationStatus, "disabled")) {
-            showTextDialog(context.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
-            return false;
+            return AvailableState.DISABLE;
         }
-        return true;
-    }
-
-    private ResTeamDetailInfo.InviteTeam getInviteTeam() {
-        try {
-            ResTeamDetailInfo.InviteTeam inviteTeam = teamDomainInfoModel.getTeamInfo(entityManager.getTeamId());
-            return inviteTeam;
-        }catch(JandiNetworkException e){
-            e.printStackTrace();
-            showErrorToast(context.getResources().getString(R.string.err_network));
-            return null;
-        }catch(Exception e){
-            e.printStackTrace();
-            showErrorToast(context.getResources().getString(R.string.err_entity_invite));
-            return null;
-        }
+        return AvailableState.AVAIL;
     }
 
     @UiThread
@@ -97,13 +99,6 @@ public class InvitationDialogExecutor {
                 .setPositiveButton(context.getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> dialog.dismiss())
                 .create().show();
-    }
-
-    @UiThread
-    void initProgressWheel() {
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(context);
-        mProgressWheel.init();
     }
 
     @UiThread
@@ -134,6 +129,10 @@ public class InvitationDialogExecutor {
                 .toBlocking()
                 .first();
         return owner.getUser().name;
+    }
+
+    private enum AvailableState {
+        AVAIL, UNDEFINE, DISABLE
     }
 
 }
