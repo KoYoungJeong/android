@@ -41,6 +41,7 @@ public class ResLeftSideMenu {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     static public class Team {
         public int id;
         public String name;
@@ -120,6 +121,8 @@ public class ResLeftSideMenu {
         public String position;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class AlarmInfo {
         public String entityType;
         public int entityId;

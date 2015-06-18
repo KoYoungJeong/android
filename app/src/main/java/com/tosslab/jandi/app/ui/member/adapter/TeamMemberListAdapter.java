@@ -20,6 +20,7 @@ import java.util.List;
 /**
  * Created by justinygchoi on 2014. 9. 22..
  */
+@Deprecated
 @EBean
 public class TeamMemberListAdapter extends BaseAdapter {
     private List<FormattedEntity> mMembers;

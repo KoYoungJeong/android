@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
  */
 public class ContentTextVisitor implements TextVisitor {
 
+    private static final String SEARCH_RESULT_STICKER_TEXT = "(sticker)";
+    private static final String TYPE_STICKER = "sticker";
     private final String query;
     private Context context;
     private int textColor;
@@ -30,8 +32,10 @@ public class ContentTextVisitor implements TextVisitor {
 
     @Override
     public void visit(SpannableStringBuilder builder, ResMessageSearch.Record record) {
-
-        if (TextUtils.isEmpty(record.getText())) {
+        String searchContentText = record.getText();
+        if (TextUtils.equals(record.getType(), TYPE_STICKER)) {
+            searchContentText = SEARCH_RESULT_STICKER_TEXT;
+        } else if (TextUtils.isEmpty(searchContentText)) {
             return;
         }
 
@@ -39,7 +43,7 @@ public class ContentTextVisitor implements TextVisitor {
         MessageSpannable messageSpannable = new MessageSpannable(textSize, textColor);
 
         int start = builder.length();
-        builder.append(record.getText()).setSpan(messageSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(searchContentText).setSpan(messageSpannable, start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         if (!TextUtils.isEmpty(query)) {
             updateHighlight(builder, start, query, textColor, context.getResources().getColor(R.color.jandi_message_search_item_highlight));

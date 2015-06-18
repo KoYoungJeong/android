@@ -10,8 +10,10 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -184,5 +186,10 @@ public class FileDetailModel {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws JandiNetworkException {
+        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        RequestManager.newInstance(context, StickerCommentRequest.create(context, stickerGroupId, stickerId, teamId, fileId, comment)).request();
     }
 }

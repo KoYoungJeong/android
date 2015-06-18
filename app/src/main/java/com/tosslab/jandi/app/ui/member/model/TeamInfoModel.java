@@ -20,6 +20,7 @@ import rx.Observable;
 /**
  * Created by Steve SeongUg Jung on 15. 2. 16..
  */
+@Deprecated
 @EBean
 public class TeamInfoModel {
 
