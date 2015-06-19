@@ -56,19 +56,8 @@ public class IntroActivityViewModel {
                 .show();
     }
 
-    public void moveMainOrTeamSelectActivity() {
-
-        ResAccountInfo.UserTeam mySelectedTeam = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo();
-
-        if (mySelectedTeam != null) {
-            moveToMainActivity();
-        } else {
-            moveTeamSelectActivity();
-        }
-    }
-
     @UiThread
-    void moveTeamSelectActivity() {
+    public void moveTeamSelectActivity() {
         AccountHomeActivity_
                 .intent(activity)
                 .start();
@@ -76,7 +65,7 @@ public class IntroActivityViewModel {
     }
 
     @UiThread
-    void moveToMainActivity() {
+    public void moveToMainActivity() {
         // Move MainActivity
         MainTabActivity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP

@@ -1,16 +1,13 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
 
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 21..
@@ -24,16 +21,28 @@ public class BodyViewFactory {
         switch (type) {
             case CollapseComment:
                 return new CollapseCommentViewHolder();
-            case PureMessage:
-                return new PureMessageViewHolder();
-            case File:
-                return FileViewHolder.createFileViewHolder();
-            case Image:
-                return new ImageViewHolder();
             case PureComment:
                 return new PureCommentViewHolder();
             case FileComment:
                 return new FileCommentViewHolder();
+
+            case CollapseStickerComment:
+                return new CollapseStickerCommentViewHolder();
+            case PureStickerComment:
+                return new PureStickerCommentViewHolder();
+            case FileStickerComment:
+            return new FileStickerCommentViewHolder();
+
+            case PureMessage:
+                return new PureMessageViewHolder();
+            case Sticker:
+                return new StickerViewHolder();
+            case PureSticker:
+                return new PureStickerViewHolder();
+            case File:
+                return FileViewHolder.createFileViewHolder();
+            case Image:
+                return new ImageViewHolder();
             case Dummy:
                 return new DummyViewHolder();
             case DummyPure:
@@ -68,32 +77,6 @@ public class BodyViewFactory {
         }
     }
 
-    public static View createItemView(Context context, ViewGroup parent, int viewType) {
-
-        BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
-
-        int layoutId = 0;
-
-        switch (type) {
-            case Message:
-                break;
-            case File:
-                break;
-            case Image:
-                break;
-            case PureComment:
-                break;
-            case FileComment:
-                break;
-            case Dummy:
-                break;
-            case Event:
-                break;
-        }
-
-        return null;
-    }
-
     public static BodyViewHolder.Type getContentType(ResMessages.Link message,
                                                      ResMessages.Link beforeMessage) {
         ResMessages.OriginalMessage currentMessage = message.message;
@@ -102,23 +85,25 @@ public class BodyViewFactory {
             return BodyViewHolder.Type.Event;
         }
 
-        if (currentMessage instanceof ResMessages.TextMessage) {
+        if (currentMessage instanceof ResMessages.TextMessage || currentMessage instanceof ResMessages.StickerMessage) {
 
             if (beforeMessage != null
-                    && beforeMessage.message instanceof ResMessages.TextMessage
+                    &&
+                    (beforeMessage.message instanceof ResMessages.TextMessage
+                            || beforeMessage.message instanceof ResMessages.StickerMessage)
                     && currentMessage.writerId == beforeMessage.message.writerId
-                    && isSince5min(currentMessage.createTime, beforeMessage.message.createTime)
+                    && DateComparatorUtil.isSince5min(currentMessage.createTime, beforeMessage.message.createTime)
                     && isSameDay(message, beforeMessage)) {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
-                    return BodyViewHolder.Type.PureMessage;
+                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.PureMessage : BodyViewHolder.Type.PureSticker;
                 }
             } else {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.Dummy;
                 } else {
-                    return BodyViewHolder.Type.Message;
+                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.Message : BodyViewHolder.Type.Sticker;
                 }
             }
 
@@ -132,7 +117,7 @@ public class BodyViewFactory {
             } else {
                 return BodyViewHolder.Type.File;
             }
-        } else if (currentMessage instanceof ResMessages.CommentMessage) {
+        } else if (currentMessage instanceof ResMessages.CommentMessage || currentMessage instanceof ResMessages.CommentStickerMessage) {
             int messageFeedbackId = message.feedbackId;
 
             boolean isFeedbackMessage = false;
@@ -152,6 +137,8 @@ public class BodyViewFactory {
              * 3. 같은 날짜에 작성된 경우
              * 1,2,3 모두 해당될때 PureComment나 CollapseComment의 view를 보여준다.
              */
+            boolean isStickerMessage = currentMessage instanceof ResMessages.CommentStickerMessage;
+
             if (beforeMessage != null
                     && isFeedbackMessage
                     && isSameDay(message, beforeMessage)) {
@@ -164,38 +151,20 @@ public class BodyViewFactory {
                  * 3. 현재 메세지의 feedbackId와 이전 메세지의 Id가 다른 경우
                  * 1,2,3 모두 해당 할때 CollapseComment
                  */
-                if (isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
+
+
+                if (DateComparatorUtil.isSince5min(currentMessage.createTime, beforeOriginalMessage.createTime)
                         && currentMessage.writerId == beforeOriginalMessage.writerId
                         && messageFeedbackId != beforeMessage.messageId) {
-                    return BodyViewHolder.Type.CollapseComment;
+                    return isStickerMessage ? BodyViewHolder.Type.CollapseStickerComment : BodyViewHolder.Type.CollapseComment;
                 } else {
-                    return BodyViewHolder.Type.PureComment;
+                    return isStickerMessage ? BodyViewHolder.Type.PureStickerComment : BodyViewHolder.Type.PureComment;
                 }
             } else {
-                return BodyViewHolder.Type.FileComment;
+                return isStickerMessage ? BodyViewHolder.Type.FileStickerComment : BodyViewHolder.Type.FileComment;
             }
         }
         return BodyViewHolder.Type.Message;
-    }
-
-    private static boolean isSince5min(Date currentMessageTime, Date beforeMessageTime) {
-        if (beforeMessageTime == null) {
-            beforeMessageTime = new Date();
-        }
-
-        if (currentMessageTime == null) {
-            currentMessageTime = new Date();
-        }
-
-        long beforeTime = beforeMessageTime.getTime();
-        long currentTime = currentMessageTime.getTime();
-
-        double diffTime = currentTime - beforeTime;
-        if (diffTime / (1000l * 60l * 5) < 1d) {
-            return true;
-        }
-
-        return false;
     }
 
     private static boolean isSameDay(ResMessages.Link message, ResMessages.Link beforeMessage) {

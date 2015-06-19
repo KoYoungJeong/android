@@ -14,6 +14,7 @@
     <string name="err_network">"請檢查您的網路連線"</string>
     <string name="jandi_help">"説明"</string>
     <string name="jandi_about">"有關"</string>
+    <string name="jandi_launch">"開啓JANDI"</string>
 
     <!-- Update -->
     <string name="jandi_update_title">"舊版"</string>
@@ -33,7 +34,8 @@
     <string name="jandi_select_team">"選擇您的團隊"</string>
     <string name="jandi_user_id">"電子郵件"</string>
     <string name="jandi_user_password">"密碼"</string>
-    <string name="jandi_welcome_message">"您好！歡迎使用JANDI"</string>
+    <string name="jandi_welcome_message">"歡迎使用JANDI!"</string>
+    <string name="jandi_is_newcomer">"還沒使用過JANDI?"</string>
     <string name="err_login">"登入失敗"</string>
     <string name="err_login_unregistered_id">"我們在JANDI找不到您的帳號"</string>
     <string name="err_login_invalid_id">"電子郵件地址無效"</string>
@@ -42,6 +44,14 @@
     <string name="err_expired_token">"憑證已經過期"</string>
     <string name="err_expired_session">"登入期限失效，請重新登入。"</string>
     <string name="err_service_connection">"連線中斷，請再試一次。"</string>
+
+    <!-- Sign Up Verification -->
+    <string name="jandi_signup_verify_title">"驗證碼認證"</string>
+    <string name="jandi_signup_resend_email">"<![CDATA[尚未收到電子郵件? <font color="#00a4e6"><u>重新傳送</u></font>]]>"</string>
+    <string name="jandi_signup_verification_code">""我們寄送了一組密碼至你的電子郵箱\n請在此處輸入密碼進行帳戶驗證""</string>
+    <string name="jandi_signup_invalidate_code">"驗證碼不正確 (1/5)\n請重試一次"</string>
+    <string name="jandi_signup_send_new_verification_code">""新的驗證碼已傳送至%s\n請收到新的驗證碼後，在此處輸入""</string>
+    <string name="jandi_signup_expired_verification_code">"驗證碼已過期。重新寄發新的驗證碼？"</string>
 
     <!-- Push -->
     <string name="err_push_registration">"推播功能出現錯誤，請再試一次。"</string>
@@ -157,6 +167,7 @@
     <string name="jandi_title_activity_file_explorer">"檔案探索"</string>
     <string name="title_file_detail">"敘述"</string>
     <string name="comment">"留言"</string>
+    <string name="jandi_file_size_large_error">"無法上傳大於100MB的檔案"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"請選擇在哪裏分享"</string>
@@ -191,7 +202,7 @@
     <string name="jandi_message_join_entity">"加入 %1$s"</string>
     <string name="err_unsupported_file_type">"沒有安裝的應用程式可以支援%1$s "</string>
     <string name="jandi_input_password">"請爲選擇的團隊輸入您的密碼"</string>
-    <string name="jandi_forgot_password"><b><u>忘記密碼？</u></b></string>
+    <string name="jandi_forgot_password"><u>忘記密碼？</u></string>
     <string name="jandi_message_ask_about_deleting">"您確定要刪除此訊息嗎？刪除的訊息將無法回復。"</string>
     <string name="jandi_profile_phone_number_hint">"電話號碼"</string>
     <string name="jandi_profile_division_hint">"部門"</string>
@@ -372,4 +383,5 @@
     <string name="jandi_invite_member">"邀請成員"</string>
     <string name="jandi_canceled">"取消了"</string>
     <string name="jandi_cannot_find_messages">"搜尋沒有結果: "</string>
+    <string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
 </resources>

@@ -4,11 +4,13 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.RequestFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
+import com.tosslab.jandi.app.network.models.ReqAccountVerification;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -16,6 +18,8 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.JandiV4HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
@@ -38,6 +42,7 @@ import org.springframework.web.client.RestTemplate;
         rootUrl = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api",
         converters = {
                 JandiV2HttpMessageConverter.class,
+                JandiV3HttpMessageConverter.class,
                 ByteArrayHttpMessageConverter.class,
                 FormHttpMessageConverter.class,
                 StringHttpMessageConverter.class},
@@ -69,15 +74,19 @@ public interface JandiRestClient {
     ResAccountInfo getAccountInfo();
 
     @Post("/accounts")
-    ResAccountInfo signUpAccount(ReqSignUpInfo signUpInfo);
+    @Accept(JandiV4HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+    ResCommon signUpAccount(ReqSignUpInfo signUpInfo);
 
     @Put("/account")
     @RequiresAuthentication
     ResAccountInfo updatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo);
 
     @Post("/accounts/activate")
-    @RequiresAuthentication
-    ResAccountInfo activateAccount(ReqAccountActivate reqAccountActivate);
+    @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+    ResAccountActivate activateAccount(ReqAccountActivate reqAccountActivate);
+
+    @Post("/accounts/verification")
+    ResCommon accountVerification(ReqAccountVerification reqAccountVerification);
 
     // 채널, PG, DM 리스트 획득
     @Get("/leftSideMenu?teamId={teamId}")

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ly_message_item"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/message_list_selector"
-    android:descendantFocusability="blocksDescendants"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingTop="5dp">
+<RelativeLayout android:id="@+id/ly_message_item"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/message_list_selector"
+                android:descendantFocusability="blocksDescendants"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingBottom="15dp"
+                android:paddingLeft="@dimen/jandi_messages_padding_left"
+                android:paddingRight="@dimen/jandi_messages_padding_right"
+                android:paddingTop="5dp">
     <!-- 사용자 프로필 사진 -->
     <ImageView
         android:id="@+id/img_message_user_profile"
@@ -33,7 +33,7 @@
         android:text="User name"
         android:textColor="@color/jandi_messages_name"
         android:textSize="@dimen/jandi_messages_user_name"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/txt_message_create_date"
@@ -45,7 +45,7 @@
         android:gravity="bottom"
         android:text="AM ??:??"
         android:textColor="@color/jandi_messages_date"
-        android:textSize="@dimen/jandi_messages_date" />
+        android:textSize="@dimen/jandi_messages_date"/>
 
 
     <TextView
@@ -59,7 +59,7 @@
         android:text="10"
         android:textColor="@color/white"
         android:textSize="@dimen/jandi_text_size_smaller"
-        android:textStyle="bold" />
+        android:textStyle="bold"/>
 
 
     <ImageView
@@ -70,7 +70,7 @@
         android:layout_alignLeft="@+id/txt_message_user_name"
         android:layout_alignRight="@+id/txt_message_user_name"
         android:layout_alignTop="@+id/txt_message_user_name"
-        android:src="@drawable/line_gray" />
+        android:src="@drawable/line_gray"/>
 
     <View
         android:id="@+id/view_entity_listitem_warning"
@@ -81,7 +81,7 @@
         android:layout_alignRight="@+id/img_message_user_profile"
         android:layout_alignTop="@+id/img_message_user_profile"
         android:background="#99ffffff"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
 
     <!-- 댓글일 경우 표시 레이어 -->
@@ -97,7 +97,7 @@
             android:layout_width="@dimen/jandi_messages_image_size"
             android:layout_height="@dimen/jandi_messages_image_size"
             android:layout_marginRight="12dp"
-            android:src="@drawable/jandi_fl_icon_deleted" />
+            android:src="@drawable/jandi_fl_icon_deleted"/>
 
         <TextView
             android:id="@+id/txt_message_commented_prefix"
@@ -106,7 +106,7 @@
             android:layout_toRightOf="@+id/img_message_commented_photo"
             android:text="Commented on "
             android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_messages_comment" />
+            android:textSize="@dimen/jandi_messages_comment"/>
 
         <TextView
             android:id="@+id/txt_message_commented_owner"
@@ -116,7 +116,7 @@
             android:text="justin"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_comment"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/txt_message_commented_postfix"
@@ -125,7 +125,7 @@
             android:layout_toRightOf="@id/txt_message_commented_owner"
             android:text="'s file"
             android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_messages_comment" />
+            android:textSize="@dimen/jandi_messages_comment"/>
 
         <TextView
             android:id="@+id/txt_message_commented_file_name"
@@ -139,7 +139,7 @@
             android:text="File Name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_comment_name"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
         <!-- 실제 댓글 내용 -->
         <TextView
             android:id="@+id/txt_message_commented_content"
@@ -150,7 +150,7 @@
             android:focusable="false"
             android:text="Comment"
             android:textColor="@color/jandi_messages_content"
-            android:textSize="@dimen/jandi_messages_comment" />
+            android:textSize="@dimen/jandi_messages_comment"/>
 
         <ImageView
             android:id="@+id/iv_img_file_arrow"
@@ -158,7 +158,7 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right" />
+            android:src="@drawable/jandi_arrow_right"/>
     </RelativeLayout>
 
 

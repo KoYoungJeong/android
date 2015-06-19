@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -41,6 +42,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -63,9 +65,11 @@ public class JandiSocketServiceModel {
     private Subscription subscribe;
 
     public JandiSocketServiceModel(Context context) {
+
         this.context = context;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
     }
+
 
     public ConnectTeam getConnectTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo =
@@ -188,6 +192,8 @@ public class JandiSocketServiceModel {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
             postEvent(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
+
+            ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
         } catch (IOException e) {
             e.printStackTrace();
         }

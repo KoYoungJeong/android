@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -17,6 +18,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import java.io.IOException;
 
@@ -36,6 +38,7 @@ public class BadgeHandleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(TAG, "onHandleIntent start");
         try {
             Context context = getApplicationContext();
             JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
@@ -55,6 +58,8 @@ public class BadgeHandleService extends IntentService {
                     intent.getBooleanExtra(KEY_POST_RETRIEVE_TOPIC_EVENT, false);
             if (postRetrieveTopicEvent) {
                 postRetrieveTopicEvent();
+
+                ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
             }
 
             String socketMessageEventContent = intent.getStringExtra(KEY_SOCKET_MESSAGE_EVENT);
@@ -63,8 +68,9 @@ public class BadgeHandleService extends IntentService {
             }
 
         } catch (JandiNetworkException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
+        Log.i(TAG, "onHandleIntent end");
     }
 
     private void setBadgeCount(Context context, ResLeftSideMenu resLeftSideMenu) {

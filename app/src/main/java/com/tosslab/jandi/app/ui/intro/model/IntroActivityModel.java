@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.ui.intro.model;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
@@ -25,6 +23,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -180,4 +179,16 @@ public class IntroActivityModel {
         return jandiAuthClient.getConfig();
     }
 
+    public boolean hasSelectedTeam() {
+        ResAccountInfo.UserTeam mySelectedTeam = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+
+        return mySelectedTeam != null;
+    }
+
+    @Background
+    public void updateParseForAllTeam() {
+
+
+
+    }
 }

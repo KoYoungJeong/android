@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.member; 
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -17,7 +15,6 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -53,6 +50,7 @@ import rx.Observable;
 /**
  * Created by justinygchoi on 2014. 9. 18..
  */
+@Deprecated
 @EActivity(R.layout.activity_team_info)
 public class TeamInfoActivity extends BaseAnalyticsActivity {
 
@@ -74,8 +72,8 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     @SystemService
     ClipboardManager clipboardManager;
 
-    private String invitationUrl;
-    private String teamName;
+//    private String invitationUrl;
+//    private String teamName;
 
     private ProgressWheel mProgressWheel;
     private EntityManager mEntityManager;
@@ -104,7 +102,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayUseLogoEnabled(false);
@@ -175,119 +172,9 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
                 finish();
                 return true;
             case R.id.action_invitation:
-                onInvitationDisableCheck();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Background
-    public void onInvitationDisableCheck() {
-        showProgressWheel();
-
-        Pair<InviteUtils.Result, ResTeamDetailInfo.InviteTeam> result =
-                InviteUtils.checkInvitationDisabled(teamDomainInfoModel, mEntityManager.getTeamId());
-
-        dismissProgressWheel();
-
-        switch (result.first) {
-            case NETWORK_ERROR:
-                showErrorToast(getResources().getString(R.string.err_network));
-                break;
-            case ERROR:
-                showErrorToast(getResources().getString(R.string.err_entity_invite));
-                break;
-            case INVITATION_DISABLED:
-                showTextDialog(
-                        getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
-                break;
-            case UNDEFINED_URL:
-                showErrorToast(getResources().getString(R.string.err_entity_invite));
-                break;
-            case SUCCESS:
-                moveToInvitationActivity(result.second);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private String getOwnerName() {
-        List<FormattedEntity> users = EntityManager.getInstance(this).getFormattedUsers();
-        FormattedEntity tempDefaultEntity = new FormattedEntity();
-        FormattedEntity owner = Observable.from(users)
-                .filter(formattedEntity ->
-                        TextUtils.equals(formattedEntity.getUser().u_authority, "owner"))
-                .firstOrDefault(tempDefaultEntity)
-                .toBlocking()
-                .first();
-        return owner.getUser().name;
-    }
-
-    @UiThread
-    public void moveToInvitationActivity(ResTeamDetailInfo.InviteTeam inviteTeam) {
-        invitationUrl = inviteTeam.getInvitationUrl();
-        teamName = inviteTeam.getName();
-        DialogFragment invitationDialog = new InvitationDialogFragment();
-        invitationDialog.show(getSupportFragmentManager(), "invitationsDialog");
-    }
-
-    @UiThread
-    void showErrorToast(String message) {
-        ColoredToast.showError(this, message);
-    }
-
-    @UiThread
-    void dismissProgressWheel() {
-        if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.dismiss();
-        }
-    }
-
-    @UiThread
-    void showProgressWheel() {
-        if (mProgressWheel == null) {
-            mProgressWheel = new ProgressWheel(this);
-            mProgressWheel.init();
-        }
-
-        if (mProgressWheel != null && !mProgressWheel.isShowing()) {
-            mProgressWheel.show();
-        }
-    }
-
-    @UiThread
-    public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(this)
-                .setMessage(alertText)
-                .setCancelable(false)
-                .setPositiveButton(getResources().getString(R.string.jandi_confirm),
-                        (dialog, id) -> dialog.dismiss())
-                .create().show();
-    }
-
-    public void onEvent(TeamInvitationsEvent event) {
-        String invitationContents =
-                teamName + getResources().getString(R.string.jandi_invite_contents);
-        int eventType = event.type;
-        if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
-            copyLink(invitationUrl, invitationContents);
-            showTextDialog(getResources().getString(R.string.jandi_invite_succes_copy_link));
-        } else {
-            Intent intent = InviteUtils.getInviteIntent(this, event, invitationUrl, invitationContents);
-            try {
-                startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                e.printStackTrace();
-                copyLink(invitationUrl, invitationContents);
-                showTextDialog(getResources().getString(R.string.jandi_invite_app_not_installed));
-            }
-        }
-    }
-
-    public void copyLink(String publicLink, String contents) {
-        ClipData clipData = ClipData.newPlainText("", contents + "\n" + publicLink);
-        clipboardManager.setPrimaryClip(clipData);
     }
 }

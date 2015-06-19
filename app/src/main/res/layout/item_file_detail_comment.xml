@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
-    android:paddingRight="@dimen/jandi_file_detail_padding_sides">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/jandi_file_detail_padding_sides"
+                android:paddingRight="@dimen/jandi_file_detail_padding_sides">
 
     <ImageView
         android:id="@+id/img_file_detail_comment_user_profile"
@@ -12,7 +12,7 @@
         android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
         android:layout_marginRight="@dimen/jandi_file_detail_comment_profile_margin_right"
         android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_top"
-        android:background="@drawable/jandi_profile_comment" />
+        android:background="@drawable/jandi_profile_comment"/>
 
     <TextView
         android:id="@+id/txt_file_detail_comment_user_name"
@@ -23,17 +23,7 @@
         android:layout_toRightOf="@+id/img_file_detail_comment_user_profile"
         android:text="UserName"
         android:textSize="@dimen/jandi_file_detail_comment_name_text"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txt_file_detail_comment_create_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/txt_file_detail_comment_user_name"
-        android:layout_toRightOf="@+id/txt_file_detail_comment_user_name"
-        android:text="Date"
-        android:textColor="@color/jandi_file_detail_date"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
+        android:textStyle="bold"/>
 
     <ImageView
         android:id="@+id/img_entity_listitem_line_through"
@@ -43,7 +33,7 @@
         android:layout_alignLeft="@+id/txt_file_detail_comment_user_name"
         android:layout_alignRight="@+id/txt_file_detail_comment_user_name"
         android:layout_alignTop="@+id/txt_file_detail_comment_user_name"
-        android:src="@drawable/line_gray" />
+        android:src="@drawable/line_gray"/>
 
 
     <View
@@ -55,7 +45,7 @@
         android:layout_alignRight="@+id/img_file_detail_comment_user_profile"
         android:layout_alignTop="@+id/img_file_detail_comment_user_profile"
         android:background="#99ffffff"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
 
     <TextView
@@ -68,7 +58,7 @@
         android:autoLink="web"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
-        android:textSize="@dimen/jandi_file_detail_comment_date_text" />
+        android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
 
 
 </RelativeLayout>

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
+
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
@@ -17,6 +19,8 @@ import de.greenrobot.event.EventBus;
  * Created by justinygchoi on 14. 12. 3..
  */
 public class JandiBroadcastReceiver extends BroadcastReceiver {
+    public static final String TAG = JandiBroadcastReceiver.class.getSimpleName();
+
     public static final String JSON_KEY_DATA = "com.parse.Data";
 
     private static final String JSON_VALUE_TYPE_PUSH = "push";
@@ -71,7 +75,6 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         } else {
             // DO NOTHING
         }
-        return;
     }
 
     private void subscribeTopic(String chatId) {

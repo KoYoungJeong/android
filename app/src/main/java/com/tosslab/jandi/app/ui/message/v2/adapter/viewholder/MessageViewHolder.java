@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
@@ -87,7 +86,8 @@ public class MessageViewHolder implements BodyViewHolder {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
             SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
-            messageStringBuilder.append(textMessage.content.body);
+            messageStringBuilder.append(!TextUtils.isEmpty(textMessage.content.body) ? textMessage.content.body : "");
+
 
             boolean hasLink = LinkifyUtil.addLinks(context, messageStringBuilder);
             if (hasLink) {

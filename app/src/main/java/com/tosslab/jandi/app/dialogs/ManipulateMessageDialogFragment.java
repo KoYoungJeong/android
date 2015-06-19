@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.dialogs;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -53,7 +53,8 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         return frag;
     }
 
-    public static ManipulateMessageDialogFragment newInstanceByTextMessage(ResMessages.TextMessage item, boolean isMine) {
+    public static ManipulateMessageDialogFragment newInstanceByTextMessage(
+            ResMessages.TextMessage item, boolean isMine) {
         String title = DateTransformator.getTimeString(item.createTime);
 
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
@@ -62,6 +63,36 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putInt(MESSAGE_ID, item.id);
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
         args.putString(CURRENT_MESSAGE, item.content.body);
+        args.putBoolean(IS_MINE, isMine);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static ManipulateMessageDialogFragment newInstanceByStickerMessage(
+            ResMessages.StickerMessage item, boolean isMine) {
+        String title = DateTransformator.getTimeString(item.createTime);
+
+        ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putInt(MESSAGE_ID, item.id);
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STICKER);
+        args.putString(CURRENT_MESSAGE, null);
+        args.putBoolean(IS_MINE, isMine);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    public static ManipulateMessageDialogFragment newInstanceByStickerCommentMessage(
+            ResMessages.CommentStickerMessage item, boolean isMine) {
+        String title = DateTransformator.getTimeString(item.createTime);
+
+        ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
+        Bundle args = new Bundle();
+        args.putString(TITLE, title);
+        args.putInt(MESSAGE_ID, item.id);
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STICKER_COMMNET);
+        args.putString(CURRENT_MESSAGE, null);
         args.putBoolean(IS_MINE, isMine);
         frag.setArguments(args);
         return frag;
@@ -110,6 +141,11 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionDel.setVisibility(View.VISIBLE);
         } else {
             actionDel.setVisibility(View.GONE);
+        }
+
+        if (messageType == MessageItem.TYPE_STICKER
+                || messageType == MessageItem.TYPE_STICKER_COMMNET) {
+            actionCopy.setVisibility(View.GONE);
         }
 
         // Delete 메뉴 클릭시.
