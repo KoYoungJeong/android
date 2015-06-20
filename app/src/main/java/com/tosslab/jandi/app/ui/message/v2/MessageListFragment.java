@@ -365,7 +365,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void insertEmptyMessage() {
         EntityManager entityManager = EntityManager.getInstance(getActivity());
         FormattedEntity entity = entityManager.getEntityById(entityId);
-        if (!entity.isUser()) {
+        if (entity != null && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
             int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
 

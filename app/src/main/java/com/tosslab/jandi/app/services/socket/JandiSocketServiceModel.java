@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -19,8 +20,11 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.JandiRestV2Client;
+import com.tosslab.jandi.app.network.client.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -265,7 +269,11 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            ResAccessToken token = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
+            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_BASIC).create(JandiRestV2Client.class);
+            String jandiRefreshToken = JandiPreference.getRefreshToken(context);
+            ResAccessToken token =
+                    RequestManager.newInstance(context, (Request<ResAccessToken>) () ->
+                            jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(jandiRefreshToken))).request();
             return token != null;
         } catch (Exception e) {
             return false;

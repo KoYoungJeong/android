@@ -61,10 +61,8 @@ public class StickerManager {
             AlphaAnimation animation = new AlphaAnimation(0f, 1f);
             animation.setDuration(300);
 
-
             DrawableTypeRequest<Uri> glideRequestor = Glide.with(context)
                     .load(Uri.parse(stickerAssetPath));
-
 
             glideRequestor.asBitmap()
                     .into(new SimpleTarget<Bitmap>() {

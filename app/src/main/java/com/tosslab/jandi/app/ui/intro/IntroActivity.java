@@ -9,8 +9,6 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -104,7 +102,6 @@ public class IntroActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         subscriber.onNext(500);
                     }
-
                     subscriber.onCompleted();
                 }).start();
             }

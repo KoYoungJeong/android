@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app;
 
+import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -13,12 +14,22 @@ import java.util.HashMap;
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends MultiDexApplication {
+    static Context context;
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context context) {
+        JandiApplication.context = context;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        JandiApplication.setContext(getApplicationContext());
         TokenUtil.setContext(getApplicationContext());
 
         // For Parse Push Notification

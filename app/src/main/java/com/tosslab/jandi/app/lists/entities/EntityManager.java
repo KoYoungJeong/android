@@ -51,7 +51,6 @@ public class EntityManager {
     private int mTotalBadgeCount;
 
     private EntityManager(Context context) {
-        LogUtil.d("itsme");
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
         if (resLeftSideMenu != null) {
@@ -59,7 +58,7 @@ public class EntityManager {
         }
     }
 
-     public static synchronized EntityManager getInstance(Context context) {
+    public static synchronized EntityManager getInstance(Context context) {
         if (entityManager == null) {
             entityManager = new EntityManager(context);
         }
@@ -153,9 +152,9 @@ public class EntityManager {
         return entity;
     }
 
-     private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
+    private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
-         LogUtil.d("EntityManger.arrangeEntities");
+        LogUtil.d("EntityManger.arrangeEntities");
         List<Integer> starredEntities = (resLeftSideMenu.user.u_starredEntities != null)
                 ? resLeftSideMenu.user.u_starredEntities
                 : new ArrayList<Integer>();

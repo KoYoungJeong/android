@@ -23,19 +23,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import retrofit.RetrofitError;
+
 /**
  * Created by tonyjs on 15. 5. 19..
  */
 @EBean
 public class SignUpVerifyModel {
 
+    public static final int AUTHORIZED = -1;
     @RestService
     JandiRestClient restClient;
-
     @RootContext
     Context context;
-
-    public static final int AUTHORIZED = -1;
 
     public boolean isValidVerificationCode(String verificationCode) {
         return !TextUtils.isEmpty(verificationCode)
@@ -62,12 +62,11 @@ public class SignUpVerifyModel {
 
         try {
             return restClient.accountVerification(accountVerification);
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new JandiNetworkException(
-                    new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 

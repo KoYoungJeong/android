@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.network.manager;
 
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 
+import retrofit.RetrofitError;
+
 /**
  * Created by Steve SeongUg Jung on 14. 12. 16..<br/>
  */

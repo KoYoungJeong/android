@@ -41,6 +41,7 @@ public interface AccountDevicesApiClient {
 
     void setHeader(String name, String value);
 
+
     void setAuthentication(HttpAuthentication auth);
 
 

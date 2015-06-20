@@ -4,40 +4,21 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.account.devices.AccountDeviceApiV2Client;
-import com.tosslab.jandi.app.network.client.account.devices.AccountDevicesApiClient;
-import com.tosslab.jandi.app.network.client.account.devices.AccountDevicesApiClient_;
 import com.tosslab.jandi.app.network.client.file.FileApiClient;
 import com.tosslab.jandi.app.network.client.file.FileApiClient_;
-import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
-import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
-import com.tosslab.jandi.app.network.client.messages.MessagesApiClient;
-import com.tosslab.jandi.app.network.client.messages.MessagesApiClient_;
 import com.tosslab.jandi.app.network.client.messages.MessagesApiV2Client;
-import com.tosslab.jandi.app.network.client.messages.comments.CommentsApiClient;
-import com.tosslab.jandi.app.network.client.messages.comments.CommentsApiClient_;
 import com.tosslab.jandi.app.network.client.messages.comments.CommentsApiV2Client;
-import com.tosslab.jandi.app.network.client.privatetopic.GroupApiClient;
-import com.tosslab.jandi.app.network.client.privatetopic.GroupApiClient_;
 import com.tosslab.jandi.app.network.client.privatetopic.GroupApiV2Client;
-import com.tosslab.jandi.app.network.client.profile.ProfileApiClient;
-import com.tosslab.jandi.app.network.client.profile.ProfileApiClient_;
 import com.tosslab.jandi.app.network.client.profile.ProfileApiV2Client;
-import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient;
-import com.tosslab.jandi.app.network.client.publictopic.ChannelApiClient_;
 import com.tosslab.jandi.app.network.client.publictopic.ChannelApiV2Client;
-import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient;
-import com.tosslab.jandi.app.network.client.settings.StarredEntityApiClient_;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApiV2Client;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
-import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationSubscribe;
@@ -51,40 +32,32 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
-import com.tosslab.jandi.app.ui.intro.model.TestAccountInfoService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EBean
+@Deprecated
 public class JandiEntityClient {
 
     @RootContext
     Context context;
-
-    private int selectedTeamId;
-
     RestAdapter restAdapter;
+    private int selectedTeamId;
 
     @AfterInject
     void initAuthentication() {
@@ -101,8 +74,6 @@ public class JandiEntityClient {
                 .setConverter(converter)
                 .setEndpoint("http://i2.jandi.io:8888/inner-api")
                 .build();
-
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(restAdapter.create(JandiRestV2Client.class).getAccountInfo());
     }
 
     /**
@@ -116,17 +87,13 @@ public class JandiEntityClient {
             return RequestManager.newInstance(context, new Request<ResLeftSideMenu>() {
                 @Override
                 public ResLeftSideMenu request() throws JandiNetworkException {
-//                    JandiRestClient_ mJandiRestClient = new JandiRestClient_(context);
-//                    mJandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-//                    return mJandiRestClient.getInfosForSideMenu(selectedTeamId);
                     return restAdapter.create(JandiRestV2Client.class).getInfosForSideMenu(selectedTeamId);
                 }
             }).request();
-
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -142,14 +109,15 @@ public class JandiEntityClient {
 //                    ChannelApiClient channelApiClient = new ChannelApiClient_(context);
 //                    channelApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return channelApiClient.createChannel(reqCreateTopic);
-                     return restAdapter.create(ChannelApiV2Client.class).createChannel(reqCreateTopic);
+                    return restAdapter.create(ChannelApiV2Client.class).createChannel(reqCreateTopic);
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -166,15 +134,16 @@ public class JandiEntityClient {
 //                    GroupApiClient groupApiClient = new GroupApiClient_(context);
 //                    groupApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return groupApiClient.createPrivateGroup(reqCreateTopic);
-                      return restAdapter.create(GroupApiV2Client.class).createPrivateGroup(reqCreateTopic);
+                    return restAdapter.create(GroupApiV2Client.class).createPrivateGroup(reqCreateTopic);
                 }
             }).request();
 
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -193,10 +162,11 @@ public class JandiEntityClient {
             }).request();
 
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -214,10 +184,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -233,10 +204,11 @@ public class JandiEntityClient {
                     return restAdapter.create(GroupApiV2Client.class).leaveGroup(id, new ReqTeam(selectedTeamId));
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -256,10 +228,11 @@ public class JandiEntityClient {
                     return restAdapter.create(ChannelApiV2Client.class).modifyPublicTopicName(entityInfo, id);
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -280,10 +253,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -297,14 +271,15 @@ public class JandiEntityClient {
 //                    ChannelApiClient channelApiClient = new ChannelApiClient_(context);
 //                    channelApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return channelApiClient.deleteTopic(id, new ReqDeleteTopic(selectedTeamId));
-                     return restAdapter.create(ChannelApiV2Client.class).deleteTopic(id, new ReqDeleteTopic(selectedTeamId));
+                    return restAdapter.create(ChannelApiV2Client.class).deleteTopic(id, new ReqDeleteTopic(selectedTeamId));
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -320,10 +295,11 @@ public class JandiEntityClient {
                     return restAdapter.create(GroupApiV2Client.class).deleteGroup(selectedTeamId, id);
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -339,10 +315,11 @@ public class JandiEntityClient {
                     return restAdapter.create(ChannelApiV2Client.class).invitePublicTopic(id, new ReqInviteTopicUsers(invitedUsers, selectedTeamId));
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -360,10 +337,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -382,14 +360,15 @@ public class JandiEntityClient {
 //                    StarredEntityApiClient starredEntityApiClient = new StarredEntityApiClient_(context);
 //                    starredEntityApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return starredEntityApiClient.enableFavorite(new ReqTeam(selectedTeamId), entityId);
-                      return restAdapter.create(StarredEntityApiV2Client.class).enableFavorite(new ReqTeam(selectedTeamId), entityId);
+                    return restAdapter.create(StarredEntityApiV2Client.class).enableFavorite(new ReqTeam(selectedTeamId), entityId);
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -407,10 +386,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -431,10 +411,11 @@ public class JandiEntityClient {
                     return restAdapter.create(TeamApiV2Client.class).getMemberProfile(selectedTeamId, entityId);
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -451,10 +432,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -471,10 +453,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -504,10 +487,11 @@ public class JandiEntityClient {
 //            accountDevicesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //            return accountDevicesApiClient.registerNotificationToken(req);
             return restAdapter.create(AccountDeviceApiV2Client.class).registerNotificationToken(req);
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -518,10 +502,11 @@ public class JandiEntityClient {
 //            accountDevicesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //            return accountDevicesApiClient.deleteNotificationToken(new ReqDeviceToken(regId));
             return restAdapter.create(AccountDeviceApiV2Client.class).deleteNotificationToken(new ReqDeviceToken(regId));
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -538,10 +523,11 @@ public class JandiEntityClient {
                     return restAdapter.create(AccountDeviceApiV2Client.class).subscribeStateNotification(new ReqSubscibeToken(regId, isSubscribe));
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -558,13 +544,14 @@ public class JandiEntityClient {
 //                    MessagesApiClient messagesApiClient = new MessagesApiClient_(context);
 //                    messagesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return messagesApiClient.getFileDetail(selectedTeamId, messageId);
-                      return restAdapter.create(MessagesApiV2Client.class).getFileDetail(selectedTeamId, messageId);
+                    return restAdapter.create(MessagesApiV2Client.class).getFileDetail(selectedTeamId, messageId);
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -579,13 +566,14 @@ public class JandiEntityClient {
 //                    CommentsApiClient commentsApiClient = new CommentsApiClient_(context);
 //                    commentsApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return commentsApiClient.sendMessageComment(reqSendComment, messageId);
-                      return restAdapter.create(CommentsApiV2Client.class).sendMessageComment(reqSendComment, messageId);
+                    return restAdapter.create(CommentsApiV2Client.class).sendMessageComment(reqSendComment, messageId);
                 }
             }).request();
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -605,10 +593,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -621,14 +610,15 @@ public class JandiEntityClient {
 //                    MessagesApiClient messagesApiClient = new MessagesApiClient_(context);
 //                    messagesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //                    return messagesApiClient.unshareMessage(reqUnshareMessage, messageId);
-                      return restAdapter.create(MessagesApiV2Client.class).unshareMessage(reqUnshareMessage, messageId);
+                    return restAdapter.create(MessagesApiV2Client.class).unshareMessage(reqUnshareMessage, messageId);
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -651,10 +641,11 @@ public class JandiEntityClient {
             }).request();
 
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -671,10 +662,11 @@ public class JandiEntityClient {
                 }
             }).request();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 
@@ -693,10 +685,11 @@ public class JandiEntityClient {
             }).request();
 
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 }

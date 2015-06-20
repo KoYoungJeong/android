@@ -2,29 +2,23 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
-import com.tosslab.jandi.app.ui.intro.model.TestAccountInfoService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.rest.RestService;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 7. 16..
  */
 @EBean
+@Deprecated
 public class JandiAuthClient {
 
     @RootContext
@@ -33,20 +27,6 @@ public class JandiAuthClient {
     @AfterInject
     void initAuthentication() {
     }
-
-
-//    public ResConfig getConfig() throws JandiNetworkException {
-//        try {
-//            LogUtil.d("JandiAuthClient생성에서 jandiRestClient 생성");
-//            JandiRestClient_ jandiRestClient = new JandiRestClient_(context);
-//            jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-//            return jandiRestClient.getConfig();
-//        } catch (HttpStatusCodeException e) {
-//            throw new JandiNetworkException(e);
-//        } catch (Exception e) {
-//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
-//        }
-//    }
 
     public ResConfig getConfig() throws JandiNetworkException {
         try {
@@ -59,10 +39,10 @@ public class JandiAuthClient {
 
             return restAdapter.create(JandiRestV2Client.class).getConfig();
 
-        } catch (HttpStatusCodeException e) {
+        } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
-            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
+            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
 }

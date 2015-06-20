@@ -4,10 +4,12 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.util.Map;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by justinygchoi on 2014. 7. 16..
@@ -31,20 +33,21 @@ public class JandiNetworkException extends Exception {
     public String httpStatusMessage;
     public String httpBody;
 
-    public JandiNetworkException(HttpStatusCodeException e) {
-        this.httpStatusCode = e.getStatusCode().value();
-        this.httpStatusMessage = e.getStatusText();
+    public JandiNetworkException(RetrofitError e) {
+        Response r = e.getResponse();
+        this.httpStatusCode = r.getStatus();
+        this.httpStatusMessage = r.getReason();
 
         ObjectMapper om = JacksonMapper.getInstance().getObjectMapper();
         try {
             Map<String, Object> m = om.readValue(
-                    e.getResponseBodyAsString(),
+                    e.getBody().toString(),
                     new TypeReference<Map<String, Object>>() {
                     }
             );
             this.errCode = m.containsKey(ERR_CODE) ? (Integer) m.get(ERR_CODE) : httpStatusCode;
             this.errReason = m.containsKey(ERR_MSG) ? (String) m.get(ERR_MSG) : httpStatusMessage;
-            this.httpBody = e.getResponseBodyAsString();
+            this.httpBody = e.getBody().toString();
         } catch (IOException e1) {
             this.errCode = -1;
             this.errReason = null;

@@ -11,6 +11,12 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
  */
 public class TokenUtil {
 
+    private static Context context;
+
+    public static void setContext(Context context) {
+        TokenUtil.context = context;
+    }
+
     public static void saveTokenInfoByPassword(Context context,
                                                String accessToken, String refreshToken,
                                                String tokenType) {
@@ -27,11 +33,6 @@ public class TokenUtil {
         }
     }
 
-    private static Context context;
-
-    public static void setContext(Context context){
-       TokenUtil.context = context;
-    }
 
     @Deprecated
     public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
@@ -47,7 +48,7 @@ public class TokenUtil {
 
 
     @Deprecated
-    public static void saveTokenInfoByRefresh(Context context ,ResAccessToken accessToken) {
+    public static void saveTokenInfoByRefresh(Context context, ResAccessToken accessToken) {
         if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
             JandiPreference.setAccessToken(context, accessToken.getAccessToken());
         }
