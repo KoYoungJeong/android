@@ -2,11 +2,8 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.JacksonConverter;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
-import com.tosslab.jandi.app.network.client.chat.ChatsApiClient;
-import com.tosslab.jandi.app.network.client.chat.ChatsApiClient_;
-import com.tosslab.jandi.app.network.client.publictopic.ChannelApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.utils.JandiNetworkException;

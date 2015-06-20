@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiAuthClient;
-import com.tosslab.jandi.app.network.client.RequestApiManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -86,7 +86,7 @@ public class IntroActivityModel {
 
     public void refreshAccountInfo() throws JandiNetworkException {
 
-        ResAccountInfo resAccountInfo = new RequestApiManager().mainRestGetAccountInfo();
+        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 //        JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class);
 //        ResAccountInfo resAccountInfo = RequestManager.newInstance(context.getApplicationContext(),
 //                () -> jandiRestClient.getAccountInfo()).request();
@@ -134,7 +134,7 @@ public class IntroActivityModel {
         }
         try {
             int selectedTeamId = selectedTeamInfo.getTeamId();
-            ResLeftSideMenu totalEntitiesInfo = new RequestApiManager().mainRestGetInfosForSideMenu(selectedTeamId);
+            ResLeftSideMenu totalEntitiesInfo = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
 //            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class);
 //            ResLeftSideMenu totalEntitiesInfo = RequestManager.newInstance(context.getApplicationContext(),
 //                    () -> {

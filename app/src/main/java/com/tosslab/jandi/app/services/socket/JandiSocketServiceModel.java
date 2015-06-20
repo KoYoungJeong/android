@@ -21,9 +21,9 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
-import com.tosslab.jandi.app.network.client.RestAdapterFactory;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -269,7 +269,7 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_BASIC).create(JandiRestV2Client.class);
+            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_SIMPLE).create(JandiRestV2Client.class);
             String jandiRefreshToken = JandiPreference.getRefreshToken(context);
             ResAccessToken token =
                     RequestManager.newInstance(context, (Request<ResAccessToken>) () ->

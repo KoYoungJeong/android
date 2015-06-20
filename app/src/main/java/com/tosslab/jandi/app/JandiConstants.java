@@ -59,8 +59,6 @@ public class JandiConstants {
     public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
     public static final int NOTIFICATION_ID = 100;
-    public static final String REST_TYPE_BASIC = "basic";
-    public static final String REST_TYPE_AUTH = "auth";
 
     public static class RoomType {
         public static final String TYPE_USER = "users";

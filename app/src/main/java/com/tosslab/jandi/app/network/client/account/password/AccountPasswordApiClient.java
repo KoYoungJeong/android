@@ -3,8 +3,6 @@ package com.tosslab.jandi.app.network.client.account.password;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
-import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.spring.HttpRequestFactory;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;

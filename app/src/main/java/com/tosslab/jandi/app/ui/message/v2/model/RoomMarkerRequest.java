@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.JacksonConverter;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiClient;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiClient_;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiV2Client;

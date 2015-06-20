@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
-import com.tosslab.jandi.app.network.client.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -21,6 +21,7 @@ import retrofit.RetrofitError;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 16..
  */
+@Deprecated
 public class RequestManager<ResponseObject> {
 
     int selectedTeamId;
@@ -45,7 +46,7 @@ public class RequestManager<ResponseObject> {
             ++loginRetryCount;
             try {
                 // Request Access token, and save token
-                JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_BASIC).create(JandiRestV2Client.class);
+                JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_SIMPLE).create(JandiRestV2Client.class);
                 accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext())));
             } catch (HttpStatusCodeException e) {
                 LogUtil.e("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
@@ -88,4 +89,5 @@ public class RequestManager<ResponseObject> {
             throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
         }
     }
+
 }

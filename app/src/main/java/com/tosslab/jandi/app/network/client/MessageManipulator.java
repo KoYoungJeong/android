@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiV2Client;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiV2Client;
 import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -53,7 +54,6 @@ public class MessageManipulator {
         jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(MainRestApiClient.class);
 
     }
-
 
     public void initEntity(int entityType, int entityId) {
         mEntityId = entityId;

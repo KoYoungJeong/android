@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network;
+package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;
@@ -17,19 +17,19 @@ import retrofit.mime.TypedOutput;
  */
 public class JacksonConverter implements Converter {
     private final ObjectMapper objectMapper;
+    private ResponseLogger responseLogger;
 
     public JacksonConverter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+        this.responseLogger = ResponseLogger.getInstance();
     }
 
     @Override
     public Object fromBody(TypedInput body, Type type) throws ConversionException {
         JavaType javaType = objectMapper.getTypeFactory().constructType(type);
-
         try {
             return objectMapper.readValue(body.in(), javaType);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new ConversionException(e);
         }
     }
@@ -39,8 +39,7 @@ public class JacksonConverter implements Converter {
         try {
             String charset = "UTF-8";
             return new JsonTypedOutput(objectMapper.writeValueAsString(object).getBytes(charset), charset);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new AssertionError(e);
         }
     }
