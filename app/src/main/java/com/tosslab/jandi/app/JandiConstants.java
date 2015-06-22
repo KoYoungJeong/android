@@ -5,13 +5,6 @@ package com.tosslab.jandi.app;
  */
 public class JandiConstants {
 
-
-    public static final String DEV_API_URL = "http://i2.jandi.io:8888/inner-api";
-    public static final String LIVE_API_URL = "";
-
-    // API_URL SET
-    public static final String API_URL = DEV_API_URL;
-
     public static final String AUTH_HEADER = "Authorization";
     public static final String PUSH_CHANNEL_PREFIX = "c";
     public static final String PUSH_REFRESH_ACTION = "com.tosslab.jandi.app.Push";

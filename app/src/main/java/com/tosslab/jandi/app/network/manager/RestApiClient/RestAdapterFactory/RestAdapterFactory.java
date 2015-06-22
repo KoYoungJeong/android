@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory;
 
-import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -18,7 +18,7 @@ public class RestAdapterFactory {
 
     private static RestAdapter.Builder getDefaultBuilder() {
         return new RestAdapter.Builder()
-                .setEndpoint(JandiConstants.API_URL);
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api");
     }
 
     private static RestAdapter.Builder getJacksonConvertedBuilder() {
