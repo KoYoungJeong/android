@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiV2Client;
@@ -22,7 +23,7 @@ import retrofit.RestAdapter;
 public class AcceptOrIgnoreInviteRequest implements Request<ResTeamDetailInfo> {
 
     private final Context context;
-//    private final InvitationApiClient invitationApiClient;
+    //    private final InvitationApiClient invitationApiClient;
     private final String invitationId;
     private final String type;
 
@@ -41,7 +42,7 @@ public class AcceptOrIgnoreInviteRequest implements Request<ResTeamDetailInfo> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

@@ -2,9 +2,10 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -22,7 +23,7 @@ public class ChatListRequest implements Request<List<ResChat>> {
 
     private final Context context;
     private final int memberId;
-//    private ChatsApiClient chatsApiClient;
+    //    private ChatsApiClient chatsApiClient;
     RestAdapter restAdapter;
 
 //    private ChatListRequest(Context context, int memberId, ChatsApiClient chatsApiClient) {
@@ -31,7 +32,7 @@ public class ChatListRequest implements Request<List<ResChat>> {
 //        this.chatsApiClient = chatsApiClient;
 //    }
 
-    private ChatListRequest(Context context,int memberId){
+    private ChatListRequest(Context context, int memberId) {
         this.context = context;
         this.memberId = memberId;
 
@@ -42,7 +43,7 @@ public class ChatListRequest implements Request<List<ResChat>> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
 
 

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiClient_;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiV2Client;
@@ -39,7 +40,7 @@ public class PendingTeamListRequest implements Request<List<ResPendingTeamInfo>>
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

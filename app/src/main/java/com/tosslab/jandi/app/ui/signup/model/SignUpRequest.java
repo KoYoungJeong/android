@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.signup.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -34,7 +35,7 @@ public class SignUpRequest implements Request<ResCommon> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.network.manager;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -11,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.springframework.http.HttpStatus;
@@ -48,6 +48,7 @@ public class RequestManager<ResponseObject> {
                 // Request Access token, and save token
                 JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
                 accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext())));
+                TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (HttpStatusCodeException e) {
                 LogUtil.e("Refresh Token Fail : " + e.getStatusCode().value() + " : " + e.getResponseBodyAsString());
                 if (e.getStatusCode() != HttpStatus.UNAUTHORIZED) {

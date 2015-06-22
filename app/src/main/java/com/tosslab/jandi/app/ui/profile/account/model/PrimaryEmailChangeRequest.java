@@ -2,9 +2,7 @@ package com.tosslab.jandi.app.ui.profile.account.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.client.account.devices.AccountDeviceApiV2Client;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileClient;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileClient_;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.settings.AccountProfileV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -38,7 +36,7 @@ public class PrimaryEmailChangeRequest implements Request<ResAccountInfo> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -34,7 +35,7 @@ public class JandiAuthClient {
 
             RestAdapter restAdapter = new RestAdapter.Builder()
                     .setConverter(converter)
-                    .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                    .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                     .build();
 
             return restAdapter.create(JandiRestV2Client.class).getConfig();

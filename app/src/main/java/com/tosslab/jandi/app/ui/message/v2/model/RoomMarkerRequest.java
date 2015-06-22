@@ -2,11 +2,12 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiClient;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiClient_;
 import com.tosslab.jandi.app.network.client.rooms.RoomsApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
@@ -20,12 +21,11 @@ import retrofit.RestAdapter;
  */
 public class RoomMarkerRequest implements Request<ResRoomInfo> {
 
+    static RestAdapter restAdapter;
     private final Context context;
     private final int teamId;
-    private final int roomId;
 //    private final RoomsApiClient roomsApiClient;
-
-    static RestAdapter restAdapter;
+    private final int roomId;
 
     private RoomMarkerRequest(Context context, int teamId, int roomId, RoomsApiClient roomsApiClient) {
         this.context = context;
@@ -43,7 +43,7 @@ public class RoomMarkerRequest implements Request<ResRoomInfo> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
         return new RoomMarkerRequest(context, teamId, roomId, new RoomsApiClient_(context));
     }

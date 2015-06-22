@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
@@ -44,7 +45,7 @@ public class ChatDeleteRequest implements Request<ResCommon> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
 
 

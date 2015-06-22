@@ -2,9 +2,10 @@ package com.tosslab.jandi.app.ui.maintab.file.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
@@ -20,7 +21,7 @@ import retrofit.RestAdapter;
 public class FileSearchRequest implements Request<ResSearchFile> {
 
     private final Context context;
-//    private final JandiRestClient jandiRestClient;
+    //    private final JandiRestClient jandiRestClient;
     private final ReqSearchFile reqSearchFile;
 
     RestAdapter restAdapter;
@@ -42,7 +43,7 @@ public class FileSearchRequest implements Request<ResSearchFile> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

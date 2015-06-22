@@ -2,9 +2,8 @@ package com.tosslab.jandi.app.ui.invites.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -42,7 +41,7 @@ public class InviteEmailRequest implements Request<List<ResInvitationMembers>> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication(context).getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
     }
 

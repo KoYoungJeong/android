@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.network.client.publictopic.ChannelApiV2Client;
 import com.tosslab.jandi.app.network.client.settings.StarredEntityApiV2Client;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
@@ -84,12 +85,7 @@ public class JandiEntityClient {
 
     public ResLeftSideMenu getTotalEntitiesInfo() throws JandiNetworkException {
         try {
-            return RequestManager.newInstance(context, new Request<ResLeftSideMenu>() {
-                @Override
-                public ResLeftSideMenu request() throws JandiNetworkException {
-                    return restAdapter.create(JandiRestV2Client.class).getInfosForSideMenu(selectedTeamId);
-                }
-            }).request();
+            return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
         } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {
