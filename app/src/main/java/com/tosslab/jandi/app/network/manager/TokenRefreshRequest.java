@@ -28,7 +28,7 @@ public class TokenRefreshRequest implements Request<ResAccessToken> {
 
     @Override
     public ResAccessToken request() {
-        JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
+        JandiRestV2Client jandiRestClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(JandiRestV2Client.class);
         ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
         // save token info
         TokenUtil.saveTokenInfoByRefresh(accessToken);

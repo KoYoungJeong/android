@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
 /**
  * Created by tee on 15. 6. 20..
  */
-public class AuthRestApiClient implements IMainRestApiAuth, IAccountPasswordApiAuth,
+public class JacksonConvertedAuthRestApiClient implements IMainRestApiAuth, IAccountPasswordApiAuth,
         IAccountEmailApiAuth, IAccountDeviceApiAuth {
 
     static RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedAuthRestAdapter();

@@ -26,6 +26,6 @@ public class AccountInfoRequest implements Request<ResAccountInfo> {
 
     @Override
     public ResAccountInfo request() {
-        return RestAdapterFactory.getAuthRestAdapter().create(JandiRestV2Client.class).getAccountInfo();
+        return RestAdapterFactory.getJacksonConvertedAuthRestAdapter().create(JandiRestV2Client.class).getAccountInfo();
     }
 }

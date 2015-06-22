@@ -46,7 +46,7 @@ public class RequestManager<ResponseObject> {
             ++loginRetryCount;
             try {
                 // Request Access token, and save token
-                JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
+                JandiRestV2Client jandiRestClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(JandiRestV2Client.class);
                 accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext())));
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (HttpStatusCodeException e) {

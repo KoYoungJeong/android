@@ -5,8 +5,8 @@ import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoad
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiLoader;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiLoader;
 import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
-import com.tosslab.jandi.app.network.manager.RestApiClient.AuthRestApiClient;
-import com.tosslab.jandi.app.network.manager.RestApiClient.SimpleRestApiClient;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedAuthRestApiClient;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -29,9 +29,9 @@ import retrofit.RetrofitError;
  */
 public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IMainRestApiLoader {
 
-    AuthRestApiClient authRestApiClient = new AuthRestApiClient();
+    JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
-    SimpleRestApiClient SimpleRestApiClient = new SimpleRestApiClient();
+    JacksonConvertedSimpleRestApiClient SimpleRestApiClient = new JacksonConvertedSimpleRestApiClient();
 
     private RestApiLoader() {
     }

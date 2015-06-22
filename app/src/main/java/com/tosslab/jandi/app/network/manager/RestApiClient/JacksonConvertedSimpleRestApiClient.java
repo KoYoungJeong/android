@@ -22,7 +22,7 @@ import retrofit.RetrofitError;
 /**
  * Created by tee on 15. 6. 20..
  */
-public class SimpleRestApiClient implements IAccountPasswordApiSimple, IMainRestApiSimple {
+public class JacksonConvertedSimpleRestApiClient implements IAccountPasswordApiSimple, IMainRestApiSimple {
 
     RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter();
 

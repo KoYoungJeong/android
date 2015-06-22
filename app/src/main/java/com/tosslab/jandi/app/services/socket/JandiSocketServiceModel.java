@@ -268,7 +268,7 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
+            JandiRestV2Client jandiRestClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(JandiRestV2Client.class);
             String jandiRefreshToken = JandiPreference.getRefreshToken(context);
             ResAccessToken token =
                     RequestManager.newInstance(context, (Request<ResAccessToken>) () ->

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.account.devices.AccountDeviceApiV2Client;
 import com.tosslab.jandi.app.network.client.file.FileApiClient;
@@ -73,8 +74,9 @@ public class JandiEntityClient {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(converter)
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
                 .build();
+
     }
 
     /**

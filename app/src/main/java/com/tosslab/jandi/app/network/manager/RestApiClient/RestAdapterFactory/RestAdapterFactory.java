@@ -39,20 +39,4 @@ public class RestAdapterFactory {
                 .build();
     }
 
-    @Deprecated
-    public static RestAdapter getSimpleRestAdapter() {
-        return getJacksonConvertedBuilder()
-                .build();
-    }
-
-    @Deprecated
-    public static RestAdapter getAuthRestAdapter() {
-        return getJacksonConvertedBuilder()
-                .setRequestInterceptor(request -> {
-                    request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
-                })
-                .build();
-    }
-
-
 }
