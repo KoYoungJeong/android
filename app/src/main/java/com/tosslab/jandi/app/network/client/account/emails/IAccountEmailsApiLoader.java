@@ -10,12 +10,12 @@ import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
  */
 public interface IAccountEmailsApiLoader {
 
-    public IExecutor<?> setExecutorRequestAddEmail(ReqAccountEmail reqAccountEmail);
+    public IExecutor setExecutorRequestAddEmail(ReqAccountEmail reqAccountEmail);
 
-    public IExecutor<?> setExecutorConfirmEmail(ReqConfirmEmail reqConfirmEmail);
+    public IExecutor setExecutorConfirmEmail(ReqConfirmEmail reqConfirmEmail);
 
-    public IExecutor<?> setExecutorDeleteEmail(ReqAccountEmail reqConfirmEmail);
+    public IExecutor setExecutorDeleteEmail(ReqAccountEmail reqConfirmEmail);
 
-    public IExecutor<?> setExecutorChangePassword(ReqChangePassword reqConfirmEmail);
+    public IExecutor setExecutorChangePassword(ReqChangePassword reqConfirmEmail);
 
 }

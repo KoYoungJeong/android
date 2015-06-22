@@ -14,26 +14,26 @@ import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
  */
 public interface IMainRestApiLoader {
 
-    public IExecutor<?> setExecutorGetAccountInfo();
+    public IExecutor setExecutorGetAccountInfo();
 
-    public IExecutor<?> setExecutorUpdatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo);
+    public IExecutor setExecutorUpdatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo);
 
-    public IExecutor<?> setExecutorGetInfosForSideMenu(int teamId);
+    public IExecutor setExecutorGetInfosForSideMenu(int teamId);
 
-    public IExecutor<?> setExecutorSetMarker(int entityId, ReqSetMarker reqSetMarker);
+    public IExecutor setExecutorSetMarker(int entityId, ReqSetMarker reqSetMarker);
 
-    public IExecutor<?> setExecutorSearchFile(ReqSearchFile reqSearchFile);
+    public IExecutor setExecutorSearchFile(ReqSearchFile reqSearchFile);
 
-    public IExecutor<?> setExecutorGetConfig();
+    public IExecutor setExecutorGetConfig();
 
-    public IExecutor<?> setExecutorGetTeamId(String userEmail);
+    public IExecutor setExecutorGetTeamId(String userEmail);
 
-    public IExecutor<?> setExecutorGetAccessToken(ReqAccessToken login);
+    public IExecutor setExecutorGetAccessToken(ReqAccessToken login);
 
-    public IExecutor<?> setExecutorSignUpAccount(ReqSignUpInfo signUpInfo);
+    public IExecutor setExecutorSignUpAccount(ReqSignUpInfo signUpInfo);
 
-    public IExecutor<?> setExecutorActivateAccount(ReqAccountActivate reqAccountActivate);
+    public IExecutor setExecutorActivateAccount(ReqAccountActivate reqAccountActivate);
 
-    public IExecutor<?> setExecutorAccountVerification(ReqAccountVerification reqAccountVerification);
+    public IExecutor setExecutorAccountVerification(ReqAccountVerification reqAccountVerification);
 
 }

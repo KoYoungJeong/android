@@ -48,10 +48,10 @@ public class MessageManipulator {
     void initSelectedTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
-        directMessageApiClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(DirectMessageApiV2Client.class);
-        groupMessageApiClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(GroupMessageApiV2Client.class);
-        channelMessageApiClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(ChannelMessageApiV2Client.class);
-        jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(MainRestApiClient.class);
+        directMessageApiClient = RestAdapterFactory.getAuthRestAdapter().create(DirectMessageApiV2Client.class);
+        groupMessageApiClient = RestAdapterFactory.getSimpleRestAdapter().create(GroupMessageApiV2Client.class);
+        channelMessageApiClient = RestAdapterFactory.getAuthRestAdapter().create(ChannelMessageApiV2Client.class);
+        jandiRestClient = RestAdapterFactory.getAuthRestAdapter().create(MainRestApiClient.class);
 
     }
 

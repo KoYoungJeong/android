@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.services.socket;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
@@ -269,7 +268,7 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_SIMPLE).create(JandiRestV2Client.class);
+            JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
             String jandiRefreshToken = JandiPreference.getRefreshToken(context);
             ResAccessToken token =
                     RequestManager.newInstance(context, (Request<ResAccessToken>) () ->

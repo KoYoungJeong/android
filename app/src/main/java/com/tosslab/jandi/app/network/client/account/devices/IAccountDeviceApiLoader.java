@@ -12,12 +12,12 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 public interface IAccountDeviceApiLoader {
 
 
-    public IExecutor<?> setExecutorRegisterNotificationToken(ReqNotificationRegister reqNotificationRegister);
+    public IExecutor setExecutorRegisterNotificationToken(ReqNotificationRegister reqNotificationRegister);
 
-    public IExecutor<?> setExecutorDeleteNotificationToken(ReqDeviceToken reqDeviceToken);
+    public IExecutor setExecutorDeleteNotificationToken(ReqDeviceToken reqDeviceToken);
 
-    public IExecutor<?> setExecutorSubscribeStateNotification(ReqSubscibeToken reqDeviceToken);
+    public IExecutor setExecutorSubscribeStateNotification(ReqSubscibeToken reqDeviceToken);
 
-    public IExecutor<?> setExecutorGetNotificationBadge(ReqNotificationTarget reqNotificationTarget);
+    public IExecutor setExecutorGetNotificationBadge(ReqNotificationTarget reqNotificationTarget);
 
 }

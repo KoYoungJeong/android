@@ -2,12 +2,11 @@ package com.tosslab.jandi.app.ui.team.select.model;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.manager.Request;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 /**
@@ -27,6 +26,6 @@ public class AccountInfoRequest implements Request<ResAccountInfo> {
 
     @Override
     public ResAccountInfo request() {
-        return RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class).getAccountInfo();
+        return RestAdapterFactory.getAuthRestAdapter().create(JandiRestV2Client.class).getAccountInfo();
     }
 }

@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.network.manager;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -29,7 +28,7 @@ public class TokenRefreshRequest implements Request<ResAccessToken> {
 
     @Override
     public ResAccessToken request() {
-        JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_SIMPLE).create(JandiRestV2Client.class);
+        JandiRestV2Client jandiRestClient = RestAdapterFactory.getSimpleRestAdapter().create(JandiRestV2Client.class);
         ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
         // save token info
         TokenUtil.saveTokenInfoByRefresh(accessToken);
