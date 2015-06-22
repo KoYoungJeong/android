@@ -24,7 +24,7 @@ import retrofit.RetrofitError;
  */
 public class SimpleRestApiClient implements IAccountPasswordApiSimple, IMainRestApiSimple {
 
-    RestAdapter restAdapter = RestAdapterFactory.getSimpleRestAdapter();
+    RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter();
 
     @Override
     public ResCommon resetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {

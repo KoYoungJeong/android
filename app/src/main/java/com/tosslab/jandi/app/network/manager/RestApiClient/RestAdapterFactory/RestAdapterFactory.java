@@ -16,24 +16,43 @@ public class RestAdapterFactory {
     private RestAdapterFactory() {
     }
 
-    public static RestAdapter.Builder getDefaultBuilder() {
+    private static RestAdapter.Builder getDefaultBuilder() {
         return new RestAdapter.Builder()
                 .setEndpoint(JandiConstants.API_URL);
     }
 
-    public static RestAdapter getSimpleRestAdapter() {
-        return getDefaultBuilder()
-                .setConverter(new JacksonConverter(new ObjectMapper()))
+    private static RestAdapter.Builder getJacksonConvertedBuilder() {
+        return getDefaultBuilder().setConverter(new JacksonConverter(new ObjectMapper()));
+
+    }
+
+    public static RestAdapter getJacksonConvertedSimpleRestAdapter() {
+        return getJacksonConvertedBuilder()
                 .build();
     }
 
-    public static RestAdapter getAuthRestAdapter() {
-        return getDefaultBuilder()
+    public static RestAdapter getJacksonConvertedAuthRestAdapter() {
+        return getJacksonConvertedBuilder()
                 .setRequestInterceptor(request -> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
-                .setConverter(new JacksonConverter(new ObjectMapper()))
                 .build();
     }
+
+    @Deprecated
+    public static RestAdapter getSimpleRestAdapter() {
+        return getJacksonConvertedBuilder()
+                .build();
+    }
+
+    @Deprecated
+    public static RestAdapter getAuthRestAdapter() {
+        return getJacksonConvertedBuilder()
+                .setRequestInterceptor(request -> {
+                    request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
+                })
+                .build();
+    }
+
 
 }

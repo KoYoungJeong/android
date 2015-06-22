@@ -22,7 +22,8 @@ import retrofit.RetrofitError;
 public class PoolableRequestApiExecutor {
 
     private static final int POOL_NUMBER = 10;
-    private static final Pools.SynchronizedPool RequestApiExecutorPool = new Pools.SynchronizedPool(POOL_NUMBER);
+    private static final Pools.SynchronizedPool RequestApiExecutorPool
+            = new Pools.SynchronizedPool(POOL_NUMBER);
 
     private PoolableRequestApiExecutor() {
     }

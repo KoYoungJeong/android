@@ -33,7 +33,7 @@ import retrofit.RetrofitError;
 public class AuthRestApiClient implements IMainRestApiAuth, IAccountPasswordApiAuth,
         IAccountEmailApiAuth, IAccountDeviceApiAuth {
 
-    static RestAdapter restAdapter = RestAdapterFactory.getAuthRestAdapter();
+    static RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedAuthRestAdapter();
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
