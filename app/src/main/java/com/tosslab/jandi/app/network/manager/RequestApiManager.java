@@ -130,7 +130,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailAp
     }
 
     @Override
-    public ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError {
+    public synchronized ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError {
         return (ResCommon) RequestApiExecute(restApiLoader.setExecutorAccountVerification(reqAccountVerification));
     }
 
