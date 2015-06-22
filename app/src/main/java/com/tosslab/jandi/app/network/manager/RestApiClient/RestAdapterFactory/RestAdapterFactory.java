@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -15,20 +16,23 @@ public class RestAdapterFactory {
     private RestAdapterFactory() {
     }
 
-    public static RestAdapter getSimpleRestAdapter() {
+    public static RestAdapter.Builder getDefaultBuilder() {
         return new RestAdapter.Builder()
+                .setEndpoint(JandiConstants.API_URL);
+    }
+
+    public static RestAdapter getSimpleRestAdapter() {
+        return getDefaultBuilder()
                 .setConverter(new JacksonConverter(new ObjectMapper()))
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
                 .build();
     }
 
     public static RestAdapter getAuthRestAdapter() {
-        return new RestAdapter.Builder()
+        return getDefaultBuilder()
                 .setRequestInterceptor(request -> {
                     request.addHeader("Authorization", TokenUtil.getRequestAuthentication().getHeaderValue());
                 })
                 .setConverter(new JacksonConverter(new ObjectMapper()))
-                .setEndpoint("http://i2.jandi.io:8888/inner-api")
                 .build();
     }
 
