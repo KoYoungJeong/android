@@ -2,10 +2,11 @@ package com.tosslab.jandi.app.network.manager;
 
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiAuth;
 import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailApiAuth;
-import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiAuth;
-import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
+import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
+import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.manager.ApiExecutor.PoolableRequestApiExecutor;
 import com.tosslab.jandi.app.network.manager.ApiLoader.RestApiLoader;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -50,104 +51,112 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailAp
         return requestApiManager;
     }
 
+    public Object RequestApiExecute(IExecutor executor) {
+        PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
+        Object result = requestApiexecutor.execute(executor);
+        requestApiexecutor.recycle();
+        return result;
+    }
+
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorRegisterNotificationToken(reqNotificationRegister));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorRegisterNotificationToken(reqNotificationRegister));
     }
 
     @Override
     public ResAccountInfo deleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorDeleteNotificationToken(reqDeviceToken));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorDeleteNotificationToken(reqDeviceToken));
     }
 
     @Override
     public ResAccountInfo subscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorSubscribeStateNotification(reqDeviceToken));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorSubscribeStateNotification(reqDeviceToken));
     }
 
     @Override
     public ResCommon getNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetNotificationBadge(reqNotificationTarget));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorGetNotificationBadge(reqNotificationTarget));
     }
 
     @Override
     public ResAccountInfo requestAddEmailByAccountEmailApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorRequestAddEmail(reqAccountEmail));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorRequestAddEmail(reqAccountEmail));
     }
 
     @Override
     public ResAccountInfo confirmEmailByAccountEmailApi(ReqConfirmEmail reqConfirmEmail) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorConfirmEmail(reqConfirmEmail));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorConfirmEmail(reqConfirmEmail));
     }
 
     @Override
     public ResAccountInfo deleteEmailByAccountEmailApi(ReqAccountEmail reqConfirmEmail) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorDeleteEmail(reqConfirmEmail));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorDeleteEmail(reqConfirmEmail));
     }
 
     @Override
     public ResCommon resetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorResetPassword(reqAccountEmail));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorResetPassword(reqAccountEmail));
+
     }
 
     @Override
     public ResCommon changePasswordByAccountPasswordApi(ReqChangePassword reqConfirmEmail) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorChangePassword(reqConfirmEmail));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorChangePassword(reqConfirmEmail));
     }
 
     @Override
     public ResConfig getConfigByMainRest() throws RetrofitError {
-        return (ResConfig) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetConfig());
+        return (ResConfig) RequestApiExecute(restApiLoader.setExecutorGetConfig());
     }
 
     @Override
     public ResMyTeam getTeamIdByMainRest(String userEmail) throws RetrofitError {
-        return (ResMyTeam) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetTeamId(userEmail));
+        return (ResMyTeam) RequestApiExecute(restApiLoader.setExecutorGetTeamId(userEmail));
     }
 
     @Override
     public ResAccessToken getAccessTokenByMainRest(ReqAccessToken login) throws RetrofitError {
-        return (ResAccessToken) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetAccessToken(login));
+        return (ResAccessToken) RequestApiExecute(restApiLoader.setExecutorGetAccessToken(login));
     }
 
     @Override
     public ResCommon signUpAccountByMainRest(ReqSignUpInfo signUpInfo) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorSignUpAccount(signUpInfo));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorSignUpAccount(signUpInfo));
     }
 
     @Override
     public ResAccountActivate activateAccountByMainRest(ReqAccountActivate reqAccountActivate) throws RetrofitError {
-        return (ResAccountActivate) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorActivateAccount(reqAccountActivate));
+        return (ResAccountActivate) RequestApiExecute(restApiLoader.setExecutorActivateAccount(reqAccountActivate));
     }
 
     @Override
     public ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorAccountVerification(reqAccountVerification));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorAccountVerification(reqAccountVerification));
     }
 
     @Override
     public ResAccountInfo getAccountInfoByMainRest() throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetAccountInfo());
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorGetAccountInfo());
     }
 
     @Override
     public ResAccountInfo updatePrimaryEmailByMainRest(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitError {
-        return (ResAccountInfo) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorUpdatePrimaryEmail(updatePrimaryEmailInfo));
+        return (ResAccountInfo) RequestApiExecute(restApiLoader.setExecutorUpdatePrimaryEmail(updatePrimaryEmailInfo));
     }
 
     @Override
     public ResLeftSideMenu getInfosForSideMenuByMainRest(int teamId) throws RetrofitError {
-        return (ResLeftSideMenu) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorGetInfosForSideMenu(teamId));
+        return (ResLeftSideMenu) RequestApiExecute(restApiLoader.setExecutorGetInfosForSideMenu(teamId));
     }
 
     @Override
     public ResCommon setMarkerByMainRest(int entityId, ReqSetMarker reqSetMarker) throws RetrofitError {
-        return (ResCommon) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorSetMarker(entityId, reqSetMarker));
+        return (ResCommon) RequestApiExecute(restApiLoader.setExecutorSetMarker(entityId, reqSetMarker));
     }
 
     @Override
     public ResSearchFile searchFileByMainRest(ReqSearchFile reqSearchFile) throws RetrofitError {
-        return (ResSearchFile) PoolableRequestApiExecutor.obtain().execute(restApiLoader.setExecutorSearchFile(reqSearchFile));
+        return (ResSearchFile) RequestApiExecute(restApiLoader.setExecutorSearchFile(reqSearchFile));
     }
 
 }
