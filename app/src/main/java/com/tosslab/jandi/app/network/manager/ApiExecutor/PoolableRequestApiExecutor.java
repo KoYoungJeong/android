@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.springframework.http.HttpStatus;
@@ -74,7 +75,7 @@ public class PoolableRequestApiExecutor {
                 ReqAccessToken refreshReqToken = ReqAccessToken
                         .createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext()));
                 accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);
-
+                TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (HttpStatusCodeException e) {
                 LogUtil.e("Refresh Token Fail", e);
                 if (e.getStatusCode() != HttpStatus.UNAUTHORIZED) {
@@ -84,5 +85,4 @@ public class PoolableRequestApiExecutor {
         }
         return accessToken;
     }
-
 }
