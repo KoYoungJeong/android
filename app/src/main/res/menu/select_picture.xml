@@ -4,10 +4,9 @@
 
     <item
         android:id="@+id/action_select_picture"
-        android:icon="@drawable/jandi_icon_check"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="@string/jandi_confirm"
+        android:title="@string/jandi_decide_choose"
         app:showAsAction="always" />
 
 </menu>

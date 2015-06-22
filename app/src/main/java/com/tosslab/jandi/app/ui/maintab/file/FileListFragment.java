@@ -446,19 +446,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         if (!isForeground) {
             return;
         }
-        filePickerViewModel.selectFileSelector(event.type, FileListFragment.this);
+        filePickerViewModel.selectFileSelector(event.type, FileListFragment.this, mSearchQuery.mSearchEntity);
     }
 
     @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
     void onGalleryActivityResult(int resultCode, Intent intent) {
-        if (resultCode != Activity.RESULT_OK || intent == null) {
-            return;
-        }
-
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_GALLERY, intent);
-        if (filePath != null && filePath.size() > 0) {
-            filePickerViewModel.moveInsertFileCommnetActivity(getActivity(), filePath, mSearchQuery.mSearchEntity);
-        }
+        // Do Nothing
     }
 
     @OnActivityResult(JandiConstants.TYPE_UPLOAD_TAKE_PHOTO)

@@ -7,9 +7,9 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_file_upload_preview"
-        android:background="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/white" />
 
     <ImageView
         android:id="@+id/iv_file_upload_preview_previous"
@@ -35,14 +35,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/jandi_bg_upload"
-        android:orientation="vertical"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp">
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/jandi_file_upload_divider" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:weightSum="7">
 
             <TextView
@@ -73,12 +78,14 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/jandi_entities_divider" />
+            android:background="@color/jandi_file_upload_divider" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:weightSum="7">
 
             <TextView
@@ -107,7 +114,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/jandi_entities_divider" />
+            android:background="@color/jandi_file_upload_divider" />
 
         <EditText
             android:id="@+id/et_file_upload_comment"
@@ -118,6 +125,8 @@
             android:hint="@string/file_upload_comment"
             android:inputType="textMultiLine"
             android:paddingBottom="12dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
             android:paddingTop="12dp" />
 
     </LinearLayout>

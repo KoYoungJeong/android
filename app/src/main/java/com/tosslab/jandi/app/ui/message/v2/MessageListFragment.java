@@ -81,11 +81,9 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -696,7 +694,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this);
+        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
     }
 
     @Override
@@ -707,10 +705,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                List<String> imagePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
-                if (imagePath != null && imagePath.size() > 0) {
-                    filePickerViewModel.moveInsertFileCommnetActivity(getActivity(), imagePath, entityId);
-                }
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
             case JandiConstants.TYPE_UPLOAD_EXPLORER:

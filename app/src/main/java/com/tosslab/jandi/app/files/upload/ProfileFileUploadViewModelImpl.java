@@ -45,7 +45,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void selectFileSelector(int type, Fragment fragment) {
+    public void selectFileSelector(int type, Fragment fragment, int entityId) {
 
     }
 

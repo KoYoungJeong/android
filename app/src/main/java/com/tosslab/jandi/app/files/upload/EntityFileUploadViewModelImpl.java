@@ -52,10 +52,13 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
 
 
     @Override
-    public void selectFileSelector(int type, Fragment fragment) {
+    public void selectFileSelector(int type, Fragment fragment, int entityId) {
         switch (type) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(fragment).startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
+                ImageAlbumActivity_
+                        .intent(fragment)
+                        .entityId(entityId)
+                        .startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
                 break;
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
 

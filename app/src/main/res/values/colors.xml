@@ -187,5 +187,7 @@
     <color name="jandi_sticker_view_background">#FFEFF2F6</color>
     <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
 
+    <color name="jandi_file_upload_divider">#B5B5B5</color>
+
 
 </resources>

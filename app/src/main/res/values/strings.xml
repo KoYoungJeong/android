@@ -391,4 +391,5 @@ Contact us at support@tosslab.com"</string>
     <string name="jandI_select_gallery">Select Pictures</string>
     <string name="jandi_view_all">View All</string>
     <string name="jandi_select_maximum_10">최대 10장까지 선택할 수 있습니다.</string>
+    <string name="jandi_decide_choose">선택완료</string>
 </resources>

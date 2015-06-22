@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.file.upload.preview;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -117,6 +118,12 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
                     }
                 }, throwable -> {
                 });
+
+        int newUiOptions = View.SYSTEM_UI_FLAG_LOW_PROFILE;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            newUiOptions |= View.SYSTEM_UI_FLAG_FULLSCREEN;
+        }
+        getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
     }
 
     @Override
@@ -132,6 +139,7 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     }
 
     public void onEventMainThread(FileUploadPreviewImageClickEvent event) {
+
         ActionBar actionBar = getSupportActionBar();
         if (vgFileInfo.getVisibility() != View.VISIBLE) {
             // 보이도록 하기, 배경 흰색

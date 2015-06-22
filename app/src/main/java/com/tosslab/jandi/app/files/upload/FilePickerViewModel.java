@@ -14,7 +14,7 @@ import java.util.List;
 public interface FilePickerViewModel {
     void showFileUploadTypeDialog(FragmentManager fragmentManager);
 
-    void selectFileSelector(int type, Fragment fragment);
+    void selectFileSelector(int type, Fragment fragment, int entityId);
 
     void selectFileSelector(int type, Activity activity);
 

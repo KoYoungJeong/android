@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.album;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,15 +11,22 @@ import android.view.Menu;
 import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.ui.album.fragment.ImageAlbumFragment_;
 import com.tosslab.jandi.app.ui.album.fragment.vo.ImagePicture;
 import com.tosslab.jandi.app.ui.album.fragment.vo.SelectPictures;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +37,10 @@ import java.util.List;
 public class ImageAlbumActivity extends AppCompatActivity {
 
     public static final String EXTRA_DATAS = "datas";
+
+    @Extra
+    int entityId;
+
     @ViewById(R.id.vg_image_album_content)
     ViewGroup contentLayout;
 
@@ -79,15 +90,43 @@ public class ImageAlbumActivity extends AppCompatActivity {
     @OptionsItem(R.id.action_select_picture)
     void onSelectPicture() {
 
-        Intent intent = new Intent();
-
         ArrayList<String> selectedPicturesPathList = getSelectedPicturesPathList();
 
-        intent.putStringArrayListExtra(EXTRA_DATAS, selectedPicturesPathList);
+        if (!isOverFileSize(selectedPicturesPathList)) {
 
-        setResult(RESULT_OK, intent);
+            FileUploadPreviewActivity_.intent(ImageAlbumActivity.this)
+                    .realFilePathList(new ArrayList<String>(selectedPicturesPathList))
+                    .selectedEntityIdToBeShared(entityId)
+                    .startForResult(FileUploadPreviewActivity.REQUEST_CODE);
+        } else {
+            ColoredToast.showError(ImageAlbumActivity.this, getString(R.string.err_file_upload_failed));
+        }
 
-        finish();
+    }
+
+    private boolean isOverFileSize(List<String> selectedPicturesPathList) {
+
+        File uploadFile;
+        for (String filePath : selectedPicturesPathList) {
+            uploadFile = new File(filePath);
+            if (uploadFile.exists()) {
+                if (uploadFile.length() > FilePickerModel.MAX_FILE_SIZE) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+    @OnActivityResult(FileUploadPreviewActivity.REQUEST_CODE)
+    void onFileUploadActivityResult(int resultCode) {
+
+        if (resultCode == Activity.RESULT_OK) {
+            finish();
+        }
+
     }
 
     private ArrayList<String> getSelectedPicturesPathList() {
