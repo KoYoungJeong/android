@@ -384,4 +384,9 @@
     <string name="jandi_canceled">"取消了"</string>
     <string name="jandi_cannot_find_messages">"搜尋沒有結果: "</string>
     <string name="jandi_no_recent_stickers">"無最近使用的貼圖"</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"一次可上傳10張照片"</string>
+    <string name="jandi_decide_choose">"選擇照片"</string>
+    <string name="jandI_select_gallery">"選擇照片"</string>
+    <string name="jandi_view_all">"檢視全部"</string>
 </resources>

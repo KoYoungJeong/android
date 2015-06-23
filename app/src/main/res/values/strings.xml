@@ -384,12 +384,12 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_invite_app_not_installed">"The app is not installed on your device. The invitation link has been copied to the clipboard instead."</string>
     <string name="jandi_invite_member">"Invite Members"</string>
 
-    <string name="jandi_google_docs">Google Docs</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
     <string name="jandi_canceled">"Canceled"</string>
     <string name="jandi_cannot_find_messages">"No messages found matching: "</string>
     <string name="jandi_no_recent_stickers">"No Recent Stickers"</string>
-    <string name="jandI_select_gallery">Select Pictures</string>
-    <string name="jandi_view_all">View All</string>
-    <string name="jandi_select_maximum_10">최대 10장까지 선택할 수 있습니다.</string>
-    <string name="jandi_decide_choose">선택완료</string>
+    <string name="jandI_select_gallery">"Select Pictures"</string>
+    <string name="jandi_view_all">"View All"</string>
+    <string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
+    <string name="jandi_decide_choose">"Select Photos"</string>
 </resources>
