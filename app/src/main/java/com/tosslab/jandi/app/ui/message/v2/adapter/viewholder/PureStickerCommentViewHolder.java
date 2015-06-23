@@ -69,7 +69,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
             unreadTextView.setVisibility(View.VISIBLE);
         }
 
-        StickerManager.getInstance().loadSticker(ivSticker, stickerMessage.content.groupId, stickerMessage.content.stickerId);
+        StickerManager.getInstance().loadStickerNoOption(ivSticker, stickerMessage.content.groupId, stickerMessage.content.stickerId);
 
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));

@@ -77,7 +77,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
 
         ResMessages.StickerContent stickerContent = commentMessage.content;
 
-        StickerManager.getInstance().loadSticker(ivCommentSticker, stickerContent.groupId, stickerContent.stickerId);
+        StickerManager.getInstance().loadStickerNoOption(ivCommentSticker, stickerContent.groupId, stickerContent.stickerId);
 
     }
 

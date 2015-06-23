@@ -14,7 +14,7 @@ import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
 
@@ -47,9 +47,18 @@ public class StickerManager {
         return stickerManager;
     }
 
-    public void loadSticker(ImageView view, int groupId, String stickerId) {
+    public void loadStickerDefaultOption(ImageView view, int groupId, String stickerId) {
 
         loadSticker(view, groupId, stickerId, DEFAULT_OPTIONS);
+    }
+
+    public void loadStickerNoOption(ImageView view, int groupId, String stickerId) {
+
+        LoadOptions loadOptions = new LoadOptions();
+        loadOptions.isClickImage = false;
+        loadOptions.isFadeAnimation = false;
+
+        loadSticker(view, groupId, stickerId, loadOptions);
     }
 
     public void loadSticker(ImageView view, int groupId, String stickerId, LoadOptions options) {
@@ -67,12 +76,11 @@ public class StickerManager {
 
 
             glideRequestor.asBitmap()
-                    .into(new SimpleTarget<Bitmap>() {
+                    .into(new BitmapImageViewTarget(view) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
 
                             if (options.isClickImage) {
-
                                 StateListDrawable stateListDrawable = new StateListDrawable();
                                 BitmapDrawable drawable = new BitmapDrawable(context.getResources(), resource);
                                 drawable.setAlpha(153);

@@ -85,6 +85,10 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         EntityManager entityManager = EntityManager.getInstance(context);
         FormattedEntity entityById = entityManager.getEntityById(fromEntity.id);
         ResLeftSideMenu.User user = entityById != null ? entityById.getUser() : null;
+
+        FormattedEntity feedbackEntityById = entityManager.getEntityById(link.feedback.writerId);
+        ResLeftSideMenu.User feedbackUser = feedbackEntityById != null ? feedbackEntityById.getUser() : null;
+
         if (user != null && TextUtils.equals(user.status, "enabled")) {
             nameTextView.setTextColor(context.getResources().getColor(R.color.jandi_messages_name));
             disableCoverView.setVisibility(View.GONE);
@@ -121,7 +125,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 fileImageView.setVisibility(View.VISIBLE);
                 fileImageView.setOnClickListener(null);
             } else {
-                fileOwnerTextView.setText(entity.getName());
+                fileOwnerTextView.setText(feedbackUser.name);
                 ResMessages.FileContent content = feedbackFileMessage.content;
                 fileNameTextView.setText(content.title);
 
@@ -183,7 +187,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         if (link.message instanceof ResMessages.CommentStickerMessage) {
             ResMessages.CommentStickerMessage commentStickerMessage = (ResMessages.CommentStickerMessage) link.message;
-            StickerManager.getInstance().loadSticker(ivSticker, commentStickerMessage.content.groupId, commentStickerMessage.content.stickerId);
+            StickerManager.getInstance().loadStickerNoOption(ivSticker, commentStickerMessage.content.groupId, commentStickerMessage.content.stickerId);
 
         }
 

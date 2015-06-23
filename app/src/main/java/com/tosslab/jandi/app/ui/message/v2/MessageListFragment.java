@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -894,6 +895,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
+        } else if (messageListModel.isStickerType(link.message)) {
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) link.message;
+            boolean isMyMessage = messageListModel.isMyMessage(stickerMessage.writerId) && !isFromSearch;
+
+            if (!isMyMessage) {
+                return;
+            }
+            messageListPresenter.showStickerMessageMenuDialog(isMyMessage, stickerMessage);
         }
     }
 
@@ -1032,6 +1041,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (messageType == MessageItem.TYPE_STRING) {
                 messageListModel.deleteMessage(messageId);
                 LogUtil.d("deleteMessageInBackground : succeed");
+            } else if (messageType == MessageItem.TYPE_STICKER
+                    || messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                messageListModel.deleteSticker(messageId, messageType);
+                LogUtil.d("deleteStickerInBackground : succeed");
             }
         } catch (JandiNetworkException e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
@@ -1054,6 +1067,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEvent(DeleteFileEvent event) {
 
         messageListPresenter.changeToArchive(event.getId());
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (!isForeground) {
+            messageListModel.updateMarkerInfo(teamId, roomId);
+            return;
+        }
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     public void onEvent(RefreshNewMessageEvent event) {

@@ -17,7 +17,9 @@ public class MessageItem {
 
     public static final int TYPE_STRING = 0;
     public static final int TYPE_IMAGE = 1;
-    public static final int TYPE_COMMENT = 2;
+    public static final int TYPE_STICKER = 2;
+    public static final int TYPE_STICKER_COMMNET = 3;
+    public static final int TYPE_COMMENT = 4;
     public static final int TYPE_FILE = 10;
 
     public boolean isDateDivider;   // 날짜 경계선인지 여부
@@ -111,6 +113,10 @@ public class MessageItem {
             }
         } else if (mMessage instanceof ResMessages.CommentMessage) {
             return TYPE_COMMENT;
+        } else if (mMessage instanceof ResMessages.StickerMessage) {
+            return TYPE_STICKER;
+        } else if (mMessage instanceof ResMessages.CommentStickerMessage) {
+            return TYPE_STICKER_COMMNET;
         }
         return TYPE_STRING;
     }

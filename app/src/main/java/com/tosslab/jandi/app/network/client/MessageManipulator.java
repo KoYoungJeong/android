@@ -3,10 +3,13 @@ package com.tosslab.jandi.app.network.client;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiClient;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiClient;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
+import com.tosslab.jandi.app.network.client.sticker.StickerApiClient;
+import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
@@ -46,6 +49,9 @@ public class MessageManipulator {
 
     @RestService
     TeamsApiClient teamsApiClient;
+
+    @RestService
+    StickerApiClient stickerApiClient;
 
     @RestService
     JandiRestClient jandiRestClient;
@@ -182,6 +188,22 @@ public class MessageManipulator {
                 case JandiConstants.TYPE_PRIVATE_TOPIC:
                     groupMessageApiClient.setAuthentication(requestAuthentication);
                     return groupMessageApiClient.deletePrivateGroupMessage(selectedTeamId, entityId, messageId);
+                default:
+                    return null;
+            }
+        }).request();
+    }
+
+    public ResCommon deleteSticker(final int messageId, int messageType) throws JandiNetworkException {
+        return RequestManager.newInstance(context, () -> {
+            JandiV2HttpAuthentication requestAuthentication = TokenUtil.getRequestAuthentication(context);
+
+            stickerApiClient.setAuthentication(requestAuthentication);
+            switch (messageType) {
+                case MessageItem.TYPE_STICKER:
+                    return stickerApiClient.deleteSticker(messageId, selectedTeamId);
+                case MessageItem.TYPE_STICKER_COMMNET:
+                    return stickerApiClient.deleteStickerComment(messageId, selectedTeamId);
                 default:
                     return null;
             }

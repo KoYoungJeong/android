@@ -354,12 +354,21 @@ public class MessageListPresenter {
     }
 
     public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(textMessage, myMessage);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage
+                (textMessage, myMessage);
+        newFragment.show(activity.getSupportFragmentManager(), "dioalog");
+    }
+
+    public void showStickerMessageMenuDialog(
+            boolean myMessage, ResMessages.StickerMessage StickerMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByStickerMessage
+                (StickerMessage, myMessage);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
     public void showMessageMenuDialog(ResMessages.CommentMessage commentMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(commentMessage, false);
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage
+                (commentMessage, false);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
@@ -793,7 +802,7 @@ public class MessageListPresenter {
     }
 
     public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadSticker(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+        StickerManager.getInstance().loadStickerDefaultOption(imgStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
     }
 
     public void dismissStickerPreview() {
