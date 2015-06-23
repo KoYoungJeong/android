@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
 import com.tosslab.jandi.app.network.client.privatetopic.messages.GroupMessageApiV2Client;
 import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiV2Client;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -48,10 +48,10 @@ public class MessageManipulator {
     void initSelectedTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
-        directMessageApiClient = RestAdapterFactory.getJacksonConvertedAuthRestAdapter().create(DirectMessageApiV2Client.class);
-        groupMessageApiClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(GroupMessageApiV2Client.class);
-        channelMessageApiClient = RestAdapterFactory.getJacksonConvertedAuthRestAdapter().create(ChannelMessageApiV2Client.class);
-        jandiRestClient = RestAdapterFactory.getJacksonConvertedAuthRestAdapter().create(MainRestApiClient.class);
+        directMessageApiClient = RestAdapterBuilder.newInstance(DirectMessageApiV2Client.class).create();
+        groupMessageApiClient = RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create();
+        channelMessageApiClient = RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create();
+        jandiRestClient = RestAdapterBuilder.newInstance(MainRestApiClient.class).create();
 
     }
 

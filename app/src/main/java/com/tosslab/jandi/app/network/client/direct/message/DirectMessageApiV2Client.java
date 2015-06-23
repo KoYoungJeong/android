@@ -1,14 +1,12 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
-
-import org.androidannotations.annotations.rest.Accept;
 
 import retrofit.http.Body;
 import retrofit.http.DELETE;
@@ -22,6 +20,7 @@ import retrofit.http.Query;
 /**
  * Created by tee on 15. 6. 16..
  */
+@AuthorizedHeader
 public interface DirectMessageApiV2Client {
     // Direct Message 리스트 정보 획득
     @GET("/users/{userId}/messages?type=old")

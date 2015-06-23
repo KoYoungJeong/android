@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -268,7 +268,7 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            JandiRestV2Client jandiRestClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(JandiRestV2Client.class);
+            JandiRestV2Client jandiRestClient = RestAdapterBuilder.newInstance(JandiRestV2Client.class).create();
             String jandiRefreshToken = JandiPreference.getRefreshToken(context);
             ResAccessToken token =
                     RequestManager.newInstance(context, (Request<ResAccessToken>) () ->

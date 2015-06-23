@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -46,7 +46,7 @@ public class RequestManager<ResponseObject> {
             ++loginRetryCount;
             try {
                 // Request Access token, and save token
-                JandiRestV2Client jandiRestClient = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter().create(JandiRestV2Client.class);
+                JandiRestV2Client jandiRestClient = RestAdapterBuilder.newInstance(JandiRestV2Client.class).create();
                 accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext())));
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (HttpStatusCodeException e) {
