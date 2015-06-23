@@ -123,6 +123,7 @@ public class OpenAction implements Action {
     void startIntroActivity() {
         IntroActivity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .startForInvite(true)
                 .start();
         ((Activity) context).finish();
     }
