@@ -16,6 +16,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
 
@@ -33,6 +34,9 @@ import rx.Subscriber;
 public class IntroActivity extends AppCompatActivity {
 
     private static final long MAX_DELAY_MS = 1500l;
+
+    @Extra
+    boolean startForInvite = false;
 
     @Bean
     IntroActivityModel introModel;
@@ -120,7 +124,7 @@ public class IntroActivity extends AppCompatActivity {
         }), (o, o2) -> o).subscribe(o -> {
             if (o == 200) {
                 introModel.sleep(initTime, MAX_DELAY_MS);
-                if (introModel.hasSelectedTeam()) {
+                if (introModel.hasSelectedTeam() && !startForInvite) {
                     ParseUpdateUtil.updateParseWithoutSelectedTeam(IntroActivity.this.getApplicationContext());
                     introViewModel.moveToMainActivity();
                 } else {

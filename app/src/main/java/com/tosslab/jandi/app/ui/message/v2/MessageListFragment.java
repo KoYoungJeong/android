@@ -41,6 +41,7 @@ import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
+import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
@@ -1055,6 +1056,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public void onEvent(DeleteFileEvent event) {
 
         messageListPresenter.changeToArchive(event.getId());
+    }
+
+    public void onEvent(FileCommentRefreshEvent event) {
+        if (!isForeground) {
+            messageListModel.updateMarkerInfo(teamId, roomId);
+            return;
+        }
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
     }
 
     public void onEvent(RefreshNewMessageEvent event) {
