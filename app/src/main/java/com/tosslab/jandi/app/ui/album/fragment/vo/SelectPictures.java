@@ -13,7 +13,7 @@ import rx.Observable;
  */
 public class SelectPictures {
 
-    public static final int MAX_PICKER_COUNT = 20;
+    public static final int MAX_PICKER_COUNT = 10;
     private static final ImagePicture NULL_OBJECT = new ImagePicture.ImagePictureBuilder().createImagePicture();
 
     private static SelectPictures selectPictures;
