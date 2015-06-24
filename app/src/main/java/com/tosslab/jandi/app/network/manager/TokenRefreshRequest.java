@@ -1,37 +1,28 @@
 package com.tosslab.jandi.app.network.manager;
 
-import android.content.Context;
-
-import com.tosslab.jandi.app.network.client.JandiRestV2Client;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
-import com.tosslab.jandi.app.utils.TokenUtil;
-
-import retrofit.RestAdapter;
-
 /**
  * Created by Steve SeongUg Jung on 14. 12. 16..
  */
-@Deprecated
-public class TokenRefreshRequest implements Request<ResAccessToken> {
 
-    private final Context context;
-    private final String refreshToken;
-
-    RestAdapter restAdapter;
-
-    public TokenRefreshRequest(Context context, String refreshToken) {
-        this.context = context;
-        this.refreshToken = refreshToken;
-    }
-
-    @Override
-    public ResAccessToken request() {
-        JandiRestV2Client jandiRestClient = RestAdapterBuilder.newInstance(JandiRestV2Client.class).create();
-        ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
-        // save token info
-        TokenUtil.saveTokenInfoByRefresh(accessToken);
-        return accessToken;
-    }
-}
+//@Deprecated
+//public class TokenRefreshRequest implements Request<ResAccessToken> {
+//
+//    private final Context context;
+//    private final String refreshToken;
+//
+//    RestAdapter restAdapter;
+//
+//    public TokenRefreshRequest(Context context, String refreshToken) {
+//        this.context = context;
+//        this.refreshToken = refreshToken;
+//    }
+//
+//    @Override
+//    public ResAccessToken request() {
+//        JandiRestV2Client jandiRestClient = RestAdapterBuilder.newInstance(JandiRestV2Client.class).create();
+//        ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createRefreshReqToken(refreshToken));
+//        // save token info
+//        TokenUtil.saveTokenInfoByRefresh(accessToken);
+//        return accessToken;
+//    }
+//}

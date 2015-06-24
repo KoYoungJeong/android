@@ -8,10 +8,9 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -23,16 +22,12 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.rest.RestService;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
  */
 @EBean
 public class OpenAction implements Action {
-
-    @RestService
-    JandiRestClient jandiRestClient;
 
     @RootContext
     Context context;
@@ -69,15 +64,14 @@ public class OpenAction implements Action {
         accessToken.setTokenType("bearer");
 
         try {
-            jandiRestClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-            ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
+            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-            TokenUtil.saveTokenInfoByRefresh(context, accessToken);
+            TokenUtil.saveTokenInfoByRefresh(accessToken);
             JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
         } catch (Exception e) {
-            TokenUtil.clearTokenInfo(context);
+            TokenUtil.clearTokenInfo();
             JandiAccountDatabaseManager.getInstance(context).clearAllData();
             failAccessToken();
             LogUtil.d(e.getMessage());

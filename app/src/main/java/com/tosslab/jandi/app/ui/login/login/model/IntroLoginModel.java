@@ -3,18 +3,14 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -24,6 +20,8 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.springframework.http.HttpStatus;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 4..
@@ -41,7 +39,7 @@ public class IntroLoginModel {
     @SupposeBackground
     public int startLogin(String myEmailId, String password) {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
-        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
+//        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
         try {
 
@@ -51,12 +49,12 @@ public class IntroLoginModel {
 
             if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
                 // Save Token & Get TeamList
-                TokenUtil.saveTokenInfoByPassword(context, accessToken);
+                TokenUtil.saveTokenInfoByPassword(accessToken);
 
-                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-                RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-                ResAccountInfo resAccountInfo = requestManager.request();
-
+//                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
+//                RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
+//                ResAccountInfo resAccountInfo = requestManager.request();
+                ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
                 JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
 
                 return HttpStatus.OK.value();
@@ -65,8 +63,8 @@ public class IntroLoginModel {
                 throw new Exception("Login Fail");
             }
 
-        } catch (JandiNetworkException e) {
-            return e.httpStatusCode;
+        } catch (RetrofitError e) {
+            return e.getResponse().getStatus();
         } catch (Exception e) {
             LogUtil.e(e.toString(), e);
             return 400;

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiAuthClient;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -20,7 +19,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
@@ -37,8 +35,6 @@ public class IntroActivityModel {
     private final long initTime = System.currentTimeMillis();
     @RootContext
     Context context;
-    @Bean
-    JandiAuthClient jandiAuthClient;
 
     /**
      * Check new app version
@@ -55,7 +51,7 @@ public class IntroActivityModel {
                 isLatestVersion = false;
                 LogUtil.i("A new version of JANDI is available.");
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
         } catch (Exception e) {
         } finally {
             return isLatestVersion;
@@ -75,7 +71,7 @@ public class IntroActivityModel {
     }
 
     int getLatestVersionInBackground() throws JandiNetworkException {
-        ResConfig resConfig = jandiAuthClient.getConfig();
+        ResConfig resConfig = getConfigInfo();
         return resConfig.versions.android;
     }
 
@@ -87,9 +83,6 @@ public class IntroActivityModel {
     public void refreshAccountInfo() throws JandiNetworkException {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-//        JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class);
-//        ResAccountInfo resAccountInfo = RequestManager.newInstance(context.getApplicationContext(),
-//                () -> jandiRestClient.getAccountInfo()).request();
         JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).upsertAccountAllInfo(resAccountInfo);
     }
 
@@ -134,23 +127,7 @@ public class IntroActivityModel {
         }
         try {
             int selectedTeamId = selectedTeamInfo.getTeamId();
-            for (int i = 0; i < 1000; i++) {
-                Thread t = new Thread() {
-                    @Override
-                    public void run() {
-                        RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
-                    }
-                };
-
-                t.start();
-
-            }
             ResLeftSideMenu totalEntitiesInfo = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
-//            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class);
-//            ResLeftSideMenu totalEntitiesInfo = RequestManager.newInstance(context.getApplicationContext(),
-//                    () -> {
-//                        return jandiRestClient.getInfosForSideMenu(selectedTeamId);
-//                    }).request();
             JandiEntityDatabaseManager.getInstance(context.getApplicationContext()).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
@@ -167,7 +144,7 @@ public class IntroActivityModel {
     }
 
     public ResConfig getConfigInfo() throws JandiNetworkException {
-        return jandiAuthClient.getConfig();
+        return RequestApiManager.getInstance().getConfigByMainRest();
     }
 
     public boolean hasSelectedTeam() {

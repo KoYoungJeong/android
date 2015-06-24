@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -45,6 +45,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
@@ -292,13 +293,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         memberProfileView.showProgressWheel();
 
         try {
-            ResLeftSideMenu entitiesInfo = JandiEntityClient_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
+            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
             JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
             EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -16,6 +17,7 @@ import retrofit.http.Query;
 /**
  * Created by tee on 15. 6. 16..
  */
+@AuthorizedHeader
 public interface MessagesApiV2Client {
 
     // Message Detail

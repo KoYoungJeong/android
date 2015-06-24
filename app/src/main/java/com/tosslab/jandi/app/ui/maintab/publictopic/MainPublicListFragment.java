@@ -16,12 +16,11 @@ import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityExpandableListAdapter;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.BaseChatListFragment;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -31,6 +30,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 10. 2..
@@ -43,7 +44,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     ExpandableListView mListViewEntities;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
     private EntityExpandableListAdapter mEntityListAdapter;
 
     private EntityManager mEntityManager;
@@ -179,11 +180,10 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @Background
     void createTopicInBackground(String entityName) {
         try {
-            ResCommon restResId = mJandiEntityClient.createPublicTopic(entityName);
+            ResCommon restResId = mEntityClientManager.createPublicTopic(entityName);
             createTopicSucceed(restResId.id, entityName);
-        } catch (JandiNetworkException e) {
-            LogUtil.e(e.getErrorInfo(), e);
-            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+        } catch (RetrofitError e) {
+            if (e.getResponse().getStatus() == 4000) {
                 createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 createTopicFailed(R.string.err_entity_create);
@@ -232,9 +232,9 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @Background
     public void joinChannelInBackground(final FormattedEntity channel) {
         try {
-            mJandiEntityClient.joinChannel(channel.getChannel());
+            mEntityClientManager.joinChannel(channel.getChannel());
             joinChannelSucceed(channel);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("fail to join channel", e);
             joinChannelFailed();
         } catch (Exception e) {

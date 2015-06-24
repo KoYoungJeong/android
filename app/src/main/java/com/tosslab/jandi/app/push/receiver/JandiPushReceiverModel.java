@@ -18,15 +18,14 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
@@ -37,6 +36,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
@@ -84,14 +85,14 @@ public class JandiPushReceiverModel {
     public void updateEntityAndBadge(Context context) {
 
         try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+            ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             BadgeUtils.setBadge(context, totalUnreadCount);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }

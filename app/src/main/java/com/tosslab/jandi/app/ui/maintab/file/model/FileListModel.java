@@ -18,7 +18,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -47,9 +47,7 @@ public class FileListModel {
     Context context;
 
     public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws JandiNetworkException {
-        RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(context, FileSearchRequest.create(context, reqSearchFile));
-        ResSearchFile resSearchFile = requestManager.request();
-
+        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
         return resSearchFile;
     }
 

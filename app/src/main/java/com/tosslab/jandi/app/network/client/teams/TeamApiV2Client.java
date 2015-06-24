@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.teams;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -19,6 +20,7 @@ import retrofit.http.Path;
 /**
  * Created by tee on 15. 6. 16..
  */
+@AuthorizedHeader
 public interface TeamApiV2Client {
 
     @POST("/teams")

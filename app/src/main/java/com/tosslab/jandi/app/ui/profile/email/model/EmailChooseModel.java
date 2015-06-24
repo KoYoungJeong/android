@@ -5,11 +5,12 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.models.ReqAccountEmail;
+import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -53,12 +54,13 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestNewEmail(String email) throws JandiNetworkException {
-        return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(email);
+        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
+        return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(reqAccountEmail);
     }
 
     public boolean isConfirmedEmail(String email) {
 
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (TextUtils.equals(email, userEmail.getId())) {
@@ -70,7 +72,7 @@ public class EmailChooseModel {
     }
 
     public String getPrimaryEmail() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
@@ -82,15 +84,17 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestDeleteEmail(String email) throws JandiNetworkException {
-        return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(email);
+        ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
+        return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(reqAccountEmail);
     }
 
     public ResAccountInfo getAccountEmailsFromServer() throws JandiNetworkException {
-        return RequestManager.newInstance(context, AccountInfoRequest.create(context)).request();
+        return RequestApiManager.getInstance().getAccountInfoByMainRest();
 
     }
 
     public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws JandiNetworkException {
-        return RequestManager.newInstance(context, EmailChooseRequest.create(context, selectedEmail)).request();
+        return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
+
 }

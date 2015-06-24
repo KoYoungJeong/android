@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -35,14 +36,14 @@ public class MainTopicModel {
     Context context;
 
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
 
 
     /**
      * topic 생성
      */
     public ResCommon createTopicInBackground(String entityName) throws JandiNetworkException {
-        return jandiEntityClient.createPublicTopic(entityName);
+        return entityClientManager.createPublicTopic(entityName);
     }
 
     public List<FormattedEntity> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity> groups) {
@@ -66,7 +67,7 @@ public class MainTopicModel {
     }
 
     public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
-        jandiEntityClient.joinChannel(channel);
+        entityClientManager.joinChannel(channel);
     }
 
     public boolean hasAlarmCount(List<FormattedEntity> joinEntities) {
@@ -110,7 +111,7 @@ public class MainTopicModel {
 
     public boolean refreshEntity() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
@@ -118,7 +119,7 @@ public class MainTopicModel {
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
             return true;
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             return false;
         } catch (Exception e) {
             return false;

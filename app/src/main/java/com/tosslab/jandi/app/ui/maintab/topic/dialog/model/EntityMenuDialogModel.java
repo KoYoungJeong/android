@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -29,32 +29,30 @@ public class EntityMenuDialogModel {
     Context context;
 
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
 
     public FormattedEntity getEntity(int entityId) {
         return EntityManager.getInstance(context).getEntityById(entityId);
     }
 
     public void requestStarred(int entityId) throws JandiNetworkException {
-        jandiEntityClient.enableFavorite(entityId);
+        entityClientManager.enableFavorite(entityId);
     }
 
     public void requestUnstarred(int entityId) throws JandiNetworkException {
-        jandiEntityClient.disableFavorite(entityId);
+        entityClientManager.disableFavorite(entityId);
     }
 
     public void requestLeaveEntity(int entityId, boolean publicTopic) throws JandiNetworkException {
-
         if (publicTopic) {
-            jandiEntityClient.leaveChannel(entityId);
+            entityClientManager.leaveChannel(entityId);
         } else {
-            jandiEntityClient.leavePrivateGroup(entityId);
+            entityClientManager.leavePrivateGroup(entityId);
         }
-
     }
 
     public void refreshEntities() throws JandiNetworkException {
-        ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);

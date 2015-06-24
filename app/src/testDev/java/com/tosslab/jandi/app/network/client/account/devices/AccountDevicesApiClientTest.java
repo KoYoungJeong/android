@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.network.client.account.devices;
 
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
@@ -9,7 +8,6 @@ import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -31,19 +29,19 @@ import static org.junit.Assert.fail;
 public class AccountDevicesApiClientTest {
 
     public static final String TEMP_TOKEN = "aaa";
-    private JandiRestClient jandiRestClient_;
+    //    private JandiRestClient jandiRestClient_;
     private ResLeftSideMenu sideMenu;
-    private AccountDevicesApiClient accountDevicesApiClient;
+//    private AccountDevicesApiClient accountDevicesApiClient;
 
     @Before
     public void setUp() throws Exception {
 
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        accountDevicesApiClient = new AccountDevicesApiClient_(Robolectric.application);
+//        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
+//        accountDevicesApiClient = new AccountDevicesApiClient_(Robolectric.application);
         ResAccessToken accessToken = getAccessToken();
 
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        accountDevicesApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+//        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+//        accountDevicesApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         sideMenu = getSideMenu();
 
@@ -55,16 +53,18 @@ public class AccountDevicesApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
-
+//        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
         return infosForSideMenu;
     }
 
     private ResAccessToken getAccessToken() {
 
-        jandiRestClient_.setHeader("Content-Type", "application/json");
 
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+//        jandiRestClient_.setHeader("Content-Type", "application/json");
+
+//        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         System.out.println("========= Get Access Token =========");
         return accessToken;
     }
@@ -76,7 +76,8 @@ public class AccountDevicesApiClientTest {
 
         ResAccountInfo resCommon = null;
         try {
-            resCommon = accountDevicesApiClient.registerNotificationToken(reqNotiricationRegister);
+            resCommon = RequestApiManager.getInstance().registerNotificationTokenByAccountDeviceApi(reqNotiricationRegister);
+//            resCommon = accountDevicesApiClient.registerNotificationToken(reqNotiricationRegister);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -90,7 +91,8 @@ public class AccountDevicesApiClientTest {
 
         ResAccountInfo resCommon = null;
         try {
-            resCommon = accountDevicesApiClient.deleteNotificationToken(new ReqDeviceToken(TEMP_TOKEN));
+            resCommon = RequestApiManager.getInstance().deleteNotificationTokenByAccountDeviceApi(new ReqDeviceToken(TEMP_TOKEN));
+//            resCommon = accountDevicesApiClient.deleteNotificationToken(new ReqDeviceToken(TEMP_TOKEN));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -103,7 +105,8 @@ public class AccountDevicesApiClientTest {
     public void testSubscribeStateNotification() throws Exception {
         ResAccountInfo resCommon = null;
         try {
-            resCommon = accountDevicesApiClient.subscribeStateNotification(new ReqSubscibeToken(TEMP_TOKEN, true));
+            resCommon = RequestApiManager.getInstance().subscribeStateNotificationByAccountDeviceApi(new ReqSubscibeToken(TEMP_TOKEN, true));
+//            resCommon = accountDevicesApiClient.subscribeStateNotification(new ReqSubscibeToken(TEMP_TOKEN, true));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

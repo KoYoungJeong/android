@@ -4,7 +4,6 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.RequestInterceptor;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.ResponseConverter;
 import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.RestAdapterDecor;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,8 @@ public class RestAdapterBuilder<CLIENT> {
     protected RestAdapter.Builder getRestAdapter() {
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
-                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
-                .setErrorHandler(cause -> new JandiNetworkException(cause));
+                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api");
+//                .setErrorHandler(cause -> new JandiNetworkException(cause));
 
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
             builder = restAdapterDecor.addRestAdapterProperty(builder);

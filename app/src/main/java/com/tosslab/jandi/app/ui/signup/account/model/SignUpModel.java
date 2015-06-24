@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.signup.account.model;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.utils.PasswordChecker;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.rest.RestService;
 
 import retrofit.RetrofitError;
 
@@ -22,9 +21,6 @@ import retrofit.RetrofitError;
 public class SignUpModel {
 
     CheckPointsHolder mCheckPointsHolder;
-
-    @RestService
-    JandiRestClient jandiRestClient;
 
     @AfterInject
     void initObject() {
@@ -132,7 +128,7 @@ public class SignUpModel {
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
         try {
-            return jandiRestClient.signUpAccount(signUpInfo);
+            return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
         } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {

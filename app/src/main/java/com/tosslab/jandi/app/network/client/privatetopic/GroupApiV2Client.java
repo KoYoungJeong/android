@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.client.privatetopic;
 
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqTeam;
@@ -15,7 +16,7 @@ import retrofit.http.Query;
 /**
  * Created by tee on 15. 6. 16..
  */
-
+@AuthorizedHeader
 public interface GroupApiV2Client {
 
     // Private Group 생성

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.settings;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -13,6 +14,7 @@ import retrofit.http.PUT;
 /**
  * Created by tee on 15. 6. 16..
  */
+@AuthorizedHeader
 public interface AccountProfileApiV2Client {
 
     @POST("/settings/name")

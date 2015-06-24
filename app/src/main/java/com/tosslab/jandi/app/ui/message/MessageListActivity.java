@@ -49,7 +49,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -91,6 +91,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 8. 12..
@@ -113,7 +114,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     int teamId;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
 
     @Bean
     MessageManipulator messageManipulator;
@@ -378,7 +379,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         MenuCommand menuCommand = MenuCommandBuilder.init(MessageListActivity.this)
-                .with(mJandiEntityClient)
+                .with(mEntityClientManager)
                 .with(mChattingInformations)
                 .build(item);
 
@@ -424,7 +425,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void getEntitiesInBackground() {
         try {
             // TODO Temp TeamId
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MessageListActivity.this).upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             JandiPreference.setBadgeCount(MessageListActivity.this, totalUnreadCount);
@@ -791,7 +792,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 messageManipulator.deleteMessage(messageId);
                 LogUtil.d("deleteMessageInBackground : succeed");
             } else if (messageType == MessageItem.TYPE_COMMENT) {
-                mJandiEntityClient.deleteMessageComment(messageId, feedbackId);
+                mEntityClientManager.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
         } catch (JandiNetworkException e) {
@@ -982,14 +983,13 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void modifyEntityInBackground(ConfirmModifyTopicEvent event) {
         try {
             if (mChattingInformations.isPublicTopic()) {
-                mJandiEntityClient.modifyChannelName(mChattingInformations.entityId, event.inputName);
+                mEntityClientManager.modifyChannelName(mChattingInformations.entityId, event.inputName);
             } else if (mChattingInformations.isPrivateTopic()) {
-                mJandiEntityClient.modifyPrivateGroupName(mChattingInformations.entityId, event.inputName);
+                mEntityClientManager.modifyPrivateGroupName(mChattingInformations.entityId, event.inputName);
             }
             modifyEntitySucceed(event.inputName);
-        } catch (JandiNetworkException e) {
-            LogUtil.e("modify failed " + e.getErrorInfo(), e);
-            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+        } catch (RetrofitError e) {
+            if (e.getResponse().getStatus() == 4000) {
                 modifyEntityFailed(getString(R.string.err_entity_duplicated_name));
             } else {
                 modifyEntityFailed(getString(R.string.err_entity_modify));
@@ -1030,12 +1030,12 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     void deleteTopicInBackground() {
         try {
             if (mChattingInformations.isPublicTopic()) {
-                mJandiEntityClient.deleteChannel(mChattingInformations.entityId);
+                mEntityClientManager.deleteChannel(mChattingInformations.entityId);
             } else if (mChattingInformations.isPrivateTopic()) {
-                mJandiEntityClient.deletePrivateGroup(mChattingInformations.entityId);
+                mEntityClientManager.deletePrivateGroup(mChattingInformations.entityId);
             }
             deleteTopicSucceed();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             deleteTopicFailed(getString(R.string.err_entity_delete));
         } catch (Exception e) {
             deleteTopicFailed(getString(R.string.err_entity_delete));
@@ -1087,9 +1087,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     @Background
     void getProfileInBackground(int userEntityId) {
         try {
-            ResLeftSideMenu.User user = mJandiEntityClient.getUserProfile(userEntityId);
+            ResLeftSideMenu.User user = mEntityClientManager.getUserProfile(userEntityId);
             getProfileSuccess(user);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {

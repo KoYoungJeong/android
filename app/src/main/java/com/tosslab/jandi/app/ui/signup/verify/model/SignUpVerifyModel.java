@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.rest.RestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -32,8 +31,7 @@ import retrofit.RetrofitError;
 public class SignUpVerifyModel {
 
     public static final int AUTHORIZED = -1;
-    @RestService
-    JandiRestClient restClient;
+
     @RootContext
     Context context;
 
@@ -47,7 +45,7 @@ public class SignUpVerifyModel {
         ReqAccountActivate accountActivate = new ReqAccountActivate(email, verificationCode);
 
         try {
-            return restClient.activateAccount(accountActivate);
+            return RequestApiManager.getInstance().activateAccountByMainRest(accountActivate);
         } catch (HttpStatusCodeException e) {
             throw new VerifyNetworkException(e);
         } catch (Exception e) {
@@ -61,7 +59,7 @@ public class SignUpVerifyModel {
         ReqAccountVerification accountVerification = new ReqAccountVerification(email);
 
         try {
-            return restClient.accountVerification(accountVerification);
+            return RequestApiManager.getInstance().accountVerificationByMainRest(accountVerification);
         } catch (RetrofitError e) {
             throw new JandiNetworkException(e);
         } catch (Exception e) {

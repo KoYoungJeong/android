@@ -12,16 +12,16 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -44,31 +45,31 @@ public class FileDetailModel {
     Context context;
 
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
 
     public ResFileDetail getFileDetailInfo(int fileId) throws JandiNetworkException {
 
-        return jandiEntityClient.getFileDetail(fileId);
+        return entityClientManager.getFileDetail(fileId);
     }
 
     public void shareMessage(int fileId, int entityIdToBeShared) throws JandiNetworkException {
-        jandiEntityClient.shareMessage(fileId, entityIdToBeShared);
+        entityClientManager.shareMessage(fileId, entityIdToBeShared);
     }
 
     public void unshareMessage(int fileId, int entityIdToBeUnshared) throws JandiNetworkException {
-        jandiEntityClient.unshareMessage(fileId, entityIdToBeUnshared);
+        entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void deleteFile(int fileId) throws JandiNetworkException {
-        jandiEntityClient.deleteFile(fileId);
-    }
+//    public void deleteFile(int fileId) throws JandiNetworkException {
+//        entityClientManager.deleteFile(fileId);
+//    }
 
     public void sendMessageComment(int fileId, String message) throws JandiNetworkException {
-        jandiEntityClient.sendMessageComment(fileId, message);
+        entityClientManager.sendMessageComment(fileId, message);
     }
 
     public ResLeftSideMenu.User getUserProfile(int userEntityId) throws JandiNetworkException {
-        return jandiEntityClient.getUserProfile(userEntityId);
+        return entityClientManager.getUserProfile(userEntityId);
     }
 
     public File download(String url, String fileName, String fileType, ProgressDialog progressDialog) throws Exception {
@@ -93,7 +94,7 @@ public class FileDetailModel {
     }
 
     public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {
-        jandiEntityClient.deleteMessageComment(messageId, feedbackId);
+        entityClientManager.deleteMessageComment(messageId, feedbackId);
 
     }
 
@@ -166,30 +167,36 @@ public class FileDetailModel {
 
     public ResCommon joinEntity(FormattedEntity entityId) throws JandiNetworkException {
 
-        return jandiEntityClient.joinChannel(entityId.getChannel());
+        return entityClientManager.joinChannel(entityId.getChannel());
 
     }
 
     public boolean refreshEntity() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-
             return true;
-        } catch (JandiNetworkException e) {
-            LogUtil.e("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
             return false;
         } catch (Exception e) {
             return false;
         }
     }
 
-    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws JandiNetworkException {
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-        RequestManager.newInstance(context, StickerCommentRequest.create(context, stickerGroupId, stickerId, teamId, fileId, comment)).request();
+    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws RetrofitError {
+        try {
+            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment);
+            RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
 }

@@ -6,12 +6,11 @@ import android.content.Context;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -22,6 +21,8 @@ import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 26..
@@ -36,15 +37,13 @@ public class JandiInterfaceModel {
     ActivityManager activityManager;
 
     public void refreshAccountInfo() throws JandiNetworkException {
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-        RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-        ResAccountInfo resAccountInfo = requestManager.request();
+        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
         JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
 
 
-        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-        ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
         JandiPreference.setBadgeCount(context, totalUnreadCount);
@@ -108,8 +107,8 @@ public class JandiInterfaceModel {
 
     private boolean getEntityInfo() {
         try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
@@ -117,10 +116,11 @@ public class JandiInterfaceModel {
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
             return true;
-        } catch (JandiNetworkException e) {
-            LogUtil.e("Get Entity Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

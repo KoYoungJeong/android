@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+
 /**
  * Created by tee on 15. 6. 23..
  */
@@ -7,6 +9,7 @@ package com.tosslab.jandi.app.network.manager.ApiExecutor;
 public class AwaitablePool<T> {
 
     private final Object[] mPool;
+    int i, j = 0;
     private int mAcquireRequestCnt = 0;
     private int mPoolSize;
     private boolean mMaxCntOfObjectAcquired = false;
@@ -35,8 +38,10 @@ public class AwaitablePool<T> {
                     e.printStackTrace();
                 }
             }
+            LogUtil.e("acquire : " + i++);
             return getReturnInstance();
         } else {
+            LogUtil.e("acquire : " + i++);
             if (mPoolSize > 0) {
                 return getReturnInstance();
             }
@@ -52,7 +57,8 @@ public class AwaitablePool<T> {
         return instance;
     }
 
-    public synchronized boolean release(T instance) {
+    public boolean release(T instance) {
+        LogUtil.e("release : " + j++);
         if (isInPool(instance)) {
             throw new IllegalStateException("Already in the pool!");
         }
@@ -60,9 +66,11 @@ public class AwaitablePool<T> {
             mPool[mPoolSize] = instance;
             mPoolSize++;
             if (mMaxCntOfObjectAcquired) {
-                this.notifyAll();
-                return true;
+                synchronized (this) {
+                    this.notifyAll();
+                }
             }
+            return true;
         }
         return false;
     }

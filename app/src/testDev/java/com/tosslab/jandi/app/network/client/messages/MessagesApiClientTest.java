@@ -2,17 +2,13 @@ package com.tosslab.jandi.app.network.client.messages;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
-import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,25 +27,12 @@ import static org.junit.Assert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class MessagesApiClientTest {
 
-    private JandiRestClient jandiRestClient_;
-    private MessagesApiClient messagesApiClient;
     private ResLeftSideMenu sideMenu;
-    private ChannelMessageApiClient channelMessageApiClient;
-
 
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
-
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        messagesApiClient = new MessagesApiClient_(Robolectric.application);
-        channelMessageApiClient = new ChannelMessageApiClient_(Robolectric.application);
-
-        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        messagesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        channelMessageApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-
         sideMenu = getSideMenu();
 
     }
@@ -60,7 +43,8 @@ public class MessagesApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().
+                getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
 
         return infosForSideMenu;
     }
@@ -91,7 +75,7 @@ public class MessagesApiClientTest {
     }
 
     private ResMessages.FileMessage getMyFileMessage(ResLeftSideMenu.Channel defaultChannel) {
-        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1, 20);
+        ResMessages publicTopicMessages = RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(sideMenu.team.id, defaultChannel.id, -1, 20);
 
         ResMessages.FileMessage fileMessage = null;
         for (ResMessages.Link message : publicTopicMessages.records) {
@@ -128,7 +112,7 @@ public class MessagesApiClientTest {
             return;
         }
 
-        ResFileDetail fileDetail = messagesApiClient.getFileDetail(sideMenu.team.id, fileMessage.id);
+        ResFileDetail fileDetail = RequestApiManager.getInstance().getFileDetailByMessagesApiAuth(sideMenu.team.id, fileMessage.id);
 
         assertThat(fileDetail, is(notNullValue()));
 
@@ -151,7 +135,7 @@ public class MessagesApiClientTest {
         reqShareMessage.teamId = sideMenu.team.id;
         ResCommon resCommon = null;
         try {
-            resCommon = messagesApiClient.shareMessage(reqShareMessage, myFileMessage.id);
+            resCommon = RequestApiManager.getInstance().shareMessageByMessagesApiAuth(reqShareMessage, myFileMessage.id);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -160,7 +144,7 @@ public class MessagesApiClientTest {
 
         ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(sideMenu.team.id, reqShareMessage.shareEntity);
         try {
-            resCommon = messagesApiClient.unshareMessage(reqUnshareMessage, myFileMessage.id);
+            resCommon = RequestApiManager.getInstance().unshareMessageByMessagesApiAuth(reqUnshareMessage, myFileMessage.id);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

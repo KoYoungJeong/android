@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -41,16 +41,16 @@ public class MemberProfileModel {
     Context context;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
 
     public ResLeftSideMenu.User getProfile() throws JandiNetworkException {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
+        return mEntityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
     public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws JandiNetworkException {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
+        return mEntityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 
     public String uploadProfilePhoto(File file) throws ExecutionException, InterruptedException {
@@ -71,7 +71,7 @@ public class MemberProfileModel {
 
     public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws JandiNetworkException {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateMemberName(entityManager.getMe().getId(), reqProfileName);
+        return mEntityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
 
     public String[] getAccountEmails() {
@@ -104,7 +104,7 @@ public class MemberProfileModel {
 
     public ResLeftSideMenu.User updateProfileEmail(String email) throws JandiNetworkException {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateMemberEmail(entityManager.getMe().getId(), email);
+        return mEntityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
 

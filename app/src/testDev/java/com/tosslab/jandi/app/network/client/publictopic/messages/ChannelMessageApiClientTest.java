@@ -1,21 +1,16 @@
 package com.tosslab.jandi.app.network.client.publictopic.messages;
 
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -32,44 +27,23 @@ import static org.hamcrest.core.Is.is;
 public class ChannelMessageApiClientTest {
 
 
-    private JandiRestClient jandiRestClient_;
-    private ChannelMessageApiClient channelMessageApiClient;
     private ResLeftSideMenu sideMenu;
 
     @Before
     public void setUp() throws Exception {
 
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        channelMessageApiClient = new ChannelMessageApiClient_(Robolectric.application);
-        ResAccessToken accessToken = getAccessToken();
-
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        channelMessageApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-
         sideMenu = getSideMenu();
-
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
-
         System.setProperty("robolectric.logging", "stdout");
         ShadowLog.stream = System.out;
 
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
 
         return infosForSideMenu;
     }
-
-    private ResAccessToken getAccessToken() {
-
-        jandiRestClient_.setHeader("Content-Type", "application/json");
-
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
-        System.out.println("========= Get Access Token =========");
-        return accessToken;
-    }
-
 
     private ResLeftSideMenu.Channel getChannel() {
         ResLeftSideMenu.Channel entity = null;
@@ -93,7 +67,7 @@ public class ChannelMessageApiClientTest {
         message.teamId = sideMenu.team.id;
         message.type = entity.type;
 
-        ResCommon resCommon = channelMessageApiClient.sendPublicTopicMessage(message, entity.id);
+        ResCommon resCommon = RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(message, entity.id);
 
         assertThat(resCommon, is(notNullValue()));
 
@@ -107,7 +81,7 @@ public class ChannelMessageApiClientTest {
 
         ResMessages publicTopicMessages = null;
         try {
-            publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, channel.id, 33391, 20);
+            publicTopicMessages = RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391, 20);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -126,7 +100,7 @@ public class ChannelMessageApiClientTest {
 
         ResUpdateMessages publicTopicMessages = null;
         try {
-            publicTopicMessages = channelMessageApiClient.getPublicTopicUpdatedMessages(sideMenu.team.id, channel.id, 33391);
+            publicTopicMessages = RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -142,7 +116,7 @@ public class ChannelMessageApiClientTest {
 
         ResLeftSideMenu.Channel channel = getChannel();
 
-        ResUpdateMessages publicTopicMessages = channelMessageApiClient.getPublicTopicUpdatedMessages(sideMenu.team.id, channel.id, 33391);
+        ResUpdateMessages publicTopicMessages = RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391);
 
         ResMessages.Link myMessage = null;
 
@@ -158,7 +132,7 @@ public class ChannelMessageApiClientTest {
         message.content = "zzzz" + new Timestamp(System.currentTimeMillis());
         ResCommon resCommon = null;
         try {
-            resCommon = channelMessageApiClient.modifyPublicTopicMessage(message, channel.id, myMessage.messageId);
+            resCommon = RequestApiManager.getInstance().modifyPublicTopicMessageByChannelMessageApi(message, channel.id, myMessage.messageId);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -173,7 +147,7 @@ public class ChannelMessageApiClientTest {
 
         ResLeftSideMenu.Channel channel = getChannel();
 
-        ResUpdateMessages publicTopicMessages = channelMessageApiClient.getPublicTopicUpdatedMessages(sideMenu.team.id, channel.id, 33391);
+        ResUpdateMessages publicTopicMessages = RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391);
 
         ResMessages.Link myMessage = null;
 
@@ -186,7 +160,7 @@ public class ChannelMessageApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = channelMessageApiClient.deletePublicTopicMessage(sideMenu.team.id, channel.id, myMessage.messageId);
+            resCommon = RequestApiManager.getInstance().deletePublicTopicMessageByChannelMessageApi(sideMenu.team.id, channel.id, myMessage.messageId);
             // TODO Fail 발생함...확인해봐야함
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());

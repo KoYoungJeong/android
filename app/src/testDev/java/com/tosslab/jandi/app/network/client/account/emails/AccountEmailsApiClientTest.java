@@ -2,16 +2,13 @@ package com.tosslab.jandi.app.network.client.account.emails;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -34,19 +31,19 @@ public class AccountEmailsApiClientTest {
 
     public static final String TEMP_TOKEN = "aaa";
     public static final String SAMPLE_EMAIL = "jsuch2362@naver.com";
-    private JandiRestClient jandiRestClient_;
+    //    private JandiRestClient jandiRestClient_;
     private ResLeftSideMenu sideMenu;
-    private AccountEmailsApiClient accountEmailsApiClient;
+//    private AccountEmailsApiClient accountEmailsApiClient;
 
     @Before
     public void setUp() throws Exception {
 
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        accountEmailsApiClient = new AccountEmailsApiClient_(Robolectric.application);
+//        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
+//        accountEmailsApiClient = new AccountEmailsApiClient_(Robolectric.application);
         ResAccessToken accessToken = getAccessToken();
 
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        accountEmailsApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+//        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
+//        accountEmailsApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         sideMenu = getSideMenu();
 
@@ -58,18 +55,19 @@ public class AccountEmailsApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
-
+//        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
         return infosForSideMenu;
     }
 
     private ResAccessToken getAccessToken() {
 
-        jandiRestClient_.setHeader("Content-Type", "application/json");
+//        jandiRestClient_.setHeader("Content-Type", "application/json");
 
         ResAccessToken accessToken = null;
         try {
-            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+//            accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
+            accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
         } catch (HttpStatusCodeException e) {
             System.out.println(e.getResponseBodyAsString());
             e.printStackTrace();
@@ -84,7 +82,9 @@ public class AccountEmailsApiClientTest {
     public void testRequestAddEmail() throws Exception {
         ResAccountInfo resAccountInfo = null;
         try {
-            resAccountInfo = accountEmailsApiClient.requestAddEmail(new ReqAccountEmail(SAMPLE_EMAIL));
+//            resAccountInfo = accountEmailsApiClient.requestAddEmail(new ReqAccountEmail(SAMPLE_EMAIL));
+            resAccountInfo = RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
+
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
@@ -96,7 +96,8 @@ public class AccountEmailsApiClientTest {
     @Test
     public void testConfirmEmail() throws Exception {
 
-        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "5aec5981-5aeb-4391-8981-36f4f5373175"));
+//        ResAccountInfo resAccountInfo = accountEmailsApiClient.confirmEmail(new ReqConfirmEmail(SAMPLE_EMAIL, "5aec5981-5aeb-4391-8981-36f4f5373175"));
+        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().confirmEmailByAccountEmailApi(new ReqConfirmEmail(SAMPLE_EMAIL, "5aec5981-5aeb-4391-8981-36f4f5373175"));
 
         assertThat(resAccountInfo, is(notNullValue()));
 
@@ -118,8 +119,10 @@ public class AccountEmailsApiClientTest {
 
         ResAccountInfo resAccountInfo = null;
         try {
-            accountEmailsApiClient.setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME + ", application/json");
-            resAccountInfo = accountEmailsApiClient.deleteEmail(new ReqAccountEmail(SAMPLE_EMAIL));
+
+//            accountEmailsApiClient.setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME + ", application/json");
+//            resAccountInfo = accountEmailsApiClient.deleteEmail(new ReqAccountEmail(SAMPLE_EMAIL));
+            resAccountInfo = RequestApiManager.getInstance().deleteEmailByAccountEmailApi(new ReqAccountEmail(SAMPLE_EMAIL));
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }

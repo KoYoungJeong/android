@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
@@ -31,7 +30,7 @@ public class MessageSearchModel {
     public ResMessageSearch requestSearchQuery(int teamId, String query, int page, int perPage, int entityId, int writerId) throws JandiNetworkException {
         ReqMessageSearchQeury reqMessageSearchQeury = new ReqMessageSearchQeury(teamId, query, page, perPage);
         reqMessageSearchQeury.entityId(entityId).writerId(writerId);
-        return RequestManager.newInstance(context, MessageSearchRequest.newInstance(context, reqMessageSearchQeury)).request();
+        return MessageSearchManager.newInstance(reqMessageSearchQeury).request();
     }
 
     public int getCurrentTeamId() {

@@ -7,11 +7,9 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
@@ -37,9 +35,7 @@ public class ParseUpdateUtil {
                     @Override
                     public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
                         LogUtil.d("UpdateParseWithoutSelectedTeam");
-                        JandiRestClient jandiRestClient = new JandiRestClient_(context);
-                        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                        return jandiRestClient.getInfosForSideMenu(userTeam.getTeamId());
+                        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
                     }
                 })
                 .map(new Func1<ResLeftSideMenu, List<String>>() {

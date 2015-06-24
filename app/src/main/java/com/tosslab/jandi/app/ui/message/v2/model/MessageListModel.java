@@ -26,15 +26,16 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -44,7 +45,6 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.sticker.request.StickerSendRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -77,7 +78,7 @@ public class MessageListModel {
     @Bean
     MessageManipulator messageManipulator;
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
     @Bean
     MessageListTimer messageListTimer;
 
@@ -158,7 +159,7 @@ public class MessageListModel {
 
     public MenuCommand getMenuCommand(ChattingInfomations chattingInfomations, MenuItem item) {
         return MenuCommandBuilder.init(activity)
-                .with(jandiEntityClient)
+                .with(entityClientManager)
                 .with(chattingInfomations)
                 .build(item);
     }
@@ -239,17 +240,17 @@ public class MessageListModel {
 
     public void deleteTopic(int entityId, int entityType) throws JandiNetworkException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            jandiEntityClient.deleteChannel(entityId);
+            entityClientManager.deleteChannel(entityId);
         } else {
-            jandiEntityClient.deletePrivateGroup(entityId);
+            entityClientManager.deletePrivateGroup(entityId);
         }
     }
 
     public void modifyTopicName(int entityType, int entityId, String inputName) throws JandiNetworkException {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            jandiEntityClient.modifyChannelName(entityId, inputName);
+            entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
-            jandiEntityClient.modifyPrivateGroupName(entityId, inputName);
+            entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
     }
 
@@ -381,13 +382,11 @@ public class MessageListModel {
             return;
         }
 
-        RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
-        RequestManager<ResRoomInfo> requestManager = RequestManager.newInstance(activity, request);
         try {
-            ResRoomInfo resRoomInfo = requestManager.request();
-            JandiMarkerDatabaseManager.getInstance(activity).upsertMarkers(resRoomInfo);
+            ResRoomInfo resRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
+            JandiMarkerDatabaseManager.getInstance(activity.getApplicationContext()).upsertMarkers(resRoomInfo);
             EventBus.getDefault().post(new RoomMarkerEvent());
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
@@ -403,13 +402,13 @@ public class MessageListModel {
 
     public void updateEntityInfo() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(activity, totalUnreadCount);
             BadgeUtils.setBadge(activity, totalUnreadCount);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }
@@ -422,16 +421,22 @@ public class MessageListModel {
 
     public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
 
-        try {
-            StickerSendRequest request = StickerSendRequest.create(activity, stickerInfo.getStickerId(), stickerInfo.getStickerGroupId(), teamId, entityId, message);
-            RequestManager<ResCommon> resCommonRequestManager = RequestManager.newInstance(activity, request);
+        FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
+        String type = null;
+        if (!TextUtils.isEmpty(message)) {
+            type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
+        }
 
-            resCommonRequestManager.request();
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message);
+
+        try {
+            RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
             return 1;
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             return -1;
         }
 
     }
+
 }

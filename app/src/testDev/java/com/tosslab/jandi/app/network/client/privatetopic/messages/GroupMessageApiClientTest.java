@@ -2,15 +2,13 @@ package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,20 +30,12 @@ import static org.junit.Assert.fail;
 @RunWith(RobolectricGradleTestRunner.class)
 public class GroupMessageApiClientTest {
 
-    private JandiRestClient jandiRestClient_;
-    private GroupMessageApiClient groupMessageApiClient;
     private ResLeftSideMenu sideMenu;
 
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
-
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        groupMessageApiClient = new GroupMessageApiClient_(Robolectric.application);
-
-        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        groupMessageApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
 
         sideMenu = getSideMenu();
 
@@ -59,7 +49,9 @@ public class GroupMessageApiClientTest {
 
     private ResLeftSideMenu getSideMenu() {
 
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().
+                getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.
+                        getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
 
         return infosForSideMenu;
     }
@@ -78,7 +70,8 @@ public class GroupMessageApiClientTest {
     }
 
     private ResMessages.TextMessage getMyTextMessage(ResLeftSideMenu.PrivateGroup privateTopic) {
-        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id);
+        ResMessages groupMessages = RequestApiManager.getInstance().
+                getGroupMessagesByGroupMessageApi(sideMenu.team.id, privateTopic.id);
         ResMessages.TextMessage textMessage = null;
         for (ResMessages.Link message : groupMessages.records) {
             if (message.message instanceof ResMessages.TextMessage && message.message.writerId == sideMenu.user.id) {
@@ -94,7 +87,8 @@ public class GroupMessageApiClientTest {
 
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
 
-        ResMessages groupMessages = groupMessageApiClient.getGroupMessages(sideMenu.team.id, privateTopic.id);
+        ResMessages groupMessages = RequestApiManager.getInstance().
+                getGroupMessagesByGroupMessageApi(sideMenu.team.id, privateTopic.id);
 
         assertThat(groupMessages, is(notNullValue()));
 
@@ -106,7 +100,7 @@ public class GroupMessageApiClientTest {
     public void testGetGroupMessagesUpdated() throws Exception {
         ResLeftSideMenu.PrivateGroup privateTopic = getPrivateTopic();
 
-        ResUpdateMessages groupMessagesUpdated = groupMessageApiClient.getGroupMessagesUpdated(sideMenu.team.id, privateTopic.id, 10);
+        ResUpdateMessages groupMessagesUpdated = RequestApiManager.getInstance().getGroupMessagesUpdatedByGroupMessageApi(sideMenu.team.id, privateTopic.id, 10);
 
         assertThat(groupMessagesUpdated, is(notNullValue()));
 
@@ -122,7 +116,8 @@ public class GroupMessageApiClientTest {
         reqSendMessage.teamId = sideMenu.team.id;
         reqSendMessage.type = "string";
         reqSendMessage.content = "create_" + new Timestamp(System.currentTimeMillis());
-        ResCommon resCommon = groupMessageApiClient.sendGroupMessage(reqSendMessage, privateTopic.id);
+        ResCommon resCommon = RequestApiManager.getInstance().
+                sendGroupMessageByGroupMessageApi(reqSendMessage, privateTopic.id);
 
         assertThat(resCommon, is(notNullValue()));
 
@@ -138,7 +133,8 @@ public class GroupMessageApiClientTest {
         ReqModifyMessage reqModifyMessages = new ReqModifyMessage();
         reqModifyMessages.teamId = sideMenu.team.id;
         reqModifyMessages.content = "mod_" + new Timestamp(System.currentTimeMillis());
-        ResCommon resCommon1 = groupMessageApiClient.modifyPrivateGroupMessage(reqModifyMessages, privateTopic.id, textMessage.id);
+        ResCommon resCommon1 = RequestApiManager.getInstance().
+                modifyPrivateGroupMessageByGroupMessageApi(reqModifyMessages, privateTopic.id, textMessage.id);
 
         assertThat(resCommon1, is(notNullValue()));
 
@@ -153,7 +149,8 @@ public class GroupMessageApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = groupMessageApiClient.deletePrivateGroupMessage(sideMenu.team.id, privateTopic.id, myTextMessage.id);
+            resCommon = RequestApiManager.getInstance().
+                    deletePrivateGroupMessageByGroupMessageApi(sideMenu.team.id, privateTopic.id, myTextMessage.id);
         } catch (HttpStatusCodeException e) {
             fail(e.getResponseBodyAsString());
         }
