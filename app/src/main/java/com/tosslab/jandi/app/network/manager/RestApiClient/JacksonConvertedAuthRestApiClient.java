@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
 import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.client.messages.IMessagesApiAuth;
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiAuth;
@@ -25,7 +24,7 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiAuth;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
@@ -61,6 +60,8 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
+
+import java.util.List;
 
 import retrofit.RetrofitError;
 

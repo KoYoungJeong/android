@@ -11,6 +11,7 @@ import retrofit.RestAdapter;
 /**
  * Created by tee on 15. 6. 18..
  */
+@Deprecated
 public class RestAdapterFactory {
 
     private RestAdapterFactory() {
