@@ -6,7 +6,7 @@ import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.client.JandiRestV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 /**
@@ -26,6 +26,6 @@ public class AccountInfoRequest implements Request<ResAccountInfo> {
 
     @Override
     public ResAccountInfo request() {
-        return RestAdapterFactory.getJacksonConvertedAuthRestAdapter().create(JandiRestV2Client.class).getAccountInfo();
+        return RestAdapterBuilder.newInstance(JandiRestV2Client.class).create().getAccountInfo();
     }
 }

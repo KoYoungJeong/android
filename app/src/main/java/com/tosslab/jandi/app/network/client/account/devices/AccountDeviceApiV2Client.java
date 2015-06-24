@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.network.client.account.devices;
 
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
@@ -17,6 +18,7 @@ import retrofit.http.PUT;
 /**
  * Created by tee on 15. 6. 16..
  */
+@AuthorizedHeader
 public interface AccountDeviceApiV2Client {
 
     // Notification Token 등록

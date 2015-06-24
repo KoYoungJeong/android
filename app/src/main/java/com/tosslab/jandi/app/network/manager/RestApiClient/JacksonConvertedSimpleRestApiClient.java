@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiV
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
 import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.RestAdapterFactory;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
 
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 /**
@@ -24,41 +23,39 @@ import retrofit.RetrofitError;
  */
 public class JacksonConvertedSimpleRestApiClient implements IAccountPasswordApiSimple, IMainRestApiSimple {
 
-    RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedSimpleRestAdapter();
-
     @Override
     public ResCommon resetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return restAdapter.create(AccountPasswordApiV2Client.class).resetPassword(reqAccountEmail);
+        return RestAdapterBuilder.newInstance(AccountPasswordApiV2Client.class).create().resetPassword(reqAccountEmail);
     }
 
     @Override
     public ResConfig getConfigByMainRest() throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).getConfig();
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getConfig();
     }
 
     @Override
     public ResMyTeam getTeamIdByMainRest(String userEmail) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).getTeamId(userEmail);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getTeamId(userEmail);
     }
 
     @Override
     public ResAccessToken getAccessTokenByMainRest(ReqAccessToken login) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).getAccessToken(login);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getAccessToken(login);
     }
 
     @Override
     public ResCommon signUpAccountByMainRest(ReqSignUpInfo signUpInfo) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).signUpAccount(signUpInfo);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().signUpAccount(signUpInfo);
     }
 
     @Override
     public ResAccountActivate activateAccountByMainRest(ReqAccountActivate reqAccountActivate) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).activateAccount(reqAccountActivate);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().activateAccount(reqAccountActivate);
     }
 
     @Override
     public ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).accountVerification(reqAccountVerification);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().accountVerification(reqAccountVerification);
     }
 
 }

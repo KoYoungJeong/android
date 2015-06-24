@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
 import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.client.messages.IMessagesApiAuth;
 import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiAuth;
 import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiAuth;
@@ -61,9 +62,6 @@ import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
-import java.util.List;
-
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 /**
@@ -74,71 +72,69 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
         IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth {
 
-    static RestAdapter restAdapter = RestAdapterFactory.getJacksonConvertedAuthRestAdapter();
-
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
-        return restAdapter.create(AccountDeviceApiV2Client.class).registerNotificationToken(reqNotificationRegister);
+        return RestAdapterBuilder.newInstance(AccountDeviceApiV2Client.class).create().registerNotificationToken(reqNotificationRegister);
     }
 
     @Override
     public ResAccountInfo deleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken) throws RetrofitError {
-        return restAdapter.create(AccountDeviceApiV2Client.class).deleteNotificationToken(reqDeviceToken);
+        return RestAdapterBuilder.newInstance(AccountDeviceApiV2Client.class).create().deleteNotificationToken(reqDeviceToken);
     }
 
     @Override
     public ResAccountInfo subscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken) throws RetrofitError {
-        return restAdapter.create(AccountDeviceApiV2Client.class).subscribeStateNotification(reqDeviceToken);
+        return RestAdapterBuilder.newInstance(AccountDeviceApiV2Client.class).create().subscribeStateNotification(reqDeviceToken);
     }
 
     @Override
     public ResCommon getNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget) throws RetrofitError {
-        return restAdapter.create(AccountDeviceApiV2Client.class).getNotificationBadge(reqNotificationTarget);
+        return RestAdapterBuilder.newInstance(AccountDeviceApiV2Client.class).create().getNotificationBadge(reqNotificationTarget);
     }
 
     @Override
     public ResAccountInfo requestAddEmailByAccountEmailApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return restAdapter.create(AccountEmailsApiV2Client.class).requestAddEmail(reqAccountEmail);
+        return RestAdapterBuilder.newInstance(AccountEmailsApiV2Client.class).create().requestAddEmail(reqAccountEmail);
     }
 
     @Override
     public ResAccountInfo confirmEmailByAccountEmailApi(ReqConfirmEmail reqConfirmEmail) throws RetrofitError {
-        return restAdapter.create(AccountEmailsApiV2Client.class).confirmEmail(reqConfirmEmail);
+        return RestAdapterBuilder.newInstance(AccountEmailsApiV2Client.class).create().confirmEmail(reqConfirmEmail);
     }
 
     @Override
     public ResAccountInfo deleteEmailByAccountEmailApi(ReqAccountEmail reqConfirmEmail) throws RetrofitError {
-        return restAdapter.create(AccountEmailsApiV2Client.class).deleteEmail(reqConfirmEmail);
+        return RestAdapterBuilder.newInstance(AccountEmailsApiV2Client.class).create().deleteEmail(reqConfirmEmail);
     }
 
     @Override
     public ResCommon changePasswordByAccountPasswordApi(ReqChangePassword reqConfirmEmail) throws RetrofitError {
-        return restAdapter.create(AccountPasswordApiV2Client.class).changePassword(reqConfirmEmail);
+        return RestAdapterBuilder.newInstance(AccountPasswordApiV2Client.class).create().changePassword(reqConfirmEmail);
     }
 
     @Override
     public ResAccountInfo getAccountInfoByMainRest() throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).getAccountInfo();
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getAccountInfo();
     }
 
     @Override
     public ResAccountInfo updatePrimaryEmailByMainRest(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).updatePrimaryEmail(updatePrimaryEmailInfo);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().updatePrimaryEmail(updatePrimaryEmailInfo);
     }
 
     @Override
     public ResLeftSideMenu getInfosForSideMenuByMainRest(int teamId) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).getInfosForSideMenu(teamId);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().getInfosForSideMenu(teamId);
     }
 
     @Override
     public ResCommon setMarkerByMainRest(int entityId, ReqSetMarker reqSetMarker) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).setMarker(entityId, reqSetMarker);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().setMarker(entityId, reqSetMarker);
     }
 
     @Override
     public ResSearchFile searchFileByMainRest(ReqSearchFile reqSearchFile) throws RetrofitError {
-        return restAdapter.create(MainRestApiClient.class).searchFile(reqSearchFile);
+        return RestAdapterBuilder.newInstance(MainRestApiClient.class).create().searchFile(reqSearchFile);
     }
 
     @Override
