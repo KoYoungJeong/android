@@ -76,6 +76,7 @@ public class StickerManager {
 
 
             glideRequestor.asBitmap()
+                    .fitCenter()
                     .into(new BitmapImageViewTarget(view) {
                         @Override
                         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
