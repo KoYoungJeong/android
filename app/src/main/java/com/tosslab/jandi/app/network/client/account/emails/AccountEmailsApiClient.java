@@ -34,6 +34,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
         requestFactory = HttpRequestFactory.class,
         interceptors = {LoggerInterceptor.class}
 )
+
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface AccountEmailsApiClient {
 

@@ -36,6 +36,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
         interceptors = {LoggerInterceptor.class}
 )
 
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface AccountDevicesApiClient {
 
@@ -43,7 +44,6 @@ public interface AccountDevicesApiClient {
 
 
     void setAuthentication(HttpAuthentication auth);
-
 
     // Notification Token 등록
     @Post("/account/devices")

@@ -9,7 +9,7 @@ import retrofit.RetrofitError;
 /**
  * Created by tee on 15. 6. 20..
  */
-public interface IAccountEmailApiAuth {
+public interface IAccountEmailsApiAuth {
 
     ResAccountInfo requestAddEmailByAccountEmailApi(ReqAccountEmail reqAccountEmail) throws RetrofitError;
 

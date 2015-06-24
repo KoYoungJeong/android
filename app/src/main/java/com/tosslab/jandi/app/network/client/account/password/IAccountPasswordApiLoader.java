@@ -9,8 +9,8 @@ import com.tosslab.jandi.app.network.models.ReqChangePassword;
  */
 public interface IAccountPasswordApiLoader {
 
-    public IExecutor setExecutorChangePassword(ReqChangePassword reqConfirmEmail);
+    public IExecutor loadChangePasswordByAccountPasswordApi(ReqChangePassword reqConfirmEmail);
 
-    public IExecutor setExecutorResetPassword(ReqAccountEmail reqAccountEmail);
+    public IExecutor loadResetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail);
 
 }

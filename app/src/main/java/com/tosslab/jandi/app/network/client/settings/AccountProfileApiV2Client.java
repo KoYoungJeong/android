@@ -13,7 +13,7 @@ import retrofit.http.PUT;
 /**
  * Created by tee on 15. 6. 16..
  */
-public interface AccountProfileV2Client {
+public interface AccountProfileApiV2Client {
 
     @POST("/settings/name")
     @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

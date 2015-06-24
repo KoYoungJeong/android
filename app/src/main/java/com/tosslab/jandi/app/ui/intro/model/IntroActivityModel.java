@@ -134,6 +134,17 @@ public class IntroActivityModel {
         }
         try {
             int selectedTeamId = selectedTeamInfo.getTeamId();
+            for (int i = 0; i < 1000; i++) {
+                Thread t = new Thread() {
+                    @Override
+                    public void run() {
+                        RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
+                    }
+                };
+
+                t.start();
+
+            }
             ResLeftSideMenu totalEntitiesInfo = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
 //            JandiRestV2Client jandiRestClient = RestAdapterFactory.getRestAdapter(JandiConstants.REST_TYPE_AUTH).create(JandiRestV2Client.class);
 //            ResLeftSideMenu totalEntitiesInfo = RequestManager.newInstance(context.getApplicationContext(),

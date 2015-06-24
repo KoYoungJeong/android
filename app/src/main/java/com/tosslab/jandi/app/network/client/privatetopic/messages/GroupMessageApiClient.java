@@ -35,6 +35,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
         interceptors = {LoggerInterceptor.class}
 )
 
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface GroupMessageApiClient {
 

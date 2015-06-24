@@ -29,6 +29,7 @@ public class JandiApplication extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
 
+//        PoolableRequestApiExecutor.setContext(getApplicationContext());
         JandiApplication.setContext(getApplicationContext());
         TokenUtil.setContext(getApplicationContext());
 

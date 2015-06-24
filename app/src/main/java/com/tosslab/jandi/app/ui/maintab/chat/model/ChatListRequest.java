@@ -19,6 +19,8 @@ import retrofit.RestAdapter;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 13..
  */
+
+@Deprecated
 public class ChatListRequest implements Request<List<ResChat>> {
 
     private final Context context;

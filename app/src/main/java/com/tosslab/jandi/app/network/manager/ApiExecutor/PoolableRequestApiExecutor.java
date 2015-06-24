@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
-import android.support.v4.util.Pools;
-
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -21,9 +19,9 @@ import retrofit.RetrofitError;
  */
 public class PoolableRequestApiExecutor {
 
-    private static final int POOL_NUMBER = 10;
-    private static final Pools.SynchronizedPool RequestApiExecutorPool
-            = new Pools.SynchronizedPool(POOL_NUMBER);
+    private static final int POOL_NUMBER = 5;
+    private static final AwaitablePool RequestApiExecutorPool
+            = new AwaitablePool(POOL_NUMBER);
 
     private PoolableRequestApiExecutor() {
     }
@@ -41,7 +39,7 @@ public class PoolableRequestApiExecutor {
         try {
             return apiExecutor.execute();
         } catch (RetrofitError e) {
-            LogUtil.e(String.valueOf(e.getResponse().getStatus()));
+            e.printStackTrace();
             if (e.getResponse().getStatus() == 401) {
                 ResAccessToken accessToken = refreshToken();
                 if (accessToken != null) {
@@ -72,7 +70,7 @@ public class PoolableRequestApiExecutor {
         while (accessToken == null && loginRetryCount <= 3) {
             ++loginRetryCount;
             try {
-                // Request Access token, and save token
+                //Request Access token, and save token
                 ReqAccessToken refreshReqToken = ReqAccessToken
                         .createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext()));
                 accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);

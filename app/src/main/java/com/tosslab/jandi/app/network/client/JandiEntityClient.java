@@ -508,6 +508,7 @@ public class JandiEntityClient {
         }
     }
 
+    @Deprecated
     public ResAccountInfo subscribeNotification(final String regId, final boolean isSubscribe) throws JandiNetworkException {
         ReqNotificationSubscribe req = new ReqNotificationSubscribe(isSubscribe);
 

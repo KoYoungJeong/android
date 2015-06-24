@@ -5,9 +5,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiAuthClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -21,12 +19,10 @@ import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
-import org.androidannotations.annotations.rest.RestService;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -34,15 +30,6 @@ import org.springframework.http.HttpStatus;
  */
 @EBean
 public class IntroLoginModel {
-
-    @Bean
-    JandiAuthClient mJandiAuthClient;
-
-    @RestService
-    JandiRestClient jandiRestClient;
-
-    @RestService
-    AccountPasswordApiClient accountPasswordApiClient;
 
     @RootContext
     Context context;
@@ -60,7 +47,7 @@ public class IntroLoginModel {
 
             // Get Access Token
             ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
-            ResAccessToken accessToken = jandiRestClient.getAccessToken(passwordReqToken);
+            ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
 
             if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
                 // Save Token & Get TeamList
@@ -110,8 +97,7 @@ public class IntroLoginModel {
     }
 
     public ResCommon requestPasswordReset(String email) {
-
-        return accountPasswordApiClient.resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
+        return RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
     }
 
     public void setValidEmail(boolean isValidEmail) {
@@ -125,4 +111,5 @@ public class IntroLoginModel {
     public boolean isValidEmailPassword() {
         return isValidEmail && isValidPassword;
     }
+
 }

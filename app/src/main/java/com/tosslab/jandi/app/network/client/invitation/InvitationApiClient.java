@@ -32,6 +32,8 @@ import java.util.List;
                 StringHttpMessageConverter.class},
         interceptors = {LoggerInterceptor.class}
 )
+
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface InvitationApiClient {
 

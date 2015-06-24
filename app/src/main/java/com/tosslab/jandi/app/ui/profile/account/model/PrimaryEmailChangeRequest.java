@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.profile.account.model;
 import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.client.settings.AccountProfileV2Client;
+import com.tosslab.jandi.app.network.client.settings.AccountProfileApiV2Client;
 import com.tosslab.jandi.app.network.manager.Request;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -50,6 +50,6 @@ public class PrimaryEmailChangeRequest implements Request<ResAccountInfo> {
 //        AccountProfileClient accountProfileClient = new AccountProfileClient_(context);
 //        accountProfileClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
 //        return accountProfileClient.changePrimaryEmail(new ReqAccountEmail(email));
-        return restAdapter.create(AccountProfileV2Client.class).changePrimaryEmail(new ReqAccountEmail(email));
+        return restAdapter.create(AccountProfileApiV2Client.class).changePrimaryEmail(new ReqAccountEmail(email));
     }
 }

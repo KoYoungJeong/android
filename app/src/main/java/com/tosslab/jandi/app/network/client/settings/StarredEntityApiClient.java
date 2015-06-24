@@ -5,10 +5,10 @@ package com.tosslab.jandi.app.network.client.settings;
  */
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
 import org.androidannotations.annotations.rest.Delete;
@@ -29,6 +29,8 @@ import org.springframework.http.converter.StringHttpMessageConverter;
                 StringHttpMessageConverter.class},
         interceptors = {LoggerInterceptor.class}
 )
+
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface StarredEntityApiClient {
 

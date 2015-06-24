@@ -23,7 +23,6 @@ public class RestAdapterFactory {
 
     private static RestAdapter.Builder getJacksonConvertedBuilder() {
         return getDefaultBuilder().setConverter(new JacksonConverter(new ObjectMapper()));
-
     }
 
     public static RestAdapter getJacksonConvertedSimpleRestAdapter() {
@@ -38,5 +37,4 @@ public class RestAdapterFactory {
                 })
                 .build();
     }
-
 }

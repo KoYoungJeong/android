@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import rx.Observable;
-import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -57,7 +56,7 @@ public class MainChatListModel {
     }
 
     public List<ResChat> getChatList(int memberId) throws JandiNetworkException {
-        return RequestManager.newInstance(context, ChatListRequest.create(context, memberId)).request();
+        return RequestApiManager.getInstance().getChatListByChatApi(memberId);
     }
 
     public List<ChatItem> convertChatItem(int teamId, List<ResChat> chatList) {

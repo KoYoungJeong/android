@@ -3,7 +3,22 @@ package com.tosslab.jandi.app.network.manager.ApiLoader;
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiLoader;
 import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoader;
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiLoader;
+import com.tosslab.jandi.app.network.client.chat.IChatApiLoader;
+import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiLoader;
+import com.tosslab.jandi.app.network.client.invitation.IInvitationApiLoader;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiLoader;
+import com.tosslab.jandi.app.network.client.messages.IMessagesApiLoader;
+import com.tosslab.jandi.app.network.client.messages.comments.ICommentsApiLoader;
+import com.tosslab.jandi.app.network.client.messages.search.IMessageSearchApiLoader;
+import com.tosslab.jandi.app.network.client.privatetopic.IGroupApiLoader;
+import com.tosslab.jandi.app.network.client.privatetopic.messages.IGroupMessageApiLoader;
+import com.tosslab.jandi.app.network.client.publictopic.IChannelApiLoader;
+import com.tosslab.jandi.app.network.client.publictopic.messages.IChannelMessageApiLoader;
+import com.tosslab.jandi.app.network.client.rooms.IRoomsApiLoader;
+import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiLoader;
+import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiLoader;
+import com.tosslab.jandi.app.network.client.sticker.IStickerApiLoader;
+import com.tosslab.jandi.app.network.client.teams.ITeamApiLoader;
 import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedAuthRestApiClient;
 import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedSimpleRestApiClient;
@@ -27,7 +42,10 @@ import retrofit.RetrofitError;
 /**
  * Created by tee on 15. 6. 20..
  */
-public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IMainRestApiLoader {
+public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IChatApiLoader,
+        IDirectMessageApiLoader, IInvitationApiLoader, IMainRestApiLoader, ICommentsApiLoader, IMessageSearchApiLoader,
+        IMessagesApiLoader, IGroupMessageApiLoader, IGroupApiLoader, IChannelMessageApiLoader, IChannelApiLoader,
+        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader {
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
@@ -41,102 +59,102 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor setExecutorRegisterNotificationToken(ReqNotificationRegister reqNotificationRegister) {
+    public IExecutor loadRegisterNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) {
         return () -> authRestApiClient.registerNotificationTokenByAccountDeviceApi(reqNotificationRegister);
     }
 
     @Override
-    public IExecutor setExecutorDeleteNotificationToken(ReqDeviceToken reqDeviceToken) {
+    public IExecutor loadDeleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken) {
         return () -> authRestApiClient.deleteNotificationTokenByAccountDeviceApi(reqDeviceToken);
     }
 
     @Override
-    public IExecutor setExecutorSubscribeStateNotification(ReqSubscibeToken reqDeviceToken) {
+    public IExecutor loadSubscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken) {
         return () -> authRestApiClient.subscribeStateNotificationByAccountDeviceApi(reqDeviceToken);
     }
 
     @Override
-    public IExecutor setExecutorGetNotificationBadge(ReqNotificationTarget reqNotificationTarget) {
+    public IExecutor loadGetNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget) {
         return () -> authRestApiClient.getNotificationBadgeByAccountDeviceApi(reqNotificationTarget);
     }
 
     @Override
-    public IExecutor setExecutorRequestAddEmail(ReqAccountEmail reqAccountEmail) {
+    public IExecutor loadRequestAddEmailByAccountEmailsApi(ReqAccountEmail reqAccountEmail) {
         return () -> authRestApiClient.requestAddEmailByAccountEmailApi(reqAccountEmail);
     }
 
     @Override
-    public IExecutor setExecutorConfirmEmail(ReqConfirmEmail reqConfirmEmail) {
+    public IExecutor loadConfirmEmailByAccountEmailsApi(ReqConfirmEmail reqConfirmEmail) {
         return () -> authRestApiClient.confirmEmailByAccountEmailApi(reqConfirmEmail);
     }
 
     @Override
-    public IExecutor setExecutorDeleteEmail(ReqAccountEmail reqConfirmEmail) {
+    public IExecutor loadExecutorDeleteEmailByAccountEmailsApi(ReqAccountEmail reqConfirmEmail) {
         return () -> authRestApiClient.deleteEmailByAccountEmailApi(reqConfirmEmail);
     }
 
     @Override
-    public IExecutor setExecutorChangePassword(ReqChangePassword reqConfirmEmail) {
+    public IExecutor loadChangePasswordByAccountEmailsApi(ReqChangePassword reqConfirmEmail) {
         return () -> authRestApiClient.changePasswordByAccountPasswordApi(reqConfirmEmail);
     }
 
     @Override
-    public IExecutor setExecutorGetAccountInfo() throws RetrofitError {
+    public IExecutor loadGetAccountInfoByMainRestApi() throws RetrofitError {
         return () -> authRestApiClient.getAccountInfoByMainRest();
     }
 
     @Override
-    public IExecutor setExecutorUpdatePrimaryEmail(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) {
+    public IExecutor loadUpdatePrimaryEmailByMainRestApi(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) {
         return () -> authRestApiClient.updatePrimaryEmailByMainRest(updatePrimaryEmailInfo);
     }
 
     @Override
-    public IExecutor setExecutorGetInfosForSideMenu(int teamId) {
+    public IExecutor loadGetInfosForSideMenuByMainRestApi(int teamId) {
         return () -> authRestApiClient.getInfosForSideMenuByMainRest(teamId);
     }
 
     @Override
-    public IExecutor setExecutorSetMarker(int entityId, ReqSetMarker reqSetMarker) {
+    public IExecutor loadSetMarkerByMainRestApi(int entityId, ReqSetMarker reqSetMarker) {
         return () -> authRestApiClient.setMarkerByMainRest(entityId, reqSetMarker);
     }
 
     @Override
-    public IExecutor setExecutorSearchFile(ReqSearchFile reqSearchFile) throws RetrofitError {
+    public IExecutor loadSearchFileByMainRestApi(ReqSearchFile reqSearchFile) throws RetrofitError {
         return () -> authRestApiClient.searchFileByMainRest(reqSearchFile);
     }
 
     @Override
-    public IExecutor setExecutorResetPassword(ReqAccountEmail reqAccountEmail) throws RetrofitError {
+    public IExecutor loadResetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
         return () -> SimpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
     }
 
     @Override
-    public IExecutor setExecutorGetConfig() throws RetrofitError {
+    public IExecutor loadGetConfigByMainRestApi() throws RetrofitError {
         return () -> SimpleRestApiClient.getConfigByMainRest();
     }
 
     @Override
-    public IExecutor setExecutorGetTeamId(String userEmail) throws RetrofitError {
+    public IExecutor loadGetTeamIdByMainRestApi(String userEmail) throws RetrofitError {
         return () -> SimpleRestApiClient.getTeamIdByMainRest(userEmail);
     }
 
     @Override
-    public IExecutor setExecutorGetAccessToken(ReqAccessToken login) throws RetrofitError {
+    public IExecutor loadGetAccessTokenByMainRestApi(ReqAccessToken login) throws RetrofitError {
         return () -> SimpleRestApiClient.getAccessTokenByMainRest(login);
     }
 
     @Override
-    public IExecutor setExecutorSignUpAccount(ReqSignUpInfo signUpInfo) throws RetrofitError {
+    public IExecutor loadSignUpAccountByMainRestApi(ReqSignUpInfo signUpInfo) throws RetrofitError {
         return () -> SimpleRestApiClient.signUpAccountByMainRest(signUpInfo);
     }
 
     @Override
-    public IExecutor setExecutorActivateAccount(ReqAccountActivate reqAccountActivate) throws RetrofitError {
+    public IExecutor loadActivateAccountByMainRestApi(ReqAccountActivate reqAccountActivate) throws RetrofitError {
         return () -> SimpleRestApiClient.activateAccountByMainRest(reqAccountActivate);
     }
 
     @Override
-    public IExecutor setExecutorAccountVerification(ReqAccountVerification reqAccountVerification) throws RetrofitError {
+    public IExecutor loadAccountVerificationByMainRestApi(ReqAccountVerification reqAccountVerification) throws RetrofitError {
         return () -> SimpleRestApiClient.accountVerificationByMainRest(reqAccountVerification);
     }
 

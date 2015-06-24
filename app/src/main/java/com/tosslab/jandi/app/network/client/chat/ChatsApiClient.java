@@ -33,6 +33,8 @@ import java.util.List;
         requestFactory = HttpRequestFactory.class,
         interceptors = {LoggerInterceptor.class}
 )
+
+@Deprecated
 @Accept(JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
 public interface ChatsApiClient {
     void setHeader(String name, String value);

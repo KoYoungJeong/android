@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
@@ -52,7 +53,7 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestNewEmail(String email) throws JandiNetworkException {
-        return RequestManager.newInstance(context, EmailAddRequest.create(context, email)).request();
+        return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(email);
     }
 
     public boolean isConfirmedEmail(String email) {
@@ -81,7 +82,7 @@ public class EmailChooseModel {
     }
 
     public ResAccountInfo requestDeleteEmail(String email) throws JandiNetworkException {
-        return RequestManager.newInstance(context, EmailDeleteRequest.create(context, email)).request();
+        return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(email);
     }
 
     public ResAccountInfo getAccountEmailsFromServer() throws JandiNetworkException {

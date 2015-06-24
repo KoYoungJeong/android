@@ -25,7 +25,6 @@ public interface TeamApiV2Client {
     @Headers("Accept :" + JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResTeamDetailInfo createNewTeam(@Body ReqCreateNewTeam req);
 
-
     @GET("/teams/{teamId}/members/{memberId}")
     @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResLeftSideMenu.User getMemberProfile(@Path("teamId") int teamId, @Path("memberId") int memberId);
@@ -33,7 +32,6 @@ public interface TeamApiV2Client {
     @POST("/teams/{teamId}/invitations")
     @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     List<ResInvitationMembers> inviteToTeam(@Path("teamId") int teamId, @Body ReqInvitationMembers invitationMembers);
-
 
     @GET("/teams/{teamId}")
     @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
