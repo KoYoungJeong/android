@@ -64,7 +64,8 @@ public class JandiRestClientTest {
     @Test
     public void testGetMyTeam() throws Exception {
 
-        ResMyTeam teamId = jandiRestClient_.getTeamId(BaseInitUtil.TEST_ID);
+//        ResMyTeam teamId = jandiRestClient_.getTeamId(BaseInitUtil.TEST_ID);
+        ResMyTeam teamId = jandiRestClient_.getTeamId("tony.park@tosslab.com");
 
         assertNotNull(teamId);
 

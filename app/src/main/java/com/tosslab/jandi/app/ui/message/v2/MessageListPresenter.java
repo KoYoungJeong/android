@@ -33,6 +33,8 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -47,8 +49,11 @@ import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -72,7 +77,6 @@ import rx.Observable;
  */
 @EBean
 public class MessageListPresenter {
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
 
@@ -129,12 +133,6 @@ public class MessageListPresenter {
 
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
-
-    @ViewById(R.id.vg_announcement)
-    ViewGroup vgAnnouncement;
-
-    @ViewById(R.id.vg_announcement_action)
-    ViewGroup vgAnnouncementAction;
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -216,12 +214,6 @@ public class MessageListPresenter {
         if (gotoLatestLayoutVisible) {
             setGotoLatestLayoutVisible();
         }
-    }
-
-    @Click(R.id.vg_announcement)
-    void showAndHideAnnouncementAction() {
-        int visibility = vgAnnouncementAction.getVisibility();
-        vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
     public void sendLayoutVisibleGone() {
@@ -782,5 +774,4 @@ public class MessageListPresenter {
         vgStickerPreview.setVisibility(View.GONE);
 
     }
-
 }

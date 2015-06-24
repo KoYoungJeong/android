@@ -8,6 +8,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.TextAppearanceSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -76,117 +77,32 @@ public class EventViewHolder implements BodyViewHolder {
                     SpannableStringBuilder builder = new SpannableStringBuilder();
 
                     EntityManager entityManager = EntityManager.getInstance(context);
-                    if (eventInfo instanceof ResMessages.CreateEvent) {
-                        ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) eventInfo;
 
-                        if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
-                            ResMessages.PublicCreateInfo publicCreateInfo =
-                                    (ResMessages.PublicCreateInfo) createEvent.createInfo;
-                            int creatorId = publicCreateInfo.creatorId;
-                            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+                    if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
+                        buildAnnouncementCreateEvent(
+                                (ResMessages.AnnouncementCreateEvent) eventInfo, builder, entityManager);
 
-                            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
-                            int beforeLength = builder.length();
-                            builder.append(creatorEntity.getName());
-                            int afterLength = builder.length();
-                            builder.setSpan(profileSpannable,
-                                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    } else if (eventInfo instanceof ResMessages.AnnouncementUpdateEvent) {
+                        buildAnnouncementUpdateEvent(
+                                (ResMessages.AnnouncementUpdateEvent) eventInfo, builder, entityManager);
 
-                            builder.append(context.getString(R.string.jandi_created_this_topic, ""));
+                    } else if (eventInfo instanceof ResMessages.AnnouncementDeleteEvent) {
+                        buildAnnouncementDeleteEvent(link.fromEntity, builder, entityManager);
 
-                        } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
-                            ResMessages.PrivateCreateInfo privateCreateInfo =
-                                    (ResMessages.PrivateCreateInfo) createEvent.createInfo;
-
-                            int creatorId = privateCreateInfo.creatorId;
-                            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
-
-                            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
-                            int beforeLength = builder.length();
-                            builder.append(creatorEntity.getName());
-                            int afterLength = builder.length();
-                            builder.setSpan(profileSpannable,
-                                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                            builder.append(context.getString(R.string.jandi_created_this_topic, ""));
-
-                        }
+                    } else if (eventInfo instanceof ResMessages.CreateEvent) {
+                        buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, entityManager);
 
                     } else if (eventInfo instanceof ResMessages.InviteEvent) {
-                        ResMessages.InviteEvent inviteEvent = (ResMessages.InviteEvent) eventInfo;
-                        int invitorId = inviteEvent.invitorId;
-                        FormattedEntity invitorEntity = entityManager.getEntityById(invitorId);
 
-                        String invitorName = invitorEntity.getName();
-
-                        ProfileSpannable profileSpannable = new ProfileSpannable(invitorId);
-                        int beforeLength = builder.length();
-                        builder.append(invitorName);
-                        int afterLength = builder.length();
-                        builder.setSpan(profileSpannable,
-                                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                        builder.append(context.getString(R.string.jandi_invited_topic, "", "{-}"));
-
-                        int nameIndexOf = builder.toString().indexOf("{-}");
-                        builder.delete(nameIndexOf, nameIndexOf + 3);
-
-                        int tempIndex = nameIndexOf;
-
-                        FormattedEntity tempEntity;
-                        List<Integer> inviteUsers = inviteEvent.inviteUsers;
-                        int size = inviteUsers.size();
-                        for (int idx = 0; idx < size; idx++) {
-                            tempEntity = entityManager.getEntityById(inviteUsers.get(idx));
-                            if (tempEntity != null) {
-                                if (idx > 0) {
-                                    builder.insert(tempIndex, ", ");
-                                    tempIndex += 2;
-                                }
-
-                                ProfileSpannable profileSpannable1 =
-                                        new ProfileSpannable(tempEntity.getId());
-                                builder.insert(tempIndex, tempEntity.getName());
-
-                                builder.setSpan(profileSpannable1,
-                                        tempIndex, tempIndex + tempEntity.getName().length(),
-                                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                tempIndex += tempEntity.getName().length();
-                            }
-                        }
+                        buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, entityManager);
 
                     } else {
                         int fromEntity = link.fromEntity;
-
                         if (eventInfo instanceof ResMessages.JoinEvent) {
-                            FormattedEntity entity =
-                                    EntityManager.getInstance(context).getEntityById(fromEntity);
-                            String name = entity.getName();
-
-                            ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
-                            int beforeLength = builder.length();
-                            builder.append(name);
-                            int afterLength = builder.length();
-                            builder.setSpan(profileSpannable,
-                                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                            builder.append(context.getString(R.string.jandi_has_joined, ""));
-
+                            buildJoinEvent(builder, fromEntity);
 
                         } else if (eventInfo instanceof ResMessages.LeaveEvent) {
-
-                            FormattedEntity entity =
-                                    EntityManager.getInstance(context).getEntityById(link.fromEntity);
-                            String name = entity.getName();
-
-                            ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
-                            int beforeLength = builder.length();
-                            builder.append(name);
-                            int afterLength = builder.length();
-                            builder.setSpan(profileSpannable,
-                                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                            builder.append(context.getString(R.string.jandi_left_topic, ""));
+                            buildLeaveEvent(builder, fromEntity);
                         }
                     }
 
@@ -213,6 +129,173 @@ public class EventViewHolder implements BodyViewHolder {
                     eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
                 });
 
+    }
+
+    private void buildCreateEvent(ResMessages.CreateEvent eventInfo,
+                                  SpannableStringBuilder builder, EntityManager entityManager) {
+        ResMessages.CreateEvent createEvent = eventInfo;
+
+        if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
+            ResMessages.PublicCreateInfo publicCreateInfo =
+                    (ResMessages.PublicCreateInfo) createEvent.createInfo;
+            int creatorId = publicCreateInfo.creatorId;
+            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+
+            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
+            int beforeLength = builder.length();
+            builder.append(creatorEntity.getName());
+            int afterLength = builder.length();
+            builder.setSpan(profileSpannable,
+                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            builder.append(context.getString(R.string.jandi_created_this_topic, ""));
+
+        } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
+            ResMessages.PrivateCreateInfo privateCreateInfo =
+                    (ResMessages.PrivateCreateInfo) createEvent.createInfo;
+
+            int creatorId = privateCreateInfo.creatorId;
+            FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+
+            ProfileSpannable profileSpannable = new ProfileSpannable(creatorId);
+            int beforeLength = builder.length();
+            builder.append(creatorEntity.getName());
+            int afterLength = builder.length();
+            builder.setSpan(profileSpannable,
+                    beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            builder.append(context.getString(R.string.jandi_created_this_topic, ""));
+
+        }
+    }
+
+    private void buildInviteEvent(ResMessages.InviteEvent eventInfo,
+                                  SpannableStringBuilder builder, EntityManager entityManager) {
+        ResMessages.InviteEvent inviteEvent = eventInfo;
+        int invitorId = inviteEvent.invitorId;
+        FormattedEntity invitorEntity = entityManager.getEntityById(invitorId);
+
+        String invitorName = invitorEntity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(invitorId);
+        int beforeLength = builder.length();
+        builder.append(invitorName);
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append(context.getString(R.string.jandi_invited_topic, "", "{-}"));
+
+        int nameIndexOf = builder.toString().indexOf("{-}");
+        builder.delete(nameIndexOf, nameIndexOf + 3);
+
+        int tempIndex = nameIndexOf;
+
+        FormattedEntity tempEntity;
+        List<Integer> inviteUsers = inviteEvent.inviteUsers;
+        int size = inviteUsers.size();
+        for (int idx = 0; idx < size; idx++) {
+            tempEntity = entityManager.getEntityById(inviteUsers.get(idx));
+            if (tempEntity != null) {
+                if (idx > 0) {
+                    builder.insert(tempIndex, ", ");
+                    tempIndex += 2;
+                }
+
+                ProfileSpannable profileSpannable1 =
+                        new ProfileSpannable(tempEntity.getId());
+                builder.insert(tempIndex, tempEntity.getName());
+
+                builder.setSpan(profileSpannable1,
+                        tempIndex, tempIndex + tempEntity.getName().length(),
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                tempIndex += tempEntity.getName().length();
+            }
+        }
+    }
+
+    private void buildJoinEvent(SpannableStringBuilder builder, int fromEntity) {
+        FormattedEntity entity =
+                EntityManager.getInstance(context).getEntityById(fromEntity);
+        String name = entity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
+        int beforeLength = builder.length();
+        builder.append(name);
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append(context.getString(R.string.jandi_has_joined, ""));
+    }
+
+    private void buildLeaveEvent(SpannableStringBuilder builder, int fromEntity) {
+        FormattedEntity entity =
+                EntityManager.getInstance(context).getEntityById(fromEntity);
+        String name = entity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
+        int beforeLength = builder.length();
+        builder.append(name);
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append(context.getString(R.string.jandi_left_topic, ""));
+    }
+
+    private void buildAnnouncementCreateEvent(ResMessages.AnnouncementCreateEvent event,
+                                              SpannableStringBuilder builder, EntityManager entityManager) {
+        Log.d(((Object) this).getClass().getSimpleName(), event.toString());
+
+        int writerId = event.getEventInfo().getWriterId();
+        FormattedEntity entity = entityManager.getEntityById(writerId);
+        String name = entity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(writerId);
+        int beforeLength = builder.length();
+        builder.append(name);
+
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append("님이 생성헸슈");
+    }
+
+    private void buildAnnouncementUpdateEvent(ResMessages.AnnouncementUpdateEvent event,
+                                              SpannableStringBuilder builder, EntityManager entityManager) {
+        Log.d(((Object) this).getClass().getSimpleName(), event.toString());
+
+        int writerId = event.getEventInfo().getWriterId();
+        FormattedEntity entity = entityManager.getEntityById(writerId);
+        String name = entity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(writerId);
+        int beforeLength = builder.length();
+        builder.append(name);
+
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append("님이 바꿨슈");
+    }
+
+    private void buildAnnouncementDeleteEvent(int from,
+                                              SpannableStringBuilder builder, EntityManager entityManager) {
+        FormattedEntity entity = entityManager.getEntityById(from);
+        String name = entity.getName();
+
+        ProfileSpannable profileSpannable = new ProfileSpannable(from);
+        int beforeLength = builder.length();
+        builder.append(name);
+
+        int afterLength = builder.length();
+        builder.setSpan(profileSpannable,
+                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        builder.append("님이 삭제했");
     }
 
     @Override
