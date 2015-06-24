@@ -18,14 +18,17 @@ public class RobolectricGradleTestRunner extends RobolectricTestRunner {
         String path = System.getProperty("user.dir");
         System.out.println(path);
 
+        boolean hasAppDir = path.contains("/app");
+
         final String _manifestProperty = System.getProperty("android.manifest");
         final String _resProperty = System.getProperty("android.resources");
         final String _assetsProperty = System.getProperty("android.assets");
         final String _androidPackage = System.getProperty("android.package");
 
-        String buildPath = "./app/build/intermediates";
+        String buildPath = hasAppDir ? "build/intermediates" : "./app/build/intermediates";
         String flavorPath = "/dev/debug";
-        final String manifestProperty = _manifestProperty == null ? "app/src/main/AndroidManifest.xml" : _manifestProperty;
+        String manifestPath = hasAppDir ? "src/main/AndroidManifest.xml" : "app/src/main/AndroidManifest.xml";
+        final String manifestProperty = _manifestProperty == null ? manifestPath : _manifestProperty;
         final String resProperty = _resProperty == null ? buildPath + "/res" + flavorPath : _resProperty;
         final String assetsProperty = _assetsProperty == null ? buildPath + "/assets" + flavorPath : _assetsProperty;
 //        final String packageProperty = _androidPackage == null ? "com.tosslab.jandi.app.dev" : _androidPackage; // System.getProperty("android.package");

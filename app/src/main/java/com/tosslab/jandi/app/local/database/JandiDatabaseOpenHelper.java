@@ -125,7 +125,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     LeftMessageMarkers.entityType + " TEXT, " +
                     LeftMessageMarkers.entityId + " INTEGER, " +
                     LeftMessageMarkers.lastLinkId + " INTEGER, " +
-                    LeftMessageMarkers.alarmCount + " INTEGER " +
+                    LeftMessageMarkers.alarmCount + " INTEGER, " +
                     LeftMessageMarkers.announcementOpened + " INTEGER " +
                     ");",
 

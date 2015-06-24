@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileEvent;
@@ -222,6 +223,24 @@ public class JandiSocketServiceModel {
             if (EntityManager.getInstance(context).getMe().getId() == socketRoomMarkerEvent.getMarker().getMemberId()) {
                 markerPublishSubject.onNext(socketRoomMarkerEvent);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshAnnouncement(Object object) {
+        try {
+            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
+
+            SocketAnnouncementEvent socketAnnouncementEvent =
+                    objectMapper.readValue(object.toString(), SocketAnnouncementEvent.class);
+
+            postEvent(socketAnnouncementEvent);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

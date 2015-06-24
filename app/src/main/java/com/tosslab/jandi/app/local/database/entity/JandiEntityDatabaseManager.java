@@ -266,7 +266,7 @@ public class JandiEntityDatabaseManager {
                         messageMarkerValue.put(LeftMessageMarkers.entityId.name(), messageMarker.entityId);
                         messageMarkerValue.put(LeftMessageMarkers.lastLinkId.name(), messageMarker.lastLinkId);
                         messageMarkerValue.put(LeftMessageMarkers.alarmCount.name(), messageMarker.alarmCount);
-                        messageMarkerValue.put(LeftMessageMarkers.announcementOpened.name(), messageMarker.announcementOpened);
+                        messageMarkerValue.put(LeftMessageMarkers.announcementOpened.name(), messageMarker.announcementOpened ? 1 : 0);
 
                         database.insert(Table.left_message_marker.name(), null, messageMarkerValue);
                     }

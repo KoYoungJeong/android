@@ -6,9 +6,12 @@ import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
@@ -111,5 +114,36 @@ public class TeamsApiClientTest {
         ResTeamDetailInfo.InviteTeam teamInfo = teamsApiClient_.getTeamInfo(teamId);
 
         assertThat(teamInfo, is(notNullValue()));
+    }
+
+
+    @Test
+    public void testGetAnnouncement() throws Exception {
+        int teamId = 11158788;
+        int topicId = 11160305;
+
+        JandiV2HttpAuthentication authentication =
+                new JandiV2HttpAuthentication("bearer", "116b7bb3-9c09-42b6-bb91-32902dcd9e6f");
+
+        teamsApiClient_.setAuthentication(authentication);
+
+        ResAnnouncement announcement = teamsApiClient_.getAnnouncement(teamId, topicId);
+
+        System.out.println(announcement);
+
+        assertThat(announcement, is(notNullValue()));
+    }
+
+    @Test
+    public void testCreateAnnouncement() throws Exception {
+        int teamId = 11158788;
+        int topicId = 11160305;
+
+        JandiV2HttpAuthentication authentication =
+                new JandiV2HttpAuthentication("bearer", "116b7bb3-9c09-42b6-bb91-32902dcd9e6f");
+        teamsApiClient_.setAuthentication(authentication);
+//        teamsApiClient_.setAuthentication(authentication);
+
+//        ResCommon resCommon = teamsApiClient_.createAnnouncement(teamId, topicId, messageId);
     }
 }

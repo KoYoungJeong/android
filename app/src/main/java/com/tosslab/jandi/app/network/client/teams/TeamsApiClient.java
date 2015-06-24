@@ -1,8 +1,12 @@
 package com.tosslab.jandi.app.network.client.teams;
 
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -11,8 +15,10 @@ import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.LoggerInterceptor;
 
 import org.androidannotations.annotations.rest.Accept;
+import org.androidannotations.annotations.rest.Delete;
 import org.androidannotations.annotations.rest.Get;
 import org.androidannotations.annotations.rest.Post;
+import org.androidannotations.annotations.rest.Put;
 import org.androidannotations.annotations.rest.RequiresAuthentication;
 import org.androidannotations.annotations.rest.Rest;
 import org.springframework.http.HttpAuthentication;
@@ -41,12 +47,10 @@ public interface TeamsApiClient {
 
     void setAuthentication(HttpAuthentication auth);
 
-
     @Post("/teams")
     @RequiresAuthentication
     @Accept(JandiV3HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
     ResTeamDetailInfo createNewTeam(ReqCreateNewTeam req);
-
 
     @Get("/teams/{teamId}/members/{memberId}")
     @RequiresAuthentication
@@ -56,8 +60,23 @@ public interface TeamsApiClient {
     @RequiresAuthentication
     List<ResInvitationMembers> inviteToTeam(int teamId, ReqInvitationMembers invitationMembers);
 
-
     @Get("/teams/{teamId}")
     @RequiresAuthentication
     ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId);
+
+    @Get("/teams/{teamId}/topics/{topicId}/announcement")
+    @RequiresAuthentication
+    ResAnnouncement getAnnouncement(int teamId, int topicId);
+
+    @Post("/teams/{teamId}/topics/{topicId}/announcement")
+    @RequiresAuthentication
+    ResCommon createAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement);
+
+    @Put("/teams/{teamId}/members/{memberId}/announcement")
+    @RequiresAuthentication
+    ResCommon updateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
+
+    @Delete("/teams/{teamId}/topics/{topicId}/announcement")
+    @RequiresAuthentication
+    ResCommon deleteAnnouncement(int teamId, int topicId);
 }
