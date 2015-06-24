@@ -22,8 +22,7 @@ import static org.junit.Assert.fail;
 /**
  * Created by tonyjs on 15. 6. 2..
  */
-@Config(emulateSdk = 18, manifest = "app/src/main/AndroidManifest.xml")
-@RunWith(RobolectricTestRunner.class)
+@RunWith(RobolectricGradleTestRunner.class)
 public class SignUpVerifyModelTest {
 
     private SignUpVerifyModel signUpVerifyModel;

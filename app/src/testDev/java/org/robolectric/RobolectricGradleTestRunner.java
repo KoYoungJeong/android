@@ -15,6 +15,9 @@ public class RobolectricGradleTestRunner extends RobolectricTestRunner {
     @Override
     protected AndroidManifest getAppManifest(Config config) {
 
+        String path = System.getProperty("user.dir");
+        System.out.println(path);
+
         final String _manifestProperty = System.getProperty("android.manifest");
         final String _resProperty = System.getProperty("android.resources");
         final String _assetsProperty = System.getProperty("android.assets");

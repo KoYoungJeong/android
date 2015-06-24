@@ -53,6 +53,7 @@ import com.tosslab.jandi.app.utils.ProgressWheel;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
@@ -129,6 +130,11 @@ public class MessageListPresenter {
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
 
+    @ViewById(R.id.vg_announcement)
+    ViewGroup vgAnnouncement;
+
+    @ViewById(R.id.vg_announcement_action)
+    ViewGroup vgAnnouncementAction;
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -210,6 +216,12 @@ public class MessageListPresenter {
         if (gotoLatestLayoutVisible) {
             setGotoLatestLayoutVisible();
         }
+    }
+
+    @Click(R.id.vg_announcement)
+    void showAndHideAnnouncementAction() {
+        int visibility = vgAnnouncementAction.getVisibility();
+        vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
     public void sendLayoutVisibleGone() {

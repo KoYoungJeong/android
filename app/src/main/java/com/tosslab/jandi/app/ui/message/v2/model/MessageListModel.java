@@ -438,4 +438,10 @@ public class MessageListModel {
         }
 
     }
+
+    public boolean isAnnouncementOpened(int entityId) {
+        FormattedEntity entity = EntityManager.getInstance(activity).getEntityById(entityId);
+        return entity.announcementOpened;
+    }
+
 }

@@ -32,7 +32,7 @@ import static com.tosslab.jandi.app.local.database.DatabaseConsts.TempMessages;
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 16;
+    private static final int DB_VERSION = 17;
     private static final String[] CREATE_TABLES = {
             Table.account + " (" +
                     Account._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
@@ -126,6 +126,7 @@ public class JandiDatabaseOpenHelper extends SQLiteOpenHelper {
                     LeftMessageMarkers.entityId + " INTEGER, " +
                     LeftMessageMarkers.lastLinkId + " INTEGER, " +
                     LeftMessageMarkers.alarmCount + " INTEGER " +
+                    LeftMessageMarkers.announcementOpened + " INTEGER " +
                     ");",
 
             Table.left_topic_entity + " (" +
