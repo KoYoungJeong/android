@@ -4,7 +4,7 @@ apply plugin: 'newrelic'        // Analytics
 apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
-//apply from: 'test.gradle'       // Android-Test Env Setting
+apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 
 configurations {
     apt
@@ -40,11 +40,6 @@ task checkstyles(type: Checkstyle) {
 
 checkstyle {
     toolVersion = "6.2"
-}
-
-def getDate() {
-    def date = new Date();
-    return date.format("yyyyMMddHHss")
 }
 
 dependencies {
