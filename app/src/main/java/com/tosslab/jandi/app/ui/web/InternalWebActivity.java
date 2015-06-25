@@ -65,7 +65,7 @@ public class InternalWebActivity extends AppCompatActivity {
 
                     if (url.startsWith("intent")) {
 
-                        Intent intent = null;
+                        Intent intent;
                         try {
                             intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                         } catch (URISyntaxException e) {
@@ -95,12 +95,27 @@ public class InternalWebActivity extends AppCompatActivity {
 
                 return false;
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                String title = view.getTitle();
+                ActionBar actionBar = getSupportActionBar();
+
+                if (actionBar != null) {
+                    actionBar.setTitle(title);
+                }
+            }
         });
 
         internalWebPresenter.setWebCromeClient(new WebChromeClient() {
             @Override
             public void onReceivedTitle(WebView view, String title) {
-                getSupportActionBar().setTitle(title);
+                ActionBar supportActionBar = getSupportActionBar();
+                if (supportActionBar != null) {
+                    supportActionBar.setTitle(title);
+                }
             }
 
             @Override
@@ -141,13 +156,15 @@ public class InternalWebActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.jandi_actionb_remove);
-        actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
-
-        if (hideActionBar) {
-            actionBar.hide();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.drawable.jandi_actionb_remove);
+            actionBar.setIcon(new ColorDrawable(Color.TRANSPARENT));
+            if (hideActionBar) {
+                actionBar.hide();
+            }
         }
+
     }
 
     @Override
