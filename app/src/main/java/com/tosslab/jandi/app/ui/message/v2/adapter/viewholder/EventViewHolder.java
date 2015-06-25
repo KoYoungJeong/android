@@ -8,7 +8,6 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.TextAppearanceSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -79,12 +78,12 @@ public class EventViewHolder implements BodyViewHolder {
                     EntityManager entityManager = EntityManager.getInstance(context);
 
                     if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
-                        buildAnnouncementCreateEvent(
-                                (ResMessages.AnnouncementCreateEvent) eventInfo, builder, entityManager);
+                        buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
+                                link.fromEntity, builder, entityManager);
 
                     } else if (eventInfo instanceof ResMessages.AnnouncementUpdateEvent) {
-                        buildAnnouncementUpdateEvent(
-                                (ResMessages.AnnouncementUpdateEvent) eventInfo, builder, entityManager);
+                        buildAnnouncementUpdateEvent((ResMessages.AnnouncementUpdateEvent) eventInfo,
+                                link.fromEntity, builder, entityManager);
 
                     } else if (eventInfo instanceof ResMessages.AnnouncementDeleteEvent) {
                         buildAnnouncementDeleteEvent(link.fromEntity, builder, entityManager);
@@ -133,11 +132,9 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildCreateEvent(ResMessages.CreateEvent eventInfo,
                                   SpannableStringBuilder builder, EntityManager entityManager) {
-        ResMessages.CreateEvent createEvent = eventInfo;
-
-        if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
+        if (eventInfo.createInfo instanceof ResMessages.PublicCreateInfo) {
             ResMessages.PublicCreateInfo publicCreateInfo =
-                    (ResMessages.PublicCreateInfo) createEvent.createInfo;
+                    (ResMessages.PublicCreateInfo) eventInfo.createInfo;
             int creatorId = publicCreateInfo.creatorId;
             FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
 
@@ -150,9 +147,9 @@ public class EventViewHolder implements BodyViewHolder {
 
             builder.append(context.getString(R.string.jandi_created_this_topic, ""));
 
-        } else if (createEvent.createInfo instanceof ResMessages.PrivateCreateInfo) {
+        } else if (eventInfo.createInfo instanceof ResMessages.PrivateCreateInfo) {
             ResMessages.PrivateCreateInfo privateCreateInfo =
-                    (ResMessages.PrivateCreateInfo) createEvent.createInfo;
+                    (ResMessages.PrivateCreateInfo) eventInfo.createInfo;
 
             int creatorId = privateCreateInfo.creatorId;
             FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
@@ -171,8 +168,7 @@ public class EventViewHolder implements BodyViewHolder {
 
     private void buildInviteEvent(ResMessages.InviteEvent eventInfo,
                                   SpannableStringBuilder builder, EntityManager entityManager) {
-        ResMessages.InviteEvent inviteEvent = eventInfo;
-        int invitorId = inviteEvent.invitorId;
+        int invitorId = eventInfo.invitorId;
         FormattedEntity invitorEntity = entityManager.getEntityById(invitorId);
 
         String invitorName = invitorEntity.getName();
@@ -192,7 +188,7 @@ public class EventViewHolder implements BodyViewHolder {
         int tempIndex = nameIndexOf;
 
         FormattedEntity tempEntity;
-        List<Integer> inviteUsers = inviteEvent.inviteUsers;
+        List<Integer> inviteUsers = eventInfo.inviteUsers;
         int size = inviteUsers.size();
         for (int idx = 0; idx < size; idx++) {
             tempEntity = entityManager.getEntityById(inviteUsers.get(idx));
@@ -244,42 +240,57 @@ public class EventViewHolder implements BodyViewHolder {
         builder.append(context.getString(R.string.jandi_left_topic, ""));
     }
 
-    private void buildAnnouncementCreateEvent(ResMessages.AnnouncementCreateEvent event,
+    private void buildAnnouncementCreateEvent(ResMessages.AnnouncementCreateEvent event, int creatorId,
                                               SpannableStringBuilder builder, EntityManager entityManager) {
-        Log.d(((Object) this).getClass().getSimpleName(), event.toString());
+
+        FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+        String creator = creatorEntity.getName();
 
         int writerId = event.getEventInfo().getWriterId();
         FormattedEntity entity = entityManager.getEntityById(writerId);
-        String name = entity.getName();
+        String writer = entity.getName();
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(writerId);
-        int beforeLength = builder.length();
-        builder.append(name);
+        String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
 
-        int afterLength = builder.length();
-        builder.setSpan(profileSpannable,
-                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(format);
 
-        builder.append("님이 생성헸슈");
+        int creatorStartIndex = format.indexOf(creator);
+        int creatorLastIndex = creatorStartIndex + creator.length();
+        ProfileSpannable creatorSpannable = new ProfileSpannable(creatorId);
+        builder.setSpan(creatorSpannable,
+                creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        int writerStartIndex = format.indexOf(writer);
+        int writerLastIndex = writerStartIndex + writer.length();
+        ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
+        builder.setSpan(writerSpannable,
+                writerStartIndex, writerLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
-    private void buildAnnouncementUpdateEvent(ResMessages.AnnouncementUpdateEvent event,
+    private void buildAnnouncementUpdateEvent(ResMessages.AnnouncementUpdateEvent event, int creatorId,
                                               SpannableStringBuilder builder, EntityManager entityManager) {
-        Log.d(((Object) this).getClass().getSimpleName(), event.toString());
+        FormattedEntity creatorEntity = entityManager.getEntityById(creatorId);
+        String creator = creatorEntity.getName();
 
         int writerId = event.getEventInfo().getWriterId();
         FormattedEntity entity = entityManager.getEntityById(writerId);
-        String name = entity.getName();
+        String writer = entity.getName();
 
-        ProfileSpannable profileSpannable = new ProfileSpannable(writerId);
-        int beforeLength = builder.length();
-        builder.append(name);
+        String format = context.getResources().getString(R.string.jandi_announcement_created, creator, writer);
 
-        int afterLength = builder.length();
-        builder.setSpan(profileSpannable,
-                beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(format);
 
-        builder.append("님이 바꿨슈");
+        int creatorStartIndex = format.indexOf(creator);
+        int creatorLastIndex = creatorStartIndex + creator.length();
+        ProfileSpannable creatorSpannable = new ProfileSpannable(creatorId);
+        builder.setSpan(creatorSpannable,
+                creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        int writerStartIndex = format.indexOf(writer);
+        int writerLastIndex = writerStartIndex + writer.length();
+        ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
+        builder.setSpan(writerSpannable,
+                writerStartIndex, writerLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
     private void buildAnnouncementDeleteEvent(int from,
@@ -290,12 +301,11 @@ public class EventViewHolder implements BodyViewHolder {
         ProfileSpannable profileSpannable = new ProfileSpannable(from);
         int beforeLength = builder.length();
         builder.append(name);
-
         int afterLength = builder.length();
         builder.setSpan(profileSpannable,
                 beforeLength, afterLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        builder.append("님이 삭제했");
+        builder.append(context.getResources().getString(R.string.jandi_announcement_deleted, ""));
     }
 
     @Override

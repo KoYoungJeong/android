@@ -106,7 +106,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putInt(MESSAGE_ID, item.id);
-        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
         frag.setArguments(args);

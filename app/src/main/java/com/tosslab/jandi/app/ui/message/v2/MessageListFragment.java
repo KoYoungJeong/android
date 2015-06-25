@@ -1296,26 +1296,32 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
-//        SocketAnnouncementEvent.Type type = event.getEventType();
-//        switch (type) {
-//            case CREATED:
-//                break;
-//            case UPDATED:
-//                break;
-//            case DELETED:
-//                break;
-//        }
     }
 
     public void onEvent(AnnouncementEvent event) {
         switch (event.getAction()) {
             case CREATE:
-                announcementModel.createAnnouncement(teamId, roomId, event.getMessageId());
+                checkAnnouncementExistsAndCreate(event.getMessageId());
                 break;
             case DELETE:
                 announcementModel.deleteAnnouncement(teamId, roomId);
                 break;
         }
+    }
+
+    @Background
+    void checkAnnouncementExistsAndCreate(int messageId) {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        if (announcement == null || announcement.isEmpty()) {
+            createAnnouncement(messageId);
+            return;
+        }
+
+        announcementViewModel.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
+    }
+
+    private void createAnnouncement(int messageId) {
+        announcementModel.createAnnouncement(teamId, roomId, messageId);
     }
 
     @Override

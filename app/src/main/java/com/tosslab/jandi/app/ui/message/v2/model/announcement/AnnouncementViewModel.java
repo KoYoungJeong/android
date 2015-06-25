@@ -1,10 +1,18 @@
 package com.tosslab.jandi.app.ui.message.v2.model.announcement;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
+import android.text.util.Linkify;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Scroller;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -16,7 +24,9 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.utils.LinkifyUtil;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -30,10 +40,6 @@ import de.greenrobot.event.EventBus;
  */
 @EBean
 public class AnnouncementViewModel {
-
-    public interface OnAnnouncementDeleteListener {
-        void onDelete();
-    }
 
     public interface OnAnnouncementOpenListener {
         void onOpen();
@@ -76,6 +82,10 @@ public class AnnouncementViewModel {
     @RootContext
     Activity activity;
 
+    @AfterViews
+    void init() {
+    }
+
     @UiThread
     public void setAnnouncement(ResAnnouncement announcement, boolean isOpened) {
         if (announcement == null || announcement.isEmpty()) {
@@ -97,7 +107,6 @@ public class AnnouncementViewModel {
         vgAnnouncement.setVisibility(View.VISIBLE);
 
         String profileUrl = fromEntity.getUserLargeProfileUrl();
-
         Ion.with(ivAnnouncementUser)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
@@ -106,14 +115,22 @@ public class AnnouncementViewModel {
                 .load(profileUrl);
 
         ResLeftSideMenu.User user = fromEntity.getUser();
-
         String date = DateTransformator.getTimeStringFromISO(
                 writtenAt, DateTransformator.FORMAT_YYYYMMDD_HHMM_A);
-
         String announcementInfo = String.format("%s %s", user.name, date);
         tvAnnouncementInfo.setText(announcementInfo);
 
-        tvAnnouncementMessage.setText(content);
+        SpannableStringBuilder messageStringBuilder = new SpannableStringBuilder();
+        messageStringBuilder.append(!TextUtils.isEmpty(content) ? content : "");
+        boolean hasLink = LinkifyUtil.addLinks(activity, messageStringBuilder);
+        if (hasLink) {
+            Spannable linkSpannable =
+                    Spannable.Factory.getInstance().newSpannable(messageStringBuilder);
+            messageStringBuilder.setSpan(linkSpannable,
+                    0, content.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            LinkifyUtil.setOnLinkClick(tvAnnouncementMessage);
+        }
+        tvAnnouncementMessage.setText(messageStringBuilder);
 
         if (onAnnouncementOpenListener != null) {
             btnAnnouncementOpen.setOnClickListener((view) -> onAnnouncementOpenListener.onOpen());
@@ -129,7 +146,7 @@ public class AnnouncementViewModel {
     @Click(R.id.btn_announcement_delete)
     void showDeleteAlertDialog() {
         new AlertDialog.Builder(activity)
-                .setMessage("삭제할래용?")
+                .setMessage(activity.getString(R.string.jandi_announcement_delete_question))
                 .setPositiveButton(activity.getString(R.string.jandi_confirm), (dialog, which) -> {
                     EventBus.getDefault().post(new AnnouncementEvent(AnnouncementEvent.Action.DELETE));
                 })
@@ -142,6 +159,30 @@ public class AnnouncementViewModel {
     void showAndHideAnnouncementAction() {
         int visibility = vgAnnouncementAction.getVisibility();
         vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+        if (vgAnnouncementAction.getVisibility() == View.VISIBLE) {
+            tvAnnouncementMessage.setSingleLine(false);
+            tvAnnouncementMessage.setMaxLines(7);
+            tvAnnouncementMessage.setVerticalScrollBarEnabled(true);
+            tvAnnouncementMessage.setMovementMethod(new ScrollingMovementMethod());
+        } else {
+            tvAnnouncementMessage.setSingleLine();
+            tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
+            tvAnnouncementMessage.setMovementMethod(null);
+        }
+//        String originText = tvAnnouncementMessage.getTag().toString();
+//        String originText = tvAnnouncementMessage.getText().toString();
+//        tvAnnouncementMessage.setText(originText);
+        tvAnnouncementMessage.invalidate();
+    }
+
+    @UiThread
+    public void showCreateAlertDialog(DialogInterface.OnClickListener confirmListener) {
+        new AlertDialog.Builder(activity)
+                .setMessage(activity.getString(R.string.jandi_announcement_create_question))
+                .setPositiveButton(activity.getString(R.string.jandi_confirm), confirmListener)
+                .setNegativeButton(activity.getString(R.string.jandi_cancel), null)
+                .create()
+                .show();
     }
 
     public void setOnAnnouncementOpenListener(OnAnnouncementOpenListener onAnnouncementOpenListener) {

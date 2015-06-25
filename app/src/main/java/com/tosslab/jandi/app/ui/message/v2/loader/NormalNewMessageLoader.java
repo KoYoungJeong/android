@@ -70,7 +70,14 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 if (visibleLastItemPosition < lastItemPosition - 1 && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 } else {
-                    messageListPresenter.moveToMessage(lastUpdatedMessage.messageId, 0);
+                    int messageId = lastUpdatedMessage.messageId;
+                    if (messageId <= 0) {
+                        if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
+                            messageListPresenter.moveToMessageById(lastUpdatedMessage.id, 0);
+                        }
+                    } else {
+                        messageListPresenter.moveToMessage(messageId, 0);
+                    }
                 }
             }
 

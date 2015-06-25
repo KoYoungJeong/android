@@ -37,6 +37,6 @@
         android:layout_height="60dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"
-        android:text="공지사항으로"
+        android:text="@string/jandi_announcement_create"
         android:textSize="20sp" />
 </LinearLayout>
