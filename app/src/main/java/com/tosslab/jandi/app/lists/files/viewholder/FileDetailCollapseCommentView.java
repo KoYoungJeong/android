@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 public class FileDetailCollapseCommentView implements CommentViewHolder {
 
@@ -53,11 +53,11 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
         int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = spannableStringBuilder.length();
-        spannableStringBuilder.append(createTime);
+        spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
 
-        MessageSpannable spannable =
-                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+        DateViewSpannable spannable =
+                new DateViewSpannable(textViewCommentContent.getContext(), createTime);
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
