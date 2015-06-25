@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.model.announcement;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,7 +130,7 @@ public class AnnouncementViewModel {
     @Click(R.id.btn_announcement_delete)
     void showDeleteAlertDialog() {
         new AlertDialog.Builder(activity)
-                .setMessage("삭제할래용?")
+                .setMessage(activity.getString(R.string.jandi_announcement_delete_question))
                 .setPositiveButton(activity.getString(R.string.jandi_confirm), (dialog, which) -> {
                     EventBus.getDefault().post(new AnnouncementEvent(AnnouncementEvent.Action.DELETE));
                 })
@@ -142,6 +143,16 @@ public class AnnouncementViewModel {
     void showAndHideAnnouncementAction() {
         int visibility = vgAnnouncementAction.getVisibility();
         vgAnnouncementAction.setVisibility(visibility == View.VISIBLE ? View.GONE : View.VISIBLE);
+    }
+
+    @UiThread
+    public void showCreateAlertDialog(DialogInterface.OnClickListener confirmListener) {
+        new AlertDialog.Builder(activity)
+                .setMessage(activity.getString(R.string.jandi_announcement_create_question))
+                .setPositiveButton(activity.getString(R.string.jandi_confirm), confirmListener)
+                .setNegativeButton(activity.getString(R.string.jandi_cancel), null)
+                .create()
+                .show();
     }
 
     public void setOnAnnouncementOpenListener(OnAnnouncementOpenListener onAnnouncementOpenListener) {

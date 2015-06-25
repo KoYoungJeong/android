@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <LinearLayout
         android:id="@+id/vg_announcement_info"
-        android:visibility="gone"
-        android:layout_margin="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="4dp"
         android:background="@drawable/bg_announcement"
         android:minHeight="61dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
             android:paddingLeft="14dp"
             android:paddingRight="14dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="15dp">
+            android:paddingTop="14dp">
             <ImageView
                 android:id="@+id/iv_announcement_user"
                 android:layout_width="32dp"
@@ -34,8 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
-                android:text="Heyra 2015/06/25 14:04 PM"
-                android:textColor="#999999"
+                android:textColor="@color/jandi_text_light"
                 android:textSize="11sp"/>
 
             <TextView
@@ -43,12 +42,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_announcement_info"
-                android:maxLines="7"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
+                android:maxLines="7"
                 android:singleLine="true"
-                android:text="워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다.워크샵 관련 공지 드립니다."
                 android:textColor="@android:color/black"
                 android:textSize="14sp"/>
 
@@ -56,15 +54,15 @@
 
         <LinearLayout
             android:id="@+id/vg_announcement_action"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#d0d0d0"/>
+                android:background="@color/jandi_announcement_divider"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -77,14 +75,14 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="삭제"
-                    android:textColor="#003658"
+                    android:text="@string/jandi_announcement_delete"
+                    android:textColor="@color/jandi_primary_color"
                     android:textSize="14sp"/>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="#d0d0d0"/>
+                    android:background="@color/jandi_announcement_divider"/>
 
                 <TextView
                     android:id="@+id/btn_announcement_close"
@@ -92,8 +90,8 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="최소화"
-                    android:textColor="#003658"
+                    android:text="@string/jandi_announcement_minimize"
+                    android:textColor="@color/jandi_primary_color"
                     android:textSize="14sp"/>
 
             </LinearLayout>
@@ -104,11 +102,11 @@
 
     <View
         android:id="@+id/btn_announcement_open"
-        android:visibility="gone"
-        android:background="@drawable/btn_announce"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_gravity="right"
         android:layout_margin="10dp"
-        android:layout_width="44dp"
-        android:layout_height="44dp"/>
+        android:background="@drawable/btn_announce"
+        android:visibility="gone"/>
 
 </FrameLayout>

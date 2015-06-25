@@ -276,6 +276,12 @@ public class MessageListPresenter {
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToMessageById(int id, int firstVisibleItemTop) {
+        int itemPosition = messageListAdapter.getItemPositionById(id);
+        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
     public int getFirstVisibleItemLinkId() {
         if (messageListAdapter.getCount() > 0) {
             int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
