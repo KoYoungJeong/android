@@ -46,7 +46,7 @@ public class EventViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         Observable.from(Arrays.asList(link.info))
                 .subscribeOn(Schedulers.io())
                 .map(stringObjectMap -> {

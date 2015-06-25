@@ -3,14 +3,13 @@ package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -31,7 +30,7 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     @Override
-    public void loadThumb(ResMessages.FileMessage fileMessage) {
+    public void loadThumb(ResMessages.FileMessage fileMessage, int entityId) {
         ResMessages.FileContent content = fileMessage.content;
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
         iconFileType.setImageResource(
@@ -69,11 +68,9 @@ public class ImageThumbLoader implements FileThumbLoader {
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> {
                         String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(context, content);
-                        PhotoViewActivity_
+                        CarouselViewerActivity_
                                 .intent(context)
-                                .imageUrl(optimizedImageUrl)
-                                .imageName(content.name)
-                                .imageType(content.type)
+                                .startLinkId(fileMessage.id)
                                 .start();
                     });
                     break;

@@ -72,10 +72,6 @@ public class PhotoViewPresenter {
 
         <T> void loadImage(T target);
 
-        void autoHideActionBar();
-
-        void toggleActionbar();
-
         boolean isForeground();
     }
 }

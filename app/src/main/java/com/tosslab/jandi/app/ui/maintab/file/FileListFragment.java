@@ -161,7 +161,9 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
-        searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
+        searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) ->
+                moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem
+                        (position).id, mSearchQuery.mSearchEntity));
 
         resetFilterLayoutPosition();
 
@@ -627,9 +629,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         ColoredToast.showError(mContext, getString(errMessageRes));
     }
 
-    private void moveToFileDetailActivity(int fileId) {
+    private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
+                .entityId(mSearchEntity)
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);

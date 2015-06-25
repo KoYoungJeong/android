@@ -27,7 +27,7 @@ public class NormalThumbLoader implements FileThumbLoader {
     }
 
     @Override
-    public void loadThumb(ResMessages.FileMessage fileMessage) {
+    public void loadThumb(ResMessages.FileMessage fileMessage, int entityId) {
 
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(fileMessage.content.serverUrl);
         String photoUrl = BitmapUtil.getFileUrl(fileMessage.content.fileUrl);

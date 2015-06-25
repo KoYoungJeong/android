@@ -299,9 +299,10 @@ public class MessageListPresenter {
         ColoredToast.showWarning(activity, activity.getString(R.string.warn_no_more_messages));
     }
 
-    public void moveFileDetailActivity(Fragment fragment, int messageId) {
+    public void moveFileDetailActivity(Fragment fragment, int messageId, int entityId) {
         FileDetailActivity_
                 .intent(fragment)
+                .entityId(entityId)
                 .fileId(messageId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
@@ -771,4 +772,7 @@ public class MessageListPresenter {
 
     }
 
+    public void setEntityInfo(int entityId) {
+        messageListAdapter.setEntityId(entityId);
+    }
 }

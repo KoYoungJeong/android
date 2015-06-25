@@ -37,7 +37,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         int fromEntityId = link.fromEntity;
 
         ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) link.message;

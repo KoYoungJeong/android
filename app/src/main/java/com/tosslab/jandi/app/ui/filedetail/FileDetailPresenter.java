@@ -110,13 +110,13 @@ public class FileDetailPresenter {
     }
 
     @UiThread
-    public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
+    public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction, int entityId) {
 
         ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
 
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
-        fileHeadManager.setFileInfo(fileMessage);
+        fileHeadManager.setFileInfo(fileMessage, entityId);
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
 

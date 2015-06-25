@@ -86,6 +86,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     @Extra
     public int fileId;
 
+    @Extra
+    int entityId = -1;
+
     @Bean
     FileDetailModel fileDetailModel;
     @Bean
@@ -368,7 +371,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             }
         }
 
-        fileDetailPresenter.drawFileDetail(resFileDetail, isSendAction);
+        fileDetailPresenter.drawFileDetail(resFileDetail, isSendAction, entityId);
     }
 
     @UiThread

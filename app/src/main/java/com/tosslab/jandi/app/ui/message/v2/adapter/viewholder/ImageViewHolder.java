@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
+import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -58,7 +58,7 @@ public class ImageViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -136,11 +136,9 @@ public class ImageViewHolder implements BodyViewHolder {
                         String optimizedImageUrl =
                                 BitmapUtil.getOptimizedImageUrl(context, fileContent);
 
-                        fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                .intent(fileImageView.getContext())
-                                .imageUrl(optimizedImageUrl)
-                                .imageName(fileContent.name)
-                                .imageType(fileContent.type)
+                        fileImageView.setOnClickListener(view -> CarouselViewerActivity_.intent(context)
+                                .entityId(entityId)
+                                .startLinkId(link.messageId)
                                 .start());
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩

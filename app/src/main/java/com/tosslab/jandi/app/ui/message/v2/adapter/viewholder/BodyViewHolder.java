@@ -11,7 +11,7 @@ public interface BodyViewHolder {
 
     void initView(View rootView);
 
-    void bindData(ResMessages.Link link, int teamId, int roomId);
+    void bindData(ResMessages.Link link, int teamId, int roomId, int entityId);
 
     int getLayoutId();
 
