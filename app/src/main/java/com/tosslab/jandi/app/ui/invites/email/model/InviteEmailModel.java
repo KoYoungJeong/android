@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -19,6 +18,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -34,7 +34,7 @@ public class InviteEmailModel {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws JandiNetworkException {
+    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
 
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
 

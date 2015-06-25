@@ -15,7 +15,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
@@ -93,8 +94,8 @@ public class ProfileApiClientTest {
         String oldName = sideMenu.user.name;
         try {
             user = RequestApiManager.getInstance().updateMemberNameByProfileApi(sideMenu.user.id, new ReqProfileName("test " + oldName));
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(user, is(notNullValue()));

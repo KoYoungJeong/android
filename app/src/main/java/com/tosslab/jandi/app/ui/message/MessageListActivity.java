@@ -69,7 +69,6 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -538,9 +537,8 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 //            LogUtil.d();("getMessagesInBackground : " + restResMessages.messageCount
 //                    + " messages from " + messageState.getFirstItemId());
             getMessagesSucceed(restResMessages);
-        } catch (JandiNetworkException e) {
-            LogUtil.e("getMessagesInBackground : FAILED" + e.httpBody, e);
-            LogUtil.e(e.getErrorInfo(), e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             getMessagesFailed(getString(R.string.err_messages_get));
         } catch (Exception e) {
             getMessagesFailed(getString(R.string.err_messages_get));
@@ -644,7 +642,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             } else {
                 LogUtil.w("getUpdateMessagesInBackground : LastUpdateLinkId = " + messageState.getLastUpdateLinkId());
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("fail to get updated messages", e);
         } catch (Exception e) {
             LogUtil.e("fail to get updated messages", e);
@@ -689,7 +687,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             messageManipulator.sendMessage(message);
             LogUtil.d("sendMessageInBackground : succeed");
             sendMessageSucceed();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("sendMessageInBackground : FAILED", e);
             sendMessageFailed(R.string.err_messages_send);
         } catch (Exception e) {
@@ -795,7 +793,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
                 mEntityClientManager.deleteMessageComment(messageId, feedbackId);
             }
             deleteMessageDone(true, null);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
             deleteMessageDone(false, getString(R.string.err_messages_delete));
         } catch (Exception e) {
@@ -989,12 +987,16 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
             modifyEntitySucceed(event.inputName);
         } catch (RetrofitError e) {
-            if (e.getResponse().getStatus() == 4000) {
-                modifyEntityFailed(getString(R.string.err_entity_duplicated_name));
-            } else {
-                modifyEntityFailed(getString(R.string.err_entity_modify));
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                if (e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+                    modifyEntityFailed(getString(R.string.err_entity_duplicated_name));
+                } else {
+                    modifyEntityFailed(getString(R.string.err_entity_modify));
+                }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             modifyEntityFailed(getString(R.string.err_entity_modify));
         }
     }
@@ -1036,8 +1038,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             }
             deleteTopicSucceed();
         } catch (RetrofitError e) {
+            e.printStackTrace();
             deleteTopicFailed(getString(R.string.err_entity_delete));
         } catch (Exception e) {
+            e.printStackTrace();
             deleteTopicFailed(getString(R.string.err_entity_delete));
         }
     }
@@ -1066,7 +1070,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageManipulator.setMarker(messageState.getLastUpdateLinkId());
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("set marker failed", e);
         } catch (Exception e) {
             LogUtil.e("set marker failed", e);
@@ -1090,10 +1094,10 @@ public class MessageListActivity extends BaseAnalyticsActivity {
             ResLeftSideMenu.User user = mEntityClientManager.getUserProfile(userEntityId);
             getProfileSuccess(user);
         } catch (RetrofitError e) {
-            LogUtil.e("get profile failed", e);
+            e.printStackTrace();
             getProfileFailed();
         } catch (Exception e) {
-            LogUtil.e("get profile failed", e);
+            e.printStackTrace();
             getProfileFailed();
         }
     }

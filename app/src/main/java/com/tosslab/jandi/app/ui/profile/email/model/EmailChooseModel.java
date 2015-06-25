@@ -9,7 +9,6 @@ import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -17,6 +16,8 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -53,7 +54,7 @@ public class EmailChooseModel {
         return accountEmails;
     }
 
-    public ResAccountInfo requestNewEmail(String email) throws JandiNetworkException {
+    public ResAccountInfo requestNewEmail(String email) throws RetrofitError {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
         return RequestApiManager.getInstance().requestAddEmailByAccountEmailApi(reqAccountEmail);
     }
@@ -83,17 +84,17 @@ public class EmailChooseModel {
 
     }
 
-    public ResAccountInfo requestDeleteEmail(String email) throws JandiNetworkException {
+    public ResAccountInfo requestDeleteEmail(String email) throws RetrofitError {
         ReqAccountEmail reqAccountEmail = new ReqAccountEmail(email, LanguageUtil.getLanguage(context.getApplicationContext()));
         return RequestApiManager.getInstance().deleteEmailByAccountEmailApi(reqAccountEmail);
     }
 
-    public ResAccountInfo getAccountEmailsFromServer() throws JandiNetworkException {
+    public ResAccountInfo getAccountEmailsFromServer() throws RetrofitError {
         return RequestApiManager.getInstance().getAccountInfoByMainRest();
 
     }
 
-    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws JandiNetworkException {
+    public ResAccountInfo updatePrimaryEmail(String selectedEmail) throws RetrofitError {
         return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 

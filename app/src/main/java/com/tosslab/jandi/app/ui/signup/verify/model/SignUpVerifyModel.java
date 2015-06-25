@@ -12,15 +12,11 @@ import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import retrofit.RetrofitError;
 
@@ -41,31 +37,32 @@ public class SignUpVerifyModel {
     }
 
     public ResAccountActivate requestSignUpVerify(String email, String verificationCode)
-            throws VerifyNetworkException, HttpStatusCodeException {
+            throws VerifyNetworkException {
         ReqAccountActivate accountActivate = new ReqAccountActivate(email, verificationCode);
-
+        ResAccountActivate resAccountActivate = null;
         try {
-            return RequestApiManager.getInstance().activateAccountByMainRest(accountActivate);
-        } catch (HttpStatusCodeException e) {
+            resAccountActivate = RequestApiManager.getInstance().activateAccountByMainRest(accountActivate);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             throw new VerifyNetworkException(e);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new VerifyNetworkException(
-                    new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
         }
+
+        return resAccountActivate;
     }
 
-    public ResCommon requestNewVerificationCode(String email) throws JandiNetworkException {
+    public ResCommon requestNewVerificationCode(String email) throws RetrofitError {
         ReqAccountVerification accountVerification = new ReqAccountVerification(email);
-
+        ResCommon resCommon = null;
         try {
-            return RequestApiManager.getInstance().accountVerificationByMainRest(accountVerification);
+            resCommon = RequestApiManager.getInstance().accountVerificationByMainRest(accountVerification);
         } catch (RetrofitError e) {
-            throw new JandiNetworkException(e);
+            e.printStackTrace();
         } catch (Exception e) {
-//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
-            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
+            e.printStackTrace();
         }
+        return resCommon;
     }
 
     public void setAccountInfo(ResAccountActivate accountActivate) {

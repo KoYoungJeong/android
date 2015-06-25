@@ -16,9 +16,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
@@ -119,8 +120,8 @@ public class CommentsApiClientTest {
         try {
             ResCommon resCommon = RequestApiManager.getInstance().
                     sendMessageCommentByCommentsApi(reqSendComment, myFileMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
     }
@@ -147,8 +148,8 @@ public class CommentsApiClientTest {
         try {
             resCommon = RequestApiManager.getInstance().
                     modifyMessageCommentByCommentsApi(reqSendComment, textMessage.feedbackId, textMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));

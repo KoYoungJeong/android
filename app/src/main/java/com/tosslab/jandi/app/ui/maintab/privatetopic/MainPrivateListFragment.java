@@ -173,13 +173,16 @@ public class MainPrivateListFragment extends BaseChatListFragment {
             ResCommon restResId = mEntityClientManager.createPrivateGroup(entityName);
             createGroupSucceed(restResId.id, entityName);
         } catch (RetrofitError e) {
-            LogUtil.e("Create Fail", e);
-            if (e.getResponse().getStatus() == 4000) {
-                createGroupFailed(R.string.err_entity_duplicated_name);
-            } else {
-                createGroupFailed(R.string.err_entity_create);
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                if (e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+                    createGroupFailed(R.string.err_entity_duplicated_name);
+                } else {
+                    createGroupFailed(R.string.err_entity_create);
+                }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             createGroupFailed(R.string.err_entity_create);
         }
     }

@@ -129,6 +129,7 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
             teamDomainInfoPresenter.successCreateTeam(newTeam.getInviteTeam().getName());
 
         } catch (RetrofitError e) {
+            e.printStackTrace();
             teamDomainInfoPresenter.dismissProgressWheel();
             teamDomainInfoPresenter.failCreateTeam(e.getResponse().getStatus());
         }

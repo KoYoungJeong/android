@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -52,7 +51,9 @@ public class IntroActivityModel {
                 LogUtil.i("A new version of JANDI is available.");
             }
         } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             return isLatestVersion;
         }
@@ -70,7 +71,7 @@ public class IntroActivityModel {
         }
     }
 
-    int getLatestVersionInBackground() throws JandiNetworkException {
+    int getLatestVersionInBackground() throws RetrofitError {
         ResConfig resConfig = getConfigInfo();
         return resConfig.versions.android;
     }
@@ -80,14 +81,14 @@ public class IntroActivityModel {
         return TextUtils.isEmpty(refreshToken);
     }
 
-    public void refreshAccountInfo() throws JandiNetworkException {
+    public void refreshAccountInfo() throws RetrofitError {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).upsertAccountAllInfo(resAccountInfo);
     }
 
     public void clearTokenInfo() {
-        TokenUtil.clearTokenInfo(context);
+        TokenUtil.clearTokenInfo();
     }
 
     public void clearAccountInfo() {
@@ -143,7 +144,7 @@ public class IntroActivityModel {
         }
     }
 
-    public ResConfig getConfigInfo() throws JandiNetworkException {
+    public ResConfig getConfigInfo() throws RetrofitError {
         return RequestApiManager.getInstance().getConfigByMainRest();
     }
 

@@ -17,7 +17,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.springframework.web.client.HttpStatusCodeException;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
@@ -136,8 +137,8 @@ public class MessagesApiClientTest {
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().shareMessageByMessagesApiAuth(reqShareMessage, myFileMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -145,8 +146,8 @@ public class MessagesApiClientTest {
         ReqUnshareMessage reqUnshareMessage = new ReqUnshareMessage(sideMenu.team.id, reqShareMessage.shareEntity);
         try {
             resCommon = RequestApiManager.getInstance().unshareMessageByMessagesApiAuth(reqUnshareMessage, myFileMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));

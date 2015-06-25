@@ -11,11 +11,12 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 6. 5..
@@ -43,7 +44,7 @@ public class MessageManipulator {
         mEntityType = entityType;
     }
 
-    public ResMessages getMessages(final int firstItemId, int count) throws JandiNetworkException {
+    public ResMessages getMessages(final int firstItemId, int count) throws RetrofitError {
         final int requestCount = Math.max(NUMBER_OF_MESSAGES, count);
 
         switch (mEntityType) {
@@ -72,7 +73,7 @@ public class MessageManipulator {
 
     }
 
-    public ResUpdateMessages updateMessages(final int fromCurrentId) throws JandiNetworkException {
+    public ResUpdateMessages updateMessages(final int fromCurrentId) throws RetrofitError {
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
                 return RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(selectedTeamId, mEntityId, fromCurrentId);
@@ -85,7 +86,7 @@ public class MessageManipulator {
         }
     }
 
-    public ResCommon setMarker(final int lastLinkId) throws JandiNetworkException {
+    public ResCommon setMarker(final int lastLinkId) throws RetrofitError {
 
         String entityType;
         switch (mEntityType) {
@@ -104,7 +105,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(mEntityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message) throws JandiNetworkException {
+    public ResCommon sendMessage(String message) throws RetrofitError {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -123,7 +124,7 @@ public class MessageManipulator {
 
     }
 
-    public ResCommon deleteMessage(final int messageId) throws JandiNetworkException {
+    public ResCommon deleteMessage(final int messageId) throws RetrofitError {
 
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -138,7 +139,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getBeforeMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
 
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
@@ -154,7 +155,7 @@ public class MessageManipulator {
 
     }
 
-    public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
 
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:

@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
@@ -47,16 +46,16 @@ public class FileDetailModel {
     @Bean
     EntityClientManager entityClientManager;
 
-    public ResFileDetail getFileDetailInfo(int fileId) throws JandiNetworkException {
+    public ResFileDetail getFileDetailInfo(int fileId) throws RetrofitError {
 
         return entityClientManager.getFileDetail(fileId);
     }
 
-    public void shareMessage(int fileId, int entityIdToBeShared) throws JandiNetworkException {
+    public void shareMessage(int fileId, int entityIdToBeShared) throws RetrofitError {
         entityClientManager.shareMessage(fileId, entityIdToBeShared);
     }
 
-    public void unshareMessage(int fileId, int entityIdToBeUnshared) throws JandiNetworkException {
+    public void unshareMessage(int fileId, int entityIdToBeUnshared) throws RetrofitError {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
@@ -64,11 +63,11 @@ public class FileDetailModel {
 //        entityClientManager.deleteFile(fileId);
 //    }
 
-    public void sendMessageComment(int fileId, String message) throws JandiNetworkException {
+    public void sendMessageComment(int fileId, String message) throws RetrofitError {
         entityClientManager.sendMessageComment(fileId, message);
     }
 
-    public ResLeftSideMenu.User getUserProfile(int userEntityId) throws JandiNetworkException {
+    public ResLeftSideMenu.User getUserProfile(int userEntityId) throws RetrofitError {
         return entityClientManager.getUserProfile(userEntityId);
     }
 
@@ -93,7 +92,7 @@ public class FileDetailModel {
         return me != null && me.getId() == writerId;
     }
 
-    public void deleteComment(int messageId, int feedbackId) throws JandiNetworkException {
+    public void deleteComment(int messageId, int feedbackId) throws RetrofitError {
         entityClientManager.deleteMessageComment(messageId, feedbackId);
 
     }
@@ -165,7 +164,7 @@ public class FileDetailModel {
         return false;
     }
 
-    public ResCommon joinEntity(FormattedEntity entityId) throws JandiNetworkException {
+    public ResCommon joinEntity(FormattedEntity entityId) throws RetrofitError {
 
         return entityClientManager.joinChannel(entityId.getChannel());
 
@@ -181,8 +180,10 @@ public class FileDetailModel {
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
             return true;
         } catch (RetrofitError e) {
+            e.printStackTrace();
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

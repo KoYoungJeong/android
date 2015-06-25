@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -79,7 +78,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
             view.moveSelectedTeam(firstJoin);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,7 +110,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

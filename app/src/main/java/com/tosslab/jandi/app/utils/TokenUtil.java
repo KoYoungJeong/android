@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
@@ -10,12 +11,6 @@ import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
  * Created by Steve SeongUg Jung on 14. 12. 17..
  */
 public class TokenUtil {
-
-    private static Context context;
-
-    public static void setContext(Context context) {
-        TokenUtil.context = context;
-    }
 
     public static void saveTokenInfoByPassword(Context context,
                                                String accessToken, String refreshToken,
@@ -34,68 +29,32 @@ public class TokenUtil {
     }
 
 
-    @Deprecated
-    public static void saveTokenInfoByPassword(Context context, ResAccessToken accessToken) {
-//        JandiPreference.setAccessToken(context, accessToken.getAccessToken());
-//        JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
-//        JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
-        saveTokenInfoByRefresh(context, accessToken);
-    }
-
     public static void saveTokenInfoByPassword(ResAccessToken accessToken) {
-        saveTokenInfoByRefresh(context, accessToken);
-    }
-
-
-    @Deprecated
-    public static void saveTokenInfoByRefresh(Context context, ResAccessToken accessToken) {
-        if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
-            JandiPreference.setAccessToken(context, accessToken.getAccessToken());
-        }
-
-        if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
-            JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
-        }
-
-        if (!TextUtils.isEmpty(accessToken.getTokenType())) {
-            JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
-        }
+        saveTokenInfoByRefresh(accessToken);
     }
 
     public static void saveTokenInfoByRefresh(ResAccessToken accessToken) {
         if (!TextUtils.isEmpty(accessToken.getAccessToken())) {
-            JandiPreference.setAccessToken(context, accessToken.getAccessToken());
+            JandiPreference.setAccessToken(JandiApplication.getContext(), accessToken.getAccessToken());
         }
 
         if (!TextUtils.isEmpty(accessToken.getRefreshToken())) {
-            JandiPreference.setRefreshToken(context, accessToken.getRefreshToken());
+            JandiPreference.setRefreshToken(JandiApplication.getContext(), accessToken.getRefreshToken());
         }
 
         if (!TextUtils.isEmpty(accessToken.getTokenType())) {
-            JandiPreference.setAccessTokenType(context, accessToken.getTokenType());
+            JandiPreference.setAccessTokenType(JandiApplication.getContext(), accessToken.getTokenType());
         }
     }
 
-    @Deprecated
-    public static void clearTokenInfo(Context context) {
-        JandiPreference.setAccessToken(context, "");
-        JandiPreference.setAccessTokenType(context, "");
-        JandiPreference.setRefreshToken(context, "");
-    }
-
     public static void clearTokenInfo() {
-        JandiPreference.setAccessToken(context, "");
-        JandiPreference.setAccessTokenType(context, "");
-        JandiPreference.setRefreshToken(context, "");
-    }
-
-    @Deprecated
-    public static JandiV2HttpAuthentication getRequestAuthentication(Context context) {
-        return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(context), JandiPreference.getAccessToken(context));
+        JandiPreference.setAccessToken(JandiApplication.getContext(), "");
+        JandiPreference.setAccessTokenType(JandiApplication.getContext(), "");
+        JandiPreference.setRefreshToken(JandiApplication.getContext(), "");
     }
 
     public static JandiV2HttpAuthentication getRequestAuthentication() {
-        return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(context), JandiPreference.getAccessToken(context));
+        return new JandiV2HttpAuthentication(JandiPreference.getAccessTokenType(JandiApplication.getContext()), JandiPreference.getAccessToken(JandiApplication.getContext()));
     }
 
 }

@@ -18,9 +18,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
+
+import retrofit.RetrofitError;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -151,10 +152,9 @@ public class GroupMessageApiClientTest {
         try {
             resCommon = RequestApiManager.getInstance().
                     deletePrivateGroupMessageByGroupMessageApi(sideMenu.team.id, privateTopic.id, myTextMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
-
 
         assertThat(resCommon, is(notNullValue()));
 

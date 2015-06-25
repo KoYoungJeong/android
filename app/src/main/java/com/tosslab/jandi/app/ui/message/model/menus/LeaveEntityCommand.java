@@ -75,10 +75,10 @@ class LeaveEntityCommand implements MenuCommand {
             trackLeavingEntity(chattingInfomations.entityType);
             leaveEntitySucceed();
         } catch (RetrofitError e) {
-            LogUtil.e("fail to leave cdp");
+            e.printStackTrace();
             leaveEntityFailed(activity.getString(R.string.err_entity_leave));
         } catch (Exception e) {
-            LogUtil.e("fail to leave cdp");
+            e.printStackTrace();
             leaveEntityFailed(activity.getString(R.string.err_entity_leave));
         }
     }

@@ -77,7 +77,7 @@ public interface MainRestApiClient {
     // Entity별 badge 설정
     @POST("/entities/{entityId}/marker")
     @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon setMarker(@Path("entityId") int entityId, ReqSetMarker reqSetMarker);
+    ResCommon setMarker(@Path("entityId") int entityId, @Body ReqSetMarker reqSetMarker);
 
     /**
      * *********************************************************

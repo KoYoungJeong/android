@@ -59,11 +59,20 @@ public class JandiConstants {
     public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
     public static final int NOTIFICATION_ID = 100;
+    public static final int NETWORK_SUCCESS = 200;
 
     public static class RoomType {
         public static final String TYPE_USER = "users";
         public static final String TYPE_PUBLIC = "channels";
         public static final String TYPE_PRIVATE = "privateGroups";
+    }
+
+    public static class NetworkError {
+        public static final int UNAUTHORIZED = 401;
+        public static final int SERVICE_UNAVAILABLE = 503;
+        public static final int DATA_NOT_FOUND = 1839;
+        public static final int DUPLICATED_NAME = 4000;
+        public static final int BAD_REQUEST = 400;
     }
 
 }

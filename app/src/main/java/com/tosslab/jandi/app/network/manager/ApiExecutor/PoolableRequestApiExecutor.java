@@ -1,6 +1,9 @@
 package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
+import android.support.v4.util.Pools;
+
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -9,9 +12,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
-
 import retrofit.RetrofitError;
 
 /**
@@ -19,9 +19,12 @@ import retrofit.RetrofitError;
  */
 public class PoolableRequestApiExecutor {
 
-    private static final int POOL_NUMBER = 5;
-    private static final AwaitablePool RequestApiExecutorPool
-            = new AwaitablePool(POOL_NUMBER);
+    private static final int POOL_NUMBER = 10;
+
+    private static final Pools.SynchronizedPool RequestApiExecutorPool =
+            new Pools.SynchronizedPool(POOL_NUMBER);
+//    private static final AwaitablePool RequestApiExecutorPool
+//            = new AwaitablePool(POOL_NUMBER);
 
     private PoolableRequestApiExecutor() {
     }
@@ -75,9 +78,9 @@ public class PoolableRequestApiExecutor {
                         .createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext()));
                 accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
-            } catch (HttpStatusCodeException e) {
+            } catch (RetrofitError e) {
                 LogUtil.e("Refresh Token Fail", e);
-                if (e.getStatusCode() != HttpStatus.UNAUTHORIZED) {
+                if (e.getResponse().getStatus() != JandiConstants.NetworkError.UNAUTHORIZED) {
                     return null;
                 }
             }

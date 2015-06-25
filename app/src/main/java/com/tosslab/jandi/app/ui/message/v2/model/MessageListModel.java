@@ -46,10 +46,8 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -90,7 +88,7 @@ public class MessageListModel {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(int position, int count) throws JandiNetworkException {
+    public ResMessages getOldMessage(int position, int count) throws RetrofitError {
         return messageManipulator.getMessages(position, count);
     }
 
@@ -109,7 +107,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws JandiNetworkException {
+    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -121,7 +119,7 @@ public class MessageListModel {
 //        messageListTimer.start();
     }
 
-    public void deleteMessage(int messageId) throws JandiNetworkException {
+    public void deleteMessage(int messageId) throws RetrofitError {
         messageManipulator.deleteMessage(messageId);
     }
 
@@ -176,8 +174,8 @@ public class MessageListModel {
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
-        } catch (JandiNetworkException e) {
-            LogUtil.e("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
@@ -206,7 +204,7 @@ public class MessageListModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(activity).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
@@ -226,7 +224,7 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateMarker(int lastUpdateLinkId) throws JandiNetworkException {
+    public void updateMarker(int lastUpdateLinkId) throws RetrofitError {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
@@ -238,7 +236,7 @@ public class MessageListModel {
         JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
     }
 
-    public void deleteTopic(int entityId, int entityType) throws JandiNetworkException {
+    public void deleteTopic(int entityId, int entityType) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.deleteChannel(entityId);
         } else {
@@ -246,7 +244,7 @@ public class MessageListModel {
         }
     }
 
-    public void modifyTopicName(int entityType, int entityId, String inputName) throws JandiNetworkException {
+    public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
             entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
@@ -365,13 +363,13 @@ public class MessageListModel {
         return 0;
     }
 
-    public ResMessages getBeforeMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
 
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
 
-    public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 

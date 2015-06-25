@@ -31,12 +31,10 @@ public class RestAdapterBuilder<CLIENT> {
         return new RestAdapterBuilder<CLIENT>(clazz);
     }
 
-
     protected RestAdapter.Builder getRestAdapter() {
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
                 .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api");
-//                .setErrorHandler(cause -> new JandiNetworkException(cause));
 
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
             builder = restAdapterDecor.addRestAdapterProperty(builder);

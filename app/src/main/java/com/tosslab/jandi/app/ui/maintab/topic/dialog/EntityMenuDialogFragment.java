@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.model.EntityMenuDialogModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
@@ -29,6 +28,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 7..
@@ -123,7 +123,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } finally {
             dismissProgressWheel();
@@ -195,7 +195,7 @@ public class EntityMenuDialogFragment extends DialogFragment {
             entityMenuDialogModel.refreshEntities();
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             showErrorToast(getString(R.string.err_entity_leave));
             e.printStackTrace();
         } catch (Exception e) {

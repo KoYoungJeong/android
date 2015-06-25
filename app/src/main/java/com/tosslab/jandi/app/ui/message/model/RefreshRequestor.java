@@ -8,11 +8,9 @@ import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -43,10 +41,12 @@ public class RefreshRequestor {
             mMessageItemConverter.insertMessageItem(restResMessages);
             messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
             return null;
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("GetFutherMessagesTask : FAILED", e);
             return context.getString(R.string.err_messages_get);
         } catch (Exception e) {
+            e.printStackTrace();
             return context.getString(R.string.err_messages_get);
         }
     }

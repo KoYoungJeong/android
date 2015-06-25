@@ -183,12 +183,16 @@ public class MainPublicListFragment extends BaseChatListFragment {
             ResCommon restResId = mEntityClientManager.createPublicTopic(entityName);
             createTopicSucceed(restResId.id, entityName);
         } catch (RetrofitError e) {
-            if (e.getResponse().getStatus() == 4000) {
-                createTopicFailed(R.string.err_entity_duplicated_name);
-            } else {
-                createTopicFailed(R.string.err_entity_create);
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                if (e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+                    createTopicFailed(R.string.err_entity_duplicated_name);
+                } else {
+                    createTopicFailed(R.string.err_entity_create);
+                }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             createTopicFailed(R.string.err_entity_create);
         }
     }

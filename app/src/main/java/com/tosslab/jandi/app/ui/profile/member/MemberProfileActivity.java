@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -127,7 +126,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
             memberProfileView.getProfileFailed();
         } catch (Exception e) {
@@ -248,7 +247,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileView.updateProfileSucceed();
             trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("get profile failed", e);
             memberProfileView.updateProfileFailed();
         } finally {
@@ -263,7 +263,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileName(new ReqProfileName(name));
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateNameColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             memberProfileView.updateProfileFailed();
         } finally {
@@ -281,7 +281,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileEmail(email);
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateEmailColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             memberProfileView.updateProfileFailed();
         }
     }

@@ -23,7 +23,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -35,7 +34,6 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.RecursiveTask;
 
 import retrofit.RetrofitError;
 
@@ -45,21 +43,17 @@ import retrofit.RetrofitError;
 @EBean
 class InviteCommand implements MenuCommand {
 
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+    @SystemService
+    ClipboardManager clipboardManager;
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
     private AppCompatActivity activity;
     private EntityClientManager mEntityClientManager;
     private ChattingInfomations chattingInfomations;
     private EntityManager entityManager;
-
     private ProgressWheel progressWheel;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
-    @SystemService
-    ClipboardManager clipboardManager;
-
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
 
     void initData(AppCompatActivity activity, EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations) {
         this.activity = activity;

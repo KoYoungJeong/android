@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -41,6 +40,7 @@ import org.androidannotations.annotations.ViewById;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -183,10 +183,12 @@ public class MainTopicListFragment extends Fragment {
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
             mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } finally {

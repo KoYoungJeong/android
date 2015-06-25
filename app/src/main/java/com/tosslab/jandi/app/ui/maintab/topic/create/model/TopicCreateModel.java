@@ -7,12 +7,13 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -27,7 +28,7 @@ public class TopicCreateModel {
     @RootContext
     Context context;
 
-    public ResCommon createTopic(String entityName, boolean publicSelected) throws JandiNetworkException {
+    public ResCommon createTopic(String entityName, boolean publicSelected) throws RetrofitError {
         if (publicSelected) {
             return entityClientManager.createPublicTopic(entityName);
         } else {
@@ -36,7 +37,7 @@ public class TopicCreateModel {
 
     }
 
-    public void refreshEntity() throws JandiNetworkException {
+    public void refreshEntity() throws RetrofitError {
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);

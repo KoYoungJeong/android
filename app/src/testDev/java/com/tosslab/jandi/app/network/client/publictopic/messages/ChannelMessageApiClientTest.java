@@ -14,9 +14,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -82,8 +83,8 @@ public class ChannelMessageApiClientTest {
         ResMessages publicTopicMessages = null;
         try {
             publicTopicMessages = RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391, 20);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(publicTopicMessages, is(notNullValue()));
@@ -101,8 +102,8 @@ public class ChannelMessageApiClientTest {
         ResUpdateMessages publicTopicMessages = null;
         try {
             publicTopicMessages = RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(sideMenu.team.id, channel.id, 33391);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(publicTopicMessages, is(notNullValue()));
@@ -133,8 +134,8 @@ public class ChannelMessageApiClientTest {
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().modifyPublicTopicMessageByChannelMessageApi(message, channel.id, myMessage.messageId);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -162,8 +163,8 @@ public class ChannelMessageApiClientTest {
         try {
             resCommon = RequestApiManager.getInstance().deletePublicTopicMessageByChannelMessageApi(sideMenu.team.id, channel.id, myMessage.messageId);
             // TODO Fail 발생함...확인해봐야함
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));

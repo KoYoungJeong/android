@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.PasswordChecker;
 
 import org.androidannotations.annotations.AfterInject;
@@ -123,18 +122,18 @@ public class SignUpModel {
     }
 
     public ResCommon requestSignUp(String email, String password, String name, String lang)
-            throws JandiNetworkException {
+            throws RetrofitError {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
         try {
             return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
         } catch (RetrofitError e) {
-            throw new JandiNetworkException(e);
+            e.printStackTrace();
         } catch (Exception e) {
-//            throw new JandiNetworkException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
-            throw new JandiNetworkException(RetrofitError.unexpectedError(null, e));
+            e.printStackTrace();
         }
 
+        return null;
     }
 }

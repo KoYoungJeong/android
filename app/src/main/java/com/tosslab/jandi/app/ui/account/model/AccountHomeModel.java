@@ -13,7 +13,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.EBean;
@@ -81,7 +80,7 @@ public class AccountHomeModel {
 
     }
 
-    public ResAccountInfo updateAccountName(Context context, String newName) throws JandiNetworkException {
+    public ResAccountInfo updateAccountName(Context context, String newName) throws RetrofitError {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
@@ -89,7 +88,7 @@ public class AccountHomeModel {
         JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(final Context context, int teamId) throws JandiNetworkException {
+    public ResLeftSideMenu getEntityInfo(final Context context, int teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 

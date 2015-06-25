@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -40,13 +39,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import retrofit.RetrofitError;
+
 @EBean
 public class FileListModel {
 
     @RootContext
     Context context;
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws JandiNetworkException {
+    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitError {
         ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
         return resSearchFile;
     }
@@ -127,7 +128,7 @@ public class FileListModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)

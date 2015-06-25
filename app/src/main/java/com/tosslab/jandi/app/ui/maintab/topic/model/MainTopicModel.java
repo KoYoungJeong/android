@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
@@ -42,7 +41,7 @@ public class MainTopicModel {
     /**
      * topic 생성
      */
-    public ResCommon createTopicInBackground(String entityName) throws JandiNetworkException {
+    public ResCommon createTopicInBackground(String entityName) throws RetrofitError {
         return entityClientManager.createPublicTopic(entityName);
     }
 
@@ -66,7 +65,7 @@ public class MainTopicModel {
         return entities;
     }
 
-    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
+    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws RetrofitError {
         entityClientManager.joinChannel(channel);
     }
 
@@ -117,11 +116,12 @@ public class MainTopicModel {
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-
             return true;
         } catch (RetrofitError e) {
+            e.printStackTrace();
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

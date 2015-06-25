@@ -12,9 +12,7 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -36,7 +34,7 @@ public class JandiInterfaceModel {
     @SystemService
     ActivityManager activityManager;
 
-    public void refreshAccountInfo() throws JandiNetworkException {
+    public void refreshAccountInfo() throws RetrofitError {
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
         JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
@@ -71,8 +69,8 @@ public class JandiInterfaceModel {
                     return false;
                 }
 
-            } catch (JandiNetworkException e) {
-                LogUtil.e("Get Account Info Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+            } catch (RetrofitError e) {
+                e.printStackTrace();
                 return false;
             }
 
@@ -114,7 +112,6 @@ public class JandiInterfaceModel {
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-
             return true;
         } catch (RetrofitError e) {
             e.printStackTrace();

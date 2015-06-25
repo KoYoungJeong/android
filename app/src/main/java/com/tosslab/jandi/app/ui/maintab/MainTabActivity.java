@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
@@ -45,7 +46,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
@@ -217,18 +217,22 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             mEntityManager.refreshEntity(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
         } catch (RetrofitError e) {
-            if (e.getResponse().getStatus() == HttpStatus.UNAUTHORIZED.value()) {
-                getEntitiesFailed(getString(R.string.err_expired_session));
-                stopJandiServiceInMainThread();
-            } else if (e.getResponse().getStatus() == HttpStatus.SERVICE_UNAVAILABLE.value()) {
-                EventBus.getDefault().post(new ServiceMaintenanceEvent());
-            } else {
-                getEntitiesFailed(getString(R.string.err_service_connection));
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+                    getEntitiesFailed(getString(R.string.err_expired_session));
+                    stopJandiServiceInMainThread();
+                } else if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                    EventBus.getDefault().post(new ServiceMaintenanceEvent());
+                } else {
+                    getEntitiesFailed(getString(R.string.err_service_connection));
+                }
             }
         } catch (ResourceAccessException e) {
-            LogUtil.e("connect failed", e);
+            e.printStackTrace();
             getEntitiesFailed(getString(R.string.err_service_connection));
         } catch (Exception e) {
+            e.printStackTrace();
             getEntitiesFailed(getString(R.string.err_service_connection));
         }
     }

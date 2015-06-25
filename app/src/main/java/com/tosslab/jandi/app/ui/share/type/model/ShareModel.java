@@ -20,7 +20,6 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
 import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -34,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -83,7 +83,7 @@ public class ShareModel {
 
     }
 
-    public void sendMessage(EntityInfo entity, String messageText) throws JandiNetworkException {
+    public void sendMessage(EntityInfo entity, String messageText) throws RetrofitError {
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
 
@@ -128,7 +128,7 @@ public class ShareModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityInfo.getEntityId())

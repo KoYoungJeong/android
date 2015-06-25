@@ -3,7 +3,8 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 11..
@@ -20,7 +21,7 @@ public class MessageSearchManager {
         return new MessageSearchManager(reqMessageSearchQuery);
     }
 
-    public ResMessageSearch request() throws JandiNetworkException {
+    public ResMessageSearch request() throws RetrofitError {
 
         int searchType = getSearchType(reqMessageSearchQeury);
 

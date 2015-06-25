@@ -13,9 +13,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
+
+import retrofit.RetrofitError;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
@@ -94,8 +95,8 @@ public class GroupApiClientTest {
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -109,8 +110,8 @@ public class GroupApiClientTest {
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().leaveGroupByGroupApi(otherPrivateTopic.id, new ReqTeam(sideMenu.team.id));
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -124,8 +125,8 @@ public class GroupApiClientTest {
         ResCommon resCommon = null;
         try {
             resCommon = RequestApiManager.getInstance().deleteGroupByGroupApi(sideMenu.team.id, myPrivateTopic.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));

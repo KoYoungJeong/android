@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -42,6 +41,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -151,7 +151,7 @@ public class MainChatListFragment extends Fragment {
 
             EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

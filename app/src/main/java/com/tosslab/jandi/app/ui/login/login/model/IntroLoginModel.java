@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -19,7 +20,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
-import org.springframework.http.HttpStatus;
 
 import retrofit.RetrofitError;
 
@@ -42,7 +42,6 @@ public class IntroLoginModel {
 //        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
         try {
-
             // Get Access Token
             ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
             ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
@@ -50,24 +49,22 @@ public class IntroLoginModel {
             if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
                 // Save Token & Get TeamList
                 TokenUtil.saveTokenInfoByPassword(accessToken);
-
-//                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-//                RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-//                ResAccountInfo resAccountInfo = requestManager.request();
                 ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
                 JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
-                return HttpStatus.OK.value();
+                return JandiConstants.NETWORK_SUCCESS;
             } else {
                 // Login Fail
                 throw new Exception("Login Fail");
             }
 
         } catch (RetrofitError e) {
-            return e.getResponse().getStatus();
+            if (e.getResponse() != null) {
+                return e.getResponse().getStatus();
+            }
+            return JandiConstants.NetworkError.BAD_REQUEST;
         } catch (Exception e) {
             LogUtil.e(e.toString(), e);
-            return 400;
+            return JandiConstants.NetworkError.BAD_REQUEST;
         }
     }
 
