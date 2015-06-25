@@ -55,6 +55,7 @@ public class ShareModel {
         entities.addAll(entityManager.getFormattedUsersWithoutMe());
 
         Iterator<EntityInfo> iterator = Observable.from(entities)
+                .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))
                 .map(entity -> {
 
                     boolean publicTopic = entity.isPublicTopic();

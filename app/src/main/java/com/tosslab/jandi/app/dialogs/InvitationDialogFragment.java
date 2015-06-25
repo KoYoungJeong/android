@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
 
 /**
@@ -123,7 +122,7 @@ public class InvitationDialogFragment extends DialogFragment {
                packageName = JandiConstants.INVITE_URL_WECHAT;
             break;
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-               packageName = JandiConstants.INVITE_URL_WECHAT;
+               packageName = JandiConstants.INVITE_URL_FACEBOOK_MESSENGER;
             break;
             default:
             case JandiConstants.TYPE_INVITATION_EMAIL:

@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
@@ -74,8 +73,6 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         View view = activity.getWindow().getDecorView();
         view.getWindowVisibleDisplayFrame(r);
 
-        LogUtil.d(r.toString());
-
         int statusbarHeight = getStatusbarHeight(KeyboardHeightModel.this.activity);
 
         int keyboardHeight = rootView.getRootView().getHeight() - r.height() - statusbarHeight;
@@ -84,8 +81,6 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
             int navigationHeight = getNavigationHeight();
             keyboardHeight -= navigationHeight;
         }
-
-        LogUtil.d("Keyboard Height : " + keyboardHeight);
 
         if (keyboardHeight > MIN_KEYBOARD_HEIGHT) {
             JandiPreference.setKeyboardHeight(activity, keyboardHeight);
