@@ -131,24 +131,6 @@ public class CarouselViewerModel {
         return reqSearchFile;
     }
 
-
-//    public void downloadInBackground(CarouselFileInfo fileInfo, ProgressDialog progressDialog,
-//                                     Context context) throws ExecutionException, InterruptedException {
-//        String fileType = fileInfo.getFileType();
-//
-//        File result = download(fileInfo.getFileLinkUrl(), fileInfo.getFileName(),
-//                fileType, progressDialog, context);
-//
-//        trackDownloadingFile(EntityManager.getInstance(context), fileInfo, context);
-//
-//        if (isMediaFile(fileType)) {
-//            addGallery(result, fileType, context);
-//        }
-//
-////
-////         showFailToast(getString(R.string.err_download));
-//    }
-
     public void trackDownloadingFile(EntityManager entityManager, CarouselFileInfo fileInfo,
                                      Context context) {
         if (entityManager != null) {
@@ -162,24 +144,6 @@ public class CarouselViewerModel {
             }
         }
     }
-
-//    @UiThread
-//    public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
-//
-//        progressDialog.dismiss();
-//
-//        Intent intent = new Intent();
-//        intent.setAction(Intent.ACTION_VIEW);
-//        intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
-//        try {
-//            startActivity(intent);
-//        } catch (ActivityNotFoundException e) {
-//            String rawString = getString(R.string.err_unsupported_file_type);
-//            String formatString = String.format(rawString, file);
-//            ColoredToast.showError(this, formatString);
-//        }
-//
-//    }
 
     public String getFileType(File file, String fileType) {
 

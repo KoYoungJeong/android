@@ -55,19 +55,19 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
             imageFiles = carouselViewerModel.getImageFileConvert(entityId, context, resSearchFile);
 
-
         } catch (JandiNetworkException e) {
             e.printStackTrace();
             imageFiles = new ArrayList<CarouselFileInfo>();
         }
 
         if (imageFiles.size() > 0) {
+            CarouselFileInfo carouselFirstFileInfo = imageFiles.get(0);
+
             view.addFileInfos(imageFiles);
-            view.setActionbarTitle(imageFiles.get(0).getFileName(), FileSizeUtil.fileSizeCalculation(
-                            imageFiles.get(0).getSize()),
-                    imageFiles.get(0).getExt());
-            view.setFileWriterName(imageFiles.get(0).getFileWriter());
-            view.setFileCreateTime(imageFiles.get(0).getFileCreateTime());
+            view.setActionbarTitle(carouselFirstFileInfo.getFileName(), FileSizeUtil.fileSizeCalculation(
+                    carouselFirstFileInfo.getSize()), carouselFirstFileInfo.getExt());
+            view.setFileWriterName(carouselFirstFileInfo.getFileWriter());
+            view.setFileCreateTime(carouselFirstFileInfo.getFileCreateTime());
         }
     }
 
@@ -75,9 +75,9 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
     @Override
     public void onFileDownload(CarouselFileInfo fileInfo, ProgressDialog progressDialog) {
         try {
-
-            File downloadFile = carouselViewerModel.download(fileInfo.getFileLinkUrl(), fileInfo.getFileName(),
-                    fileInfo.getFileType(), progressDialog, context.getApplicationContext());
+            File downloadFile = carouselViewerModel.download(fileInfo.getFileLinkUrl(),
+                    fileInfo.getFileName(), fileInfo.getFileType(),
+                    progressDialog, context.getApplicationContext());
 
             carouselViewerModel.trackDownloadingFile(EntityManager.getInstance(context),
                     fileInfo, context);
@@ -88,7 +88,6 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
             view.downloadDone(downloadFile, fileInfo.getFileType(), progressDialog);
 
-
         } catch (ExecutionException e) {
             e.printStackTrace();
             view.showFailToast(context.getApplicationContext().getString(R.string.err_download));
@@ -96,6 +95,11 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
             e.printStackTrace();
             view.showFailToast(context.getApplicationContext().getString(R.string.err_download));
         }
+    }
+
+    @Override
+    public void onFileDatail() {
+        view.moveToFileDatail();
     }
 
 }

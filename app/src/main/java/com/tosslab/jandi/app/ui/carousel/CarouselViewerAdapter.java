@@ -49,18 +49,12 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
         }
 
         if (fragment instanceof PhotoViewFragment) {
-            PhotoViewFragment fragment1 = (PhotoViewFragment) fragment;
-            fragment1.setOnCarouselImageClickListener(carouselImageClickListener);
+            PhotoViewFragment photoViewFragment = (PhotoViewFragment) fragment;
+            photoViewFragment.setOnCarouselImageClickListener(carouselImageClickListener);
         }
 
         return fragment;
     }
-
-//    @Override
-//    public int getItemPosition(Object object) {
-//
-//        return POSITION_NONE;
-//    }
 
     @Override
     public int getCount() {

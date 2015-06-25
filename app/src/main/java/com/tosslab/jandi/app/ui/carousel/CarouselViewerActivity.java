@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,6 +26,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -84,9 +84,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             public void onCarouselImageClick() {
 
                 isFullScreen = !isFullScreen;
-
                 setUpFullScreen(isFullScreen);
-
             }
         });
         viewPager.setAdapter(carouselViewerAdapter);
@@ -135,7 +133,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             }
         } else {
             // TODO 상태바, 액션바, 하단 툴바 노출
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -188,8 +185,16 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     }
 
     @Override
-    public void moveFileDatail() {
+    public void moveToFileDatail() {
+        CarouselFileInfo fileInfo = getCarouselFileInfo();
 
+        FileDetailActivity_
+                .intent(this)
+                .entityId(entityId)
+                .fileId(fileInfo.getFileLinkId())
+                .start();
+
+        finish();
     }
 
     private void setUpToolbar() {
@@ -203,20 +208,13 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_carousel_close:
-                finish();
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    @OptionsItem(R.id.menu_carousel_close)
+    void carouselClose() {
+        finish();
     }
 
     private CarouselFileInfo getCarouselFileInfo() {
         int currentItem = viewPager.getCurrentItem();
-
         return ((CarouselViewerAdapter) viewPager.getAdapter()).getFileInfo(currentItem);
     }
 
@@ -234,16 +232,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
     @Click(R.id.iv_file_datail_info)
     void onMoveToFileDatail() {
-
-        CarouselFileInfo fileInfo = getCarouselFileInfo();
-
-        FileDetailActivity_
-                .intent(this)
-                .entityId(entityId)
-                .fileId(fileInfo.getFileLinkId())
-                .start();
-
-        finish();
+        carouselViewerPresenter.onFileDatail();
     }
 
     @UiThread
@@ -254,8 +243,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), carouselViewerModel.getFileType(file,
-                fileType));
+        intent.setDataAndType(Uri.fromFile(file), carouselViewerModel.getFileType(file, fileType));
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
@@ -263,7 +251,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             String formatString = String.format(rawString, file);
             ColoredToast.showError(this, formatString);
         }
-
     }
 
     @UiThread

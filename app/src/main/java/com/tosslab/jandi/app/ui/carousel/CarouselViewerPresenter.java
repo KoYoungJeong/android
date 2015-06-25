@@ -19,6 +19,8 @@ public interface CarouselViewerPresenter {
 
     void onFileDownload(CarouselFileInfo fileInfo, ProgressDialog progressDialog);
 
+    void onFileDatail();
+
     interface View {
 
         void addFileInfos(List<CarouselFileInfo> fileInfoList);
@@ -29,7 +31,7 @@ public interface CarouselViewerPresenter {
 
         void setFileCreateTime(String fileCreateTime);
 
-        void moveFileDatail();
+        void moveToFileDatail();
 
         void showFailToast(String message);
 
