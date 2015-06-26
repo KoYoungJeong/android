@@ -106,6 +106,8 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
             LogUtil.e("Network Error");
         }
 
+
+
         requestApiexecutor.recycle();
 
         return result;
