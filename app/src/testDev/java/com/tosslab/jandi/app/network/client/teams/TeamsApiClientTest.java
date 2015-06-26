@@ -3,8 +3,10 @@ package com.tosslab.jandi.app.network.client.teams;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.client.JandiRestClient;
 import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -116,14 +118,13 @@ public class TeamsApiClientTest {
         assertThat(teamInfo, is(notNullValue()));
     }
 
-
     @Test
     public void testGetAnnouncement() throws Exception {
         int teamId = 11158788;
         int topicId = 11160305;
 
         JandiV2HttpAuthentication authentication =
-                new JandiV2HttpAuthentication("bearer", "116b7bb3-9c09-42b6-bb91-32902dcd9e6f");
+                new JandiV2HttpAuthentication("bearer", "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
 
         teamsApiClient_.setAuthentication(authentication);
 
@@ -138,12 +139,52 @@ public class TeamsApiClientTest {
     public void testCreateAnnouncement() throws Exception {
         int teamId = 11158788;
         int topicId = 11160305;
+        int messageId = 361087;
+        JandiV2HttpAuthentication authentication =
+                new JandiV2HttpAuthentication("bearer", "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
+        teamsApiClient_.setAuthentication(authentication);
+
+        ReqCreateAnnouncement reqCreateAnnouncement = new ReqCreateAnnouncement(messageId);
+        ResCommon resCommon = teamsApiClient_.createAnnouncement(teamId, topicId, reqCreateAnnouncement);
+
+        System.out.println(resCommon);
+
+        assertThat(resCommon, is(notNullValue()));
+    }
+
+    @Test
+    public void testUpdateAnnouncementStatus() throws Exception {
+        int teamId = 11158788;
+        int topicId = 11160305;
 
         JandiV2HttpAuthentication authentication =
-                new JandiV2HttpAuthentication("bearer", "116b7bb3-9c09-42b6-bb91-32902dcd9e6f");
-        teamsApiClient_.setAuthentication(authentication);
-//        teamsApiClient_.setAuthentication(authentication);
+                new JandiV2HttpAuthentication("bearer", "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
 
-//        ResCommon resCommon = teamsApiClient_.createAnnouncement(teamId, topicId, messageId);
+        teamsApiClient_.setAuthentication(authentication);
+
+        ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus = new ReqUpdateAnnouncementStatus(topicId, true);
+        ResCommon resCommon =
+                teamsApiClient_.updateAnnouncementStatus(teamId, 11158789, reqUpdateAnnouncementStatus);
+
+        System.out.println(resCommon);
+
+        assertThat(resCommon, is(notNullValue()));
+    }
+
+    @Test
+    public void testDeleteAnnouncement() throws Exception {
+        int teamId = 11158788;
+        int topicId = 11160305;
+
+        JandiV2HttpAuthentication authentication =
+                new JandiV2HttpAuthentication("bearer", "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
+
+        teamsApiClient_.setAuthentication(authentication);
+
+        ResCommon resCommon = teamsApiClient_.deleteAnnouncement(teamId, topicId);
+
+        System.out.println(resCommon);
+
+        assertThat(resCommon, is(notNullValue()));
     }
 }

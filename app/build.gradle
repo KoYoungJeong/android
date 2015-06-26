@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
 apply plugin: 'android-apt'     // Android-Annotation
-apply plugin: 'newrelic'        // Analytics
 apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
@@ -47,6 +48,7 @@ dependencies {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
 
     apt 'org.androidannotations:androidannotations:3.2'
@@ -84,7 +86,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.6.0' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
     // Analytics & report
-    compile 'com.newrelic.agent.android:android-agent:4.+'
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
     compile 'com.parse.bolts:bolts-android:1.1.4'
 
@@ -96,6 +97,9 @@ dependencies {
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
+        transitive = true;
+    }
 
 }
 
