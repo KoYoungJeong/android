@@ -9,12 +9,14 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 public class AwaitablePool<T> {
 
     private final Object[] mPool;
-    int i, j = 0;
+    private int cntAcquire, cntRelease = 0;
     private int mAcquireRequestCnt = 0;
     private int mPoolSize;
     private boolean mMaxCntOfObjectAcquired = false;
 
     public AwaitablePool(int maxPoolSize) {
+        cntAcquire = 0;
+        cntRelease = 0;
         if (maxPoolSize <= 0) {
             throw new IllegalArgumentException("The max pool size must be > 0");
         }
@@ -33,15 +35,15 @@ public class AwaitablePool<T> {
         if (mMaxCntOfObjectAcquired) {
             while (mPoolSize <= 0) {
                 try {
-                    this.wait();
+                    this.wait(5000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-            LogUtil.e("acquire : " + i++);
+            LogUtil.e("acquire : " + cntAcquire++);
             return getReturnInstance();
         } else {
-            LogUtil.e("acquire : " + i++);
+            LogUtil.e("acquire : " + cntAcquire++);
             if (mPoolSize > 0) {
                 return getReturnInstance();
             }
@@ -58,7 +60,7 @@ public class AwaitablePool<T> {
     }
 
     public boolean release(T instance) {
-        LogUtil.e("release : " + j++);
+        LogUtil.e("release : " + cntRelease++);
         if (isInPool(instance)) {
             throw new IllegalStateException("Already in the pool!");
         }

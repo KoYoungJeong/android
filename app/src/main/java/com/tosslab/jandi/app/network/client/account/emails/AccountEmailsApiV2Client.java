@@ -19,15 +19,15 @@ import retrofit.http.PUT;
 public interface AccountEmailsApiV2Client {
 
     @POST("/account/emails")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo requestAddEmail(@Body ReqAccountEmail reqAccountEmail);
 
     @PUT("/emails/confirm")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo confirmEmail(@Body ReqConfirmEmail reqConfirmEmail);
 
     @DELETE("/account/emails")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo deleteEmail(@Body ReqAccountEmail reqConfirmEmail);
 
 }

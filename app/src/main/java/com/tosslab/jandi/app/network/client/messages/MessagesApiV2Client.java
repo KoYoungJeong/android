@@ -22,17 +22,17 @@ public interface MessagesApiV2Client {
 
     // Message Detail
     @GET("/messages/{messageId}")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResFileDetail getFileDetail(@Query("teamId") int teamId, @Path("messageId") int messageId);
 
     // Share Message
     @PUT("/messages/{messageId}/share")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon shareMessage(@Body ReqShareMessage share, @Path("messageId") int messageId);
 
     // Unshare Message
     @PUT("/messages/{messageId}/unshare")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon unshareMessage(@Body ReqUnshareMessage share, @Path("messageId") int messageId);
 
 }

@@ -19,11 +19,11 @@ import retrofit.http.Query;
 public interface StarredEntityApiV2Client {
 
     @POST("/settings/starred/entities/{entityId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon enableFavorite(@Body ReqTeam reqTeam, @Path("entityId") int entityId);
 
     @DELETE("/settings/starred/entities/{entityId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon disableFavorite(@Query("teamId") int teamId, @Path("entityId") int entityId);
 
 }

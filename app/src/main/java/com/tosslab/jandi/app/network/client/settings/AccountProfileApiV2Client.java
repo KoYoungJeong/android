@@ -18,11 +18,11 @@ import retrofit.http.PUT;
 public interface AccountProfileApiV2Client {
 
     @POST("/settings/name")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo changeName(@Body ReqProfileName reqProfileName);
 
     @PUT("/settings/primaryEmail")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo changePrimaryEmail(@Body ReqAccountEmail reqAccountEmail);
 
 }

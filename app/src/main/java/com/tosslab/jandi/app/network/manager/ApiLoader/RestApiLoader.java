@@ -259,7 +259,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
 
     @Override
     public IExecutor loadGetDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter) {
-        return () -> authRestApiClient.getDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, timeAfter);
+        return () -> authRestApiClient.getDirectMessagesUpdatedByDirectMessageApi(teamId, userId, timeAfter);
     }
 
     @Override

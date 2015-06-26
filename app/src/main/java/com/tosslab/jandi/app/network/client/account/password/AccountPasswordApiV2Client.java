@@ -19,11 +19,11 @@ public interface AccountPasswordApiV2Client {
 
     //TOKEN NOT NEDDED
     @POST("/accounts/password/resetToken")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon resetPassword(@Body ReqAccountEmail reqAccountEmail);
 
     @PUT("/accounts/password")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon changePassword(@Body ReqChangePassword reqConfirmEmail);
 
 }

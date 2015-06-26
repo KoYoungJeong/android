@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -76,6 +77,7 @@ public class MessageManipulator {
     public ResUpdateMessages updateMessages(final int fromCurrentId) throws RetrofitError {
         switch (mEntityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
+                LogUtil.e(String.valueOf("selectedTeamId:" + selectedTeamId + "EntityId:" + mEntityId + "fromCurrentId:" + fromCurrentId));
                 return RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(selectedTeamId, mEntityId, fromCurrentId);
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return RequestApiManager.getInstance().getDirectMessagesUpdatedByDirectMessageApi(selectedTeamId, mEntityId, fromCurrentId);

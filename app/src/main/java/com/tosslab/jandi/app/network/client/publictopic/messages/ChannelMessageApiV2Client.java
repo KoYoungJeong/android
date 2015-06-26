@@ -20,50 +20,51 @@ import retrofit.http.Query;
 /**
  * Created by tee on 15. 6. 16..
  */
+
 @AuthorizedHeader
 public interface ChannelMessageApiV2Client {
 
     // 채널에서 Message 리스트 정보 획득
     @GET("/channels/{channelId}/messages")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                        @Query("fromId") int fromId, @Query("count") int count);
 
     @GET("/channels/{channelId}/messages?type=old")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMessages(@Query("teamId") int teamId, @Path("channelId") int channelId);
 
     // 채널의 업데이트 Message 리스트 정보 획득
     @GET("/channels/{channelId}/messages/update/{currentLinkId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResUpdateMessages getPublicTopicUpdatedMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                                     @Path("currentLinkId") int currentLinkId);
 
     @GET("/channels/{channelId}/messages?type=new")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicUpdatedMessagesForMarker(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                                        @Query("currentLinkId") int currentLinkId);
 
 
     @GET("/channels/{channelId}/messages")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMarkerMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                              @Query("currentLinkId") int currentLinkId);
 
     // 채널에서 Message 생성
     @POST("/channels/{channelId}/message")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon sendPublicTopicMessage(@Body ReqSendMessage message, @Path("channelId") int channelId);
 
     // 채널에서 Message 수정
     @PUT("/channels/{channelId}/messages/{messageId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon modifyPublicTopicMessage(@Body ReqModifyMessage message, @Path("channelId") int channelId,
                                        @Path("messageId") int messageId);
 
     // 채널에서 Message 삭제
     @DELETE("/channels/{channelId}/messages/{messageId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deletePublicTopicMessage(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                        @Path("messageId") int messageId);
 

@@ -24,46 +24,46 @@ import retrofit.http.Query;
 public interface DirectMessageApiV2Client {
     // Direct Message 리스트 정보 획득
     @GET("/users/{userId}/messages?type=old")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getDirectMessages(@Query("teamId") int teamId, @Path("userId") int userId,
-                                  @Query("fromId") int fromId, @Query("count")  int count);
+                                  @Query("fromId") int fromId, @Query("count") int count);
 
     @GET("/users/{userId}/messages?type=old")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getDirectMessages(@Query("teamId") int teamId, @Path("userId") int userId);
 
     @GET("/users/{userId}/messages/update/{timeAfter}")
-    @Headers("Accept: "+JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResUpdateMessages getDirectMessagesUpdated( @Query("teamId") int teamId, @Path("userId") int userId,
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResUpdateMessages getDirectMessagesUpdated(@Query("teamId") int teamId, @Path("userId") int userId,
                                                @Path("timeAfter") int timeAfter);
 
     // Updated 된 Direct Message 리스트 정보 획득
     @GET("/users/{userId}/messages?type=new")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResMessages getDirectMessagesUpdatedForMarker( @Query("teamId") int teamId, @Path("userId") int userId,
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResMessages getDirectMessagesUpdatedForMarker(@Query("teamId") int teamId, @Path("userId") int userId,
                                                   @Query("currentLinkId") int currentLinkId);
 
     // Updated 된 Direct Message 리스트 정보 획득
     @GET("/users/{userId}/messages")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getDirectMarkerMessages(@Query("teamId") int teamId, @Path("userId") int userId,
                                         @Query("currentLinkId") int currentLinkId);
 
     // Direct Message 생성
     @POST("/users/{userId}/message")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon sendDirectMessage(@Body ReqSendMessage message,@Path("userId") int userId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon sendDirectMessage(@Body ReqSendMessage message, @Path("userId") int userId);
 
     // Direct Message 수정
     @PUT("/users/{userId}/messages/{messageId}")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon modifyDirectMessage(ReqModifyMessage message,
                                   @Path("userId") int userId, @Path("messageId") int messageId);
 
     // Direct Message 삭제
     @DELETE("/users/{userId}/messages/{messageId}")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteDirectMessage(@Query("teamId") int teamId,@Path("userId") int userId,
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon deleteDirectMessage(@Query("teamId") int teamId, @Path("userId") int userId,
                                   @Path("messageId") int messageId);
 
 }

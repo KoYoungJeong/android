@@ -16,11 +16,11 @@ import retrofit.http.POST;
 public interface StickerApiV2Client {
 
     @POST("/stickers")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon sendSticker(@Body ReqSendSticker reqSendSticker);
 
     @POST("/stickers/comment")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon sendStickerComment(@Body ReqSendSticker reqSendSticker);
 
 }

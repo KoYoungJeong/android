@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
-import android.support.v4.util.Pools;
-
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -21,10 +19,10 @@ public class PoolableRequestApiExecutor {
 
     private static final int POOL_NUMBER = 10;
 
-    private static final Pools.SynchronizedPool RequestApiExecutorPool =
-            new Pools.SynchronizedPool(POOL_NUMBER);
-//    private static final AwaitablePool RequestApiExecutorPool
-//            = new AwaitablePool(POOL_NUMBER);
+//    private static final Pools.SynchronizedPool RequestApiExecutorPool =
+//            new Pools.SynchronizedPool(POOL_NUMBER);
+    private static final AwaitablePool RequestApiExecutorPool
+            = new AwaitablePool(POOL_NUMBER);
 
     private PoolableRequestApiExecutor() {
     }

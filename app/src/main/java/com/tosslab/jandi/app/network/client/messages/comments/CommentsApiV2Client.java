@@ -25,17 +25,17 @@ public interface CommentsApiV2Client {
 
     // Send Comment
     @POST("/messages/{messageId}/comment")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon sendMessageComment(@Body ReqSendComment comment, @Path("messageId") int messageId);
 
     // Modify comment
     @PUT("/messages/{messageId}/comments/{commentId}")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon modifyMessageComment(@Body ReqSendComment comment, @Path("messageId") int messageId,@Path("commentId") int commentId);
 
     // Delete comment
     @DELETE("/messages/{messageId}/comments/{commentId}")
-    @Headers("Accept :"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteMessageComment(@Query("teamId") int teamId, @Path("messageId") int messageId,@Path("commentId") int commentId);
 
 }

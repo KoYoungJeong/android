@@ -23,27 +23,27 @@ public interface GroupApiV2Client {
 
     // Private Group 생성
     @POST("/privateGroup")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon createPrivateGroup(@Body ReqCreateTopic group);
 
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon modifyGroup(@Body ReqCreateTopic channel, @Path("groupId") int groupId);
 
     // Private Group 삭제
     @DELETE("/privateGroups/{groupId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteGroup(@Query("teamId") int teamId, @Path("groupId") int groupId);
 
     // Private Group Leave
     @PUT("/privateGroups/{groupId}/leave")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon leaveGroup(@Path("groupId") int groupId, @Body ReqTeam team);
 
     // Private Group invite
     @PUT("/privateGroups/{groupId}/invite")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon inviteGroup(int groupId, ReqInviteTopicUsers inviteUsers);
 
 }

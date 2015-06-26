@@ -20,15 +20,15 @@ import retrofit.http.Path;
 public interface ProfileApiV2Client {
 
     @PUT("/members/{memberId}/profile")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResLeftSideMenu.User updateMemberProfile(@Path("memberId") int memberId, @Body ReqUpdateProfile reqUpdateProfile);
 
     @PUT("/members/{memberId}/name")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon updateMemberName(@Path("memberId") int memberId, @Body ReqProfileName reqProfileName);
 
     @PUT("/members/{memberId}/email")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResLeftSideMenu.User updateMemberEmail(@Path("memberId") int memberId, @Body ReqAccountEmail reqAccountEmail);
 
 }

@@ -23,22 +23,22 @@ public interface AccountDeviceApiV2Client {
 
     // Notification Token 등록
     @POST("/account/devices")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo registerNotificationToken(@Body ReqNotificationRegister reqNotificationRegister);
 
     // Notification Token 삭제
     @DELETE("/account/devices")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo deleteNotificationToken(@Body ReqDeviceToken reqDeviceToken);
 
     // Notification 켜고 끄기
     @PUT("/account/devices")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo subscribeStateNotification(@Body ReqSubscibeToken reqDeviceToken);
 
     // ios 뱃지
     @PUT("/account/devices/badge")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon getNotificationBadge(@Body ReqNotificationTarget reqNotificationTarget);
 
 }

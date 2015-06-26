@@ -16,7 +16,7 @@ import retrofit.http.Path;
 public interface RoomsApiV2Client {
 
     @GET("/teams/{teamId}/rooms/{roomId}")
-    @Headers("Accept :" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResRoomInfo getRoomInfo(@Path("teamId") int teamId, @Path("roomId") int roomId);
 
 }

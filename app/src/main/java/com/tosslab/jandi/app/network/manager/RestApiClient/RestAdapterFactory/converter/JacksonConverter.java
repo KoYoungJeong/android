@@ -27,6 +27,7 @@ public class JacksonConverter implements Converter {
     @Override
     public Object fromBody(TypedInput body, Type type) throws ConversionException {
         JavaType javaType = objectMapper.getTypeFactory().constructType(type);
+
         try {
             return objectMapper.readValue(body.in(), javaType);
         } catch (IOException e) {
