@@ -71,7 +71,6 @@ import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.List;
 
@@ -96,14 +95,14 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         return requestApiManager;
     }
 
-    public Object RequestApiExecute(IExecutor executor) throws RetrofitError {
+    public Object RequestApiExecute(IExecutor executor) {
         PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
         Object result = null;
-
         try {
             result = requestApiexecutor.execute(executor);
         } catch (RetrofitError e) {
-            LogUtil.e("Network Error");
+            requestApiexecutor.recycle();
+            throw e;
         }
 
         requestApiexecutor.recycle();
