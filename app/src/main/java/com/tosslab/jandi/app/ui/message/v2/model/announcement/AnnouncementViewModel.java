@@ -169,9 +169,6 @@ public class AnnouncementViewModel {
             tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
             tvAnnouncementMessage.setMovementMethod(null);
         }
-//        String originText = tvAnnouncementMessage.getTag().toString();
-//        String originText = tvAnnouncementMessage.getText().toString();
-//        tvAnnouncementMessage.setText(originText);
         tvAnnouncementMessage.invalidate();
     }
 

@@ -260,7 +260,7 @@ public class EventViewHolder implements BodyViewHolder {
         builder.setSpan(creatorSpannable,
                 creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int writerStartIndex = format.indexOf(writer);
+        int writerStartIndex = format.lastIndexOf(writer);
         int writerLastIndex = writerStartIndex + writer.length();
         ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
         builder.setSpan(writerSpannable,
@@ -286,7 +286,7 @@ public class EventViewHolder implements BodyViewHolder {
         builder.setSpan(creatorSpannable,
                 creatorStartIndex, creatorLastIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int writerStartIndex = format.indexOf(writer);
+        int writerStartIndex = format.lastIndexOf(writer);
         int writerLastIndex = writerStartIndex + writer.length();
         ProfileSpannable writerSpannable = new ProfileSpannable(writerId);
         builder.setSpan(writerSpannable,
