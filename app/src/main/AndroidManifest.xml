@@ -238,6 +238,9 @@
             </intent-filter>
         </receiver>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="24a73214fd9000841e8d34390de55bdfd4150668" />
     </application>
 
     // for samsung or sony device to show badge
