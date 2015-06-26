@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -9,6 +10,8 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import java.io.IOException;
 
 import retrofit.RetrofitError;
 
@@ -18,11 +21,12 @@ import retrofit.RetrofitError;
 public class PoolableRequestApiExecutor {
 
     private static final int POOL_NUMBER = 10;
-
-//    private static final Pools.SynchronizedPool RequestApiExecutorPool =
+    private static final int RETRY_COUNT = 3;
+    //    private static final Pools.SynchronizedPool RequestApiExecutorPool =
 //            new Pools.SynchronizedPool(POOL_NUMBER);
     private static final AwaitablePool RequestApiExecutorPool
             = new AwaitablePool(POOL_NUMBER);
+    private int retryCnt = 0;
 
     private PoolableRequestApiExecutor() {
     }
@@ -38,10 +42,21 @@ public class PoolableRequestApiExecutor {
 
     public Object execute(IExecutor apiExecutor) {
         try {
-            return apiExecutor.execute();
+            Object object = apiExecutor.execute();
+            retryCnt = 0;
+            return object;
         } catch (RetrofitError e) {
-            e.printStackTrace();
-            if (e.getResponse().getStatus() == 401) {
+            if (e.getKind() == RetrofitError.Kind.NETWORK) {
+                if (retryCnt < RETRY_COUNT) {
+                    retryCnt++;
+                    return execute(apiExecutor);
+                } else {
+                    retryCnt = 0;
+                    throw RetrofitError.networkError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new IOException());
+                }
+            }
+
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
                 ResAccessToken accessToken = refreshToken();
                 if (accessToken != null) {
                     try {
@@ -49,20 +64,27 @@ public class PoolableRequestApiExecutor {
                     } catch (RetrofitError e1) {
                         // unknown exception
                         LogUtil.e("Retry Fail");
+                        //TODO Exception 상세화 필요
+                        throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
                     }
                 } else {
                     // unauthorized exception
                     LogUtil.e("Refresh Token Fail", e);
+                    //TODO Exception 상세화 필요
+                    throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
                 }
             } else {
                 // exception, not unauthorized
                 JandiSocketService.stopSocketServiceIfRunning(JandiApplication.getContext());
                 LogUtil.e("Request Fail", e);
+                //TODO Exception 상세화 필요
+                throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
             }
         } catch (Exception e) {
             LogUtil.e("Unknown Request Error : ", e);
+            //TODO Exception 상세화 필요
+            throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
         }
-        return null;
     }
 
     private ResAccessToken refreshToken() {
