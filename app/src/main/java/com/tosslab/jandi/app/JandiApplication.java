@@ -2,11 +2,14 @@ package com.tosslab.jandi.app;
 
 import android.support.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 
 import java.util.HashMap;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Created by justinygchoi on 2014. 6. 19..
@@ -17,6 +20,7 @@ public class JandiApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         // For Parse Push Notification
         Parse.initialize(this,

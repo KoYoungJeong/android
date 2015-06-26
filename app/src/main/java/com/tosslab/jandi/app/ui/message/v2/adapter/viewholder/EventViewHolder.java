@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -116,14 +117,12 @@ public class EventViewHolder implements BodyViewHolder {
                     builder.setSpan(eventTextAppearance,
                             0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    int dateTextSize = context.getResources()
-                            .getDimensionPixelSize(R.dimen.jandi_messages_date);
-                    builder.append(" ").append(DateTransformator.getTimeStringForSimple(link.time));
-                    TextAppearanceSpan dateTextAppearance =
-                            new TextAppearanceSpan(null, Typeface.NORMAL,
-                                    dateTextSize, eventTextColor, eventTextColor);
-                    builder.setSpan(dateTextAppearance,
-                            eventLength, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    int startIndex = eventLength;
+                    builder.append(" ");
+                    DateViewSpannable spannable =
+                            new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));
+                    builder.setSpan(spannable, startIndex, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                     eventContentView.setText(builder);
                     eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
                 });

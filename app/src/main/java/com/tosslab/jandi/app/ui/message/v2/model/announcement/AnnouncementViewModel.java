@@ -169,7 +169,7 @@ public class AnnouncementViewModel {
             tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
             tvAnnouncementMessage.setMovementMethod(null);
         }
-        tvAnnouncementMessage.invalidate();
+        tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
     }
 
     @UiThread

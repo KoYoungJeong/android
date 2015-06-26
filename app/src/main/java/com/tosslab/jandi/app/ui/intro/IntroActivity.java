@@ -2,8 +2,6 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.newrelic.agent.android.NewRelic;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
@@ -11,7 +9,6 @@ import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -43,11 +40,6 @@ public class IntroActivity extends AppCompatActivity {
 
     @Bean
     IntroActivityViewModel introViewModel;
-
-    @AfterInject
-    void init() {
-        registerNewRelicToken();
-    }
 
     @AfterViews
     void startOn() {
@@ -148,11 +140,6 @@ public class IntroActivity extends AppCompatActivity {
     @UiThread
     void finishOnUiThread() {
         finish();
-    }
-
-    private void registerNewRelicToken() {
-        NewRelic.withApplicationToken(JandiConstantsForFlavors.NEWRELIC_TOKEN_ID)
-                .start(this.getApplication());
     }
 
 }
