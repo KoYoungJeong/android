@@ -73,18 +73,11 @@ public class AnnouncementViewModel {
     @ViewById(R.id.btn_announcement_close)
     View btnAnnouncementClose;
 
-    @ViewById(R.id.btn_announcement_delete)
-    View btnAnnouncementDelete;
-
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
 
     @RootContext
     Activity activity;
-
-    @AfterViews
-    void init() {
-    }
 
     @UiThread
     public void setAnnouncement(ResAnnouncement announcement, boolean isOpened) {

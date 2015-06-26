@@ -118,6 +118,7 @@ public class TeamsApiClientTest {
         assertThat(teamInfo, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testGetAnnouncement() throws Exception {
         int teamId = 11158788;
@@ -135,6 +136,7 @@ public class TeamsApiClientTest {
         assertThat(announcement, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testCreateAnnouncement() throws Exception {
         int teamId = 11158788;
@@ -152,6 +154,7 @@ public class TeamsApiClientTest {
         assertThat(resCommon, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testUpdateAnnouncementStatus() throws Exception {
         int teamId = 11158788;
@@ -171,6 +174,7 @@ public class TeamsApiClientTest {
         assertThat(resCommon, is(notNullValue()));
     }
 
+    @Ignore
     @Test
     public void testDeleteAnnouncement() throws Exception {
         int teamId = 11158788;
