@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
@@ -31,12 +32,13 @@ import de.greenrobot.event.EventBus;
  */
 public class MessageViewHolder implements BodyViewHolder {
 
+    protected Context context;
     private ImageView profileImageView;
     private TextView nameTextView;
     private TextView messageTextView;
     private View disableCoverView;
     private View disableLineThroughView;
-    private Context context;
+    private LinkPreviewViewModel linkPreviewViewModel;
 
     @Override
     public void initView(View rootView) {
@@ -46,6 +48,9 @@ public class MessageViewHolder implements BodyViewHolder {
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
         context = rootView.getContext();
+
+        linkPreviewViewModel = new LinkPreviewViewModel(context);
+        linkPreviewViewModel.initView(rootView);
     }
 
     @Override
@@ -81,7 +86,6 @@ public class MessageViewHolder implements BodyViewHolder {
         }
 
         nameTextView.setText(fromEntity.name);
-
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
 
@@ -135,6 +139,8 @@ public class MessageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+
+        linkPreviewViewModel.bindData(link);
     }
 
     @Override

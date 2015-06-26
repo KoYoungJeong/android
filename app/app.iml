@@ -24,7 +24,7 @@
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
-    <output url="file://$MODULE_DIR$/build/intermediates/classes/dev/debug" />
+    <output url="file://$MODULE_DIR$/build/retrolambda/devDebug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/dev/debug" />
     <exclude-output />
     <content url="file://$MODULE_DIR$">
@@ -84,7 +84,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/rs" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/build/dependency-cache" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
@@ -144,8 +143,8 @@
     <orderEntry type="library" exported="" name="android-agent-4.273.4" level="project" />
     <orderEntry type="library" exported="" name="support-v13-22.1.0" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="asm-tree-5.0.1" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="asm-analysis-5.0.1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="asm-analysis-5.0.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.3.0" level="project" />
     <orderEntry type="library" exported="" name="spring-android-rest-template-1.0.1.RELEASE" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="httpcore-4.0.1" level="project" />

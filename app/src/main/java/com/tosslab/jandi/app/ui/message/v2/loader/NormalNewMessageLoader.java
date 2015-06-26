@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -57,6 +58,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
+            Log.e("tony", "new messages size = " + newMessage.updateInfo.messages.size());
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
                 int lastItemPosition = messageListPresenter.getLastItemPosition();

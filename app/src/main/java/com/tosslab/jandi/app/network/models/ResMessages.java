@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
+import android.text.TextUtils;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
@@ -45,6 +47,16 @@ public class ResMessages {
         public Map<String, Object> info; // How to convert other type
         public OriginalMessage feedback;
         public OriginalMessage message;
+
+        public boolean hasLinkPreview() {
+            boolean isTextMessage = message != null && message instanceof TextMessage;
+            if (!isTextMessage) {
+                return false;
+            }
+            TextMessage textMessage = (TextMessage) message;
+            LinkPreview linkPreview = textMessage.linkPreview;
+            return linkPreview != null && !linkPreview.isEmpty();
+        }
 
         @Override
         public String toString() {
@@ -108,6 +120,7 @@ public class ResMessages {
         public int permission;
         public int feedbackId;
         public FileMessage feedback;
+        public String linkPreviewId;
 
         @Override
         public String toString() {
@@ -123,6 +136,7 @@ public class ResMessages {
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", feedback=" + feedback +
+                    ", linkPreviewId=" + linkPreviewId +
                     '}';
         }
     }
@@ -131,6 +145,27 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
         public TextContent content;
+        public LinkPreview linkPreview;
+
+        @Override
+        public String toString() {
+            return "TextMessage{" +
+                    "id=" + id +
+                    ", teamId=" + teamId +
+                    ", writerId=" + writerId +
+                    ", createTime=" + createTime +
+                    ", updateTime=" + updateTime +
+                    ", contentType='" + contentType + '\'' +
+                    ", status='" + status + '\'' +
+                    ", shareEntities=" + shareEntities +
+                    ", permission=" + permission +
+                    ", feedbackId=" + feedbackId +
+                    ", feedback=" + feedback +
+                    ", linkPreviewId=" + linkPreviewId +
+                    ". content=" + content +
+                    ", linkPreview=" + linkPreview +
+                    '}';
+        }
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -150,6 +185,13 @@ public class ResMessages {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextContent {
         public String body;
+
+        @Override
+        public String toString() {
+            return "TextContent{" +
+                    "body='" + body + '\'' +
+                    '}';
+        }
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -283,4 +325,30 @@ public class ResMessages {
         public String stickerId;
         public String url;
     }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    public static class LinkPreview {
+        public String linkUrl;
+        public String description;
+        public String title;
+        public String imageUrl;
+        public String domain;
+
+        public boolean isEmpty() {
+            return TextUtils.isEmpty(linkUrl);
+        }
+
+        @Override
+        public String toString() {
+            return "LinkPreview{" +
+                    ", linkUrl='" + linkUrl + '\'' +
+                    ", description='" + description + '\'' +
+                    ", title='" + title + '\'' +
+                    ", imageUrl='" + imageUrl + '\'' +
+                    ", domain='" + domain + '\'' +
+                    '}';
+        }
+    }
+
 }

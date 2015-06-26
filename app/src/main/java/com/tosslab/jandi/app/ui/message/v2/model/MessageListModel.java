@@ -93,6 +93,16 @@ public class MessageListModel {
         return messageManipulator.getMessages(position, count);
     }
 
+    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) {
+        ResMessages.OriginalMessage message = null;
+        try {
+            message = messageManipulator.getMessage(teamId, messageId);
+        } catch (JandiNetworkException e) {
+            e.printStackTrace();
+        }
+        return message;
+    }
+
     public List<ResMessages.Link> sortById(List<ResMessages.Link> messages) {
 
         Collections.sort(messages, new Comparator<ResMessages.Link>() {

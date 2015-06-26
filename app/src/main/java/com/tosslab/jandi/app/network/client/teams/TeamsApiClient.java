@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
@@ -60,4 +61,9 @@ public interface TeamsApiClient {
     @Get("/teams/{teamId}")
     @RequiresAuthentication
     ResTeamDetailInfo.InviteTeam getTeamInfo(int teamId);
+
+    @Get("/teams/{teamId}/messages/{messageId}")
+    @RequiresAuthentication
+    ResMessages.OriginalMessage getMessage(int teamId, int messageId);
+
 }

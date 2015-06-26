@@ -64,6 +64,7 @@ import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseMana
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -73,10 +74,12 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.to.UpdateMessage;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.SendingMessageQueue;
+import com.tosslab.jandi.app.ui.message.to.queue.UpdateMessageQueue;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
@@ -127,6 +130,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
+    public static final String TAG = "INFO";
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
@@ -184,7 +188,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             break;
                         case Old:
                             if (oldMessageLoader != null) {
-                                ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+                                MessageState data = (MessageState) messageQueue.getData();
+                                ResMessages resMessages = oldMessageLoader.load(data.getFirstItemId());
 
                                 if (roomId <= 0) {
                                     roomId = resMessages.entityId;
@@ -219,6 +224,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             } else {
                                 messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
                             }
+                            break;
+                        case Update:
+                            UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
+                            ResMessages.OriginalMessage message =
+                                    messageListModel.getMessage(teamId, updateMessage.getMessageId());
+                            messageListPresenter.updateMessage(message);
                             break;
                     }
                 }, throwable -> {
@@ -675,7 +686,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
     }
 
-    //FIXME
+    // FIXME
     public void onEvent(TeamInvitationsEvent event) {
         if (!isForeground) {
             return;
@@ -1113,9 +1124,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.updateMarkerInfo(teamId, roomId);
                 return;
             }
+
             sendMessagePublisherEvent(new NewMessageQueue(messageState));
         }
+    }
 
+    public void onEvent(SocketLinkPreviewMessageEvent event) {
+        SocketLinkPreviewMessageEvent.Message message = event.getMessage();
+        if (message == null || message.isEmpty()) {
+            return;
+        }
+
+        sendMessagePublisherEvent(new UpdateMessageQueue(teamId, message.getId()));
     }
 
     @Background
