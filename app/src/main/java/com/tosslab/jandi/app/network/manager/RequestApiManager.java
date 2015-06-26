@@ -96,7 +96,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         return requestApiManager;
     }
 
-    public Object RequestApiExecute(IExecutor executor) {
+    public Object RequestApiExecute(IExecutor executor) throws RetrofitError {
         PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
         Object result = null;
 
@@ -105,8 +105,6 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         } catch (RetrofitError e) {
             LogUtil.e("Network Error");
         }
-
-
 
         requestApiexecutor.recycle();
 
