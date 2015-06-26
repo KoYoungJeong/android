@@ -104,7 +104,6 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
             result = requestApiexecutor.execute(executor);
         } catch (RetrofitError e) {
             LogUtil.e("Network Error");
-            requestApiexecutor.recycle();
         }
 
         requestApiexecutor.recycle();
