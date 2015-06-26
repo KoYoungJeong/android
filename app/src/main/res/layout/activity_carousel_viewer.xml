@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -16,55 +17,61 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/jandi_primary_color_transparent_55"
+        android:background="@color/jandi_carousel_transparent_45"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         >
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/jandi_carousel_bottom_height"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            >
 
             <TextView
                 android:id="@+id/tv_file_writer_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:textColor="@color/jandi_text_white"/>
+                android:layout_marginBottom="@dimen/jandi_carousel_bottom_line_spacing"
+                android:layout_marginLeft="@dimen/jandi_carousel_bottom_left"
+                android:textColor="@color/jandi_text_white"
+                android:textSize="@dimen/jandi_carousel_file_writer_txt"/>
 
             <TextView
                 android:id="@+id/tv_file_create_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/jandi_text_white"/>
+                android:layout_marginLeft="@dimen/jandi_carousel_bottom_left"
+                android:textColor="@color/jandi_carousel_file_size_ext_create_time"
+                android:textSize="@dimen/jandi_carousel_file_create_time_txt"/>
         </LinearLayout>
 
 
         <ImageView
             android:id="@+id/iv_file_download"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/jandi_account_arrow_more"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_download"/>
 
         <ImageView
             android:id="@+id/iv_file_datail_info"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="15dp"
-            android:src="@drawable/jandi_actionb_search"
-            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_detailview"/>
 
     </LinearLayout>
 
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_carousel"
-        style="@style/Jandi.Default.ActionBar"
+        style="@style/ImageCarousel.Toolbar"
         android:layout_width="match_parent"
-        android:background="@color/jandi_primary_color_transparent_55"
-        android:visibility="visible"/>
+        android:background="@color/jandi_carousel_transparent_45"
+        android:visibility="visible"
+        app:subtitleTextAppearance="@style/ImageCarousel.SubTitle"
+        app:titleTextAppearance="@style/ImageCarousel.Title"
+        />
 
 </RelativeLayout>

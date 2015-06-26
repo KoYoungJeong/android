@@ -331,13 +331,31 @@
         <!--<item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>-->
     </style>
 
-    <style name="JandiSticker" />
+    <style name="JandiSticker"/>
 
     <style name="JandiSticker.Group" parent="JandiSticker">
         <item name="android:layout_width">63dp</item>
         <item name="android:layout_height">50dp</item>
         <item name="android:scaleType">centerInside</item>
         <item name="android:background">@drawable/bg_sticker_group</item>
+    </style>
+
+    <style name="ImageCarousel"/>
+
+    <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+    </style>
+
+    <style name="ImageCarousel.Title" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/jandi_text_white</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ImageCarousel.SubTitle" parent="TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textColor">@color/jandi_carousel_file_size_ext_create_time</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
 </resources>

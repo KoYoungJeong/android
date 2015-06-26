@@ -81,6 +81,7 @@
     <color name="jandi_messages_commented">@color/jandi_primary_color</color>
     <color name="jandi_messages_file_name">@color/jandi_text</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
+    <color name="jandi_messages_image_name">#00a6e9</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -184,5 +185,6 @@
     <color name="jandi_sticker_view_background">#FFEFF2F6</color>
     <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
 
-
+    <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
+    <color name="jandi_carousel_transparent_45">#45000000</color>
 </resources>
