@@ -31,7 +31,6 @@
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
 
-
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>
 
@@ -79,9 +78,10 @@
     <color name="jandi_messages_content">@color/jandi_text</color>
     <color name="jandi_messages_joined_cdp">@color/jandi_text_light</color>
     <color name="jandi_messages_commented">@color/jandi_primary_color</color>
-    <color name="jandi_messages_file_name">@color/jandi_text</color>
+    <color name="jandi_messages_file_name">#00a6e9</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
-    <color name="jandi_messages_image_name">#00a6e9</color>
+    <color name="jandi_messages_file_writer">#000000</color>
+    <color name="jandi_messages_file_content">#353535</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -187,4 +187,6 @@
 
     <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
     <color name="jandi_carousel_transparent_45">#45000000</color>
+
+    <color name="jandi_message_indicator">#D2D2D2</color>
 </resources>

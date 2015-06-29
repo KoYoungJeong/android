@@ -16,9 +16,9 @@ public class FileSizeUtil {
             int idx = (int) Math.floor(Math.log(size) / Math.log(1024));
             DecimalFormat df = new DecimalFormat("#,###");
             double ret = ((size / Math.pow(1024, Math.floor(idx))));
-            retFormat = df.format(ret) + s[idx];
+            retFormat = df.format(ret) + " " + s[idx];
         } else {
-            retFormat += s[0];
+            retFormat += " " + s[0];
         }
         return retFormat;
     }

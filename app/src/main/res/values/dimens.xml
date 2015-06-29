@@ -50,6 +50,7 @@
     <!--// 댓글-->
     <dimen name="jandi_messages_comment_name">14sp</dimen>
     <dimen name="jandi_messages_comment">12sp</dimen>
+    <dimen name="jandi_messages_file_name">17sp</dimen>
 
 
     <!-- File Detail -->

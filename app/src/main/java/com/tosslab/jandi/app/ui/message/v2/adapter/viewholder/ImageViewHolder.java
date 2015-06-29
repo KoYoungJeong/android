@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -47,7 +49,7 @@ public class ImageViewHolder implements BodyViewHolder {
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
 
-        fileImageView = (ImageView) rootView.findViewById(R.id.img_message_photo);
+        fileImageView = (ImageView) rootView.findViewById(R.id.iv_message_photo);
         fileNameTextView = (TextView) rootView.findViewById(R.id.txt_message_image_file_name);
         fileTypeTextView = (TextView) rootView.findViewById(R.id.txt_img_file_type);
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
@@ -148,19 +150,21 @@ public class ImageViewHolder implements BodyViewHolder {
 
                         LogUtil.i("small thumb - " + mediumThumb);
 
-                        Ion.with(fileImageView)
+                        Glide.with(fileImageView.getContext())
+                                .load(mediumThumb)
                                 .placeholder(R.drawable.jandi_fl_icon_img)
                                 .error(R.drawable.jandi_fl_icon_img)
-                                .crossfade(true)
-                                .fitCenter()
-                                .load(mediumThumb);
+                                .crossFade()
+                                .into(fileImageView);
                     }
                 } else {
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }
 
                 fileNameTextView.setText(fileContent.title);
-                fileTypeTextView.setText(fileContent.ext);
+
+                fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileContent.size) + ", "
+                        + fileContent.ext);
             }
 
         }
