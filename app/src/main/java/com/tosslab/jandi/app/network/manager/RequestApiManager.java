@@ -97,16 +97,15 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     public Object RequestApiExecute(IExecutor executor) {
         PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
-        Object result = null;
-        try {
-            result = requestApiexecutor.execute(executor);
-        } catch (RetrofitError e) {
-            requestApiexecutor.recycle();
-            throw e;
-        }
-        requestApiexecutor.recycle();
 
-        return result;
+        try {
+            return requestApiexecutor.execute(executor);
+        } catch (RetrofitError e) {
+            throw e;
+        } finally {
+            requestApiexecutor.recycle();
+        }
+
     }
 
     @Override
