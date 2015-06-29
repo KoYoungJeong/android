@@ -75,4 +75,6 @@ public class JandiConstants {
         public static final int BAD_REQUEST = 400;
     }
 
+    public static final String UNVAILABLE_CLIENT_CONNECTION = "unvailable_client_connection";
+
 }

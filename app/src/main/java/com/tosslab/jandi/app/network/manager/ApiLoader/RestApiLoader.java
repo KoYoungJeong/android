@@ -74,7 +74,9 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
 
     @Override
     public IExecutor loadRegisterNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) {
-        return () -> authRestApiClient.registerNotificationTokenByAccountDeviceApi(reqNotificationRegister);
+        return () -> {
+            return authRestApiClient.registerNotificationTokenByAccountDeviceApi(reqNotificationRegister);
+        };
     }
 
     @Override
