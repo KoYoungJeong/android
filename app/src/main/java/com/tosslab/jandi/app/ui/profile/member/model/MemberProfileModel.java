@@ -58,7 +58,7 @@ public class MemberProfileModel {
         EntityManager entityManager = EntityManager.getInstance(context);
 
         String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
+                = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         return Ion.with(context)
                 .load(HttpPut.METHOD_NAME, requestURL)

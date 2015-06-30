@@ -97,17 +97,15 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     public Object RequestApiExecute(IExecutor executor) {
         PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
-        Object result = null;
+
         try {
-            result = requestApiexecutor.execute(executor);
+            return requestApiexecutor.execute(executor);
         } catch (RetrofitError e) {
-            requestApiexecutor.recycle();
             throw e;
+        } finally {
+            requestApiexecutor.recycle();
         }
 
-        requestApiexecutor.recycle();
-
-        return result;
     }
 
     @Override
@@ -332,7 +330,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     @Override
     public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
-        return (ResMessages) RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedByDirectMessageApi(teamId, userId, currentLinkId));
+        return (ResMessages) RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, currentLinkId));
     }
 
     @Override

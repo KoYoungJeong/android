@@ -19,11 +19,11 @@ import retrofit.http.Path;
 public interface ChatApiV2Client {
 
     @GET("/members/{memberId}/chats")
-    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     List<ResChat> getChatList(@Path("memberId") int memberId);
 
     @DELETE("/members/{memberId}/chats/{entityId}")
-    @Headers("Accept:"+ JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon deleteChat(@Path("memberId") int teamId,@Path("memberId") int entityId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon deleteChat(@Path("memberId") int teamId, @Path("entityId") int entityId);
 
 }

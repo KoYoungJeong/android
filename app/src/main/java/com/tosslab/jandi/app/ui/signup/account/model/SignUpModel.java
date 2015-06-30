@@ -121,19 +121,12 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResCommon requestSignUp(String email, String password, String name, String lang)
-            throws RetrofitError {
+    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitError {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        try {
-            return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
 
-        return null;
     }
+
 }

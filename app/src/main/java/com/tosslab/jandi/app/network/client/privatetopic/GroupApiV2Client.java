@@ -44,6 +44,11 @@ public interface GroupApiV2Client {
     // Private Group invite
     @PUT("/privateGroups/{groupId}/invite")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon inviteGroup(int groupId, ReqInviteTopicUsers inviteUsers);
+    ResCommon inviteGroup(@Path("groupId") int groupId, @Body ReqInviteTopicUsers inviteUsers);
+
+    //    // Private Group invite
+//    @Put("/privateGroups/{groupId}/invite")
+//    @RequiresAuthentication
+//    ResCommon inviteGroup(int groupId, ReqInviteTopicUsers inviteUsers);
 
 }

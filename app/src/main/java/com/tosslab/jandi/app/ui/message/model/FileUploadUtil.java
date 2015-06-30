@@ -40,7 +40,7 @@ public class FileUploadUtil {
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
         String permissionCode = (chattingInfomations.isPublicTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion

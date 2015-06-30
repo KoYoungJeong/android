@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
@@ -184,7 +185,7 @@ public class SignUpActivity extends AppCompatActivity {
         } catch (RetrofitError e) {
             signUpViewModel.dismissProgressWheel();
 
-            if (e.getResponse() != null && e.getResponse().getStatus() == 40001) {
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.EMAIL_ALREADY_REGISTERED) {
                 signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
             } else {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));

@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.network.manager.ApiLoader;
 
-import com.tosslab.jandi.app.network.client.account.devices.AccountDeviceApiV2ClientImpl;
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiLoader;
 import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoader;
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiLoader;
@@ -75,23 +74,24 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
 
     @Override
     public IExecutor loadRegisterNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) {
-        return () -> new AccountDeviceApiV2ClientImpl().registerNotificationToken
-                (reqNotificationRegister);
+        return () -> {
+            return authRestApiClient.registerNotificationTokenByAccountDeviceApi(reqNotificationRegister);
+        };
     }
 
     @Override
     public IExecutor loadDeleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken) {
-        return () -> new AccountDeviceApiV2ClientImpl().deleteNotificationToken(reqDeviceToken);
+        return () -> authRestApiClient.deleteNotificationTokenByAccountDeviceApi(reqDeviceToken);
     }
 
     @Override
     public IExecutor loadSubscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken) {
-        return () -> new AccountDeviceApiV2ClientImpl().subscribeStateNotification(reqDeviceToken);
+        return () -> authRestApiClient.subscribeStateNotificationByAccountDeviceApi(reqDeviceToken);
     }
 
     @Override
     public IExecutor loadGetNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget) {
-        return () -> new AccountDeviceApiV2ClientImpl().getNotificationBadge(reqNotificationTarget);
+        return () -> authRestApiClient.getNotificationBadgeByAccountDeviceApi(reqNotificationTarget);
     }
 
     @Override

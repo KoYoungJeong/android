@@ -60,6 +60,7 @@ public class JandiConstants {
 
     public static final int NOTIFICATION_ID = 100;
     public static final int NETWORK_SUCCESS = 200;
+    public static final String UNVAILABLE_CLIENT_CONNECTION = "unvailable_client_connection";
 
     public static class RoomType {
         public static final String TYPE_USER = "users";
@@ -73,6 +74,7 @@ public class JandiConstants {
         public static final int DATA_NOT_FOUND = 1839;
         public static final int DUPLICATED_NAME = 4000;
         public static final int BAD_REQUEST = 400;
+        public static final int EMAIL_ALREADY_REGISTERED = 40001;
     }
 
 }

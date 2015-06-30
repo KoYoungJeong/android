@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
@@ -10,8 +13,6 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import java.io.IOException;
 
 import retrofit.RetrofitError;
 
@@ -41,22 +42,34 @@ public class PoolableRequestApiExecutor {
     }
 
     public Object execute(IExecutor apiExecutor) {
+
         try {
             Object object = apiExecutor.execute();
             retryCnt = 0;
             return object;
         } catch (RetrofitError e) {
-            if (e.getKind() == RetrofitError.Kind.NETWORK) {
-                if (retryCnt < RETRY_COUNT) {
-                    retryCnt++;
-                    return execute(apiExecutor);
-                } else {
-                    retryCnt = 0;
-                    throw RetrofitError.networkError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new IOException());
-                }
-            }
+            return handleException(e, apiExecutor);
+        }
 
-            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+    }
+
+    private Object handleException(RetrofitError e, IExecutor apiExecutor) {
+        // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
+        if (!isActiveNetwork()) {
+            throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,
+                    new Exception(JandiConstants.UNVAILABLE_CLIENT_CONNECTION));
+        }
+
+        if (e.getKind() == RetrofitError.Kind.NETWORK) {
+            if (retryCnt < RETRY_COUNT) {
+                retryCnt++;
+                return execute(apiExecutor);
+            } else {
+                retryCnt = 0;
+                throw e;
+            }
+        } else if (e.getKind() == RetrofitError.Kind.HTTP) {
+            if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
                 ResAccessToken accessToken = refreshToken();
                 if (accessToken != null) {
                     try {
@@ -64,27 +77,29 @@ public class PoolableRequestApiExecutor {
                     } catch (RetrofitError e1) {
                         // unknown exception
                         LogUtil.e("Retry Fail");
-                        //TODO Exception 상세화 필요
-                        throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
+                        throw e1;
                     }
                 } else {
                     // unauthorized exception
                     LogUtil.e("Refresh Token Fail", e);
-                    //TODO Exception 상세화 필요
-                    throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
+                    throw e;
                 }
             } else {
                 // exception, not unauthorized
                 JandiSocketService.stopSocketServiceIfRunning(JandiApplication.getContext());
                 LogUtil.e("Request Fail", e);
-                //TODO Exception 상세화 필요
-                throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
+                throw e;
             }
-        } catch (Exception e) {
-            LogUtil.e("Unknown Request Error : ", e);
-            //TODO Exception 상세화 필요
-            throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_ROOT_URL + "/inner-api", new Exception());
+        } else {
+            throw e;
         }
+    }
+
+    //Todo 네트워크 상태를 체크하는 공용 클래스 생성 필요 - 중복 사용이 예상되는 메서드
+    public boolean isActiveNetwork() {
+        NetworkInfo activeNetworkInfo = ((ConnectivityManager) JandiApplication.getContext().
+                getSystemService(JandiApplication.getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private ResAccessToken refreshToken() {
