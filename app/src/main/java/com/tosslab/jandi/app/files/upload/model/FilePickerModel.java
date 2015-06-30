@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 @EBean
 public class FilePickerModel {
 
-    public static final long MAX_FILE_SIZE = 1024 * 1024 * 100;
+    public static final long MAX_FILE_SIZE = 1024 * 1024 * 300;
 
     public String getFilePath(Context context, int requestCode, Intent intent, File filePath) {
         String realFilePath;

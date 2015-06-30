@@ -167,7 +167,7 @@
     <string name="jandi_title_activity_file_explorer">"文件探索"</string>
     <string name="title_file_detail">"叙述"</string>
     <string name="comment">"留言"</string>
-    <string name="jandi_file_size_large_error">"无法上传大於100MB的文件"</string>
+    <string name="jandi_file_size_large_error">"无法上传大於300MB的文件"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"请选择在哪里分享"</string>

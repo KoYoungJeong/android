@@ -173,7 +173,7 @@
     <string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
     <string name="title_file_detail">"説明"</string>
     <string name="comment">"コメント"</string>
-    <string name="jandi_file_size_large_error">"現在のところ、100MBを超えるファイルはアップロードできません。"</string>
+    <string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
