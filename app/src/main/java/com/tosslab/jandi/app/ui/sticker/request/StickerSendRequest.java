@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiClient;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiClient_;
 import com.tosslab.jandi.app.network.manager.Request;

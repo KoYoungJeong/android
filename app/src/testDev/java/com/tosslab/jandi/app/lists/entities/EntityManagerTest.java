@@ -1,12 +1,13 @@
 package com.tosslab.jandi.app.lists.entities;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,12 +16,12 @@ import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.functions.Func1;
-
+import static com.jayway.awaitility.Awaitility.await;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 
@@ -31,64 +32,75 @@ public class EntityManagerTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData(Robolectric.application);
 
-    }
-
-    @Test
-    public void testHasNewChatMessage() throws Exception {
-
         int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
         JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
 
-        JandiRestClient jandiRestClient = new JandiRestClient_(Robolectric.application);
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        ResLeftSideMenu infosForSideMenu = jandiRestClient.getInfosForSideMenu(teamId);
-        JandiEntityDatabaseManager.getInstance(Robolectric.application).upsertLeftSideMenu(infosForSideMenu);
+        JandiEntityClient client = JandiEntityClient_.getInstance_(Robolectric.application);
+        ResLeftSideMenu totalEntitiesInfo = client.getTotalEntitiesInfo();
 
-        EntityManager instance = EntityManager.getInstance(Robolectric.application);
+        JandiEntityDatabaseManager manager = JandiEntityDatabaseManager.getInstance(Robolectric.application);
+        manager.upsertLeftSideMenu(totalEntitiesInfo);
 
-        List<FormattedEntity> formattedUsersWithoutMe = instance.getFormattedUsersWithoutMe();
-
-        Boolean allUser = Observable.from(formattedUsersWithoutMe)
-                .filter(new Func1<FormattedEntity, Boolean>() {
-                    @Override
-                    public Boolean call(FormattedEntity entity) {
-                        return entity.alarmCount > 0;
-                    }
-                })
-                .firstOrDefault(new FormattedEntity())
-                .map(new Func1<FormattedEntity, Boolean>() {
-                    @Override
-                    public Boolean call(FormattedEntity entity) {
-                        return entity.alarmCount > 0;
-                    }
-                })
-                .toBlocking()
-                .first();
-
-
-        List<FormattedEntity> joinedUsers = instance.getJoinedUsers();
-
-        Boolean joinUser = Observable.from(joinedUsers)
-                .filter(new Func1<FormattedEntity, Boolean>() {
-                    @Override
-                    public Boolean call(FormattedEntity entity) {
-                        return entity.alarmCount > 0;
-                    }
-                })
-                .firstOrDefault(new FormattedEntity())
-                .map(new Func1<FormattedEntity, Boolean>() {
-                    @Override
-                    public Boolean call(FormattedEntity entity) {
-                        return entity.alarmCount > 0;
-                    }
-                })
-                .toBlocking()
-                .first();
-
-        boolean hasNewChatMessage = instance.hasNewChatMessage();
-
-        assertThat(joinUser, is(hasNewChatMessage));
     }
 
+    @Test
+    public void testThreadSafe() throws Exception {
 
+        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
+        ResLeftSideMenu entityInfoAtWhole = JandiEntityDatabaseManager.getInstance(Robolectric.application)
+                .getEntityInfoAtWhole(teamId);
+
+        int initThreadCount = Thread.activeCount();
+        System.out.println(initThreadCount + " Threads Alive");
+
+        for (int idx = 0; idx < 100; ++idx) {
+            new Thread(() -> {
+                EntityManager entityManager = EntityManager.getInstance(Robolectric.application);
+                System.out.println(Thread.currentThread().getName() + " : Refresh Start");
+                entityManager.refreshEntity(entityInfoAtWhole);
+                System.out.println(Thread.currentThread().getName() + " : Refresh End");
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println(Thread.currentThread().getName() + " : Load Start");
+                entityManager.getMe();
+                entityManager.getCategorizableEntities();
+                entityManager.getDefaultTopicId();
+                entityManager.getDistictId();
+                entityManager.getEntityById(entityInfoAtWhole.user.id);
+                entityManager.getEntityNameById(entityInfoAtWhole.user.id);
+                entityManager.getFormattedUsers();
+                entityManager.getFormattedUsersWithoutMe();
+                entityManager.getGroups();
+                entityManager.getJoinedChannels();
+                entityManager.getTeamId();
+                entityManager.getTeamName();
+                entityManager.getUnjoinedChannels();
+                entityManager.getMe();
+                entityManager.getUnjoinedMembersOfEntity(entityInfoAtWhole.joinEntities.get(0).id,
+                        JandiConstants.TYPE_PUBLIC_TOPIC);
+                entityManager.isMe(entityInfoAtWhole.user.id);
+                entityManager.isMyTopic(entityInfoAtWhole.user.id);
+                entityManager.retrieveAccessableEntities();
+                entityManager.retrieveExclusivedEntities(
+                        Arrays.asList(entityInfoAtWhole.joinEntities.get(0).id));
+                entityManager.retrieveGivenEntities(
+                        Arrays.asList(entityInfoAtWhole.joinEntities.get(0).id));
+
+                System.out.println(Thread.currentThread().getName() + " : Load End");
+
+                FormattedEntity me = entityManager.getMe();
+                assertThat(me, is(notNullValue()));
+
+            }).start();
+        }
+
+        await().timeout(1, TimeUnit.HOURS).until(() -> initThreadCount <= Thread.activeCount());
+        System.out.println(Thread.activeCount() + " Threads Alive");
+
+    }
 }
