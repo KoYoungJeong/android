@@ -15,9 +15,9 @@ public class DateTransformator {
     public static final String FORMAT_DEFAULT = "MM/dd/yyyy, hh:mm a";
     public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd hh:mm a";
 
-    public static String getTimeDifference(Date date) {
-        return getTimeString(date, FORMAT_DEFAULT);
-    }
+//    public static String getTimeDifference(Date date) {
+//        return getTimeString(date, FORMAT_DEFAULT);
+//    }
 
     public static String getTimeString(Date date) {
         return getTimeString(date, FORMAT_DEFAULT);
