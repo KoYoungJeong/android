@@ -1,9 +1,10 @@
-package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder;
+package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder;
 
+import com.tosslab.jandi.app.BuildConfig;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.RequestInterceptor;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.ResponseConverter;
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor.RestAdapterDecor;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RequestInterceptor;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.ResponseConverter;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor.RestAdapterDecor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +35,11 @@ public class RestAdapterBuilder<CLIENT> {
     protected RestAdapter.Builder getRestAdapter() {
 
         RestAdapter.Builder builder = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(JandiConstantsForFlavors.SERVICE_INNER_API_URL);
+
+        if (BuildConfig.DEBUG) {
+            builder.setLogLevel(RestAdapter.LogLevel.FULL);
+        }
 
         for (RestAdapterDecor restAdapterDecor : restAdapterDecors) {
             builder = restAdapterDecor.addRestAdapterProperty(builder);

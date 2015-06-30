@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter;
+package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.converter;
 
 /**
  * Created by tee on 15. 6. 20..

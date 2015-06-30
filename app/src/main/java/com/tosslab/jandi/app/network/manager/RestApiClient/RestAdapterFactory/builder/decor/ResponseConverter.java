@@ -1,6 +1,6 @@
-package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor;
+package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor;
 
-import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter.JacksonConverter;
+import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.converter.JacksonConverter;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import retrofit.RestAdapter;
