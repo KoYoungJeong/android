@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.invitation;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;

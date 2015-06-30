@@ -22,9 +22,9 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiAuth;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
-import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
-import com.tosslab.jandi.app.network.manager.ApiExecutor.PoolableRequestApiExecutor;
-import com.tosslab.jandi.app.network.manager.ApiLoader.RestApiLoader;
+import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+import com.tosslab.jandi.app.network.manager.apiloader.RestApiLoader;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -95,7 +95,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         return requestApiManager;
     }
 
-    public <RESULT> RESULT RequestApiExecute(IExecutor<RESULT> executor) {
+    public <RESULT> RESULT requestApiExecute(IExecutor<RESULT> executor) {
         PoolableRequestApiExecutor requestApiexecutor = PoolableRequestApiExecutor.obtain();
 
         try {
@@ -110,419 +110,419 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadRegisterNotificationTokenByAccountDeviceApi(reqNotificationRegister));
+        return requestApiExecute(RestApiLoader.getInstance().loadRegisterNotificationTokenByAccountDeviceApi(reqNotificationRegister));
     }
 
     @Override
     public ResAccountInfo deleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteNotificationTokenByAccountDeviceApi(reqDeviceToken));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteNotificationTokenByAccountDeviceApi(reqDeviceToken));
     }
 
     @Override
     public ResAccountInfo subscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSubscribeStateNotificationByAccountDeviceApi(reqDeviceToken));
+        return requestApiExecute(RestApiLoader.getInstance().loadSubscribeStateNotificationByAccountDeviceApi(reqDeviceToken));
     }
 
     @Override
     public ResCommon getNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetNotificationBadgeByAccountDeviceApi(reqNotificationTarget));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetNotificationBadgeByAccountDeviceApi(reqNotificationTarget));
     }
 
     @Override
     public ResAccountInfo requestAddEmailByAccountEmailApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadRequestAddEmailByAccountEmailsApi(reqAccountEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadRequestAddEmailByAccountEmailsApi(reqAccountEmail));
     }
 
     @Override
     public ResAccountInfo confirmEmailByAccountEmailApi(ReqConfirmEmail reqConfirmEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadConfirmEmailByAccountEmailsApi(reqConfirmEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadConfirmEmailByAccountEmailsApi(reqConfirmEmail));
     }
 
     @Override
     public ResAccountInfo deleteEmailByAccountEmailApi(ReqAccountEmail reqConfirmEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadExecutorDeleteEmailByAccountEmailsApi(reqConfirmEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadExecutorDeleteEmailByAccountEmailsApi(reqConfirmEmail));
     }
 
     @Override
     public ResCommon resetPasswordByAccountPasswordApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadResetPasswordByAccountPasswordApi(reqAccountEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadResetPasswordByAccountPasswordApi(reqAccountEmail));
     }
 
     @Override
     public ResCommon changePasswordByAccountPasswordApi(ReqChangePassword reqConfirmEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadChangePasswordByAccountEmailsApi(reqConfirmEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadChangePasswordByAccountEmailsApi(reqConfirmEmail));
     }
 
     @Override
     public ResConfig getConfigByMainRest() throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetConfigByMainRestApi());
+        return requestApiExecute(RestApiLoader.getInstance().loadGetConfigByMainRestApi());
     }
 
     @Override
     public ResMyTeam getTeamIdByMainRest(String userEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetTeamIdByMainRestApi(userEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetTeamIdByMainRestApi(userEmail));
     }
 
     @Override
     public ResAccessToken getAccessTokenByMainRest(ReqAccessToken login) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetAccessTokenByMainRestApi(login));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetAccessTokenByMainRestApi(login));
     }
 
     @Override
     public ResCommon signUpAccountByMainRest(ReqSignUpInfo signUpInfo) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSignUpAccountByMainRestApi(signUpInfo));
+        return requestApiExecute(RestApiLoader.getInstance().loadSignUpAccountByMainRestApi(signUpInfo));
     }
 
     @Override
     public ResAccountActivate activateAccountByMainRest(ReqAccountActivate reqAccountActivate) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadActivateAccountByMainRestApi(reqAccountActivate));
+        return requestApiExecute(RestApiLoader.getInstance().loadActivateAccountByMainRestApi(reqAccountActivate));
     }
 
     @Override
     public ResCommon accountVerificationByMainRest(ReqAccountVerification reqAccountVerification) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadAccountVerificationByMainRestApi(reqAccountVerification));
+        return requestApiExecute(RestApiLoader.getInstance().loadAccountVerificationByMainRestApi(reqAccountVerification));
     }
 
     @Override
     public ResAccountInfo getAccountInfoByMainRest() throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetAccountInfoByMainRestApi());
+        return requestApiExecute(RestApiLoader.getInstance().loadGetAccountInfoByMainRestApi());
     }
 
     @Override
     public ResAccountInfo updatePrimaryEmailByMainRest(ReqUpdatePrimaryEmailInfo updatePrimaryEmailInfo) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadUpdatePrimaryEmailByMainRestApi(updatePrimaryEmailInfo));
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdatePrimaryEmailByMainRestApi(updatePrimaryEmailInfo));
     }
 
     @Override
     public ResLeftSideMenu getInfosForSideMenuByMainRest(int teamId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetInfosForSideMenuByMainRestApi(teamId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetInfosForSideMenuByMainRestApi(teamId));
     }
 
     @Override
     public ResCommon setMarkerByMainRest(int entityId, ReqSetMarker reqSetMarker) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSetMarkerByMainRestApi(entityId, reqSetMarker));
+        return requestApiExecute(RestApiLoader.getInstance().loadSetMarkerByMainRestApi(entityId, reqSetMarker));
     }
 
     @Override
     public ResSearchFile searchFileByMainRest(ReqSearchFile reqSearchFile) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSearchFileByMainRestApi(reqSearchFile));
+        return requestApiExecute(RestApiLoader.getInstance().loadSearchFileByMainRestApi(reqSearchFile));
     }
 
     @Override
     public ResAccountInfo changeNameByAccountProfileApi(ReqProfileName reqProfileName) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadChangeNameByAccountProfileApi(reqProfileName));
+        return requestApiExecute(RestApiLoader.getInstance().loadChangeNameByAccountProfileApi(reqProfileName));
     }
 
     @Override
     public ResAccountInfo changePrimaryEmailByAccountProfileApi(ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadChangePrimaryEmailByAccountProfileApi(reqAccountEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadChangePrimaryEmailByAccountProfileApi(reqAccountEmail));
     }
 
     @Override
     public ResCommon createChannelByChannelApi(ReqCreateTopic channel) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadCreateChannelByChannelApi(channel));
+        return requestApiExecute(RestApiLoader.getInstance().loadCreateChannelByChannelApi(channel));
     }
 
     @Override
     public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int channelId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicNameByChannelApi(channel, channelId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicNameByChannelApi(channel, channelId));
     }
 
     @Override
     public ResCommon deleteTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteTopicByChannelApi(channelId, reqDeleteTopic));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteTopicByChannelApi(channelId, reqDeleteTopic));
     }
 
     @Override
     public ResCommon joinTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadJoinTopicByChannelApi(channelId, reqDeleteTopic));
+        return requestApiExecute(RestApiLoader.getInstance().loadJoinTopicByChannelApi(channelId, reqDeleteTopic));
     }
 
     @Override
     public ResCommon leaveTopicByChannelApi(int channelId, ReqDeleteTopic reqDeleteTopic) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadLeaveTopicByChannelApi(channelId, reqDeleteTopic));
+        return requestApiExecute(RestApiLoader.getInstance().loadLeaveTopicByChannelApi(channelId, reqDeleteTopic));
     }
 
     @Override
     public ResCommon invitePublicTopicByChannelApi(int channelId, ReqInviteTopicUsers reqInviteTopicUsers) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadInvitePublicTopicByChannelApi(channelId, reqInviteTopicUsers));
+        return requestApiExecute(RestApiLoader.getInstance().loadInvitePublicTopicByChannelApi(channelId, reqInviteTopicUsers));
     }
 
     @Override
     public ResMessages getPublicTopicMessagesByChannelMessageApi(int teamId, int channelId, int fromId, int count) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMessagesByChannelMessageApi(teamId, channelId, fromId, count));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMessagesByChannelMessageApi(teamId, channelId, fromId, count));
     }
 
     @Override
     public ResMessages getPublicTopicMessagesByChannelMessageApi(int teamId, int channelId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMessagesByChannelMessageApi(teamId, channelId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMessagesByChannelMessageApi(teamId, channelId));
     }
 
     @Override
     public ResUpdateMessages getPublicTopicUpdatedMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicUpdatedMessagesByChannelMessageApi(teamId, channelId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicUpdatedMessagesByChannelMessageApi(teamId, channelId, currentLinkId));
     }
 
     @Override
     public ResMessages getPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(teamId, channelId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicUpdatedMessagesForMarkerByChannelMessageApi(teamId, channelId, currentLinkId));
     }
 
     @Override
     public ResMessages getPublicTopicMarkerMessagesByChannelMessageApi(int teamId, int channelId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMarkerMessagesByChannelMessageApi(teamId, channelId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPublicTopicMarkerMessagesByChannelMessageApi(teamId, channelId, currentLinkId));
     }
 
     @Override
     public ResCommon sendPublicTopicMessageByChannelMessageApi(ReqSendMessage message, int channelId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendPublicTopicMessageByChannelMessageApi(message, channelId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendPublicTopicMessageByChannelMessageApi(message, channelId));
     }
 
     @Override
     public ResCommon modifyPublicTopicMessageByChannelMessageApi(ReqModifyMessage message, int channelId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicMessageByChannelMessageApi(message, channelId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyPublicTopicMessageByChannelMessageApi(message, channelId, messageId));
     }
 
     @Override
     public ResCommon deletePublicTopicMessageByChannelMessageApi(int teamId, int channelId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeletePublicTopicMessageByChannelMessageApi(teamId, channelId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeletePublicTopicMessageByChannelMessageApi(teamId, channelId, messageId));
     }
 
     @Override
     public List<ResChat> getChatListByChatApi(int memberId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetChatListByChatApi(memberId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetChatListByChatApi(memberId));
     }
 
     @Override
     public ResCommon deleteChatByChatApi(int memberId, int entityId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteChatByChatApi(memberId, entityId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteChatByChatApi(memberId, entityId));
     }
 
     @Override
     public ResCommon sendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendMessageCommentByCommentsApi(comment, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendMessageCommentByCommentsApi(comment, messageId));
     }
 
     @Override
     public ResCommon modifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyMessageCommentByCommentsApi(comment, messageId, commentId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyMessageCommentByCommentsApi(comment, messageId, commentId));
     }
 
     @Override
     public ResCommon deleteMessageCommentByCommentsApi(int teamId, int messageId, int commentId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteMessageCommentByCommentsApi(teamId, messageId, commentId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteMessageCommentByCommentsApi(teamId, messageId, commentId));
     }
 
     @Override
     public ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId, int fromId, int count) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesByDirectMessageApi(teamId, userId, fromId, count));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesByDirectMessageApi(teamId, userId, fromId, count));
     }
 
     @Override
     public ResMessages getDirectMessagesByDirectMessageApi(int teamId, int userId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesByDirectMessageApi(teamId, userId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesByDirectMessageApi(teamId, userId));
     }
 
     @Override
     public ResUpdateMessages getDirectMessagesUpdatedByDirectMessageApi(int teamId, int userId, int timeAfter) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedByDirectMessageApi(teamId, userId, timeAfter));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedByDirectMessageApi(teamId, userId, timeAfter));
     }
 
     @Override
     public ResMessages getDirectMessagesUpdatedForMarkerByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetDirectMessagesUpdatedForMarkerByDirectMessageApi(teamId, userId, currentLinkId));
     }
 
     @Override
     public ResMessages getDirectMarkerMessagesByDirectMessageApi(int teamId, int userId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetDirectMarkerMessagesByDirectMessageApi(teamId, userId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetDirectMarkerMessagesByDirectMessageApi(teamId, userId, currentLinkId));
     }
 
     @Override
     public ResCommon sendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendDirectMessageByDirectMessageApi(message, userId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendDirectMessageByDirectMessageApi(message, userId));
     }
 
     @Override
     public ResCommon modifyDirectMessageByDirectMessageApi(ReqModifyMessage message, int userId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyDirectMessageByDirectMessageApi(message, userId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyDirectMessageByDirectMessageApi(message, userId, messageId));
     }
 
     @Override
     public ResCommon deleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteDirectMessageByDirectMessageApi(teamId, userId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteDirectMessageByDirectMessageApi(teamId, userId, messageId));
     }
 
     @Override
     public ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadCreatePrivateGroupByGroupApi(group));
+        return requestApiExecute(RestApiLoader.getInstance().loadCreatePrivateGroupByGroupApi(group));
     }
 
     @Override
     public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, int groupId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyGroupByGroupApi(channel, groupId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyGroupByGroupApi(channel, groupId));
     }
 
     @Override
     public ResCommon deleteGroupByGroupApi(int teamId, int groupId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeleteGroupByGroupApi(teamId, groupId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteGroupByGroupApi(teamId, groupId));
     }
 
     @Override
     public ResCommon leaveGroupByGroupApi(int groupId, ReqTeam team) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadLeaveGroupByGroupApi(groupId, team));
+        return requestApiExecute(RestApiLoader.getInstance().loadLeaveGroupByGroupApi(groupId, team));
     }
 
     @Override
     public ResCommon inviteGroupByGroupApi(int groupId, ReqInviteTopicUsers inviteUsers) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadInviteGroupByGroupApi(groupId, inviteUsers));
+        return requestApiExecute(RestApiLoader.getInstance().loadInviteGroupByGroupApi(groupId, inviteUsers));
     }
 
     @Override
     public ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId, int fromId, int count) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesByGroupMessageApi(teamId, groupId, fromId, count));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesByGroupMessageApi(teamId, groupId, fromId, count));
     }
 
     @Override
     public ResMessages getGroupMessagesByGroupMessageApi(int teamId, int groupId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesByGroupMessageApi(teamId, groupId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesByGroupMessageApi(teamId, groupId));
     }
 
     @Override
     public ResUpdateMessages getGroupMessagesUpdatedByGroupMessageApi(int teamId, int groupId, int lastLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesUpdatedByGroupMessageApi(teamId, groupId, lastLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetGroupMessagesUpdatedByGroupMessageApi(teamId, groupId, lastLinkId));
     }
 
     @Override
     public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId,
                                                                         int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance()
+        return requestApiExecute(RestApiLoader.getInstance()
                 .loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(teamId, groupId, currentLinkId));
     }
 
     @Override
     public ResMessages getGroupMarkerMessagesByGroupMessageApi(int teamId, int groupId, int currentLinkId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetGroupMarkerMessagesByGroupMessageApi(teamId, groupId, currentLinkId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetGroupMarkerMessagesByGroupMessageApi(teamId, groupId, currentLinkId));
     }
 
     @Override
     public ResCommon sendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendGroupMessageByGroupMessageApi(message, groupId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendGroupMessageByGroupMessageApi(message, groupId));
     }
 
     @Override
     public ResCommon modifyPrivateGroupMessageByGroupMessageApi(ReqModifyMessage message, int groupId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadModifyPrivateGroupMessageByGroupMessageApi(message, groupId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadModifyPrivateGroupMessageByGroupMessageApi(message, groupId, messageId));
     }
 
     @Override
     public ResCommon deletePrivateGroupMessageByGroupMessageApi(int teamId, int groupId, int messageId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDeletePrivateGroupMessageByGroupMessageApi(teamId, groupId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDeletePrivateGroupMessageByGroupMessageApi(teamId, groupId, messageId));
     }
 
     @Override
     public ResTeamDetailInfo acceptOrDeclineInvitationByInvitationApi(String invitationId, ReqInvitationAcceptOrIgnore reqInvitationAcceptOrIgnore) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadAcceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore));
+        return requestApiExecute(RestApiLoader.getInstance().loadAcceptOrDeclineInvitationByInvitationApi(invitationId, reqInvitationAcceptOrIgnore));
     }
 
     @Override
     public List<ResPendingTeamInfo> getPendingTeamInfoByInvitationApi() throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetPendingTeamInfoByInvitationApi());
+        return requestApiExecute(RestApiLoader.getInstance().loadGetPendingTeamInfoByInvitationApi());
     }
 
     @Override
     public ResMessageSearch searchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId, int entityId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage, writerId, entityId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage, writerId, entityId));
     }
 
     @Override
     public ResMessageSearch searchMessagesByEntityIdByMessageSearchApi(int teamId, String query, int page, int perPage, int entityId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId));
     }
 
     @Override
     public ResMessageSearch searchMessagesByWriterIdByMessageSearchApi(int teamId, String query, int page, int perPage, int writerId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId));
+        return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId));
     }
 
     @Override
     public ResMessageSearch searchMessagesByMessageSearchApi(int teamId, String query, int page, int perPage) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage));
+        return requestApiExecute(RestApiLoader.getInstance().loadSearchMessagesByMessageSearchApi(teamId, query, page, perPage));
     }
 
     @Override
     public ResFileDetail getFileDetailByMessagesApiAuth(int teamId, int messageId) {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetFileDetailByMessagesApiAuth(teamId, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetFileDetailByMessagesApiAuth(teamId, messageId));
     }
 
     @Override
     public ResCommon shareMessageByMessagesApiAuth(ReqShareMessage share, int messageId) {
-        return RequestApiExecute(RestApiLoader.getInstance().loadShareMessageByMessagesApiAuth(share, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadShareMessageByMessagesApiAuth(share, messageId));
     }
 
     @Override
     public ResCommon unshareMessageByMessagesApiAuth(ReqUnshareMessage share, int messageId) {
-        return RequestApiExecute(RestApiLoader.getInstance().loadUnshareMessageByMessagesApiAuth(share, messageId));
+        return requestApiExecute(RestApiLoader.getInstance().loadUnshareMessageByMessagesApiAuth(share, messageId));
     }
 
     @Override
     public ResLeftSideMenu.User updateMemberProfileByProfileApi(int memberId, ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadUpdateMemberProfileByProfileApi(memberId, reqUpdateProfile));
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdateMemberProfileByProfileApi(memberId, reqUpdateProfile));
     }
 
     @Override
     public ResCommon updateMemberNameByProfileApi(int memberId, ReqProfileName reqProfileName) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadUpdateMemberNameByProfileApi(memberId, reqProfileName));
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdateMemberNameByProfileApi(memberId, reqProfileName));
     }
 
     @Override
     public ResLeftSideMenu.User updateMemberEmailByProfileApi(int memberId, ReqAccountEmail reqAccountEmail) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadUpdateMemberEmailByProfileApi(memberId, reqAccountEmail));
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdateMemberEmailByProfileApi(memberId, reqAccountEmail));
     }
 
     @Override
     public ResRoomInfo getRoomInfoByRoomsApi(int teamId, int roomId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetRoomInfoByRoomsApi(teamId, roomId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetRoomInfoByRoomsApi(teamId, roomId));
     }
 
     @Override
     public ResCommon enableFavoriteByStarredEntityApi(ReqTeam reqTeam, int entityId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadEnableFavoriteByStarredEntityApi(reqTeam, entityId));
+        return requestApiExecute(RestApiLoader.getInstance().loadEnableFavoriteByStarredEntityApi(reqTeam, entityId));
     }
 
     @Override
     public ResCommon disableFavoriteByStarredEntityApi(int teamId, int entityId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadDisableFavoriteByStarredEntityApi(teamId, entityId));
+        return requestApiExecute(RestApiLoader.getInstance().loadDisableFavoriteByStarredEntityApi(teamId, entityId));
     }
 
     @Override
     public ResCommon sendStickerByStickerApi(ReqSendSticker reqSendSticker) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendStickerByStickerApi(reqSendSticker));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendStickerByStickerApi(reqSendSticker));
     }
 
     @Override
     public ResCommon sendStickerCommentByStickerApi(ReqSendSticker reqSendSticker) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadSendStickerCommentByStickerApi(reqSendSticker));
+        return requestApiExecute(RestApiLoader.getInstance().loadSendStickerCommentByStickerApi(reqSendSticker));
     }
 
     @Override
     public ResTeamDetailInfo createNewTeamByTeamApi(ReqCreateNewTeam req) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadCreateNewTeamByTeamApi(req));
+        return requestApiExecute(RestApiLoader.getInstance().loadCreateNewTeamByTeamApi(req));
     }
 
     @Override
     public ResLeftSideMenu.User getMemberProfileByTeamApi(int teamId, int memberId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetMemberProfileByTeamApi(teamId, memberId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetMemberProfileByTeamApi(teamId, memberId));
     }
 
     @Override
     public List<ResInvitationMembers> inviteToTeamByTeamApi(int teamId, ReqInvitationMembers invitationMembers) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadInviteToTeamByTeamApi(teamId, invitationMembers));
+        return requestApiExecute(RestApiLoader.getInstance().loadInviteToTeamByTeamApi(teamId, invitationMembers));
     }
 
     @Override
     public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(int teamId) throws RetrofitError {
-        return RequestApiExecute(RestApiLoader.getInstance().loadGetTeamInfoByTeamApi(teamId));
+        return requestApiExecute(RestApiLoader.getInstance().loadGetTeamInfoByTeamApi(teamId));
     }
 
 }

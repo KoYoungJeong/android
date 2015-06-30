@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.teams;
 
-import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
