@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -580,6 +581,23 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             moveMessageList(entityId, entityType, teamId, isStarred);
         }
 
+    }
+
+    public void onEventMainThread(TopicDeleteEvent event) {
+        if (mResFileDetail != null) {
+            int size = mResFileDetail.shareEntities.size();
+
+            int entityId;
+            int eventId = event.getId();
+            for (int idx = 0; idx < size; ++idx) {
+                entityId = mResFileDetail.shareEntities.get(idx);
+
+                if (eventId == entityId) {
+                    finish();
+                    return;
+                }
+            }
+        }
     }
 
     private void moveMessageList(int entityId, int entityType, int teamId, boolean isStarred) {
