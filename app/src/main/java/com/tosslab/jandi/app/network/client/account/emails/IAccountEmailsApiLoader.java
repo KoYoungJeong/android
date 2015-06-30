@@ -4,18 +4,20 @@ import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
 
 /**
  * Created by tee on 15. 6. 20..
  */
 public interface IAccountEmailsApiLoader {
 
-    public IExecutor loadRequestAddEmailByAccountEmailsApi(ReqAccountEmail reqAccountEmail);
+    IExecutor<ResAccountInfo> loadRequestAddEmailByAccountEmailsApi(ReqAccountEmail reqAccountEmail);
 
-    public IExecutor loadConfirmEmailByAccountEmailsApi(ReqConfirmEmail reqConfirmEmail);
+    IExecutor<ResAccountInfo> loadConfirmEmailByAccountEmailsApi(ReqConfirmEmail reqConfirmEmail);
 
-    public IExecutor loadExecutorDeleteEmailByAccountEmailsApi(ReqAccountEmail reqConfirmEmail);
+    IExecutor<ResAccountInfo> loadExecutorDeleteEmailByAccountEmailsApi(ReqAccountEmail reqConfirmEmail);
 
-    public IExecutor loadChangePasswordByAccountEmailsApi(ReqChangePassword reqConfirmEmail);
+    IExecutor<ResCommon> loadChangePasswordByAccountEmailsApi(ReqChangePassword reqConfirmEmail);
 
 }

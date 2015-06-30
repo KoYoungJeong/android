@@ -41,10 +41,10 @@ public class PoolableRequestApiExecutor {
         RequestApiExecutorPool.release(this);
     }
 
-    public Object execute(IExecutor apiExecutor) {
+    public <RESULT> RESULT execute(IExecutor<RESULT> apiExecutor) {
 
         try {
-            Object object = apiExecutor.execute();
+            RESULT object = apiExecutor.execute();
             retryCnt = 0;
             return object;
         } catch (RetrofitError e) {
@@ -53,7 +53,7 @@ public class PoolableRequestApiExecutor {
 
     }
 
-    private Object handleException(RetrofitError e, IExecutor apiExecutor) {
+    private <RESULT> RESULT handleException(RetrofitError e, IExecutor<RESULT> apiExecutor) {
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
             throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,

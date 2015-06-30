@@ -1,14 +1,18 @@
 package com.tosslab.jandi.app.network.client.chat;
 
 import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResCommon;
+
+import java.util.List;
 
 /**
  * Created by tee on 15. 6. 23..
  */
 public interface IChatApiLoader {
 
-    IExecutor loadGetChatListByChatApi(int memberId);
+    IExecutor<List<ResChat>> loadGetChatListByChatApi(int memberId);
 
-    IExecutor loadDeleteChatByChatApi(int memberId, int entityId);
+    IExecutor<ResCommon> loadDeleteChatByChatApi(int memberId, int entityId);
 
 }

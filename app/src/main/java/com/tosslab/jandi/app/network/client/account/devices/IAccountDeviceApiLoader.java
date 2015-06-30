@@ -5,18 +5,20 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResCommon;
 
 /**
  * Created by tee on 15. 6. 20..
  */
 public interface IAccountDeviceApiLoader {
 
-    public IExecutor loadRegisterNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister);
+    IExecutor<ResAccountInfo> loadRegisterNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister);
 
-    public IExecutor loadDeleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken);
+    IExecutor<ResAccountInfo> loadDeleteNotificationTokenByAccountDeviceApi(ReqDeviceToken reqDeviceToken);
 
-    public IExecutor loadSubscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken);
+    IExecutor<ResAccountInfo> loadSubscribeStateNotificationByAccountDeviceApi(ReqSubscibeToken reqDeviceToken);
 
-    public IExecutor loadGetNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget);
+    IExecutor<ResCommon> loadGetNotificationBadgeByAccountDeviceApi(ReqNotificationTarget reqNotificationTarget);
 
 }
