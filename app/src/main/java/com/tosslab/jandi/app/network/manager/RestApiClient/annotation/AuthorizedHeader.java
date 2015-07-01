@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.annotation;
+package com.tosslab.jandi.app.network.manager.RestApiClient.annotation;
 
 
 import java.lang.annotation.ElementType;

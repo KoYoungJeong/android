@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.apiloader;
+package com.tosslab.jandi.app.network.manager.ApiLoader;
 
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiLoader;
 import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoader;
@@ -20,9 +20,9 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiLoader;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiLoader;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiLoader;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiLoader;
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedAuthRestApiClient;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedAuthRestApiClient;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;

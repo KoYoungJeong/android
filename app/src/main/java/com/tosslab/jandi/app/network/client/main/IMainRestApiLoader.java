@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.main;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;

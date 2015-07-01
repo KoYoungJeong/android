@@ -1,9 +1,9 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor;
+package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor;
 
-import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor.AuthorizeInterceptor;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor.Interceptor;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor.LoggerInterceptor;
+
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.interceptor.AuthorizeInterceptor;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.interceptor.Interceptor;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +25,6 @@ public class RequestInterceptor implements RestAdapterDecor {
         if (authorizedHeader != null && authorizedHeader.required()) {
             interceptors.add(new AuthorizeInterceptor());
         }
-
-        interceptors.add(new LoggerInterceptor());
-
     }
 
     @Override

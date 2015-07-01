@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor;
+package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.decor;
 
 import retrofit.RestAdapter;
 

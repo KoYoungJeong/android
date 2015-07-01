@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.account.emails;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;

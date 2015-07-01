@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.apiexecutor;
+package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiAuth;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -32,7 +32,8 @@ public class AwaitablePoolTest {
 
     }
 
-    @Test public void textadasd() throws Exception {
+    @Test
+    public void textadasd() throws Exception {
         IAccountDeviceApiAuth iAccountDeviceApiAuth = RequestApiManager.getInstance();
     }
 
