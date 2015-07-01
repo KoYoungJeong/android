@@ -1,9 +1,9 @@
 package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.decor;
 
 
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor.AuthorizeInterceptor;
 import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor.Interceptor;
-import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 
 import java.util.ArrayList;
 import java.util.List;

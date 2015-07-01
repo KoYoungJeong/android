@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiAuth;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.manager.apiexecutor.AwaitablePool;
 
 import org.junit.Before;
 import org.junit.Test;

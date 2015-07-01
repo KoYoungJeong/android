@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
-import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -25,7 +25,7 @@ public interface IGroupMessageApiLoader {
     IExecutor<ResCommon> loadSendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId);
 
     IExecutor<ResCommon> loadModifyPrivateGroupMessageByGroupMessageApi(ReqModifyMessage message,
-                                                             int groupId, int messageId);
+                                                                        int groupId, int messageId);
 
     IExecutor<ResCommon> loadDeletePrivateGroupMessageByGroupMessageApi(int teamId, int groupId, int messageId);
 

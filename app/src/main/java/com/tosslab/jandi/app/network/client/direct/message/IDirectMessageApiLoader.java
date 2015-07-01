@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
-import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -25,7 +25,7 @@ public interface IDirectMessageApiLoader {
     IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId);
 
     IExecutor<ResCommon> loadModifyDirectMessageByDirectMessageApi(ReqModifyMessage message,
-                                                        int userId, int messageId);
+                                                                   int userId, int messageId);
 
     IExecutor<ResCommon> loadDeleteDirectMessageByDirectMessageApi(int teamId, int userId, int messageId);
 

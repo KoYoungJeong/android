@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory;//package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory;
+//package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory;
 //
 //import com.tosslab.jandi.app.JandiConstantsForFlavors;
 //import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;

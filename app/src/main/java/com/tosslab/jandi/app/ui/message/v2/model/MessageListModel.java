@@ -123,7 +123,7 @@ public class MessageListModel {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(int messageId, int messageType) throws JandiNetworkException {
+    public void deleteSticker(int messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 

@@ -339,12 +339,13 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                 getFileDetailFailed(getString(R.string.jandi_unshared_message));
             } else {
                 getFileDetailFailed(getString(R.string.err_file_detail));
-
+                e.printStackTrace();
             }
             finishOnMainThread();
         } catch (Exception e) {
             getFileDetailFailed(getString(R.string.err_file_detail));
             finishOnMainThread();
+            e.printStackTrace();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }

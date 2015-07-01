@@ -88,7 +88,8 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     private static final RequestApiManager requestApiManager = new RequestApiManager();
 
-    private RequestApiManager() {}
+    private RequestApiManager() {
+    }
 
     public static final RequestApiManager getInstance() {
         return requestApiManager;
@@ -394,7 +395,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     @Override
     public ResMessages getGroupMessagesUpdatedForMarkerByGroupMessageApi(int teamId, int groupId,
-                                                                        int currentLinkId) throws RetrofitError {
+                                                                         int currentLinkId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance()
                 .loadGetGroupMessagesUpdatedForMarkerByGroupMessageApi(teamId, groupId, currentLinkId));
     }
@@ -524,4 +525,13 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         return requestApiExecute(RestApiLoader.getInstance().loadGetTeamInfoByTeamApi(teamId));
     }
 
+    @Override
+    public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteStickerCommentByStickerApi(commentId, teamId));
+    }
+
+    @Override
+    public ResCommon deleteStickerByStickerApi(int messageId, int teamId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadDeleteStickerByStickerApi(messageId, teamId));
+    }
 }

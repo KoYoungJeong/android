@@ -82,7 +82,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
-    JacksonConvertedSimpleRestApiClient SimpleRestApiClient = new JacksonConvertedSimpleRestApiClient();
+    JacksonConvertedSimpleRestApiClient simpleRestApiClient = new JacksonConvertedSimpleRestApiClient();
 
     private RestApiLoader() {
     }
@@ -433,15 +433,13 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String
-            query,
+    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String query,
                                                                                       int page, int perPage, int entityId) {
         return () -> authRestApiClient.searchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId);
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String
-            query,
+    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String query,
                                                                                       int page, int perPage, int writerId) {
         return () -> authRestApiClient.searchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId);
     }
@@ -519,38 +517,47 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResCommon> loadResetPasswordByAccountPasswordApi(ReqAccountEmail
                                                                               reqAccountEmail) {
-        return () -> SimpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
+        return () -> simpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
     }
 
     @Override
     public IExecutor<ResConfig> loadGetConfigByMainRestApi() {
-        return () -> SimpleRestApiClient.getConfigByMainRest();
+        return () -> simpleRestApiClient.getConfigByMainRest();
     }
 
     @Override
     public IExecutor<ResMyTeam> loadGetTeamIdByMainRestApi(String userEmail) {
-        return () -> SimpleRestApiClient.getTeamIdByMainRest(userEmail);
+        return () -> simpleRestApiClient.getTeamIdByMainRest(userEmail);
     }
 
     @Override
     public IExecutor<ResAccessToken> loadGetAccessTokenByMainRestApi(ReqAccessToken login) {
-        return () -> SimpleRestApiClient.getAccessTokenByMainRest(login);
+        return () -> simpleRestApiClient.getAccessTokenByMainRest(login);
     }
 
     @Override
     public IExecutor<ResCommon> loadSignUpAccountByMainRestApi(ReqSignUpInfo signUpInfo) {
-        return () -> SimpleRestApiClient.signUpAccountByMainRest(signUpInfo);
+        return () -> simpleRestApiClient.signUpAccountByMainRest(signUpInfo);
     }
 
     @Override
     public IExecutor<ResAccountActivate> loadActivateAccountByMainRestApi(ReqAccountActivate
                                                                                   reqAccountActivate) {
-        return () -> SimpleRestApiClient.activateAccountByMainRest(reqAccountActivate);
+        return () -> simpleRestApiClient.activateAccountByMainRest(reqAccountActivate);
     }
 
     @Override
     public IExecutor<ResCommon> loadAccountVerificationByMainRestApi(ReqAccountVerification reqAccountVerification) {
-        return () -> SimpleRestApiClient.accountVerificationByMainRest(reqAccountVerification);
+        return () -> simpleRestApiClient.accountVerificationByMainRest(reqAccountVerification);
     }
 
+    @Override
+    public IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(int commentId, int teamId) {
+        return () -> authRestApiClient.deleteStickerCommentByStickerApi(commentId, teamId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loadDeleteStickerByStickerApi(int messageId, int teamId) {
+        return () -> authRestApiClient.deleteStickerByStickerApi(messageId, teamId);
+    }
 }
