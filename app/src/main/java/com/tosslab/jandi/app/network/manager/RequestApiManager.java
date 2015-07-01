@@ -88,8 +88,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
 
     private static final RequestApiManager requestApiManager = new RequestApiManager();
 
-    private RequestApiManager() {
-    }
+    private RequestApiManager() {}
 
     public static final RequestApiManager getInstance() {
         return requestApiManager;
