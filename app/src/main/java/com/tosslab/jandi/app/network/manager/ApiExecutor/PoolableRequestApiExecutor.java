@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.ApiExecutor;
+package com.tosslab.jandi.app.network.manager.apiexecutor;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
