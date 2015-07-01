@@ -407,8 +407,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        final int FAVORITE_MENU_ITEM = 0;
-
         menu.clear();
 
         if (isFromSearch) {
@@ -418,14 +416,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
-        MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
-        if (isFavorite) {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
-            item.setTitle(R.string.jandi_unstarred);
-        } else {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
-            item.setTitle(R.string.jandi_starred);
-        }
+        MenuItem starredItem;
 
         // DirectMessage의 경우 확장 메뉴가 없음.
         if (!messageListModel.isDirectMessage(entityType)) {
@@ -444,14 +435,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         } else {
             inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
+        }
 
-            FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-            if (entityById != null) {
-                if (!TextUtils.equals(entityById.getUser().status, "enabled")) {
-                    menu.removeItem(item.getItemId());
-                }
+        starredItem = menu.findItem(R.id.action_entity_starred);
+
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        if (entity != null && entity.isUser()) {
+            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
+                menu.removeItem(starredItem.getItemId());
             }
         }
+
+        if (starredItem != null) {
+            if (isFavorite) {
+                starredItem.setTitle(R.string.jandi_unstarred);
+            } else {
+                starredItem.setTitle(R.string.jandi_starred);
+            }
+        }
+
     }
 
     @Override

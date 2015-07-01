@@ -1,34 +1,24 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.JandiEntityClient;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
@@ -46,29 +36,23 @@ import org.androidannotations.annotations.UiThread;
 import java.util.Collections;
 import java.util.List;
 
-import rx.Observable;
-
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */
 @EBean
 class InviteCommand implements MenuCommand {
 
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+    @SystemService
+    ClipboardManager clipboardManager;
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
     private AppCompatActivity activity;
     private JandiEntityClient mJandiEntityClient;
     private ChattingInfomations chattingInfomations;
     private EntityManager entityManager;
-
     private ProgressWheel progressWheel;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
-    @SystemService
-    ClipboardManager clipboardManager;
-
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
 
     void initData(AppCompatActivity activity, JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations) {
         this.activity = activity;

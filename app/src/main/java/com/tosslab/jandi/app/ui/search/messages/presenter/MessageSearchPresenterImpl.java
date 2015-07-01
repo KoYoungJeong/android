@@ -41,6 +41,12 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     }
 
     @Override
+    public void onInitEntityId(int entityId) {
+        String entityName = messageSearchModel.getEntityName(entityId);
+        onSelectEntity(entityId, entityName);
+    }
+
+    @Override
     public void setView(View view) {
         this.view = view;
     }

@@ -57,13 +57,17 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
 
             boolean isLastLinkId = false;
 
-            if (newMessage.records != null && newMessage.records.size() > 0) {
-                isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
+            if (newMessage.records != null) {
+                if (newMessage.records.size() > 0) {
+                    isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
 
-                messageListPresenter.addAndMove(newMessage.records);
+                    messageListPresenter.addAndMove(newMessage.records);
 
-                int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
-                messageState.setLastUpdateLinkId(lastLinkId);
+                    int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
+                    messageState.setLastUpdateLinkId(lastLinkId);
+                } else {
+                    isLastLinkId = true;
+                }
             }
 
             if (!isLastLinkId) {

@@ -123,6 +123,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     private File photoFileByCamera;
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
+    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
 
     @AfterInject
     void init() {
@@ -161,7 +162,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
-        searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id));
+        searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
+            moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id);
+            if (onSearchItemSelect != null) {
+                onSearchItemSelect.onSearchItemSelect();
+            }
+        });
 
         resetFilterLayoutPosition();
 
@@ -726,6 +732,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             }
         });
+    }
+
+    @Override
+    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+        this.onSearchItemSelect = onSearchItemSelect;
     }
 
     private void setHeaderImageViewImage(ViewGroup parentView, int imageResourceId) {

@@ -92,4 +92,8 @@ public class MessageSearchModel {
 
         return searchResults;
     }
+
+    public String getEntityName(int entityId) {
+        return EntityManager.getInstance(context).getEntityNameById(entityId);
+    }
 }
