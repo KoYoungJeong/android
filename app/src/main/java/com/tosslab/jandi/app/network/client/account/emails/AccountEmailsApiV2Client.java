@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.account.emails;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;

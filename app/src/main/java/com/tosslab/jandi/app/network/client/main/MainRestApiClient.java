@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.main;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountVerification;
