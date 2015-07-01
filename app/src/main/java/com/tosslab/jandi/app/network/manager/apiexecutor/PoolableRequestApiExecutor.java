@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.network.manager.apiexecutor;
 
+import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -98,7 +99,7 @@ public class PoolableRequestApiExecutor {
     //Todo 네트워크 상태를 체크하는 공용 클래스 생성 필요 - 중복 사용이 예상되는 메서드
     public boolean isActiveNetwork() {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) JandiApplication.getContext().
-                getSystemService(JandiApplication.getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+                getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
