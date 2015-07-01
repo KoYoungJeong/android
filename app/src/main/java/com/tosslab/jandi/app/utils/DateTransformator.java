@@ -15,10 +15,6 @@ public class DateTransformator {
     public static final String FORMAT_DEFAULT = "MM/dd/yyyy, hh:mm a";
     public static final String FORMAT_YYYYMMDD_HHMM_A = "yyyy/MM/dd hh:mm a";
 
-//    public static String getTimeDifference(Date date) {
-//        return getTimeString(date, FORMAT_DEFAULT);
-//    }
-
     public static String getTimeString(Date date) {
         return getTimeString(date, FORMAT_DEFAULT);
     }
@@ -29,7 +25,6 @@ public class DateTransformator {
 
     public static String getTimeStringFromISO(String date, String format) {
         try {
-//            Date formatDate = ISO_DATE_FORMAT.parse(date);
             ISO8601DateFormat isoFormat = new ISO8601DateFormat();
             Date formatDate = isoFormat.parse(date);
             date = getTimeString(formatDate, format);
