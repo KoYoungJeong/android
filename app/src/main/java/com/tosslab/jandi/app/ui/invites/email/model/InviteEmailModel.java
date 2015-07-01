@@ -6,17 +6,19 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.utils.LanguageUtil;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -32,11 +34,12 @@ public class InviteEmailModel {
         return !FormatConverter.isInvalidEmailString(text);
     }
 
-    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws JandiNetworkException {
+    public List<ResInvitationMembers> inviteMembers(List<String> invites) throws RetrofitError {
 
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
 
-        return RequestManager.newInstance(context, new InviteEmailRequest(context, teamId, invites)).request();
+        return RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context.getApplicationContext())));
+
     }
 
     public boolean isInvitedEmail(String emailText) {

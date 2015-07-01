@@ -58,15 +58,16 @@ public class EntityManager {
         }
     }
 
-    synchronized public static EntityManager getInstance(Context context) {
+    public static synchronized EntityManager getInstance(Context context) {
         if (entityManager == null) {
             entityManager = new EntityManager(context);
         }
-
         return entityManager;
     }
 
     void init(ResLeftSideMenu resLeftSideMenu) {
+
+        LogUtil.d("EntityManger.init");
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
         mGroups = new HashMap<Integer, FormattedEntity>();
@@ -151,8 +152,9 @@ public class EntityManager {
         return entity;
     }
 
-    private void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
+    private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
+        LogUtil.d("EntityManger.arrangeEntities");
         List<Integer> starredEntities = (resLeftSideMenu.user.u_starredEntities != null)
                 ? resLeftSideMenu.user.u_starredEntities
                 : new ArrayList<Integer>();

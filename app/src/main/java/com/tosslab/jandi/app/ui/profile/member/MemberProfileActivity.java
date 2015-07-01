@@ -19,7 +19,7 @@ import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -45,6 +44,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
@@ -126,7 +126,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
             memberProfileView.getProfileFailed();
         } catch (Exception e) {
@@ -247,7 +247,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileView.updateProfileSucceed();
             trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("get profile failed", e);
             memberProfileView.updateProfileFailed();
         } finally {
@@ -262,7 +263,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileName(new ReqProfileName(name));
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateNameColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             memberProfileView.updateProfileFailed();
         } finally {
@@ -280,7 +281,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileEmail(email);
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateEmailColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             memberProfileView.updateProfileFailed();
         }
     }
@@ -292,13 +293,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         memberProfileView.showProgressWheel();
 
         try {
-            ResLeftSideMenu entitiesInfo = JandiEntityClient_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
+            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
             JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
             EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 

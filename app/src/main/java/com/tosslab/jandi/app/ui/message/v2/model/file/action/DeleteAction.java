@@ -1,18 +1,18 @@
 package com.tosslab.jandi.app.ui.message.v2.model.file.action;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 20..
@@ -39,9 +39,10 @@ public class DeleteAction implements FileAction {
     void deleteFile(int fileId) {
         showProgressWheel();
         try {
-            FileDetailModel_.getInstance_(context).deleteFile(fileId);
+
+//            FileDetailModel_.getInstance_(context).deleteFile(fileId);
 //            deleteFileDone(true);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
 //            deleteFileDone(false);
         } catch (Exception e) {
 //            deleteFileDone(false);

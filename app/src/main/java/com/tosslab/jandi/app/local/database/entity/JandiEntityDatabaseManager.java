@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -58,7 +59,7 @@ public class JandiEntityDatabaseManager {
     }
 
     public void upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-
+        LogUtil.d("JandiEntityDatabaseManager.upsertLeftSideMenu");
         SQLiteDatabase database = getWriteableDatabase();
 
 
@@ -347,6 +348,7 @@ public class JandiEntityDatabaseManager {
         }
     }
 
+    //FIXME
     public ResLeftSideMenu getEntityInfoAtWhole(int teamId) {
         SQLiteDatabase database = getReadableDatabase();
 

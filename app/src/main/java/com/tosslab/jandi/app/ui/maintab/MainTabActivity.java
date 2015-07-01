@@ -1,24 +1,18 @@
 package com.tosslab.jandi.app.ui.maintab;
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
@@ -26,25 +20,21 @@ import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -56,12 +46,12 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -71,38 +61,33 @@ import rx.Observable;
 public class MainTabActivity extends BaseAnalyticsActivity {
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
-
+    EntityClientManager mEntityClientManager;
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
+    @SystemService
+    ClipboardManager clipboardManager;
+    @Bean
+    InvitationDialogExecutor invitationDialogExecutor;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
     private MainTabPagerAdapter mMainTabPagerAdapter;
     private ViewPager mViewPager;
-
     private boolean isFirst = true;    // poor implementation
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
-    @SystemService
-    ClipboardManager clipboardManager;
-
-    @Bean
-    InvitationDialogExecutor invitationDialogExecutor;
-
     private String invitationUrl;
     private String teamName;
 
     @AfterViews
     void initView() {
+        LogUtil.d("시작은 여기");
         mContext = getApplicationContext();
-        mEntityManager = EntityManager.getInstance(MainTabActivity.this);
+        mEntityManager = EntityManager.getInstance(mContext);
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
         mProgressWheel.init();
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(mContext).getSelectedTeamInfo();
 
         setupActionBar(selectedTeamInfo.getName());
 
@@ -190,6 +175,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Override
     public void onResume() {
         super.onResume();
+        LogUtil.d("MainTabAcitivity.onResume");
+
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
         getEntities();
@@ -222,27 +209,30 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     @Background
     public void getEntitiesInBackground() {
         try {
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MainTabActivity.this).upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             BadgeUtils.setBadge(MainTabActivity.this, totalUnreadCount);
             JandiPreference.setBadgeCount(MainTabActivity.this, totalUnreadCount);
-            EntityManager.getInstance(MainTabActivity.this).refreshEntity(resLeftSideMenu);
+            mEntityManager.refreshEntity(resLeftSideMenu);
             getEntitiesSucceed(resLeftSideMenu);
-        } catch (JandiNetworkException e) {
-            LogUtil.e(e.getErrorInfo() + "get entity failed", e);
-            if (e.httpStatusCode == HttpStatus.UNAUTHORIZED.value()) {
-                getEntitiesFailed(getString(R.string.err_expired_session));
-                stopJandiServiceInMainThread();
-            } else if (e.httpStatusCode == HttpStatus.SERVICE_UNAVAILABLE.value()) {
-                EventBus.getDefault().post(new ServiceMaintenanceEvent());
-            } else {
-                getEntitiesFailed(getString(R.string.err_service_connection));
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+            if (e.getResponse() != null) {
+                if (e.getResponse().getStatus() == JandiConstants.NetworkError.UNAUTHORIZED) {
+                    getEntitiesFailed(getString(R.string.err_expired_session));
+                    stopJandiServiceInMainThread();
+                } else if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                    EventBus.getDefault().post(new ServiceMaintenanceEvent());
+                } else {
+                    getEntitiesFailed(getString(R.string.err_service_connection));
+                }
             }
         } catch (ResourceAccessException e) {
-            LogUtil.e("connect failed", e);
+            e.printStackTrace();
             getEntitiesFailed(getString(R.string.err_service_connection));
         } catch (Exception e) {
+            e.printStackTrace();
             getEntitiesFailed(getString(R.string.err_service_connection));
         }
     }
@@ -309,6 +299,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(MessagePushEvent event) {
+        LogUtil.d("MainTabAcitivity.MessagePushEventCall");
         if (!TextUtils.equals(event.getEntityType(), "user")) {
             getEntities();
         }

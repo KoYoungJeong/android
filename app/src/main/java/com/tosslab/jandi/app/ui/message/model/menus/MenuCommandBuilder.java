@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 
 /**
@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 public class MenuCommandBuilder {
 
     private AppCompatActivity activity;
-    private JandiEntityClient mJandiEntityClient;
+    private EntityClientManager mEntityClientManager;
     private ChattingInfomations chattingInfomations;
 
     public MenuCommandBuilder(AppCompatActivity activity) {
@@ -24,8 +24,8 @@ public class MenuCommandBuilder {
         return new MenuCommandBuilder(activity);
     }
 
-    public MenuCommandBuilder with(JandiEntityClient jandiEntityClient) {
-        this.mJandiEntityClient = jandiEntityClient;
+    public MenuCommandBuilder with(EntityClientManager entityClientManager) {
+        this.mEntityClientManager = entityClientManager;
         return this;
     }
 
@@ -41,14 +41,14 @@ public class MenuCommandBuilder {
                 return new HomeMenuCommand(activity);
             case R.id.action_entity_starred:
                 FavoriteTriggerCommand favoriteTriggerCommand = FavoriteTriggerCommand_.getInstance_(activity);
-                favoriteTriggerCommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                favoriteTriggerCommand.initData(activity, mEntityClientManager, chattingInfomations);
                 return favoriteTriggerCommand;
             case R.id.action_entity_move_file_list:
                 return new FileListCommand(activity, chattingInfomations);
             case R.id.action_entity_invite:
             case R.id.action_my_entity_invite:
                 InviteCommand invitecommand = InviteCommand_.getInstance_(activity);
-                invitecommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                invitecommand.initData(activity, mEntityClientManager, chattingInfomations);
                 return invitecommand;
             case R.id.action_my_entity_rename:
                 return new ModifyEntityCommand(activity, chattingInfomations);
@@ -57,7 +57,7 @@ public class MenuCommandBuilder {
             case R.id.action_entity_leave:
             case R.id.action_my_entity_leave:
                 LeaveEntityCommand leaveentitycommand = LeaveEntityCommand_.getInstance_(activity);
-                leaveentitycommand.initData(activity, mJandiEntityClient, chattingInfomations);
+                leaveentitycommand.initData(activity, mEntityClientManager, chattingInfomations);
                 return leaveentitycommand;
             case R.id.action_entity_members:
             case R.id.action_my_entity_members:

@@ -16,7 +16,6 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.ShareEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.ui.web.model.InternalWebModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -31,6 +30,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 24..
@@ -206,7 +206,8 @@ public class InternalWebActivity extends AppCompatActivity {
         try {
             internalWebModel.sendMessage(entityId, entityType, text);
             internalWebPresenter.showSuccessToast(getString(R.string.jandi_share_succeed, getString(R.string.jandi_message_hint)));
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             internalWebPresenter.showErrorToast(getString(R.string.err_network));
         } finally {
             internalWebPresenter.dismissProgressWheel();
