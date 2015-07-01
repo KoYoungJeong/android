@@ -1,10 +1,10 @@
-package com.tosslab.jandi.app.network.manager.restapiclient;
+package com.tosslab.jandi.app.network.manager.RestApiClient;
 
 import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiV2Client;
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
 import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RestAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;

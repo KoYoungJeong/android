@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient;
+package com.tosslab.jandi.app.network.manager.RestApiClient;
 
 import com.tosslab.jandi.app.network.client.account.devices.AccountDeviceApiV2Client;
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiAuth;
@@ -40,7 +40,7 @@ import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiV2Client;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
-import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.RestAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
@@ -471,15 +471,4 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(int teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getTeamInfo(teamId);
     }
-
-    @Override
-    public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteStickerComment(commentId, teamId);
-    }
-
-    @Override
-    public ResCommon deleteStickerByStickerApi(int messageId, int teamId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteSticker(messageId, teamId);
-    }
-
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.builder.interceptor;
+package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.interceptor;
 
 import com.tosslab.jandi.app.utils.TokenUtil;
 
