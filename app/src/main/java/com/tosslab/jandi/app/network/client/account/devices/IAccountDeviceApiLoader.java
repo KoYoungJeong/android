@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.account.devices;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;

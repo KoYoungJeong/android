@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.messages;
 
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;

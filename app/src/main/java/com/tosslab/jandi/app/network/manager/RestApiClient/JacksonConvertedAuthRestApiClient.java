@@ -40,7 +40,7 @@ import com.tosslab.jandi.app.network.client.sticker.IStickerApiAuth;
 import com.tosslab.jandi.app.network.client.sticker.StickerApiV2Client;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiAuth;
 import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
-import com.tosslab.jandi.app.network.manager.RestApiClient.restadapterfactory.builder.RestAdapterBuilder;
+import com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.builder.RestAdapterBuilder;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
