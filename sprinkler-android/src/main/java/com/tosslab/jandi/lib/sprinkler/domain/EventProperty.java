@@ -1,8 +1,20 @@
 package com.tosslab.jandi.lib.sprinkler.domain;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "event_property")
 public class EventProperty {
+    @DatabaseField(generatedId = true, readOnly = true)
+    private long id;
+
+    @DatabaseField
     private String propertyName;
+    @DatabaseField
     private String propertyValue;
+
+    @DatabaseField(foreign = true)
+    private TrackEvent trackEvent;
 
     public String getPropertyName() {
         return propertyName;
@@ -18,5 +30,21 @@ public class EventProperty {
 
     public void setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public TrackEvent getTrackEvent() {
+        return trackEvent;
+    }
+
+    public void setTrackEvent(TrackEvent trackEvent) {
+        this.trackEvent = trackEvent;
     }
 }

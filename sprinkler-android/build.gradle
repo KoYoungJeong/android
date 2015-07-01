@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'org.robolectric'     // Android-Test
+
 
 android {
     compileSdkVersion 21
@@ -16,6 +18,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -24,4 +31,19 @@ dependencies {
     }
 
     compile 'com.j256.ormlite:ormlite-android:4.+'
+    testCompile 'org.robolectric:robolectric:2.4'
+    testCompile 'com.jayway.awaitility:awaitility:1.6.+'
+    testCompile 'junit:junit:4.12'
+}
+
+
+robolectric {
+    // configure the set of classes for JUnit tests
+    include '**/*Test.class'
+
+    // configure max heap size of the test JVM
+    maxHeapSize = "2048m"
+
+    ignoreFailures true
+
 }
