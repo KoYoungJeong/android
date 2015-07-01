@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
