@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.converter;
+package com.tosslab.jandi.app.network.manager.RestApiClient.RestAdapterFactory.converter;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.JavaType;

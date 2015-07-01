@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.apiexecutor;
+package com.tosslab.jandi.app.network.manager.ApiExecutor;
 
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 

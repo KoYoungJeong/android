@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.manager.apiloader;
+package com.tosslab.jandi.app.network.manager.ApiLoader;
 
 import com.tosslab.jandi.app.network.client.account.devices.IAccountDeviceApiLoader;
 import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoader;
@@ -20,9 +20,9 @@ import com.tosslab.jandi.app.network.client.settings.IAccountProfileApiLoader;
 import com.tosslab.jandi.app.network.client.settings.IStarredEntityApiLoader;
 import com.tosslab.jandi.app.network.client.sticker.IStickerApiLoader;
 import com.tosslab.jandi.app.network.client.teams.ITeamApiLoader;
-import com.tosslab.jandi.app.network.manager.apiexecutor.IExecutor;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedAuthRestApiClient;
-import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
+import com.tosslab.jandi.app.network.manager.ApiExecutor.IExecutor;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedAuthRestApiClient;
+import com.tosslab.jandi.app.network.manager.RestApiClient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -82,7 +82,7 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
-    JacksonConvertedSimpleRestApiClient simpleRestApiClient = new JacksonConvertedSimpleRestApiClient();
+    JacksonConvertedSimpleRestApiClient SimpleRestApiClient = new JacksonConvertedSimpleRestApiClient();
 
     private RestApiLoader() {
     }
@@ -433,13 +433,15 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String query,
+    public IExecutor<ResMessageSearch> loadSearchMessagesByEntityIdByMessageSearchApi(int teamId, String
+            query,
                                                                                       int page, int perPage, int entityId) {
         return () -> authRestApiClient.searchMessagesByEntityIdByMessageSearchApi(teamId, query, page, perPage, entityId);
     }
 
     @Override
-    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String query,
+    public IExecutor<ResMessageSearch> loadSearchMessagesByWriterIdByMessageSearchApi(int teamId, String
+            query,
                                                                                       int page, int perPage, int writerId) {
         return () -> authRestApiClient.searchMessagesByWriterIdByMessageSearchApi(teamId, query, page, perPage, writerId);
     }
@@ -517,47 +519,38 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResCommon> loadResetPasswordByAccountPasswordApi(ReqAccountEmail
                                                                               reqAccountEmail) {
-        return () -> simpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
+        return () -> SimpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
     }
 
     @Override
     public IExecutor<ResConfig> loadGetConfigByMainRestApi() {
-        return () -> simpleRestApiClient.getConfigByMainRest();
+        return () -> SimpleRestApiClient.getConfigByMainRest();
     }
 
     @Override
     public IExecutor<ResMyTeam> loadGetTeamIdByMainRestApi(String userEmail) {
-        return () -> simpleRestApiClient.getTeamIdByMainRest(userEmail);
+        return () -> SimpleRestApiClient.getTeamIdByMainRest(userEmail);
     }
 
     @Override
     public IExecutor<ResAccessToken> loadGetAccessTokenByMainRestApi(ReqAccessToken login) {
-        return () -> simpleRestApiClient.getAccessTokenByMainRest(login);
+        return () -> SimpleRestApiClient.getAccessTokenByMainRest(login);
     }
 
     @Override
     public IExecutor<ResCommon> loadSignUpAccountByMainRestApi(ReqSignUpInfo signUpInfo) {
-        return () -> simpleRestApiClient.signUpAccountByMainRest(signUpInfo);
+        return () -> SimpleRestApiClient.signUpAccountByMainRest(signUpInfo);
     }
 
     @Override
     public IExecutor<ResAccountActivate> loadActivateAccountByMainRestApi(ReqAccountActivate
                                                                                   reqAccountActivate) {
-        return () -> simpleRestApiClient.activateAccountByMainRest(reqAccountActivate);
+        return () -> SimpleRestApiClient.activateAccountByMainRest(reqAccountActivate);
     }
 
     @Override
     public IExecutor<ResCommon> loadAccountVerificationByMainRestApi(ReqAccountVerification reqAccountVerification) {
-        return () -> simpleRestApiClient.accountVerificationByMainRest(reqAccountVerification);
+        return () -> SimpleRestApiClient.accountVerificationByMainRest(reqAccountVerification);
     }
 
-    @Override
-    public IExecutor<ResCommon> loadDeleteStickerCommentByStickerApi(int commentId, int teamId) {
-        return () -> authRestApiClient.deleteStickerCommentByStickerApi(commentId, teamId);
-    }
-
-    @Override
-    public IExecutor<ResCommon> loadDeleteStickerByStickerApi(int messageId, int teamId) {
-        return () -> authRestApiClient.deleteStickerByStickerApi(messageId, teamId);
-    }
 }
