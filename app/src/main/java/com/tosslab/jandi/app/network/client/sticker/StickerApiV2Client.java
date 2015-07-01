@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.sticker;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.RestApiClient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
