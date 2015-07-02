@@ -150,6 +150,8 @@ public class JandiSocketServiceModel {
             } else {
                 postEvent(socketMessageEvent);
             }
+
+            postEvent(socketMessageEvent);
         } catch (IOException e) {
             e.printStackTrace();
         }
