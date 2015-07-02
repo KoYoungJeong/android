@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
@@ -53,6 +53,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
 
         if (!jandiInterfaceModel.hasTeamInfo(teamId)) {
             moveIntroActivity();
+            return;
         }
 
         if (jandiInterfaceModel.setupSelectedTeam(teamId)) {

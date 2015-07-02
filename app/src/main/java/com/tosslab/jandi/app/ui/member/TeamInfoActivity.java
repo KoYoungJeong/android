@@ -1,14 +1,10 @@
-package com.tosslab.jandi.app.ui.member; 
+package com.tosslab.jandi.app.ui.member;
 
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -19,33 +15,26 @@ import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.member.model.TeamInfoModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 
 /**
  * Created by justinygchoi on 2014. 9. 18..
@@ -61,7 +50,7 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     TeamMemberListAdapter teamUserListAdapter;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
 
     @Bean
     TeamInfoModel teamInfoModel;

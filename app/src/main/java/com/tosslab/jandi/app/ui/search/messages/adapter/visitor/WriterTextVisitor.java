@@ -6,7 +6,7 @@ import android.text.Spanned;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.views.spannable.NameSpannable;
 

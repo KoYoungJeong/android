@@ -15,17 +15,16 @@ import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -40,16 +39,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import retrofit.RetrofitError;
+
 @EBean
 public class FileListModel {
 
     @RootContext
     Context context;
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws JandiNetworkException {
-        RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(context, FileSearchRequest.create(context, reqSearchFile));
-        ResSearchFile resSearchFile = requestManager.request();
-
+    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile) throws RetrofitError {
+        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
         return resSearchFile;
     }
 
@@ -101,7 +100,7 @@ public class FileListModel {
 
     public boolean isOverSize(String realFilePath) {
         File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > MessageListModel.MAX_FILE_SIZE;
+        return uploadFile.exists() && uploadFile.length() > FilePickerModel.MAX_FILE_SIZE;
     }
 
     public boolean isDefaultSearchQuery(ReqSearchFile searchFile) {
@@ -121,7 +120,7 @@ public class FileListModel {
 
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -129,7 +128,7 @@ public class FileListModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)

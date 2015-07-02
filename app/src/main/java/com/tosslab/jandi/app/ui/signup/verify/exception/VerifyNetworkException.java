@@ -7,9 +7,10 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by tonyjs on 15. 6. 1..
@@ -26,13 +27,13 @@ public class VerifyNetworkException extends Exception {
     public String errReason;
     private int tryCount = NONE_TRY_COUNT;
 
-    public VerifyNetworkException(HttpStatusCodeException e) {
-        this.httpStatusCode = e.getStatusCode().value();
-        this.httpStatusMessage = e.getStatusText();
+    public VerifyNetworkException(RetrofitError e) {
+        this.httpStatusCode = e.getResponse().getStatus();
+        this.httpStatusMessage = e.getMessage();
 
         ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
         try {
-            String responseBodyAsString = e.getResponseBodyAsString();
+            String responseBodyAsString = e.getResponse().getBody().toString();
             LogUtil.e(responseBodyAsString);
             ExceptionData data = objectMapper.readValue(responseBodyAsString,
                     new TypeReference<ExceptionData>() {

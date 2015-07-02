@@ -8,13 +8,13 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -27,6 +27,8 @@ import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.TextChange;
 import org.json.JSONException;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -118,9 +120,8 @@ public class TopicCreateActivity extends AppCompatActivity {
 
             topicCreatePresenter.createTopicSuccess(teamId, topic.id, topicTitle, publicSelected);
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e(e.getErrorInfo(), e);
-            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+        } catch (RetrofitError e) {
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_create);

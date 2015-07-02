@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.DateComparatorUtil;
@@ -31,8 +30,7 @@ public class BodyViewFactory {
             case PureStickerComment:
                 return new PureStickerCommentViewHolder();
             case FileStickerComment:
-            return new FileStickerCommentViewHolder();
-
+                return new FileStickerCommentViewHolder();
             case PureMessage:
                 return new PureMessageViewHolder();
             case Sticker:
@@ -49,31 +47,11 @@ public class BodyViewFactory {
                 return new DummyPureViewHolder();
             case Event:
                 return new EventViewHolder();
+            case PureLinkPreviewMessage:
+                return new PureLinkPreviewViewHolder();
             case Message:
             default:
                 return new MessageViewHolder();
-        }
-    }
-
-    public static int getViewHolderId(int viewType) {
-        BodyViewHolder.Type type = BodyViewHolder.Type.values()[viewType];
-
-        switch (type) {
-            case File:
-                return R.id.message_file;
-            case Image:
-                return R.id.message_img;
-            case PureComment:
-                return R.id.message_cmt_without_file;
-            case FileComment:
-                return R.id.message_cmt_with_file;
-            case Dummy:
-                return R.id.message_dummy;
-            case Event:
-                return R.id.message_event;
-            case Message:
-            default:
-                return R.id.message_msg;
         }
     }
 
@@ -97,7 +75,13 @@ public class BodyViewFactory {
                 if (message instanceof DummyMessageLink) {
                     return BodyViewHolder.Type.DummyPure;
                 } else {
-                    return currentMessage instanceof ResMessages.TextMessage ? BodyViewHolder.Type.PureMessage : BodyViewHolder.Type.PureSticker;
+                    if (!(currentMessage instanceof ResMessages.TextMessage)) {
+                        return BodyViewHolder.Type.PureSticker;
+                    }
+
+                    boolean hasLinkPreviewBoth = message.hasLinkPreview() && beforeMessage.hasLinkPreview();
+
+                    return hasLinkPreviewBoth ? BodyViewHolder.Type.PureLinkPreviewMessage : BodyViewHolder.Type.PureMessage;
                 }
             } else {
                 if (message instanceof DummyMessageLink) {

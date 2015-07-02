@@ -151,6 +151,15 @@
     <string name="err_messages_delete">"메시지를 삭제하지 못했습니다. 다시 시도해 주세요"</string>
     <string name="err_file_upload_failed">"파일을 업로드하지 못했습니다. 다시 시도해 주세요"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"공지로 등록"</string>
+    <string name="jandi_announcement_create_question">"등록되어 있는 공지를 지금 이 메시지로 변경합니다. 계속할까요?"</string>
+    <string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
+    <string name="jandi_announcement_created">"%1$s님이 %2$s님의 메시지를 공지사항으로 게시했습니다."</string>
+    <string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
+    <string name="jandi_announcement_delete">"삭제"</string>
+    <string name="jandi_announcement_minimize">"최소화"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"이름 수정"</string>
     <string name="menu_entity_delete">"삭제"</string>
@@ -183,7 +192,7 @@
     <string name="jandi_title_activity_file_explorer">"파일 탐색기"</string>
     <string name="title_file_detail">"파일 상세 정보"</string>
     <string name="comment">"댓글"</string>
-    <string name="jandi_file_size_large_error">"현재 100MB 이상의 파일은 업로드 할 수 없습니다."</string>
+    <string name="jandi_file_size_large_error">"현재 300MB 이상의 파일은 업로드 할 수 없습니다."</string>
 
 
     <!-- Share & invite -->
@@ -401,4 +410,9 @@
     <string name="jandi_canceled">"취소됨"</string>
     <string name="jandi_cannot_find_messages">"검색 결과가 없습니다: "</string>
     <string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
+    <string name="jandi_decide_choose">"사진 선택"</string>
+    <string name="jandI_select_gallery">"사진 선택"</string>
+    <string name="jandi_view_all">"전체보기"</string>
 </resources>

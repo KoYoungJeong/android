@@ -23,7 +23,7 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;

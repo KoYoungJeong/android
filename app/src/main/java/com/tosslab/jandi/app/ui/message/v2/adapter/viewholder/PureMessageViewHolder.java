@@ -10,8 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
@@ -23,10 +24,13 @@ import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 public class PureMessageViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
+    private LinkPreviewViewModel linkPreviewViewModel;
 
     @Override
     public void initView(View rootView) {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
+        linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
+        linkPreviewViewModel.initView(rootView);
     }
 
     @Override
@@ -71,6 +75,9 @@ public class PureMessageViewHolder implements BodyViewHolder {
         }
 
         tvMessage.setText(builder);
+
+        linkPreviewViewModel.bindData(link);
+
     }
 
     @Override

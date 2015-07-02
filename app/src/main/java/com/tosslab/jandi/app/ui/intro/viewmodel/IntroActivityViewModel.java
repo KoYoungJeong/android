@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.ui.intro.viewmodel;
 
 import android.app.Activity;
+import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
@@ -77,7 +79,7 @@ public class IntroActivityViewModel {
     @UiThread
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        JandiSocketService.stopSocketServiceIfRunning(activity);
+        JandiSocketService.stopService(activity);
 
         IntroMainActivity_.intent(activity).start();
         activity.finish();

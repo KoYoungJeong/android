@@ -10,7 +10,9 @@
         android:icon="@drawable/jandi_ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/JandiTheme"
-        tools:replace="android:icon">
+        tools:replace="android:icon"
+        android:allowClearUserData="true"
+        android:largeHeap="true" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/origin_play_service_version"
@@ -135,6 +137,16 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.file.upload.preview.FileUploadPreviewActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.album.ImageAlbumActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.search.main.view.SearchActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_topic_paricipants"
@@ -227,7 +239,14 @@
         </activity>
 
         <service android:name=".services.socket.JandiSocketService"/>
-
+        <receiver
+            android:name=".services.socket.monitor.SocketServiceStarter"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.tosslab.jandi.app.services.SOCKET_SERVICE_RESTART"/>
+            </intent-filter>
+        </receiver>
         <!-- Google Play Campaign Measurement -->
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService"/>
         <receiver
@@ -238,6 +257,7 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".services.BadgeHandleService"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="24a73214fd9000841e8d34390de55bdfd4150668" />

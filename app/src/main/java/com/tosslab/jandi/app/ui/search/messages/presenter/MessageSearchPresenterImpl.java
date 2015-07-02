@@ -6,7 +6,6 @@ import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -15,6 +14,8 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 10..
@@ -74,7 +75,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             } else {
                 view.setOnLoadingEnd();
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
@@ -97,7 +98,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             } else {
                 view.setOnLoadingEnd();
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
 
@@ -154,7 +155,7 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
         view.startMessageListActivity(currentTeamId, entityId, entityType, isStarred, linkId);
     }
 
-    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws JandiNetworkException {
+    private ResMessageSearch searchMessage(ReqMessageSearchQeury searchQeuryInfo) throws RetrofitError {
 
         return messageSearchModel.requestSearchQuery(searchQeuryInfo.getTeamId(), searchQeuryInfo.getQuery(), searchQeuryInfo.getPage(), ITEM_PER_PAGE, searchQeuryInfo.getEntityId(), searchQeuryInfo.getWriterId());
     }

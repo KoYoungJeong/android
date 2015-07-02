@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,8 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -71,7 +73,6 @@ import rx.Observable;
  */
 @EBean
 public class MessageListPresenter {
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
 
@@ -129,21 +130,16 @@ public class MessageListPresenter {
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
 
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
     private MessageListAdapter messageListAdapter;
-
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
     private EntityManager mEntityManager;
     private String invitationUrl;
     private String teamName;
@@ -272,6 +268,12 @@ public class MessageListPresenter {
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToMessageById(int id, int firstVisibleItemTop) {
+        int itemPosition = messageListAdapter.getItemPositionById(id);
+        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
     public int getFirstVisibleItemLinkId() {
         if (messageListAdapter.getCount() > 0) {
             int firstVisibleItemPosition = ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition();
@@ -386,13 +388,6 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
-        if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
-            uploadProgressDialog.dismiss();
-        }
-    }
-
-    @UiThread
     public void clearMessages() {
         messageListAdapter.clear();
 
@@ -445,6 +440,39 @@ public class MessageListPresenter {
             messageListAdapter.notifyDataSetChanged();
         }
 
+    }
+
+    @UiThread
+    public void updateMessage(ResMessages.OriginalMessage message) {
+        if (message == null) {
+            Log.e("INFO", "updateMessage is null");
+            return;
+        }
+
+        Log.i("INFO", "updateMessage - " + message.toString());
+
+        if (message instanceof ResMessages.TextMessage) {
+            ResMessages.LinkPreview linkPreview = ((ResMessages.TextMessage) message).linkPreview;
+            if (linkPreview != null && !linkPreview.isEmpty()) {
+                updateLinkPreviewMessage(message);
+            }
+        }
+    }
+
+    private void updateLinkPreviewMessage(ResMessages.OriginalMessage message) {
+        int messageId = message.id;
+        int index = messageListAdapter.indexByMessageId(messageId);
+        Log.i("INFO", "updateLinkPreviewMessage index = " + index);
+        if (index < 0) {
+            return;
+        }
+
+        ResMessages.Link link = getItem(index);
+        if (!(link.message instanceof ResMessages.TextMessage)) {
+            return;
+        }
+        link.message = message;
+        messageListAdapter.notifyDataSetChanged();
     }
 
     public void updateMessageIdAtSendingMessage(long localId, int messageId) {
@@ -509,7 +537,8 @@ public class MessageListPresenter {
     }
 
     private boolean isVisibleLastItem() {
-        return ((LinearLayoutManager) messageListView.getLayoutManager()).findFirstVisibleItemPosition() == messageListAdapter.getCount() - 1;
+        return ((LinearLayoutManager) messageListView.getLayoutManager())
+                .findFirstVisibleItemPosition() == messageListAdapter.getCount() - 1;
     }
 
     @UiThread
@@ -528,7 +557,11 @@ public class MessageListPresenter {
         FormattedEntity entityById = EntityManager.getInstance(activity).getEntityById(item.message.writerId);
         previewNameView.setText(entityById.getName());
 
-        String url = entityById.getUser().u_photoThumbnailUrl != null && !(TextUtils.isEmpty(entityById.getUser().u_photoThumbnailUrl.smallThumbnailUrl)) ? entityById.getUser().u_photoThumbnailUrl.smallThumbnailUrl : entityById.getUser().u_photoUrl;
+        ResLeftSideMenu.User user = entityById.getUser();
+        boolean hasSmallThumbnailUrl =
+                user.u_photoThumbnailUrl != null && !(TextUtils.isEmpty(user.u_photoThumbnailUrl.smallThumbnailUrl));
+        String url = hasSmallThumbnailUrl
+                ? user.u_photoThumbnailUrl.smallThumbnailUrl : user.u_photoUrl;
         Ion.with(previewProfileView)
                 .transform(new IonCircleTransform())
                 .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + url);
@@ -770,5 +803,4 @@ public class MessageListPresenter {
         vgStickerPreview.setVisibility(View.GONE);
 
     }
-
 }

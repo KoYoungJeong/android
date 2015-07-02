@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,6 +151,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return messageList.get(position);
     }
 
+    public void setItem(int position, ResMessages.Link link) {
+        messageList.set(position, link);
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -286,6 +291,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         for (int idx = 0; idx < messageList.size(); idx++) {
             ResMessages.Link link = messageList.get(idx);
             if (link.messageId == messageId) {
+                return idx;
+            }
+        }
+
+        return -1;
+    }
+
+    public int getItemPositionById(int id) {
+        for (int idx = 0; idx < messageList.size(); idx++) {
+            ResMessages.Link link = messageList.get(idx);
+            if (link.id == id) {
                 return idx;
             }
         }

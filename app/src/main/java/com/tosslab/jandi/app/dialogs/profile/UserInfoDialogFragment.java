@@ -30,11 +30,9 @@ import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
@@ -44,6 +42,7 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -56,7 +55,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     int entityId;
 
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
     private ImageView imgStarred;
 
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
@@ -325,13 +324,10 @@ public class UserInfoDialogFragment extends DialogFragment {
 
         try {
             if (entity.isStarred) {
-                RequestManager.newInstance(getActivity(), () ->
-                        jandiEntityClient.disableFavorite(entityId)).request();
+                entityClientManager.disableFavorite(entityId);
             } else {
-                RequestManager.newInstance(getActivity(), () ->
-                        jandiEntityClient.enableFavorite(entityId)).request();
+                entityClientManager.enableFavorite(entityId);
             }
-
 
             entity.isStarred = !entity.isStarred;
 
@@ -339,8 +335,7 @@ public class UserInfoDialogFragment extends DialogFragment {
 
             EventBus.getDefault().post(new RetrieveTopicListEvent());
 
-
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

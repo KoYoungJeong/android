@@ -2,18 +2,12 @@ package com.tosslab.jandi.app.network.client.messages.comments;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.client.messages.MessagesApiClient;
-import com.tosslab.jandi.app.network.client.messages.MessagesApiClient_;
-import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient;
-import com.tosslab.jandi.app.network.client.publictopic.messages.ChannelMessageApiClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,9 +16,10 @@ import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.core.Is.is;
@@ -34,31 +29,12 @@ import static org.junit.Assert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class CommentsApiClientTest {
 
-    private JandiRestClient jandiRestClient_;
-    private MessagesApiClient messagesApiClient;
-    private CommentsApiClient commentsApiClient;
     private ResLeftSideMenu sideMenu;
-    private ChannelMessageApiClient channelMessageApiClient;
-
 
     @Before
     public void setUp() throws Exception {
-
-
         BaseInitUtil.initData(Robolectric.application);
-
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        messagesApiClient = new MessagesApiClient_(Robolectric.application);
-        commentsApiClient = new CommentsApiClient_(Robolectric.application);
-        channelMessageApiClient = new ChannelMessageApiClient_(Robolectric.application);
-
-        jandiRestClient_.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        messagesApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        commentsApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        channelMessageApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-
         sideMenu = getSideMenu();
-
     }
 
     @After
@@ -68,7 +44,8 @@ public class CommentsApiClientTest {
 
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().
+                getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
 
         return infosForSideMenu;
     }
@@ -99,7 +76,8 @@ public class CommentsApiClientTest {
     }
 
     private ResMessages.FileMessage getMyFileMessage(ResLeftSideMenu.Channel defaultChannel) {
-        ResMessages publicTopicMessages = channelMessageApiClient.getPublicTopicMessages(sideMenu.team.id, defaultChannel.id, -1, 20);
+        ResMessages publicTopicMessages = RequestApiManager.getInstance().
+                getPublicTopicMessagesByChannelMessageApi(sideMenu.team.id, defaultChannel.id, -1, 20);
 
         ResMessages.FileMessage fileMessage = null;
         for (ResMessages.Link message : publicTopicMessages.records) {
@@ -140,9 +118,10 @@ public class CommentsApiClientTest {
         reqSendComment.teamId = sideMenu.team.id;
         reqSendComment.comment = "create_" + new Timestamp(System.currentTimeMillis());
         try {
-            ResCommon resCommon = commentsApiClient.sendMessageComment(reqSendComment, myFileMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            ResCommon resCommon = RequestApiManager.getInstance().
+                    sendMessageCommentByCommentsApi(reqSendComment, myFileMessage.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
     }
@@ -157,7 +136,8 @@ public class CommentsApiClientTest {
             return;
         }
 
-        ResFileDetail fileDetail = messagesApiClient.getFileDetail(sideMenu.team.id, myFileMessage.id);
+        ResFileDetail fileDetail = RequestApiManager.getInstance().
+                getFileDetailByMessagesApiAuth(sideMenu.team.id, myFileMessage.id);
 
         ResMessages.CommentMessage textMessage = getMyCommentMessage(fileDetail);
 
@@ -166,9 +146,10 @@ public class CommentsApiClientTest {
         reqSendComment.comment = "mod_" + new Timestamp(System.currentTimeMillis());
         ResCommon resCommon = null;
         try {
-            resCommon = commentsApiClient.modifyMessageComment(reqSendComment, textMessage.feedbackId, textMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            resCommon = RequestApiManager.getInstance().
+                    modifyMessageCommentByCommentsApi(reqSendComment, textMessage.feedbackId, textMessage.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -185,11 +166,13 @@ public class CommentsApiClientTest {
             return;
         }
 
-        ResFileDetail fileDetail = messagesApiClient.getFileDetail(sideMenu.team.id, myFileMessage.id);
+        ResFileDetail fileDetail = RequestApiManager.getInstance().
+                getFileDetailByMessagesApiAuth(sideMenu.team.id, myFileMessage.id);
 
         ResMessages.CommentMessage textMessage = getMyCommentMessage(fileDetail);
 
-        commentsApiClient.deleteMessageComment(sideMenu.team.id, textMessage.feedbackId, textMessage.id);
+        RequestApiManager.getInstance().
+                deleteMessageCommentByCommentsApi(sideMenu.team.id, textMessage.feedbackId, textMessage.id);
     }
 
 }

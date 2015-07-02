@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
@@ -25,8 +25,8 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -41,6 +41,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -57,12 +58,14 @@ public class MainChatListFragment extends Fragment {
 
     @AfterViews
     void initViews() {
+        LogUtil.d("MainChatListFragment");
         FAButtonUtil.setFAButtonController(((AbsListView) getView().findViewById(R.id.lv_main_chat_list)), getView().findViewById(R.id.btn_main_chat_fab));
     }
 
 
     @Override
     public void onResume() {
+        LogUtil.d("MainChatListFragment onResume");
         super.onResume();
         EventBus.getDefault().register(this);
         getChatList();
@@ -148,7 +151,7 @@ public class MainChatListFragment extends Fragment {
 
             EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

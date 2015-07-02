@@ -15,8 +15,6 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -30,6 +28,7 @@ import org.androidannotations.annotations.OptionsMenu;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 12..
@@ -82,9 +81,9 @@ public class EmailChooseActivity extends AppCompatActivity {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
             emailChoosePresenter.finishWithResultOK();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
-            LogUtil.e("Request Choose Email Fail : " + e.getErrorInfo(), e);
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -103,7 +102,7 @@ public class EmailChooseActivity extends AppCompatActivity {
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(accountInfo.getEmails());
             List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
             emailChoosePresenter.refreshEmails(accountEmails);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }
@@ -196,8 +195,8 @@ public class EmailChooseActivity extends AppCompatActivity {
             ResAccountInfo resAccountInfo = emailChooseModel.requestDeleteEmail(email);
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
-        } catch (JandiNetworkException e) {
-            LogUtil.e("Request Delete Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
         } finally {
             emailChoosePresenter.dismissProgressWheel();
@@ -212,9 +211,9 @@ public class EmailChooseActivity extends AppCompatActivity {
             JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_team_creation_failed));
-            LogUtil.e("Request New Email Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }

@@ -36,8 +36,8 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -75,6 +74,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -213,8 +213,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             }
 
             getFileDetail(false, true);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -292,7 +294,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
     @Override
     public void finish() {
-//        setAccountInfo(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         super.finish();
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
@@ -331,18 +332,20 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             boolean enableUserFromUploder = fileDetailModel.isEnableUserFromUploder(resFileDetail);
             fileDetailPresenter.drawFileWriterState(enableUserFromUploder);
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("fail to get file detail.", e);
-            if (e.httpStatusCode == 403) {
+
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
                 getFileDetailFailed(getString(R.string.jandi_unshared_message));
             } else {
                 getFileDetailFailed(getString(R.string.err_file_detail));
-
+                e.printStackTrace();
             }
             finishOnMainThread();
         } catch (Exception e) {
             getFileDetailFailed(getString(R.string.err_file_detail));
             finishOnMainThread();
+            e.printStackTrace();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -416,10 +419,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
             LogUtil.d("success to share message");
             shareMessageSucceed(entityIdToBeShared);
             showMoveDialog(entityIdToBeShared);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to send message", e);
             shareMessageFailed();
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("fail to send message", e);
             shareMessageFailed();
         } finally {
@@ -511,10 +516,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
                     mResFileDetail);
             fileDetailPresenter.unshareMessageSucceed(entityIdToBeUnshared);
             getFileDetail(false, true);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to send message", e);
             unshareMessageFailed();
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("fail to send message", e);
             unshareMessageFailed();
         } finally {
@@ -531,7 +538,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         if (!isForeground) {
             return;
         }
-        deleteFileInBackground(event.getFileId());
+//        deleteFileInBackground(event.getFileId());
     }
 
     public void onEvent(DeleteFileEvent event) {
@@ -628,34 +635,34 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
             moveMessageList(entityId.getId(), entityType, entityManager.getTeamId(), false);
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
     }
 
-    /**
-     * 파일 삭제
-     *
-     * @param fileId
-     */
-    @Background
-    public void deleteFileInBackground(int fileId) {
-        fileDetailPresenter.showProgressWheel();
-        try {
-            fileDetailModel.deleteFile(fileId);
-            LogUtil.d("success to delete file");
-            deleteFileDone(true);
-        } catch (JandiNetworkException e) {
-            LogUtil.e("delete file failed", e);
-            deleteFileDone(false);
-        } catch (Exception e) {
-            deleteFileDone(false);
-        } finally {
-            fileDetailPresenter.dismissProgressWheel();
-        }
-    }
+//    /**
+//     * 파일 삭제
+//     *
+//     * @param fileId
+//     */
+//    @Background
+//    public void deleteFileInBackground(int fileId) {
+//        fileDetailPresenter.showProgressWheel();
+//        try {
+//            fileDetailModel.deleteFile(fileId);
+//            LogUtil.d("success to delete file");
+//            deleteFileDone(true);
+//        } catch (JandiNetworkException e) {
+//            LogUtil.e("delete file failed", e);
+//            deleteFileDone(false);
+//        } catch (Exception e) {
+//            deleteFileDone(false);
+//        } finally {
+//            fileDetailPresenter.dismissProgressWheel();
+//        }
+//    }
 
     @UiThread
     public void deleteFileDone(boolean isOk) {
@@ -738,15 +745,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
     void sendCommentWithSticker(int stickerGroupId, String stickerId, String comment) {
         fileDetailPresenter.showProgressWheel();
         try {
+
             fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment);
 
             getFileDetail(true, true);
-            LogUtil.d("success to send message");
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e("fail to send message", e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
-            LogUtil.e("fail to send message", e);
+            e.printStackTrace();
         } finally {
             fileDetailPresenter.dismissProgressWheel();
         }
@@ -762,7 +769,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
 
             getFileDetail(true, true);
             LogUtil.d("success to send message");
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
@@ -852,10 +859,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User user = fileDetailModel.getUserProfile(userEntityId);
             fileDetailPresenter.showUserInfoDialog(new FormattedEntity(user));
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("get profile failed", e);
             getProfileFailed();
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("get profile failed", e);
             getProfileFailed();
         }
