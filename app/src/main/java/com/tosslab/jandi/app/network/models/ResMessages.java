@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.models;
 
+import android.util.Log;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
@@ -77,6 +79,9 @@ public class ResMessages {
             property = "eventType",
             defaultImpl = EventInfo.class)
     @JsonSubTypes({
+            @JsonSubTypes.Type(value = AnnouncementCreateEvent.class, name = "announcement_created"),
+            @JsonSubTypes.Type(value = AnnouncementDeleteEvent.class, name = "announcement_deleted"),
+            @JsonSubTypes.Type(value = AnnouncementUpdateEvent.class, name = "announcement_status_updated"),
             @JsonSubTypes.Type(value = CreateEvent.class, name = "create"),
             @JsonSubTypes.Type(value = InviteEvent.class, name = "invite"),
             @JsonSubTypes.Type(value = LeaveEvent.class, name = "leave"),
@@ -227,6 +232,94 @@ public class ResMessages {
                 @JsonSubTypes.Type(value = PublicCreateInfo.class, name = "channel"),
                 @JsonSubTypes.Type(value = PrivateCreateInfo.class, name = "privateGroup")})
         public CreateInfo createInfo;
+    }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class AnnouncementCreateEvent extends EventInfo {
+
+        private Info eventInfo;
+
+        public void setEventInfo(Info eventInfo) {
+            this.eventInfo = eventInfo;
+        }
+
+        public Info getEventInfo() {
+            return eventInfo;
+        }
+
+        @Override
+        public String toString() {
+            return "AnnouncementEvent{" +
+                    ", eventInfo=" + eventInfo +
+                    '}';
+        }
+
+        public static class Info {
+            private int writerId;
+
+            public int getWriterId() {
+                return writerId;
+            }
+
+            public void setWriterId(int writerId) {
+                this.writerId = writerId;
+            }
+
+            @Override
+            public String toString() {
+                return "Info{" +
+                        "writerId=" + writerId +
+                        '}';
+            }
+        }
+    }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class AnnouncementUpdateEvent extends EventInfo {
+
+        private Info eventInfo;
+
+        public void setEventInfo(Info eventInfo) {
+            this.eventInfo = eventInfo;
+        }
+
+        public Info getEventInfo() {
+            return eventInfo;
+        }
+
+        @Override
+        public String toString() {
+            return "AnnouncementEvent{" +
+                    ", eventInfo=" + eventInfo +
+                    '}';
+        }
+
+        public static class Info {
+            private int writerId;
+
+            public int getWriterId() {
+                return writerId;
+            }
+
+            public void setWriterId(int writerId) {
+                this.writerId = writerId;
+            }
+
+            @Override
+            public String toString() {
+                return "Info{" +
+                        "writerId=" + writerId +
+                        '}';
+            }
+        }
+    }
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class AnnouncementDeleteEvent extends EventInfo {
+
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

@@ -37,6 +37,7 @@ public class FormattedEntity {
     // MessageMarker
     public int lastLinkId = -1;
     public int alarmCount = 0;
+    public boolean announcementOpened = false;
 
     // Starred
     public boolean isStarred = false;

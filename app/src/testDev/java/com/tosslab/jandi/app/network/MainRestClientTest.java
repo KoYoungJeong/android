@@ -53,29 +53,22 @@ public class MainRestClientTest {
 
     @Test
     public void testGetMyTeam() throws Exception {
-
         ResMyTeam teamId = RequestApiManager.getInstance().getTeamIdByMainRest(BaseInitUtil.TEST_ID);
         assertNotNull(teamId);
         System.out.println(teamId);
-
     }
 
     @Test
     public void testGetLeftSideMenu() throws Exception {
-
-
         ResMyTeam teamId = RequestApiManager.getInstance().getTeamIdByMainRest(BaseInitUtil.TEST_ID);
         System.out.println("========= Get Team Info =========");
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId.teamList.get(0).teamId);
         assertNotNull(infosForSideMenu);
         System.out.println(infosForSideMenu);
-
     }
 
     @Test
     public void testSearchFile() throws Exception {
-
-
         ReqSearchFile reqSearchFile = new ReqSearchFile();
         reqSearchFile.teamId = 279;
         reqSearchFile.searchType = "file";
@@ -89,7 +82,6 @@ public class MainRestClientTest {
         assertNotNull(resSearchFile);
 
         System.out.println(resSearchFile);
-
     }
 
     @Test

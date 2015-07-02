@@ -248,4 +248,11 @@
         android:id="@+id/layout_search_bar"
         style="@style/Jandi.Default.ActionBar"
         android:layout_width="match_parent" />
+
+    <include
+        android:id="@+id/vg_announcement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_search_bar"
+        layout="@layout/layout_announcement"/>
 </RelativeLayout>

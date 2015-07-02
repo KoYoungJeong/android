@@ -27,7 +27,7 @@ public class FileDetailCollapseCommentView implements CommentViewHolder {
 
         ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) originalMessage;
         // 날짜
-        String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
+        String createTime = DateTransformator.getTimeString(commentMessage.createTime);
         // 댓글 내용
         String comment = commentMessage.content.body;
 

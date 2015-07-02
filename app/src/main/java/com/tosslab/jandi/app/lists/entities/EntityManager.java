@@ -148,6 +148,7 @@ public class EntityManager {
             ResLeftSideMenu.MessageMarker marker = mMarkers.get(entity.getId());
             entity.lastLinkId = marker.lastLinkId;
             entity.alarmCount = marker.alarmCount;
+            entity.announcementOpened = marker.announcementOpened;
         }
         return entity;
     }
