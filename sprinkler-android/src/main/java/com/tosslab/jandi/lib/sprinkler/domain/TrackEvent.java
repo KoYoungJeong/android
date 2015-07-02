@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.util.Collection;
 import java.util.Date;
 
-@DatabaseTable(tableName = "tracker_event")
+@DatabaseTable(tableName = "trackEvent")
 public class TrackEvent {
 
     @DatabaseField(generatedId = true, readOnly = true)
@@ -15,7 +15,7 @@ public class TrackEvent {
 
     @DatabaseField
     private String event;
-    @DatabaseField(foreign = true, columnName = "trackid_id")
+    @DatabaseField(foreign = true, columnName = "trackId_id")
     private TrackId trackId;
     @DatabaseField
     private String platform;

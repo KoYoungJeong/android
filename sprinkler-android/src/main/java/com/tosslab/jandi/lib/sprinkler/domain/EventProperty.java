@@ -3,7 +3,7 @@ package com.tosslab.jandi.lib.sprinkler.domain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "event_property")
+@DatabaseTable(tableName = "eventProperty")
 public class EventProperty {
     @DatabaseField(generatedId = true, readOnly = true)
     private long id;

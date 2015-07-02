@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 1..
  */
-@DatabaseTable(tableName = "tracker_id")
+@DatabaseTable(tableName = "trackId")
 public class TrackId {
     @DatabaseField(generatedId = true, readOnly = true)
     private long id;
