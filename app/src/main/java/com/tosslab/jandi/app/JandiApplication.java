@@ -1,22 +1,39 @@
 package com.tosslab.jandi.app;
 
+import android.content.Context;
 import android.support.multidex.MultiDexApplication;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
 
 import java.util.HashMap;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Created by justinygchoi on 2014. 6. 19..
  */
 public class JandiApplication extends MultiDexApplication {
+    static Context context;
+
     HashMap<TrackerName, Tracker> mTrackers = new HashMap<TrackerName, Tracker>();
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public static void setContext(Context context) {
+        JandiApplication.context = context;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
+
+        JandiApplication.setContext(getApplicationContext());
 
         // For Parse Push Notification
         Parse.initialize(this,

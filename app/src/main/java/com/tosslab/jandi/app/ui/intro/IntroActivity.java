@@ -2,16 +2,13 @@ package com.tosslab.jandi.app.ui.intro;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.newrelic.agent.android.NewRelic;
-import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -20,6 +17,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 
@@ -44,25 +42,20 @@ public class IntroActivity extends AppCompatActivity {
     @Bean
     IntroActivityViewModel introViewModel;
 
-    @AfterInject
-    void init() {
-        registerNewRelicToken();
-    }
-
     @AfterViews
     void startOn() {
-
         checkNewVersion();
-
     }
 
     @Background
     void checkNewVersion() {
+
         long initTime = System.currentTimeMillis();
         try {
             ResConfig config = introModel.getConfigInfo();
 
             int installedAppVersion = introModel.getInstalledAppVersion(IntroActivity.this);
+
             if (config.maintenance != null && config.maintenance.status) {
                 introViewModel.showMaintenanceDialog();
             } else if (installedAppVersion < config.versions.android) {
@@ -81,9 +74,10 @@ public class IntroActivity extends AppCompatActivity {
                 }
             }
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
             introViewModel.showMaintenanceDialog();
+
         } catch (Exception e) {
             introViewModel.showMaintenanceDialog();
         }
@@ -101,13 +95,12 @@ public class IntroActivity extends AppCompatActivity {
                 new Thread(() -> {
                     try {
                         introModel.refreshAccountInfo();
-                        subscriber.onNext(200);
-                    } catch (JandiNetworkException e) {
-                        subscriber.onNext(e.httpStatusCode);
+                        subscriber.onNext(JandiConstants.NETWORK_SUCCESS);
+                    } catch (RetrofitError e) {
+                        subscriber.onNext(e.getResponse().getStatus());
                     } catch (Exception e) {
                         subscriber.onNext(500);
                     }
-
                     subscriber.onCompleted();
                 }).start();
             }
@@ -122,7 +115,7 @@ public class IntroActivity extends AppCompatActivity {
 
             }
         }), (o, o2) -> o).subscribe(o -> {
-            if (o == 200) {
+            if (o == JandiConstants.NETWORK_SUCCESS) {
                 introModel.sleep(initTime, MAX_DELAY_MS);
                 if (introModel.hasSelectedTeam() && !startForInvite) {
                     ParseUpdateUtil.updateParseWithoutSelectedTeam(IntroActivity.this.getApplicationContext());
@@ -131,7 +124,7 @@ public class IntroActivity extends AppCompatActivity {
                     introViewModel.moveTeamSelectActivity();
                 }
                 introModel.updateParseForAllTeam();
-            } else if (o == 401) {
+            } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {
                 introModel.clearTokenInfo();
                 introModel.clearAccountInfo();
 
@@ -148,11 +141,6 @@ public class IntroActivity extends AppCompatActivity {
     @UiThread
     void finishOnUiThread() {
         finish();
-    }
-
-    private void registerNewRelicToken() {
-        NewRelic.withApplicationToken(JandiConstantsForFlavors.NEWRELIC_TOKEN_ID)
-                .start(this.getApplication());
     }
 
 }

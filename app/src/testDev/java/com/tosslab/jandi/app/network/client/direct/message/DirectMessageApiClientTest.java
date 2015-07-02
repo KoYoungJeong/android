@@ -1,28 +1,24 @@
 package com.tosslab.jandi.app.network.client.direct.message;
 
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
-import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.sql.Timestamp;
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.is;
@@ -32,20 +28,10 @@ import static org.junit.Assert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class DirectMessageApiClientTest {
 
-    private JandiRestClient jandiRestClient_;
     private ResLeftSideMenu sideMenu;
-    private DirectMessageApiClient directMessageApiClient;
-
 
     @Before
     public void setUp() throws Exception {
-
-        jandiRestClient_ = new JandiRestClient_(Robolectric.application);
-        directMessageApiClient = new DirectMessageApiClient_(Robolectric.application);
-        ResAccessToken accessToken = getAccessToken();
-
-        jandiRestClient_.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-        directMessageApiClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
 
         sideMenu = getSideMenu();
 
@@ -57,18 +43,8 @@ public class DirectMessageApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = jandiRestClient_.getInfosForSideMenu(279);
-
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
         return infosForSideMenu;
-    }
-
-    private ResAccessToken getAccessToken() {
-
-        jandiRestClient_.setHeader("Content-Type", "application/json");
-
-        ResAccessToken accessToken = jandiRestClient_.getAccessToken(ReqAccessToken.createPasswordReqToken(BaseInitUtil.TEST_ID, BaseInitUtil.TEST_PASSWORD));
-        System.out.println("========= Get Access Token =========");
-        return accessToken;
     }
 
     private ResLeftSideMenu.User getUser() {
@@ -102,9 +78,9 @@ public class DirectMessageApiClientTest {
 
         ResMessages directMessages = null;
         try {
-            directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            directMessages = RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(sideMenu.team.id, user.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
 
         }
 
@@ -121,9 +97,9 @@ public class DirectMessageApiClientTest {
 
         ResUpdateMessages directMessagesUpdated = null;
         try {
-            directMessagesUpdated = directMessageApiClient.getDirectMessagesUpdated(sideMenu.team.id, user.id, 10);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            directMessagesUpdated = RequestApiManager.getInstance().getDirectMessagesUpdatedByDirectMessageApi(sideMenu.team.id, user.id, 10);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
 
@@ -142,9 +118,9 @@ public class DirectMessageApiClientTest {
 
         ResCommon resCommon = null;
         try {
-            resCommon = directMessageApiClient.sendDirectMessage(reqSendMessage, user.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            resCommon = RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(reqSendMessage, user.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -155,7 +131,7 @@ public class DirectMessageApiClientTest {
 
         ResLeftSideMenu.User user = getUser();
 
-        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
+        ResMessages directMessages = RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(sideMenu.team.id, user.id);
 
         ResMessages.TextMessage textMessage = getMyTextMessage(directMessages);
 
@@ -165,9 +141,9 @@ public class DirectMessageApiClientTest {
             message.teamId = sideMenu.team.id;
             message.content = "mod_" + new Timestamp(System.currentTimeMillis());
 
-            resCommon = directMessageApiClient.modifyDirectMessage(message, user.id, textMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            resCommon = RequestApiManager.getInstance().modifyDirectMessageByDirectMessageApi(message, user.id, textMessage.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));
@@ -178,15 +154,15 @@ public class DirectMessageApiClientTest {
 
         ResLeftSideMenu.User user = getUser();
 
-        ResMessages directMessages = directMessageApiClient.getDirectMessages(sideMenu.team.id, user.id);
+        ResMessages directMessages = RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(sideMenu.team.id, user.id);
 
         ResMessages.TextMessage textMessage = getMyTextMessage(directMessages);
 
         ResCommon resCommon = null;
         try {
-            resCommon = directMessageApiClient.deleteDirectMessage(sideMenu.team.id, user.id, textMessage.id);
-        } catch (HttpStatusCodeException e) {
-            fail(e.getResponseBodyAsString());
+            resCommon = RequestApiManager.getInstance().deleteDirectMessageByDirectMessageApi(sideMenu.team.id, user.id, textMessage.id);
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
         }
 
         assertThat(resCommon, is(notNullValue()));

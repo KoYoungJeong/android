@@ -1,21 +1,10 @@
 package com.tosslab.jandi.app.ui.invites;
 
-import android.content.Context;
-import android.content.Intent;
-import android.text.TextUtils;
-import android.util.Pair;
-
-import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
-import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
-
-/**
- * Created by tonyjs on 15. 5. 5..
- */
-@Deprecated
-public class InviteUtils {
+///**
+// * Created by tonyjs on 15. 5. 5..
+// */
+//@Deprecated
+//public class InviteUtils {
 //    private static final String PACKAGE_NAME_KAKAO = "com.kakao.talk";
 //    private static final String PACKAGE_NAME_LINE = "jp.naver.line.android";
 //    private static final String PACKAGE_NAME_WECHAT = "com.tencent.mm";
@@ -116,5 +105,5 @@ public class InviteUtils {
 //        }
 //        return intent;
 //    }
-
-}
+//
+//}

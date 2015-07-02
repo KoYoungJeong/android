@@ -1,39 +1,57 @@
-package com.tosslab.jandi.app.ui.invites.email.model;
-
-import android.content.Context;
-
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient;
-import com.tosslab.jandi.app.network.client.teams.TeamsApiClient_;
-import com.tosslab.jandi.app.network.manager.Request;
-import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
-import com.tosslab.jandi.app.network.models.ResInvitationMembers;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.LanguageUtil;
-import com.tosslab.jandi.app.utils.TokenUtil;
-
-import java.util.List;
-
-/**
- * Created by Steve SeongUg Jung on 14. 12. 28..
- */
-public class InviteEmailRequest implements Request<List<ResInvitationMembers>> {
-
-    private final Context context;
-    private final int teamId;
-    private final List<String> invites;
-
-    public InviteEmailRequest(Context context, int teamId, List<String> invites) {
-        this.context = context;
-        this.teamId = teamId;
-        this.invites = invites;
-    }
-
-    @Override
-    public List<ResInvitationMembers> request() throws JandiNetworkException {
-
-        TeamsApiClient apiClient = new TeamsApiClient_(context);
-        apiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-
-        return apiClient.inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context)));
-    }
-}
+//package com.tosslab.jandi.app.ui.invites.model;
+//
+//import android.content.Context;
+//
+//import com.tosslab.jandi.app.JandiConstantsForFlavors;
+//import com.tosslab.jandi.app.network.client.teams.TeamApiV2Client;
+//import com.tosslab.jandi.app.network.manager.Request;
+//import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
+//import com.tosslab.jandi.app.network.models.ResInvitationMembers;
+//import com.tosslab.jandi.app.ui.intro.model.JacksonConverter;
+//import com.tosslab.jandi.app.utils.JandiNetworkException;
+//import com.tosslab.jandi.app.utils.LanguageUtil;
+//import com.tosslab.jandi.app.utils.TokenUtil;
+//
+//import org.codehaus.jackson.map.ObjectMapper;
+//
+//import java.util.List;
+//
+//import retrofit.RestAdapter;
+//
+///**
+// * Created by Steve SeongUg Jung on 14. 12. 28..
+// */
+//public class InviteEmailRequest implements Request<List<ResInvitationMembers>> {
+//
+//    private final Context context;
+//    private final int teamId;
+//    private final List<String> invites;
+//
+//    RestAdapter restAdapter;
+//
+//    public InviteEmailRequest(Context context, int teamId, List<String> invites) {
+//        this.context = context;
+//        this.teamId = teamId;
+//        this.invites = invites;
+//
+//        JacksonConverter converter = new JacksonConverter(new ObjectMapper());
+//
+//        restAdapter = new RestAdapter.Builder()
+//                .setRequestInterceptor(request -> {
+//                    request.addHeader("Authorization", TokenUtil.getRequestAuthentication(context).getHeaderValue());
+//                })
+//                .setConverter(converter)
+//                .setEndpoint(JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api")
+//                .build();
+//    }
+//
+//    @Override
+//    public List<ResInvitationMembers> request() throws JandiNetworkException {
+//
+////        TeamsApiClient apiClient = new TeamsApiClient_(context);
+////        apiClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
+////
+////        return apiClient.inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context)));
+//        return restAdapter.create(TeamApiV2Client.class).inviteToTeam(teamId, new ReqInvitationMembers(teamId, invites, LanguageUtil.getLanguage(context)));
+//    }
+//}

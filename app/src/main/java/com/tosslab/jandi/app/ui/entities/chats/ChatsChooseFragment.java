@@ -1,15 +1,10 @@
 package com.tosslab.jandi.app.ui.entities.chats;
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.database.DataSetObserver;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
@@ -17,28 +12,21 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
@@ -53,7 +41,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -74,21 +61,15 @@ public class ChatsChooseFragment extends Fragment {
     ChatChooseModel chatChooseModel;
 
     ChatChooseAdapter chatChooseAdapter;
-    private PublishSubject<String> publishSubject;
-
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-
     @SystemService
     ClipboardManager clipboardManager;
-
     @SystemService
     InputMethodManager inputMethodManager;
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
-
+    private PublishSubject<String> publishSubject;
     private String invitationUrl;
     private String teamName;
 

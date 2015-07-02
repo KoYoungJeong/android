@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
@@ -15,7 +16,6 @@ import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
 import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.AfterTextChange;
@@ -23,7 +23,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
-import org.springframework.http.HttpStatus;
 
 import de.greenrobot.event.EventBus;
 
@@ -48,14 +47,14 @@ public class IntroLoginFragment extends Fragment {
 
         introLoginViewModel.dissmissProgressDialog();
 
-        if (httpCode == HttpStatus.OK.value()) {
+        if (httpCode == JandiConstants.NETWORK_SUCCESS) {
             introLoginViewModel.loginSuccess(email);
             JandiPreference.setFirstLogin(getActivity());
 
             ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(getActivity()).getAccountInfo();
             MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
             mixpanelAccountAnalyticsClient.trackAccountSingingIn();
-        } else if (httpCode == JandiNetworkException.DATA_NOT_FOUND) {
+        } else if (httpCode == JandiConstants.NetworkError.DATA_NOT_FOUND) {
             introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
         } else {
             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);

@@ -9,9 +9,13 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 //import android.provider.DocumentsContract;
 
@@ -125,8 +129,11 @@ public class ImageFilePath {
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
             // Return the remote address
-            if (isGooglePhotosUri(uri))
+            if (isGooglePhotosUri(uri)) {
                 return uri.getLastPathSegment();
+            } else if (isPicasaPhotoUri(uri)) {
+                return copyFile(context, uri);
+            }
 
             return getDataColumn(context, uri, null, null);
         }
@@ -136,6 +143,56 @@ public class ImageFilePath {
         }
 
         return null;
+    }
+
+    private static String copyFile(Context context, Uri uri) {
+
+        String filePath;
+        InputStream inputStream = null;
+        BufferedOutputStream outStream = null;
+        try {
+            inputStream = context.getContentResolver().openInputStream(uri);
+
+            filePath = GoogleImagePickerUtil.getDownloadPath() + "/" + GoogleImagePickerUtil
+                    .getWebImageName() + ".jpg";
+            outStream = new BufferedOutputStream(new FileOutputStream
+                    (filePath));
+
+            byte[] buf = new byte[2048];
+            int len;
+            while ((len = inputStream.read(buf)) > 0) {
+                outStream.write(buf, 0, len);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            filePath = "";
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (outStream != null) {
+                    outStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return filePath;
+    }
+
+    private static boolean isPicasaPhotoUri(Uri uri) {
+
+        return uri != null
+                && !TextUtils.isEmpty(uri.getAuthority())
+                && (uri.getAuthority().startsWith("com.android.gallery3d")
+                || uri.getAuthority().startsWith("com.google.android.gallery3d"));
     }
 
     /**

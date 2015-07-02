@@ -9,13 +9,12 @@ import android.util.Log;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -23,6 +22,7 @@ import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by tonyjs on 15. 6. 9..
@@ -41,7 +41,7 @@ public class BadgeHandleService extends IntentService {
         Log.i(TAG, "onHandleIntent start");
         try {
             Context context = getApplicationContext();
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
 
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
@@ -67,7 +67,7 @@ public class BadgeHandleService extends IntentService {
                 postSocketMessageEvent(socketMessageEventContent);
             }
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             Log.e(TAG, e.getMessage());
         }
         Log.i(TAG, "onHandleIntent end");

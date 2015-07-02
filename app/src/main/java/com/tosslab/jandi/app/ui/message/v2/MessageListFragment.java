@@ -89,7 +89,6 @@ import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -114,6 +113,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -366,7 +366,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void insertEmptyMessage() {
         EntityManager entityManager = EntityManager.getInstance(getActivity());
         FormattedEntity entity = entityManager.getEntityById(entityId);
-        if (!entity.isUser()) {
+        if (entity != null && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
             int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
 
@@ -522,9 +522,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageListModel.updateMarker(messageState.getLastUpdateLinkId());
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         }
     }
@@ -982,8 +984,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.deleteTopic(entityId, entityType);
             messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
-        } catch (JandiNetworkException e) {
-            LogUtil.e("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
@@ -1035,7 +1037,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
         } catch (Exception e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
@@ -1224,9 +1226,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e("modify failed " + e.getErrorInfo(), e);
-            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+        } catch (RetrofitError e) {
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_duplicated_name));
             } else {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
