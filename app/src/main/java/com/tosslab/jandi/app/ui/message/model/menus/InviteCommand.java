@@ -1,39 +1,28 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
-import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
-import com.tosslab.jandi.app.ui.invites.InviteUtils;
 import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -46,7 +35,7 @@ import org.androidannotations.annotations.UiThread;
 import java.util.Collections;
 import java.util.List;
 
-import rx.Observable;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
@@ -54,25 +43,21 @@ import rx.Observable;
 @EBean
 class InviteCommand implements MenuCommand {
 
-    private AppCompatActivity activity;
-    private JandiEntityClient mJandiEntityClient;
-    private ChattingInfomations chattingInfomations;
-    private EntityManager entityManager;
-
-    private ProgressWheel progressWheel;
-
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
-
     @SystemService
     ClipboardManager clipboardManager;
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
+    private AppCompatActivity activity;
+    private EntityClientManager mEntityClientManager;
+    private ChattingInfomations chattingInfomations;
+    private EntityManager entityManager;
+    private ProgressWheel progressWheel;
 
-    void initData(AppCompatActivity activity, JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations) {
+    void initData(AppCompatActivity activity, EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations) {
         this.activity = activity;
-        this.mJandiEntityClient = mJandiEntityClient;
+        this.mEntityClientManager = mEntityClientManager;
         this.chattingInfomations = chattingInfomations;
         entityManager = EntityManager.getInstance(activity);
 
@@ -162,20 +147,20 @@ class InviteCommand implements MenuCommand {
     public void inviteInBackground(List<Integer> invitedUsers) {
         try {
             if (chattingInfomations.isPublicTopic()) {
-                mJandiEntityClient.inviteChannel(
+                mEntityClientManager.inviteChannel(
                         chattingInfomations.entityId, invitedUsers);
             } else if (chattingInfomations.isPrivateTopic()) {
-                mJandiEntityClient.invitePrivateGroup(
+                mEntityClientManager.invitePrivateGroup(
                         chattingInfomations.entityId, invitedUsers);
             }
 
-            ResLeftSideMenu resLeftSideMenu = mJandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(resLeftSideMenu);
             EntityManager.getInstance(activity).refreshEntity(resLeftSideMenu);
 
 
             inviteSucceed(invitedUsers.size());
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("fail to invite entity");
             inviteFailed(activity.getString(R.string.err_entity_invite));
         } catch (Exception e) {

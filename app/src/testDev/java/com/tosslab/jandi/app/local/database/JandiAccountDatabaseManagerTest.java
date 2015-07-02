@@ -1,11 +1,9 @@
 package com.tosslab.jandi.app.local.database;
 
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMyTeam;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -20,14 +18,10 @@ import static junit.framework.Assert.assertNotNull;
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiAccountDatabaseManagerTest {
 
-    private JandiRestClient jandiRestClient;
-
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
-        jandiRestClient = new JandiRestClient_(Robolectric.application);
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
     }
 
     @After
@@ -38,10 +32,8 @@ public class JandiAccountDatabaseManagerTest {
     @Test
     public void testUpsertLeftSideMenu() throws Exception {
 
-        ResMyTeam teamId = jandiRestClient.getTeamId(BaseInitUtil.TEST_ID);
-
-        ResLeftSideMenu infosForSideMenu = jandiRestClient.getInfosForSideMenu(teamId.teamList.get(0).teamId);
-
+        ResMyTeam teamId = RequestApiManager.getInstance().getTeamIdByMainRest(BaseInitUtil.TEST_ID);
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId.teamList.get(0).teamId);
         JandiEntityDatabaseManager databaseManager = JandiEntityDatabaseManager.getInstance(Robolectric.application);
         databaseManager.upsertLeftSideMenu(infosForSideMenu);
 

@@ -136,18 +136,14 @@ public class MessageListPresenter {
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
     private MessageListAdapter messageListAdapter;
-
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
     private EntityManager mEntityManager;
     private String invitationUrl;
     private String teamName;

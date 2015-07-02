@@ -17,10 +17,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
-import com.tosslab.jandi.app.network.manager.RequestManager;
-import com.tosslab.jandi.app.network.manager.TokenRefreshRequest;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -36,9 +36,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketMemberProfileEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -49,6 +47,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Subscription;
 import rx.subjects.PublishSubject;
 
@@ -89,8 +88,8 @@ public class JandiSocketServiceModel {
 
     public void refreshEntity() {
         try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
@@ -101,21 +100,17 @@ public class JandiSocketServiceModel {
 
             ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }
 
     public void refreshAccountInfo() {
         try {
-            AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-            RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-            ResAccountInfo resAccountInfo = requestManager.request();
+            ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
             JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
             postEvent(new TeamInfoChangeEvent());
-
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
@@ -213,7 +208,6 @@ public class JandiSocketServiceModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void updateMarker(Object object) {
@@ -257,9 +251,9 @@ public class JandiSocketServiceModel {
         markerPublishSubject = PublishSubject.create();
         subscribe = markerPublishSubject.throttleLast(1000 * 10, TimeUnit.MILLISECONDS)
                 .subscribe(o -> {
-                    JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+                    EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
                     try {
-                        ResLeftSideMenu entitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+                        ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
                         JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entitiesInfo);
                         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
                         JandiPreference.setBadgeCount(context, totalUnreadCount);
@@ -269,7 +263,7 @@ public class JandiSocketServiceModel {
 
                         postEvent(new RetrieveTopicListEvent());
 
-                    } catch (JandiNetworkException e) {
+                    } catch (RetrofitError e) {
                         e.printStackTrace();
                     }
 
@@ -284,7 +278,8 @@ public class JandiSocketServiceModel {
 
     public boolean refreshToken() {
         try {
-            ResAccessToken token = new TokenRefreshRequest(context, JandiPreference.getRefreshToken(context)).request();
+            String jandiRefreshToken = JandiPreference.getRefreshToken(context);
+            ResAccessToken token = RequestApiManager.getInstance().getAccessTokenByMainRest(ReqAccessToken.createRefreshReqToken(jandiRefreshToken));
             return token != null;
         } catch (Exception e) {
             return false;

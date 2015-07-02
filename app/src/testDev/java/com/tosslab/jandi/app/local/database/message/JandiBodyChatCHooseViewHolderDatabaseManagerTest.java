@@ -5,14 +5,12 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -44,14 +42,12 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
     @Test
     public void testUpsertMessage() throws Exception {
 
-        JandiRestClient jandiRestClient = new JandiRestClient_(Robolectric.application);
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-        ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         JandiAccountDatabaseManager.getInstance(Robolectric.application).upsertAccountTeams(accountInfo.getMemberships());
         int teamId = accountInfo.getMemberships().get(0).getTeamId();
         JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
 
-        ResLeftSideMenu infosForSideMenu = jandiRestClient.getInfosForSideMenu(teamId);
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(Robolectric.application);
         int entityId = infosForSideMenu.joinEntities.get(0).id;

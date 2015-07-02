@@ -6,7 +6,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -29,7 +29,7 @@ public class SettingFragmentViewModel {
     Context context;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
     private ProgressWheel progressWheel;
 
     @AfterViews

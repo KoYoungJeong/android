@@ -9,11 +9,10 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -22,8 +21,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
-import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -56,8 +55,8 @@ public class MainChatListModel {
         return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
     }
 
-    public List<ResChat> getChatList(int memberId) throws JandiNetworkException {
-        return RequestManager.newInstance(context, ChatListRequest.create(context, memberId)).request();
+    public List<ResChat> getChatList(int memberId) throws RetrofitError {
+        return RequestApiManager.getInstance().getChatListByChatApi(memberId);
     }
 
     public List<ChatItem> convertChatItem(int teamId, List<ResChat> chatList) {

@@ -5,15 +5,13 @@ import android.app.Application;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,9 +36,7 @@ public class MainChatListModelTest {
         application = Robolectric.application;
         BaseInitUtil.initData(application);
 
-        JandiRestClient jandiRestClient = new JandiRestClient_(application);
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(application));
-        ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         JandiAccountDatabaseManager.getInstance(application).updateSelectedTeam(accountInfo.getMemberships().get(0).getTeamId());
     }
 
@@ -53,9 +49,8 @@ public class MainChatListModelTest {
     @Test
     public void testConvertChatItem() throws Exception {
 
-
-        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(application);
-        ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(application);
+        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
         JandiEntityDatabaseManager.getInstance(application).upsertLeftSideMenu(totalEntitiesInfo);
 
         MainChatListModel mainChatListModel = MainChatListModel_.getInstance_(application);
@@ -65,5 +60,6 @@ public class MainChatListModelTest {
         List<ChatItem> chatItems = mainChatListModel.convertChatItem(JandiAccountDatabaseManager.getInstance(application).getSelectedTeamInfo().getTeamId(), chatList);
 
         assertThat(chatItems.size(), is(equalTo(chatList.size())));
+
     }
 }
