@@ -26,7 +26,7 @@ public interface DirectMessageApiV2Client {
     @GET("/users/{userId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getDirectMessages(@Query("teamId") int teamId, @Path("userId") int userId,
-                                  @Query("fromId") int fromId, @Query("count") int count);
+                                  @Query("linkId") int fromId, @Query("count") int count);
 
     @GET("/users/{userId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

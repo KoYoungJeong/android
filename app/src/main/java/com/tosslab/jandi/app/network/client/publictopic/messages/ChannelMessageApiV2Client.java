@@ -25,10 +25,10 @@ import retrofit.http.Query;
 public interface ChannelMessageApiV2Client {
 
     // 채널에서 Message 리스트 정보 획득
-    @GET("/channels/{channelId}/messages")
+    @GET("/channels/{channelId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
-                                       @Query("fromId") int fromId, @Query("count") int count);
+                                       @Query("linkId") int fromId, @Query("count") int count);
 
     @GET("/channels/{channelId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)

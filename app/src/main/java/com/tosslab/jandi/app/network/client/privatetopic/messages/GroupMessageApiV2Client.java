@@ -24,10 +24,10 @@ import retrofit.http.Query;
 public interface GroupMessageApiV2Client {
 
     // Private Group의 Message 리스트 정보 획득
-    @GET("/privateGroups/{groupId}/messages")
+    @GET("/privateGroups/{groupId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getGroupMessages(@Query("teamId") int teamId, @Path("groupId") int groupId,
-                                 @Query("fromId") int fromId, @Query("count") int count);
+                                 @Query("linkId") int fromId, @Query("count") int count);
 
     @GET("/privateGroups/{groupId}/messages?type=old")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
