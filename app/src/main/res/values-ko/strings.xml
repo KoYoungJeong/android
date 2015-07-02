@@ -192,7 +192,7 @@
     <string name="jandi_title_activity_file_explorer">"파일 탐색기"</string>
     <string name="title_file_detail">"파일 상세 정보"</string>
     <string name="comment">"댓글"</string>
-    <string name="jandi_file_size_large_error">"현재 100MB 이상의 파일은 업로드 할 수 없습니다."</string>
+    <string name="jandi_file_size_large_error">"현재 300MB 이상의 파일은 업로드 할 수 없습니다."</string>
 
 
     <!-- Share & invite -->
@@ -410,4 +410,9 @@
     <string name="jandi_canceled">"취소됨"</string>
     <string name="jandi_cannot_find_messages">"검색 결과가 없습니다: "</string>
     <string name="jandi_no_recent_stickers">"최근 사용한 스티커가 없습니다."</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"최대 10장까지 선택할 수 있습니다."</string>
+    <string name="jandi_decide_choose">"사진 선택"</string>
+    <string name="jandI_select_gallery">"사진 선택"</string>
+    <string name="jandi_view_all">"전체보기"</string>
 </resources>

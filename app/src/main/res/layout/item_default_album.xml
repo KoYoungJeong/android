@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/btn_rect_white"
+    android:paddingBottom="1dp">
+
+    <ImageView
+        android:id="@+id/iv_item_default_album_sample"
+        android:layout_width="83dp"
+        android:layout_height="83dp"
+        android:layout_centerVertical="true" />
+
+    <TextView
+        android:id="@+id/tv_item_default_album_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/tv_item_default_album_count"
+        android:layout_toRightOf="@+id/iv_item_default_album_sample"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textSize="@dimen/jandi_text_size_large"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_item_default_album_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="6dp"
+        android:layout_toLeftOf="@+id/iv_item_default_album_arrow"
+        android:background="@drawable/jandi_check_select"
+        android:gravity="center_vertical"
+        android:text="12"
+        android:textColor="@color/jandi_text_white"
+        android:textSize="@dimen/jandi_entity_badge_font"
+        android:textStyle="bold"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/iv_item_default_album_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/iv_item_default_album_sample"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/iv_item_default_album_sample"
+        android:layout_marginRight="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/jandi_arrow_right" />
+
+
+</RelativeLayout>

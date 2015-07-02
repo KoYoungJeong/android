@@ -182,7 +182,7 @@
     <string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
     <string name="title_file_detail">"説明"</string>
     <string name="comment">"コメント"</string>
-    <string name="jandi_file_size_large_error">"現在のところ、100MBを超えるファイルはアップロードできません。"</string>
+    <string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
@@ -401,4 +401,9 @@
     <string name="jandi_canceled">"キャンセルされました"</string>
     <string name="jandi_cannot_find_messages">"一致するメッセージがありません: "</string>
     <string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
+    <string name="jandi_decide_choose">"写真を選択"</string>
+    <string name="jandI_select_gallery">"写真を選択"</string>
+    <string name="jandi_view_all">"すべて表示"</string>
 </resources>

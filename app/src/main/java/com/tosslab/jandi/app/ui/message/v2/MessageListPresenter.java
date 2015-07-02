@@ -394,13 +394,6 @@ public class MessageListPresenter {
     }
 
     @UiThread
-    public void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
-        if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
-            uploadProgressDialog.dismiss();
-        }
-    }
-
-    @UiThread
     public void clearMessages() {
         messageListAdapter.clear();
 

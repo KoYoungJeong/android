@@ -58,7 +58,6 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -72,7 +71,6 @@ import retrofit.RetrofitError;
 @EBean
 public class MessageListModel {
 
-    public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
     @Bean
     MessageManipulator messageManipulator;
     @Bean
@@ -104,12 +102,7 @@ public class MessageListModel {
 
     public List<ResMessages.Link> sortById(List<ResMessages.Link> messages) {
 
-        Collections.sort(messages, new Comparator<ResMessages.Link>() {
-            @Override
-            public int compare(ResMessages.Link lhs, ResMessages.Link rhs) {
-                return lhs.id - rhs.id;
-            }
-        });
+        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
         return messages;
     }
 
@@ -174,11 +167,6 @@ public class MessageListModel {
                 .with(entityClientManager)
                 .with(chattingInfomations)
                 .build(item);
-    }
-
-    public boolean isOverSize(String realFilePath) {
-        File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
     public int sendMessage(long localId, String message) {
@@ -267,12 +255,7 @@ public class MessageListModel {
     }
 
     public List<ResMessages.Link> sortDescById(List<ResMessages.Link> messages) {
-        Collections.sort(messages, new Comparator<ResMessages.Link>() {
-            @Override
-            public int compare(ResMessages.Link lhs, ResMessages.Link rhs) {
-                return lhs.id - rhs.id;
-            }
-        });
+        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
         return messages;
     }
 
@@ -286,14 +269,6 @@ public class MessageListModel {
         screenViewTracker.set("&uid", EntityManager.getInstance(activity).getDistictId());
         screenViewTracker.setScreenName(gaPath);
         screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
-    }
-
-    public void trackUploadingFile(int entityType, JsonObject result) {
-
-        try {
-            MixpanelMemberAnalyticsClient.getInstance(activity, EntityManager.getInstance(activity).getDistictId()).trackUploadingFile(entityType, result);
-        } catch (JSONException e) {
-        }
     }
 
     public void trackChangingEntityName(int entityType) {
@@ -365,16 +340,6 @@ public class MessageListModel {
             return true;
         }
 
-    }
-
-    @Deprecated
-    public int getLatestMessageId(List<ResMessages.Link> messages) {
-
-        for (ResMessages.Link message : messages) {
-
-        }
-
-        return 0;
     }
 
     public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
