@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -38,6 +39,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.ViewsById;
 
@@ -66,6 +68,9 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
 
     @Bean(FileUploadPresenterImpl.class)
     FileUploadPresenter fileUploadPresenter;
+
+    @SystemService
+    InputMethodManager inputMethodManager;
 
     @ViewById(R.id.vp_file_upload_preview)
     ViewPager vpFilePreview;
@@ -155,6 +160,8 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
             if (actionBar != null) {
                 actionBar.hide();
             }
+
+            inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         }
 
 
