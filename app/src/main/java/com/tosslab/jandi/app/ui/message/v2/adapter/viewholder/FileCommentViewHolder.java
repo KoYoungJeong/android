@@ -76,8 +76,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
         String profileUrl = entity.getUserLargeProfileUrl();
 
-        LogUtil.e("profileUrl - " + profileUrl);
-
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
