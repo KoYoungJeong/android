@@ -209,10 +209,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             getAnnouncement();
                             break;
                         case Update:
-                            UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
-                            ResMessages.OriginalMessage message =
-                                    messageListModel.getMessage(teamId, updateMessage.getMessageId());
-                            messageListPresenter.updateMessage(message);
+                            upodateMessage(messageQueue);
                             break;
                     }
                 }, throwable -> {
@@ -308,6 +305,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void getAnnouncement() {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
         announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
+    }
+
+    private void upodateMessage(MessageQueue messageQueue) {
+        UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
+        ResMessages.OriginalMessage message =
+                messageListModel.getMessage(teamId, updateMessage.getMessageId());
+        messageListPresenter.updateMessage(message);
     }
 
     private void getSavedMessageList() {

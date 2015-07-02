@@ -65,5 +65,5 @@ public interface TeamApiV2Client {
     ResCommon deleteAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId);
 
     @GET("/teams/{teamId}/messages/{messageId}")
-    ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("teamId") int messageId);
+    ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
 }
