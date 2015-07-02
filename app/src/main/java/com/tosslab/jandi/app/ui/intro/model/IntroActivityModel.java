@@ -20,6 +20,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+import org.androidannotations.annotations.rest.RestService;
 
 import retrofit.RetrofitError;
 

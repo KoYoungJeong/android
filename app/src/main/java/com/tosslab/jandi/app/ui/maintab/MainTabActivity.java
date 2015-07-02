@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab;
 
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
@@ -123,13 +125,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             }
         });
 
-
         if (needInvitePopup()) {
             JandiPreference.setInvitePopup(MainTabActivity.this);
             showInvitePopup();
         }
 
-        JandiSocketService.startSocketServiceIfStop(MainTabActivity.this);
+        sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
     }
 
     private void showInvitePopup() {
@@ -198,6 +199,12 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         EventBus.getDefault().unregister(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        JandiSocketService.stopService(this);
+        super.onDestroy();
+    }
+
     /**
      * 해당 사용자의 채널, DM, PG 리스트를 획득 (with 통신)
      */
@@ -239,8 +246,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @UiThread
     void stopJandiServiceInMainThread() {
-        JandiSocketService.stopSocketServiceIfRunning(MainTabActivity.this);
-
+        JandiSocketService.stopService(MainTabActivity.this);
     }
 
     @UiThread

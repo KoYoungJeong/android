@@ -86,7 +86,7 @@ public class PoolableRequestApiExecutor {
                 }
             } else {
                 // exception, not unauthorized
-                JandiSocketService.stopSocketServiceIfRunning(JandiApplication.getContext());
+                JandiSocketService.stopService(JandiApplication.getContext());
                 LogUtil.e("Request Fail", e);
                 throw e;
             }

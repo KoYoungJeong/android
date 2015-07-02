@@ -9,23 +9,19 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
@@ -83,18 +79,8 @@ public class JandiPushReceiverModel {
 
     @Background
     public void updateEntityAndBadge(Context context) {
-
-        try {
-            EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
-            ResLeftSideMenu resLeftSideMenu = entityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-            BadgeUtils.setBadge(context, totalUnreadCount);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(context, BadgeHandleService.class);
+        context.startService(intent);
     }
 
     public PushTO parsingPushTO(Bundle extras) {
@@ -208,6 +194,7 @@ public class JandiPushReceiverModel {
     public void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
         // 현재 디바이스 설정이 push off 라면 무시
         String writerProfile = messagePush.getWriterThumb();
+        Notification notification;
         if (writerProfile != null) {
             Bitmap bitmap = null;
             try {
@@ -218,15 +205,12 @@ public class JandiPushReceiverModel {
             } catch (Exception e) {
             }
 
-            Notification notification;
-            if (writerProfile != null) {
-                notification = generateNotification(context, messagePush, bitmap);
-            } else {
-                notification = generateNotification(context, messagePush);
-            }
-
-            sendNotification(context, notification);
+            notification = generateNotification(context, messagePush, bitmap);
+        } else {
+            notification = generateNotification(context, messagePush);
         }
+
+        sendNotification(context, notification);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
