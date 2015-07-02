@@ -96,7 +96,7 @@ public class MessageListModel {
         ResMessages.OriginalMessage message = null;
         try {
             message = messageManipulator.getMessage(teamId, messageId);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
         return message;

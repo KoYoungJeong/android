@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 
@@ -63,4 +64,6 @@ public interface TeamApiV2Client {
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId);
 
+    @GET("/teams/{teamId}/messages/{messageId}")
+    ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("teamId") int messageId);
 }

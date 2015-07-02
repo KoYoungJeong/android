@@ -9,6 +9,7 @@ import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 
 import java.util.List;
@@ -33,5 +34,7 @@ public interface ITeamApiLoader {
     IExecutor<ResCommon> loadUpdateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus);
 
     IExecutor<ResCommon> loadDeleteAnnouncement(int teamId, int topicId);
+
+    IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId);
 
 }

@@ -496,6 +496,11 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
+    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getMessage(teamId, messageId);
+    }
+
+    @Override
     public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteStickerComment(commentId, teamId);
     }
