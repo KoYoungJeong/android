@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.views.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 
 import de.greenrobot.event.EventBus;
@@ -61,8 +61,6 @@ public class MessageViewHolder implements BodyViewHolder {
         ResLeftSideMenu.User fromEntity = entity.getUser();
 
         String profileUrl = entity.getUserLargeProfileUrl();
-
-        LogUtil.e("profileUrl - " + profileUrl);
 
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)
@@ -106,16 +104,14 @@ public class MessageViewHolder implements BodyViewHolder {
 
             Resources resources = context.getResources();
 
-            int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-            int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
-
             int startIndex = messageStringBuilder.length();
             messageStringBuilder.append(
                     DateTransformator.getTimeStringForSimple(link.message.createTime));
             int endIndex = messageStringBuilder.length();
 
-            MessageSpannable spannable =
-                    new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+            DateViewSpannable spannable =
+                    new DateViewSpannable(messageTextView.getContext(),
+                            DateTransformator.getTimeStringForSimple(link.message.createTime));
             messageStringBuilder.setSpan(spannable,
                     startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 

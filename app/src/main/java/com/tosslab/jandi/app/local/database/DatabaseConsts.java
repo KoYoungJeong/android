@@ -65,7 +65,7 @@ public class DatabaseConsts {
     }
 
     public enum LeftMessageMarkers {
-        _id, teamId, entityType, entityId, lastLinkId, alarmCount
+        _id, teamId, entityType, entityId, lastLinkId, alarmCount, announcementOpened
     }
 
     public enum LeftTopicEntity {

@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 
 /**
@@ -53,15 +53,13 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
         Resources resources = context.getResources();
 
-        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
-
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
         int endIndex = builder.length();
 
-        MessageSpannable spannable =
-                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+        DateViewSpannable spannable =
+                new DateViewSpannable(tvMessage.getContext(),
+                        DateTransformator.getTimeStringForSimple(link.message.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,

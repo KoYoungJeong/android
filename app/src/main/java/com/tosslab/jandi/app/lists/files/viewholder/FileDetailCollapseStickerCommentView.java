@@ -27,7 +27,7 @@ public class FileDetailCollapseStickerCommentView implements CommentViewHolder {
 
         StickerManager.getInstance().loadStickerNoOption(ivStickerContent, stickerMessage.content.groupId, stickerMessage.content.stickerId);
 
-        String createTime = DateTransformator.getTimeDifference(stickerMessage.createTime);
+        String createTime = DateTransformator.getTimeString(stickerMessage.createTime);
         tvCreatedTime.setText(createTime);
 
     }

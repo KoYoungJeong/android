@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
 apply plugin: 'android-apt'     // Android-Annotation
-apply plugin: 'newrelic'        // Analytics
 apply plugin: 'org.robolectric'     // Android-Test
 apply plugin: 'me.tatarka.retrolambda'  //RetroLamda
 apply plugin: 'aar-link-sources'
-//apply from: 'test.gradle'       // Android-Test Env Setting
+apply from: 'valid.gradle'       // Gradle Propertie Valid Check
 
 configurations {
     apt
@@ -42,19 +43,15 @@ checkstyle {
     toolVersion = "6.2"
 }
 
-def getDate() {
-    def date = new Date();
-    return date.format("yyyyMMddHHss")
-}
-
 dependencies {
 
     repositories {
         mavenCentral()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
 
-    apt 'org.androidannotations:androidannotations:3.2'
+    apt 'org.androidannotations:androidannotations:3.3.1'
 
     compile 'com.android.support:multidex:1.0.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -78,10 +75,10 @@ dependencies {
 
     // Boilerplate
     compile 'de.greenrobot:eventbus:2.4.+'
-    compile 'org.androidannotations:androidannotations-api:3.2'
+    compile 'org.androidannotations:androidannotations-api:3.3.1'
     // Network
     compile 'org.springframework.android:spring-android-core:1.0.+'
-    compile 'org.springframework.android:spring-android-rest-template:1.0.+'
+    compile 'org.springframework.android:spring-android-rest-template:1.0+'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
     compile 'com.github.nkzawa:socket.io-client:0.5.0'
 
@@ -89,7 +86,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.6.0' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
     // Analytics & report
-    compile 'com.newrelic.agent.android:android-agent:4.+'
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
     compile 'com.parse.bolts:bolts-android:1.1.4'
 
@@ -101,6 +97,19 @@ dependencies {
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-all:1.10.+'
+    compile('com.crashlytics.sdk.android:crashlytics:2.4.0@aar') {
+        transitive = true;
+    }
+
+    // newrelic
+    compile 'com.newrelic.agent.android:android-agent:4.273.4'
+
+    //Retrofit
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+
+    //OKHTTP
+    compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
 
 }
 
@@ -112,8 +121,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 51
-        versionName '1.0.3'
+        versionCode 52
+        versionName '1.0.4'
 
         // Enabling multidex support.
         multiDexEnabled true

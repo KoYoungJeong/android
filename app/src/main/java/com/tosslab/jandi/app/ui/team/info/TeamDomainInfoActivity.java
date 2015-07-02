@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -23,6 +22,8 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 17..
@@ -127,9 +128,10 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
             teamDomainInfoPresenter.dismissProgressWheel();
             teamDomainInfoPresenter.successCreateTeam(newTeam.getInviteTeam().getName());
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             teamDomainInfoPresenter.dismissProgressWheel();
-            teamDomainInfoPresenter.failCreateTeam(e.httpStatusCode);
+            teamDomainInfoPresenter.failCreateTeam(e.getResponse().getStatus());
         }
     }
 

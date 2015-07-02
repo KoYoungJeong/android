@@ -53,7 +53,6 @@ import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
@@ -80,6 +79,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
@@ -126,6 +126,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterInject
     void init() {
+        LogUtil.d("FileListFragment");
         mContext = getActivity();
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
@@ -145,6 +146,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @AfterViews
     void bindAdapter() {
+        LogUtil.d("FileListFragment AfterViews");
         setHasOptionsMenu(true);
 
         // myToken 획득
@@ -271,10 +273,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 searchedFileItemListAdapter.setReadyMore();
             }
 
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
         } catch (Exception e) {
+            e.printStackTrace();
             fileListPresenter.showErrorToast(getString(R.string.err_file_search));
         } finally {
             fileListPresenter.dismissMoreProgressBar();
@@ -297,6 +301,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onResume() {
+        LogUtil.d("FileListFragment onResume");
         super.onResume();
         isForeground = true;
     }
@@ -467,10 +472,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
             }
 
             searchSucceed(resSearchFile);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         } catch (Exception e) {
+            e.printStackTrace();
             searchFailed(R.string.err_file_search);
         }
     }

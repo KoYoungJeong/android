@@ -135,6 +135,15 @@
     <string name="err_messages_delete">"訊息無法刪除"</string>
     <string name="err_file_upload_failed">"檔案無法上傳"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"發布公告"</string>
+    <string name="jandi_announcement_create_question">"此訊息將會取代公告，你確定要繼續嗎?"</string>
+    <string name="jandi_announcement_delete_question">"公告將被刪除，你確定要繼續?"</string>
+    <string name="jandi_announcement_created">"%1$s 更新 %2$s 的訊息為公告"</string>
+    <string name="jandi_announcement_deleted">"%s 刪除公告"</string>
+    <string name="jandi_announcement_delete">"刪除"</string>
+    <string name="jandi_announcement_minimize">"最小化"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"重新命名"</string>
     <string name="menu_entity_delete">"刪除"</string>

@@ -151,6 +151,15 @@
     <string name="err_messages_delete">"메시지를 삭제하지 못했습니다. 다시 시도해 주세요"</string>
     <string name="err_file_upload_failed">"파일을 업로드하지 못했습니다. 다시 시도해 주세요"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"공지로 등록"</string>
+    <string name="jandi_announcement_create_question">"등록되어 있는 공지를 지금 이 메시지로 변경합니다. 계속할까요?"</string>
+    <string name="jandi_announcement_delete_question">"이 공지를 삭제하시겠습니까? 삭제시 토픽 내 다른 멤버들 또한 더 이상 이 공지를 볼 수 없게되며, 원본 메시지는 보존됩니다."</string>
+    <string name="jandi_announcement_created">"%1$s님이 %2$s님의 메시지를 공지사항으로 게시했습니다."</string>
+    <string name="jandi_announcement_deleted">"%s님이 공지사항을 삭제했습니다."</string>
+    <string name="jandi_announcement_delete">"삭제"</string>
+    <string name="jandi_announcement_minimize">"최소화"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"이름 수정"</string>
     <string name="menu_entity_delete">"삭제"</string>

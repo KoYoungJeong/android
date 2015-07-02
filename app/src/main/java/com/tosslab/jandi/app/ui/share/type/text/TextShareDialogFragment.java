@@ -8,7 +8,6 @@ import android.support.v4.app.DialogFragment;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.share.type.model.ShareModel;
 import com.tosslab.jandi.app.ui.share.type.to.EntityInfo;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -19,6 +18,8 @@ import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 13..
@@ -75,7 +76,8 @@ public class TextShareDialogFragment extends DialogFragment {
             shareModel.sendMessage(entity, messageText);
             textSharePresenter.showSuccessMessage(getString(R.string.jandi_share_succeed, getString(R.string.jandi_message_hint)));
             finishOnUiThread();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             textSharePresenter.showErrorMessage(getString(R.string.err_network));
         } finally {
             textSharePresenter.dismissProgressWheel();

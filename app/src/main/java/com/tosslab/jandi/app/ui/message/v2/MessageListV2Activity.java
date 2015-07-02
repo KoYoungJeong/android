@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 
 import org.androidannotations.annotations.EActivity;
@@ -39,6 +41,7 @@ public class MessageListV2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         initViews();
     }
 

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.ResultObject;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
@@ -13,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -22,6 +20,9 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 3..
@@ -74,12 +75,10 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
         try {
             accountHomeModel.updateSelectTeam(context, teamId);
-
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
-
             view.moveSelectedTeam(firstJoin);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,7 +110,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,11 +154,11 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.removePendingTeamView(selectedTeam);
             view.dismissProgressWheel();
             view.moveAfterinvitaionAccept();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             view.dismissProgressWheel();
             e.printStackTrace();
 
-            String alertText = getJoinErrorMessage(selectedTeam, e.errCode);
+            String alertText = getJoinErrorMessage(selectedTeam, e.getResponse().getStatus());
 
             view.showTextAlertDialog(alertText, (dialog, which) -> {
                 view.dismissProgressWheel();
@@ -208,9 +207,9 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             view.dismissProgressWheel();
-            view.showErrorToast(getJoinErrorMessage(selectedTeam, e.errCode));
+            view.showErrorToast(getJoinErrorMessage(selectedTeam, e.getResponse().getStatus()));
             view.removePendingTeamView(selectedTeam);
         } catch (Exception e) {
             view.dismissProgressWheel();
@@ -224,12 +223,11 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     void getTeamInfo() {
-        ResultObject<ArrayList<Team>> resultObject = accountHomeModel.getTeamInfos(context);
-        ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
-
-        if (resultObject.getStatusCode() < 400) {
-            view.setTeamInfo(resultObject.getResult(), selectedTeamInfo);
-        } else {
+        try {
+            List<Team> teamList = accountHomeModel.getTeamInfos(context);
+            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
+            view.setTeamInfo((ArrayList<Team>) teamList, selectedTeamInfo);
+        } catch (RetrofitError e) {
             view.showErrorToast(context.getString(R.string.err_network));
         }
     }

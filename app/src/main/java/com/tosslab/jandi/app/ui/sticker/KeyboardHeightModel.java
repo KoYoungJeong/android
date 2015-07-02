@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
@@ -73,8 +72,6 @@ public class KeyboardHeightModel implements ViewTreeObserver.OnGlobalLayoutListe
         Rect r = new Rect();
         View view = activity.getWindow().getDecorView();
         view.getWindowVisibleDisplayFrame(r);
-
-        LogUtil.d(r.toString());
 
         int statusbarHeight = getStatusbarHeight(KeyboardHeightModel.this.activity);
 

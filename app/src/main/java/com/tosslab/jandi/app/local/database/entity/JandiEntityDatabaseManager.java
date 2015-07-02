@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -58,7 +59,7 @@ public class JandiEntityDatabaseManager {
     }
 
     public void upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-
+        LogUtil.d("JandiEntityDatabaseManager.upsertLeftSideMenu");
         SQLiteDatabase database = getWriteableDatabase();
 
 
@@ -266,6 +267,7 @@ public class JandiEntityDatabaseManager {
                         messageMarkerValue.put(LeftMessageMarkers.entityId.name(), messageMarker.entityId);
                         messageMarkerValue.put(LeftMessageMarkers.lastLinkId.name(), messageMarker.lastLinkId);
                         messageMarkerValue.put(LeftMessageMarkers.alarmCount.name(), messageMarker.alarmCount);
+                        messageMarkerValue.put(LeftMessageMarkers.announcementOpened.name(), messageMarker.announcementOpened ? 1 : 0);
 
                         database.insert(Table.left_message_marker.name(), null, messageMarkerValue);
                     }
@@ -347,6 +349,7 @@ public class JandiEntityDatabaseManager {
         }
     }
 
+    //FIXME
     public ResLeftSideMenu getEntityInfoAtWhole(int teamId) {
         SQLiteDatabase database = getReadableDatabase();
 
@@ -455,7 +458,8 @@ public class JandiEntityDatabaseManager {
             messageMarker.entityType = markerCursor.getString(markerCursor.getColumnIndex(LeftMessageMarkers.entityType.name()));
             messageMarker.lastLinkId = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.lastLinkId.name()));
             messageMarker.alarmCount = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.alarmCount.name()));
-
+            int announcementOpened = markerCursor.getInt(markerCursor.getColumnIndex(LeftMessageMarkers.announcementOpened.name()));
+            messageMarker.announcementOpened = announcementOpened == 1;
             messageMarkers.add(messageMarker);
         }
         return messageMarkers;

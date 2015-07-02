@@ -154,6 +154,15 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="err_messages_delete">"Message could not be deleted"</string>
     <string name="err_file_upload_failed">"File could not be uploaded"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_created">"%1$s has updated %2$s's message as the announcement."</string>
+    <string name="jandi_announcement_deleted">"%s has deleted the announcement."</string>
+    <string name="jandi_announcement_create_question">"The current announcement will be replaced with this message. Do you wish to continue?"</string>
+    <string name="jandi_announcement_delete_question">"The announcement will be deleted. Do you wish to continue?"</string>
+    <string name="jandi_announcement_create">"Make an announcement"</string>
+    <string name="jandi_announcement_delete">"Delete"</string>
+    <string name="jandi_announcement_minimize">"Minimize"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"Rename"</string>
     <string name="menu_entity_delete">"Delete"</string>

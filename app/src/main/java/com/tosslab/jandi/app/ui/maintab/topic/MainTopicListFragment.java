@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -24,7 +23,6 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.FAButtonUtil;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -41,6 +39,7 @@ import org.androidannotations.annotations.ViewById;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -69,6 +68,18 @@ public class MainTopicListFragment extends Fragment {
         super.onDestroy();
     }
 
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        EventBus.getDefault().unregister(this);
+//        super.onStop();
+//    }
+
     @Click(R.id.btn_main_topic_fab)
     void onAddTopicClick() {
         TopicCreateActivity_
@@ -81,6 +92,8 @@ public class MainTopicListFragment extends Fragment {
     @AfterInject
     void initObject() {
 
+        LogUtil.d("MainTopicListFragment");
+
         EntityManager entityManager = EntityManager.getInstance(getActivity());
 
         List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
@@ -91,6 +104,8 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterViews
     void initView() {
+
+        LogUtil.d("MainTopicListFragment initView");
         topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
@@ -179,10 +194,12 @@ public class MainTopicListFragment extends Fragment {
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
             mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("fail to join entity", e);
             mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
         } finally {
@@ -202,11 +219,11 @@ public class MainTopicListFragment extends Fragment {
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
     }
 
-    public void onEvent(MessagePushEvent event) {
-        if (!TextUtils.equals(event.getEntityType(), "user")) {
-
-        }
-    }
+//    public void onEvent(MessagePushEvent event) {
+//        if (!TextUtils.equals(event.getEntityType(), "user")) {
+//
+//        }
+//    }
 
     public void onEvent(SocketMessageEvent event) {
         if (TextUtils.equals(event.getMessageType(), "chat")) {

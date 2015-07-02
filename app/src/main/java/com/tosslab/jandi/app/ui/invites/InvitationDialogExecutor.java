@@ -11,7 +11,6 @@ import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
@@ -22,6 +21,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -61,7 +61,7 @@ public class InvitationDialogExecutor {
                     showTextDialog(context.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
                     break;
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             showErrorToast(context.getResources().getString(R.string.err_network));
         } catch (Exception e) {
