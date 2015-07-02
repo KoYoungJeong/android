@@ -18,7 +18,7 @@ public class TrackEvent {
     @DatabaseField(foreign = true, columnName = "trackId_id")
     private TrackId trackId;
     @DatabaseField
-    private String platform;
+    private String platform = "android";
     @ForeignCollectionField
     private Collection<EventProperty> properties;
 

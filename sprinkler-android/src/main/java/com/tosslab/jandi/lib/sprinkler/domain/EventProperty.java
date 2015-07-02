@@ -47,4 +47,28 @@ public class EventProperty {
     public void setTrackEvent(TrackEvent trackEvent) {
         this.trackEvent = trackEvent;
     }
+
+
+    public static class Builder {
+        private String propertyName;
+        private String propertyValue;
+
+        public Builder propertyName(String propertyName) {
+            this.propertyName = propertyName;
+            return this;
+        }
+
+        public Builder propertyValue(String propertyValue) {
+            this.propertyValue = propertyValue;
+            return this;
+        }
+
+        public EventProperty build() {
+            EventProperty eventProperty = new EventProperty();
+            eventProperty.setPropertyName(propertyName);
+            eventProperty.setPropertyValue(propertyValue);
+
+            return eventProperty;
+        }
+    }
 }
