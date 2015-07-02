@@ -549,6 +549,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
+    public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadGetMessage(teamId, messageId));
+    }
+
+    @Override
     public ResCommon deleteStickerCommentByStickerApi(int commentId, int teamId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteStickerCommentByStickerApi(commentId, teamId));
     }

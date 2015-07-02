@@ -208,9 +208,9 @@ public class JandiSocketService extends Service {
         eventHashMap.put("announcement_deleted", announcementListener);
         eventHashMap.put("announcement_status_updated", announcementListener);
 
-        EventListener lnikPreviewMessageUpdateListener =
+        EventListener linkPreviewMessageUpdateListener =
                 objects -> jandiSocketServiceModel.updateLinkPreviewMessage(objects[0]);
-        eventHashMap.put("link_preview_created", lnikPreviewMessageUpdateListener);
+        eventHashMap.put("link_preview_created", linkPreviewMessageUpdateListener);
 
     }
 

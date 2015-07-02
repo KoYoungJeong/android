@@ -538,6 +538,11 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
+    public IExecutor<ResMessages.OriginalMessage> loadGetMessage(int teamId, int topicId) {
+        return () -> authRestApiClient.getMessage(teamId, topicId);
+    }
+
+    @Override
     public IExecutor<ResCommon> loadResetPasswordByAccountPasswordApi(ReqAccountEmail
                                                                               reqAccountEmail) {
         return () -> simpleRestApiClient.resetPasswordByAccountPasswordApi(reqAccountEmail);
