@@ -141,6 +141,15 @@
     <string name="err_messages_delete">"メッセージを削除できませんでした"</string>
     <string name="err_file_upload_failed">"ファイルをアップロードできませんでした"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"告知に登録する"</string>
+    <string name="jandi_announcement_create_question">"登録されている告知をこのメッセージに変更します。変更しますか？"</string>
+    <string name="jandi_announcement_delete_question">"この告知を削除しますか？削除時トピック内の他のメンバーたちにもこれからこの告知が見えますが、元のメッセージは保存されます"</string>
+    <string name="jandi_announcement_created">"%1$sさんが%2$sさんのメッセージを告知に登録しました。"</string>
+    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。hh:mm PM"</string>
+    <string name="jandi_announcement_delete">"削除"</string>
+    <string name="jandi_announcement_minimize">"環境設定"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"変更する"</string>
     <string name="menu_entity_delete">"削除する"</string>

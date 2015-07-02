@@ -76,7 +76,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         String userName = writer.getName();
         textViewCommentUserName.setText(userName);
         // 날짜
-        String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
+        String createTime = DateTransformator.getTimeString(commentMessage.createTime);
         // 댓글 내용
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);

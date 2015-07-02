@@ -33,6 +33,8 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
@@ -47,12 +49,16 @@ import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.DateComparatorUtil;
+import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SystemService;
@@ -71,7 +77,6 @@ import rx.Observable;
  */
 @EBean
 public class MessageListPresenter {
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
 
@@ -128,7 +133,6 @@ public class MessageListPresenter {
 
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
-
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -265,6 +269,12 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
         int itemPosition = messageListAdapter.getItemPositionByMessageId(linkId);
+        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToMessageById(int id, int firstVisibleItemTop) {
+        int itemPosition = messageListAdapter.getItemPositionById(id);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -766,5 +776,4 @@ public class MessageListPresenter {
         vgStickerPreview.setVisibility(View.GONE);
 
     }
-
 }

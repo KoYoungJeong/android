@@ -72,7 +72,7 @@ public class FileDetailCommentStickerView implements CommentViewHolder {
         String userName = writer.getName();
         textViewCommentUserName.setText(userName);
         // 날짜
-        String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
+        String createTime = DateTransformator.getTimeString(commentMessage.createTime);
         textViewCommentFileCreateDate.setText(createTime);
 
         ResMessages.StickerContent stickerContent = commentMessage.content;

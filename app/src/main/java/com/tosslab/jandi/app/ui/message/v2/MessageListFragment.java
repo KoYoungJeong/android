@@ -43,6 +43,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -62,8 +63,10 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -73,6 +76,7 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
+import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -84,6 +88,8 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.model.announcement.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.model.announcement.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
@@ -159,6 +165,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Bean
     StickerViewModel stickerViewModel;
 
+    @Bean
+    AnnouncementModel announcementModel;
+
+    @Bean
+    AnnouncementViewModel announcementViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -183,42 +195,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             getSavedMessageList();
                             break;
                         case Old:
-                            if (oldMessageLoader != null) {
-                                ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
-
-                                if (roomId <= 0) {
-                                    roomId = resMessages.entityId;
-                                    messageListPresenter.setMarkerInfo(teamId, roomId);
-                                    messageListModel.updateMarkerInfo(teamId, roomId);
-                                }
-
-                            }
-                            messageListModel.trackGetOldMessage(entityType);
+                            loadOldMessage(messageQueue);
                             break;
                         case New:
-                            if (newsMessageLoader != null) {
-                                MessageState data = (MessageState) messageQueue.getData();
-                                int lastUpdateLinkId = data.getLastUpdateLinkId();
-                                if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
-                                    oldMessageLoader.load(lastUpdateLinkId);
-                                }
-                                newsMessageLoader.load(lastUpdateLinkId);
-                            }
+                            loadNewMessage(messageQueue);
                             break;
                         case Send:
-                            SendingMessage data = (SendingMessage) messageQueue.getData();
-                            int linkId;
-                            if (data.getStickerInfo() != null) {
-                                linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
-                            } else {
-                                linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
-                            }
-                            if (linkId > 0) {
-                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
-                                EventBus.getDefault().post(new RefreshNewMessageEvent());
-                            } else {
-                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
-                            }
+                            sendMessage(messageQueue);
+                            break;
+                        case CheckAnnouncement:
+                            getAnnouncement();
                             break;
                     }
                 }, throwable -> {
@@ -269,6 +255,51 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
+    private void loadOldMessage(MessageQueue messageQueue) {
+        if (oldMessageLoader != null) {
+            ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+
+            if (roomId <= 0) {
+                roomId = resMessages.entityId;
+                messageListPresenter.setMarkerInfo(teamId, roomId);
+                messageListModel.updateMarkerInfo(teamId, roomId);
+            }
+
+        }
+        messageListModel.trackGetOldMessage(entityType);
+    }
+
+    private void loadNewMessage(MessageQueue messageQueue) {
+        if (newsMessageLoader != null) {
+            MessageState data = (MessageState) messageQueue.getData();
+            int lastUpdateLinkId = data.getLastUpdateLinkId();
+            if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                oldMessageLoader.load(lastUpdateLinkId);
+            }
+            newsMessageLoader.load(lastUpdateLinkId);
+        }
+    }
+
+    private void sendMessage(MessageQueue messageQueue) {
+        SendingMessage data = (SendingMessage) messageQueue.getData();
+        int linkId;
+        if (data.getStickerInfo() != null) {
+            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+        } else {
+            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+        }
+        if (linkId > 0) {
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        } else {
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
+        }
+    }
+
+    private void getAnnouncement() {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
+    }
 
     private void getSavedMessageList() {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
@@ -326,6 +357,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementQueue());
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
@@ -344,6 +376,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         });
 
         insertEmptyMessage();
+
+        initAnnouncementListeners();
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
@@ -1244,6 +1278,53 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
+    /*
+    Announcement
+     */
+    private void initAnnouncementListeners() {
+        announcementViewModel.setOnAnnouncementCloseListener(() -> {
+            announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        });
+        announcementViewModel.setOnAnnouncementOpenListener(() -> {
+            announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        });
+    }
+
+    public void onEvent(SocketAnnouncementEvent event) {
+        if (!isForeground) {
+            messageListModel.updateMarkerInfo(teamId, roomId);
+            return;
+        }
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementQueue());
+    }
+
+    public void onEvent(AnnouncementEvent event) {
+        switch (event.getAction()) {
+            case CREATE:
+                checkAnnouncementExistsAndCreate(event.getMessageId());
+                break;
+            case DELETE:
+                announcementModel.deleteAnnouncement(teamId, roomId);
+                break;
+        }
+    }
+
+    @Background
+    void checkAnnouncementExistsAndCreate(int messageId) {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        if (announcement == null || announcement.isEmpty()) {
+            createAnnouncement(messageId);
+            return;
+        }
+
+        announcementViewModel.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
+    }
+
+    private void createAnnouncement(int messageId) {
+        announcementModel.createAnnouncement(teamId, roomId, messageId);
+    }
+
     @Override
     public boolean onBackPressed() {
 
@@ -1255,5 +1336,3 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 }
-
-
