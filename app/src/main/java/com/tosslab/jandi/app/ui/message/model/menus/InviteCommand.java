@@ -35,11 +35,8 @@ import org.androidannotations.annotations.UiThread;
 import java.util.Collections;
 import java.util.List;
 
-<<<<<<< HEAD
 import retrofit.RetrofitError;
 
-=======
->>>>>>> origin/entitymanager_thread_safe
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */

@@ -15,12 +15,8 @@ import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
-<<<<<<< HEAD
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-=======
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
->>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -29,7 +25,6 @@ import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.EBean;

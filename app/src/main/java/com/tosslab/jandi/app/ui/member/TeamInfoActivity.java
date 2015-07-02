@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.member; 
+package com.tosslab.jandi.app.ui.member;
 
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -16,13 +16,8 @@ import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-<<<<<<< HEAD
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.client.EntityClientManager;
-=======
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
->>>>>>> origin/entitymanager_thread_safe
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.member.adapter.TeamMemberListAdapter;
 import com.tosslab.jandi.app.ui.member.model.TeamInfoModel;

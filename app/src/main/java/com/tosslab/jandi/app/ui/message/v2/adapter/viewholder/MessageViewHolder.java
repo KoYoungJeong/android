@@ -21,7 +21,6 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPr
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
 

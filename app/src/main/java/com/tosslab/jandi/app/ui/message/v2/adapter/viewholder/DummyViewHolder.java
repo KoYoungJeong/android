@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..

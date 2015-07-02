@@ -9,17 +9,12 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-<<<<<<< HEAD
-=======
-import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
->>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
@@ -36,8 +31,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
 import java.util.List;
-
-import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..

@@ -1,8 +1,7 @@
 package com.tosslab.jandi.app.local.database.entity;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.junit.Test;
@@ -27,8 +26,9 @@ public class JandiEntityDatabaseManagerTest {
         int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
         JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
 
-        JandiEntityClient client = JandiEntityClient_.getInstance_(Robolectric.application);
-        ResLeftSideMenu totalEntitiesInfo = client.getTotalEntitiesInfo();
+
+        ResLeftSideMenu totalEntitiesInfo = RequestApiManager.getInstance()
+                .getInfosForSideMenuByMainRest(teamId);
 
         JandiEntityDatabaseManager manager = JandiEntityDatabaseManager.getInstance(Robolectric.application);
         manager.upsertLeftSideMenu(totalEntitiesInfo);

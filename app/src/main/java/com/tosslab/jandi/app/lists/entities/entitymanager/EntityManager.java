@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,13 +61,7 @@ public class EntityManager {
         return entityManager;
     }
 
-<<<<<<< HEAD:app/src/main/java/com/tosslab/jandi/app/lists/entities/EntityManager.java
-    void init(ResLeftSideMenu resLeftSideMenu) {
-
-        LogUtil.d("EntityManger.init");
-=======
     protected void init(ResLeftSideMenu resLeftSideMenu) {
->>>>>>> origin/entitymanager_thread_safe:app/src/main/java/com/tosslab/jandi/app/lists/entities/entitymanager/EntityManager.java
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
         mGroups = new HashMap<Integer, FormattedEntity>();

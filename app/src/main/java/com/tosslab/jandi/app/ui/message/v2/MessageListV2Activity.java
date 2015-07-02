@@ -5,13 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-<<<<<<< HEAD
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.services.socket.JandiSocketService;
-import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
-=======
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
->>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
 
 import org.androidannotations.annotations.EActivity;
