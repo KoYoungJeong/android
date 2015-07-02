@@ -133,7 +133,6 @@ public class JandiSocketServiceModel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void refreshMessage(Object object) {
