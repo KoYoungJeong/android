@@ -44,6 +44,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.restadapterfactory.bu
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqChangePassword;
 import com.tosslab.jandi.app.network.models.ReqConfirmEmail;
+import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -63,9 +64,11 @@ import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
+import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -470,6 +473,26 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResTeamDetailInfo.InviteTeam getTeamInfoByTeamApi(int teamId) throws RetrofitError {
         return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getTeamInfo(teamId);
+    }
+
+    @Override
+    public ResAnnouncement getAnnouncement(int teamId, int topicId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().getAnnouncement(teamId, topicId);
+    }
+
+    @Override
+    public ResCommon createAnnouncement(int teamId, int topicId, ReqCreateAnnouncement reqCreateAnnouncement) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().createAnnouncement(teamId, topicId, reqCreateAnnouncement);
+    }
+
+    @Override
+    public ResCommon updateAnnouncementStatus(int teamId, int memberId, ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus);
+    }
+
+    @Override
+    public ResCommon deleteAnnouncement(int teamId, int topicId) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(TeamApiV2Client.class).create().deleteAnnouncement(teamId, topicId);
     }
 
     @Override

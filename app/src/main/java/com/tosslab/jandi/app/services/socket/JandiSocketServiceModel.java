@@ -224,7 +224,7 @@ public class JandiSocketServiceModel {
 
     public void refreshAnnouncement(Object object) {
         try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
+            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
@@ -233,7 +233,7 @@ public class JandiSocketServiceModel {
                     objectMapper.readValue(object.toString(), SocketAnnouncementEvent.class);
 
             postEvent(socketAnnouncementEvent);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

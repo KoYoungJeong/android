@@ -39,6 +39,9 @@ public class TeamsApiClientTest {
 
     @Before
     public void setUp() throws Exception {
+        JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
+        JandiPreference.setAccessToken(Robolectric.application, "463d951c-8591-4428-ac0e-f11148d82679");
+
         BaseInitUtil.initData(Robolectric.application);
     }
 
@@ -101,9 +104,6 @@ public class TeamsApiClientTest {
         int teamId = 11158788;
         int topicId = 11160305;
 
-        JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
-        JandiPreference.setAccessToken(Robolectric.application, "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
-
         ResAnnouncement announcement = RequestApiManager.getInstance().getAnnouncement(teamId, topicId);
         System.out.println(announcement);
 
@@ -117,9 +117,6 @@ public class TeamsApiClientTest {
         int topicId = 11160305;
         int messageId = 361087;
 
-        JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
-        JandiPreference.setAccessToken(Robolectric.application, "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
-
         ReqCreateAnnouncement reqCreateAnnouncement = new ReqCreateAnnouncement(messageId);
         ResCommon resCommon = RequestApiManager.getInstance().createAnnouncement(teamId, topicId, reqCreateAnnouncement);
 
@@ -128,14 +125,11 @@ public class TeamsApiClientTest {
         assertThat(resCommon, is(notNullValue()));
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void testUpdateAnnouncementStatus() throws Exception {
         int teamId = 11158788;
         int topicId = 11160305;
-
-        JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
-        JandiPreference.setAccessToken(Robolectric.application, "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
 
         ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus = new ReqUpdateAnnouncementStatus(topicId, true);
         ResCommon resCommon =
@@ -151,9 +145,6 @@ public class TeamsApiClientTest {
     public void testDeleteAnnouncement() throws Exception {
         int teamId = 11158788;
         int topicId = 11160305;
-
-        JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
-        JandiPreference.setAccessToken(Robolectric.application, "9a275f3e-ee55-42dd-a93d-64197e9e17e6");
 
         ResCommon resCommon = RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);
 

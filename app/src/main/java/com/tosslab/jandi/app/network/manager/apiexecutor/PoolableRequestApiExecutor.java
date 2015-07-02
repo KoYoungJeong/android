@@ -6,7 +6,9 @@ import android.net.NetworkInfo;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
@@ -14,6 +16,7 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
+import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 /**
@@ -111,7 +114,7 @@ public class PoolableRequestApiExecutor {
                 //Request Access token, and save token
                 ReqAccessToken refreshReqToken = ReqAccessToken
                         .createRefreshReqToken(JandiPreference.getRefreshToken(JandiApplication.getContext()));
-                accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(refreshReqToken);
+                accessToken = new JacksonConvertedSimpleRestApiClient().getAccessTokenByMainRest(refreshReqToken);
                 TokenUtil.saveTokenInfoByRefresh(accessToken);
             } catch (RetrofitError e) {
                 LogUtil.e("Refresh Token Fail", e);
@@ -120,6 +123,7 @@ public class PoolableRequestApiExecutor {
                 }
             }
         }
+        LogUtil.e(accessToken.toString());
         return accessToken;
     }
 }
