@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.client.account.emails.IAccountEmailsApiLoad
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiLoader;
 import com.tosslab.jandi.app.network.client.chat.IChatApiLoader;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiLoader;
+import com.tosslab.jandi.app.network.client.file.IFileApiLoader;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiLoader;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiLoader;
 import com.tosslab.jandi.app.network.client.messages.IMessagesApiLoader;
@@ -81,7 +82,7 @@ import java.util.List;
 public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApiLoader, IAccountPasswordApiLoader, IChatApiLoader,
         IDirectMessageApiLoader, IInvitationApiLoader, IMainRestApiLoader, ICommentsApiLoader, IMessageSearchApiLoader,
         IMessagesApiLoader, IGroupMessageApiLoader, IGroupApiLoader, IProfileApiLoader, IChannelMessageApiLoader, IChannelApiLoader,
-        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader {
+        IRoomsApiLoader, IAccountProfileApiLoader, IStarredEntityApiLoader, IStickerApiLoader, ITeamApiLoader ,IFileApiLoader{
 
     JacksonConvertedAuthRestApiClient authRestApiClient = new JacksonConvertedAuthRestApiClient();
 
@@ -587,5 +588,10 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     @Override
     public IExecutor<ResCommon> loadDeleteStickerByStickerApi(int messageId, int teamId) {
         return () -> authRestApiClient.deleteStickerByStickerApi(messageId, teamId);
+    }
+
+    @Override
+    public IExecutor<ResCommon> loaderDeleteFileByFileApi(int teamId, int fileId) {
+        return () -> authRestApiClient.deleteFileByFileApi(teamId, fileId);
     }
 }

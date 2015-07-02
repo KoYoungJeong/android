@@ -50,8 +50,10 @@ public class FileDetailModel {
     @Bean
     EntityClientManager entityClientManager;
 
+    public void deleteFile(int fileId) throws RetrofitError {
+        entityClientManager.deleteFile(fileId);
+    }
     public ResFileDetail getFileDetailInfo(int fileId) throws RetrofitError {
-
         return entityClientManager.getFileDetail(fileId);
     }
 

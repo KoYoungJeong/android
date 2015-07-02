@@ -205,4 +205,8 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().deleteMessageCommentByCommentsApi(selectedTeamId, feedbackId, messageId);
     }
 
+    public ResCommon deleteFile(final int fileId) throws RetrofitError {
+        return RequestApiManager.getInstance().deleteFileByFileApi(selectedTeamId, fileId);
+    }
+
 }

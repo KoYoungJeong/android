@@ -5,6 +5,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
@@ -40,12 +41,11 @@ public class DeleteAction implements FileAction {
         showProgressWheel();
         try {
 
-//            FileDetailModel_.getInstance_(context).deleteFile(fileId);
-//            deleteFileDone(true);
+            FileDetailModel_.getInstance_(context).deleteFile(fileId);
         } catch (RetrofitError e) {
-//            deleteFileDone(false);
+            e.printStackTrace();
         } catch (Exception e) {
-//            deleteFileDone(false);
+            e.printStackTrace();
         } finally {
             dismissProgressWheel();
         }

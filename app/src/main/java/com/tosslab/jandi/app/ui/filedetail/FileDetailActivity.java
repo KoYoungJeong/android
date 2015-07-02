@@ -538,7 +538,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         if (!isForeground) {
             return;
         }
-//        deleteFileInBackground(event.getFileId());
+        deleteFileInBackground(event.getFileId());
     }
 
     public void onEvent(DeleteFileEvent event) {
@@ -642,27 +642,29 @@ public class FileDetailActivity extends BaseAnalyticsActivity {
         }
     }
 
-//    /**
-//     * 파일 삭제
-//     *
-//     * @param fileId
-//     */
-//    @Background
-//    public void deleteFileInBackground(int fileId) {
-//        fileDetailPresenter.showProgressWheel();
-//        try {
-//            fileDetailModel.deleteFile(fileId);
-//            LogUtil.d("success to delete file");
-//            deleteFileDone(true);
-//        } catch (JandiNetworkException e) {
-//            LogUtil.e("delete file failed", e);
-//            deleteFileDone(false);
-//        } catch (Exception e) {
-//            deleteFileDone(false);
-//        } finally {
-//            fileDetailPresenter.dismissProgressWheel();
-//        }
-//    }
+    /**
+     * 파일 삭제
+     *
+     * @param fileId
+     */
+    @Background
+    public void deleteFileInBackground(int fileId) {
+        fileDetailPresenter.showProgressWheel();
+        try {
+            fileDetailModel.deleteFile(fileId);
+            LogUtil.d("success to delete file");
+            deleteFileDone(true);
+        } catch (RetrofitError e) {
+            LogUtil.e("delete file failed", e);
+            e.printStackTrace();
+            deleteFileDone(false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            deleteFileDone(false);
+        } finally {
+            fileDetailPresenter.dismissProgressWheel();
+        }
+    }
 
     @UiThread
     public void deleteFileDone(boolean isOk) {

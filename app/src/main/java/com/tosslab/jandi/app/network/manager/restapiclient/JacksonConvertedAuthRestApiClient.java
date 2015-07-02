@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.client.chat.ChatApiV2Client;
 import com.tosslab.jandi.app.network.client.chat.IChatApiAuth;
 import com.tosslab.jandi.app.network.client.direct.message.DirectMessageApiV2Client;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth;
+import com.tosslab.jandi.app.network.client.file.FileApiV2Client;
+import com.tosslab.jandi.app.network.client.file.IFileApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.InvitationApiV2Client;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
@@ -93,7 +95,7 @@ import retrofit.RetrofitError;
 public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth, IAccountEmailsApiAuth, IAccountPasswordApiAuth,
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
-        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth {
+        IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IFileApiAuth {
 
     @Override
     public ResAccountInfo registerNotificationTokenByAccountDeviceApi(ReqNotificationRegister reqNotificationRegister) throws RetrofitError {
@@ -510,4 +512,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
         return RestAdapterBuilder.newInstance(StickerApiV2Client.class).create().deleteSticker(messageId, teamId);
     }
 
+    @Override
+    public ResCommon deleteFileByFileApi(int teamId, int fileId) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().deleteFile(teamId, fileId);
+    }
 }

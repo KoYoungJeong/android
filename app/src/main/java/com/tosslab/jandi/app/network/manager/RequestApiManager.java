@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApi
 import com.tosslab.jandi.app.network.client.account.password.IAccountPasswordApiSimple;
 import com.tosslab.jandi.app.network.client.chat.IChatApiAuth;
 import com.tosslab.jandi.app.network.client.direct.message.IDirectMessageApiAuth;
+import com.tosslab.jandi.app.network.client.file.IFileApiAuth;
 import com.tosslab.jandi.app.network.client.invitation.IInvitationApiAuth;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiAuth;
 import com.tosslab.jandi.app.network.client.main.IMainRestApiSimple;
@@ -87,7 +88,7 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
         IChatApiAuth, IDirectMessageApiAuth, IInvitationApiAuth, IMainRestApiAuth, ICommentsApiAuth, IMessageSearchApiAuth,
         IMessagesApiAuth, IGroupMessageApiAuth, IGroupApiAuth, IProfileApiAuth, IChannelMessageApiAuth, IChannelApiAuth,
         IRoomsApiAuth, IAccountProfileApiAuth, IStarredEntityApiAuth, IStickerApiAuth, ITeamApiAuth, IAccountPasswordApiSimple,
-        IMainRestApiSimple {
+        IMainRestApiSimple, IFileApiAuth {
 
     private static final RequestApiManager requestApiManager = new RequestApiManager();
 
@@ -561,5 +562,10 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResCommon deleteStickerByStickerApi(int messageId, int teamId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadDeleteStickerByStickerApi(messageId, teamId));
+    }
+
+    @Override
+    public ResCommon deleteFileByFileApi(int teamId, int fileId) {
+        return requestApiExecute(RestApiLoader.getInstance().loaderDeleteFileByFileApi(teamId, fileId));
     }
 }
