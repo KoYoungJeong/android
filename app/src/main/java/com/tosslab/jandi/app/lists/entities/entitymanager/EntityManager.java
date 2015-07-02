@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.lists.entities;
+package com.tosslab.jandi.app.lists.entities.entitymanager;
 
 import android.content.Context;
 
@@ -8,14 +8,11 @@ import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,9 +45,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedUsersWithoutMe = null;
     private List<FormattedEntity> mSortedGroups = null;
 
-    private int mTotalBadgeCount;
-
-    private EntityManager(Context context) {
+    protected EntityManager(Context context) {
         int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
         if (resLeftSideMenu != null) {
@@ -60,14 +55,18 @@ public class EntityManager {
 
     public static synchronized EntityManager getInstance(Context context) {
         if (entityManager == null) {
-            entityManager = new EntityManager(context);
+            entityManager = new EntityManagerLockProxy(context);
         }
         return entityManager;
     }
 
+<<<<<<< HEAD:app/src/main/java/com/tosslab/jandi/app/lists/entities/EntityManager.java
     void init(ResLeftSideMenu resLeftSideMenu) {
 
         LogUtil.d("EntityManger.init");
+=======
+    protected void init(ResLeftSideMenu resLeftSideMenu) {
+>>>>>>> origin/entitymanager_thread_safe:app/src/main/java/com/tosslab/jandi/app/lists/entities/entitymanager/EntityManager.java
         mJoinedTopics = new HashMap<Integer, FormattedEntity>();
         mUnjoinedTopics = new HashMap<Integer, FormattedEntity>();
         mGroups = new HashMap<Integer, FormattedEntity>();
@@ -87,12 +86,10 @@ public class EntityManager {
             mMarkers.put(marker.entityId, marker);
         }
         arrangeEntities(resLeftSideMenu);
-        mTotalBadgeCount = retrieveTotalBadgeCount();
     }
 
     public void refreshEntity(Context context) {
 
-        LogUtil.d("Refresh Entity~!");
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
@@ -103,38 +100,7 @@ public class EntityManager {
     }
 
     public void refreshEntity(ResLeftSideMenu resLeftSideMenu) {
-        LogUtil.d("Refresh Entity~!");
         init(resLeftSideMenu);
-    }
-
-    /**
-     * *********************************************************
-     * for Badge Count
-     * **********************************************************
-     */
-    private int retrieveTotalBadgeCount() {
-        int totalBadgeCount = 0;
-
-        totalBadgeCount += retrieveBadgeCount(mStarredJoinedTopics);
-        totalBadgeCount += retrieveBadgeCount(mJoinedTopics);
-        totalBadgeCount += retrieveBadgeCount(mStarredGroups);
-        totalBadgeCount += retrieveBadgeCount(mGroups);
-        totalBadgeCount += retrieveBadgeCount(mStarredUsers);
-        totalBadgeCount += retrieveBadgeCount(mUsers);
-
-        return totalBadgeCount;
-    }
-
-    private int retrieveBadgeCount(HashMap<Integer, FormattedEntity> hashMap) {
-        int badgeCount = 0;
-        for (FormattedEntity formattedEntity : hashMap.values()) {
-            badgeCount += formattedEntity.alarmCount;
-        }
-        return badgeCount;
-    }
-
-    public int getTotalBadgeCount() {
-        return mTotalBadgeCount;
     }
 
     /**
@@ -412,43 +378,6 @@ public class EntityManager {
         return ret;
     }
 
-    /**
-     * *********************************************************
-     * 각 채팅 종류별로 새로운 메시지가 있는지 확인
-     * 뱃지 카운트의 존재 여부를 검사하여...
-     * **********************************************************
-     */
-    public boolean hasNewTopicMessage() {
-        return hasNewMessage(getJoinedChannels()) || hasNewMessage(getGroups());
-    }
-
-    public boolean hasNewChatMessage() {
-        return hasNewMessage(getJoinedUsers());
-    }
-
-    List<FormattedEntity> getJoinedUsers() {
-
-        Iterator<FormattedEntity> iterator = mJoinedUsers.values().iterator();
-
-
-        List<FormattedEntity> joinedUserList = new ArrayList<FormattedEntity>();
-
-        while (iterator.hasNext()) {
-            joinedUserList.add(iterator.next());
-        }
-
-        return joinedUserList;
-    }
-
-    private boolean hasNewMessage(List<FormattedEntity> formattedEntities) {
-        for (FormattedEntity entity : formattedEntities) {
-            if (entity.alarmCount > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean isMyTopic(int entityId) {
         FormattedEntity searchedTopic = searchPublicTopicById(entityId);
         if (searchedTopic != null) {
@@ -505,16 +434,10 @@ public class EntityManager {
      */
     private List<FormattedEntity> sortFormattedEntityList(Collection<FormattedEntity> naiveEntities) {
         List<FormattedEntity> sortedEntities = new ArrayList<FormattedEntity>(naiveEntities);
-        Collections.sort(sortedEntities, new NameAscCompare());
+        Collections.sort(sortedEntities, (formattedEntity, formattedEntity2) ->
+                formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName()));
 
         return sortedEntities;
     }
 
-    static class NameAscCompare implements Comparator<FormattedEntity> {
-
-        @Override
-        public int compare(FormattedEntity formattedEntity, FormattedEntity formattedEntity2) {
-            return formattedEntity.getName().compareToIgnoreCase(formattedEntity2.getName());
-        }
-    }
 }

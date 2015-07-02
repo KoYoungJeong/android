@@ -13,8 +13,8 @@ import android.widget.ListView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.lists.entities.UnjoinedUserListAdapter;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -35,8 +35,11 @@ import org.androidannotations.annotations.UiThread;
 import java.util.Collections;
 import java.util.List;
 
+<<<<<<< HEAD
 import retrofit.RetrofitError;
 
+=======
+>>>>>>> origin/entitymanager_thread_safe
 /**
  * Created by Steve SeongUg Jung on 14. 12. 10..
  */

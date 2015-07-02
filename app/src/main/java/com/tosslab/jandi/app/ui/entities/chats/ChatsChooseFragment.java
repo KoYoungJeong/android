@@ -16,7 +16,11 @@ import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
+<<<<<<< HEAD
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+=======
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+>>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.ui.entities.chats.adapter.ChatChooseAdapter;
 import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;

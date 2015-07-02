@@ -16,6 +16,10 @@ import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+<<<<<<< HEAD
+=======
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+>>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;

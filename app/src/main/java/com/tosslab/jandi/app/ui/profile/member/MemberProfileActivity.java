@@ -18,9 +18,13 @@ import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
+<<<<<<< HEAD
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
 import com.tosslab.jandi.app.lists.entities.EntityManager;
+=======
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+>>>>>>> origin/entitymanager_thread_safe
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
