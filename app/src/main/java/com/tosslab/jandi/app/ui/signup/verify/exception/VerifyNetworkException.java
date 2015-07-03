@@ -11,6 +11,7 @@ import org.codehaus.jackson.type.TypeReference;
 import java.io.IOException;
 
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by tonyjs on 15. 6. 1..
@@ -31,23 +32,15 @@ public class VerifyNetworkException extends Exception {
         this.httpStatusCode = e.getResponse().getStatus();
         this.httpStatusMessage = e.getMessage();
 
-        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
         try {
-            String responseBodyAsString = e.getResponse().getBody().toString();
-            LogUtil.e(responseBodyAsString);
-            ExceptionData data = objectMapper.readValue(responseBodyAsString,
-                    new TypeReference<ExceptionData>() {
-                    });
-
-            if (data != null) {
-                LogUtil.e(data.toString());
-            }
-            errCode = data != null ? data.code : httpStatusCode;
-            errReason = data != null ? data.msg : httpStatusMessage;
-            ExceptionData.TryData tryData = data != null ? data.getData() : null;
+            ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
+            LogUtil.d(exceptionData.toString());
+            errCode = exceptionData.code;
+            errReason = exceptionData.msg;
+            ExceptionData.TryData tryData = exceptionData.getData();
             tryCount = tryData != null ? tryData.getTryCount() : NONE_TRY_COUNT;
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (RuntimeException runtimeException) {
+            runtimeException.printStackTrace();
         }
     }
 
@@ -80,7 +73,11 @@ public class VerifyNetworkException extends Exception {
 
         @Override
         public String toString() {
-            return "tryData = " + data;
+            return "ExceptionData{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    ", data=" + data +
+                    '}';
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)

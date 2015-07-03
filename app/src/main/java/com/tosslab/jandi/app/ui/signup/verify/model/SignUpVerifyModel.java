@@ -26,8 +26,6 @@ import retrofit.RetrofitError;
 @EBean
 public class SignUpVerifyModel {
 
-    public static final int AUTHORIZED = -1;
-
     @RootContext
     Context context;
 
