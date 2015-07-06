@@ -200,7 +200,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         if (searchSelectView != null) {
             searchSelectView.setOnSearchItemSelect(null);
         }
-        searchSelectView = messageSearchFragment;
+        searchSelectView = fileListFragment;
         searchSelectView.setOnSearchItemSelect(() -> finish());
 
 
