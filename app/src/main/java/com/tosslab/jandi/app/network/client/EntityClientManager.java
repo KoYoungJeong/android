@@ -53,17 +53,19 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
     }
 
-    public ResCommon createPublicTopic(String entityName) throws RetrofitError {
+    public ResCommon createPublicTopic(String entityName, String topicDescription) throws RetrofitError {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
+        reqCreateTopic.description = topicDescription;
         return RequestApiManager.getInstance().createChannelByChannelApi(reqCreateTopic);
     }
 
-    public ResCommon createPrivateGroup(String entityName) throws RetrofitError {
+    public ResCommon createPrivateGroup(String entityName, String topicDescription) throws RetrofitError {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
+        reqCreateTopic.description = topicDescription;
         return RequestApiManager.getInstance().createPrivateGroupByGroupApi(reqCreateTopic);
     }
 

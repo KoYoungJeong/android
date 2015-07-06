@@ -170,7 +170,7 @@ public class MainPrivateListFragment extends BaseChatListFragment {
     @Background
     void createGroupInBackground(String entityName) {
         try {
-            ResCommon restResId = mEntityClientManager.createPrivateGroup(entityName);
+            ResCommon restResId = mEntityClientManager.createPrivateGroup(entityName, "");
             createGroupSucceed(restResId.id, entityName);
         } catch (RetrofitError e) {
             e.printStackTrace();

@@ -398,4 +398,7 @@
     <string name="jandi_decide_choose">"選擇照片"</string>
     <string name="jandI_select_gallery">"選擇照片"</string>
     <string name="jandi_view_all">"檢視全部"</string>
+
+    <string name="jandi_title_name_required">"名字*"</string>
+
 </resources>

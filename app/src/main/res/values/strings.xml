@@ -401,4 +401,11 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_view_all">"View All"</string>
     <string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
     <string name="jandi_decide_choose">"Select Photos"</string>
+    <string name="jandi_input_topic_name">이름을 입력하세요.</string>
+
+    <string name="jandi_title_name_required">"Name*"</string>
+    <string name="jandi_is_topic_required">공개여부*</string>
+    <string name="jandi_topic_description">토픽소개</string>
+    <string name="jandi_explain_topic_description">토픽에 대해 소개해 주세요.</string>
+    <string name="jandi_this_is_required_parts">항목은 필수 항목입니다.</string>
 </resources>

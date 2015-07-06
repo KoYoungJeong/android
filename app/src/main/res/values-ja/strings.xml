@@ -406,4 +406,7 @@
     <string name="jandi_decide_choose">"写真を選択"</string>
     <string name="jandI_select_gallery">"写真を選択"</string>
     <string name="jandi_view_all">"すべて表示"</string>
+
+    <string name="jandi_title_name_required">"名前*"</string>
+
 </resources>

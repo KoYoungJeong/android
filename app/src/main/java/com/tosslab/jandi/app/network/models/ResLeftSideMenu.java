@@ -73,6 +73,7 @@ public class ResLeftSideMenu {
         public int ch_creatorId;
         public Date ch_createTime;
         public List<Integer> ch_members;
+        public String description;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -102,6 +103,8 @@ public class ResLeftSideMenu {
         public int pg_creatorId;
         public Date pg_createTime;
         public List<Integer> pg_members;
+        public String description;
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

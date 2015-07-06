@@ -6,4 +6,5 @@ package com.tosslab.jandi.app.network.models;
 public class ReqCreateTopic {
     public int teamId;
     public String name;
+    public String description;
 }

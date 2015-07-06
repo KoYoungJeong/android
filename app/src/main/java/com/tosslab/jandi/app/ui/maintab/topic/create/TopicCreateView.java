@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.ui.maintab.topic.create;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -23,14 +23,19 @@ import org.androidannotations.annotations.ViewById;
  * Created by Steve SeongUg Jung on 15. 1. 6..
  */
 @EBean
-public class TopicCreatePresenter {
+public class TopicCreateView {
 
+    public static final int TITLE_MAX_LENGTH = 60;
+    public static final int DESCRIPTION_MAX_LENGTH = 300;
     @RootContext
     Activity activity;
 
 
     @ViewById(R.id.et_topic_create_title)
-    EditText titleTextView;
+    EditText tvTitle;
+
+    @ViewById(R.id.et_topic_create_description)
+    EditText tvTopicDescription;
 
     @ViewById(R.id.img_topic_create_private_check)
     ImageView privateCheckView;
@@ -38,8 +43,11 @@ public class TopicCreatePresenter {
     @ViewById(R.id.img_topic_create_public_check)
     ImageView publicCheckView;
 
-    @ViewById(R.id.layout_topic_create_tips)
-    View topicTipLayout;
+    @ViewById(R.id.tv_topic_create_name_count)
+    TextView tvTitleCount;
+
+    @ViewById(R.id.tv_topic_create_description_count)
+    TextView tvDescriptionCount;
 
     private ProgressWheel progressWheel;
 
@@ -56,7 +64,7 @@ public class TopicCreatePresenter {
     }
 
     public String getTopicTitle() {
-        return titleTextView.getText().toString();
+        return tvTitle.getText().toString();
     }
 
     public void setTopicType(boolean isPublic) {
@@ -120,14 +128,15 @@ public class TopicCreatePresenter {
 
     }
 
+    public void setTitleCount(int length) {
+        tvTitleCount.setText(String.format("%d/%d", length, TITLE_MAX_LENGTH));
+    }
 
-    public void setTopicTip(boolean isPublic) {
+    public void setDescriptionCount(int length) {
+        tvDescriptionCount.setText(String.format("%d/%d", length, DESCRIPTION_MAX_LENGTH));
+    }
 
-        if (isPublic) {
-            topicTipLayout.setVisibility(View.GONE);
-        } else {
-            topicTipLayout.setVisibility(View.VISIBLE);
-        }
-
+    public String getTopicDescriptionText() {
+        return tvTopicDescription.getText().toString();
     }
 }

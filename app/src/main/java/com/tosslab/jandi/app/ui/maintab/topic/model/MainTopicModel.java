@@ -42,7 +42,7 @@ public class MainTopicModel {
      * topic 생성
      */
     public ResCommon createTopicInBackground(String entityName) throws RetrofitError {
-        return entityClientManager.createPublicTopic(entityName);
+        return entityClientManager.createPublicTopic(entityName, "");
     }
 
     public List<FormattedEntity> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity> groups) {

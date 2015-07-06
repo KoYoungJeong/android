@@ -23,7 +23,7 @@ public interface ChannelApiV2Client {
 
     // 채널 생성
     @POST("/channel")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResCommon createChannel(@Body ReqCreateTopic channel);
 
     @PUT("/channels/{channelId}")

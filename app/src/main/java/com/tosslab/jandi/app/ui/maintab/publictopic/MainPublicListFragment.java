@@ -180,7 +180,7 @@ public class MainPublicListFragment extends BaseChatListFragment {
     @Background
     void createTopicInBackground(String entityName) {
         try {
-            ResCommon restResId = mEntityClientManager.createPublicTopic(entityName);
+            ResCommon restResId = mEntityClientManager.createPublicTopic(entityName, "");
             createTopicSucceed(restResId.id, entityName);
         } catch (RetrofitError e) {
             e.printStackTrace();
