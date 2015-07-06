@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.web.InternalWebActivity_;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.views.AutoScaleImageView;
 
 /**
@@ -22,6 +23,7 @@ public class LinkPreviewViewModel {
     private TextView tvTitle;
     private TextView tvDomain;
     private TextView tvDescription;
+    private View vgThumb;
     private AutoScaleImageView ivThumb;
     private OnLinkPreviewClickListener onLinkPreviewClickListener;
 
@@ -40,6 +42,7 @@ public class LinkPreviewViewModel {
         tvTitle = (TextView) rootView.findViewById(R.id.tv_linkpreview_title);
         tvDomain = (TextView) rootView.findViewById(R.id.tv_linkpreview_domain);
         tvDescription = (TextView) rootView.findViewById(R.id.tv_linkpreview_description);
+        vgThumb = rootView.findViewById(R.id.vg_linkpreview_thumb);
         ivThumb = (AutoScaleImageView) rootView.findViewById(R.id.iv_linkpreview_thumb);
         ivThumb.setRatio(274, 115);
     }
@@ -50,7 +53,7 @@ public class LinkPreviewViewModel {
 
         if (message.linkPreview == null || TextUtils.isEmpty(message.linkPreview.linkUrl)) {
             vgLinkPreview.setVisibility(View.GONE);
-            return ;
+            return;
         } else {
             vgLinkPreview.setVisibility(View.VISIBLE);
         }
@@ -68,10 +71,10 @@ public class LinkPreviewViewModel {
 
         String imageUrl = linkPreview.imageUrl;
         if (TextUtils.isEmpty(imageUrl)) {
-            ivThumb.setVisibility(View.GONE);
+            vgThumb.setVisibility(View.GONE);
             ivThumb.setImageDrawable(null);
         } else {
-            ivThumb.setVisibility(View.VISIBLE);
+            vgThumb.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(imageUrl)
                     .asBitmap()
