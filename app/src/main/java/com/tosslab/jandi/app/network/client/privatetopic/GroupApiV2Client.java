@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.network.client.privatetopic;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
@@ -32,7 +32,7 @@ public interface GroupApiV2Client {
     ResCommon modifyGroup(@Body ReqCreateTopic channel, @Path("groupId") int groupId);
 
     // Private Group 삭제
-    @DELETE("/privateGroups/{groupId}")
+    @DELETEWithBody("/privateGroups/{groupId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteGroup(@Query("teamId") int teamId, @Path("groupId") int groupId);
 

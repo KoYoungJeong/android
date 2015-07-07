@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.client.publictopic.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -9,7 +10,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Headers;
 import retrofit.http.POST;
@@ -63,7 +63,7 @@ public interface ChannelMessageApiV2Client {
                                        @Path("messageId") int messageId);
 
     // 채널에서 Message 삭제
-    @DELETE("/channels/{channelId}/messages/{messageId}")
+    @DELETEWithBody("/channels/{channelId}/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deletePublicTopicMessage(@Query("teamId") int teamId, @Path("channelId") int channelId,
                                        @Path("messageId") int messageId);

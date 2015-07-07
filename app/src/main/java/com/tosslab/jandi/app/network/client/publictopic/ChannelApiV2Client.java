@@ -2,13 +2,13 @@ package com.tosslab.jandi.app.network.client.publictopic;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
@@ -31,7 +31,7 @@ public interface ChannelApiV2Client {
     ResCommon modifyPublicTopicName(@Body ReqCreateTopic channel, @Path("channelId") int channelId);
 
     // 채널 삭제
-    @DELETE("/channels/{channelId}")
+    @DELETEWithBody("/channels/{channelId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteTopic(@Path("channelId") int channelId, @Body ReqDeleteTopic reqDeleteTopic);
 
