@@ -46,7 +46,6 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@id/iv_announcement_user"
-                android:maxLines="7"
                 android:singleLine="true"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"/>

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.services.socket.to;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
@@ -11,7 +12,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class SocketAnnouncementEvent {
     public enum Type {
         CREATED("announcement_created"),
-        UPDATED("announcement_status_updated"),
+        STATUS_UPDATED("announcement_status_updated"),
         DELETED("announcement_deleted");
 
         String name;
@@ -38,7 +39,7 @@ public class SocketAnnouncementEvent {
     }
 
     public Type getEventType() {
-        Type temp = Type.UPDATED;
+        Type temp = Type.STATUS_UPDATED;
         Type[] types = Type.values();
         for (Type type : types) {
             if (type.getName().equals(event)) {
@@ -78,7 +79,8 @@ public class SocketAnnouncementEvent {
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Data {
         private int topicId;
-        private boolean status = false;
+        @JsonProperty("status")
+        private boolean opened = false;
 
         public int getTopicId() {
             return topicId;
@@ -88,18 +90,18 @@ public class SocketAnnouncementEvent {
             this.topicId = topicId;
         }
 
-        public boolean isStatus() {
-            return status;
+        public boolean isOpened() {
+            return opened;
         }
 
-        public void setStatus(boolean status) {
-            this.status = status;
+        public void setOpened(boolean status) {
+            this.opened = status;
         }
 
         @Override
         public String toString() {
             return "Data{" +
-                    "status=" + status +
+                    "opened=" + opened +
                     ", topicId=" + topicId +
                     '}';
         }
