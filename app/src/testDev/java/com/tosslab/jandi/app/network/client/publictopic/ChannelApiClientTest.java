@@ -3,25 +3,50 @@ package com.tosslab.jandi.app.network.client.publictopic;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.models.ReqCreateTopic;
+import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
+import com.tosslab.jandi.app.network.models.ResCommon;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(RobolectricGradleTestRunner.class)
 public class ChannelApiClientTest {
-
-    private ResLeftSideMenu sideMenu;
 
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
-        sideMenu = getSideMenu();
+
+    }
+
+    @Test
+    public void testDeleteChannel() throws Exception {
+
+        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
+
+        ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.teamId = teamId;
+        reqCreateTopic.name = "Test Create Public Topic";
+        ResCommon channelByChannelApi = RequestApiManager.getInstance().createChannelByChannelApi(reqCreateTopic);
+
+        int createId = channelByChannelApi.id;
+
+        assertTrue(createId > 0);
+
+        ResCommon resCommon = RequestApiManager.getInstance().deleteTopicByChannelApi(createId, new ReqDeleteTopic(teamId));
+
+        assertThat(resCommon, is(notNullValue()));
 
     }
 
@@ -30,13 +55,5 @@ public class ChannelApiClientTest {
         JandiDatabaseOpenHelper.getInstance(Robolectric.application).getWritableDatabase().close();
     }
 
-
-    private ResLeftSideMenu getSideMenu() {
-
-        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance()
-                .getInfosForSideMenuByMainRest(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId());
-
-        return infosForSideMenu;
-    }
 
 }
