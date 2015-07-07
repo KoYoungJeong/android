@@ -1,188 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/jandi_entities_bg"
-              android:orientation="vertical">
 
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/layout_search_bar"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"
-        android:visibility="visible"/>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_height="match_parent"
+        android:background="@color/jandi_entities_bg"
         android:orientation="vertical">
 
-        <TextView
-            style="@style/JandiTopic.Create.TextView.Title"
-            android:text="@string/jandi_title_name_required"/>
 
-        <EditText
-            android:id="@+id/et_topic_create_title"
-            style="@style/JandiTopic.Create.TextView.Input"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:hint="@string/jandi_input_topic_name"
-            android:maxLength="60"
-            android:maxLines="1"
-            android:paddingBottom="12dp"
-            android:paddingLeft="17dp"
-            android:paddingRight="17dp"
-            android:paddingTop="14dp"
-            android:singleLine="true"/>
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_topic_create_name_count"
-        style="@style/JandiTopic.Create.TextView.TextCount"
-        android:text="0/60"/>
-
-    <TextView
-        style="@style/JandiTopic.Create.TextView.Title"
-        android:text="@string/jandi_is_topic_required"/>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="@color/white"
-        android:orientation="vertical">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/layout_search_bar"
+            style="@style/Jandi.Default.ActionBar"
+            android:layout_width="match_parent"
+            android:visibility="visible"/>
 
         <LinearLayout
-            android:id="@+id/layout_topic_create_public_check"
             android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
 
             <TextView
-                style="@style/JandiTopic.Create.TextView.Type"
-                android:text="@string/jandi_topic_public"
-                android:textColor="@color/jandi_text"
-                android:textSize="14dp"/>
+                style="@style/JandiTopic.Create.TextView.Title"
+                android:text="@string/jandi_title_name_required"/>
 
-            <ImageView
-                android:id="@+id/img_topic_create_public_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_topic_type_selector"/>
+            <EditText
+                android:id="@+id/et_topic_create_title"
+                style="@style/JandiTopic.Create.TextView.Input"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:hint="@string/jandi_input_topic_name"
+                android:maxLength="60"
+                android:maxLines="1"
+                android:paddingBottom="12dp"
+                android:paddingLeft="17dp"
+                android:paddingRight="17dp"
+                android:paddingTop="14dp"
+                android:singleLine="true"/>
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@color/jandi_topic_is_public_divider"/>
-
-        <LinearLayout
-            android:id="@+id/layout_topic_create_private_check"
-            android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp">
-
-            <TextView
-                style="@style/JandiTopic.Create.TextView.Type"
-                android:text="@string/jandi_topic_private"
-                android:textColor="@color/jandi_text"
-                android:textSize="14dp"/>
-
-            <ImageView
-                android:id="@+id/img_topic_create_private_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/jandi_topic_type_selector"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <GridLayout
-        android:id="@+id/layout_topic_create_tips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:columnCount="2"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:useDefaultMargins="false"
-        android:visibility="visible">
-
         <TextView
-            android:layout_columnSpan="1"
-            android:text="-"
-            android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:layout_columnSpan="1"
-            android:layout_marginLeft="3dp"
-            android:text="@string/jandi_what_is_topic_type"
-            android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:textSize="12sp"/>
-
-        <Space
-            android:layout_columnSpan="2"
-            android:layout_marginTop="7dp"/>
-
-        <TextView
-            android:layout_columnSpan="1"
-            android:text="*"
-            android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:textSize="12sp"/>
-
-        <TextView
-            android:layout_columnSpan="1"
-            android:layout_marginLeft="3dp"
-            android:text="@string/jandi_this_is_required_parts"
-            android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-            android:textSize="12sp"/>
-    </GridLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical">
+            android:id="@+id/tv_topic_create_name_count"
+            style="@style/JandiTopic.Create.TextView.TextCount"
+            android:text="0/60"/>
 
         <TextView
             style="@style/JandiTopic.Create.TextView.Title"
-            android:text="@string/jandi_topic_description"/>
+            android:text="@string/jandi_is_topic_required"/>
 
-        <EditText
-            android:id="@+id/et_topic_create_description"
-            style="@style/JandiTopic.Create.TextView.Input"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:hint="@string/jandi_explain_topic_description"
-            android:inputType="text|textMultiLine"
-            android:maxLength="300"
-            android:paddingBottom="12dp"
-            android:paddingLeft="17dp"
-            android:paddingRight="17dp"
-            android:paddingTop="14dp"
-            android:singleLine="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/layout_topic_create_public_check"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp">
+
+                <TextView
+                    style="@style/JandiTopic.Create.TextView.Type"
+                    android:text="@string/jandi_topic_public"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="14dp"/>
+
+                <ImageView
+                    android:id="@+id/img_topic_create_public_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/jandi_topic_type_selector"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@color/jandi_topic_is_public_divider"/>
+
+            <LinearLayout
+                android:id="@+id/layout_topic_create_private_check"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp">
+
+                <TextView
+                    style="@style/JandiTopic.Create.TextView.Type"
+                    android:text="@string/jandi_topic_private"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="14dp"/>
+
+                <ImageView
+                    android:id="@+id/img_topic_create_private_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/jandi_topic_type_selector"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <GridLayout
+            android:id="@+id/layout_topic_create_tips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:columnCount="2"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:useDefaultMargins="false"
+            android:visibility="visible">
+
+            <TextView
+                android:layout_columnSpan="1"
+                android:text="-"
+                android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_columnSpan="1"
+                android:layout_marginLeft="3dp"
+                android:text="@string/jandi_what_is_topic_type"
+                android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                android:textSize="12sp"/>
+
+            <Space
+                android:layout_columnSpan="2"
+                android:layout_marginTop="7dp"/>
+
+            <TextView
+                android:layout_columnSpan="1"
+                android:text="*"
+                android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_columnSpan="1"
+                android:layout_marginLeft="3dp"
+                android:text="@string/jandi_this_is_required_parts"
+                android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
+                android:textSize="12sp"/>
+        </GridLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/JandiTopic.Create.TextView.Title"
+                android:text="@string/jandi_topic_description"/>
+
+            <EditText
+                android:id="@+id/et_topic_create_description"
+                style="@style/JandiTopic.Create.TextView.Input"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:hint="@string/jandi_explain_topic_description"
+                android:inputType="text|textMultiLine"
+                android:lineSpacingExtra="12dp"
+                android:maxLength="300"
+                android:paddingBottom="12dp"
+                android:paddingLeft="17dp"
+                android:paddingRight="17dp"
+                android:paddingTop="14dp"
+                android:singleLine="true"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_topic_create_description_count"
+            style="@style/JandiTopic.Create.TextView.TextCount"
+            android:text="0/300"/>
+
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tv_topic_create_description_count"
-        style="@style/JandiTopic.Create.TextView.TextCount"
-        android:text="0/300"/>
-
-
-</LinearLayout>
+</ScrollView>
