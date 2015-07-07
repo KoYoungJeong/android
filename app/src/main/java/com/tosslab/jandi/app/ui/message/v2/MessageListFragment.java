@@ -187,7 +187,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messagePublishSubject = PublishSubject.create();
 
-        messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
+        messageSubscription = messagePublishSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
 
                     switch (messageQueue.getQueueType()) {
