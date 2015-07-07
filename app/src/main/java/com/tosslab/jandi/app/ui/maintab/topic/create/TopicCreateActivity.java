@@ -60,6 +60,7 @@ public class TopicCreateActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayUseLogoEnabled(false);
             actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+
         }
 
     }

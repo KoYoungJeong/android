@@ -254,11 +254,11 @@
 
     <style name="JandiTopic.Create.TextView.Title" parent="JandiTopic">
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">25dp</item>
         <item name="android:layout_marginRight">25dp</item>
         <item name="android:textSize">16dp</item>
         <item name="android:textColor">@color/jandi_text</item>
-        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="JandiTopic.Create.TextView.Input" parent="JandiTopic">

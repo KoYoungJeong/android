@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.create;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -72,9 +73,15 @@ public class TopicCreateView {
             publicCheckView.setSelected(true);
             privateCheckView.setSelected(false);
 
+            publicCheckView.setVisibility(View.VISIBLE);
+            privateCheckView.setVisibility(View.INVISIBLE);
+
         } else {
             publicCheckView.setSelected(false);
             privateCheckView.setSelected(true);
+
+            publicCheckView.setVisibility(View.INVISIBLE);
+            privateCheckView.setVisibility(View.VISIBLE);
 
         }
     }
