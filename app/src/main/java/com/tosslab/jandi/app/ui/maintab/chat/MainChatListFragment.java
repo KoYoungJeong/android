@@ -171,11 +171,17 @@ public class MainChatListFragment extends Fragment {
         boolean hasAlarmCount = MainChatListModel.hasAlarmCount(mainChatListPresenter.getChatItems());
         EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
 
+        int entityId = chatItem.getEntityId();
+
+        boolean isStarred = EntityManager.getInstance(getActivity().getApplicationContext())
+                .getEntityById(entityId)
+                .isStarred;
+
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .entityId(chatItem.getEntityId())
+                .entityId(entityId)
                 .roomId(chatItem.getRoomId())
-                .isFavorite(chatItem.isStarred())
+                .isFavorite(isStarred)
                 .teamId(mainChatListModel.getTeamId())
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .start();
