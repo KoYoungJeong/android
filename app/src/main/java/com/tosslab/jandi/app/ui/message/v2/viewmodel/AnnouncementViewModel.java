@@ -210,6 +210,7 @@ public class AnnouncementViewModel {
             int textLength = text.length();
             int breakPosition = paint.breakText(text, true, width, null);
             if (breakPosition >= textLength) {
+                tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
                 return;
             }
 
