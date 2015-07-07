@@ -4,7 +4,10 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqAccessToken;
+import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.robolectric.shadows.ShadowLog;
 
@@ -20,6 +23,11 @@ public class BaseInitUtil {
 
         httpOn();
         logOn();
+
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
+
+        TokenUtil.saveTokenInfoByPassword(accessToken);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());

@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.client.privatetopic.messages;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -9,7 +10,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.Headers;
 import retrofit.http.POST;
@@ -61,7 +61,7 @@ public interface GroupMessageApiV2Client {
                                         @Path("groupId") int groupId, @Path("messageId") int messageId);
 
     // Private Group Message 삭제
-    @DELETE("/privateGroups/{groupId}/messages/{messageId}")
+    @DELETEWithBody("/privateGroups/{groupId}/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deletePrivateGroupMessage(@Query("teamId") int teamId, @Path("groupId") int groupId,
                                         @Path("messageId") int messageId);
