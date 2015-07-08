@@ -123,7 +123,6 @@ public class IntroActivity extends AppCompatActivity {
                 } else {
                     introViewModel.moveTeamSelectActivity();
                 }
-                introModel.updateParseForAllTeam();
             } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {
                 introModel.clearTokenInfo();
                 introModel.clearAccountInfo();

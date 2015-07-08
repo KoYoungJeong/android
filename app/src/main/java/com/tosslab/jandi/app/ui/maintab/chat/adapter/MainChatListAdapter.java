@@ -141,7 +141,6 @@ public class MainChatListAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
-
-
     }
+
 }

@@ -21,7 +21,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
-import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SupposeUiThread;
 import org.androidannotations.annotations.UiThread;
@@ -93,10 +92,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         return true;
     }
 
-    @ItemClick(R.id.list_topic_member)
-    void ListItemClicked(ChatChooseItem chatChooseItem){
-        membersListPresenter.onListItemClick(chatChooseItem);
-    }
 
     @Override
     protected void onResume() {

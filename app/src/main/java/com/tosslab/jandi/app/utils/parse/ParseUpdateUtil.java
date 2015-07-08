@@ -25,7 +25,6 @@ import rx.schedulers.Schedulers;
  */
 public class ParseUpdateUtil {
 
-
     public static void updateParseWithoutSelectedTeam(Context context) {
         List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
@@ -104,6 +103,16 @@ public class ParseUpdateUtil {
                     }
                 }, throwable -> LogUtil.e("Parse Error", throwable));
 
+    }
+
+    public static void deleteChannelOnServer() {
+        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+        currentInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        try {
+            currentInstallation.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private static List<ResAccountInfo.UserTeam> getUserTeams(Context context) {

@@ -30,31 +30,24 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @RootContext
     AppCompatActivity myActivity;
-
-    private View view;
-
     @Bean
     MembersModel memberModel;
+    private View view;
 
     @AfterViews
     void initObject() {
         List<ChatChooseItem> members;
-        if(view.getType() == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
+        if (view.getType() == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
             members = memberModel.getTeamMembers();
-        }else{
+        } else {
             members = memberModel.getTopicMembers(view.getEntityId());
         }
         view.showListMembers(members);
     }
 
     @Override
-    public void onListItemClick(ChatChooseItem chatChooseItem) {
-         EventBus.getDefault().post(new RequestMoveDirectMessageEvent(chatChooseItem.getEntityId()));
-    }
-
-    @Override
     public void onEventBusRegister() {
-         EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override
