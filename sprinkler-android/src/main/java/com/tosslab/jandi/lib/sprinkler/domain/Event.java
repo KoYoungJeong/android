@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.tracker.keys;
+package com.tosslab.jandi.lib.sprinkler.domain;
 
 /**
  * <a href="http://wiki.tosslab.com/display/SPRK/Android">Android#Event</a>
