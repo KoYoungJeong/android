@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/jandi_entities_bg"
-    android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/jandi_entities_bg"
+                android:orientation="vertical">
 
 
-    <ExpandableListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/list_main_topic"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:groupIndicator="@null"
-        android:scrollbars="none" />
+        android:background="@color/white"/>
 
 
     <ImageView
@@ -22,6 +20,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:background="@drawable/btn_chat_fab" />
+        android:background="@drawable/btn_chat_fab"/>
 
 </RelativeLayout>

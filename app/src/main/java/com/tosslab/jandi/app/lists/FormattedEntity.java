@@ -27,20 +27,16 @@ public class FormattedEntity {
 
     public static final boolean JOINED = true;
     public static final boolean UNJOINED = false;
-
-    private ResLeftSideMenu.Entity entity;
-
     public int type;
     public boolean isJoined;                        // if type is channel
     public boolean isSelectedToBeJoined = false;    // if type is user
-
     // MessageMarker
     public int lastLinkId = -1;
     public int alarmCount = 0;
     public boolean announcementOpened = false;
-
     // Starred
     public boolean isStarred = false;
+    private ResLeftSideMenu.Entity entity;
 
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
@@ -337,6 +333,19 @@ public class FormattedEntity {
                 return "@" + entity.name;
             default:
                 return entity.name;
+        }
+    }
+
+    public String getDescription() {
+
+        switch (this.type) {
+            case TYPE_REAL_CHANNEL:
+                return ((ResLeftSideMenu.Channel) entity).description;
+            case TYPE_REAL_PRIVATE_GROUP:
+                return ((ResLeftSideMenu.PrivateGroup) entity).description;
+            default:
+            case TYPE_REAL_USER:
+                return "";
         }
     }
 }

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/jandi_entity_item_title_margin_left"
+                android:orientation="horizontal">
+
+
+    <ImageView
+        android:id="@+id/img_entity_listitem_icon"
+        android:layout_width="@dimen/jandi_entity_item_icon"
+        android:layout_height="@dimen/jandi_entity_item_icon"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/jandi_topic_icon"/>
+
+    <ImageView
+        android:id="@+id/img_entity_listitem_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/img_entity_listitem_icon"
+        android:layout_alignTop="@+id/img_entity_listitem_icon"
+        android:layout_marginLeft="-3dp"
+        android:layout_marginTop="-1dp"
+        android:src="@drawable/jandi_icon_fav"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/vg_entity_listitem_name"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/vg_entity_listitem_badge"
+        android:layout_toRightOf="@+id/img_entity_listitem_icon"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <com.tosslab.jandi.app.views.FixedLinearLayout
+            android:id="@+id/vg_entity_listitem_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txt_entity_listitem_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="Topic Name sdfasdfasdfasdfsadf"
+                android:textColor="#333333"
+                android:textSize="@dimen/jandi_entity_item_title_font"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txt_entity_listitem_user_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="6dp"
+                android:maxLines="1"
+                android:text="(11)"
+                android:textColor="#333333"
+                android:textStyle="bold"/>
+
+        </com.tosslab.jandi.app.views.FixedLinearLayout>
+
+        <TextView
+            android:id="@+id/tv_entity_listitem_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Descroption"
+            android:textColor="#666666"
+            android:textSize="@dimen/jandi_text_size_small"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/vg_entity_listitem_badge"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txt_entity_listitem_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/jandi_badge_starred"
+            android:gravity="center"
+            android:minHeight="24dp"
+            android:minWidth="24dp"
+            android:text="0"
+            android:textColor="@color/jandi_text_white"
+            android:textSize="@dimen/jandi_entity_badge_font"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/view_entity_listitem_warning"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/jandi_entity_item_height"
+        android:background="#99ffffff"
+        android:visibility="gone"/>
+
+</RelativeLayout>
