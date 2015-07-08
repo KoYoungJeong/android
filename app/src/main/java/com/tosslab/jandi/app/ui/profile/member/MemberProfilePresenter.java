@@ -1,16 +1,15 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -19,7 +18,6 @@ import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.GlideCircleTransform;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -96,13 +94,7 @@ public class MemberProfilePresenter {
             profileImageUrlPath = user.u_photoUrl;
         }
 
-        if (!TextUtils.isEmpty(profileImageUrlPath)) {
-            Ion.with(imageViewProfilePhoto)
-                    .placeholder(R.drawable.jandi_profile)
-                    .error(R.drawable.jandi_profile)
-                    .transform(new IonCircleTransform())
-                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath);
-        }
+        displayProfileImage(profileImageUrlPath);
         // 프로필 이름
         textViewProfileRealName.setText(user.name);
         // 상태 메시지
@@ -131,6 +123,17 @@ public class MemberProfilePresenter {
         if (!TextUtils.isEmpty(strPosition)) {
             textViewProfileUserPosition.setText(strPosition);
             textViewProfileUserPosition.setTextColor(activity.getResources().getColor(R.color.jandi_text));
+        }
+    }
+
+    public void displayProfileImage(String profileImageUrlPath) {
+        if (!TextUtils.isEmpty(profileImageUrlPath)) {
+            Glide.with(activity)
+                    .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath)
+                    .placeholder(R.drawable.jandi_profile)
+                    .error(R.drawable.jandi_profile)
+                    .transform(new GlideCircleTransform(activity))
+                    .into(imageViewProfilePhoto);
         }
     }
 
