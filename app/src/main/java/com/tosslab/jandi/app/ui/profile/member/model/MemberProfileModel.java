@@ -107,8 +107,7 @@ public class MemberProfileModel {
         return mEntityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
-
-    public int getMyEntityId() {
-        return EntityManager.getInstance(context).getMe().getId();
+    public boolean isMyId(int id) {
+        return EntityManager.getInstance(context).getMe().getId() == id;
     }
 }

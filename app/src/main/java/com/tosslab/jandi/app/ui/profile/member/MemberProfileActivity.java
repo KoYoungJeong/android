@@ -197,8 +197,9 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        if (event.getEntityId() == memberProfileModel.getMyEntityId()) {
-            memberProfileView.displayProfile(EntityManager.getInstance(MemberProfileActivity.this).getMe().getUser());
+        ResLeftSideMenu.User member = event.getMember();
+        if (memberProfileModel.isMyId(member.id)) {
+            memberProfileView.displayProfile(member);
             closeDialogFragment();
         }
     }
@@ -331,7 +332,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);
         if (!TextUtils.isEmpty(filePath)) {
-
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }
     }

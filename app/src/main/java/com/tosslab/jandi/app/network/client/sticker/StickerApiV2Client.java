@@ -2,11 +2,11 @@ package com.tosslab.jandi.app.network.client.sticker;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Path;
@@ -26,10 +26,10 @@ public interface StickerApiV2Client {
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon sendStickerComment(@Body ReqSendSticker reqSendSticker);
 
-    @DELETE("/stickers/comments/{commentId}")
+    @DELETEWithBody("/stickers/comments/{commentId}")
     ResCommon deleteStickerComment(@Path("commentId") int commentId, @Query("teamId") int teamId);
 
-    @DELETE("/stickers/messages/{messageId}")
+    @DELETEWithBody("/stickers/messages/{messageId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteSticker(@Path("messageId") int messageId, @Query("teamId") int teamId);
 

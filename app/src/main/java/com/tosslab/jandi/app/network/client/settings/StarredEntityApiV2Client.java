@@ -2,11 +2,11 @@ package com.tosslab.jandi.app.network.client.settings;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqTeam;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.Path;
@@ -22,7 +22,7 @@ public interface StarredEntityApiV2Client {
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon enableFavorite(@Body ReqTeam reqTeam, @Path("entityId") int entityId);
 
-    @DELETE("/settings/starred/entities/{entityId}")
+    @DELETEWithBody("/settings/starred/entities/{entityId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon disableFavorite(@Query("teamId") int teamId, @Path("entityId") int entityId);
 

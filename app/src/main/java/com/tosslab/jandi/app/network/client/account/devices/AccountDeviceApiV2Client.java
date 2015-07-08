@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.network.client.account.devices;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
@@ -10,7 +11,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
 import retrofit.http.Body;
-import retrofit.http.DELETE;
 import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
@@ -27,7 +27,7 @@ public interface AccountDeviceApiV2Client {
     ResAccountInfo registerNotificationToken(@Body ReqNotificationRegister reqNotificationRegister);
 
     // Notification Token 삭제
-    @DELETE("/account/devices")
+    @DELETEWithBody("/account/devices")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResAccountInfo deleteNotificationToken(@Body ReqDeviceToken reqDeviceToken);
 

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.model.announcement;
+package com.tosslab.jandi.app.ui.message.v2.viewmodel;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -73,8 +75,15 @@ public class AnnouncementViewModel {
     private OnAnnouncementOpenListener onAnnouncementOpenListener;
     private OnAnnouncementCloseListener onAnnouncementCloseListener;
 
+    private TextLineDetermineRunnable textLineDetermineRunnable;
+
     @RootContext
     Activity activity;
+
+    @AfterViews
+    void init() {
+        textLineDetermineRunnable = new TextLineDetermineRunnable(tvAnnouncementMessage);
+    }
 
     @UiThread
     public void setAnnouncement(ResAnnouncement announcement, boolean isOpened) {
@@ -129,6 +138,10 @@ public class AnnouncementViewModel {
             btnAnnouncementClose.setOnClickListener((view) -> onAnnouncementCloseListener.onClose());
         }
 
+        openAnnouncement(isOpened);
+    }
+
+    public void openAnnouncement(boolean isOpened) {
         btnAnnouncementOpen.setVisibility(isOpened ? View.GONE : View.VISIBLE);
         vgAnnouncementInfo.setVisibility(isOpened ? View.VISIBLE : View.GONE);
     }
@@ -152,14 +165,13 @@ public class AnnouncementViewModel {
         if (vgAnnouncementAction.getVisibility() == View.VISIBLE) {
             tvAnnouncementMessage.setSingleLine(false);
             tvAnnouncementMessage.setMaxLines(7);
-            tvAnnouncementMessage.setVerticalScrollBarEnabled(true);
-            tvAnnouncementMessage.setMovementMethod(new ScrollingMovementMethod());
+            tvAnnouncementMessage.post(textLineDetermineRunnable);
         } else {
             tvAnnouncementMessage.setSingleLine();
             tvAnnouncementMessage.setVerticalScrollBarEnabled(false);
             tvAnnouncementMessage.setMovementMethod(null);
+            tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
         }
-        tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
     }
 
     @UiThread
@@ -178,5 +190,49 @@ public class AnnouncementViewModel {
 
     public void setOnAnnouncementCloseListener(OnAnnouncementCloseListener onAnnouncementCloseListener) {
         this.onAnnouncementCloseListener = onAnnouncementCloseListener;
+    }
+
+    private static class TextLineDetermineRunnable implements Runnable {
+        private TextView tvAnnouncementMessage;
+
+        public TextLineDetermineRunnable(TextView textView) {
+            tvAnnouncementMessage = textView;
+        }
+
+        @Override
+        public void run() {
+            int width = tvAnnouncementMessage.getWidth()
+                    - tvAnnouncementMessage.getPaddingLeft()
+                    - tvAnnouncementMessage.getPaddingRight();
+            String text = tvAnnouncementMessage.getText().toString();
+            TextPaint paint = tvAnnouncementMessage.getPaint();
+
+            int textLength = text.length();
+            int breakPosition = paint.breakText(text, true, width, null);
+            if (breakPosition >= textLength) {
+                tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
+                return;
+            }
+
+            String extraText = text.substring(breakPosition, text.length());
+            int line = 0;
+            while (true) {
+                int extraTextLength = extraText.length();
+                breakPosition = paint.breakText(extraText, true, width, null);
+                if (breakPosition >= extraTextLength) {
+                    break;
+                }
+
+                extraText = extraText.substring(breakPosition, extraText.length());
+                line++;
+            }
+
+            if (line >= 6) {
+                tvAnnouncementMessage.setVerticalScrollBarEnabled(true);
+                tvAnnouncementMessage.setMovementMethod(new ScrollingMovementMethod());
+            }
+
+            tvAnnouncementMessage.setText(tvAnnouncementMessage.getText());
+        }
     }
 }
