@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
@@ -76,8 +77,7 @@ public class IntroActivity extends AppCompatActivity {
 
         } catch (RetrofitError e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
-
-            if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+            if (e.getCause() instanceof ConnectionNotFoundException) {
                 introViewModel.showCheckNetworkDialog();
             } else {
                 introViewModel.showMaintenanceDialog();

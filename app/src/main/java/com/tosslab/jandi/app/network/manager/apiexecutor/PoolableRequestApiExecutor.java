@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
@@ -60,7 +61,8 @@ public class PoolableRequestApiExecutor {
         // 현재(2015/6) 시나리오엔 존재하지 않지만 Client측의 Network Connection에러를 UI단에 던지기 위한 코드 추가
         if (!isActiveNetwork()) {
             throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,
-                    new Exception(JandiConstants.UNVAILABLE_CLIENT_CONNECTION));
+                    new ConnectionNotFoundException());
+//                    new Exception(JandiConstants.UNVAILABLE_CLIENT_CONNECTION));
         }
 
         if (e.getKind() == RetrofitError.Kind.NETWORK) {
@@ -102,7 +104,7 @@ public class PoolableRequestApiExecutor {
     public boolean isActiveNetwork() {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) JandiApplication.getContext().
                 getSystemService(JandiApplication.getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return activeNetworkInfo != null && activeNetworkInfo.isAvailable() && activeNetworkInfo.isConnected();
     }
 
     private ResAccessToken refreshToken() {

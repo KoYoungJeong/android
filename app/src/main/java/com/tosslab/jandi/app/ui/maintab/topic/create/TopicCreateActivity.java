@@ -114,22 +114,21 @@ public class TopicCreateActivity extends AppCompatActivity {
 
             topicCreateModel.refreshEntity();
 
+            topicCreatePresenter.dismissProgressWheel();
+
             EntityManager.getInstance(TopicCreateActivity.this).refreshEntity(TopicCreateActivity.this);
-
             int teamId = JandiAccountDatabaseManager.getInstance(TopicCreateActivity.this).getSelectedTeamInfo().getTeamId();
-
             topicCreatePresenter.createTopicSuccess(teamId, topic.id, topicTitle, publicSelected);
-
         } catch (RetrofitError e) {
+            topicCreatePresenter.dismissProgressWheel();
             if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_duplicated_name);
             } else {
                 topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
             }
         } catch (Exception e) {
-            topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
-        } finally {
             topicCreatePresenter.dismissProgressWheel();
+            topicCreatePresenter.createTopicFailed(R.string.err_entity_create);
         }
     }
 

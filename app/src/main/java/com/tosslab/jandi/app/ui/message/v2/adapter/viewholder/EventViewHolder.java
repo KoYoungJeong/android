@@ -106,6 +106,7 @@ public class EventViewHolder implements BodyViewHolder {
                         }
                     }
 
+                    builder.append(" ");
                     int eventTextSize = context.getResources()
                             .getDimensionPixelSize(R.dimen.jandi_messages_content);
                     ColorStateList eventTextColor = ColorStateList.valueOf(
@@ -117,7 +118,7 @@ public class EventViewHolder implements BodyViewHolder {
                     builder.setSpan(eventTextAppearance,
                             0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    int startIndex = eventLength;
+                    int startIndex = builder.length();
                     builder.append(" ");
                     DateViewSpannable spannable =
                             new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));

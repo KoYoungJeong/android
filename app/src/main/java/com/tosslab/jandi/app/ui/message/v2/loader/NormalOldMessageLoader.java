@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
-
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -76,7 +75,6 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             if (oldMessage.lastLinkId <= lastLinkIdInMessage) {
                 updateMarker(teamId, oldMessage.entityId, lastLinkIdInMessage);
             }
-
 
             if (linkId == -1) {
 
