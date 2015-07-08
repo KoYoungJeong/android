@@ -47,7 +47,7 @@ public interface DirectMessageApiV2Client {
     @GET("/users/{userId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getDirectMarkerMessages(@Query("teamId") int teamId, @Path("userId") int userId,
-                                        @Query("currentLinkId") int currentLinkId);
+                                        @Query("linkId") int currentLinkId);
 
     // Direct Message 생성
     @POST("/users/{userId}/message")

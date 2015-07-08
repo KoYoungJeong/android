@@ -49,7 +49,7 @@ public interface ChannelMessageApiV2Client {
     @GET("/channels/{channelId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMarkerMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
-                                             @Query("currentLinkId") int currentLinkId);
+                                             @Query("linkId") int currentLinkId);
 
     // 채널에서 Message 생성
     @POST("/channels/{channelId}/message")
