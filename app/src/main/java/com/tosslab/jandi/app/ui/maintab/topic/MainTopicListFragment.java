@@ -110,7 +110,8 @@ public class MainTopicListFragment extends Fragment {
                 int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
                 mainTopicView.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
             } else {
-                mainTopicView.showUnjoinDialog(getFragmentManager(), item, (dialog, which) -> joinChannelInBackground(item));
+                mainTopicView.showUnjoinDialog(getFragmentManager(), item,
+                        (dialog, which) -> joinChannelInBackground(item));
             }
         });
 

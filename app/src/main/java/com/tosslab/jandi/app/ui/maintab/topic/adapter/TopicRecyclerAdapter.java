@@ -29,7 +29,6 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
 
-
     public TopicRecyclerAdapter(Context context) {
         this.context = context;
         topicList = new ArrayList<Topic>();
@@ -81,6 +80,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
             return false;
         });
+
     }
 
     public Topic getItem(int position) {
@@ -108,10 +108,10 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         this.onRecyclerItemLongClickListener = onRecyclerItemLongClickListener;
     }
 
+
     public void clear() {
         topicList.clear();
     }
-
 
     static class TopicViewHolder extends RecyclerView.ViewHolder {
 

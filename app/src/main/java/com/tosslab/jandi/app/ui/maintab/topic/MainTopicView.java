@@ -175,4 +175,5 @@ public class MainTopicView {
         dialog.setOnJoinClickListener(onJoinClickListener);
         dialog.show(fragmentManager, "dialog");
     }
+
 }

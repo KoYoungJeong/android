@@ -26,6 +26,8 @@
             android:id="@+id/tv_unjoin_topic_desc_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textColor="@color/black"
             android:textSize="@dimen/jandi_entity_item_title_font"
             android:textStyle="bold"/>
@@ -83,6 +85,7 @@
         android:layout_marginTop="51dp"
         android:lineSpacingExtra="7dp"
         android:maxLines="6"
+        android:minLines="6"
         android:scrollbars="vertical"/>
 
 </RelativeLayout>
