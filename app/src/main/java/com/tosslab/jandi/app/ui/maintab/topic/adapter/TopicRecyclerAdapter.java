@@ -73,19 +73,14 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             }
         });
 
-        if (topic.isJoined()) {
-            holder.itemView.setOnLongClickListener(view -> {
-                if (onRecyclerItemLongClickListener != null) {
-                    return onRecyclerItemLongClickListener.onItemClick(holder.itemView,
-                            TopicRecyclerAdapter.this, position);
-                }
+        holder.itemView.setOnLongClickListener(view -> {
+            if (onRecyclerItemLongClickListener != null) {
+                return onRecyclerItemLongClickListener.onItemClick(holder.itemView,
+                        TopicRecyclerAdapter.this, position);
+            }
 
-                return false;
-            });
-
-        } else {
-            holder.itemView.setOnLongClickListener(null);
-        }
+            return false;
+        });
     }
 
     public Topic getItem(int position) {

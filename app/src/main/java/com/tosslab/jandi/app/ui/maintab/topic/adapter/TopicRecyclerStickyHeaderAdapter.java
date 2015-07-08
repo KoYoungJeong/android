@@ -29,7 +29,6 @@ public class TopicRecyclerStickyHeaderAdapter implements StickyHeadersAdapter {
 
         View view = LayoutInflater.from(context).inflate(R.layout.item_entity_title, parent, false);
 
-
         TopicHeaderViewHolder viewHolder = new TopicHeaderViewHolder(view);
         viewHolder.textViewTitle = (TextView) view.findViewById(R.id.txt_entity_list_title);
 

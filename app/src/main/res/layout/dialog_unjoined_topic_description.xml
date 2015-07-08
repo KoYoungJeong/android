@@ -17,20 +17,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/iv_unjoin_topic_desc_icon"
         android:layout_alignTop="@+id/iv_unjoin_topic_desc_icon"
         android:layout_marginLeft="15dp"
         android:layout_toRightOf="@+id/iv_unjoin_topic_desc_icon"
-        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_unjoin_topic_desc_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
             android:textColor="@color/black"
             android:textSize="@dimen/jandi_entity_item_title_font"
             android:textStyle="bold"/>
@@ -40,7 +35,7 @@
             android:id="@+id/vg_unjoin_topic_desc_member"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 

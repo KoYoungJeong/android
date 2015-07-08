@@ -117,10 +117,13 @@ public class MainTopicListFragment extends Fragment {
         mainTopicView.setOnItemLongClickListener((view, adapter, position) -> {
 
             Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
-            EntityMenuDialogFragment_.builder().entityId(item.getEntityId())
-                    .build()
-                    .show(getFragmentManager(), "dialog");
-
+            if (item.isJoined() || !item.isPublic()) {
+                EntityMenuDialogFragment_.builder().entityId(item.getEntityId())
+                        .build()
+                        .show(getFragmentManager(), "dialog");
+            } else {
+                mainTopicView.showUnjoinDialog(getFragmentManager(), item, (dialog, which) -> joinChannelInBackground(item));
+            }
             return true;
 
         });
