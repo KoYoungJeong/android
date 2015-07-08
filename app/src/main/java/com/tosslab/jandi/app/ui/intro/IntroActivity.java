@@ -76,8 +76,12 @@ public class IntroActivity extends AppCompatActivity {
 
         } catch (RetrofitError e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
-            introViewModel.showMaintenanceDialog();
 
+            if (e.getResponse().getStatus() == JandiConstants.NetworkError.SERVICE_UNAVAILABLE) {
+                introViewModel.showCheckNetworkDialog();
+            } else {
+                introViewModel.showMaintenanceDialog();
+            }
         } catch (Exception e) {
             introViewModel.showMaintenanceDialog();
         }
