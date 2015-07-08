@@ -52,21 +52,28 @@ public class MainTopicModel {
     }
 
     public Observable<Topic> getUnjoinEntities(List<FormattedEntity> unjoinedChannels) {
-        return Observable.from(unjoinedChannels).map(formattedEntity -> new Topic.Builder()
-                .entityId(formattedEntity.getId())
-                .description(formattedEntity.getDescription())
-                .isJoined(false)
-                .isPublic(formattedEntity.isPublicTopic())
-                .isStarred(formattedEntity.isStarred)
-                .memberCount(formattedEntity.getMemberCount())
-                .name(formattedEntity.getName())
-                .unreadCount(formattedEntity.alarmCount)
-                .build());
+        return Observable.from(unjoinedChannels).map(formattedEntity -> {
+
+            int creatorId = ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
+
+
+            return new Topic.Builder()
+                    .entityId(formattedEntity.getId())
+                    .description(formattedEntity.getDescription())
+                    .isJoined(false)
+                    .creatorId(creatorId)
+                    .isPublic(formattedEntity.isPublicTopic())
+                    .isStarred(formattedEntity.isStarred)
+                    .memberCount(formattedEntity.getMemberCount())
+                    .name(formattedEntity.getName())
+                    .unreadCount(formattedEntity.alarmCount)
+                    .build();
+        });
 
     }
 
-    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws RetrofitError {
-        entityClientManager.joinChannel(channel);
+    public void joinPublicTopic(int id) throws RetrofitError {
+        entityClientManager.joinChannel(id);
     }
 
     public boolean hasAlarmCount(Observable<Topic> joinEntities) {

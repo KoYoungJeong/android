@@ -5,6 +5,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.domain;
  */
 public class Topic {
 
+    private final int creatorId;
     private String name;
     private boolean isStarred;
     private boolean isJoined;
@@ -14,7 +15,7 @@ public class Topic {
     private boolean isPublic;
     private String description;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description) {
+    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -23,6 +24,7 @@ public class Topic {
         this.unreadCount = unreadCount;
         this.isPublic = isPublic;
         this.description = description;
+        this.creatorId = creatorId;
     }
 
     public String getName() {
@@ -89,6 +91,10 @@ public class Topic {
         this.description = description;
     }
 
+    public int getCreatorId() {
+        return creatorId;
+    }
+
     public static class Builder {
         private String name;
         private boolean isStarred;
@@ -98,6 +104,7 @@ public class Topic {
         private int unreadCount;
         private boolean isPublic;
         private String description;
+        private int creatorId;
 
         public Builder name(String name) {
             this.name = name;
@@ -140,7 +147,13 @@ public class Topic {
         }
 
         public Topic build() {
-            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount, isPublic, description);
+            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
+                    isPublic, description, creatorId);
+        }
+
+        public Builder creatorId(int creatorId) {
+            this.creatorId = creatorId;
+            return this;
         }
     }
 }

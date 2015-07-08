@@ -69,8 +69,8 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().createPrivateGroupByGroupApi(reqCreateTopic);
     }
 
-    public ResCommon joinChannel(final ResLeftSideMenu.Channel channel) throws RetrofitError {
-        return RequestApiManager.getInstance().joinTopicByChannelApi(channel.id, new ReqDeleteTopic(selectedTeamId));
+    public ResCommon joinChannel(int id) throws RetrofitError {
+        return RequestApiManager.getInstance().joinTopicByChannelApi(id, new ReqDeleteTopic(selectedTeamId));
     }
 
     public ResCommon leaveChannel(final int id) throws RetrofitError {

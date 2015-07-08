@@ -4,16 +4,21 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 7..
  */
 public class FixedLinearLayout extends LinearLayout {
+    public FixedLinearLayout(Context context) {
+        this(context, null);
+    }
+
     public FixedLinearLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public FixedLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @Override
@@ -24,20 +29,21 @@ public class FixedLinearLayout extends LinearLayout {
             View firstChild = getChildAt(0);
             View secondChild = getChildAt(1);
 
-            int secondRighPosition = firstChild.getWidth()
-                    + secondChild.getWidth()
+            secondChild.measure(MeasureSpec.UNSPECIFIED, heightMeasureSpec);
+
+            int secondRighPosition = firstChild.getMeasuredWidth()
+                    + secondChild.getMeasuredWidth()
                     + ((LayoutParams) secondChild.getLayoutParams()).leftMargin;
 
             if (getMeasuredWidth() <= secondRighPosition) {
-                LayoutParams layoutParams = (LayoutParams) firstChild.getLayoutParams();
-
-//                layoutParams.width = getMeasuredWidth() - secondChild.getMeasuredWidth()
-//                        - ((LayoutParams) secondChild.getLayoutParams()).leftMargin;
-
-//                firstChild.setLayoutParams(layoutParams);
 
 
-                LogUtil.d(String.format("%s : %d", ((TextView) firstChild).getText(), firstChild.getWidth()));
+                int firstChildWidth = getMeasuredWidth() - secondChild.getMeasuredWidth()
+                        - ((LayoutParams) secondChild.getLayoutParams()).leftMargin;
+
+                firstChild.measure(
+                        MeasureSpec.makeMeasureSpec(firstChildWidth, MeasureSpec.EXACTLY),
+                        heightMeasureSpec);
 
             }
         }

@@ -50,7 +50,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
                 (TextView) view.findViewById(R.id.tv_entity_listitem_description);
         viewHolder.textViewBadgeCount = (TextView) view.findViewById(R.id.txt_entity_listitem_badge);
         viewHolder.vgBadge = view.findViewById(R.id.vg_entity_listitem_badge);
-        viewHolder.disableCoverView = view.findViewById(R.id.view_entity_listitem_warning);
+        viewHolder.ivInfo = (ImageView) view.findViewById(R.id.iv_entity_listitem_info);
 
         return viewHolder;
     }
@@ -66,14 +66,14 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
         holder.draw(topic);
 
-        if (topic.isJoined()) {
-            holder.itemView.setOnClickListener(view -> {
-                if (onRecyclerItemClickListener != null) {
-                    onRecyclerItemClickListener.onItemClick(holder.itemView, TopicRecyclerAdapter.this,
-                            position);
-                }
-            });
+        holder.itemView.setOnClickListener(view -> {
+            if (onRecyclerItemClickListener != null) {
+                onRecyclerItemClickListener.onItemClick(holder.itemView, TopicRecyclerAdapter.this,
+                        position);
+            }
+        });
 
+        if (topic.isJoined()) {
             holder.itemView.setOnLongClickListener(view -> {
                 if (onRecyclerItemLongClickListener != null) {
                     return onRecyclerItemLongClickListener.onItemClick(holder.itemView,
@@ -84,7 +84,6 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             });
 
         } else {
-            holder.itemView.setOnClickListener(null);
             holder.itemView.setOnLongClickListener(null);
         }
     }
@@ -128,7 +127,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         private TextView tvName;
         private TextView tvMemberCount;
         private TextView textViewBadgeCount;
-        private View disableCoverView;
+        private ImageView ivInfo;
 
 
         public TopicViewHolder(View itemView) {
@@ -146,23 +145,23 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
             // 뱃지 카운트
             if (topic.getUnreadCount() > 0) {
-                vgBadge.setVisibility(View.VISIBLE);
+                textViewBadgeCount.setVisibility(View.VISIBLE);
                 textViewBadgeCount.setBackgroundResource(R.drawable.jandi_badge_starred);
                 textViewBadgeCount.setText(topic.getUnreadCount() + "");
             } else {
-                vgBadge.setVisibility(View.INVISIBLE);
+                textViewBadgeCount.setVisibility(View.INVISIBLE);
+            }
+
+            if (topic.isJoined()) {
+                ivInfo.setVisibility(View.INVISIBLE);
+            } else {
+                textViewBadgeCount.setVisibility(View.INVISIBLE);
+                ivInfo.setVisibility(View.VISIBLE);
             }
 
             if (topic.isPublic()) {
-                if (topic.isJoined()) {
-                    disableCoverView.setVisibility(View.GONE);
-                } else {
-                    disableCoverView.setVisibility(View.VISIBLE);
-                    textViewBadgeCount.setVisibility(View.GONE);
-                }
                 imageViewIcon.setImageResource(R.drawable.jandi_topic_icon);
             } else {
-                disableCoverView.setVisibility(View.GONE);
                 imageViewIcon.setImageResource(R.drawable.jandi_private_topic_icon);
             }
 
@@ -171,15 +170,10 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             // 추가 정보
             tvMemberCount.setText(String.format("(%d)", topic.getMemberCount()));
 
-            int nameWidth = tvName.getMeasuredWidth();
-            int nameParentWidth = ((View) tvName.getParent()).getMeasuredWidth();
-
-            if (nameWidth == nameParentWidth) {
-                int memberCountWidth = tvMemberCount.getMeasuredWidth();
-                ViewGroup.LayoutParams layoutParams = tvName.getLayoutParams();
-                layoutParams.width = layoutParams.width - memberCountWidth;
-
-                tvName.setLayoutParams(layoutParams);
+            if (topic.isJoined()) {
+                imageViewIcon.setAlpha(1f);
+            } else {
+                imageViewIcon.setAlpha(0.5f);
             }
 
             String description = topic.getDescription();

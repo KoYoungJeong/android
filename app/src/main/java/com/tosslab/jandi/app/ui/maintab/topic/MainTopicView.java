@@ -1,7 +1,9 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,8 +14,10 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerStickyHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
+import com.tosslab.jandi.app.ui.maintab.topic.model.UnjoinTopicDialog;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
@@ -74,7 +78,7 @@ public class MainTopicView {
         rvTopic.addItemDecoration(stickyHeadersItemDecoration);
         rvTopic.setAdapter(topicListAdapter);
 
-//        FAButtonUtil.setFAButtonController(rvTopic, btnFA);
+        FAButtonUtil.setFAButtonController(rvTopic, btnFA);
 
     }
 
@@ -98,26 +102,13 @@ public class MainTopicView {
                 .toSortedList((lhs, rhs) -> {
 
                     if (lhs.isStarred() && rhs.isStarred()) {
-                        if (lhs.isPublic() && !rhs.isPublic()) {
-                            return 1;
-                        } else if (!lhs.isPublic() && rhs.isPublic()) {
-                            return -1;
-                        } else {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        }
-
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
                     } else if (lhs.isStarred()) {
                         return -1;
                     } else if (rhs.isStarred()) {
                         return 1;
                     } else {
-                        if (lhs.isPublic() && !rhs.isPublic()) {
-                            return 1;
-                        } else if (!lhs.isPublic() && rhs.isPublic()) {
-                            return -1;
-                        } else {
-                            return lhs.getName().compareToIgnoreCase(rhs.getName());
-                        }
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
                     }
 
                 })
@@ -177,5 +168,11 @@ public class MainTopicView {
     public void setOnItemLongClickListener(OnRecyclerItemLongClickListener onItemLongClickListener) {
 
         topicListAdapter.setOnRecyclerItemLongClickListener(onItemLongClickListener);
+    }
+
+    public void showUnjoinDialog(FragmentManager fragmentManager, Topic topic, DialogInterface.OnClickListener onJoinClickListener) {
+        UnjoinTopicDialog dialog = UnjoinTopicDialog.instantiate(topic);
+        dialog.setOnJoinClickListener(onJoinClickListener);
+        dialog.show(fragmentManager, "dialog");
     }
 }
