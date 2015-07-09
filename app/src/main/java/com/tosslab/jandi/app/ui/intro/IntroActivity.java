@@ -8,6 +8,8 @@ import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
+import com.tosslab.jandi.app.utils.AlertUtil;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -78,7 +80,8 @@ public class IntroActivity extends AppCompatActivity {
         } catch (RetrofitError e) {
             introModel.sleep(initTime, MAX_DELAY_MS);
             if (e.getCause() instanceof ConnectionNotFoundException) {
-                introViewModel.showCheckNetworkDialog();
+                AlertUtil_.getInstance_(IntroActivity.this)
+                        .showCheckNetworkDialog(IntroActivity.this, (dialog, which) -> finish());
             } else {
                 introViewModel.showMaintenanceDialog();
             }
@@ -101,7 +104,11 @@ public class IntroActivity extends AppCompatActivity {
                         introModel.refreshAccountInfo();
                         subscriber.onNext(JandiConstants.NETWORK_SUCCESS);
                     } catch (RetrofitError e) {
-                        subscriber.onNext(e.getResponse().getStatus());
+                        if (e.getResponse() == null) {
+                            subscriber.onNext(-1);
+                        } else {
+                            subscriber.onNext(e.getResponse().getStatus());
+                        }
                     } catch (Exception e) {
                         subscriber.onNext(500);
                     }

@@ -99,13 +99,4 @@ public class IntroActivityViewModel {
                 .setCancelable(false)
                 .create().show();
     }
-
-    @UiThread
-    public void showCheckNetworkDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(R.string.err_network)
-                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> activity.finish())
-                .setCancelable(false)
-                .create().show();
-    }
 }

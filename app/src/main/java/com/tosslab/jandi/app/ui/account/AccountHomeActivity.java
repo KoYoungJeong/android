@@ -159,7 +159,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
                             if (join) {
                                 accountHomePresenter.onRequestJoin(selectedTeam);
                             } else {
-                                accountHomePresenter.onRequestIgnore(selectedTeam);
+                                accountHomePresenter.onRequestIgnore(selectedTeam, true);
                             }
                         }
                     });
@@ -234,7 +234,6 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     public void moveSelectedTeam(boolean firstJoin) {
         JandiSocketService.stopService(AccountHomeActivity.this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
-//        JandiSocketService.startSocketServiceIfStop(AccountHomeActivity.this);
 
         ParseUpdateUtil.updateParseWithoutSelectedTeam(AccountHomeActivity.this.getApplicationContext());
 
@@ -317,10 +316,9 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     }
 
     @Override
-    public void moveAfterinvitaionAccept() {
+    public void moveAfterInvitaionAccept() {
         accountHomePresenter.onTeamCreateAcceptResult();
     }
-
 
     public void onEvent(ConfirmModifyProfileEvent event) {
         accountHomePresenter.onChangeName(event.inputMessage);
@@ -334,7 +332,7 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     }
 
     @OnActivityResult(REQ_EMAIL_CHOOSE)
-    void onEmailChooseeResult(int resultCode) {
+    void onEmailChooseResult(int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
             accountHomePresenter.onEmailChooseResult();
         }
