@@ -68,18 +68,6 @@ public class MainTopicListFragment extends Fragment {
         super.onDestroy();
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        EventBus.getDefault().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        EventBus.getDefault().unregister(this);
-//        super.onStop();
-//    }
-
     @Click(R.id.btn_main_topic_fab)
     void onAddTopicClick() {
         TopicCreateActivity_
@@ -113,6 +101,7 @@ public class MainTopicListFragment extends Fragment {
             }
         });
         topicListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            //TODO 메세지 진입시 네트워크 체킹 ?
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 

@@ -158,6 +158,7 @@ public class MainChatListFragment extends Fragment {
         }
     }
 
+    //TODO 메세지 진입시 네트워크 체킹 ?
     @ItemClick(R.id.lv_main_chat_list)
     void onEntityItemClick(ChatItem chatItem) {
 
