@@ -7,8 +7,12 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.parse.Parse;
+import com.tosslab.jandi.app.network.manager.apiexecutor.PoolableRequestApiExecutor;
+
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.HashMap;
+import java.util.concurrent.Executors;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -40,6 +44,10 @@ public class JandiApplication extends MultiDexApplication {
                 JandiConstantsForFlavors.PARSE_APPLICATION_ID,
                 JandiConstantsForFlavors.PARSE_CLIENT_KEY);
 
+
+        // Set AndroidAnnotations Background pool
+        BackgroundExecutor.setExecutor(
+                Executors.newScheduledThreadPool(PoolableRequestApiExecutor.MAX_POOL_SIZE));
     }
 
     synchronized public Tracker getTracker(TrackerName trackerId) {

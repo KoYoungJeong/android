@@ -1,14 +1,12 @@
 package com.tosslab.jandi.app.ui.intro.viewmodel;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
@@ -93,10 +91,12 @@ public class IntroActivityViewModel {
 
     @UiThread
     public void showMaintenanceDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage(R.string.jandi_service_maintenance)
-                .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> activity.finish())
-                .setCancelable(false)
-                .create().show();
+        if (activity != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setMessage(R.string.jandi_service_maintenance)
+                    .setPositiveButton(R.string.jandi_confirm, (dialog, which) -> activity.finish())
+                    .setCancelable(false)
+                    .create().show();
+        }
     }
 }

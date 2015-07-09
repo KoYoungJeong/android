@@ -6,9 +6,7 @@ import android.net.NetworkInfo;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.network.client.main.MainRestApiClient;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
-import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.manager.restapiclient.JacksonConvertedSimpleRestApiClient;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
@@ -17,7 +15,6 @@ import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
 /**
@@ -25,12 +22,11 @@ import retrofit.RetrofitError;
  */
 public class PoolableRequestApiExecutor {
 
-    private static final int POOL_NUMBER = 10;
-    private static final int RETRY_COUNT = 3;
+    public static final int MAX_POOL_SIZE = 10;
+    private static final int RETRY_COUNT = 2;
     //    private static final Pools.SynchronizedPool RequestApiExecutorPool =
-//            new Pools.SynchronizedPool(POOL_NUMBER);
-    private static final AwaitablePool RequestApiExecutorPool
-            = new AwaitablePool(POOL_NUMBER);
+//            new Pools.SynchronizedPool(MAX_POOL_SIZE);
+    private static final AwaitablePool RequestApiExecutorPool = new AwaitablePool(MAX_POOL_SIZE);
     private int retryCnt = 0;
 
     private PoolableRequestApiExecutor() {
@@ -62,7 +58,6 @@ public class PoolableRequestApiExecutor {
         if (!isActiveNetwork()) {
             throw RetrofitError.unexpectedError(JandiConstantsForFlavors.SERVICE_INNER_API_URL,
                     new ConnectionNotFoundException());
-//                    new Exception(JandiConstants.UNVAILABLE_CLIENT_CONNECTION));
         }
 
         if (e.getKind() == RetrofitError.Kind.NETWORK) {
@@ -104,7 +99,7 @@ public class PoolableRequestApiExecutor {
     public boolean isActiveNetwork() {
         NetworkInfo activeNetworkInfo = ((ConnectivityManager) JandiApplication.getContext().
                 getSystemService(JandiApplication.getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isAvailable() && activeNetworkInfo.isConnected();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private ResAccessToken refreshToken() {

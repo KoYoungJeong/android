@@ -239,8 +239,11 @@ public class JandiSocketService extends Service {
     }
 
     private void closeAll() {
-        for (String key : eventHashMap.keySet()) {
-            jandiSocketManager.unregister(key, eventHashMap.get(key));
+        // TODO Why eventHashMap == null?
+        if (eventHashMap != null) {
+            for (String key : eventHashMap.keySet()) {
+                jandiSocketManager.unregister(key, eventHashMap.get(key));
+            }
         }
         jandiSocketManager.disconnect();
         jandiSocketManager.release();

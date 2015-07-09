@@ -6,15 +6,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.tosslab.jandi.app.local.database.DatabaseConsts;
 
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.Table;
-
 /**
  * Created by Steve SeongUg Jung on 14. 12. 18..
  */
 public class JandiStickerDatabaseOpenHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 16;
     private static final String[] CREATE_TABLES = {
-            Table.sticker_items + " (" +
+            DatabaseConsts.StickerTable.sticker_items + " (" +
                     DatabaseConsts.StickerItem._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.StickerItem.id + " TEXT NOT NULL, " +
                     DatabaseConsts.StickerItem.groupId + " INTEGER NOT NULL, " +
@@ -22,7 +20,7 @@ public class JandiStickerDatabaseOpenHelper extends SQLiteOpenHelper {
                     DatabaseConsts.StickerItem.web + " TEXT NOT NULL" +
                     ");",
 
-            Table.sticker_recent + " (" +
+            DatabaseConsts.StickerTable.sticker_recent + " (" +
                     DatabaseConsts.StickerRecent._id + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     DatabaseConsts.StickerRecent.id + " TEXT NOT NULL, " +
                     DatabaseConsts.StickerRecent.groupId + " INTEGER NOT NULL" +
