@@ -461,43 +461,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
-        MenuItem starredItem;
-
-        // DirectMessage의 경우 확장 메뉴가 없음.
-        if (!messageListModel.isDirectMessage(entityType)) {
-            if (messageListModel.isMyTopic(entityId)) {
-                if (messageListModel.isDefaultTopic(entityId)) {
-                    inflater.inflate(R.menu.manipulate_my_entity_menu_default, menu);
-                } else {
-                    inflater.inflate(R.menu.manipulate_my_entity_menu, menu);
-                }
-            } else {
-                if (messageListModel.isDefaultTopic(entityId)) {
-                    inflater.inflate(R.menu.manipulate_entity_menu_default, menu);
-                } else {
-                    inflater.inflate(R.menu.manipulate_entity_menu, menu);
-                }
-            }
-        } else {
-            inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
-        }
-
-        starredItem = menu.findItem(R.id.action_entity_starred);
-
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        if (entity != null && entity.isUser()) {
-            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
-                menu.removeItem(starredItem.getItemId());
-            }
-        }
-
-        if (starredItem != null) {
-            if (isFavorite) {
-                starredItem.setTitle(R.string.jandi_unstarred);
-            } else {
-                starredItem.setTitle(R.string.jandi_starred);
-            }
-        }
 
     }
 

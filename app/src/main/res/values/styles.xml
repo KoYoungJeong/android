@@ -344,4 +344,13 @@
         <item name="android:background">@drawable/bg_sticker_group</item>
     </style>
 
+    <style name="JandiTopicDetail"/>
+
+    <style name="JandiTopicDetail.Layout">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:paddingLeft">17dp</item>
+        <item name="android:paddingRight">17dp</item>
+    </style>
+
 </resources>

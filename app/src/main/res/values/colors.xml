@@ -33,6 +33,7 @@
     <color name="jandi_border_green">#31C08A</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
+    <color name="jandi_text_topic_detail_content">#FF6E6E6E</color>
 
     <color name="jandi_text_hint">#FFBDBDBD</color>
 

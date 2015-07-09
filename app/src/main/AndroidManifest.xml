@@ -127,6 +127,11 @@
             android:screenOrientation="portrait"/>
 
         <activity
+            android:name=".ui.message.detail.TopicDetailActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"/>
+
+        <activity
             android:name=".ui.profile.email.EmailChooseActivity_"
             android:label="@string/jandi_choose_email"
             android:screenOrientation="portrait"/>
