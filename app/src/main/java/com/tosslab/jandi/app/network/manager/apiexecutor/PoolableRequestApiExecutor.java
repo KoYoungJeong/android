@@ -22,7 +22,7 @@ import retrofit.RetrofitError;
 public class PoolableRequestApiExecutor {
 
     public static final int MAX_POOL_SIZE = 10;
-    private static final int RETRY_COUNT = 3;
+    private static final int RETRY_COUNT = 2;
     //    private static final Pools.SynchronizedPool RequestApiExecutorPool =
 //            new Pools.SynchronizedPool(MAX_POOL_SIZE);
     private static final AwaitablePool RequestApiExecutorPool = new AwaitablePool(MAX_POOL_SIZE);
