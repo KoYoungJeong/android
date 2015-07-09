@@ -81,11 +81,6 @@ public class PushInterfaceActivity extends AppCompatActivity {
     @UiThread
     void moveMessageListActivity() {
 
-        if (!jandiInterfaceModel.hasBackStackActivity()) {
-            MainTabActivity_.intent(PushInterfaceActivity.this)
-                    .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .start();
-        }
 
         FormattedEntity entity = EntityManager.getInstance(PushInterfaceActivity.this).getEntityById(entityId);
         boolean isUser = entity.isUser();
@@ -101,6 +96,10 @@ public class PushInterfaceActivity extends AppCompatActivity {
                 }
             }
         }
+
+        MainTabActivity_.intent(PushInterfaceActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .start();
 
         MessageListV2Activity_.intent(PushInterfaceActivity.this)
                 .teamId(teamId)

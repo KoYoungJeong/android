@@ -295,7 +295,7 @@ public class JandiSocketServiceModel {
     }
 
     public void stopMarkerObserver() {
-        if (!subscribe.isUnsubscribed()) {
+        if (subscribe != null && !subscribe.isUnsubscribed()) {
             subscribe.unsubscribe();
         }
     }

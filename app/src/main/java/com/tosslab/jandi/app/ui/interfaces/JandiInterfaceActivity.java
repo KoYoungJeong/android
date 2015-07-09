@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.tosslab.jandi.app.ui.interfaces.actions.Action;
 import com.tosslab.jandi.app.ui.interfaces.actions.ActionFactory;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EActivity;
@@ -19,6 +20,8 @@ public class JandiInterfaceActivity extends AppCompatActivity {
 
     @AfterInject
     void initView() {
+        // renew parse push infomation before getting access
+        ParseUpdateUtil.deleteChannelOnServer();
 
         Intent intent = getIntent();
         Uri data = intent.getData();

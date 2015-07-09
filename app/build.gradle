@@ -121,8 +121,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 52
-        versionName '1.0.4'
+        versionCode 53
+        versionName '1.0.5'
 
         // Enabling multidex support.
         multiDexEnabled true
@@ -278,7 +278,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDevDebug") {
     // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
     // We iterate through the compiled .class tree and rename $$ to $.
     doFirst {
-        new File('build/intermediates/classes/dev').eachFileRecurse { file ->
+        new File('app/build/intermediates/classes/dev').eachFileRecurse { file ->
             if (file.name.contains('$$')) {
                 file.renameTo(file.path.replace('$$', '$'))
             }
