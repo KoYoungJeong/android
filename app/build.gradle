@@ -121,8 +121,8 @@ android {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 53
-        versionName '1.0.5'
+        versionCode 54
+        versionName '1.0.6'
 
         // Enabling multidex support.
         multiDexEnabled true
