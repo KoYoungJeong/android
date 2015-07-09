@@ -77,6 +77,15 @@ public class JandiSocketService extends Service {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        eventHashMap = new HashMap<String, EventListener>();
+
+        jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
+        jandiSocketManager = JandiSocketManager.getInstance();
+    }
+
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean isStopForcibly = intent.getBooleanExtra(STOP_FORCIBLY, false);
         LogUtil.i(TAG, "onStartCommand isRunning ? " + isRunning + " & stopForce ? " + isStopForcibly);
@@ -90,11 +99,6 @@ public class JandiSocketService extends Service {
         if (isRunning) {
             return START_NOT_STICKY;
         }
-
-        jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
-        jandiSocketManager = JandiSocketManager.getInstance();
-
-        eventHashMap = new HashMap<String, EventListener>();
 
         jandiSocketServiceModel.startMarkerObserver();
 
@@ -241,7 +245,6 @@ public class JandiSocketService extends Service {
                 jandiSocketManager.unregister(key, eventHashMap.get(key));
             }
         }
-
         jandiSocketManager.disconnect();
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
