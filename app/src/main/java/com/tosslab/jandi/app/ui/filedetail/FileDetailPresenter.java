@@ -92,8 +92,6 @@ public class FileDetailPresenter {
     void initViews() {
         addFileDetailViewAsListviewHeader();
         mProgressWheel = new ProgressWheel(activity);
-        mProgressWheel.init();
-
     }
 
     private void addFileDetailViewAsListviewHeader() {

@@ -48,7 +48,6 @@ public class EmailChoosePresenter {
         emailChooseAdapter = new EmailChooseAdapter(activity);
 
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @AfterViews

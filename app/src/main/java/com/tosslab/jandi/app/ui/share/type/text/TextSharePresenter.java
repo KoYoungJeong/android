@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.share.type.text;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -54,11 +55,9 @@ public class TextSharePresenter {
         }
     }
 
-    @AfterInject
-    void initObject() {
+    void initObject(Activity activity) {
         shareEntityAdapter = new ShareEntityAdapter(context);
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+        progressWheel = new ProgressWheel(activity);
     }
 
     @AfterViews

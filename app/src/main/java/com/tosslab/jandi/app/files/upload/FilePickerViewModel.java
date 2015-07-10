@@ -20,8 +20,7 @@ public interface FilePickerViewModel {
 
     List<String> getFilePath(Context context, int requestCode, Intent intent);
 
-    void startUpload(Context context, String title, int entityId, String realFilePath, String comment);
-
+    void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment);
 
     void showFileUploadDialog(Context context, FragmentManager fragmentManager, String realFilePath, int entityId);
 

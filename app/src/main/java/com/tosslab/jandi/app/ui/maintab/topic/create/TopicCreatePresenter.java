@@ -47,7 +47,6 @@ public class TopicCreatePresenter {
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @AfterViews

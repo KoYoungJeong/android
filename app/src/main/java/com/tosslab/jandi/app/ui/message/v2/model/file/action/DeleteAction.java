@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2.model.file.action;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v7.app.AlertDialog;
 
@@ -22,14 +23,15 @@ import retrofit.RetrofitError;
 public class DeleteAction implements FileAction {
 
     @RootContext
-    Context context;
+    Activity activity;
+
     private ProgressWheel progressWheel;
 
     @Override
     public void action(ResMessages.Link link) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.jandi_action_delete)
-                .setMessage(context.getString(R.string.jandi_file_delete_message))
+                .setMessage(activity.getString(R.string.jandi_file_delete_message))
                 .setNegativeButton(R.string.jandi_cancel, null)
                 .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> deleteFile(link.messageId))
                 .create().show();
@@ -41,7 +43,7 @@ public class DeleteAction implements FileAction {
         showProgressWheel();
         try {
 
-            FileDetailModel_.getInstance_(context).deleteFile(fileId);
+            FileDetailModel_.getInstance_(activity.getApplicationContext()).deleteFile(fileId);
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -61,7 +63,7 @@ public class DeleteAction implements FileAction {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showProgressWheel() {
         if (progressWheel == null) {
-            progressWheel = new ProgressWheel(context);
+            progressWheel = new ProgressWheel(activity);
         }
 
         if (!progressWheel.isShowing()) {
