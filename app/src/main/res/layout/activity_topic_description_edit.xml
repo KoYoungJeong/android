@@ -23,7 +23,6 @@
         android:inputType="text|textMultiLine"
         android:lineSpacingExtra="12dp"
         android:maxLength="300"
-        android:maxLines="6"
         android:paddingBottom="12dp"
         android:paddingLeft="17dp"
         android:paddingRight="17dp"

@@ -69,7 +69,7 @@ public class UnjoinTopicDialog extends DialogFragment {
         tvHost.setText(EntityManager.getInstance(getActivity()).getEntityNameById(creatorId));
 
         if (TextUtils.isEmpty(description)) {
-            tvDescription.setVisibility(View.GONE);
+            tvDescription.setText(R.string.jandi_it_has_no_topic_description);
         } else {
             tvDescription.setText(description);
         }
