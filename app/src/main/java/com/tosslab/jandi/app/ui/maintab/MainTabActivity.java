@@ -31,10 +31,9 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
-import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
-import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel_;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -335,7 +334,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEventMainThread(ServiceMaintenanceEvent event) {
-        IntroActivityViewModel introViewModel = IntroActivityViewModel_.getInstance_(MainTabActivity.this);
-        introViewModel.showMaintenanceDialog();
+        AlertUtil_.getInstance_(MainTabActivity.this)
+                .showConfirmDialog(MainTabActivity.this,
+                        R.string.jandi_service_maintenance, (dialog, which) -> finish(),
+                        false);
     }
 }

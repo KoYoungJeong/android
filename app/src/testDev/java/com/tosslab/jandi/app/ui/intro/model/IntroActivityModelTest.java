@@ -51,7 +51,7 @@ public class IntroActivityModelTest {
     public void testCheckNewVersion() throws Exception {
 
         // When : Check app version to server
-        introActivityModel.checkNewVersion();
+        introActivityModel.checkNewVersion(Robolectric.application);
 
         await().until(new Callable<Boolean>() {
             @Override
