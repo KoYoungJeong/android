@@ -124,7 +124,14 @@
             android:name=".ui.maintab.topic.create.TopicCreateActivity_"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/jandi_create_channel"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
+
+        <activity
+            android:name=".ui.message.detail.edit.TopicDescriptionEditActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
 
         <activity
             android:name=".ui.message.detail.TopicDetailActivity_"

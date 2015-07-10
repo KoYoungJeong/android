@@ -20,16 +20,18 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/vg_topic_detail_name"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
                     android:text="@string/jandi_title_name"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
@@ -38,17 +40,24 @@
                     android:id="@+id/tv_topic_detail_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
                     android:layout_marginTop="6dp"
                     android:textColor="@color/jandi_text_topic_detail_content"
                     android:textSize="@dimen/jandi_text_size_medium"/>
             </LinearLayout>
+
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
 
             <LinearLayout
                 android:id="@+id/vg_topic_detail_description"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:minHeight="97dp"
                 android:orientation="vertical">
@@ -56,6 +65,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
                     android:text="@string/jandi_topic_description"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
@@ -64,18 +74,26 @@
                     android:id="@+id/tv_topic_detail_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
                     android:layout_marginTop="6dp"
+                    android:maxLines="6"
                     android:lineSpacingExtra="6dp"
                     android:textColor="@color/jandi_text_topic_detail_content"
                     android:textSize="@dimen/jandi_text_size_medium"/>
             </LinearLayout>
+
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
 
             <LinearLayout
                 android:id="@+id/vg_topic_detail_member_count"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -97,18 +115,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
-                    android:layout_marginTop="6dp"
                     android:lineSpacingExtra="6dp"
                     android:textColor="@color/jandi_text_topic_detail_content"
                     android:textSize="@dimen/jandi_text_size_medium"/>
             </LinearLayout>
+
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
 
             <LinearLayout
                 android:id="@+id/vg_topic_detail_invite"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -121,12 +144,18 @@
 
             </LinearLayout>
 
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
+
             <LinearLayout
                 android:id="@+id/vg_topic_detail_starred"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -146,12 +175,18 @@
 
             </LinearLayout>
 
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
+
             <LinearLayout
                 android:id="@+id/vg_topic_detail_leave"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/jandi_bg_topic_create_input"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -164,11 +199,18 @@
 
             </LinearLayout>
 
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
+
             <LinearLayout
                 android:id="@+id/vg_topic_detail_delete"
                 style="@style/JandiTopicDetail.Layout"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 

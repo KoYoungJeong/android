@@ -17,7 +17,19 @@ public interface TopicDetailPresenter {
 
     void onTopicStar(Context context, int entityId);
 
+    void onTopicLeave(Context context, int entityId);
+
+    void onTopicDelete(Context context, int entityId);
+
+    void deleteTopic(Context context, int entityId);
+
+    void onChangeTopicName(Context context, int entityId);
+
+    void onConfirmChangeTopicName(Context context, int entityId, String topicName, int entityType);
+
     interface View {
+
+        void leaveTopic();
 
         void setTopicName(String topicName);
 
@@ -28,5 +40,19 @@ public interface TopicDetailPresenter {
         void setTopicMemberCount(int topicMemberCount);
 
         void showSuccessToast(String message);
+
+        void showFailToast(String message);
+
+        void setEnableTopicDelete(boolean owner);
+
+        void showTopicDeleteDialog();
+
+        void showProgressWheel();
+
+        void dismissProgressWheel();
+
+        void showTopicNameChangeDialog(int entityId, String entityName, int entityType);
+
+        void moveTopicDescriptionEdit();
     }
 }

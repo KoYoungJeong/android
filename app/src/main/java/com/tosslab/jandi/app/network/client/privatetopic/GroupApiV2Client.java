@@ -28,8 +28,10 @@ public interface GroupApiV2Client {
 
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon modifyGroup(@Body ReqCreateTopic channel, @Path("groupId") int groupId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyGroup(@Query("teamId") int teamId,
+                          @Body ReqCreateTopic channel,
+                          @Path("groupId") int groupId);
 
     // Private Group 삭제
     @DELETEWithBody("/privateGroups/{groupId}")

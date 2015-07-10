@@ -173,7 +173,4 @@ public class InvitationViewModel {
         ColoredToast.showError(context, errMessage);
     }
 
-    public boolean isTopicOwner(Context context, int entityId) {
-        return EntityManager.getInstance(context).isMyTopic(entityId);
-    }
 }

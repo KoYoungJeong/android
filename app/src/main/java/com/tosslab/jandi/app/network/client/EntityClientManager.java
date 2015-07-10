@@ -211,4 +211,17 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().deleteFileByFileApi(selectedTeamId, fileId);
     }
 
+    public ResCommon modifyChannelDescription(int entityId, String description) throws RetrofitError {
+        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        entityInfo.teamId = selectedTeamId;
+        entityInfo.description = description;
+        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, entityId);
+    }
+
+    public ResCommon modifyPrivateGroupDescription(int entityId, String description) throws RetrofitError {
+        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        entityInfo.teamId = selectedTeamId;
+        entityInfo.description = description;
+        return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, entityId);
+    }
 }

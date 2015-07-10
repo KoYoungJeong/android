@@ -414,4 +414,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_set_starred_chat">즐겨찾는 대화창으로 설정</string>
     <string name="jandi_chat_leave">대화창 나가기</string>
     <string name="jandi_topic_starred">즐겨찾는 토픽으로 설정</string>
+    <string name="jandi_it_has_no_topic_description">(토픽소개가 없습니다.)</string>
+    <string name="jandi_plz_input_topic_description">(토픽에 대해 소개해주세요)</string>
+    <string name="jandi_save">저장</string>
 </resources>
