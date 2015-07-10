@@ -411,6 +411,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_topic_leave">토픽 나가기</string>
     <string name="jandi_topic_delete">토픽 삭제하기</string>
     <string name="jandi_topic_detail">토픽 상세보기</string>
+    <string name="jandi_chat_detail">대화창 상세보기</string>
     <string name="jandi_set_starred_chat">즐겨찾는 대화창으로 설정</string>
     <string name="jandi_chat_leave">대화창 나가기</string>
     <string name="jandi_topic_starred">즐겨찾는 토픽으로 설정</string>

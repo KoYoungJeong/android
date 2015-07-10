@@ -1041,13 +1041,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
     }
 
-    public void onEvent(ChatCloseEvent event) {
+    public void onEventMainThread(ChatCloseEvent event) {
         if (entityId == event.getCompanionId()) {
             getActivity().finish();
         }
     }
 
-    public void onEvent(TopicDeleteEvent event) {
+    public void onEventMainThread(TopicDeleteEvent event) {
         if (entityId == event.getId()) {
             getActivity().finish();
         }

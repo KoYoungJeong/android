@@ -23,6 +23,7 @@ import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
+import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity_;
 import com.tosslab.jandi.app.ui.message.detail.presenter.TopicDetailPresenter;
@@ -51,7 +52,6 @@ import de.greenrobot.event.EventBus;
 @OptionsMenu(R.menu.topic_detail)
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 
-    public static final String EXTRA_LEAVE = "leave";
     @FragmentArg
     int entityId;
 
@@ -142,7 +142,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     public void leaveTopic() {
         FragmentActivity activity = getActivity();
         Intent data = new Intent();
-        data.putExtra(EXTRA_LEAVE, true);
+        data.putExtra(TopicDetailActivity.EXTRA_LEAVE, true);
 
         activity.setResult(Activity.RESULT_OK, data);
         activity.finish();
@@ -150,11 +150,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
         topicDetailPresenter.deleteTopic(getActivity(), entityId);
-    }
-
-    @OptionsItem(android.R.id.home)
-    void onHomeMenuClick() {
-        getActivity().finish();
     }
 
     @Click(R.id.vg_topic_detail_name)
