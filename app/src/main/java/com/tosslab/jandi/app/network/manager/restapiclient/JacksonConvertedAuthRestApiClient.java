@@ -311,7 +311,9 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
 
     @Override
     public ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().createPrivateGroup(group);
+        return RestAdapterBuilder.newInstance(GroupApiV2Client.class)
+                .create()
+                .createPrivateGroup(group.teamId, group);
     }
 
     @Override

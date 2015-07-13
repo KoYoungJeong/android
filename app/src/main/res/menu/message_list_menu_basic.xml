@@ -4,13 +4,13 @@
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_entity_search"
-        android:icon="@drawable/jandi_actionb_search"
+        android:icon="@drawable/jandi_icon_search"
         android:showAsAction="always"
         android:title="@string/jandi_action_search"
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_entity_move_file_list"
-        android:icon="@drawable/jandi_icon_actionbar_file"
+        android:icon="@drawable/jandi_icon_file_search"
         android:showAsAction="always"
         android:title="@string/jandi_tab_file"
         app:showAsAction="always"/>

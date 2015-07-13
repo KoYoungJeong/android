@@ -24,7 +24,7 @@ public interface GroupApiV2Client {
     // Private Group 생성
     @POST("/privateGroup")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
-    ResCommon createPrivateGroup(@Body ReqCreateTopic group);
+    ResCommon createPrivateGroup(@Query("teamId") int teamId, @Body ReqCreateTopic group);
 
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
