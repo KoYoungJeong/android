@@ -130,7 +130,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_message_commented_file_name"
                     android:layout_marginTop="8dp"
-                    android:autoLink="web"
                     android:text="Comment"
                     android:textColor="@color/jandi_messages_content"
                     android:textSize="@dimen/jandi_messages_comment" />
@@ -182,7 +181,6 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_message_nested_comment_user_name"
                     android:layout_marginTop="8dp"
-                    android:autoLink="web"
                     android:text="Nested comment"
                     android:textColor="@color/jandi_messages_content"
                     android:textSize="@dimen/jandi_messages_comment" />
@@ -285,7 +283,6 @@
                 android:id="@+id/txt_message_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autoLink="web"
                 android:text="Text"
                 android:textColor="@color/jandi_messages_content"
                 android:textSize="@dimen/jandi_messages_content" />

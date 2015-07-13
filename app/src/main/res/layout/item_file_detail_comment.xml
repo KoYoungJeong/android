@@ -55,7 +55,6 @@
         android:layout_alignLeft="@+id/txt_file_detail_comment_user_name"
         android:layout_below="@+id/txt_file_detail_comment_user_name"
         android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_right"
-        android:autoLink="web"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
         android:textSize="@dimen/jandi_file_detail_comment_date_text"/>
