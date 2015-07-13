@@ -56,7 +56,6 @@ public class TopicCreateView {
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @AfterViews

@@ -1,25 +1,26 @@
 package com.tosslab.jandi.app.ui.intro;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ResConfig;
-import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
-import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityViewModel;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.app.services.socket.JandiSocketService;
+import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
+import com.tosslab.jandi.app.ui.intro.viewmodel.IntroActivityPresenter;
+import com.tosslab.jandi.app.ui.login.IntroMainActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.app.utils.AlertUtil_;
+import com.tosslab.jandi.app.utils.ColoredToast;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.UiThread;
-
-import retrofit.RetrofitError;
-import rx.Observable;
-import rx.Subscriber;
 
 /**
  * Created by justinygchoi on 14. 11. 6..
@@ -29,117 +30,98 @@ import rx.Subscriber;
  */
 @Fullscreen
 @EActivity(R.layout.activity_intro)
-public class IntroActivity extends AppCompatActivity {
-
-    private static final long MAX_DELAY_MS = 1500l;
+public class IntroActivity extends AppCompatActivity implements IntroActivityPresenter.View {
 
     @Extra
     boolean startForInvite = false;
 
     @Bean
-    IntroActivityModel introModel;
-
-    @Bean
-    IntroActivityViewModel introViewModel;
+    IntroActivityPresenter presenter;
 
     @AfterViews
     void startOn() {
-        checkNewVersion();
-    }
-
-    @Background
-    void checkNewVersion() {
-
-        long initTime = System.currentTimeMillis();
-        try {
-            ResConfig config = introModel.getConfigInfo();
-
-            int installedAppVersion = introModel.getInstalledAppVersion(IntroActivity.this);
-
-            if (config.maintenance != null && config.maintenance.status) {
-                introViewModel.showMaintenanceDialog();
-            } else if (installedAppVersion < config.versions.android) {
-                introModel.sleep(initTime, MAX_DELAY_MS);
-                introViewModel.showUpdateDialog();
-            } else {
-                if (introModel.hasOldToken()) {
-                    introModel.removeOldToken();
-                }
-
-                if (!introModel.isNeedLogin()) {
-                    refreshTokenAndGoNextActivity(initTime);
-                } else {
-                    introModel.sleep(initTime, MAX_DELAY_MS);
-                    introViewModel.moveToIntroTutorialActivity();
-                }
-            }
-
-        } catch (RetrofitError e) {
-            introModel.sleep(initTime, MAX_DELAY_MS);
-            introViewModel.showMaintenanceDialog();
-
-        } catch (Exception e) {
-            introViewModel.showMaintenanceDialog();
-        }
-
-    }
-
-    @Background
-    void refreshTokenAndGoNextActivity(long initTime) {
-
-        // like fork & join...but need to refactor
-
-        Observable.combineLatest(Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-                new Thread(() -> {
-                    try {
-                        introModel.refreshAccountInfo();
-                        subscriber.onNext(JandiConstants.NETWORK_SUCCESS);
-                    } catch (RetrofitError e) {
-                        subscriber.onNext(e.getResponse().getStatus());
-                    } catch (Exception e) {
-                        subscriber.onNext(500);
-                    }
-                    subscriber.onCompleted();
-                }).start();
-            }
-        }), Observable.create(new Observable.OnSubscribe<Integer>() {
-            @Override
-            public void call(Subscriber<? super Integer> subscriber) {
-
-                new Thread(() -> {
-                    subscriber.onNext(introModel.refreshEntityInfo() ? 1 : -1);
-                    subscriber.onCompleted();
-                }).start();
-
-            }
-        }), (o, o2) -> o).subscribe(o -> {
-            if (o == JandiConstants.NETWORK_SUCCESS) {
-                introModel.sleep(initTime, MAX_DELAY_MS);
-                if (introModel.hasSelectedTeam() && !startForInvite) {
-                    ParseUpdateUtil.updateParseWithoutSelectedTeam(IntroActivity.this.getApplicationContext());
-                    introViewModel.moveToMainActivity();
-                } else {
-                    introViewModel.moveTeamSelectActivity();
-                }
-                introModel.updateParseForAllTeam();
-            } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {
-                introModel.clearTokenInfo();
-                introModel.clearAccountInfo();
-
-                introModel.sleep(initTime, MAX_DELAY_MS);
-                introViewModel.moveToIntroTutorialActivity();
-            } else {
-                introViewModel.showWarningToast(getString(R.string.err_network));
-                finishOnUiThread();
-            }
-        });
-
+        presenter.setView(this);
+        presenter.checkNewVersion(getApplicationContext(), startForInvite);
     }
 
     @UiThread
-    void finishOnUiThread() {
+    @Override
+    public void moveTeamSelectActivity() {
+        AccountHomeActivity_
+                .intent(IntroActivity.this)
+                .start();
+        finish();
+    }
+
+    @UiThread
+    @Override
+    public void moveToMainActivity() {
+        // Move MainActivity
+        MainTabActivity_.intent(IntroActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .start();
+
+        finish();
+    }
+
+    @UiThread
+    @Override
+    public void moveToIntroTutorialActivity() {
+        // Move TutorialActivity
+        JandiSocketService.stopService(IntroActivity.this);
+
+        IntroMainActivity_.intent(IntroActivity.this).start();
+
+        finish();
+    }
+
+    @UiThread
+    @Override
+    public void showCheckNetworkDialog() {
+        AlertUtil_.getInstance_(IntroActivity.this)
+                .showCheckNetworkDialog(IntroActivity.this, (dialog, which) -> finish());
+    }
+
+    @UiThread
+    @Override
+    public void showWarningToast(String message) {
+        ColoredToast.showWarning(getApplicationContext(), message);
+    }
+
+    @UiThread
+    @Override
+    public void showMaintenanceDialog() {
+        AlertUtil_.getInstance_(IntroActivity.this)
+                .showConfirmDialog(IntroActivity.this,
+                        R.string.jandi_service_maintenance, (dialog, which) -> finish(),
+                        false);
+    }
+
+    @UiThread
+    @Override
+    public void showUpdateDialog() {
+        AlertUtil_.getInstance_(IntroActivity.this)
+                .showConfirmDialog(IntroActivity.this, R.string.jandi_update_title,
+                        R.string.jandi_update_message, (dialog, which) -> {
+                            final String appPackageName = getPackageName();
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (android.content.ActivityNotFoundException anfe) {
+                                startActivity(new Intent(Intent.ACTION_VIEW,
+                                        Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+                            } finally {
+                                finish();   // 업데이트 안내를 확인하면 앱을 종료한다.
+                            }
+                        },
+                        false);
+    }
+
+    @UiThread
+    @Override
+    public void finishOnUiThread() {
         finish();
     }
 

@@ -56,7 +56,7 @@ public class InternalWebActivity extends AppCompatActivity {
 
     @AfterInject
     void initObject() {
-
+        internalWebPresenter.initObject(this);
         internalWebPresenter.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -187,8 +187,7 @@ public class InternalWebActivity extends AppCompatActivity {
 
         String message = internalWebModel.createMessage(title, url);
 
-        internalWebPresenter.showShareEntity(entities, message);
-
+        internalWebPresenter.showShareEntity(this, entities, message);
     }
 
     public void onEvent(ShareEntityEvent shareEntityEvent) {
@@ -205,10 +204,10 @@ public class InternalWebActivity extends AppCompatActivity {
         String text = shareEntityEvent.getText();
         try {
             internalWebModel.sendMessage(entityId, entityType, text);
-            internalWebPresenter.showSuccessToast(getString(R.string.jandi_share_succeed, getString(R.string.jandi_message_hint)));
+            internalWebPresenter.showSuccessToast(getApplicationContext(), getString(R.string.jandi_share_succeed, getString(R.string.jandi_message_hint)));
         } catch (RetrofitError e) {
             e.printStackTrace();
-            internalWebPresenter.showErrorToast(getString(R.string.err_network));
+            internalWebPresenter.showErrorToast(getApplicationContext(), getString(R.string.err_network));
         } finally {
             internalWebPresenter.dismissProgressWheel();
         }
@@ -217,19 +216,21 @@ public class InternalWebActivity extends AppCompatActivity {
     @OptionsItem(R.id.action_copy_link)
     public void onCopyLinkOptionSelect() {
 
-        String message = internalWebModel.createMessage(internalWebPresenter.getCurrentTitle(), internalWebPresenter.getCurrentUrl());
+        String message = internalWebModel.createMessage(
+                internalWebPresenter.getCurrentTitle(), internalWebPresenter.getCurrentUrl());
 
         internalWebModel.copyToClipboard(message);
     }
 
     @OptionsItem(R.id.action_open_to_browser)
     public void onOpenBrowserOptionSelect() {
-        internalWebPresenter.moveOtherBrowser(internalWebPresenter.getCurrentUrl());
+        internalWebPresenter.moveOtherBrowser(InternalWebActivity.this, internalWebPresenter.getCurrentUrl());
     }
 
     @OptionsItem(R.id.action_share_to_app)
     public void onShareToAppOptionSelect() {
-        internalWebPresenter.sendOtherApp(internalWebPresenter.getCurrentTitle(), internalWebPresenter.getCurrentUrl());
+        internalWebPresenter.sendOtherApp(InternalWebActivity.this,
+                internalWebPresenter.getCurrentTitle(), internalWebPresenter.getCurrentUrl());
     }
 
     @OptionsItem(android.R.id.home)
@@ -246,7 +247,7 @@ public class InternalWebActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         if (helpSite) {
-            internalWebPresenter.zendeskCookieRemove();
+            internalWebPresenter.zendeskCookieRemove(getApplicationContext());
         }
         super.onDestroy();
     }

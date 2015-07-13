@@ -89,8 +89,8 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.ui.message.v2.model.announcement.AnnouncementModel;
-import com.tosslab.jandi.app.ui.message.v2.model.announcement.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
@@ -187,7 +187,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messagePublishSubject = PublishSubject.create();
 
-        messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
+        messageSubscription = messagePublishSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
 
                     switch (messageQueue.getQueueType()) {
@@ -207,7 +209,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             getAnnouncement();
                             break;
                         case Update:
-                            upodateMessage(messageQueue);
+                            updateMessage(messageQueue);
                             break;
                     }
                 }, throwable -> {
@@ -302,10 +304,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void getAnnouncement() {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        messageListPresenter.dismissProgressWheel();
         announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
     }
 
-    private void upodateMessage(MessageQueue messageQueue) {
+    private void updateMessage(MessageQueue messageQueue) {
         UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
         ResMessages.OriginalMessage message =
                 messageListModel.getMessage(teamId, updateMessage.getMessageId());
@@ -1134,20 +1137,44 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
      */
     private void initAnnouncementListeners() {
         announcementViewModel.setOnAnnouncementCloseListener(() -> {
+            announcementViewModel.openAnnouncement(false);
+            announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, false);
         });
         announcementViewModel.setOnAnnouncementOpenListener(() -> {
+            announcementViewModel.openAnnouncement(true);
+            announcementModel.setActionFromUser(true);
             announcementModel.updateAnnouncementStatus(teamId, roomId, true);
         });
     }
 
     public void onEvent(SocketAnnouncementEvent event) {
-        if (!isForeground) {
-            messageListModel.updateMarkerInfo(teamId, roomId);
-            return;
+        SocketAnnouncementEvent.Type eventType = event.getEventType();
+        switch (eventType) {
+            case CREATED:
+            case DELETED:
+                if (!isForeground) {
+                    messageListModel.updateMarkerInfo(teamId, roomId);
+                    return;
+                }
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                break;
+            case STATUS_UPDATED:
+                if (!isForeground) {
+                    announcementModel.setActionFromUser(false);
+                    messageListModel.updateMarkerInfo(teamId, roomId);
+                    return;
+                }
+                SocketAnnouncementEvent.Data data = event.getData();
+                if (data != null) {
+                    if (!announcementModel.isActionFromUser()) {
+                        announcementViewModel.openAnnouncement(data.isOpened());
+                    }
+                }
+                announcementModel.setActionFromUser(false);
+                break;
         }
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
-        sendMessagePublisherEvent(new CheckAnnouncementQueue());
     }
 
     public void onEvent(AnnouncementEvent event) {
@@ -1156,6 +1183,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 checkAnnouncementExistsAndCreate(event.getMessageId());
                 break;
             case DELETE:
+                messageListPresenter.showProgressWheel();
                 announcementModel.deleteAnnouncement(teamId, roomId);
                 break;
         }
@@ -1173,6 +1201,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void createAnnouncement(int messageId) {
+        messageListPresenter.showProgressWheel();
         announcementModel.createAnnouncement(teamId, roomId, messageId);
     }
 

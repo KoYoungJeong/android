@@ -175,7 +175,10 @@ public class JandiSocketServiceModel {
         try {
             SocketMemberProfileEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketMemberProfileEvent.class);
-            postEvent(new ProfileChangeEvent(socketTopicEvent.getMember().id));
+
+            ResLeftSideMenu.User member = socketTopicEvent.getMember();
+
+            postEvent(new ProfileChangeEvent(member));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,7 +295,7 @@ public class JandiSocketServiceModel {
     }
 
     public void stopMarkerObserver() {
-        if (!subscribe.isUnsubscribed()) {
+        if (subscribe != null && !subscribe.isUnsubscribed()) {
             subscribe.unsubscribe();
         }
     }

@@ -12,8 +12,6 @@ public interface MembersListPresenter {
 
     void setView(View view);
 
-    void onListItemClick(ChatChooseItem chatChooseItem);
-
     void onEventBusRegister();
 
     void onEventBusUnregister();

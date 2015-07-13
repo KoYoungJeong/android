@@ -87,6 +87,8 @@
     <color name="jandi_messages_file_name">@color/jandi_text</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
     <color name="jandi_announcement_divider">#FFD0D0D0</color>
+    <color name="jandi_linkpreview_divider">#FFE6E6E6</color>
+
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
     <color name="jandi_messages_button_text">#FFFFFF</color>

@@ -105,7 +105,7 @@ public class UserInfoDialogFragment extends DialogFragment {
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        if (event.getEntityId() == entityId) {
+        if (event.getMember().id == entityId) {
             FormattedEntity entityById =
                     EntityManager.getInstance(getActivity()).getEntityById(entityId);
 

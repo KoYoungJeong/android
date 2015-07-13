@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.ui.message.v2.model.announcement;
+package com.tosslab.jandi.app.ui.message.v2.model;
 
 import android.content.Context;
 
@@ -23,6 +23,16 @@ public class AnnouncementModel {
 
     @RootContext
     Context context;
+
+    private boolean isActionFromUser = false;
+
+    public boolean isActionFromUser() {
+        return isActionFromUser;
+    }
+
+    public void setActionFromUser(boolean fromUser) {
+        isActionFromUser = fromUser;
+    }
 
     public boolean isAnnouncementOpened(int entityId) {
         FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
@@ -54,8 +64,8 @@ public class AnnouncementModel {
         int memberId = EntityManager.getInstance(context).getMe().getUser().id;
 
         try {
-            ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus
-                    = new ReqUpdateAnnouncementStatus(topicId, isOpened);
+            ReqUpdateAnnouncementStatus reqUpdateAnnouncementStatus =
+                    new ReqUpdateAnnouncementStatus(topicId, isOpened);
             RequestApiManager.getInstance()
                     .updateAnnouncementStatus(teamId, memberId, reqUpdateAnnouncementStatus);
         } catch (RetrofitError e) {

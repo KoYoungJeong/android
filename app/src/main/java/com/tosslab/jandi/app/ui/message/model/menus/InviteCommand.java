@@ -62,7 +62,6 @@ class InviteCommand implements MenuCommand {
         entityManager = EntityManager.getInstance(activity);
 
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @Override
@@ -112,7 +111,7 @@ class InviteCommand implements MenuCommand {
         });
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle(R.string.title_cdp_invite);
+        dialog.setTitle(R.string.jandi_invite_member_to_topic);
         dialog.setView(view);
         dialog.setPositiveButton(R.string.menu_entity_invite, new DialogInterface.OnClickListener() {
             @Override

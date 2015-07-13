@@ -71,7 +71,6 @@ public class SignUpVerifyActivity extends AppCompatActivity implements SignUpVer
 
         presenter.setView(this);
         progressWheel = new ProgressWheel(this);
-        progressWheel.init();
         verificationCodeView.setOnVerificationCodeChangedListener(() ->
                 presenter.validateVerificationCode(verificationCodeView.getVerificationCode()));
         verificationCodeView.setOnActionDoneListener(() -> hideKeyboard());

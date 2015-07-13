@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.share.type.text;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -37,7 +38,7 @@ public class TextSharePresenter {
     FloatLabel floatLabel;
 
     @RootContext
-    Context context;
+    Activity activity;
 
     private String subject;
     private String text;
@@ -56,9 +57,8 @@ public class TextSharePresenter {
 
     @AfterInject
     void initObject() {
-        shareEntityAdapter = new ShareEntityAdapter(context);
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+        shareEntityAdapter = new ShareEntityAdapter(activity);
+        progressWheel = new ProgressWheel(activity);
     }
 
     @AfterViews
@@ -115,12 +115,12 @@ public class TextSharePresenter {
 
     @UiThread
     public void showErrorMessage(String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(activity, message);
     }
 
     @UiThread
     public void showSuccessMessage(String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(activity, message);
     }
 
     @UiThread
@@ -136,10 +136,10 @@ public class TextSharePresenter {
             entityType = JandiConstants.TYPE_DIRECT_MESSAGE;
         }
 
-        MainTabActivity_.intent(context)
+        MainTabActivity_.intent(activity)
                 .start();
 
-        MessageListV2Activity_.intent(context)
+        MessageListV2Activity_.intent(activity)
                 .teamId(teamId)
                 .roomId(entityType != JandiConstants.TYPE_DIRECT_MESSAGE ? entityType : entity.getEntityId())
                 .entityId(entity.getEntityId())

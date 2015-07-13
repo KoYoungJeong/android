@@ -45,7 +45,7 @@ package com.tosslab.jandi.app.ui.invites;
 //        }
 //    }
 //
-////    public static Intent getInviteIntent(Context context, TeamInvitationsEvent event,
+////    public static Intent getInviteIntent(Context activity, TeamInvitationsEvent event,
 ////                                         String invitationUrl, String invitationContents) {
 ////        switch (event.type) {
 ////            case JandiConstants.TYPE_INVITATION_KAKAO:
@@ -63,12 +63,12 @@ package com.tosslab.jandi.app.ui.invites;
 ////            default:
 ////            case JandiConstants.TYPE_INVITATION_EMAIL:
 ////                return InviteEmailActivity_
-////                        .intent(context)
+////                        .intent(activity)
 ////                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
 ////        }
 ////    }
 //
-//    public static Intent getInviteIntent(Context context, int eventType,
+//    public static Intent getInviteIntent(Context activity, int eventType,
 //                                         String invitationUrl, String invitationContents) {
 //        switch (eventType) {
 //            case JandiConstants.TYPE_INVITATION_KAKAO:
@@ -86,7 +86,7 @@ package com.tosslab.jandi.app.ui.invites;
 //            default:
 //            case JandiConstants.TYPE_INVITATION_EMAIL:
 //                return InviteEmailActivity_
-//                        .intent(context)
+//                        .intent(activity)
 //                        .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
 //        }
 //    }

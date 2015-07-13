@@ -35,21 +35,21 @@ public interface ChannelMessageApiV2Client {
     ResMessages getPublicTopicMessages(@Query("teamId") int teamId, @Path("channelId") int channelId);
 
     // 채널의 업데이트 Message 리스트 정보 획득
-    @GET("/channels/{channelId}/messages/update/{currentLinkId}")
+    @GET("/channels/{channelId}/messages/update/{linkId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResUpdateMessages getPublicTopicUpdatedMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
-                                                    @Path("currentLinkId") int currentLinkId);
+                                                    @Path("linkId") int currentLinkId);
 
     @GET("/channels/{channelId}/messages?type=new")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicUpdatedMessagesForMarker(@Query("teamId") int teamId, @Path("channelId") int channelId,
-                                                       @Query("currentLinkId") int currentLinkId);
+                                                       @Query("linkId") int currentLinkId);
 
 
     @GET("/channels/{channelId}/messages")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages getPublicTopicMarkerMessages(@Query("teamId") int teamId, @Path("channelId") int channelId,
-                                             @Query("currentLinkId") int currentLinkId);
+                                             @Query("linkId") int currentLinkId);
 
     // 채널에서 Message 생성
     @POST("/channels/{channelId}/message")

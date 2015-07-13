@@ -82,8 +82,6 @@ public class MembersAdapter extends BaseAdapter {
             viewHolder.imageViewFavorite.setVisibility(View.GONE);
         }
 
-
-        viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
         Ion.with(viewHolder.imageViewIcon)
                 .placeholder(R.drawable.jandi_profile)
                 .error(R.drawable.jandi_profile)
@@ -103,6 +101,7 @@ public class MembersAdapter extends BaseAdapter {
             viewHolder.disableCoverView.setVisibility(View.VISIBLE);
         }
 
+        convertView.setOnClickListener(getProfileClickListener(item.getEntityId()));
 
         return convertView;
     }
