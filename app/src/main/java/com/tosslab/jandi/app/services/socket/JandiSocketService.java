@@ -117,7 +117,8 @@ public class JandiSocketService extends Service {
     }
 
     private void initEventMapper() {
-        EventListener entityRefreshListener = objects -> jandiSocketServiceModel.refreshEntity();
+        EventListener entityRefreshListener = objects ->
+                jandiSocketServiceModel.refreshEntity(null, true);
 
         eventHashMap.put("team_joined", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
@@ -257,6 +258,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.disconnect();
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
+        jandiSocketServiceModel.stopRefreshEntityObserver();
     }
 
     private void sendBroadcastForRestart() {
