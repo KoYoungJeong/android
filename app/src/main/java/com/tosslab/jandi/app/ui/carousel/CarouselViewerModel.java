@@ -9,18 +9,15 @@ import android.text.TextUtils;
 import android.webkit.MimeTypeMap;
 
 import com.koushikdutta.ion.Ion;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.manager.RequestManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
-import com.tosslab.jandi.app.ui.maintab.file.model.FileSearchRequest;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -40,12 +37,8 @@ import rx.functions.Func1;
 @EBean
 public class CarouselViewerModel {
 
-    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile, Context context) throws
-            JandiNetworkException {
-        RequestManager<ResSearchFile> requestManager = RequestManager.newInstance(context, FileSearchRequest.create(context, reqSearchFile));
-        ResSearchFile resSearchFile = requestManager.request();
-
-        return resSearchFile;
+    public ResSearchFile searchFileList(ReqSearchFile reqSearchFile, Context context)  {
+        return null;
     }
 
     public File download(String url, String fileName, String fileType, ProgressDialog

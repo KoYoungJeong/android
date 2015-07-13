@@ -4,12 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -55,7 +54,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
             imageFiles = carouselViewerModel.getImageFileConvert(entityId, context, resSearchFile);
 
-        } catch (JandiNetworkException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             imageFiles = new ArrayList<CarouselFileInfo>();
         }
