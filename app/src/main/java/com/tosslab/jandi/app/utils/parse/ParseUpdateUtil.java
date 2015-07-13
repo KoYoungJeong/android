@@ -66,6 +66,7 @@ public class ParseUpdateUtil {
                     return subscribeList;
                 })
                 .collect(() -> new ArrayList<String>(), (collector, values) -> collector.addAll(values))
+                .filter(subscribeList -> !subscribeList.isEmpty())
                 .subscribe(new Action1<List<String>>() {
                     @Override
                     public void call(List<String> subscriber) {
