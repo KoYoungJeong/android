@@ -99,6 +99,7 @@ public class ParseUpdateUtil {
                     }
                 }, throwable -> {
                     LogUtil.e("Parse Error", throwable);
+
                     Crashlytics.log(Log.ERROR
                             , "Parse Push"
                             , "Push Regist Fail" + throwable.getMessage());
