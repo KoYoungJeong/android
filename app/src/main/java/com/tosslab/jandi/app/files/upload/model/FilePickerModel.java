@@ -84,7 +84,7 @@ public class FilePickerModel {
     }
 
     public void openExplorerForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(fragment.getActivity().getApplicationContext(), FileExplorerActivity.class);
+        Intent intent = new Intent(fragment.getActivity(), FileExplorerActivity.class);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
     }
 

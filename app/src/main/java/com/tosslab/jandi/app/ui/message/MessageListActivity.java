@@ -213,7 +213,6 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     private void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
     }
 
     private void clearPushNotification(int entityId) {

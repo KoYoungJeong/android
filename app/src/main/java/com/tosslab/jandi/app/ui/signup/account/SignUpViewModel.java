@@ -67,7 +67,6 @@ public class SignUpViewModel {
     @AfterInject
     void initObject() {
         mProgressWheel = new ProgressWheel(activity);
-        mProgressWheel.init();
     }
 
     @AfterViews

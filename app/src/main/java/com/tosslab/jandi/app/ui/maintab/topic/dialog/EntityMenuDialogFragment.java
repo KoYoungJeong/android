@@ -72,8 +72,6 @@ public class EntityMenuDialogFragment extends DialogFragment {
         }
 
         progressWheel = new ProgressWheel(getActivity());
-        progressWheel.init();
-
     }
 
     public void setStarredButtonText(boolean isStarred) {

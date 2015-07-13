@@ -55,7 +55,6 @@ public class IntroLoginViewModel {
     @AfterInject
     void initObject() {
         mProgressWheel = new ProgressWheel(activity);
-        mProgressWheel.init();
     }
 
     public void showProgressDialog() {
