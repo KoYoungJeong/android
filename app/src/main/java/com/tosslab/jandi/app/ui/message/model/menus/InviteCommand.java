@@ -62,7 +62,6 @@ class InviteCommand implements MenuCommand {
         entityManager = EntityManager.getInstance(activity);
 
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @Override

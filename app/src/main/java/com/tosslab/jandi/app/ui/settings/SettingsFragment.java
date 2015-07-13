@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
@@ -43,6 +44,11 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Bean
     SettingFragmentViewModel settingFragmentViewModel;
+
+    @AfterViews
+    void init() {
+        settingFragmentViewModel.initProgress(getActivity());
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +102,7 @@ public class SettingsFragment extends PreferenceFragment {
                     .termMode(TermActivity.Mode.Privacy.name())
                     .start();
         } else if (preference.getKey().equals("setting_logout")) {
-            settingFragmentViewModel.showSignoutDialog();
+            settingFragmentViewModel.showSignoutDialog(getActivity());
         }
         return false;
     }
@@ -139,7 +145,7 @@ public class SettingsFragment extends PreferenceFragment {
             settingFragmentViewModel.dismissProgressDialog();
         }
 
-        settingFragmentViewModel.returnToLoginActivity();
+        settingFragmentViewModel.returnToLoginActivity(getActivity());
     }
 
     private void removeSignData() {

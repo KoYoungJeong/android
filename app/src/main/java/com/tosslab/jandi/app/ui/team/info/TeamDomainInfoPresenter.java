@@ -39,7 +39,6 @@ public class TeamDomainInfoPresenter {
     @AfterViews
     void initView() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     public void setTeamCreatable(boolean isTeamCreatable) {
@@ -77,16 +76,13 @@ public class TeamDomainInfoPresenter {
 
         activity.setResult(Activity.RESULT_OK);
         activity.finish();
-
     }
 
 
     @UiThread
     public void successJoinTeam() {
-
         activity.setResult(Activity.RESULT_OK);
         activity.finish();
-
     }
 
     @UiThread
@@ -96,8 +92,6 @@ public class TeamDomainInfoPresenter {
 
     @UiThread
     public void showProgressWheel() {
-        dismissProgressWheel();
-
         if (progressWheel != null && !progressWheel.isShowing()) {
             progressWheel.show();
         }

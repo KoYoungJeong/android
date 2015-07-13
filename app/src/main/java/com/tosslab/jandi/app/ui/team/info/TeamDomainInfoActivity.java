@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
@@ -131,6 +132,10 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         } catch (RetrofitError e) {
             e.printStackTrace();
             teamDomainInfoPresenter.dismissProgressWheel();
+            if (e.getCause() instanceof ConnectionNotFoundException) {
+                teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));
+                return;
+            }
             teamDomainInfoPresenter.failCreateTeam(e.getResponse().getStatus());
         }
     }
