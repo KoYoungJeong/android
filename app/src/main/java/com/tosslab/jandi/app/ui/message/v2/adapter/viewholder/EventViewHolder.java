@@ -213,7 +213,12 @@ public class EventViewHolder implements BodyViewHolder {
     private void buildJoinEvent(SpannableStringBuilder builder, int fromEntity) {
         FormattedEntity entity =
                 EntityManager.getInstance(context).getEntityById(fromEntity);
-        String name = entity.getName();
+        String name;
+        if (entity != null) {
+            name = entity.getName();
+        } else {
+            name = " ";
+        }
 
         ProfileSpannable profileSpannable = new ProfileSpannable(fromEntity);
         int beforeLength = builder.length();
