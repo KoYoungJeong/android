@@ -10,7 +10,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
@@ -231,7 +233,14 @@ public class JandiSocketService extends Service {
         closeAll();
 
         isRunning = false;
-        unregisterReceiver(connectReceiver);
+
+        try {
+            unregisterReceiver(connectReceiver);
+        } catch (IllegalArgumentException e) {
+            Crashlytics.log(Log.WARN
+                    , "Socket Service"
+                    , "Socket Connect Receiver was unregisted : " + e.getMessage());
+        }
         super.onDestroy();
         if (!isStopForcibly) {
             sendBroadcastForRestart();
