@@ -3,23 +3,21 @@ package com.tosslab.jandi.app.ui.maintab.topic;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.ExpandableListView;
+import android.support.v7.widget.RecyclerView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
-import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.util.List;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -28,14 +26,14 @@ import java.util.List;
 public class MainTopicPresenter {
 
     @ViewById(R.id.list_main_topic)
-    ExpandableListView topicListView;
+    RecyclerView topicListView;
 
-    TopicListAdapter topicListAdapter;
+    TopicRecyclerAdapter topicListAdapter;
     private ProgressWheel progressWheel;
 
     void initObject(Activity activity) {
         progressWheel = new ProgressWheel(activity);
-        topicListAdapter = new TopicListAdapter(activity.getApplicationContext());
+        topicListAdapter = new TopicRecyclerAdapter(activity.getApplicationContext());
     }
 
     @AfterViews
@@ -57,12 +55,30 @@ public class MainTopicPresenter {
                 .start();
     }
 
-    public void setEntities(List<FormattedEntity> joinEntities, List<FormattedEntity> unjoinEntities) {
+    public void setEntities(Observable<Topic> joinTopics, Observable<Topic> unjoinTopics) {
 
-        topicListAdapter
-                .joinEntities(joinEntities)
-                .unjoinEntities(unjoinEntities)
-                .notifyDataSetChanged();
+        topicListAdapter.clear();
+
+        joinTopics
+                .toSortedList((lhs, rhs) -> {
+
+                    if (lhs.isStarred() && rhs.isStarred()) {
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    } else if (lhs.isStarred()) {
+                        return -1;
+                    } else if (rhs.isStarred()) {
+                        return 1;
+                    } else {
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    }
+
+                })
+                .subscribe(topicListAdapter::addAll);
+
+        unjoinTopics.toSortedList((lhs, rhs) -> lhs.getName().compareToIgnoreCase(rhs.getName()))
+                .subscribe(topicListAdapter::addAll);
+
+        topicListAdapter.notifyDataSetChanged();
 
     }
 
@@ -86,10 +102,6 @@ public class MainTopicPresenter {
         if (progressWheel != null && progressWheel.isShowing()) {
             progressWheel.dismiss();
         }
-    }
-
-    public List<FormattedEntity> getJoinedTopics() {
-        return topicListAdapter.getJoinEntities();
     }
 
     @UiThread

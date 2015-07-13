@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
@@ -42,7 +42,7 @@ import rx.Observable;
 public class MainTopicView {
 
     @RootContext
-    Context context;
+    Activity activity;
 
     @ViewById(R.id.list_main_topic)
     RecyclerView rvTopic;
@@ -55,20 +55,19 @@ public class MainTopicView {
 
     @AfterInject
     void initObject() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
-        topicListAdapter = new TopicRecyclerAdapter(context);
+        progressWheel = new ProgressWheel(activity);
+        topicListAdapter = new TopicRecyclerAdapter(activity);
         topicListAdapter.setHasStableIds(true);
     }
 
     @AfterViews
     void initViews() {
 
-        rvTopic.setLayoutManager(new LinearLayoutManager(context));
-        rvTopic.addItemDecoration(new SimpleDividerItemDecoration(context));
+        rvTopic.setLayoutManager(new LinearLayoutManager(activity));
+        rvTopic.addItemDecoration(new SimpleDividerItemDecoration(activity));
 
         TopicRecyclerStickyHeaderAdapter headerAdapter =
-                new TopicRecyclerStickyHeaderAdapter(context, topicListAdapter);
+                new TopicRecyclerStickyHeaderAdapter(activity, topicListAdapter);
 
         StickyHeadersItemDecoration stickyHeadersItemDecoration = new StickyHeadersBuilder()
                 .setAdapter(topicListAdapter)
@@ -84,7 +83,7 @@ public class MainTopicView {
 
     @UiThread
     public void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred, int teamId) {
-        MessageListV2Activity_.intent(context)
+        MessageListV2Activity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
@@ -123,12 +122,12 @@ public class MainTopicView {
 
     @UiThread
     public void showToast(String message) {
-        ColoredToast.show(context, message);
+        ColoredToast.show(activity, message);
     }
 
     @UiThread
     public void showErrorToast(String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(activity, message);
     }
 
     @UiThread

@@ -249,7 +249,6 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     public void showProgressWheel() {
         if (progressWheel == null) {
             progressWheel = new ProgressWheel(getActivity());
-            progressWheel.init();
         }
 
         if (progressWheel.isShowing()) {

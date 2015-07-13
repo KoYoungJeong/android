@@ -73,7 +73,6 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterInject
     void initObject() {
-        mainTopicPresenter.initObject(getActivity());
 
         LogUtil.d("MainTopicListFragment");
 
@@ -90,46 +89,6 @@ public class MainTopicListFragment extends Fragment {
     @AfterViews
     void initView() {
         LogUtil.d("MainTopicListFragment initView");
-<<<<<<< HEAD
-=======
-        topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                return true;
-            }
-        });
-        topicListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            //TODO 메세지 진입시 네트워크 체킹 ?
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
-                TopicListAdapter adapter = (TopicListAdapter) parent.getExpandableListAdapter();
-                FormattedEntity entity = adapter.getChild(groupPosition, childPosition);
-                int badgeCount = JandiPreference.getBadgeCount(getActivity()) - entity.alarmCount;
-                JandiPreference.setBadgeCount(getActivity(), badgeCount);
-                BadgeUtils.setBadge(getActivity(), badgeCount);
-                entity.alarmCount = 0;
-                adapter.notifyDataSetChanged();
-
-                final TopicBadgeEvent event =
-                        new TopicBadgeEvent(mainTopicModel.hasAlarmCount(mainTopicPresenter.getJoinedTopics()));
-                EventBus.getDefault().post(event);
-
-                if (entity.isJoined || entity.isPrivateGroup()) {
-                    int entityType = entity.isPublicTopic()
-                            ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity())
-                            .getSelectedTeamInfo().getTeamId();
-                    mainTopicPresenter.moveToMessageActivity(getActivity(),
-                            entity.getId(), entityType, entity.isStarred, teamId);
-                } else {
-                    joinChannelInBackground(entity);
-                }
-
-                return false;
-            }
-        });
->>>>>>> develop_unstable
 
         mainTopicView.setOnItemClickListener((view, adapter, position) -> {
 
@@ -183,14 +142,9 @@ public class MainTopicListFragment extends Fragment {
 
         mainTopicView.showProgressWheel();
 
-<<<<<<< HEAD
         String message = getString(R.string.jandi_message_join_entity, topic.getName());
-        mainTopicView.showToast(message);
-=======
-        String message = getString(R.string.jandi_message_join_entity, entity.getChannel().name);
         final Context context = getActivity().getApplicationContext();
-        mainTopicPresenter.showToast(context, message);
->>>>>>> develop_unstable
+        mainTopicView.showToast(message);
 
         try {
             mainTopicModel.joinPublicTopic(topic.getEntityId());
@@ -203,28 +157,15 @@ public class MainTopicListFragment extends Fragment {
             }
             int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
-<<<<<<< HEAD
             mainTopicView.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
         } catch (RetrofitError e) {
             e.printStackTrace();
-            LogUtil.e("fail to join topic", e);
+            LogUtil.e("fail to join entity", e);
             mainTopicView.showErrorToast(getString(R.string.err_entity_join));
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtil.e("fail to join topic", e);
+            LogUtil.e("fail to join entity", e);
             mainTopicView.showErrorToast(getString(R.string.err_entity_join));
-=======
-            mainTopicPresenter.moveToMessageActivity(getActivity(),
-                    entity.getId(), entityType, entity.isStarred, teamId);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-            LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
-        } catch (Exception e) {
-            e.printStackTrace();
-            LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
->>>>>>> develop_unstable
         } finally {
             mainTopicView.dismissProgressWheel();
         }
