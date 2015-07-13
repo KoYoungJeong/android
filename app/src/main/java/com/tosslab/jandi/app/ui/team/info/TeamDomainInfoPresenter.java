@@ -39,7 +39,6 @@ public class TeamDomainInfoPresenter {
     @AfterViews
     void initView() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     public void setTeamCreatable(boolean isTeamCreatable) {

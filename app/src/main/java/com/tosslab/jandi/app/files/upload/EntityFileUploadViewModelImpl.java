@@ -123,10 +123,10 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void startUpload(Context context, String title, int entityId, String realFilePath, String comment) {
-        ProgressDialog uploadProgress = getUploadProgress(context, realFilePath);
+    public void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment) {
+        ProgressDialog uploadProgress = getUploadProgress(activity, realFilePath);
 
-        uploadFile(context, title, entityId, realFilePath, comment, uploadProgress);
+        uploadFile(activity.getApplicationContext(), title, entityId, realFilePath, comment, uploadProgress);
     }
 
     @Background
@@ -165,10 +165,10 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
 
-    public ProgressDialog getUploadProgress(Context context, String realFilePath) {
-        final ProgressDialog progressDialog = new ProgressDialog(context);
+    public ProgressDialog getUploadProgress(Activity activity, String realFilePath) {
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage(context.getString(R.string.jandi_file_uploading) + " " + realFilePath);
+        progressDialog.setMessage(activity.getString(R.string.jandi_file_uploading) + " " + realFilePath);
         progressDialog.show();
 
         return progressDialog;

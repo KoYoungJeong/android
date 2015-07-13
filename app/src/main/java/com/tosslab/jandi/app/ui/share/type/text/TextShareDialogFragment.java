@@ -41,7 +41,7 @@ public class TextShareDialogFragment extends DialogFragment {
 
     @AfterInject
     void initObject() {
-
+        textSharePresenter.initObject(getActivity());
         textSharePresenter.setText(subject, text);
 
         List<EntityInfo> entities = shareModel.getEntityInfos();

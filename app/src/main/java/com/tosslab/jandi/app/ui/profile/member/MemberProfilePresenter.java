@@ -60,7 +60,6 @@ public class MemberProfilePresenter {
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @UiThread

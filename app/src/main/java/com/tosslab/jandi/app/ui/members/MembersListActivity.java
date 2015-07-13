@@ -75,9 +75,9 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        if(type == JandiConstants.TYPE_MEMBERS_LIST_TEAM){
+        if (type == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
-        }else{
+        } else {
             actionBar.setTitle(R.string.jandi_topic_paricipants);
         }
 
@@ -86,7 +86,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
-        if(type != JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
+        if (type != JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
             menu.findItem(R.id.action_invitation).setVisible(false);
         }
         return true;
@@ -108,18 +108,16 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @SupposeUiThread
     void initProgressWheel() {
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(getApplicationContext());
-        mProgressWheel.init();
+        mProgressWheel = new ProgressWheel(MembersListActivity.this);
     }
 
     @UiThread
     void showProgressWheel() {
         if (mProgressWheel == null) {
-            mProgressWheel = new ProgressWheel(getApplicationContext());
-            mProgressWheel.init();
+            mProgressWheel = new ProgressWheel(MembersListActivity.this);
         }
 
-        if (mProgressWheel != null && !mProgressWheel.isShowing()) {
+        if (!mProgressWheel.isShowing()) {
             mProgressWheel.show();
         }
     }
@@ -130,7 +128,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     }
 
     @OptionsItem(R.id.action_invitation)
-    //FIXME
+        //FIXME
     void onInviteOptionSelect() {
         invitationDialogExecutor.execute();
     }
@@ -142,7 +140,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     }
 
     @Override
-    public int getEntityId(){
+    public int getEntityId() {
         return entityId;
     }
 

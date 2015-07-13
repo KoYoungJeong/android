@@ -86,7 +86,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(mContext).getSelectedTeamInfo();
 

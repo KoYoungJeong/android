@@ -76,7 +76,6 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @AfterViews
     void initView() {
         progressWheel = new ProgressWheel(AccountHomeActivity.this);
-        progressWheel.init();
         setUpActionBar();
     }
 
