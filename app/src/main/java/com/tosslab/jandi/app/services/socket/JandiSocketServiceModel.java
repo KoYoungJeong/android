@@ -39,6 +39,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -88,7 +89,9 @@ public class JandiSocketServiceModel {
 
         String token = JandiPreference.getAccessToken(context);
         return new ConnectTeam(token,
-                selectedTeamInfo.getTeamId(), selectedTeamInfo.getName(),
+                UserAgentUtil.getDefaultUserAgent(context),
+                selectedTeamInfo.getTeamId(),
+                selectedTeamInfo.getName(),
                 selectedTeamInfo.getMemberId(), me.getName());
     }
 

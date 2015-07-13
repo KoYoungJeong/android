@@ -8,7 +8,6 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 10..
@@ -28,11 +27,13 @@ public class GoogleImagePickerUtil {
             return Ion.with(context)
                     .load(url)
                     .progressDialog(downloadProgress)
+                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                     .write(new File(dir, downloadName))
                     .get();
         } else {
             return Ion.with(context)
                     .load(url)
+                    .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                     .write(new File(dir, downloadName))
                     .get();
         }

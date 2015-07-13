@@ -56,7 +56,7 @@ public class JandiSocketManagerTest {
                 ResAccountInfo.UserTeam userTeam = accountDatabaseManager.getSelectedTeamInfo();
                 String name = accountDatabaseManager.getAccountInfo().getName();
 
-                ConnectTeam connectTeam = new ConnectTeam("", userTeam.getTeamId(), userTeam.getName(), userTeam.getMemberId(), name);
+                ConnectTeam connectTeam = new ConnectTeam("", userAgent, userTeam.getTeamId(), userTeam.getName(), userTeam.getMemberId(), name);
                 System.out.println("Connect Team Name : " + userTeam.getName());
 
                 try {
@@ -312,7 +312,7 @@ public class JandiSocketManagerTest {
                 ResAccountInfo.UserTeam userTeam = accountDatabaseManager.getSelectedTeamInfo();
                 String name = accountDatabaseManager.getAccountInfo().getName();
 
-                ConnectTeam connectTeam = new ConnectTeam("", userTeam.getTeamId(), userTeam.getName(), userTeam.getMemberId(), name);
+                ConnectTeam connectTeam = new ConnectTeam("", userAgent, userTeam.getTeamId(), userTeam.getName(), userTeam.getMemberId(), name);
                 System.out.println("Connect Team Name : " + userTeam.getName());
 
                 socketManager.sendByJson("connect_team", connectTeam);

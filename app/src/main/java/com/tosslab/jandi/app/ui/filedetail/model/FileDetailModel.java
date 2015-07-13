@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -80,6 +81,7 @@ public class FileDetailModel {
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .write(new File(dir, fileName))
                 .get();
     }
