@@ -30,7 +30,6 @@ public class ParseUpdateUtil {
         List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
         Observable.from(userTeams)
-                .filter(userTeam -> TextUtils.equals(userTeam.getStatus(), "enabled"))
                 .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
                 .map(userTeam -> {
