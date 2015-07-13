@@ -55,7 +55,7 @@ public class IntroActivityPresenter {
                 }
 
                 if (!model.isNeedLogin(context)) {
-                    refreshTokenAndGoNextActivity(context, MAX_DELAY_MS, startForInvite);
+                    refreshTokenAndGoNextActivity(context, initTime, startForInvite);
                 } else {
                     model.sleep(initTime, MAX_DELAY_MS);
                     view.moveToIntroTutorialActivity();
