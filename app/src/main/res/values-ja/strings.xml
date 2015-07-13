@@ -141,6 +141,15 @@
     <string name="err_messages_delete">"メッセージを削除できませんでした"</string>
     <string name="err_file_upload_failed">"ファイルをアップロードできませんでした"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"告知に登録する"</string>
+    <string name="jandi_announcement_create_question">"登録されている告知をこのメッセージに変更します。変更しますか？"</string>
+    <string name="jandi_announcement_delete_question">"この告知を削除しますか？削除時トピック内の他のメンバーたちにもこれからこの告知が見えますが、元のメッセージは保存されます"</string>
+    <string name="jandi_announcement_created">"%1$sさんが%2$sさんのメッセージを告知に登録しました。"</string>
+    <string name="jandi_announcement_deleted">"%sさんが告知を削除しました。hh:mm PM"</string>
+    <string name="jandi_announcement_delete">"削除"</string>
+    <string name="jandi_announcement_minimize">"環境設定"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"変更する"</string>
     <string name="menu_entity_delete">"削除する"</string>
@@ -173,7 +182,7 @@
     <string name="jandi_title_activity_file_explorer">"ファイルを探す"</string>
     <string name="title_file_detail">"説明"</string>
     <string name="comment">"コメント"</string>
-    <string name="jandi_file_size_large_error">"現在のところ、100MBを超えるファイルはアップロードできません。"</string>
+    <string name="jandi_file_size_large_error">"現在のところ、300MBを超えるファイルはアップロードできません。"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"共有範囲を選択してください"</string>
@@ -392,4 +401,9 @@
     <string name="jandi_canceled">"キャンセルされました"</string>
     <string name="jandi_cannot_find_messages">"一致するメッセージがありません: "</string>
     <string name="jandi_no_recent_stickers">"最近利用したスタンプがありません"</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"最大10枚まで選択できます"</string>
+    <string name="jandi_decide_choose">"写真を選択"</string>
+    <string name="jandI_select_gallery">"写真を選択"</string>
+    <string name="jandi_view_all">"すべて表示"</string>
 </resources>

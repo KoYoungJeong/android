@@ -10,13 +10,13 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.linkpreview.LinkPreviewViewModel;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.MessageSpannable;
-import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 5. 6..
@@ -53,26 +53,27 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
         Resources resources = context.getResources();
 
-        int dateSpannableTextSize = ((int) resources.getDimension(R.dimen.jandi_messages_date));
-        int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
-
         int startIndex = builder.length();
         builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
         int endIndex = builder.length();
 
-        MessageSpannable spannable =
-                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+        DateViewSpannable spannable =
+                new DateViewSpannable(tvMessage.getContext(),
+                        DateTransformator.getTimeStringForSimple(link.message.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
         if (unreadCount > 0) {
-            UnreadCountSpannable unreadCountSpannable =
-                    UnreadCountSpannable.createUnreadCountSpannable(
-                            context, String.valueOf(unreadCount));
-            builder.append("   ")
-                    .setSpan(unreadCountSpannable, builder.length() - 2, builder.length() - 1,
+            NameSpannable unreadCountSpannable =
+                    new NameSpannable(
+                            context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
+                            , context.getResources().getColor(R.color.jandi_accent_color));
+            int beforeLength = builder.length();
+            builder.append(" ");
+            builder.append(String.valueOf(unreadCount))
+                    .setSpan(unreadCountSpannable, beforeLength, builder.length(),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 

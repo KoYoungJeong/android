@@ -111,6 +111,7 @@ public class ResLeftSideMenu {
         public int entityId;
         public int lastLinkId;
         public int alarmCount;
+        public boolean announcementOpened;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

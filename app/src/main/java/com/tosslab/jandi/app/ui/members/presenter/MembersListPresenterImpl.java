@@ -7,7 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -30,31 +30,24 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @RootContext
     AppCompatActivity myActivity;
-
-    private View view;
-
     @Bean
     MembersModel memberModel;
+    private View view;
 
     @AfterViews
     void initObject() {
         List<ChatChooseItem> members;
-        if(view.getType() == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
+        if (view.getType() == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
             members = memberModel.getTeamMembers();
-        }else{
+        } else {
             members = memberModel.getTopicMembers(view.getEntityId());
         }
         view.showListMembers(members);
     }
 
     @Override
-    public void onListItemClick(ChatChooseItem chatChooseItem) {
-         EventBus.getDefault().post(new RequestMoveDirectMessageEvent(chatChooseItem.getEntityId()));
-    }
-
-    @Override
     public void onEventBusRegister() {
-         EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);
     }
 
     @Override

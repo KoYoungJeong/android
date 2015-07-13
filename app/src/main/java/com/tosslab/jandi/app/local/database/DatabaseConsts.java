@@ -17,8 +17,12 @@ public class DatabaseConsts {
 
         search_keyword,
 
-        rooms_marker,
-        sticker_items, sticker_recent
+        rooms_marker
+    }
+
+    public enum StickerTable {
+        sticker_recent, sticker_items
+
     }
 
     public enum Account {
@@ -65,7 +69,7 @@ public class DatabaseConsts {
     }
 
     public enum LeftMessageMarkers {
-        _id, teamId, entityType, entityId, lastLinkId, alarmCount
+        _id, teamId, entityType, entityId, lastLinkId, alarmCount, announcementOpened
     }
 
     public enum LeftTopicEntity {

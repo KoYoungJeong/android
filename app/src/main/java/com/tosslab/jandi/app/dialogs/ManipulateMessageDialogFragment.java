@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -105,7 +106,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         Bundle args = new Bundle();
         args.putString(TITLE, title);
         args.putInt(MESSAGE_ID, item.id);
-        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
+        args.putInt(MESSAGE_TYPE, MessageItem.TYPE_COMMENT);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
         frag.setArguments(args);
@@ -134,8 +135,10 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View mainView = inflater.inflate(R.layout.dialog_manipulate_message, null);
 
-        final TextView actionDel = (TextView) mainView.findViewById(R.id.txt_action_del_message);
-        final TextView actionCopy = (TextView) mainView.findViewById(R.id.txt_action_copy_message);
+        final TextView actionDel = (TextView) mainView.findViewById(R.id.tv_action_del_message);
+        final TextView actionCopy = (TextView) mainView.findViewById(R.id.tv_action_copy_message);
+        final TextView actionSetAnnouncement =
+                (TextView) mainView.findViewById(R.id.tv_action_announce_message);
 
         if (isMine) {   // 본인이 작성한 메시지가 아닌경우 삭제 메뉴가 활성화되지 않는다.
             actionDel.setVisibility(View.VISIBLE);
@@ -148,23 +151,29 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionCopy.setVisibility(View.GONE);
         }
 
+        boolean isTextMessage = messageType == MessageItem.TYPE_STRING;
+        actionSetAnnouncement.setVisibility(isTextMessage ? View.VISIBLE : View.GONE);
+
         // Delete 메뉴 클릭시.
-        actionDel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(new RequestDeleteMessageEvent(messageType, messageId, feedbackId));
-                dismiss();
-            }
+        actionDel.setOnClickListener((view) -> {
+            EventBus.getDefault().post(new RequestDeleteMessageEvent(messageType, messageId, feedbackId));
+            dismiss();
         });
 
         // Copy 클릭시.
-        actionCopy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EventBus.getDefault().post(new ConfirmCopyMessageEvent(currentMessage));
-                dismiss();
-            }
+        actionCopy.setOnClickListener((view) -> {
+            EventBus.getDefault().post(new ConfirmCopyMessageEvent(currentMessage));
+            dismiss();
         });
+
+        // 공지하기 클릭시
+        actionSetAnnouncement.setOnClickListener((view) -> {
+            AnnouncementEvent event =
+                    new AnnouncementEvent(AnnouncementEvent.Action.CREATE, messageId);
+            EventBus.getDefault().post(event);
+            dismiss();
+        });
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(mainView)

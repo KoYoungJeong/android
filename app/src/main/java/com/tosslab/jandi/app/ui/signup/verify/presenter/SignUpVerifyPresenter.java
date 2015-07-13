@@ -4,16 +4,17 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
-import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.signup.verify.exception.VerifyNetworkException;
+import com.tosslab.jandi.app.ui.signup.verify.model.SignUpVerifyModel;
 import com.tosslab.jandi.app.ui.signup.verify.view.SignUpVerifyView;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by tonyjs on 15. 5. 19..
@@ -101,9 +102,9 @@ public class SignUpVerifyPresenter {
             String successEmailText = context.getResources()
                     .getString(R.string.jandi_signup_send_new_verification_code, email);
             view.showToast(successEmailText);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             view.hideProgress();
-            LogUtil.d(e.getErrorInfo() + " , Response Body : " + e.httpBody);
             view.showErrorToast(context.getResources().getString(R.string.err_network));
         }
     }

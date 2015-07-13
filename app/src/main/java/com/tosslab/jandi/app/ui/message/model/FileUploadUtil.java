@@ -40,7 +40,7 @@ public class FileUploadUtil {
         progressDialog.show();
 
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
         String permissionCode = (chattingInfomations.isPublicTopic()) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -54,7 +54,7 @@ public class FileUploadUtil {
                         progressDialog.setProgress((int) (downloaded / total));
                     }
                 })
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", uploadFile.getName())
                 .setMultipartParameter("share", "" + event.entityId)

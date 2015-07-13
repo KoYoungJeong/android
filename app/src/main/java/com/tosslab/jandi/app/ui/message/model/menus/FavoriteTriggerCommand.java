@@ -5,8 +5,8 @@ import android.view.MenuItem;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -25,21 +25,21 @@ import de.greenrobot.event.EventBus;
 class FavoriteTriggerCommand implements MenuCommand {
 
     private Activity activity;
-    private JandiEntityClient mJandiEntityClient;
+    private EntityClientManager mEntityClientManager;
     private ChattingInfomations chattingInfomations;
 
-    void initData(Activity activity, JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations) {
+    void initData(Activity activity, EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations) {
         this.activity = activity;
-        this.mJandiEntityClient = mJandiEntityClient;
+        this.mEntityClientManager = mEntityClientManager;
         this.chattingInfomations = chattingInfomations;
     }
 
     @Override
     public void execute(MenuItem menuItem) {
-        triggerFavorite(mJandiEntityClient, chattingInfomations, menuItem);
+        triggerFavorite(mEntityClientManager, chattingInfomations, menuItem);
     }
 
-    private void triggerFavorite(JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations, MenuItem item) {
+    private void triggerFavorite(EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations, MenuItem item) {
         if (chattingInfomations.isFavorite) {
             chattingInfomations.isFavorite = false;
         } else {
@@ -51,18 +51,18 @@ class FavoriteTriggerCommand implements MenuCommand {
 
 
         if (chattingInfomations.isFavorite) {
-            enableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
+            enableFavoriteInBackground(mEntityClientManager, chattingInfomations);
         } else {
-            disableFavoriteInBackground(mJandiEntityClient, chattingInfomations);
+            disableFavoriteInBackground(mEntityClientManager, chattingInfomations);
         }
 
     }
 
     @Background
-    void enableFavoriteInBackground(JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations) {
+    void enableFavoriteInBackground(EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations) {
         try {
             if (chattingInfomations.entityId > 0) {
-                mJandiEntityClient.enableFavorite(chattingInfomations.entityId);
+                mEntityClientManager.enableFavorite(chattingInfomations.entityId);
             }
             enableFavoriteSucceed();
         } catch (RestClientException e) {
@@ -78,10 +78,10 @@ class FavoriteTriggerCommand implements MenuCommand {
     }
 
     @Background
-    void disableFavoriteInBackground(JandiEntityClient mJandiEntityClient, ChattingInfomations chattingInfomations) {
+    void disableFavoriteInBackground(EntityClientManager mEntityClientManager, ChattingInfomations chattingInfomations) {
         try {
             if (chattingInfomations.entityId > 0) {
-                mJandiEntityClient.disableFavorite(chattingInfomations.entityId);
+                mEntityClientManager.disableFavorite(chattingInfomations.entityId);
             }
         } catch (RestClientException e) {
             LogUtil.e("disable favorite failed", e);

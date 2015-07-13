@@ -14,12 +14,12 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
-import com.tosslab.jandi.app.views.spannable.MessageSpannable;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -76,7 +76,7 @@ public class FileDetailCommentView implements CommentViewHolder {
         String userName = writer.getName();
         textViewCommentUserName.setText(userName);
         // 날짜
-        String createTime = DateTransformator.getTimeDifference(commentMessage.createTime);
+        String createTime = DateTransformator.getTimeString(commentMessage.createTime);
         // 댓글 내용
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(commentMessage.content.body);
@@ -97,11 +97,11 @@ public class FileDetailCommentView implements CommentViewHolder {
         int dateSpannableTextColor = resources.getColor(R.color.jandi_messages_date);
 
         int startIndex = spannableStringBuilder.length();
-        spannableStringBuilder.append(createTime);
+        spannableStringBuilder.append(" ");
         int endIndex = spannableStringBuilder.length();
 
-        MessageSpannable spannable =
-                new MessageSpannable(dateSpannableTextSize, dateSpannableTextColor);
+        DateViewSpannable spannable =
+                new DateViewSpannable(textViewCommentContent.getContext(), createTime);
         spannableStringBuilder.setSpan(spannable,
                 startIndex, endIndex,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

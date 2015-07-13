@@ -6,15 +6,14 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.androidannotations.annotations.Bean;
@@ -29,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -41,16 +41,16 @@ public class MemberProfileModel {
     Context context;
 
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
 
-    public ResLeftSideMenu.User getProfile() throws JandiNetworkException {
+    public ResLeftSideMenu.User getProfile() throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.getUserProfile(entityManager.getMe().getId());
+        return mEntityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
-    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws JandiNetworkException {
+    public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
+        return mEntityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 
     public String uploadProfilePhoto(File file) throws ExecutionException, InterruptedException {
@@ -58,20 +58,20 @@ public class MemberProfileModel {
         EntityManager entityManager = EntityManager.getInstance(context);
 
         String requestURL
-                = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/members/" + entityManager.getMe().getId() + "/profile/photo";
+                = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/members/" + entityManager.getMe().getId() + "/profile/photo";
 
         return Ion.with(context)
                 .load(HttpPut.METHOD_NAME, requestURL)
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(context).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();
     }
 
-    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws JandiNetworkException {
+    public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateMemberName(entityManager.getMe().getId(), reqProfileName);
+        return mEntityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
 
     public String[] getAccountEmails() {
@@ -102,13 +102,12 @@ public class MemberProfileModel {
 
     }
 
-    public ResLeftSideMenu.User updateProfileEmail(String email) throws JandiNetworkException {
+    public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mJandiEntityClient.updateMemberEmail(entityManager.getMe().getId(), email);
+        return mEntityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
-
-    public int getMyEntityId() {
-        return EntityManager.getInstance(context).getMe().getId();
+    public boolean isMyId(int id) {
+        return EntityManager.getInstance(context).getMe().getId() == id;
     }
 }

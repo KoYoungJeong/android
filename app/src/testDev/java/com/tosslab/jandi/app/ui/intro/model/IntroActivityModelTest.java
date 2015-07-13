@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.ui.intro.IntroActivity;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -16,6 +15,7 @@ import org.robolectric.shadows.ShadowLog;
 
 import java.util.concurrent.Callable;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
@@ -51,7 +51,7 @@ public class IntroActivityModelTest {
     public void testCheckNewVersion() throws Exception {
 
         // When : Check app version to server
-        introActivityModel.checkNewVersion();
+        introActivityModel.checkNewVersion(Robolectric.application);
 
         await().until(new Callable<Boolean>() {
             @Override
@@ -146,7 +146,7 @@ public class IntroActivityModelTest {
             public void run() {
                 try {
                     latestVersionInBackground[0] = introActivityModel.getLatestVersionInBackground();
-                } catch (JandiNetworkException e) {
+                } catch (RetrofitError e) {
                     e.printStackTrace();
                 }
                 isCalled[0] = true;

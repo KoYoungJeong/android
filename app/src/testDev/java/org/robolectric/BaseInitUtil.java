@@ -3,8 +3,7 @@ package org.robolectric;
 import android.content.Context;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -25,12 +24,12 @@ public class BaseInitUtil {
         httpOn();
         logOn();
 
-        JandiRestClient jandiRestClient = new JandiRestClient_(context);
-        ResAccessToken accessToken = jandiRestClient.getAccessToken(ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
-        TokenUtil.saveTokenInfoByPassword(context, accessToken);
+        ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(
+                ReqAccessToken.createPasswordReqToken(TEST_ID, TEST_PASSWORD));
 
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-        ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
+        TokenUtil.saveTokenInfoByPassword(accessToken);
+
+        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
         JandiAccountDatabaseManager.getInstance(context).upsertAccountDevices(accountInfo.getDevices());
         JandiAccountDatabaseManager.getInstance(context).upsertAccountTeams(accountInfo.getMemberships());
         JandiAccountDatabaseManager.getInstance(context).upsertAccountEmail(accountInfo.getEmails());

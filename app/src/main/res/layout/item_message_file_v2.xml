@@ -56,9 +56,8 @@
         android:layout_alignBaseline="@+id/txt_message_create_date"
         android:layout_marginLeft="4dp"
         android:layout_toRightOf="@+id/txt_message_create_date"
-        android:background="@drawable/jandi_img_read_unread"
         android:text="10"
-        android:textColor="@color/white"
+        android:textColor="?android:attr/colorAccent"
         android:textSize="@dimen/jandi_text_size_smaller"
         android:textStyle="bold"/>
 

@@ -1,11 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -23,12 +20,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.gson.JsonObject;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
-import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
@@ -43,6 +37,7 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
 import com.tosslab.jandi.app.events.files.RequestFileUploadEvent;
+import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
 import com.tosslab.jandi.app.events.messages.ChatModeChangeEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
@@ -56,17 +51,22 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.events.team.invite.TeamInvitationsEvent;
+import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
+import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
+import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -75,6 +75,7 @@ import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.UpdateMessage;
+import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.MessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.NewMessageQueue;
 import com.tosslab.jandi.app.ui.message.to.queue.OldMessageQueue;
@@ -88,11 +89,11 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
+import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
+import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -108,15 +109,10 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Subscription;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
@@ -130,7 +126,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     public static final String EXTRA_FILE_DELETE = "file_delete";
     public static final String EXTRA_FILE_ID = "file_id";
     public static final String EXTRA_NEW_PHOTO_FILE = "new_photo_file";
-    public static final String TAG = "INFO";
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
 
@@ -163,6 +158,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Bean
     StickerViewModel stickerViewModel;
 
+
+    @Bean(value = EntityFileUploadViewModelImpl.class)
+    FilePickerViewModel filePickerViewModel;
+
+    @Bean
+    FileUploadStateViewModel fileUploadStateViewModel;
+
+    @Bean
+    AnnouncementModel announcementModel;
+
+    @Bean
+    AnnouncementViewModel announcementViewModel;
+
     private OldMessageLoader oldMessageLoader;
     private NewsMessageLoader newsMessageLoader;
     private MessageState messageState;
@@ -179,7 +187,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messagePublishSubject = PublishSubject.create();
 
-        messageSubscription = messagePublishSubject.observeOn(Schedulers.io())
+        messageSubscription = messagePublishSubject
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
                 .subscribe(messageQueue -> {
 
                     switch (messageQueue.getQueueType()) {
@@ -187,49 +197,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                             getSavedMessageList();
                             break;
                         case Old:
-                            if (oldMessageLoader != null) {
-                                MessageState data = (MessageState) messageQueue.getData();
-                                ResMessages resMessages = oldMessageLoader.load(data.getFirstItemId());
-
-                                if (roomId <= 0) {
-                                    roomId = resMessages.entityId;
-                                    messageListPresenter.setMarkerInfo(teamId, roomId);
-                                    messageListModel.updateMarkerInfo(teamId, roomId);
-                                }
-
-                            }
-                            messageListModel.trackGetOldMessage(entityType);
+                            loadOldMessage(messageQueue);
                             break;
                         case New:
-                            if (newsMessageLoader != null) {
-                                MessageState data = (MessageState) messageQueue.getData();
-                                int lastUpdateLinkId = data.getLastUpdateLinkId();
-                                if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
-                                    oldMessageLoader.load(lastUpdateLinkId);
-                                }
-                                newsMessageLoader.load(lastUpdateLinkId);
-                            }
+                            loadNewMessage(messageQueue);
                             break;
                         case Send:
-                            SendingMessage data = (SendingMessage) messageQueue.getData();
-                            int linkId;
-                            if (data.getStickerInfo() != null) {
-                                linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
-                            } else {
-                                linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
-                            }
-                            if (linkId > 0) {
-                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
-                                EventBus.getDefault().post(new RefreshNewMessageEvent());
-                            } else {
-                                messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
-                            }
+                            sendMessage(messageQueue);
+                            break;
+                        case CheckAnnouncement:
+                            getAnnouncement();
                             break;
                         case Update:
-                            UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
-                            ResMessages.OriginalMessage message =
-                                    messageListModel.getMessage(teamId, updateMessage.getMessageId());
-                            messageListPresenter.updateMessage(message);
+                            updateMessage(messageQueue);
                             break;
                     }
                 }, throwable -> {
@@ -277,10 +257,64 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListPresenter.setEntityInfo(entityId);
         messageListModel.updateMarkerInfo(teamId, roomId);
+        fileUploadStateViewModel.setEntityId(entityId);
 
         JandiPreference.setKeyboardHeight(getActivity(), 0);
     }
 
+    private void loadOldMessage(MessageQueue messageQueue) {
+        if (oldMessageLoader != null) {
+            ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+
+            if (roomId <= 0) {
+                roomId = resMessages.entityId;
+                messageListPresenter.setMarkerInfo(teamId, roomId);
+                messageListModel.updateMarkerInfo(teamId, roomId);
+            }
+
+        }
+        messageListModel.trackGetOldMessage(entityType);
+    }
+
+    private void loadNewMessage(MessageQueue messageQueue) {
+        if (newsMessageLoader != null) {
+            MessageState data = (MessageState) messageQueue.getData();
+            int lastUpdateLinkId = data.getLastUpdateLinkId();
+            if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
+                oldMessageLoader.load(lastUpdateLinkId);
+            }
+            newsMessageLoader.load(lastUpdateLinkId);
+        }
+    }
+
+    private void sendMessage(MessageQueue messageQueue) {
+        SendingMessage data = (SendingMessage) messageQueue.getData();
+        int linkId;
+        if (data.getStickerInfo() != null) {
+            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+        } else {
+            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+        }
+        if (linkId > 0) {
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
+            EventBus.getDefault().post(new RefreshNewMessageEvent());
+        } else {
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
+        }
+    }
+
+    private void getAnnouncement() {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        messageListPresenter.dismissProgressWheel();
+        announcementViewModel.setAnnouncement(announcement, announcementModel.isAnnouncementOpened(entityId));
+    }
+
+    private void updateMessage(MessageQueue messageQueue) {
+        UpdateMessage updateMessage = (UpdateMessage) messageQueue.getData();
+        ResMessages.OriginalMessage message =
+                messageListModel.getMessage(teamId, updateMessage.getMessageId());
+        messageListPresenter.updateMessage(message);
+    }
 
     private void getSavedMessageList() {
         List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
@@ -339,6 +373,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementQueue());
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
@@ -357,6 +392,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         });
 
         insertEmptyMessage();
+
+        initAnnouncementListeners();
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
@@ -379,7 +416,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     void insertEmptyMessage() {
         EntityManager entityManager = EntityManager.getInstance(getActivity());
         FormattedEntity entity = entityManager.getEntityById(entityId);
-        if (!entity.isUser()) {
+        if (entity != null && !entity.isUser()) {
             int topicMemberCount = entity.getMemberCount();
             int teamMemberCount = entityManager.getFormattedUsersWithoutMe().size();
 
@@ -420,8 +457,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        final int FAVORITE_MENU_ITEM = 0;
-
         menu.clear();
 
         if (isFromSearch) {
@@ -431,14 +466,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
-        MenuItem item = menu.getItem(FAVORITE_MENU_ITEM);
-        if (isFavorite) {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav);
-            item.setTitle(R.string.jandi_unstarred);
-        } else {
-            item.setIcon(R.drawable.jandi_icon_actionbar_fav_off);
-            item.setTitle(R.string.jandi_starred);
-        }
+        MenuItem starredItem;
 
         // DirectMessage의 경우 확장 메뉴가 없음.
         if (!messageListModel.isDirectMessage(entityType)) {
@@ -457,14 +485,25 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             }
         } else {
             inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
+        }
 
-            FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-            if (entityById != null) {
-                if (!TextUtils.equals(entityById.getUser().status, "enabled")) {
-                    menu.removeItem(item.getItemId());
-                }
+        starredItem = menu.findItem(R.id.action_entity_starred);
+
+        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
+        if (entity != null && entity.isUser()) {
+            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
+                menu.removeItem(starredItem.getItemId());
             }
         }
+
+        if (starredItem != null) {
+            if (isFavorite) {
+                starredItem.setTitle(R.string.jandi_unstarred);
+            } else {
+                starredItem.setTitle(R.string.jandi_starred);
+            }
+        }
+
     }
 
     @Override
@@ -509,15 +548,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         super.onResume();
         isForeground = true;
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
-
+        fileUploadStateViewModel.registerEventBus();
         PushMonitor.getInstance().register(entityId);
 
         messageListModel.removeNotificationSameEntityId(entityId);
+        fileUploadStateViewModel.initDownloadState();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
+
+        fileUploadStateViewModel.unregisterEventBus();
+
         isForeground = false;
 
         if (!isFromSearch) {
@@ -527,6 +569,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
         messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
         PushMonitor.getInstance().unregister(entityId);
+
+        super.onPause();
     }
 
     @Background
@@ -535,9 +579,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageListModel.updateMarker(messageState.getLastUpdateLinkId());
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         }
     }
@@ -595,8 +641,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Click(R.id.btn_upload_file)
     void onUploadClick() {
-        DialogFragment fileUploadTypeDialog = new FileUploadTypeDialogFragment();
-        fileUploadTypeDialog.show(getFragmentManager(), "dialog");
+        filePickerViewModel.showFileUploadTypeDialog(getFragmentManager());
     }
 
     @Click(R.id.btn_send_message)
@@ -708,136 +753,31 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        switch (event.type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
-                LogUtil.i("RequestFileUploadEvent : from gallery");
-                messageListPresenter.openAlbumForActivityResult(MessageListFragment.this);
-                break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-
-                try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
-                    photoFileByCamera = File.createTempFile("camera", ".jpg", directory);
-                    messageListPresenter.openCameraForActivityResult(MessageListFragment.this, Uri.fromFile(photoFileByCamera));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
-                LogUtil.i("RequestFileUploadEvent : from explorer");
-                messageListPresenter.openExplorerForActivityResult(MessageListFragment.this);
-                break;
-            default:
-                break;
-
-        }
+        filePickerViewModel.selectFileSelector(event.type, MessageListFragment.this, entityId);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
-        String realFilePath;
         switch (requestCode) {
             case JandiConstants.TYPE_UPLOAD_GALLERY:
-
-                if (intent == null) {
-                    return;
-                }
-                Uri data = intent.getData();
-
-                if (data != null) {
-                    realFilePath = ImageFilePath.getPath(getActivity(), data);
-                    if (GoogleImagePickerUtil.isUrl(realFilePath)) {
-
-                        String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                        String downloadName = GoogleImagePickerUtil.getWebImageName();
-                        ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(getActivity(), downloadDir, downloadName);
-                        downloadImageAndShowFileUploadDialog(downloadProgress, realFilePath, downloadDir, downloadName);
-                    } else {
-                        showFileUploadDialog(realFilePath);
-                    }
-                }
                 break;
-
             case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-                if (photoFileByCamera == null) {
-                    LogUtil.e("photoFileByCamera object is null...");
-                    return;
-                }
-                if (!photoFileByCamera.exists()) {
-                    LogUtil.e("photoFileByCamera is not exists");
-                    return;
-                }
-                showFileUploadDialog(photoFileByCamera.getAbsolutePath());
-
-                break;
             case JandiConstants.TYPE_UPLOAD_EXPLORER:
-
-                realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
-                if (!TextUtils.isEmpty(realFilePath)) {
-                    showFileUploadDialog(realFilePath);
+                List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
+                if (filePath != null && filePath.size() > 0) {
+                    filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
                 }
+                break;
+            case FileUploadPreviewActivity.REQUEST_CODE:
                 break;
             default:
                 break;
         }
 
-    }
-
-    @Background
-    void saveAndShowFileUploadDialog(Bitmap bitmap) {
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHssmm");
-
-        String path = GoogleImagePickerUtil.getDownloadPath() + "/camera" + dateFormat.format(System.currentTimeMillis()) + ".jpg";
-        new File(path).delete();
-        OutputStream stream = null;
-        try {
-            stream = new FileOutputStream(path);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            showFileUploadDialog(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    @Background
-    void downloadImageAndShowFileUploadDialog(ProgressDialog downloadProgress, String realFilePath, String downloadDir, String downloadName) {
-
-        try {
-            File file = GoogleImagePickerUtil.downloadFile(getActivity(), downloadProgress, realFilePath, downloadDir, downloadName);
-            messageListPresenter.dismissProgressDialog(downloadProgress);
-            showFileUploadDialog(file.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // File Upload 대화상자 보여주기
-    @UiThread
-    void showFileUploadDialog(String realFilePath) {
-        // 업로드 파일 용량 체크
-
-        if (messageListModel.isOverSize(realFilePath)) {
-            messageListPresenter.exceedMaxFileSizeError();
-        } else {
-            DialogFragment newFragment = FileUploadDialogFragment.newInstance(realFilePath, entityId);
-            newFragment.show(getFragmentManager(), "dialog");
-        }
     }
 
     @TextChange(R.id.et_message)
@@ -955,12 +895,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
 
     public void onEvent(ConfirmFileUploadEvent event) {
+        LogUtil.d("List fragment onEvent");
         if (!isForeground) {
             return;
         }
-        ProgressDialog uploadProgress = messageListPresenter.getUploadProgress(event);
-
-        uploadFile(event, uploadProgress);
+        filePickerViewModel.startUpload(getActivity(), event.title, event.entityId, event.realFilePath, event.comment);
     }
 
     public void onEvent(ConfirmDeleteTopicEvent event) {
@@ -997,45 +936,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.deleteTopic(entityId, entityType);
             messageListModel.trackDeletingEntity(entityType);
             messageListPresenter.finish();
-        } catch (JandiNetworkException e) {
-            LogUtil.e("Topic Delete Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
 
-    }
-
-
-    @Background
-    void uploadFile(ConfirmFileUploadEvent event, ProgressDialog uploadProgressDialog) {
-        boolean isPublicTopic = entityType == JandiConstants.TYPE_PUBLIC_TOPIC;
-        try {
-            JsonObject result = messageListModel.uploadFile(event, uploadProgressDialog, isPublicTopic);
-            if (result.get("code") == null) {
-
-                LogUtil.e("Upload Success : " + result);
-                messageListPresenter.showSuccessToast(getString(R.string.jandi_file_upload_succeed));
-                messageListModel.trackUploadingFile(entityType, result);
-            } else {
-                LogUtil.e("Upload Fail : Result : " + result);
-                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
-            }
-            sendMessagePublisherEvent(new NewMessageQueue(messageState));
-        } catch (ExecutionException e) {
-            if (getActivity() != null) {
-                messageListPresenter.showFailToast(getString(R.string.jandi_canceled));
-            }
-        } catch (Exception e) {
-            LogUtil.e("Upload Error : ", e);
-            if (getActivity() != null) {
-                messageListPresenter.showFailToast(getString(R.string.err_file_upload_failed));
-            }
-        } finally {
-            if (getActivity() != null) {
-                messageListPresenter.dismissProgressDialog(uploadProgressDialog);
-            }
-        }
     }
 
     @Background
@@ -1050,7 +957,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
         } catch (Exception e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
@@ -1248,9 +1155,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.trackChangingEntityName(entityType);
             EntityManager.getInstance(getActivity()).getEntityById(entityId).getEntity().name = event.inputName;
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e("modify failed " + e.getErrorInfo(), e);
-            if (e.errCode == JandiNetworkException.DUPLICATED_NAME) {
+        } catch (RetrofitError e) {
+            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_duplicated_name));
             } else {
                 messageListPresenter.showFailToast(getString(R.string.err_entity_modify));
@@ -1267,6 +1173,79 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(changedEntityName);
     }
 
+    /*
+    Announcement
+     */
+    private void initAnnouncementListeners() {
+        announcementViewModel.setOnAnnouncementCloseListener(() -> {
+            announcementViewModel.openAnnouncement(false);
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, false);
+        });
+        announcementViewModel.setOnAnnouncementOpenListener(() -> {
+            announcementViewModel.openAnnouncement(true);
+            announcementModel.setActionFromUser(true);
+            announcementModel.updateAnnouncementStatus(teamId, roomId, true);
+        });
+    }
+
+    public void onEvent(SocketAnnouncementEvent event) {
+        SocketAnnouncementEvent.Type eventType = event.getEventType();
+        switch (eventType) {
+            case CREATED:
+            case DELETED:
+                if (!isForeground) {
+                    messageListModel.updateMarkerInfo(teamId, roomId);
+                    return;
+                }
+                sendMessagePublisherEvent(new NewMessageQueue(messageState));
+                sendMessagePublisherEvent(new CheckAnnouncementQueue());
+                break;
+            case STATUS_UPDATED:
+                if (!isForeground) {
+                    announcementModel.setActionFromUser(false);
+                    messageListModel.updateMarkerInfo(teamId, roomId);
+                    return;
+                }
+                SocketAnnouncementEvent.Data data = event.getData();
+                if (data != null) {
+                    if (!announcementModel.isActionFromUser()) {
+                        announcementViewModel.openAnnouncement(data.isOpened());
+                    }
+                }
+                announcementModel.setActionFromUser(false);
+                break;
+        }
+    }
+
+    public void onEvent(AnnouncementEvent event) {
+        switch (event.getAction()) {
+            case CREATE:
+                checkAnnouncementExistsAndCreate(event.getMessageId());
+                break;
+            case DELETE:
+                messageListPresenter.showProgressWheel();
+                announcementModel.deleteAnnouncement(teamId, roomId);
+                break;
+        }
+    }
+
+    @Background
+    void checkAnnouncementExistsAndCreate(int messageId) {
+        ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+        if (announcement == null || announcement.isEmpty()) {
+            createAnnouncement(messageId);
+            return;
+        }
+
+        announcementViewModel.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
+    }
+
+    private void createAnnouncement(int messageId) {
+        messageListPresenter.showProgressWheel();
+        announcementModel.createAnnouncement(teamId, roomId, messageId);
+    }
+
     @Override
     public boolean onBackPressed() {
 
@@ -1278,5 +1257,3 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         return false;
     }
 }
-
-

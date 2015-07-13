@@ -4,11 +4,9 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,10 +46,7 @@ public class ParseUpdateUtilTest {
                 .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {
                     @Override
                     public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
-
-                        JandiRestClient jandiRestClient = new JandiRestClient_(Robolectric.application);
-                        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
-                        return jandiRestClient.getInfosForSideMenu(userTeam.getTeamId());
+                        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
                     }
                 })
                 .map(new Func1<ResLeftSideMenu, List<String>>() {

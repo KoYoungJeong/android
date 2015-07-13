@@ -299,6 +299,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         return -1;
     }
 
+    public int getItemPositionById(int id) {
+        for (int idx = 0; idx < messageList.size(); idx++) {
+            ResMessages.Link link = messageList.get(idx);
+            if (link.id == id) {
+                return idx;
+            }
+        }
+
+        return -1;
+    }
+
     public void clear() {
         messageList.clear();
     }

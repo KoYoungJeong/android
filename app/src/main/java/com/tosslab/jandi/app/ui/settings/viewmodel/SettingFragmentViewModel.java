@@ -1,12 +1,14 @@
 package com.tosslab.jandi.app.ui.settings.viewmodel;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.events.messages.AnnouncementEvent;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -25,26 +27,21 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class SettingFragmentViewModel {
 
-    @RootContext
-    Context context;
-
     @Bean
-    JandiEntityClient mJandiEntityClient;
+    EntityClientManager mEntityClientManager;
     private ProgressWheel progressWheel;
 
-    @AfterViews
-    void initViews() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+    public void initProgress(Activity activity) {
+        progressWheel = new ProgressWheel(activity);
     }
 
     @UiThread
-    public void changeNotificationTagerFailed(String errMessage) {
+    public void changeNotificationTagerFailed(Context context, String errMessage) {
         ColoredToast.showError(context, errMessage);
     }
 
-    public void showSignoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    public void showSignoutDialog(Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.jandi_setting_sign_out)
                 .setMessage(R.string.jandi_sign_out_message)
                 .setNegativeButton(R.string.jandi_cancel, null)
@@ -75,7 +72,7 @@ public class SettingFragmentViewModel {
     }
 
     @UiThread
-    public void returnToLoginActivity() {
+    public void returnToLoginActivity(Context context) {
         IntroActivity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .start();

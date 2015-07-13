@@ -1,17 +1,15 @@
 package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.spring.JandiV2HttpAuthentication;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
@@ -23,7 +21,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.rest.RestService;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 28..
@@ -31,18 +28,14 @@ import org.androidannotations.annotations.rest.RestService;
 @EBean
 public class OpenAction implements Action {
 
-    @RestService
-    JandiRestClient jandiRestClient;
-
     @RootContext
-    Context context;
+    Activity activity;
 
     ProgressWheel progressWheel;
 
     @AfterInject
     void initObject() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+        progressWheel = new ProgressWheel(activity);
     }
 
     @Override
@@ -69,16 +62,15 @@ public class OpenAction implements Action {
         accessToken.setTokenType("bearer");
 
         try {
-            jandiRestClient.setAuthentication(new JandiV2HttpAuthentication(accessToken.getTokenType(), accessToken.getAccessToken()));
-            ResAccountInfo accountInfo = jandiRestClient.getAccountInfo();
+            ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-            TokenUtil.saveTokenInfoByRefresh(context, accessToken);
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
+            TokenUtil.saveTokenInfoByRefresh(accessToken);
+            JandiAccountDatabaseManager.getInstance(activity).upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
         } catch (Exception e) {
-            TokenUtil.clearTokenInfo(context);
-            JandiAccountDatabaseManager.getInstance(context).clearAllData();
+            TokenUtil.clearTokenInfo();
+            JandiAccountDatabaseManager.getInstance(activity).clearAllData();
             failAccessToken();
             LogUtil.d(e.getMessage());
         } finally {
@@ -111,20 +103,20 @@ public class OpenAction implements Action {
 
     @UiThread
     void failAccessToken() {
-        ColoredToast.showWarning(context, context.getString(R.string.jandi_error_web_token));
+        ColoredToast.showWarning(activity, activity.getString(R.string.jandi_error_web_token));
     }
 
     @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
-        ColoredToast.show(context, context.getString(R.string.jandi_success_web_token));
+        ColoredToast.show(activity, activity.getString(R.string.jandi_success_web_token));
     }
 
     @UiThread
     void startIntroActivity() {
-        IntroActivity_.intent(context)
+        IntroActivity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .startForInvite(true)
                 .start();
-        ((Activity) context).finish();
+        ((Activity) activity).finish();
     }
 }

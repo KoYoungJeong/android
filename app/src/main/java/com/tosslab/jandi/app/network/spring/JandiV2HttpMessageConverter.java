@@ -1,5 +1,7 @@
 package com.tosslab.jandi.app.network.spring;
 
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+
 import org.codehaus.jackson.JsonEncoding;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,10 +36,12 @@ public class JandiV2HttpMessageConverter extends AbstractHttpMessageConverter<Ob
      * Construct a new {@code BindingJacksonHttpMessageConverter}.
      */
     public JandiV2HttpMessageConverter() {
+
         super(
                 new org.springframework.http.MediaType("application", "json", DEFAULT_CHARSET)
                 , new org.springframework.http.MediaType("application", APPLICATION_VERSION_NAME)
         );
+        LogUtil.d("xxxx");
     }
 
     /**

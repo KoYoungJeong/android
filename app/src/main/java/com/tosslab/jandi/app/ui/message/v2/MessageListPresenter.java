@@ -33,7 +33,7 @@ import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -73,7 +73,6 @@ import rx.Observable;
  */
 @EBean
 public class MessageListPresenter {
-
     @ViewById(R.id.list_messages)
     RecyclerView messageListView;
 
@@ -131,21 +130,16 @@ public class MessageListPresenter {
     @ViewById(R.id.iv_messages_preview_sticker_image)
     ImageView imgStickerPreview;
 
-
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-
+    @Bean
+    TeamDomainInfoModel teamDomainInfoModel;
     private MessageListAdapter messageListAdapter;
-
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
-
-    @Bean
-    TeamDomainInfoModel teamDomainInfoModel;
-
     private EntityManager mEntityManager;
     private String invitationUrl;
     private String teamName;
@@ -174,7 +168,6 @@ public class MessageListPresenter {
         mEntityManager = EntityManager.getInstance(activity);
 
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @AfterViews
@@ -271,6 +264,12 @@ public class MessageListPresenter {
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveToMessage(int linkId, int firstVisibleItemTop) {
         int itemPosition = messageListAdapter.getItemPositionByMessageId(linkId);
+        ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToMessageById(int id, int firstVisibleItemTop) {
+        int itemPosition = messageListAdapter.getItemPositionById(id);
         ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset(itemPosition, firstVisibleItemTop);
     }
 
@@ -386,13 +385,6 @@ public class MessageListPresenter {
     @UiThread
     public void showSuccessToast(String message) {
         ColoredToast.show(activity, message);
-    }
-
-    @UiThread
-    public void dismissProgressDialog(ProgressDialog uploadProgressDialog) {
-        if (uploadProgressDialog != null && uploadProgressDialog.isShowing()) {
-            uploadProgressDialog.dismiss();
-        }
     }
 
     @UiThread

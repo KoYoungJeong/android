@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,8 @@ public class JandiAccountDatabaseManager {
     public void upsertAccountAllInfo(ResAccountInfo resAccountInfo) {
         upsertAccountInfo(resAccountInfo);
         upsertAccountEmail(resAccountInfo.getEmails());
+
+        LogUtil.d("resACCOUNTINFO GET EMAIL" + resAccountInfo.getEmails());
 
         List<ResAccountInfo.UserTeam> memberships = resAccountInfo.getMemberships();
 
@@ -455,6 +458,7 @@ public class JandiAccountDatabaseManager {
         userTeam.setUnread(cursor.getInt(unreadIndex));
 
         closeCursor(cursor);
+
 
         return userTeam;
 

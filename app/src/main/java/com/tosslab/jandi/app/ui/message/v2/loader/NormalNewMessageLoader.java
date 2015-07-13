@@ -1,18 +1,16 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collections;
 
+import retrofit.RetrofitError;
 import rx.Subscription;
 
 /**
@@ -58,7 +56,6 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
-            Log.e("tony", "new messages size = " + newMessage.updateInfo.messages.size());
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
@@ -72,14 +69,22 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 if (visibleLastItemPosition < lastItemPosition - 1 && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 } else {
-                    messageListPresenter.moveToMessage(lastUpdatedMessage.messageId, 0);
+                    int messageId = lastUpdatedMessage.messageId;
+                    if (messageId <= 0) {
+                        if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
+                            messageListPresenter.moveToMessageById(lastUpdatedMessage.id, 0);
+                        }
+                    } else {
+                        messageListPresenter.moveToMessage(messageId, 0);
+                    }
                 }
             }
 
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e(e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (!messageSubscription.isUnsubscribed()) {
                 messageListModel.startRefreshTimer();
@@ -92,9 +97,11 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             if (messageState.getLastUpdateLinkId() > 0) {
                 messageListModel.updateMarker(messageState.getLastUpdateLinkId());
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.e("set marker failed", e);
         }
     }

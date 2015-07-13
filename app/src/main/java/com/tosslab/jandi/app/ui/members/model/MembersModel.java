@@ -4,9 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
-import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;

@@ -3,46 +3,31 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiAuthClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.account.password.AccountPasswordApiClient;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.SupposeBackground;
 import org.androidannotations.annotations.SupposeUiThread;
-import org.androidannotations.annotations.rest.RestService;
-import org.springframework.http.HttpStatus;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 4..
  */
 @EBean
 public class IntroLoginModel {
-
-    @Bean
-    JandiAuthClient mJandiAuthClient;
-
-    @RestService
-    JandiRestClient jandiRestClient;
-
-    @RestService
-    AccountPasswordApiClient accountPasswordApiClient;
 
     @RootContext
     Context context;
@@ -54,35 +39,32 @@ public class IntroLoginModel {
     @SupposeBackground
     public int startLogin(String myEmailId, String password) {
         // 팀이 아무것도 없는 사용자일 경우의 에러 메시지
-        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
+//        final int errStringResNotRegisteredId = R.string.err_login_unregistered_id;
 
         try {
-
             // Get Access Token
             ReqAccessToken passwordReqToken = ReqAccessToken.createPasswordReqToken(myEmailId, password);
-            ResAccessToken accessToken = jandiRestClient.getAccessToken(passwordReqToken);
+            ResAccessToken accessToken = RequestApiManager.getInstance().getAccessTokenByMainRest(passwordReqToken);
 
             if (accessToken != null && !TextUtils.isEmpty(accessToken.getAccessToken()) && !TextUtils.isEmpty(accessToken.getRefreshToken())) {
                 // Save Token & Get TeamList
-                TokenUtil.saveTokenInfoByPassword(context, accessToken);
-
-                AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-                RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-                ResAccountInfo resAccountInfo = requestManager.request();
-
+                TokenUtil.saveTokenInfoByPassword(accessToken);
+                ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
                 JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
-                return HttpStatus.OK.value();
+                return JandiConstants.NETWORK_SUCCESS;
             } else {
                 // Login Fail
                 throw new Exception("Login Fail");
             }
 
-        } catch (JandiNetworkException e) {
-            return e.httpStatusCode;
+        } catch (RetrofitError e) {
+            if (e.getResponse() != null) {
+                return e.getResponse().getStatus();
+            }
+            return JandiConstants.NetworkError.BAD_REQUEST;
         } catch (Exception e) {
             LogUtil.e(e.toString(), e);
-            return 400;
+            return JandiConstants.NetworkError.BAD_REQUEST;
         }
     }
 
@@ -110,8 +92,7 @@ public class IntroLoginModel {
     }
 
     public ResCommon requestPasswordReset(String email) {
-
-        return accountPasswordApiClient.resetPassword(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
+        return RequestApiManager.getInstance().resetPasswordByAccountPasswordApi(new ReqAccountEmail(email, LanguageUtil.getLanguage(context)));
     }
 
     public void setValidEmail(boolean isValidEmail) {
@@ -125,4 +106,5 @@ public class IntroLoginModel {
     public boolean isValidEmailPassword() {
         return isValidEmail && isValidPassword;
     }
+
 }

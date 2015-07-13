@@ -16,7 +16,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FormatConverter;
@@ -154,7 +154,7 @@ public class FileHeadManager {
         textViewUserName.setOnClickListener(v -> UserInfoDialogFragment_.builder().entityId(fileMessage.writerId).build().show(activity.getSupportFragmentManager(), "dialog"));
 
         // 파일
-        String createTime = DateTransformator.getTimeDifference(fileMessage.createTime);
+        String createTime = DateTransformator.getTimeString(fileMessage.createTime);
         textViewFileCreateDate.setText(createTime);
         // if Deleted File
         if (TextUtils.equals(fileMessage.status, "archived")) {

@@ -14,7 +14,7 @@
         android:visibility="visible" />
 
     <ListView
-        android:id="@+id/list_file_detail_comments"
+        android:id="@+id/lv_file_detail_comments"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/space_file_detail_divider"
@@ -60,11 +60,12 @@
         android:id="@+id/space_file_detail_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_above="@+id/ly_file_detail_input_comment"
+        android:layout_above="@+id/vg_file_detail_input_comment"
+        android:layout_alignWithParentIfMissing="true"
         android:background="@color/jandi_message_input_border" />
 
     <RelativeLayout
-        android:id="@+id/ly_file_detail_input_comment"
+        android:id="@+id/vg_file_detail_input_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/vg_message_sticker_selector"

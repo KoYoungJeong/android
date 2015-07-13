@@ -7,11 +7,9 @@ import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ import rx.schedulers.Schedulers;
  */
 public class ParseUpdateUtil {
 
-
     public static void updateParseWithoutSelectedTeam(Context context) {
         List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
@@ -36,10 +33,8 @@ public class ParseUpdateUtil {
                 .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {
                     @Override
                     public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
-
-                        JandiRestClient jandiRestClient = new JandiRestClient_(context);
-                        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(context));
-                        return jandiRestClient.getInfosForSideMenu(userTeam.getTeamId());
+                        LogUtil.d("UpdateParseWithoutSelectedTeam");
+                        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
                     }
                 })
                 .map(new Func1<ResLeftSideMenu, List<String>>() {
@@ -108,6 +103,16 @@ public class ParseUpdateUtil {
                     }
                 }, throwable -> LogUtil.e("Parse Error", throwable));
 
+    }
+
+    public static void deleteChannelOnServer() {
+        ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
+        currentInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        try {
+            currentInstallation.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     private static List<ResAccountInfo.UserTeam> getUserTeams(Context context) {

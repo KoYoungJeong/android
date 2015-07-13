@@ -21,20 +21,21 @@ import com.tosslab.jandi.app.events.messages.RoomMarkerEvent;
 import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
+import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
@@ -44,12 +45,9 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
 import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.sticker.request.StickerSendRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -60,12 +58,12 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -73,11 +71,10 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class MessageListModel {
 
-    public static final int MAX_FILE_SIZE = 100 * 1024 * 1024;
     @Bean
     MessageManipulator messageManipulator;
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
     @Bean
     MessageListTimer messageListTimer;
 
@@ -89,7 +86,7 @@ public class MessageListModel {
         messageManipulator.initEntity(entityType, entityId);
     }
 
-    public ResMessages getOldMessage(int position, int count) throws JandiNetworkException {
+    public ResMessages getOldMessage(int position, int count) throws RetrofitError {
         return messageManipulator.getMessages(position, count);
     }
 
@@ -97,7 +94,7 @@ public class MessageListModel {
         ResMessages.OriginalMessage message = null;
         try {
             message = messageManipulator.getMessage(teamId, messageId);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
         return message;
@@ -105,12 +102,7 @@ public class MessageListModel {
 
     public List<ResMessages.Link> sortById(List<ResMessages.Link> messages) {
 
-        Collections.sort(messages, new Comparator<ResMessages.Link>() {
-            @Override
-            public int compare(ResMessages.Link lhs, ResMessages.Link rhs) {
-                return lhs.id - rhs.id;
-            }
-        });
+        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
         return messages;
     }
 
@@ -118,7 +110,7 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws JandiNetworkException {
+    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -130,11 +122,11 @@ public class MessageListModel {
 //        messageListTimer.start();
     }
 
-    public void deleteMessage(int messageId) throws JandiNetworkException {
+    public void deleteMessage(int messageId) throws RetrofitError {
         messageManipulator.deleteMessage(messageId);
     }
 
-    public void deleteSticker(int messageId, int messageType) throws JandiNetworkException {
+    public void deleteSticker(int messageId, int messageType) throws RetrofitError {
         messageManipulator.deleteSticker(messageId, messageType);
     }
 
@@ -172,14 +164,9 @@ public class MessageListModel {
 
     public MenuCommand getMenuCommand(ChattingInfomations chattingInfomations, MenuItem item) {
         return MenuCommandBuilder.init(activity)
-                .with(jandiEntityClient)
+                .with(entityClientManager)
                 .with(chattingInfomations)
                 .build(item);
-    }
-
-    public boolean isOverSize(String realFilePath) {
-        File uploadFile = new File(realFilePath);
-        return uploadFile.exists() && uploadFile.length() > MAX_FILE_SIZE;
     }
 
     public int sendMessage(long localId, String message) {
@@ -189,8 +176,8 @@ public class MessageListModel {
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
-        } catch (JandiNetworkException e) {
-            LogUtil.e("send Message Fail : " + e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
@@ -211,7 +198,7 @@ public class MessageListModel {
 
     public JsonObject uploadFile(ConfirmFileUploadEvent event, ProgressDialog progressDialog, boolean isPublicTopic) throws ExecutionException, InterruptedException {
         File uploadFile = new File(event.realFilePath);
-        String requestURL = JandiConstantsForFlavors.SERVICE_ROOT_URL + "inner-api/v2/file";
+        String requestURL = JandiConstantsForFlavors.SERVICE_INNER_API_URL + "/v2/file";
         String permissionCode = (isPublicTopic) ? "744" : "740";
         Builders.Any.M ionBuilder
                 = Ion
@@ -219,7 +206,7 @@ public class MessageListModel {
                 .load(requestURL)
                 .uploadProgressDialog(progressDialog)
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
-                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication(activity).getHeaderValue())
+                .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
@@ -239,7 +226,7 @@ public class MessageListModel {
         return requestFuture.get();
     }
 
-    public void updateMarker(int lastUpdateLinkId) throws JandiNetworkException {
+    public void updateMarker(int lastUpdateLinkId) throws RetrofitError {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
@@ -251,29 +238,24 @@ public class MessageListModel {
         JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
     }
 
-    public void deleteTopic(int entityId, int entityType) throws JandiNetworkException {
+    public void deleteTopic(int entityId, int entityType) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            jandiEntityClient.deleteChannel(entityId);
+            entityClientManager.deleteChannel(entityId);
         } else {
-            jandiEntityClient.deletePrivateGroup(entityId);
+            entityClientManager.deletePrivateGroup(entityId);
         }
     }
 
-    public void modifyTopicName(int entityType, int entityId, String inputName) throws JandiNetworkException {
+    public void modifyTopicName(int entityType, int entityId, String inputName) throws RetrofitError {
         if (entityType == JandiConstants.TYPE_PUBLIC_TOPIC) {
-            jandiEntityClient.modifyChannelName(entityId, inputName);
+            entityClientManager.modifyChannelName(entityId, inputName);
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
-            jandiEntityClient.modifyPrivateGroupName(entityId, inputName);
+            entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
     }
 
     public List<ResMessages.Link> sortDescById(List<ResMessages.Link> messages) {
-        Collections.sort(messages, new Comparator<ResMessages.Link>() {
-            @Override
-            public int compare(ResMessages.Link lhs, ResMessages.Link rhs) {
-                return lhs.id - rhs.id;
-            }
-        });
+        Collections.sort(messages, (lhs, rhs) -> lhs.id - rhs.id);
         return messages;
     }
 
@@ -287,14 +269,6 @@ public class MessageListModel {
         screenViewTracker.set("&uid", EntityManager.getInstance(activity).getDistictId());
         screenViewTracker.setScreenName(gaPath);
         screenViewTracker.send(new HitBuilders.AppViewBuilder().build());
-    }
-
-    public void trackUploadingFile(int entityType, JsonObject result) {
-
-        try {
-            MixpanelMemberAnalyticsClient.getInstance(activity, EntityManager.getInstance(activity).getDistictId()).trackUploadingFile(entityType, result);
-        } catch (JSONException e) {
-        }
     }
 
     public void trackChangingEntityName(int entityType) {
@@ -368,23 +342,13 @@ public class MessageListModel {
 
     }
 
-    @Deprecated
-    public int getLatestMessageId(List<ResMessages.Link> messages) {
-
-        for (ResMessages.Link message : messages) {
-
-        }
-
-        return 0;
-    }
-
-    public ResMessages getBeforeMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getBeforeMarkerMessage(int linkId) throws RetrofitError {
 
         return messageManipulator.getBeforeMarkerMessage(linkId);
     }
 
 
-    public ResMessages getAfterMarkerMessage(int linkId) throws JandiNetworkException {
+    public ResMessages getAfterMarkerMessage(int linkId) throws RetrofitError {
         return messageManipulator.getAfterMarkerMessage(linkId);
     }
 
@@ -395,13 +359,11 @@ public class MessageListModel {
             return;
         }
 
-        RoomMarkerRequest request = RoomMarkerRequest.create(activity, teamId, roomId);
-        RequestManager<ResRoomInfo> requestManager = RequestManager.newInstance(activity, request);
         try {
-            ResRoomInfo resRoomInfo = requestManager.request();
-            JandiMarkerDatabaseManager.getInstance(activity).upsertMarkers(resRoomInfo);
+            ResRoomInfo resRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
+            JandiMarkerDatabaseManager.getInstance(activity.getApplicationContext()).upsertMarkers(resRoomInfo);
             EventBus.getDefault().post(new RoomMarkerEvent());
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
@@ -417,13 +379,13 @@ public class MessageListModel {
 
     public void updateEntityInfo() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(activity).upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance(activity).refreshEntity(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(activity, totalUnreadCount);
             BadgeUtils.setBadge(activity, totalUnreadCount);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
     }
@@ -436,16 +398,22 @@ public class MessageListModel {
 
     public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
 
-        try {
-            StickerSendRequest request = StickerSendRequest.create(activity, stickerInfo.getStickerId(), stickerInfo.getStickerGroupId(), teamId, entityId, message);
-            RequestManager<ResCommon> resCommonRequestManager = RequestManager.newInstance(activity, request);
+        FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
+        String type = null;
+        if (!TextUtils.isEmpty(message)) {
+            type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
+        }
 
-            resCommonRequestManager.request();
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message);
+
+        try {
+            RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);
             return 1;
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             return -1;
         }
 
     }
+
 }

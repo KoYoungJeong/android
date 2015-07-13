@@ -6,20 +6,23 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.ConfirmModifyProfileEvent;
 import com.tosslab.jandi.app.events.ErrorDialogFragmentEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -27,9 +30,6 @@ import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.GoogleImagePickerUtil;
-import com.tosslab.jandi.app.utils.ImageFilePath;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -41,17 +41,14 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.UiThread;
 
-import java.io.File;
-import java.util.concurrent.ExecutionException;
-
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 8. 27..
  */
 @EActivity(R.layout.activity_profile)
 public class MemberProfileActivity extends BaseAnalyticsActivity {
-    private static final int REQ_CODE_PICK_IMAGE = 0;
 
     @Bean
     MemberProfileModel memberProfileModel;
@@ -59,7 +56,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Bean
     MemberProfilePresenter memberProfileView;
 
-    private File mTempPhotoFile;  // 프로필 사진 변경시 선택한 임시 파일
+    @Bean(ProfileFileUploadViewModelImpl.class)
+    FilePickerViewModel filePickerViewModel;
 
     @AfterViews
     void bindAdapter() {
@@ -126,7 +124,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         try {
             ResLeftSideMenu.User me = memberProfileModel.getProfile();
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
             memberProfileView.getProfileFailed();
         } catch (Exception e) {
@@ -199,8 +197,9 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(ProfileChangeEvent event) {
-        if (event.getEntityId() == memberProfileModel.getMyEntityId()) {
-            memberProfileView.displayProfile(EntityManager.getInstance(MemberProfileActivity.this).getMe().getUser());
+        ResLeftSideMenu.User member = event.getMember();
+        if (memberProfileModel.isMyId(member.id)) {
+            memberProfileView.displayProfile(member);
             closeDialogFragment();
         }
     }
@@ -247,7 +246,8 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileView.updateProfileSucceed();
             trackUpdateProfile(getDistictId(), me);
             memberProfileView.displayProfile(me);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             LogUtil.e("get profile failed", e);
             memberProfileView.updateProfileFailed();
         } finally {
@@ -262,7 +262,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileName(new ReqProfileName(name));
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateNameColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             memberProfileView.updateProfileFailed();
         } finally {
@@ -280,7 +280,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
             memberProfileModel.updateProfileEmail(email);
             memberProfileView.updateProfileSucceed();
             memberProfileView.successUpdateEmailColor();
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             memberProfileView.updateProfileFailed();
         }
     }
@@ -292,13 +292,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         memberProfileView.showProgressWheel();
 
         try {
-            ResLeftSideMenu entitiesInfo = JandiEntityClient_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
+            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
             JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
             EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
@@ -320,76 +320,19 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
 
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-
-        startActivityForResult(intent, REQ_CODE_PICK_IMAGE);
-
+        filePickerViewModel.selectFileSelector(JandiConstants.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
 
     }
 
-    @OnActivityResult(REQ_CODE_PICK_IMAGE)
+    @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
     public void onImagePickResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
             return;
         }
 
-        if (imageData != null && imageData.getData() != null) {
-            String path = ImageFilePath.getPath(MemberProfileActivity.this, imageData.getData());
-
-            if (GoogleImagePickerUtil.isUrl(path)) {
-
-                String downloadDir = GoogleImagePickerUtil.getDownloadPath();
-                String downloadName = GoogleImagePickerUtil.getWebImageName();
-                ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(MemberProfileActivity.this, downloadDir, downloadName);
-                downloadImage(downloadProgress, path, downloadDir, downloadName);
-            } else {
-                mTempPhotoFile = new File(path);
-                memberProfileView.updateLocalProfileImage(mTempPhotoFile);
-                uploadProfileImage(mTempPhotoFile);
-            }
-        } else {
-            mTempPhotoFile = new File(ImageFilePath.getTempPath(MemberProfileActivity.this));
-            memberProfileView.updateLocalProfileImage(mTempPhotoFile);
-            uploadProfileImage(mTempPhotoFile);
-        }
-    }
-
-    @Background
-    void uploadProfileImage(File profileFile) {
-        memberProfileView.showProgressWheel();
-        try {
-            memberProfileModel.uploadProfilePhoto(profileFile);
-            memberProfileView.successPhotoUpload();
-
-        } catch (ExecutionException e) {
-            LogUtil.e("uploadFileDone: FAILED", e);
-            memberProfileView.failPhotoUpload();
-        } catch (InterruptedException e) {
-            LogUtil.e("uploadFileDone: FAILED", e);
-            memberProfileView.failPhotoUpload();
-        } finally {
-            memberProfileView.dismissProgressWheel();
-        }
-
-
-    }
-
-    @Background
-    void downloadImage(ProgressDialog downloadProgress, String path, String downloadDir, String downloadName) {
-
-        try {
-            Log.d("INFO", downloadDir + "/" + downloadName);
-            File file = GoogleImagePickerUtil.downloadFile(MemberProfileActivity.this, downloadProgress, path, downloadDir, downloadName);
-            Log.d("INFO", file.getAbsolutePath());
-            memberProfileView.dismissProgressDialog(downloadProgress);
-            mTempPhotoFile = new File(file.getAbsolutePath());
-            memberProfileView.updateLocalProfileImage(mTempPhotoFile);
-            uploadProfileImage(mTempPhotoFile);
-            Log.d("INFO", mTempPhotoFile.getAbsolutePath());
-        } catch (Exception e) {
-            e.printStackTrace();
+        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        if (!TextUtils.isEmpty(filePath)) {
+            filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }
     }
 

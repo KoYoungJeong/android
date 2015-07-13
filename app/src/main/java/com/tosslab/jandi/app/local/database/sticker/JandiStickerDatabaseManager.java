@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.local.database.DatabaseConsts;
 import com.tosslab.jandi.app.local.database.DatabaseConsts.StickerRecent;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
 
@@ -16,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.tosslab.jandi.app.local.database.DatabaseConsts.StickerItem;
-import static com.tosslab.jandi.app.local.database.DatabaseConsts.Table;
 
 
 /**
@@ -87,7 +87,7 @@ public class JandiStickerDatabaseManager {
         String[] whereArgs = new String[1];
         for (ResSticker sticker : stickers) {
             whereArgs[0] = sticker.getId();
-            database.delete(Table.sticker_items.name(), where, whereArgs);
+            database.delete(DatabaseConsts.StickerTable.sticker_items.name(), where, whereArgs);
         }
 
         database.beginTransaction();
@@ -105,7 +105,7 @@ public class JandiStickerDatabaseManager {
                 values.put(StickerItem.mobile.name(), sticker.getMobile());
                 values.put(StickerItem.web.name(), sticker.getWeb());
 
-                database.insert(Table.sticker_items.name(), null, values);
+                database.insert(DatabaseConsts.StickerTable.sticker_items.name(), null, values);
                 ++total;
             }
 
@@ -134,7 +134,7 @@ public class JandiStickerDatabaseManager {
 
         String selection = StickerItem.groupId + "= ?";
         String[] selectionArgs = {String.valueOf(groupId)};
-        Cursor cursor = database.query(Table.sticker_items.name(), null, selection, selectionArgs, null, null, null);
+        Cursor cursor = database.query(DatabaseConsts.StickerTable.sticker_items.name(), null, selection, selectionArgs, null, null, null);
 
         if (cursor == null || cursor.getCount() <= 0) {
             return resStickers;
@@ -172,12 +172,12 @@ public class JandiStickerDatabaseManager {
 
         String where = StickerRecent.id + " = ? AND " + StickerRecent.groupId + " = ?";
         String[] whereArgs = {id, String.valueOf(groupId)};
-        database.delete(Table.sticker_recent.name(), where, whereArgs);
+        database.delete(DatabaseConsts.StickerTable.sticker_recent.name(), where, whereArgs);
 
         ContentValues values = new ContentValues();
         values.put(StickerRecent.id.name(), id);
         values.put(StickerRecent.groupId.name(), groupId);
-        return database.insert(Table.sticker_recent.name(), null, values);
+        return database.insert(DatabaseConsts.StickerTable.sticker_recent.name(), null, values);
     }
 
     public List<ResSticker> getRecentStickers() {
@@ -185,7 +185,7 @@ public class JandiStickerDatabaseManager {
 
         List<ResSticker> resStickers = new ArrayList<ResSticker>();
 
-        Cursor cursor = database.query(Table.sticker_recent.name(), null, null, null, null, null, StickerRecent._id + " DESC");
+        Cursor cursor = database.query(DatabaseConsts.StickerTable.sticker_recent.name(), null, null, null, null, null, StickerRecent._id + " DESC");
 
         if (cursor == null || cursor.getCount() <= 0) {
             return resStickers;

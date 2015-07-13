@@ -7,11 +7,10 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.InvitationDialogFragment;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.Background;
@@ -22,6 +21,7 @@ import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -32,17 +32,17 @@ import rx.Observable;
 public class InvitationDialogExecutor {
 
     @RootContext
-    AppCompatActivity context;
+    AppCompatActivity activity;
 
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
-    private ProgressWheel mProgressWheel;
+    private ProgressWheel progressWheel;
     private EntityManager entityManager;
 
     @Background
     public void execute() {
-        entityManager = EntityManager.getInstance(context);
+        entityManager = EntityManager.getInstance(activity);
         showProgressWheel();
 
         try {
@@ -52,21 +52,21 @@ public class InvitationDialogExecutor {
                 case AVAIL:
                     InvitationDialogFragment invitationDialog =
                             InvitationDialogFragment.newInstance(inviteTeam.getName(), inviteTeam.getInvitationUrl());
-                    invitationDialog.show(context.getSupportFragmentManager(), "invitationsDialog");
+                    invitationDialog.show(activity.getSupportFragmentManager(), "invitationsDialog");
                     break;
                 case UNDEFINE:
-                    showErrorToast(context.getResources().getString(R.string.err_entity_invite));
+                    showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
                     break;
                 case DISABLE:
-                    showTextDialog(context.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
+                    showTextDialog(activity.getResources().getString(R.string.jandi_invite_disabled, getOwnerName()));
                     break;
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
-            showErrorToast(context.getResources().getString(R.string.err_network));
+            showErrorToast(activity.getResources().getString(R.string.err_network));
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorToast(context.getResources().getString(R.string.err_entity_invite));
+            showErrorToast(activity.getResources().getString(R.string.err_entity_invite));
         }
 
         dismissProgressWheel();
@@ -86,35 +86,34 @@ public class InvitationDialogExecutor {
 
     @UiThread
     void showErrorToast(String message) {
-        ColoredToast.showError(context, message);
+        ColoredToast.showError(activity, message);
     }
 
     @UiThread
     public void showTextDialog(String alertText) {
-        new AlertDialog.Builder(context)
+        new AlertDialog.Builder(activity)
                 .setMessage(alertText)
                 .setCancelable(false)
-                .setPositiveButton(context.getResources().getString(R.string.jandi_confirm),
+                .setPositiveButton(activity.getResources().getString(R.string.jandi_confirm),
                         (dialog, id) -> dialog.dismiss())
                 .create().show();
     }
 
     @UiThread
     void dismissProgressWheel() {
-        if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.dismiss();
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
         }
     }
 
     @UiThread
     void showProgressWheel() {
-        if (mProgressWheel == null) {
-            mProgressWheel = new ProgressWheel(context);
-            mProgressWheel.init();
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(activity);
         }
 
-        if (mProgressWheel != null && !mProgressWheel.isShowing())
-            mProgressWheel.show();
+        if (progressWheel != null && !progressWheel.isShowing())
+            progressWheel.show();
     }
 
     private String getOwnerName() {
