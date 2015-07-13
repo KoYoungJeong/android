@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -82,11 +81,9 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -119,24 +116,20 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
-
+    @Bean
+    StickerViewModel stickerViewModel;
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+    @SystemService
+    InputMethodManager inputMethodManager;
+    @SystemService
+    ClipboardManager clipboardManager;
     private EntityManager entityManager;
     private boolean isMyFile;
     private boolean isDeleted = true;
     private boolean isForeground;
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
-
-    @Bean
-    StickerViewModel stickerViewModel;
-    @Bean
-    KeyboardHeightModel keyboardHeightModel;
-
-    @SystemService
-    InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
-
     private StickerInfo stickerInfo = NULL_STICKER;
 
     @AfterViews
@@ -673,6 +666,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
+            String rawString = getString(R.string.err_unsupported_file_type);
+            String formatString = String.format(rawString, file);
+            ColoredToast.showError(this, formatString);
+        } catch (SecurityException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
             ColoredToast.showError(this, formatString);
