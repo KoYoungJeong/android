@@ -1,17 +1,19 @@
 package com.tosslab.jandi.app.events.entities;
 
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 9..
  */
 public class ProfileChangeEvent {
-    private final int entityId;
+    private final ResLeftSideMenu.User member;
 
-    public ProfileChangeEvent(int id) {
+    public ProfileChangeEvent(ResLeftSideMenu.User member) {
 
-        entityId = id;
+        this.member = member;
     }
 
-    public int getEntityId() {
-        return entityId;
+    public ResLeftSideMenu.User getMember() {
+        return member;
     }
 }

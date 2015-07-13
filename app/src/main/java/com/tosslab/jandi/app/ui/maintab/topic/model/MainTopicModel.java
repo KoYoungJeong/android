@@ -4,14 +4,13 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Bean;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -35,14 +35,14 @@ public class MainTopicModel {
     Context context;
 
     @Bean
-    JandiEntityClient jandiEntityClient;
+    EntityClientManager entityClientManager;
 
 
     /**
      * topic 생성
      */
-    public ResCommon createTopicInBackground(String entityName) throws JandiNetworkException {
-        return jandiEntityClient.createPublicTopic(entityName);
+    public ResCommon createTopicInBackground(String entityName) throws RetrofitError {
+        return entityClientManager.createPublicTopic(entityName);
     }
 
     public List<FormattedEntity> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity> groups) {
@@ -65,8 +65,8 @@ public class MainTopicModel {
         return entities;
     }
 
-    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws JandiNetworkException {
-        jandiEntityClient.joinChannel(channel);
+    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws RetrofitError {
+        entityClientManager.joinChannel(channel);
     }
 
     public boolean hasAlarmCount(List<FormattedEntity> joinEntities) {
@@ -86,10 +86,13 @@ public class MainTopicModel {
                     public Boolean call(FormattedEntity entity) {
                         if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
                             return entity.getId() == event.getRoom().getId();
+                        } else if(TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                            // 단순 메세지 업데이트인 경우
+                            return false;
                         } else {
                             for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                                 if (entity.getId() == messageRoom.getId()) {
-                                    return true;
+                                        return true;
                                 }
                             }
                             return false;
@@ -110,17 +113,18 @@ public class MainTopicModel {
 
     public boolean refreshEntity() {
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+            ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
             JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context, totalUnreadCount);
             BadgeUtils.setBadge(context, totalUnreadCount);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
-
             return true;
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

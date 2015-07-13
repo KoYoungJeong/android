@@ -7,9 +7,11 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
+
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by tonyjs on 15. 6. 1..
@@ -26,27 +28,19 @@ public class VerifyNetworkException extends Exception {
     public String errReason;
     private int tryCount = NONE_TRY_COUNT;
 
-    public VerifyNetworkException(HttpStatusCodeException e) {
-        this.httpStatusCode = e.getStatusCode().value();
-        this.httpStatusMessage = e.getStatusText();
+    public VerifyNetworkException(RetrofitError e) {
+        this.httpStatusCode = e.getResponse().getStatus();
+        this.httpStatusMessage = e.getMessage();
 
-        ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
         try {
-            String responseBodyAsString = e.getResponseBodyAsString();
-            LogUtil.e(responseBodyAsString);
-            ExceptionData data = objectMapper.readValue(responseBodyAsString,
-                    new TypeReference<ExceptionData>() {
-                    });
-
-            if (data != null) {
-                LogUtil.e(data.toString());
-            }
-            errCode = data != null ? data.code : httpStatusCode;
-            errReason = data != null ? data.msg : httpStatusMessage;
-            ExceptionData.TryData tryData = data != null ? data.getData() : null;
+            ExceptionData exceptionData = (ExceptionData) e.getBodyAs(ExceptionData.class);
+            LogUtil.d(exceptionData.toString());
+            errCode = exceptionData.code;
+            errReason = exceptionData.msg;
+            ExceptionData.TryData tryData = exceptionData.getData();
             tryCount = tryData != null ? tryData.getTryCount() : NONE_TRY_COUNT;
-        } catch (IOException e1) {
-            e1.printStackTrace();
+        } catch (RuntimeException runtimeException) {
+            runtimeException.printStackTrace();
         }
     }
 
@@ -79,7 +73,11 @@ public class VerifyNetworkException extends Exception {
 
         @Override
         public String toString() {
-            return "tryData = " + data;
+            return "ExceptionData{" +
+                    "code=" + code +
+                    ", msg='" + msg + '\'' +
+                    ", data=" + data +
+                    '}';
         }
 
         @JsonIgnoreProperties(ignoreUnknown = true)

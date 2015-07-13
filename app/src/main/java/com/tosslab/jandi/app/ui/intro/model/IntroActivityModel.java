@@ -5,29 +5,22 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiAuthClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
-import com.tosslab.jandi.app.ui.team.select.model.AccountInfoRequest;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
-import org.androidannotations.annotations.Background;
-import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.rest.RestService;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 3..
@@ -36,44 +29,34 @@ import org.androidannotations.annotations.rest.RestService;
 @EBean
 public class IntroActivityModel {
 
-    // check for Splash time (1500ms)
-    private final long initTime = System.currentTimeMillis();
-    @RootContext
-    Context context;
-    @RestService
-    JandiRestClient jandiRestClient;
-    @Bean
-    JandiAuthClient jandiAuthClient;
-
     /**
      * Check new app version
      */
-    public boolean checkNewVersion() {
+    public boolean checkNewVersion(Context context) {
         // 예외가 발생할 경우에도 그저 업데이트 안내만 무시한다.
         boolean isLatestVersion = true;
         try {
             // get current app version
             int thisVersion = getInstalledAppVersion(context);
-
             // get stored app version at server
             int latestVersion = getLatestVersionInBackground();
             if (thisVersion < latestVersion) {
                 isLatestVersion = false;
                 LogUtil.i("A new version of JANDI is available.");
             }
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             return isLatestVersion;
         }
     }
 
-
     public int getInstalledAppVersion(Context context) {
         try {
             PackageManager packageManager = context.getPackageManager();
             String packageName = context.getPackageName();
-
             PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
             return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
@@ -82,32 +65,28 @@ public class IntroActivityModel {
         }
     }
 
-    int getLatestVersionInBackground() throws JandiNetworkException {
-        ResConfig resConfig = jandiAuthClient.getConfig();
+    int getLatestVersionInBackground() throws RetrofitError {
+        ResConfig resConfig = getConfigInfo();
         return resConfig.versions.android;
     }
 
-    public boolean isNeedLogin() {
-
+    public boolean isNeedLogin(Context context) {
         String refreshToken = JandiPreference.getRefreshToken(context);
         return TextUtils.isEmpty(refreshToken);
     }
 
-    public void refreshAccountInfo() throws JandiNetworkException {
+    public void refreshAccountInfo(Context context) throws RetrofitError {
 
-        AccountInfoRequest accountInfoRequest = AccountInfoRequest.create(context);
-        RequestManager<ResAccountInfo> requestManager = RequestManager.newInstance(context, accountInfoRequest);
-        ResAccountInfo resAccountInfo = requestManager.request();
-
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
-
+        ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        JandiAccountDatabaseManager.getInstance(context.getApplicationContext())
+                .upsertAccountAllInfo(resAccountInfo);
     }
 
     public void clearTokenInfo() {
-        TokenUtil.clearTokenInfo(context);
+        TokenUtil.clearTokenInfo();
     }
 
-    public void clearAccountInfo() {
+    public void clearAccountInfo(Context context) {
         JandiAccountDatabaseManager.getInstance(context).deleteAccountDevices();
         JandiAccountDatabaseManager.getInstance(context).deleteAccountEmails();
         JandiAccountDatabaseManager.getInstance(context).deleteAccountInfo();
@@ -115,11 +94,9 @@ public class IntroActivityModel {
     }
 
     public void sleep(long initTime, long maxDelayMs) {
-
         long currentTimeMillis = System.currentTimeMillis();
         long currentTimeGap = currentTimeMillis - initTime;
         long sleepTime = maxDelayMs - currentTimeGap;
-
         try {
             if (sleepTime > 0) {
                 // delay for splash
@@ -128,66 +105,51 @@ public class IntroActivityModel {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 
-    public boolean hasOldToken() {
-
+    public boolean hasOldToken(Context context) {
         String myToken = JandiPreference.getMyToken(context);
-
         return !TextUtils.isEmpty(myToken);
     }
 
-    public void removeOldToken() {
+    public void removeOldToken(Context context) {
         JandiPreference.clearMyToken(context);
     }
 
-    public boolean refreshEntityInfo() {
-
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
-
+    public boolean refreshEntityInfo(Context context) {
+        ResAccountInfo.UserTeam selectedTeamInfo =
+                JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         if (selectedTeamInfo == null) {
             return false;
         }
-
-        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-
         try {
-            ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            int selectedTeamId = selectedTeamInfo.getTeamId();
+            ResLeftSideMenu totalEntitiesInfo =
+                    RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
+            JandiEntityDatabaseManager.getInstance(context.getApplicationContext())
+                    .upsertLeftSideMenu(totalEntitiesInfo);
+
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            BadgeUtils.setBadge(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(context);
-
+            JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
+            BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);
+            EntityManager.getInstance(context.getApplicationContext())
+                    .refreshEntity(context.getApplicationContext());
             return true;
-
-        } catch (JandiNetworkException e) {
+        } catch (RetrofitError e) {
             e.printStackTrace();
             return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-
-
     }
 
-    public ResConfig getConfigInfo() throws JandiNetworkException {
-        return jandiAuthClient.getConfig();
+    public ResConfig getConfigInfo() throws RetrofitError {
+        return RequestApiManager.getInstance().getConfigByMainRest();
     }
 
-    public boolean hasSelectedTeam() {
-        ResAccountInfo.UserTeam mySelectedTeam = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
-
-        return mySelectedTeam != null;
+    public boolean hasSelectedTeam(Context context) {
+        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo() != null;
     }
 
-    @Background
-    public void updateParseForAllTeam() {
-
-
-
-    }
 }

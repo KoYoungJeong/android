@@ -15,18 +15,12 @@ import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
+import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
 import org.androidannotations.annotations.Background;
@@ -55,9 +49,6 @@ public class JandiPushReceiverModel {
             intent.putExtra(JandiConstants.EXTRA_IS_FROM_PUSH, true);
             intent.putExtra(JandiConstants.EXTRA_TEAM_ID, teamId);
         }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -82,18 +73,8 @@ public class JandiPushReceiverModel {
 
     @Background
     public void updateEntityAndBadge(Context context) {
-
-        try {
-            JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(context);
-            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-            BadgeUtils.setBadge(context, totalUnreadCount);
-            JandiPreference.setBadgeCount(context, totalUnreadCount);
-            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-        } catch (JandiNetworkException e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent(context, BadgeHandleService.class);
+        context.startService(intent);
     }
 
     public PushTO parsingPushTO(Bundle extras) {
@@ -207,6 +188,7 @@ public class JandiPushReceiverModel {
     public void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
         // 현재 디바이스 설정이 push off 라면 무시
         String writerProfile = messagePush.getWriterThumb();
+        Notification notification;
         if (writerProfile != null) {
             Bitmap bitmap = null;
             try {
@@ -217,15 +199,12 @@ public class JandiPushReceiverModel {
             } catch (Exception e) {
             }
 
-            Notification notification;
-            if (writerProfile != null) {
-                notification = generateNotification(context, messagePush, bitmap);
-            } else {
-                notification = generateNotification(context, messagePush);
-            }
-
-            sendNotification(context, notification);
+            notification = generateNotification(context, messagePush, bitmap);
+        } else {
+            notification = generateNotification(context, messagePush);
         }
+
+        sendNotification(context, notification);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

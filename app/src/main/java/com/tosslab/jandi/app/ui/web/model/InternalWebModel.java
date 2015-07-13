@@ -6,11 +6,10 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.ui.maintab.topic.model.EntityComparator;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -21,6 +20,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 
 /**
@@ -70,7 +70,7 @@ public class InternalWebModel {
         return buffer.toString();
     }
 
-    public void sendMessage(int entityId, int entityType, String text) throws JandiNetworkException {
+    public void sendMessage(int entityId, int entityType, String text) throws RetrofitError {
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(context);
         messageManipulator.initEntity(entityType, entityId);
         messageManipulator.sendMessage(text);

@@ -56,6 +56,9 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @Extra
     boolean isFromFiles;
 
+    @Extra
+    int entityId = -1;
+
     @ViewById(R.id.txt_search_keyword)
     AutoCompleteTextView searchEditText;
 
@@ -84,6 +87,7 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     private FileListFragment fileListFragment;
 
     private String[] searchQueries;
+    private boolean isForeground;
 
     @AfterViews
     void initObject() {
@@ -121,12 +125,12 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
             return;
         }
         if (fileListFragment == null) {
-            fileListFragment = FileListFragment_.builder().build();
+            fileListFragment = FileListFragment_.builder().entityIdForCategorizing(entityId).build();
             fragmentTransaction.add(R.id.layout_search_content,
                     fileListFragment, FileListFragment.class.getName());
         }
         if (messageSearchFragment == null) {
-            messageSearchFragment = MessageSearchFragment_.builder().build();
+            messageSearchFragment = MessageSearchFragment_.builder().entityId(entityId).build();
             fragmentTransaction.add(R.id.layout_search_content,
                     messageSearchFragment, MessageSearchFragment.class.getName());
         }
@@ -162,7 +166,11 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         }
         fragmentTransaction.commit();
 
+        if (searchSelectView != null) {
+            searchSelectView.setOnSearchItemSelect(null);
+        }
         searchSelectView = messageSearchFragment;
+        searchSelectView.setOnSearchItemSelect(() -> finish());
 
         setSelectTab(messageTabView, filesTabView);
         setSearchText(searchQueries[0]);
@@ -189,7 +197,12 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         }
         fragmentTransaction.commit();
 
+        if (searchSelectView != null) {
+            searchSelectView.setOnSearchItemSelect(null);
+        }
         searchSelectView = fileListFragment;
+        searchSelectView.setOnSearchItemSelect(() -> finish());
+
 
         setSelectTab(filesTabView, messageTabView);
         setSearchText(searchQueries[1]);
@@ -199,16 +212,22 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
     @Override
     protected void onResume() {
         super.onResume();
+        isForeground = true;
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onPause() {
-        super.onPause();
         EventBus.getDefault().unregister(this);
+        isForeground = false;
+        super.onPause();
     }
 
     public void onEvent(SearchResultScrollEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
 
         if (event.getFrom() != searchSelectView.getClass()) {
             return;
@@ -351,5 +370,11 @@ public class SearchActivity extends AppCompatActivity implements SearchPresenter
         void onSearchHeaderReset();
 
         void initSearchLayoutIfFirst();
+
+        void setOnSearchItemSelect(OnSearchItemSelect onSearchItemSelect);
+    }
+
+    public interface OnSearchItemSelect {
+        void onSearchItemSelect();
     }
 }

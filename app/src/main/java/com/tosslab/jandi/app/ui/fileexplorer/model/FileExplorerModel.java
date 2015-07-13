@@ -74,6 +74,10 @@ public class FileExplorerModel {
     public String getExternalSdCardPath() {
         File storageDir = new File(DEFAULT_STORAGE);
         File[] originFiles = storageDir.listFiles();
+        if (originFiles == null || originFiles.length <= 0) {
+            return null;
+        }
+
         String inStoragePath = Environment.getExternalStorageDirectory().getAbsolutePath().substring(0, Environment.getExternalStorageDirectory().getAbsolutePath().lastIndexOf("/") + 1);
 
         String microSdCardPath = null;
@@ -94,7 +98,6 @@ public class FileExplorerModel {
     }
 
     public boolean hasExternalSdCard() {
-        boolean a = !TextUtils.isEmpty(getExternalSdCardPath());
         return !TextUtils.isEmpty(getExternalSdCardPath());
     }
 

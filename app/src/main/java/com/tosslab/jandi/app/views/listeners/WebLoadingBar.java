@@ -18,22 +18,28 @@ public class WebLoadingBar extends View {
     private int width;
     private int height;
     private int max = 100;
+    private int color;
 
     public WebLoadingBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         paint = new Paint();
 
-        paint.setColor(getResources().getColor(R.color.dialog_title_text));
+        color = getResources().getColor(R.color.dialog_title_text);
+
+        paint.setColor(color);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+        paint.setColor(color);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
 
-
         canvas.save();
         canvas.drawRect(0, 0, (progress * width) / max, height, paint);
         canvas.restore();
-
 
     }
 

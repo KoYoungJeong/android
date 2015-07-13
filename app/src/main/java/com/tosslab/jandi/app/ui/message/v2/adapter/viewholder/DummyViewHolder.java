@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
-import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -10,13 +8,10 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 4..
@@ -47,8 +42,6 @@ public class DummyViewHolder implements BodyViewHolder {
                 .getEntityById(dummyMessageLink.message.writerId);
 
         String profileUrl = entity.getUserLargeProfileUrl();
-
-        LogUtil.e("profileUrl - " + profileUrl);
 
         Ion.with(profileImageView)
                 .placeholder(R.drawable.jandi_profile)

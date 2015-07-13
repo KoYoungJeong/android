@@ -2,15 +2,10 @@ package com.tosslab.jandi.app.local.database.rooms.marker;
 
 import com.jayway.awaitility.Awaitility;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
-import com.tosslab.jandi.app.network.client.JandiRestClient_;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
-import com.tosslab.jandi.app.ui.maintab.chat.model.ChatListRequest;
-import com.tosslab.jandi.app.ui.message.v2.model.RoomMarkerRequest;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -32,15 +27,12 @@ import static org.junit.Assert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class JandiMarkerDatabaseManagerTest {
 
-    private JandiRestClient jandiRestClient;
     private JandiMarkerDatabaseManager databaseManager;
 
     @Before
     public void setUp() throws Exception {
 
         BaseInitUtil.initData(Robolectric.application);
-        jandiRestClient = new JandiRestClient_(Robolectric.application);
-        jandiRestClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
 
         databaseManager = JandiMarkerDatabaseManager.getInstance(Robolectric.application);
     }
@@ -50,10 +42,8 @@ public class JandiMarkerDatabaseManagerTest {
 
         ResAccountInfo.UserTeam userTeam = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0);
         int teamId = userTeam.getTeamId();
-        List<ResChat> chatList = RequestManager.newInstance(Robolectric.application, ChatListRequest.create(Robolectric.application, userTeam.getMemberId())).request();
-
-        ResRoomInfo roomInfo = RequestManager.newInstance(Robolectric.application, RoomMarkerRequest.create(Robolectric.application, teamId, chatList.get(0).getEntityId())).request();
-
+        List<ResChat> chatList = RequestApiManager.getInstance().getChatListByChatApi(teamId);
+        ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, chatList.get(0).getEntityId());
         final boolean[] finish = new boolean[2];
 
         new Thread(new Runnable() {

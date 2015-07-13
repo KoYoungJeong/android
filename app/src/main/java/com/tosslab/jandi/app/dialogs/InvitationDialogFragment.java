@@ -43,7 +43,7 @@ public class InvitationDialogFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Dialog me = getDialog();
         me.setCanceledOnTouchOutside(true);
-        clipboardManager = (ClipboardManager)getActivity()
+        clipboardManager = (ClipboardManager) getActivity()
                 .getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -53,8 +53,8 @@ public class InvitationDialogFragment extends DialogFragment {
         builder.setTitle(R.string.jandi_invite_member)
                 .setItems(R.array.types_invitations, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                         int eventType = 0;
-                         switch (which) {
+                        int eventType = 0;
+                        switch (which) {
                             case 0:     // from email
                                 eventType = JandiConstants.TYPE_INVITATION_EMAIL;
                                 break;
@@ -114,16 +114,16 @@ public class InvitationDialogFragment extends DialogFragment {
         switch (eventType) {
             case JandiConstants.TYPE_INVITATION_KAKAO:
                 packageName = JandiConstants.INVITE_URL_KAKAO;
-            break;
+                break;
             case JandiConstants.TYPE_INVITATION_LINE:
                 packageName = JandiConstants.INVITE_URL_LINE;
-            break;
+                break;
             case JandiConstants.TYPE_INVITATION_WECHAT:
-               packageName = JandiConstants.INVITE_URL_WECHAT;
-            break;
+                packageName = JandiConstants.INVITE_URL_WECHAT;
+                break;
             case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-               packageName = JandiConstants.INVITE_URL_FACEBOOK_MESSENGER;
-            break;
+                packageName = JandiConstants.INVITE_URL_FACEBOOK_MESSENGER;
+                break;
             default:
             case JandiConstants.TYPE_INVITATION_EMAIL:
                 return InviteEmailActivity_
@@ -163,8 +163,8 @@ public class InvitationDialogFragment extends DialogFragment {
                 .create().show();
     }
 
-    public String getInvitationContents(){
-        return getArguments().getString(INVITE_TEAM_NAME)+
+    public String getInvitationContents() {
+        return getArguments().getString(INVITE_TEAM_NAME) +
                 getActivity().getApplicationContext().getResources().getString(R.string.jandi_invite_contents);
     }
 

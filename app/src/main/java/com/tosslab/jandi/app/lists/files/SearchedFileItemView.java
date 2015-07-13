@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
@@ -54,6 +54,7 @@ public class SearchedFileItemView extends RelativeLayout {
         FormattedEntity entityById = EntityManager.getInstance(mContext).getEntityById(searchedFile.writerId);
 
         String searchedFileOwnerName = entityById.getName();
+
         textViewSearchedFileOwnerName.setText(searchedFileOwnerName);
 
         textViewSearchedFileType.setText(searchedFile.content.ext);

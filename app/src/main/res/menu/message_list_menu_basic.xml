@@ -3,10 +3,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_entity_starred"
-        android:icon="@drawable/jandi_icon_actionbar_fav_off"
+        android:id="@+id/action_entity_search"
+        android:icon="@drawable/jandi_actionb_search"
         android:showAsAction="always"
-        android:title="@string/jandi_action_starred"
+        android:title="@string/jandi_action_search"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_entity_move_file_list"

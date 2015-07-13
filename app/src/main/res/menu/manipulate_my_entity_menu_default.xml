@@ -18,8 +18,14 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/action_entity_starred"
+                android:title="@string/jandi_starred" />
+            <item
                 android:id="@+id/action_my_entity_members"
                 android:title="@string/jandi_topic_paricipants" />
+            <item
+                android:id="@+id/action_my_entity_rename"
+                android:title="@string/jandi_action_rename"/>
         </menu>
     </item>
 </menu>

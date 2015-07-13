@@ -12,7 +12,7 @@
         android:layout_height="@dimen/jandi_file_detail_comment_profile_size"
         android:layout_marginRight="@dimen/jandi_file_detail_comment_profile_margin_right"
         android:layout_marginTop="@dimen/jandi_file_detail_comment_profile_margin_top"
-        android:background="@drawable/jandi_profile_comment" />
+        android:src="@drawable/jandi_profile_comment" />
 
     <TextView
         android:id="@+id/txt_file_detail_comment_user_name"

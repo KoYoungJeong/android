@@ -135,6 +135,15 @@
     <string name="err_messages_delete">"信息无法删除"</string>
     <string name="err_file_upload_failed">"文件无法上传"</string>
 
+    <!-- Announcement -->
+    <string name="jandi_announcement_create">"发布公告"</string>
+    <string name="jandi_announcement_create_question">"此信息将会取代公告，你确定要继续吗?"</string>
+    <string name="jandi_announcement_delete_question">"公告将被删除，你确定要继续?"</string>
+    <string name="jandi_announcement_created">"%1$s 更新 %2$s 的信息为公告"</string>
+    <string name="jandi_announcement_deleted">"%s 删除公告"</string>
+    <string name="jandi_announcement_delete">"删除"</string>
+    <string name="jandi_announcement_minimize">"最小化"</string>
+
     <!-- Manipulate CDP -->
     <string name="menu_entity_edit">"重新命名"</string>
     <string name="menu_entity_delete">"删除"</string>
@@ -167,7 +176,7 @@
     <string name="jandi_title_activity_file_explorer">"文件探索"</string>
     <string name="title_file_detail">"叙述"</string>
     <string name="comment">"留言"</string>
-    <string name="jandi_file_size_large_error">"无法上传大於100MB的文件"</string>
+    <string name="jandi_file_size_large_error">"无法上传大於300MB的文件"</string>
 
     <!-- Share & invite -->
     <string name="jandi_title_cdp_to_be_shared">"请选择在哪里分享"</string>
@@ -383,4 +392,9 @@
     <string name="jandi_canceled">"取消了"</string>
     <string name="jandi_cannot_find_messages">"搜寻没有结果: "</string>
     <string name="jandi_no_recent_stickers">"无最近使用的贴图"</string>
+    <string name="jandi_google_docs">"Google Docs"</string>
+    <string name="jandi_select_maximum_10">"一次可上传10张照片"</string>
+    <string name="jandi_decide_choose">"选择照片"</string>
+    <string name="jandI_select_gallery">"选择照片"</string>
+    <string name="jandi_view_all">"查看全部"</string>
 </resources>

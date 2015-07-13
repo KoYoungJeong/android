@@ -1,21 +1,17 @@
 package com.tosslab.jandi.app.ui.signup.account.model;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.client.JandiRestClient;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.signup.account.to.CheckPointsHolder;
 import com.tosslab.jandi.app.utils.FormatConverter;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
 import com.tosslab.jandi.app.utils.PasswordChecker;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.rest.RestService;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
+
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 24..
@@ -24,9 +20,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class SignUpModel {
 
     CheckPointsHolder mCheckPointsHolder;
-
-    @RestService
-    JandiRestClient jandiRestClient;
 
     @AfterInject
     void initObject() {
@@ -128,19 +121,12 @@ public class SignUpModel {
                 && mCheckPointsHolder.didAgreeAll == CheckPointsHolder.VALID);
     }
 
-    public ResCommon requestSignUp(String email, String password, String name, String lang)
-            throws JandiNetworkException {
+    public ResCommon requestSignUp(String email, String password, String name, String lang) throws RetrofitError {
 
         ReqSignUpInfo signUpInfo = new ReqSignUpInfo(email, password, name, lang);
 
-        try {
-            return jandiRestClient.signUpAccount(signUpInfo);
-        } catch (HttpStatusCodeException e) {
-            throw new JandiNetworkException(e);
-        } catch (Exception e) {
-            throw new JandiNetworkException(
-                    new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getMessage()));
-        }
+        return RequestApiManager.getInstance().signUpAccountByMainRest(signUpInfo);
 
     }
+
 }

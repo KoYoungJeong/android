@@ -7,10 +7,9 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.JandiNetworkException;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 import rx.Subscription;
 
 /**
@@ -57,13 +56,17 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
 
             boolean isLastLinkId = false;
 
-            if (newMessage.records != null && newMessage.records.size() > 0) {
-                isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
+            if (newMessage.records != null) {
+                if (newMessage.records.size() > 0) {
+                    isLastLinkId = newMessage.lastLinkId == newMessage.records.get(newMessage.records.size() - 1).id;
 
-                messageListPresenter.addAndMove(newMessage.records);
+                    messageListPresenter.addAndMove(newMessage.records);
 
-                int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
-                messageState.setLastUpdateLinkId(lastLinkId);
+                    int lastLinkId = newMessage.records.get(newMessage.records.size() - 1).id;
+                    messageState.setLastUpdateLinkId(lastLinkId);
+                } else {
+                    isLastLinkId = true;
+                }
             }
 
             if (!isLastLinkId) {
@@ -73,9 +76,10 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
                 EventBus.getDefault().post(new ChatModeChangeEvent(false));
             }
 
-        } catch (JandiNetworkException e) {
-            LogUtil.e(e.getErrorInfo() + " : " + e.httpBody, e);
+        } catch (RetrofitError e) {
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
         }
     }

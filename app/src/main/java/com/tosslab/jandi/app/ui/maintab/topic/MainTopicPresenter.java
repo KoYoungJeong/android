@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.ExpandableListView;
@@ -26,20 +27,15 @@ import java.util.List;
 @EBean
 public class MainTopicPresenter {
 
-    @RootContext
-    Context context;
-
     @ViewById(R.id.list_main_topic)
     ExpandableListView topicListView;
 
     TopicListAdapter topicListAdapter;
     private ProgressWheel progressWheel;
 
-    @AfterInject
-    void initObject() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
-        topicListAdapter = new TopicListAdapter(context);
+    void initObject(Activity activity) {
+        progressWheel = new ProgressWheel(activity);
+        topicListAdapter = new TopicListAdapter(activity.getApplicationContext());
     }
 
     @AfterViews
@@ -48,7 +44,9 @@ public class MainTopicPresenter {
     }
 
     @UiThread
-    public void moveToMessageActivity(final int entityId, final int entityType, final boolean isStarred, int teamId) {
+    public void moveToMessageActivity(Context context,
+                                      final int entityId, final int entityType,
+                                      final boolean isStarred, int teamId) {
         MessageListV2Activity_.intent(context)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
@@ -69,12 +67,12 @@ public class MainTopicPresenter {
     }
 
     @UiThread
-    public void showToast(String message) {
+    public void showToast(Context context, String message) {
         ColoredToast.show(context, message);
     }
 
     @UiThread
-    public void showErrorToast(String message) {
+    public void showErrorToast(Context context, String message) {
         ColoredToast.showError(context, message);
     }
 

@@ -48,7 +48,6 @@ public class BaseChatListFragment extends Fragment {
 
     private void setProgressWheel() {
         mProgressWheel = new ProgressWheel(getActivity());
-        mProgressWheel.init();
     }
 
     protected void moveToPublicTopicMessageActivity(int channelId) {

@@ -17,6 +17,7 @@ import rx.Observable;
  * Created by justinygchoi on 14. 11. 10..
  */
 public class BadgeUtils {
+
     public static void setBadge(Context context, int count) {
         setBadgeSamsung(context, count);
         setBadgeSony(context, count);
@@ -26,7 +27,8 @@ public class BadgeUtils {
 
         int totalUnread = 0;
 
-        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfos = Observable.from(resLeftSideMenu.alarmInfos)
+        List<ResLeftSideMenu.AlarmInfo> alarmInfos = resLeftSideMenu.alarmInfos;
+        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(alarmInfos)
                 .filter(alarmInfo -> {
 
                     if (TextUtils.equals(alarmInfo.entityType, "chat")) {
@@ -44,8 +46,8 @@ public class BadgeUtils {
                 }).toBlocking()
                 .getIterator();
 
-        while (alarmInfos.hasNext()) {
-            totalUnread += alarmInfos.next().alarmCount;
+        while (alarmInfoIterator.hasNext()) {
+            totalUnread += alarmInfoIterator.next().alarmCount;
         }
 
         return totalUnread;
@@ -55,7 +57,6 @@ public class BadgeUtils {
         setBadgeSamsung(context, 0);
         clearBadgeSony(context);
     }
-
 
     private static void setBadgeSamsung(Context context, int count) {
         String launcherClassName = getLauncherClassName(context);

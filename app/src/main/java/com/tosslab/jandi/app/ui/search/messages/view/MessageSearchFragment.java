@@ -1,10 +1,11 @@
 package com.tosslab.jandi.app.ui.search.messages.view;
 
-import android.support.v7.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -22,7 +23,7 @@ import com.tosslab.jandi.app.events.search.MoreSearchRequestEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.events.search.SelectEntityEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.entities.EntityManager;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.messages.adapter.EntitySelectDialogAdatper;
@@ -38,6 +39,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -55,6 +57,9 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @Bean(MessageSearchPresenterImpl.class)
     MessageSearchPresenter messageSearchPresenter;
+
+    @FragmentArg
+    int entityId;
 
     @ViewById(R.id.list_search_messages)
     RecyclerView searchListView;
@@ -78,6 +83,8 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     private int scropMaxY;
     private int scropMinY;
     private boolean isFirstLayout = true;
+    private boolean isForeground;
+    private SearchActivity.OnSearchItemSelect onSearchItemSelect;
 
     @AfterViews
     void initObject() {
@@ -95,6 +102,11 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
                     SearchResult searchRecord = ((MessageSearchResultAdapter) adapter).getItem(position);
                     messageSearchPresenter.onRecordClick(searchRecord);
+
+                    if (onSearchItemSelect != null) {
+                        onSearchItemSelect.onSearchItemSelect();
+                    }
+
                 }
             }
         });
@@ -127,18 +139,24 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
             }
         });
 
+        if (entityId > 0) {
+            messageSearchPresenter.onInitEntityId(entityId);
+        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        isForeground = true;
     }
 
     @Override
     public void onPause() {
-        super.onPause();
+        isForeground = false;
         EventBus.getDefault().unregister(this);
+        super.onPause();
     }
 
     @Click(R.id.layout_search_scope_where)
@@ -152,15 +170,28 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     }
 
     public void onEvent(MoreSearchRequestEvent event) {
+
+        if (!isForeground) {
+            return;
+        }
+
         messageSearchPresenter.onMoreSearchRequest();
     }
 
     public void onEvent(SelectEntityEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
         messageSearchPresenter.onSelectEntity(event.getEntityId(), event.getName());
         onSearchHeaderReset();
     }
 
     public void onEvent(SelectMemberEvent event) {
+        if (!isForeground) {
+            return;
+        }
+
         messageSearchPresenter.onSelectMember(event.getMemberId(), event.getName());
         onSearchHeaderReset();
     }
@@ -315,6 +346,7 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Override
     public void startMessageListActivity(int currentTeamId, int entityId, int entityType, boolean isStarred, int linkId) {
         MessageListV2Activity_.intent(getActivity())
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(currentTeamId)
                 .entityId(entityId)
                 .entityType(entityType)
@@ -382,5 +414,10 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
     @Override
     public void initSearchLayoutIfFirst() {
         isFirstLayout = false;
+    }
+
+    @Override
+    public void setOnSearchItemSelect(SearchActivity.OnSearchItemSelect onSearchItemSelect) {
+        this.onSearchItemSelect = onSearchItemSelect;
     }
 }

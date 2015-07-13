@@ -1,0 +1,29 @@
+package com.tosslab.jandi.app.network.client.chat;
+
+import com.tosslab.jandi.app.JandiConstants;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
+import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
+import com.tosslab.jandi.app.network.models.ResChat;
+import com.tosslab.jandi.app.network.models.ResCommon;
+
+import java.util.List;
+
+import retrofit.http.GET;
+import retrofit.http.Headers;
+import retrofit.http.Path;
+
+/**
+ * Created by tee on 15. 6. 16..
+ */
+@AuthorizedHeader
+public interface ChatApiV2Client {
+
+    @GET("/members/{memberId}/chats")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    List<ResChat> getChatList(@Path("memberId") int memberId);
+
+    @DELETEWithBody("/members/{memberId}/chats/{entityId}")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon deleteChat(@Path("memberId") int teamId, @Path("entityId") int entityId);
+
+}

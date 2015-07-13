@@ -2,9 +2,9 @@ package com.tosslab.jandi.app.network.client.sticker;
 
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
-import com.tosslab.jandi.app.network.client.JandiEntityClient;
-import com.tosslab.jandi.app.network.client.JandiEntityClient_;
-import com.tosslab.jandi.app.network.manager.RequestManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -13,8 +13,6 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.network.models.sticker.ResSticker;
-import com.tosslab.jandi.app.ui.maintab.file.model.FileSearchRequest;
-import com.tosslab.jandi.app.utils.TokenUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +31,9 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(RobolectricGradleTestRunner.class)
 public class StickerApiClientTest {
 
-    private StickerApiClient stickerApiClient;
-
     @Before
     public void setUp() throws Exception {
         BaseInitUtil.initData(Robolectric.application);
-        stickerApiClient = new StickerApiClient_(Robolectric.application);
-
-        stickerApiClient.setAuthentication(TokenUtil.getRequestAuthentication(Robolectric.application));
     }
 
     @Test
@@ -50,8 +43,8 @@ public class StickerApiClientTest {
         int teamId = userTeams.get(0).getTeamId();
         JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
 
-        JandiEntityClient jandiEntityClient = JandiEntityClient_.getInstance_(Robolectric.application);
-        ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
+        EntityClientManager entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
+        ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 
         ResLeftSideMenu.Entity entity = totalEntitiesInfo.entities.get(0);
 
@@ -68,17 +61,16 @@ public class StickerApiClientTest {
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        ResCommon resCommon = stickerApiClient.sendSticker(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
+        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
         assertNotNull(resCommon);
 
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
-        resCommon = stickerApiClient.sendSticker(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
+        resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
         assertNotNull(resCommon);
     }
 
     @Test
     public void testSendStickerForComment() throws Exception {
-
 
         List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
         int teamId = userTeams.get(0).getTeamId();
@@ -97,14 +89,15 @@ public class StickerApiClientTest {
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
 
-        ResSearchFile resSearchFile = RequestManager.newInstance(Robolectric.application, FileSearchRequest.create(Robolectric.application, reqSearchFile)).request();
+
+        ResSearchFile resSearchFile = RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
 
         ResMessages.FileMessage fileMessage = ((ResMessages.FileMessage) resSearchFile.files.get(0));
 
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        stickerApiClient.sendStickerComment(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
+        RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
 
     }
 }

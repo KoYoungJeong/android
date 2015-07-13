@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_manipulate_entity"
@@ -11,14 +11,17 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/action_entity_starred"
+                android:title="@string/jandi_starred"/>
+            <item
                 android:id="@+id/action_entity_invite"
-                android:title="@string/jandi_action_invite" />
+                android:title="@string/jandi_action_invite"/>
             <item
                 android:id="@+id/action_entity_members"
-                android:title="@string/jandi_topic_paricipants" />
+                android:title="@string/jandi_topic_paricipants"/>
             <item
                 android:id="@+id/action_entity_leave"
-                android:title="@string/jandi_action_leave" />
+                android:title="@string/jandi_action_leave"/>
         </menu>
     </item>
 </menu>
