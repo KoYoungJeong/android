@@ -48,7 +48,7 @@ public class IntroActivity extends AppCompatActivity implements IntroActivityPre
     @Override
     public void moveTeamSelectActivity() {
         AccountHomeActivity_
-                .intent(getApplicationContext())
+                .intent(IntroActivity.this)
                 .start();
         finish();
     }
@@ -57,7 +57,7 @@ public class IntroActivity extends AppCompatActivity implements IntroActivityPre
     @Override
     public void moveToMainActivity() {
         // Move MainActivity
-        MainTabActivity_.intent(getApplicationContext())
+        MainTabActivity_.intent(IntroActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_NEW_TASK
                         | Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -70,9 +70,9 @@ public class IntroActivity extends AppCompatActivity implements IntroActivityPre
     @Override
     public void moveToIntroTutorialActivity() {
         // Move TutorialActivity
-        JandiSocketService.stopService(getApplicationContext());
+        JandiSocketService.stopService(IntroActivity.this);
 
-        IntroMainActivity_.intent(getApplicationContext()).start();
+        IntroMainActivity_.intent(IntroActivity.this).start();
 
         finish();
     }

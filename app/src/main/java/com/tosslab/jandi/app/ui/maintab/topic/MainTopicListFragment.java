@@ -80,6 +80,7 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterInject
     void initObject() {
+        mainTopicPresenter.initObject(getActivity());
 
         LogUtil.d("MainTopicListFragment");
 
@@ -93,7 +94,6 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterViews
     void initView() {
-        mainTopicPresenter.initObject(getActivity());
         LogUtil.d("MainTopicListFragment initView");
         topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -123,7 +123,7 @@ public class MainTopicListFragment extends Fragment {
                             ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
                     int teamId = JandiAccountDatabaseManager.getInstance(getActivity())
                             .getSelectedTeamInfo().getTeamId();
-                    mainTopicPresenter.moveToMessageActivity(getActivity().getApplicationContext(),
+                    mainTopicPresenter.moveToMessageActivity(getActivity(),
                             entity.getId(), entityType, entity.isStarred, teamId);
                 } else {
                     joinChannelInBackground(entity);
@@ -189,12 +189,12 @@ public class MainTopicListFragment extends Fragment {
             }
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
-            mainTopicPresenter.moveToMessageActivity(context,
+            mainTopicPresenter.moveToMessageActivity(getActivity(),
                     entity.getId(), entityType, entity.isStarred, teamId);
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(context,getString(R.string.err_entity_join));
+            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);

@@ -147,7 +147,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         addFileDetailViewAsListviewHeader();
 
         progressWheel = new ProgressWheel(this);
-        progressWheel.init();
 
         entityManager = EntityManager.getInstance(this);
 

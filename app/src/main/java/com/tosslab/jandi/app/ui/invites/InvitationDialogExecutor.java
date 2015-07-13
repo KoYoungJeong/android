@@ -37,7 +37,7 @@ public class InvitationDialogExecutor {
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
 
-    private ProgressWheel mProgressWheel;
+    private ProgressWheel progressWheel;
     private EntityManager entityManager;
 
     @Background
@@ -101,19 +101,19 @@ public class InvitationDialogExecutor {
 
     @UiThread
     void dismissProgressWheel() {
-        if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.dismiss();
+        if (progressWheel != null && progressWheel.isShowing()) {
+            progressWheel.dismiss();
         }
     }
 
     @UiThread
     void showProgressWheel() {
-        if (mProgressWheel == null) {
-            mProgressWheel = new ProgressWheel(activity);
+        if (progressWheel == null) {
+            progressWheel = new ProgressWheel(activity);
         }
 
-        if (mProgressWheel != null && !mProgressWheel.isShowing())
-            mProgressWheel.show();
+        if (progressWheel != null && !progressWheel.isShowing())
+            progressWheel.show();
     }
 
     private String getOwnerName() {

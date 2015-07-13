@@ -145,7 +145,7 @@ public class SettingsFragment extends PreferenceFragment {
             settingFragmentViewModel.dismissProgressDialog();
         }
 
-        settingFragmentViewModel.returnToLoginActivity(getActivity().getApplicationContext());
+        settingFragmentViewModel.returnToLoginActivity(getActivity());
     }
 
     private void removeSignData() {
