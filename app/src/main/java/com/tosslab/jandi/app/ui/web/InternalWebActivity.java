@@ -224,12 +224,12 @@ public class InternalWebActivity extends AppCompatActivity {
 
     @OptionsItem(R.id.action_open_to_browser)
     public void onOpenBrowserOptionSelect() {
-        internalWebPresenter.moveOtherBrowser(getApplicationContext(), internalWebPresenter.getCurrentUrl());
+        internalWebPresenter.moveOtherBrowser(InternalWebActivity.this, internalWebPresenter.getCurrentUrl());
     }
 
     @OptionsItem(R.id.action_share_to_app)
     public void onShareToAppOptionSelect() {
-        internalWebPresenter.sendOtherApp(getApplicationContext(),
+        internalWebPresenter.sendOtherApp(InternalWebActivity.this,
                 internalWebPresenter.getCurrentTitle(), internalWebPresenter.getCurrentUrl());
     }
 
