@@ -80,14 +80,14 @@ dependencies {
     compile 'org.springframework.android:spring-android-core:1.0.+'
     compile 'org.springframework.android:spring-android-rest-template:1.0+'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.+'
-    compile 'com.github.nkzawa:socket.io-client:0.5.0'
+    compile 'com.github.nkzawa:socket.io-client:0.5.2'
 
     // Cache
     compile 'com.github.bumptech.glide:glide:3.6.0' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
     // Analytics & report
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
-    compile 'com.parse.bolts:bolts-android:1.1.4'
+    compile 'com.parse.bolts:bolts-android:1.2.0'
 
     // RxJava
     compile 'io.reactivex:rxandroid:0.24.+'
@@ -153,6 +153,9 @@ android {
         inhouse {
             versionName(defaultConfig.versionName + "." + inhouse_version)
             buildTypes {
+                release {
+                    debuggable true
+                }
             }
         }
 

@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="34dp"
         android:layout_marginTop="@dimen/jandi_file_detail_comment_message_margin_top"
-        android:autoLink="web"
         android:text="HiHi\nThis is Comment"
         android:textColor="@color/jandi_file_detail_comment_text"
         android:textSize="@dimen/jandi_file_detail_comment_date_text"/>

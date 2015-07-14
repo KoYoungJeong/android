@@ -33,7 +33,7 @@ public class SearchPresenterImpl implements SearchPresenter {
         objectPublishSubject = PublishSubject.create();
 
         objectPublishSubject
-                .throttleLast(500, TimeUnit.MILLISECONDS)
+                .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {
                     @Override

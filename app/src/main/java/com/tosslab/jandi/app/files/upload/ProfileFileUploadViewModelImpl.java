@@ -157,6 +157,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
         if (progressWheel == null) {
             progressWheel = new ProgressWheel(activity);
+            progressWheel.setCancelable(false);
         }
 
         if (!progressWheel.isShowing()) {

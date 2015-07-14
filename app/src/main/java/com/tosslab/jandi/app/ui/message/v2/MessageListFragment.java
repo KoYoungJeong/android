@@ -365,13 +365,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messageListModel.setEntityInfo(entityType, entityId);
 
-
         String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
         messageListPresenter.setSendEditText(tempMessage);
-
-        sendMessagePublisherEvent(new OldMessageQueue(messageState));
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
-        sendMessagePublisherEvent(new CheckAnnouncementQueue());
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
             messageListPresenter.disableChat();
@@ -392,6 +387,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         insertEmptyMessage();
 
         initAnnouncementListeners();
+
+        sendMessagePublisherEvent(new OldMessageQueue(messageState));
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementQueue());
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
