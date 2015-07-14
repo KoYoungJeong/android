@@ -28,8 +28,8 @@ public class JandiSocketConnector implements SocketConnector {
             return socket;
         }
 
+        status = Status.CONNECTING;
         if (socket == null) {
-            status = Status.CONNECTING;
             try {
                 IO.Options options = new IO.Options();
                 options.reconnection = false;
@@ -95,6 +95,8 @@ public class JandiSocketConnector implements SocketConnector {
                     e.printStackTrace();
                 }
             }
+            //FIXME NullPointerException 여지가 있을지?
+            socket = null;
             status = Status.READY;
         }
     }
