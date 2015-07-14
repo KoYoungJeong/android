@@ -28,6 +28,7 @@ import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -151,9 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
     private void removeSignData() {
         JandiPreference.signOut(getActivity());
 
-        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
-        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
-        parseInstallation.saveInBackground();
+        ParseUpdateUtil.deleteChannelOnServer();
 
         JandiAccountDatabaseManager.getInstance(getActivity()).clearAllData();
     }

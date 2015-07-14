@@ -544,12 +544,47 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
     }
 
+    @Click(R.id.btn_message_sticker)
+    void onStickerClick(View view) {
+        boolean selected = view.isSelected();
+
+        if (selected) {
+            stickerViewModel.dismissStickerSelector();
+        } else {
+            int keyboardHeight = JandiPreference.getKeyboardHeight(FileDetailActivity.this.getApplicationContext());
+            if (keyboardHeight > 0) {
+                hideSoftKeyboard();
+                stickerViewModel.showStickerSelector(keyboardHeight);
+                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
+                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                        if (isShow) {
+                            stickerViewModel.dismissStickerSelector();
+                        }
+                    });
+                }
+            } else {
+                initKeyboardHeight();
+            }
+        }
+    }
+
+    private void initKeyboardHeight() {
+        EditText etMessage = etComment;
+        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
+            onStickerClick(findViewById(R.id.btn_message_sticker));
+            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
+        });
+
+        etMessage.requestFocus();
+        showKeyboard();
+    }
+
+
     /**
      * *********************************************************
      * 댓글 작성 관련
      * **********************************************************
      */
-
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
         CharSequence text = etComment.getText();
@@ -701,6 +736,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
         int userEntityId = event.userId;
         fileDetailPresenter.getProfile(userEntityId);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!stickerViewModel.isShowStickerSelector()) {
+            super.onBackPressed();
+        } else {
+            stickerViewModel.dismissStickerSelector();
+        }
     }
 
     @UiThread

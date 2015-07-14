@@ -82,16 +82,16 @@ public class ParseUpdateUtil {
                                     removeChannles.add(savedChannel);
                                 }
                             }
-                            currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
                             try {
+                                currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
                                 currentInstallation.save();
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         }
 
-                        currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
                         try {
+                            currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
                             currentInstallation.save();
                         } catch (ParseException e) {
                             e.printStackTrace();
