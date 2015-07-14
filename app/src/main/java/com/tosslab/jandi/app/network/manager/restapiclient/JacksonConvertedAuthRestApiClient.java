@@ -516,4 +516,19 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     public ResCommon deleteFileByFileApi(int teamId, int fileId) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().deleteFile(teamId, fileId);
     }
+
+    @Override
+    public List<ResMessages.FileMessage> searchInitImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchInitImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public List<ResMessages.FileMessage> searchOldImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchOldImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchNewImageFile(teamId, roomId, messageId, count);
+    }
 }

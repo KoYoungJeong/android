@@ -594,4 +594,19 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     public IExecutor<ResCommon> loaderDeleteFileByFileApi(int teamId, int fileId) {
         return () -> authRestApiClient.deleteFileByFileApi(teamId, fileId);
     }
+
+    @Override
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchInitImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return () -> authRestApiClient.searchInitImageFileByFileApi(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchOldImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return () -> authRestApiClient.searchOldImageFileByFileApi(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public IExecutor<List<ResMessages.FileMessage>> loaderSearchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return () -> authRestApiClient.searchNewImageFileByFileApi(teamId, roomId, messageId, count);
+    }
 }
