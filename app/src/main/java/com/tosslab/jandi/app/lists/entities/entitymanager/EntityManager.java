@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import rx.Observable;
 
@@ -276,7 +275,12 @@ public class EntityManager {
     }
 
     public String getDistictId() {
-        return mMe.id + "-" + mMyTeam.id;
+        // FIXME Why null???
+        if (mMe != null && mMyTeam != null) {
+            return mMe.id + "-" + mMyTeam.id;
+        } else {
+            return "unknown";
+        }
     }
 
     public String getTeamName() {
