@@ -49,6 +49,12 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @AfterViews
     void initViews() {
+
+        if (!accountHomeModel.checkAccount(context)) {
+            view.invalidAccess();
+            return ;
+        }
+
         getAccountInfo();
         getTeamInfo();
     }

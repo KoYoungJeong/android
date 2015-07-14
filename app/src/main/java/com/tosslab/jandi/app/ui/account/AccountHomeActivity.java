@@ -315,6 +315,11 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     }
 
     @Override
+    public void invalidAccess() {
+        finish();
+    }
+
+    @Override
     public void moveAfterInvitaionAccept() {
         accountHomePresenter.onTeamCreateAcceptResult();
     }

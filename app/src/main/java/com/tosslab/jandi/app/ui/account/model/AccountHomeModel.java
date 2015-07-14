@@ -121,4 +121,7 @@ public class AccountHomeModel {
         return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
     }
 
+    public boolean checkAccount(Context context) {
+        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo() != null;
+    }
 }

@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.services.socket;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
@@ -27,7 +26,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
-import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileCommentEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketFileDeleteEvent;
@@ -41,8 +39,8 @@ import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketTopicEvent;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -63,12 +61,14 @@ public class JandiSocketServiceModel {
     private final Context context;
     private final ObjectMapper objectMapper;
     private PublishSubject<SocketRoomMarkerEvent> markerPublishSubject;
-    private Subscription subscribe;
+    private Subscription markerSubscribe;
+    private EntitySocketModel entitySocketModel;
 
     public JandiSocketServiceModel(Context context) {
 
         this.context = context;
         this.objectMapper = JacksonMapper.getInstance().getObjectMapper();
+        entitySocketModel = new EntitySocketModel(context);
     }
 
 
@@ -89,19 +89,26 @@ public class JandiSocketServiceModel {
 
         String token = JandiPreference.getAccessToken(context);
         return new ConnectTeam(token,
-                selectedTeamInfo.getTeamId(), selectedTeamInfo.getName(),
+                UserAgentUtil.getDefaultUserAgent(context),
+                selectedTeamInfo.getTeamId(),
+                selectedTeamInfo.getName(),
                 selectedTeamInfo.getMemberId(), me.getName());
     }
 
     public void refreshEntity() {
-        refreshEntity(true, null);
+        refreshEntity(true, null, null, false);
     }
 
-    public void refreshEntity(boolean postRetrieveEvent, String socketMessageEventContent) {
-        Intent intent = new Intent(context, BadgeHandleService.class);
-        intent.putExtra(BadgeHandleService.KEY_POST_RETRIEVE_TOPIC_EVENT, postRetrieveEvent);
-        intent.putExtra(BadgeHandleService.KEY_SOCKET_MESSAGE_EVENT, socketMessageEventContent);
-        context.startService(intent);
+    public void refreshEntity(Object event, boolean parseUpdate) {
+        refreshEntity(true, null, event, parseUpdate);
+    }
+
+    public void refreshEntity(boolean postRetrieveEvent
+            , String socketMessageEventContent
+            , Object event, boolean parseUpdate) {
+
+        entitySocketModel.refreshEntity(new EntitySocketModel.EntityRefreshEventWrapper
+                (postRetrieveEvent, parseUpdate, socketMessageEventContent, event));
     }
 
     public void refreshAccountInfo() {
@@ -146,7 +153,7 @@ public class JandiSocketServiceModel {
             if (TextUtils.equals(messageType, "topic_leave")
                     || TextUtils.equals(messageType, "topic_join")
                     || TextUtils.equals(messageType, "topic_invite")) {
-                refreshEntity(true, content);
+                refreshEntity(true, content, socketMessageEvent, false);
             } else {
                 postEvent(socketMessageEvent);
             }
@@ -156,11 +163,10 @@ public class JandiSocketServiceModel {
     }
 
     public void refreshTopicState(Object object) {
-        refreshEntity();
         try {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
-            postEvent(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()));
+            refreshEntity(new TopicInfoUpdateEvent(socketTopicEvent.getTopic().getId()), false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -171,14 +177,13 @@ public class JandiSocketServiceModel {
     }
 
     public void refreshMemberProfile(Object object) {
-        refreshEntity();
         try {
             SocketMemberProfileEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketMemberProfileEvent.class);
 
             ResLeftSideMenu.User member = socketTopicEvent.getMember();
 
-            postEvent(new ProfileChangeEvent(member));
+            refreshEntity(new ProfileChangeEvent(member), false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -186,24 +191,21 @@ public class JandiSocketServiceModel {
     }
 
     public void refreshTopicDelete(Object object) {
-        refreshEntity();
         try {
             SocketTopicEvent socketTopicEvent =
                     objectMapper.readValue(object.toString(), SocketTopicEvent.class);
-            postEvent(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()));
 
-            ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
+            refreshEntity(new TopicDeleteEvent(socketTopicEvent.getTopic().getId()), true);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void refreshMemberStarred(Object object) {
-        refreshEntity();
         try {
             SocketMemberEvent socketMemberEvent =
                     objectMapper.readValue(object.toString(), SocketMemberEvent.class);
-            postEvent(new MemberStarredEvent(socketMemberEvent.getMember().getId()));
+            refreshEntity(new MemberStarredEvent(socketMemberEvent.getMember().getId()), false);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -273,7 +275,8 @@ public class JandiSocketServiceModel {
 
     public void startMarkerObserver() {
         markerPublishSubject = PublishSubject.create();
-        subscribe = markerPublishSubject.throttleLast(1000 * 10, TimeUnit.MILLISECONDS)
+        markerSubscribe = markerPublishSubject.throttleWithTimeout(1000 * 10, TimeUnit.MILLISECONDS)
+                .onBackpressureBuffer()
                 .subscribe(o -> {
                     EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
                     try {
@@ -295,8 +298,8 @@ public class JandiSocketServiceModel {
     }
 
     public void stopMarkerObserver() {
-        if (subscribe != null && !subscribe.isUnsubscribed()) {
-            subscribe.unsubscribe();
+        if (markerSubscribe != null && !markerSubscribe.isUnsubscribed()) {
+            markerSubscribe.unsubscribe();
         }
     }
 
@@ -320,4 +323,9 @@ public class JandiSocketServiceModel {
             e.printStackTrace();
         }
     }
+
+    public void stopRefreshEntityObserver() {
+        entitySocketModel.stopObserver();
+    }
+
 }

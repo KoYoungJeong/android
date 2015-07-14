@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import rx.Observable;
+
 /**
  * Created by justinygchoi on 2014. 8. 11..
  */
@@ -27,17 +29,17 @@ public class EntityManager {
     private ResLeftSideMenu.Team mMyTeam;
     private ResLeftSideMenu.User mMe;   // with MessageMarker
 
-    private HashMap<Integer, FormattedEntity> mJoinedTopics;
-    private HashMap<Integer, FormattedEntity> mUnjoinedTopics;
-    private HashMap<Integer, FormattedEntity> mUsers;
-    private HashMap<Integer, FormattedEntity> mJoinedUsers;
-    private HashMap<Integer, FormattedEntity> mGroups;
+    private Map<Integer, FormattedEntity> mJoinedTopics;
+    private Map<Integer, FormattedEntity> mUnjoinedTopics;
+    private Map<Integer, FormattedEntity> mUsers;
+    private Map<Integer, FormattedEntity> mJoinedUsers;
+    private Map<Integer, FormattedEntity> mGroups;
 
-    private HashMap<Integer, FormattedEntity> mStarredJoinedTopics;
-    private HashMap<Integer, FormattedEntity> mStarredUsers;
-    private HashMap<Integer, FormattedEntity> mStarredGroups;
+    private Map<Integer, FormattedEntity> mStarredJoinedTopics;
+    private Map<Integer, FormattedEntity> mStarredUsers;
+    private Map<Integer, FormattedEntity> mStarredGroups;
 
-    private HashMap<Integer, ResLeftSideMenu.MessageMarker> mMarkers;
+    private Map<Integer, ResLeftSideMenu.MessageMarker> mMarkers;
 
     // Collection 의 Sort 는 연산 시간이 오래 걸리기 때문에 한번만 하기 위해 저장하자.
     private List<FormattedEntity> mSortedJoinedTopics = null;
@@ -238,16 +240,22 @@ public class EntityManager {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
 
         if (mStarredUsers != null) {
-            Map<Integer, FormattedEntity> clone = (Map<Integer, FormattedEntity>) mStarredUsers.clone();
-            clone.remove(mMe.id);
-            ret.addAll(clone.values());
+            Observable.from(mStarredUsers.values())
+                    .filter(formattedEntity -> formattedEntity.getId() != mMe.id)
+                    .collect(() -> ret, (o, formattedEntity1) -> o.add(formattedEntity1))
+                    .subscribe();
         }
 
         if (mSortedUsersWithoutMe == null) {
-            HashMap<Integer, FormattedEntity> usersWithoutMe
-                    = (HashMap<Integer, FormattedEntity>) mUsers.clone();
-            usersWithoutMe.remove(mMe.id);
-            mSortedUsersWithoutMe = sortFormattedEntityList(usersWithoutMe.values());
+
+            List<FormattedEntity> tempEntities = new ArrayList<FormattedEntity>();
+
+            Observable.from(mUsers.values())
+                    .filter(formattedEntity -> formattedEntity.getId() != mMe.id)
+                    .collect(() -> tempEntities, (o, formattedEntity1) -> o.add(formattedEntity1))
+                    .subscribe();
+
+            mSortedUsersWithoutMe = sortFormattedEntityList(tempEntities);
         }
 
         ret.addAll(mSortedUsersWithoutMe);
@@ -267,7 +275,12 @@ public class EntityManager {
     }
 
     public String getDistictId() {
-        return mMe.id + "-" + mMyTeam.id;
+        // FIXME Why null???
+        if (mMe != null && mMyTeam != null) {
+            return mMe.id + "-" + mMyTeam.id;
+        } else {
+            return "unknown";
+        }
     }
 
     public String getTeamName() {
@@ -359,17 +372,12 @@ public class EntityManager {
     private List<FormattedEntity> extractExclusivedUser(List<Integer> joinedMembers) {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
 
-        HashMap<Integer, FormattedEntity> starredUsers
-                = (HashMap<Integer, FormattedEntity>) mStarredUsers.clone();
-        HashMap<Integer, FormattedEntity> users
-                = (HashMap<Integer, FormattedEntity>) mUsers.clone();
+        Observable.merge(Observable.from(mStarredUsers.values()), Observable.from(mUsers.values()))
+                .filter(formattedEntity -> !joinedMembers.contains(formattedEntity.getId()))
+                .collect(() -> ret, (formattedEntities
+                        , formattedEntity1) -> formattedEntities.add(formattedEntity1))
+                .subscribe();
 
-        for (int id : joinedMembers) {
-            starredUsers.remove(id);
-            users.remove(id);
-        }
-        ret.addAll(starredUsers.values());
-        ret.addAll(users.values());
         return ret;
     }
 

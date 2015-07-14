@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.filedetail.fileinfo;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -102,6 +103,16 @@ public class ImageThumbLoader implements FileThumbLoader {
                     .crossfade(true)
                     .load(url);
             return;
+        }
+
+        if (context == null) {
+            return;
+        }
+
+        if (context instanceof Activity) {
+            if (((Activity) context).isFinishing()) {
+                return;
+            }
         }
 
         Glide.with(context)

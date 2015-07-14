@@ -71,7 +71,7 @@
             android:layout_marginLeft="4dp"
             android:layout_toRightOf="@+id/txt_message_commented_create_date"
             android:text="99"
-            android:textColor="?android:attr/colorAccent"
+            android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_smaller"
             android:textStyle="bold"/>
 

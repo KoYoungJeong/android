@@ -15,7 +15,6 @@
         android:id="@+id/vg_image_album_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/vg_image_album_content_selected"
         android:layout_alignWithParentIfMissing="true"
         android:layout_below="@+id/toolbar_image_album" />
 
