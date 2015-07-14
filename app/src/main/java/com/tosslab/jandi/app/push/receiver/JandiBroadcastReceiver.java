@@ -78,10 +78,18 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void subscribeTopic(String chatId) {
-        ParsePush.subscribeInBackground(chatId);
+        try {
+            ParsePush.subscribeInBackground(chatId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void unsubscribeTopic(String chatId) {
-        ParsePush.unsubscribeInBackground(chatId);
+        try {
+            ParsePush.unsubscribeInBackground(chatId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
