@@ -442,7 +442,7 @@
     <string name="jandi_coach_mark_filelist_explain2">모든 파일을 볼 수 있습니다</string>
 
     <string name="jandi_coach_mark_directmessage_explain1">팀 멤버에게 1:1로 보낸 메시지는</string>
-    <string name="jandi_coach_mark_directmessage_explain2">여기서 볼 수 있어요.</string>
+    <string name="jandi_coach_mark_directmessage_explain2">여기서 볼 수 있습니다.</string>
     <string name="jandi_coach_mark_directmessage_choose_member">1:1 메시지를 보낼 멤버 찾기</string>
 
     <string name="jandi_coach_mark_more_profile">프로필\n변경하기</string>
