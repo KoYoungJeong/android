@@ -40,6 +40,10 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class AnnouncementViewModel {
 
+    private ResAnnouncement announcement;
+    private boolean isOpened;
+    private boolean isAfterViews;
+
     public interface OnAnnouncementOpenListener {
         void onOpen();
     }
@@ -83,10 +87,27 @@ public class AnnouncementViewModel {
     @AfterViews
     void init() {
         textLineDetermineRunnable = new TextLineDetermineRunnable(tvAnnouncementMessage);
+
+        isAfterViews = true;
+
+        if (announcement != null) {
+            initAnnouncement(announcement, isOpened);
+        }
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setAnnouncement(ResAnnouncement announcement, boolean isOpened) {
+        this.announcement = announcement;
+        this.isOpened = isOpened;
+
+        if (!isAfterViews) {
+            return;
+        }
+
+        initAnnouncement(announcement, isOpened);
+    }
+
+    private void initAnnouncement(ResAnnouncement announcement, boolean isOpened) {
         if (announcement == null || announcement.isEmpty()) {
             vgAnnouncement.setVisibility(View.GONE);
             return;
