@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.parse.ParsePush;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -78,10 +77,18 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void subscribeTopic(String chatId) {
-        ParsePush.subscribeInBackground(chatId);
+        try {
+            ParsePush.subscribeInBackground(chatId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void unsubscribeTopic(String chatId) {
-        ParsePush.unsubscribeInBackground(chatId);
+        try {
+            ParsePush.unsubscribeInBackground(chatId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
