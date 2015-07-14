@@ -420,7 +420,7 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_save">저장</string>
 
     <!-- tutorial -->
-    <string name="jandi_coach_mark_search_message">Search messages\nin Topics</string>
+    <string name="jandi_coach_mark_search_message">Search for messages</string>
     <string name="jandi_coach_mark_create_new_topics">Create new topics</string>
 
     <string name="jandi_coach_mark_topic_list_welcome">Welcome!</string>
@@ -431,9 +431,9 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_coach_mark_topic_explain1">Instantly send messages and</string>
     <string name="jandi_coach_mark_topic_explain2">files to members of this topic</string>
 
-    <string name="jandi_coach_mark_topic_message_search">Message search</string>
+    <string name="jandi_coach_mark_topic_message_search">Message\nsearch</string>
     <string name="jandi_coach_mark_topic_file_search">File drawer\nand search</string>
-    <string name="jandi_coach_mark_topic_setting">Additional\nTopic info and settings\n(eg invite,\nleave, rename)</string>
+    <string name="jandi_coach_mark_topic_setting">Topic info and settings\n(eg invite,\nleave, rename)</string>
     <string name="jandi_coach_mark_upload_file">Upload files</string>
     <string name="jandi_coach_mark_stickers">Stickers</string>
 

@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -17,6 +18,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -88,8 +91,8 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
@@ -391,10 +394,26 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
+
+        if (!JandiPreference.isAleadyShowCoachMarkTopic(getActivity().getApplicationContext())) {
+            showCoachMark();
+        }
+
+    }
+
+    private void showCoachMark() {
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.setContentView(R.layout.dialog_coach_mark_topic);
+        dialog.setCanceledOnTouchOutside(true);
+        View masterView = dialog.findViewById(R.id.coach_mark_master_view);
+        masterView.setOnClickListener(view -> dialog.dismiss());
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        dialog.show();
     }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
-
         messageListPresenter.showStickerPreview(stickerInfo);
         if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
             messageListPresenter.loadSticker(stickerInfo);

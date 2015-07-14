@@ -21,14 +21,18 @@
         android:layout_below="@id/iv_topic_search_guide_icon"
         android:layout_marginRight="8dp"
         android:gravity="center|right"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDx="-1"
+        android:shadowDy="-1"
+        android:shadowRadius="1"
         android:text="@string/jandi_coach_mark_search_message"
-        android:textColor="#FF19c1ff"
+        android:textColor="@color/jandi_coach_mark_text"
         android:textSize="14sp"
         android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
@@ -37,6 +41,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="28dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDx="-1"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
             android:text="@string/jandi_coach_mark_directmessage_explain1"
             android:textColor="@color/white"
             android:textSize="15sp"
@@ -47,6 +55,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDx="-1"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
             android:text="@string/jandi_coach_mark_directmessage_explain2"
             android:textColor="@color/white"
             android:textSize="15sp"
@@ -67,20 +79,24 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="19dp"
-        android:layout_marginRight="-2dp"
+        android:layout_marginBottom="19.5dp"
+        android:layout_marginRight="-1.3dp"
         android:src="@drawable/icon_create_guide" />
 
     <TextView
-        android:layout_width="150dp"
-        android:layout_height="16dp"
+        android:layout_width="170dp"
+        android:layout_height="36dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="43dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginRight="8dp"
         android:layout_toLeftOf="@id/iv_create_guide_icon"
         android:gravity="center|right"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDx="-1"
+        android:shadowDy="-1"
+        android:shadowRadius="1"
         android:text="@string/jandi_coach_mark_directmessage_choose_member"
-        android:textColor="#FF19c1ff"
+        android:textColor="@color/jandi_coach_mark_text"
         android:textSize="14sp"
         android:textStyle="bold" />
 

@@ -196,5 +196,8 @@
 
     <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
 
+    <color name="jandi_coach_mark_text">#FF19c1ff</color>
+    <color name="jandi_coach_mark_text_shadow">#DD000000</color>
+
 
 </resources>

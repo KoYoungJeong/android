@@ -22,8 +22,12 @@
         android:layout_below="@id/iv_topic_search_guide_icon"
         android:layout_marginRight="8dp"
         android:gravity="center|right"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDx="-1"
+        android:shadowDy="-1"
+        android:shadowRadius="1"
         android:text="@string/jandi_coach_mark_filelist_search"
-        android:textColor="#FF19c1ff"
+        android:textColor="@color/jandi_coach_mark_text"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -51,7 +55,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="3dp"
                 android:layout_marginTop="-1dp"
-
+                android:shadowColor="@color/jandi_coach_mark_text_shadow"
+                android:shadowDx="-1"
+                android:shadowDy="-1"
+                android:shadowRadius="1"
                 android:text="@string/jandi_file_category_everyone"
                 android:textColor="@color/white"
                 android:textSize="13dp" />
@@ -68,7 +75,7 @@
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="#3c3d3e"
+            android:background="#606263"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -77,6 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="3dp"
                 android:layout_marginTop="-1dp"
+                android:shadowColor="@color/jandi_coach_mark_text_shadow"
+                android:shadowDx="-1"
+                android:shadowDy="-1"
+                android:shadowRadius="1"
                 android:text="@string/jandi_file_category_everywhere"
                 android:textColor="@color/white"
                 android:textSize="13dp" />
@@ -93,7 +104,7 @@
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="#3c3d3e"
+            android:background="#606263"
             android:gravity="center_vertical|right"
             android:orientation="horizontal">
 
@@ -102,6 +113,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="3dp"
                 android:layout_marginTop="-1dp"
+                android:shadowColor="@color/jandi_coach_mark_text_shadow"
+                android:shadowDx="-1"
+                android:shadowDy="-1"
+                android:shadowRadius="1"
                 android:text="@string/jandi_file_category_all"
                 android:textColor="@color/white"
                 android:textSize="13dp" />
@@ -118,11 +133,14 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="18dp"
+        android:layout_height="36dp"
         android:layout_below="@id/ll_filename_sort"
         android:gravity="center"
+        android:shadowDx="-1"
+        android:shadowDy="-1"
+        android:shadowRadius="1"
         android:text="@string/jandi_coach_mark_filelist_sort"
-        android:textColor="#FF19c1ff"
+        android:textColor="@color/jandi_coach_mark_text"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -137,6 +155,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="28dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDx="-1"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
             android:text="@string/jandi_coach_mark_filelist_explain1"
             android:textColor="@color/white"
             android:textSize="15sp"
@@ -147,6 +169,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDx="-1"
+            android:shadowDy="-1"
+            android:shadowRadius="1"
             android:text="@string/jandi_coach_mark_filelist_explain2"
             android:textColor="@color/white"
             android:textSize="15sp"
