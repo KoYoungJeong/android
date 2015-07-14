@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -34,8 +35,14 @@ public class ParseUpdateUtil {
                 .observeOn(Schedulers.io())
                 .map(userTeam -> {
                     LogUtil.d("UpdateParseWithoutSelectedTeam");
-                    return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
+                    try {
+                        return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
+                    } catch (RetrofitError retrofitError) {
+                        retrofitError.printStackTrace();
+                        return null;
+                    }
                 })
+                .filter(resLeftSideMenu1 -> resLeftSideMenu1 != null)
                 .map(resLeftSideMenu -> {
                     int myId = resLeftSideMenu.user.id;
 
