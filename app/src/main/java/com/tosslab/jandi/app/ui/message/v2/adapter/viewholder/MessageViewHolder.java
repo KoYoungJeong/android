@@ -22,7 +22,7 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
-import com.tosslab.jandi.app.views.spannable.UnreadCountSpannable;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -118,12 +118,14 @@ public class MessageViewHolder implements BodyViewHolder {
                     link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
             if (unreadCount > 0) {
-                UnreadCountSpannable unreadCountSpannable =
-                        UnreadCountSpannable.createUnreadCountSpannable(
-                                context, String.valueOf(unreadCount));
-                messageStringBuilder.append("   ")
-                        .setSpan(unreadCountSpannable,
-                                messageStringBuilder.length() - 2, messageStringBuilder.length() - 1,
+                NameSpannable unreadCountSpannable =
+                        new NameSpannable(
+                                context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
+                                , context.getResources().getColor(R.color.jandi_accent_color));
+                int beforeLength = messageStringBuilder.length();
+                messageStringBuilder.append(" ");
+                messageStringBuilder.append(String.valueOf(unreadCount))
+                        .setSpan(unreadCountSpannable, beforeLength, messageStringBuilder.length(),
                                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
 
