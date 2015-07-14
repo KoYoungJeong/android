@@ -153,6 +153,9 @@ android {
         inhouse {
             versionName(defaultConfig.versionName + "." + inhouse_version)
             buildTypes {
+                release {
+                    debuggable true
+                }
             }
         }
 
