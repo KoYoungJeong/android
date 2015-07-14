@@ -30,7 +30,7 @@ import uk.co.senab.photoview.PhotoView;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 9..
  */
-@EFragment(R.layout.activity_photo_view)
+@EFragment(R.layout.fragment_photo_view)
 public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.View {
 
     public static final String TASK_ID_ACTIONBAR_HIDE = "actionbar_hide";

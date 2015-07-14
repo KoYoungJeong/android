@@ -41,10 +41,10 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
 
     @Background
     @Override
-    public void getImageFiles(int entityId, int startLinkId, Context context) {
+    public void getImageFiles(int roomId, int startLinkId, Context context) {
         List<CarouselFileInfo> imageFiles = null;
         try {
-            ReqSearchFile reqSearchFile = carouselViewerModel.getReqSearchFile(entityId, startLinkId, context);
+            ReqSearchFile reqSearchFile = carouselViewerModel.getReqSearchFile(roomId, startLinkId, context);
 
             ResSearchFile resSearchFile = carouselViewerModel.searchFileList(reqSearchFile, context);
 
@@ -52,7 +52,7 @@ public class CarouselViewerPresenterImpl implements CarouselViewerPresenter {
                 // TODO 더이상 갱신 요청할 것 없음
             }
 
-            imageFiles = carouselViewerModel.getImageFileConvert(entityId, context, resSearchFile);
+            imageFiles = carouselViewerModel.getImageFileConvert(roomId, context, resSearchFile);
 
         } catch (Exception e) {
             e.printStackTrace();

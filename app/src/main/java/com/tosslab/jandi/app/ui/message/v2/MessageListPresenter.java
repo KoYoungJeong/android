@@ -303,7 +303,6 @@ public class MessageListPresenter {
     public void moveFileDetailActivity(Fragment fragment, int messageId, int entityId) {
         FileDetailActivity_
                 .intent(fragment)
-                .entityId(entityId)
                 .fileId(messageId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         activity.overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);

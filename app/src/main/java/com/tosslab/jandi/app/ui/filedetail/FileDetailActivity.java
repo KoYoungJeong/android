@@ -67,7 +67,6 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -96,9 +95,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     @Extra
     public int fileId;
-
-    @Extra
-    int entityId = -1;
 
     @Bean
     FileDetailModel fileDetailModel;
@@ -808,7 +804,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
-        fileHeadManager.setFileInfo(fileMessage, entityId);
+        fileHeadManager.setFileInfo(fileMessage);
 
         if (TextUtils.equals(fileMessage.status, "archived")) {
             vgCommentLayout.setVisibility(View.GONE);

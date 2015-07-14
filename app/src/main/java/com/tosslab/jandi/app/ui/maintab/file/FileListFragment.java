@@ -521,7 +521,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
-                .entityId(mSearchEntity)
                 .fileId(fileId)
                 .startForResult(JandiConstants.TYPE_FILE_DETAIL_REFRESH);
         getActivity().overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);

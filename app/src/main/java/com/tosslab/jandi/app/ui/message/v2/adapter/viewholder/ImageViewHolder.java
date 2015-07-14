@@ -137,7 +137,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 BitmapUtil.getOptimizedImageUrl(context, fileContent);
 
                         fileImageView.setOnClickListener(view -> CarouselViewerActivity_.intent(context)
-                                .entityId(entityId)
+                                .roomId(roomId)
                                 .startLinkId(link.messageId)
                                 .start());
 

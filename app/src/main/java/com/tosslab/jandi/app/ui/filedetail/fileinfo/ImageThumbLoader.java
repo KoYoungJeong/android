@@ -11,6 +11,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
+import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
@@ -31,7 +32,7 @@ public class ImageThumbLoader implements FileThumbLoader {
     }
 
     @Override
-    public void loadThumb(ResMessages.FileMessage fileMessage, int entityId) {
+    public void loadThumb(ResMessages.FileMessage fileMessage) {
         ResMessages.FileContent content = fileMessage.content;
         MimeTypeUtil.SourceType sourceType = SourceTypeUtil.getSourceType(content.serverUrl);
         iconFileType.setImageResource(
@@ -69,9 +70,11 @@ public class ImageThumbLoader implements FileThumbLoader {
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> {
                         String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(context, content);
-                        CarouselViewerActivity_
+                        PhotoViewActivity_
                                 .intent(context)
-                                .startLinkId(fileMessage.id)
+                                .imageUrl(optimizedImageUrl)
+                                .imageName(content.name)
+                                .imageType(content.type)
                                 .start();
                     });
                     break;

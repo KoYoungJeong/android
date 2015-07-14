@@ -1,52 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/background_dark">
-
-    <uk.co.senab.photoview.PhotoView
-        android:id="@+id/pv_photoview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignWithParentIfMissing="true"/>
-
-    <LinearLayout
-        android:id="@+id/vg_photoview_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:layout_gravity="center">
-
-            <com.tosslab.jandi.app.ui.photo.widget.CircleProgress
-                android:id="@+id/progress_photoview"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_photoview_percentage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="0%"
-                android:textColor="@color/white"
-                android:textSize="21dp"/>
-        </FrameLayout>
+    <FrameLayout
+        android:id="@+id/vg_photo_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Downloading..."
-            android:textColor="@color/white"
-            android:textSize="21dp"/>
-
-    </LinearLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_photo_view"
+        style="@style/Jandi.Default.ActionBar"
+        android:layout_width="match_parent"
+        android:background="@color/jandi_carousel_transparent_45"
+        android:visibility="visible"/>
 
 </RelativeLayout>
-

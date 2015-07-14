@@ -138,7 +138,7 @@ public class FileHeadManager {
 
     }
 
-    public void setFileInfo(ResMessages.FileMessage fileMessage, int entityId) {
+    public void setFileInfo(ResMessages.FileMessage fileMessage) {
         // 사용자
         FormattedEntity writer = EntityManager.getInstance(activity).getEntityById(fileMessage.writerId);
         String profileUrl = writer.getUserSmallProfileUrl();
@@ -185,7 +185,7 @@ public class FileHeadManager {
                     thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
                 }
 
-                thumbLoader.loadThumb(fileMessage, entityId);
+                thumbLoader.loadThumb(fileMessage);
             }
         }
     }

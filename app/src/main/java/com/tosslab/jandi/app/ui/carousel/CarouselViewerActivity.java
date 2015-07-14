@@ -57,16 +57,13 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     int startLinkId;
 
     @Extra
-    int entityId = -1;
+    int roomId = -1;
 
     @Bean
     CarouselViewerModel carouselViewerModel;
-
-    private CarouselViewerAdapter carouselViewerAdapter;
-
     @Bean(CarouselViewerPresenterImpl.class)
     CarouselViewerPresenter carouselViewerPresenter;
-
+    private CarouselViewerAdapter carouselViewerAdapter;
     private boolean isFullScreen = false;
 
     @AfterInject
@@ -114,6 +111,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
     private void setUpFullScreen(boolean isFullScreen) {
         int systemUiOptions;
+        ActionBar actionBar = getSupportActionBar();
 
         if (isFullScreen) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -126,7 +124,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             }
 
             // TODO 액션바 하단 툴바 숨기기
-            ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.hide();
                 vgCarouselBottom.setVisibility(View.GONE);
@@ -143,7 +140,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
             }
 
-            ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
                 actionBar.show();
                 vgCarouselBottom.setVisibility(View.VISIBLE);
@@ -154,7 +150,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     }
 
     void getImageFiles() {
-        carouselViewerPresenter.getImageFiles(entityId, startLinkId, getApplicationContext());
+        carouselViewerPresenter.getImageFiles(roomId, startLinkId, getApplicationContext());
     }
 
 
@@ -190,7 +186,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
         FileDetailActivity_
                 .intent(this)
-                .entityId(entityId)
                 .fileId(fileInfo.getFileLinkId())
                 .start();
 

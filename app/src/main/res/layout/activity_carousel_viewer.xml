@@ -71,7 +71,6 @@
         android:background="@color/jandi_carousel_transparent_45"
         android:visibility="visible"
         app:subtitleTextAppearance="@style/ImageCarousel.SubTitle"
-        app:titleTextAppearance="@style/ImageCarousel.Title"
-        />
+        app:titleTextAppearance="@style/ImageCarousel.Title"/>
 
 </RelativeLayout>

@@ -165,10 +165,11 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 String optimizedUrl =
                                         BitmapUtil.getOptimizedImageUrl(context, content);
 
-                                fileImageView.setOnClickListener(view -> CarouselViewerActivity_.intent(context)
-                                        .entityId(entityId)
-                                        .startLinkId(link.id)
-                                        .start());
+                                fileImageView.setOnClickListener(view ->
+                                        CarouselViewerActivity_.intent(context)
+                                                .roomId(roomId)
+                                                .startLinkId(link.id)
+                                                .start());
                                 break;
                         }
 
