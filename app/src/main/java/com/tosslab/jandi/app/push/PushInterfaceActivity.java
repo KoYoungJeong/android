@@ -30,6 +30,7 @@ import java.util.List;
 @EActivity(R.layout.activity_intro)
 public class PushInterfaceActivity extends AppCompatActivity {
 
+    public static final String EXTRA_USED = "used";
     @Extra(JandiConstants.EXTRA_ENTITY_ID)
     int entityId;
     @Extra(JandiConstants.EXTRA_ENTITY_TYPE)
@@ -44,7 +45,13 @@ public class PushInterfaceActivity extends AppCompatActivity {
     @AfterInject
     void initObject() {
 
-        checkTeamInfo();
+        boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
+
+        if (!used) {
+            checkTeamInfo();
+        } else {
+            moveIntroActivity();
+        }
 
     }
 
