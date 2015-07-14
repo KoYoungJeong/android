@@ -14,9 +14,13 @@ import java.net.URISyntaxException;
  * Created by Steve SeongUg Jung on 15. 4. 1..
  */
 public class JandiSocketConnector implements SocketConnector {
+    enum Status {
+        READY, CONNECTING, CONNECTED, DISCONNECTING
+    }
 
     public static final String TAG = "SocketConnector";
     private Socket socket;
+    private Status status = Status.READY;
 
     @Override
     public Emitter connect(String url, EventListener disconnectListener) {
@@ -25,6 +29,7 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         if (socket == null) {
+            status = Status.CONNECTING;
             try {
                 IO.Options options = new IO.Options();
                 options.reconnection = false;
@@ -38,7 +43,6 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         if (socket != null) {
-
             socket.on(Socket.EVENT_CONNECT, args -> LogUtil.e(TAG, Socket.EVENT_CONNECT))
                     .on(Socket.EVENT_ERROR, args -> {
                         LogUtil.e(TAG, Socket.EVENT_ERROR);
@@ -58,6 +62,7 @@ public class JandiSocketConnector implements SocketConnector {
                     });
 
             socket.connect();
+            status = Status.CONNECTED;
         }
 
         return socket;
@@ -78,6 +83,7 @@ public class JandiSocketConnector implements SocketConnector {
     @Override
     public void disconnect() {
         if (socket != null && socket.connected()) {
+            status = Status.DISCONNECTING;
             socket.off();
             socket.disconnect();
 
@@ -89,12 +95,20 @@ public class JandiSocketConnector implements SocketConnector {
                     e.printStackTrace();
                 }
             }
+            status = Status.READY;
         }
     }
 
     @Override
     public boolean isConnectingOrConnected() {
-        return socket != null && socket.connected();
+        if (status == Status.DISCONNECTING) {
+            return false;
+        }
+        boolean alreadyConnect = socket != null && socket.connected();
+        if (alreadyConnect) {
+            return true;
+        }
+        return status == Status.CONNECTING || status == Status.CONNECTED;
     }
 
 }
