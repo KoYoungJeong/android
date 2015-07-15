@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
+import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
@@ -33,6 +34,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
@@ -55,6 +57,8 @@ public class MainChatListFragment extends Fragment {
 
     @Bean
     MainChatListModel mainChatListModel;
+    @FragmentArg
+    int selectedEntity;
 
     @AfterViews
     void initViews() {
@@ -147,6 +151,7 @@ public class MainChatListFragment extends Fragment {
             mainChatListModel.saveChatList(teamId, chatItems);
             mainChatListPresenter.setChatItems(chatItems);
 
+            mainChatListPresenter.setSelectedItem(this.selectedEntity);
             boolean hasAlarmCount = MainChatListModel.hasAlarmCount(chatItems);
 
             EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
@@ -158,9 +163,19 @@ public class MainChatListFragment extends Fragment {
         }
     }
 
+    public void onEvent(MainSelectTopicEvent event) {
+        selectedEntity = event.getSelectedEntity();
+        mainChatListPresenter.setSelectedItem(selectedEntity);
+    }
+
     //TODO 메세지 진입시 네트워크 체킹 ?
     @ItemClick(R.id.lv_main_chat_list)
-    void onEntityItemClick(ChatItem chatItem) {
+    void onEntityItemClick(int position) {
+
+        ChatItem chatItem = mainChatListPresenter.getChatItem(position);
+        this.selectedEntity = chatItem.getEntityId();
+        mainChatListPresenter.setSelectedItem(this.selectedEntity);
+        EventBus.getDefault().post(new MainSelectTopicEvent(selectedEntity));
 
         int unread = chatItem.getUnread();
         chatItem.unread(0);

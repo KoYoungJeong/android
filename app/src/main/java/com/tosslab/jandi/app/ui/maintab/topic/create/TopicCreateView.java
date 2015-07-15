@@ -143,6 +143,6 @@ public class TopicCreateView {
     }
 
     public String getTopicDescriptionText() {
-        return tvTopicDescription.getText().toString();
+        return tvTopicDescription.getText().toString().trim();
     }
 }

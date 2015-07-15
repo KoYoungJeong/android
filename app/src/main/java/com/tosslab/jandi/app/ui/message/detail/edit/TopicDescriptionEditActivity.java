@@ -101,8 +101,7 @@ public class TopicDescriptionEditActivity extends AppCompatActivity {
     void onSaveOptionSelected() {
         FormattedEntity entity = EntityManager.getInstance(TopicDescriptionEditActivity.this).getEntityById(entityId);
 
-        String description = etDescpription.getText()
-                .toString();
+        String description = etDescpription.getText().toString().trim();
 
         try {
             if (entity.isPublicTopic()) {

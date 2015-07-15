@@ -178,4 +178,14 @@ public class MainTopicView {
     public void notifyDatasetChanged() {
         topicListAdapter.notifyDataSetChanged();
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setSelectedItem(int selectedEntity) {
+        int itemCount = topicListAdapter.getItemCount();
+
+        for (int idx = 0; idx < itemCount; ++idx) {
+            Topic item = topicListAdapter.getItem(idx);
+            item.setSelected(item.getEntityId() == selectedEntity);
+        }
+    }
 }

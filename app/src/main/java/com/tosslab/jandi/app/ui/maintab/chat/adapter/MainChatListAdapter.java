@@ -55,6 +55,8 @@ public class MainChatListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
             viewHolder = new ViewHolder();
+            viewHolder.selector = convertView.findViewById(R.id
+                    .view_entity_listitem_selector);
             viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
@@ -104,6 +106,8 @@ public class MainChatListAdapter extends BaseAdapter {
 
         }
 
+        viewHolder.selector.setSelected(item.isSelected());
+
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
         viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
         Ion.with(viewHolder.imageViewIcon)
@@ -141,6 +145,7 @@ public class MainChatListAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
+        public View selector;
     }
 
 }

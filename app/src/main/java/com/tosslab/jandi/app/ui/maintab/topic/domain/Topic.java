@@ -14,6 +14,7 @@ public class Topic {
     private int unreadCount;
     private boolean isPublic;
     private String description;
+    private boolean selected;
 
     public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId) {
         this.name = name;
@@ -93,6 +94,14 @@ public class Topic {
 
     public int getCreatorId() {
         return creatorId;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
     }
 
     public static class Builder {

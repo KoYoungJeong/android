@@ -46,12 +46,6 @@ public class MainChatListPresenter {
         chatListView.setAdapter(mainChatListAdapter);
     }
 
-    @UiThread
-    public void setChatItems(List<ChatItem> chatItems) {
-        mainChatListAdapter.setChatItem(chatItems);
-        mainChatListAdapter.notifyDataSetChanged();
-    }
-
     public void refreshListView() {
         mainChatListAdapter.notifyDataSetChanged();
     }
@@ -62,5 +56,23 @@ public class MainChatListPresenter {
 
     public List<ChatItem> getChatItems() {
         return mainChatListAdapter.getChatItems();
+    }
+
+    @UiThread
+    public void setChatItems(List<ChatItem> chatItems) {
+        mainChatListAdapter.setChatItem(chatItems);
+        mainChatListAdapter.notifyDataSetChanged();
+    }
+
+    public ChatItem getChatItem(int position) {
+        return mainChatListAdapter.getItem(position);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void setSelectedItem(int selectedEntityId) {
+        for (int idx = 0, count = mainChatListAdapter.getCount(); idx < count; ++idx) {
+            ChatItem item = mainChatListAdapter.getItem(idx);
+            item.setSelected(item.getEntityId() == selectedEntityId);
+        }
     }
 }

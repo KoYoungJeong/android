@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
+import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -88,8 +89,8 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
@@ -513,6 +514,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messageListModel.removeNotificationSameEntityId(entityId);
         fileUploadStateViewModel.initDownloadState();
+
+        EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
     }
 
     @Override

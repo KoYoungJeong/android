@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -29,6 +30,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
@@ -49,6 +51,8 @@ public class MainTopicListFragment extends Fragment {
     MainTopicModel mainTopicModel;
     @Bean
     MainTopicView mainTopicView;
+    @FragmentArg
+    int selectedEntity = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -109,13 +113,18 @@ public class MainTopicListFragment extends Fragment {
                 int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
                 int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
                 mainTopicView.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
+                selectedEntity = item.getEntityId();
+                mainTopicView.setSelectedItem(selectedEntity);
+
+                EventBus.getDefault().post(new MainSelectTopicEvent(selectedEntity));
             } else {
 
                 mainTopicView.showUnjoinDialog(getFragmentManager(), item,
                         (dialog, which) -> joinChannelInBackground(item));
 
-                mainTopicView.notifyDatasetChanged();
             }
+
+            mainTopicView.notifyDatasetChanged();
 
 
         });
@@ -136,6 +145,12 @@ public class MainTopicListFragment extends Fragment {
         });
 
     }
+
+    public void onEvent(MainSelectTopicEvent event) {
+        selectedEntity = event.getSelectedEntity();
+        mainTopicView.setSelectedItem(selectedEntity);
+    }
+
 
     @OptionsItem(R.id.action_main_search)
     void onSearchOptionSelect() {
@@ -184,6 +199,7 @@ public class MainTopicListFragment extends Fragment {
         Observable<Topic> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         mainTopicView.setEntities(joinEntities, unjoinEntities);
+        mainTopicView.setSelectedItem(selectedEntity);
 
         boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));

@@ -41,6 +41,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         View view = LayoutInflater.from(context).inflate(R.layout.item_topic_body, parent, false);
 
         TopicViewHolder viewHolder = new TopicViewHolder(view);
+        viewHolder.selector = view.findViewById(R.id.view_entity_listitem_selector);
         viewHolder.tvName = (TextView) view.findViewById(R.id.txt_entity_listitem_name);
         viewHolder.imageViewIcon = (ImageView) view.findViewById(R.id.img_entity_listitem_icon);
         viewHolder.imageViewFavorite = (ImageView) view.findViewById(R.id.img_entity_listitem_fav);
@@ -123,6 +124,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         private TextView tvMemberCount;
         private TextView textViewBadgeCount;
         private ImageView ivInfo;
+        public View selector;
 
 
         public TopicViewHolder(View itemView) {
@@ -178,6 +180,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             } else {
                 tvDescription.setVisibility(View.GONE);
             }
+
+            selector.setSelected(topic.isSelected());
+
 
         }
     }
