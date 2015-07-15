@@ -43,32 +43,35 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         if (socket != null) {
-            socket.on(Socket.EVENT_CONNECT, args -> LogUtil.e(TAG, Socket.EVENT_CONNECT))
-                    .on(Socket.EVENT_ERROR, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_ERROR);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_DISCONNECT, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_CONNECT_ERROR, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
-                        disconnectCallback(disconnectListener, args);
-                    });
+            socket.on(Socket.EVENT_CONNECT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT);
+                status = Status.CONNECTED;
+
+            }).on(Socket.EVENT_ERROR, args -> {
+                LogUtil.e(TAG, Socket.EVENT_ERROR);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_DISCONNECT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_CONNECT_ERROR, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
+                disconnectCallback(disconnectListener, args);
+            });
 
             socket.connect();
-            status = Status.CONNECTED;
         }
 
         return socket;
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
+        status = Status.READY;
         if (args != null) {
             for (Object arg : args) {
                 LogUtil.e(TAG, "Disconnect Reason : " + arg.toString());
@@ -103,14 +106,10 @@ public class JandiSocketConnector implements SocketConnector {
 
     @Override
     public boolean isConnectingOrConnected() {
-        if (status == Status.DISCONNECTING) {
+        if (status == Status.READY || status == Status.DISCONNECTING) {
             return false;
         }
         boolean alreadyConnect = socket != null && socket.connected();
-        if (alreadyConnect) {
-            return true;
-        }
-        return status == Status.CONNECTING || status == Status.CONNECTED;
+        return alreadyConnect || status == Status.CONNECTING || status == Status.CONNECTED;
     }
-
 }
