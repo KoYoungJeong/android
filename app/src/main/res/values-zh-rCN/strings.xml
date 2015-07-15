@@ -399,5 +399,17 @@
     <string name="jandi_view_all">"查看全部"</string>
 
     <string name="jandi_title_name_required">"名字*"</string>
+    <string name="jandi_input_topic_name">"请输入议题群组名称"</string>
+    <string name="jandi_is_topic_required">" 公开/私人"</string>
+    <string name="jandi_it_has_no_topic_description">"(无议题内容)"</string>
+    <string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
+    <string name="jandi_save">"储存"</string>
+    <string name="jandi_this_is_required_parts">"必须填写"</string>
+    <string name="jandi_topic_delete">"删除议题"</string>
+    <string name="jandi_topic_description">"议题内容"</string>
+    <string name="jandi_topic_leave">"离开议题"</string>
+    <string name="jandi_topic_detail">"议题信息"</string>
+    <string name="jandi_explain_topic_description">"描述 (选项)"</string>
+    <string name="jandi_topic_starred">"标记议题"</string>
 
 </resources>

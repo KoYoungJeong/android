@@ -408,5 +408,17 @@
     <string name="jandi_view_all">"すべて表示"</string>
 
     <string name="jandi_title_name_required">"名前*"</string>
+    <string name="jandi_input_topic_name">"トピック名を入力してください"</string>
+    <string name="jandi_is_topic_required">"公開/非公開"</string>
+    <string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
+    <string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
+    <string name="jandi_save">"保存"</string>
+    <string name="jandi_this_is_required_parts">"必須"</string>
+    <string name="jandi_topic_delete">"このトピックを削除"</string>
+    <string name="jandi_topic_description">"トピック説明"</string>
+    <string name="jandi_topic_leave">"このトピックから退出"</string>
+    <string name="jandi_topic_detail">"トピックの詳細情報"</string>
+    <string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
+    <string name="jandi_topic_starred">"このトピックをお気に入りに追加する"</string>
 
 </resources>

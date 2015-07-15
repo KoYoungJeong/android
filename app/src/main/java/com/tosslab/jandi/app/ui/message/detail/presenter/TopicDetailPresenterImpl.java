@@ -55,7 +55,7 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
         if (TextUtils.isEmpty(topicDescription)) {
             if (owner) {
-                topicDescription = context.getString(R.string.jandi_plz_input_topic_description);
+                topicDescription = context.getString(R.string.jandi_explain_topic_description);
             } else {
                 topicDescription = context.getString(R.string.jandi_it_has_no_topic_description);
             }
