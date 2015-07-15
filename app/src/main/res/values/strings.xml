@@ -407,7 +407,6 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_is_topic_required">"Type*"</string>
     <string name="jandi_topic_description">"Topic description"</string>
     <string name="jandi_explain_topic_description">"Description (optional)"</string>
-    <string name="jandi_this_is_required_parts">"required"</string>
     <string name="jandi_topic_leave">"Leave topic"</string>
     <string name="jandi_topic_delete">"Delete topic"</string>
     <string name="jandi_topic_detail">"Topic Info"</string>

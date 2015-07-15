@@ -404,7 +404,6 @@
     <string name="jandi_it_has_no_topic_description">"(无议题内容)"</string>
     <string name="jandi_plz_input_topic_description">"描述 (选项)"</string>
     <string name="jandi_save">"储存"</string>
-    <string name="jandi_this_is_required_parts">"必须填写"</string>
     <string name="jandi_topic_delete">"删除议题"</string>
     <string name="jandi_topic_description">"议题内容"</string>
     <string name="jandi_topic_leave">"离开议题"</string>

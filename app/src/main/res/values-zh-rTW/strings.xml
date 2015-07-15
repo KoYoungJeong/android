@@ -405,7 +405,6 @@
     <string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
     <string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
     <string name="jandi_save">"儲存"</string>
-    <string name="jandi_this_is_required_parts">"必須填寫"</string>
     <string name="jandi_topic_delete">"刪除議題"</string>
     <string name="jandi_topic_description">"議題內容"</string>
     <string name="jandi_topic_leave">"離開議題"</string>

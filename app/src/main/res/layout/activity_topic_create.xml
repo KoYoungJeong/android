@@ -123,47 +123,33 @@
 
             </LinearLayout>
 
-            <GridLayout
+            <LinearLayout
                 android:id="@+id/layout_topic_create_tips"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:columnCount="2"
+                android:orientation="horizontal"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:useDefaultMargins="false"
                 android:visibility="visible">
 
                 <TextView
-                    android:layout_columnSpan="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="-"
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
                     android:textSize="12sp"/>
 
                 <TextView
-                    android:layout_columnSpan="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:text="@string/jandi_what_is_topic_type"
                     android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
                     android:textSize="12sp"/>
 
-                <Space
-                    android:layout_columnSpan="2"
-                    android:layout_marginTop="7dp"/>
-
-                <TextView
-                    android:layout_columnSpan="1"
-                    android:text="*"
-                    android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                    android:textSize="12sp"/>
-
-                <TextView
-                    android:layout_columnSpan="1"
-                    android:layout_marginLeft="3dp"
-                    android:text="@string/jandi_this_is_required_parts"
-                    android:textColor="@color/jandi_message_search_item_topic_txt_color_sub"
-                    android:textSize="12sp"/>
-            </GridLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
