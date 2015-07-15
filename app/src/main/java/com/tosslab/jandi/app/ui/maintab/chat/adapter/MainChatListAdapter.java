@@ -27,6 +27,7 @@ public class MainChatListAdapter extends BaseAdapter {
     private Context context;
 
     private List<ChatItem> entities;
+    private int selectedEntity;
 
     public MainChatListAdapter(Context context) {
         this.context = context;
@@ -106,7 +107,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
         }
 
-        viewHolder.selector.setSelected(item.isSelected());
+        viewHolder.selector.setSelected(item.getEntityId() == selectedEntity);
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
         viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
@@ -133,6 +134,10 @@ public class MainChatListAdapter extends BaseAdapter {
 
     public List<ChatItem> getChatItems() {
         return entities;
+    }
+
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
     }
 
     static class ViewHolder {

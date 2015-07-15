@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -46,7 +47,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.springframework.web.client.ResourceAccessException;
@@ -71,7 +71,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     ClipboardManager clipboardManager;
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
-    @Extra
+
     int selectedEntity = -1;
     private ProgressWheel mProgressWheel;
     private Context mContext;
@@ -95,6 +95,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         setupActionBar(selectedTeamInfo.getName());
 
+        selectedEntity = PushInterfaceActivity.selectedEntityId;
+
         // ViewPager
         View[] tabViews = new View[4];
         tabViews[0] = getLayoutInflater().inflate(R.layout.tab_topic, null);
@@ -106,6 +108,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         mViewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
+
+        PushInterfaceActivity.selectedEntityId = -1;
 
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);

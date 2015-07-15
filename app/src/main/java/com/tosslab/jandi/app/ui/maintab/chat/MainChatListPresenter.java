@@ -70,9 +70,7 @@ public class MainChatListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     public void setSelectedItem(int selectedEntityId) {
-        for (int idx = 0, count = mainChatListAdapter.getCount(); idx < count; ++idx) {
-            ChatItem item = mainChatListAdapter.getItem(idx);
-            item.setSelected(item.getEntityId() == selectedEntityId);
-        }
+        mainChatListAdapter.setSelectedEntity(selectedEntityId);
+        mainChatListAdapter.notifyDataSetChanged();
     }
 }

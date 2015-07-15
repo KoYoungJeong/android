@@ -31,6 +31,8 @@ import java.util.List;
 public class PushInterfaceActivity extends AppCompatActivity {
 
     public static final String EXTRA_USED = "used";
+    // Push -> 선택된 엔티티 설정이 안됨에 따라...
+    public static int selectedEntityId;
     @Extra(JandiConstants.EXTRA_ENTITY_ID)
     int entityId;
     @Extra(JandiConstants.EXTRA_ENTITY_TYPE)
@@ -52,7 +54,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
         } else {
             moveIntroActivity();
         }
-
+        selectedEntityId = entityId;
     }
 
     @Background

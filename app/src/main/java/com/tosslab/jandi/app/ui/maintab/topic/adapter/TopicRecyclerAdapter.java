@@ -28,6 +28,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
+    private int selectedEntity;
 
     public TopicRecyclerAdapter(Context context) {
         this.context = context;
@@ -65,6 +66,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         Topic topic = getItem(position);
 
         holder.draw(topic);
+
+        holder.selector.setSelected(topic.getEntityId() == selectedEntity);
+
 
         holder.itemView.setOnClickListener(view -> {
             if (onRecyclerItemClickListener != null) {
@@ -114,17 +118,21 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         topicList.clear();
     }
 
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
+
     static class TopicViewHolder extends RecyclerView.ViewHolder {
 
         public View vgBadge;
         public TextView tvDescription;
+        public View selector;
         private ImageView imageViewIcon;
         private ImageView imageViewFavorite;
         private TextView tvName;
         private TextView tvMemberCount;
         private TextView textViewBadgeCount;
         private ImageView ivInfo;
-        public View selector;
 
 
         public TopicViewHolder(View itemView) {
@@ -180,9 +188,6 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
             } else {
                 tvDescription.setVisibility(View.GONE);
             }
-
-            selector.setSelected(topic.isSelected());
-
 
         }
     }

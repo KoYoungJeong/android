@@ -14,7 +14,6 @@ public class ChatItem {
     private String photo;
     private boolean status;
     private int roomId;
-    private boolean selected;
 
     public int getLastMessageId() {
         return lastMessageId;
@@ -106,11 +105,4 @@ public class ChatItem {
         return roomId;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
 }
