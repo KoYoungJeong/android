@@ -515,7 +515,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.removeNotificationSameEntityId(entityId);
         fileUploadStateViewModel.initDownloadState();
 
-        EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
     }
 
     @Override
