@@ -5,13 +5,15 @@ package com.tosslab.jandi.app.network.socket.domain;
  */
 public class ConnectTeam {
     private final String token;
+    private final String userAgent;
     private final int teamId;
     private final String teamName;
     private final int memberId;
     private final String userName;
 
-    public ConnectTeam(String token, int teamId, String teamName, int memberId, String userName) {
+    public ConnectTeam(String token, String userAgent, int teamId, String teamName, int memberId, String userName) {
         this.token = token;
+        this.userAgent = userAgent;
         this.teamId = teamId;
         this.teamName = teamName;
         this.memberId = memberId;
@@ -36,5 +38,9 @@ public class ConnectTeam {
 
     public String getToken() {
         return token;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
     }
 }

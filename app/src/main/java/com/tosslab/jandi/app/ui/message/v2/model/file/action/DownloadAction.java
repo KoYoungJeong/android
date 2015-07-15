@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import java.io.File;
 
@@ -46,6 +47,7 @@ public class DownloadAction implements FileAction {
         Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .write(new File(dir, message.content.name))
                 .setCallback(new FutureCallback<File>() {
                     @Override

@@ -10,9 +10,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
-import com.parse.ParseException;
 import com.parse.ParseInstallation;
-import com.parse.SaveCallback;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
@@ -28,6 +26,7 @@ import com.tosslab.jandi.app.ui.term.TermActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -151,9 +150,7 @@ public class SettingsFragment extends PreferenceFragment {
     private void removeSignData() {
         JandiPreference.signOut(getActivity());
 
-        ParseInstallation parseInstallation = ParseInstallation.getCurrentInstallation();
-        parseInstallation.remove(JandiConstants.PARSE_CHANNELS);
-        parseInstallation.saveInBackground();
+        ParseUpdateUtil.deleteChannelOnServer();
 
         JandiAccountDatabaseManager.getInstance(getActivity()).clearAllData();
     }
@@ -171,10 +168,11 @@ public class SettingsFragment extends PreferenceFragment {
     void onPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_ON);
-        installation.saveEventually(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_ok));
+        installation.saveEventually(e -> {
+            Activity activity = getActivity();
+            if (activity != null && !(activity.isFinishing())) {
+                ColoredToast.show(activity
+                        , activity.getString(R.string.jandi_setting_push_subscription_ok));
             }
         });
     }
@@ -182,10 +180,11 @@ public class SettingsFragment extends PreferenceFragment {
     void offPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_OFF);
-        installation.saveEventually(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                ColoredToast.show(getActivity(), getString(R.string.jandi_setting_push_subscription_cancel));
+        installation.saveEventually(e -> {
+            Activity activity = getActivity();
+            if (activity != null && !(activity.isFinishing())) {
+                ColoredToast.show(activity
+                        , activity.getString(R.string.jandi_setting_push_subscription_cancel));
             }
         });
     }

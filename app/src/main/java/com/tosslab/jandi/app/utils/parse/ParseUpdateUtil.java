@@ -2,7 +2,9 @@ package com.tosslab.jandi.app.utils.parse;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
@@ -15,9 +17,9 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit.RetrofitError;
 import rx.Observable;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -29,48 +31,49 @@ public class ParseUpdateUtil {
         List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
         Observable.from(userTeams)
+                .onBackpressureBuffer()
                 .observeOn(Schedulers.io())
-                .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {
-                    @Override
-                    public ResLeftSideMenu call(ResAccountInfo.UserTeam userTeam) {
-                        LogUtil.d("UpdateParseWithoutSelectedTeam");
+                .map(userTeam -> {
+                    LogUtil.d("UpdateParseWithoutSelectedTeam");
+                    try {
                         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(userTeam.getTeamId());
+                    } catch (RetrofitError retrofitError) {
+                        retrofitError.printStackTrace();
+                        return null;
                     }
                 })
-                .map(new Func1<ResLeftSideMenu, List<String>>() {
-                    @Override
-                    public List<String> call(ResLeftSideMenu resLeftSideMenu) {
-                        int myId = resLeftSideMenu.user.id;
+                .filter(resLeftSideMenu1 -> resLeftSideMenu1 != null)
+                .map(resLeftSideMenu -> {
+                    int myId = resLeftSideMenu.user.id;
 
-                        List<String> subscribeList = new ArrayList<String>();
-                        String parseChannel;
-                        for (ResLeftSideMenu.Entity joinEntity : resLeftSideMenu.joinEntities) {
-                            if (joinEntity instanceof ResLeftSideMenu.Channel) {
-                                parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
-                            } else if (joinEntity instanceof ResLeftSideMenu.PrivateGroup) {
-                                parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
-                            } else {
-                                parseChannel = "";
-                            }
-
-                            if (!TextUtils.isEmpty(parseChannel)) {
-                                subscribeList.add(parseChannel);
-                            }
+                    List<String> subscribeList = new ArrayList<String>();
+                    String parseChannel;
+                    for (ResLeftSideMenu.Entity joinEntity : resLeftSideMenu.joinEntities) {
+                        if (joinEntity instanceof ResLeftSideMenu.Channel) {
+                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
+                        } else if (joinEntity instanceof ResLeftSideMenu.PrivateGroup) {
+                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + joinEntity.id;
+                        } else {
+                            parseChannel = "";
                         }
 
-                        for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
-                            if (entity instanceof ResLeftSideMenu.User) {
-                                parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + entity.id + "-" + myId;
-                                subscribeList.add(parseChannel);
-                            }
-
+                        if (!TextUtils.isEmpty(parseChannel)) {
+                            subscribeList.add(parseChannel);
                         }
-
-                        return subscribeList;
                     }
 
+                    for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
+                        if (entity instanceof ResLeftSideMenu.User) {
+                            parseChannel = JandiConstants.PUSH_CHANNEL_PREFIX + entity.id + "-" + myId;
+                            subscribeList.add(parseChannel);
+                        }
+
+                    }
+
+                    return subscribeList;
                 })
                 .collect(() -> new ArrayList<String>(), (collector, values) -> collector.addAll(values))
+                .filter(subscribeList -> !subscribeList.isEmpty())
                 .subscribe(new Action1<List<String>>() {
                     @Override
                     public void call(List<String> subscriber) {
@@ -86,22 +89,28 @@ public class ParseUpdateUtil {
                                     removeChannles.add(savedChannel);
                                 }
                             }
-                            currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
                             try {
+                                currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
                                 currentInstallation.save();
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         }
 
-                        currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
                         try {
+                            currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
                             currentInstallation.save();
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
-                }, throwable -> LogUtil.e("Parse Error", throwable));
+                }, throwable -> {
+                    LogUtil.e("Parse Error", throwable);
+
+                    Crashlytics.log(Log.ERROR
+                            , "Parse Push"
+                            , "Push Regist Fail" + throwable.getMessage());
+                });
 
     }
 

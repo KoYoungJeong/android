@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -101,7 +102,7 @@ public class FileDetailPresenter {
         }
     }
 
-    public void onLongClickComment(ResMessages.CommentMessage item) {
+    public void onLongClickComment(ResMessages.OriginalMessage item) {
         if (item == null) {
             return;
         }
@@ -227,7 +228,11 @@ public class FileDetailPresenter {
     public void deleteComment(int fileId, int messageType, int messageId, int feedbackId) {
         view.showProgress();
         try {
-            fileDetailModel.deleteComment(messageId, feedbackId);
+            if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
+            } else {
+                fileDetailModel.deleteComment(messageId, feedbackId);
+            }
 
             view.dismissProgress();
 
@@ -259,6 +264,24 @@ public class FileDetailPresenter {
         } catch (Exception e) {
             view.dismissProgress();
             view.onDeleteFileSucceed(false);
+        }
+    }
+
+    public void checkSharedEntity(int eventId) {
+        final ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+        if (fileMessage == null) {
+            return;
+        }
+        int size = fileMessage.shareEntities.size();
+
+        int entityId;
+        for (int idx = 0; idx < size; ++idx) {
+            entityId = fileMessage.shareEntities.get(idx);
+
+            if (eventId == entityId) {
+                view.finishOnMainThread();
+                return;
+            }
         }
     }
 
@@ -333,7 +356,7 @@ public class FileDetailPresenter {
 
         void showMoveDialog(int entityIdToBeShared);
 
-        void showManipulateMessageDialogFragment(ResMessages.CommentMessage item, boolean isMine);
+        void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine);
 
         void initShareListDialog(List<FormattedEntity> unSharedEntities);
 

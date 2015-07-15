@@ -60,4 +60,8 @@ public class FileUploadModel {
 
         return String.format("%s%s", prefix, originEntityName);
     }
+
+    public boolean isValid(Context context, int selectedEntityIdToBeShared) {
+        return EntityManager.getInstance(context).getEntityById(selectedEntityIdToBeShared) != null;
+    }
 }

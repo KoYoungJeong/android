@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -40,6 +39,7 @@ import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
 import com.tosslab.jandi.app.events.RequestMoveDirectMessageEvent;
 import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.MoveSharedEntityEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.events.files.DeleteFileEvent;
 import com.tosslab.jandi.app.events.files.FileCommentRefreshEvent;
@@ -82,11 +82,9 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import retrofit.RetrofitError;
 
 /**
  * Created by justinygchoi on 2014. 7. 19..
@@ -119,29 +117,24 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ViewGroup vgStickerPreview;
     @ViewById(R.id.iv_file_detail_preview_sticker_image)
     ImageView ivStickerPreview;
-
+    @Bean
+    StickerViewModel stickerViewModel;
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+    @SystemService
+    InputMethodManager inputMethodManager;
+    @SystemService
+    ClipboardManager clipboardManager;
     private EntityManager entityManager;
     private boolean isMyFile;
     private boolean isDeleted = true;
     private boolean isForeground;
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
-
-    @Bean
-    StickerViewModel stickerViewModel;
-    @Bean
-    KeyboardHeightModel keyboardHeightModel;
-
-    @SystemService
-    InputMethodManager inputMethodManager;
-    @SystemService
-    ClipboardManager clipboardManager;
-
     private StickerInfo stickerInfo = NULL_STICKER;
 
     @AfterViews
     public void initForm() {
-        LogUtil.i("initForm");
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();
@@ -198,7 +191,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     @ItemLongClick(R.id.lv_file_detail_comments)
-    void onCommentLongClick(ResMessages.CommentMessage item) {
+    void onCommentLongClick(ResMessages.OriginalMessage item) {
         fileDetailPresenter.onLongClickComment(item);
     }
 
@@ -230,6 +223,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             return;
         }
         copyToClipboard(event.contentString);
+    }
+
+    public void onEventMainThread(TopicDeleteEvent event) {
+        fileDetailPresenter.checkSharedEntity(event.getId());
     }
 
     private void setUpActionBar() {
@@ -276,7 +273,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void onResume() {
         super.onResume();
-        LogUtil.d("onResume");
         isForeground = true;
         fileDetailPresenter.getFileDetail(fileId, false, true);
         trackGaFileDetail(entityManager);
@@ -312,7 +308,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setSendButtonSelected(inputLength > 0);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void finishOnMainThread() {
         finish();
@@ -500,7 +496,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         FormattedEntity entity = entityManager.getEntityById(entityId);
 
-        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC : JandiConstants.TYPE_DIRECT_MESSAGE;
+        int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC
+                : entity.isPrivateGroup() ? JandiConstants.TYPE_PRIVATE_TOPIC
+                : JandiConstants.TYPE_DIRECT_MESSAGE;
 
         int teamId = entityManager.getTeamId();
         boolean isStarred = entity.isStarred;
@@ -556,12 +554,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      * 댓글 작성 관련
      * **********************************************************
      */
-
     @Click(R.id.btn_file_detail_send_comment)
     void sendComment() {
         CharSequence text = etComment.getText();
         String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
+        etComment.setText("");
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
@@ -580,13 +578,46 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void hideSoftKeyboard() {
         inputMethodManager.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
-        etComment.setText("");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void showKeyboard() {
         inputMethodManager.showSoftInput(etComment, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    @Click(R.id.btn_message_sticker)
+    void onStickerClick(View view) {
+        boolean selected = view.isSelected();
+
+        if (selected) {
+            stickerViewModel.dismissStickerSelector();
+        } else {
+            int keyboardHeight =
+                    JandiPreference.getKeyboardHeight(FileDetailActivity.this.getApplicationContext());
+            if (keyboardHeight > 0) {
+                hideSoftKeyboard();
+                stickerViewModel.showStickerSelector(keyboardHeight);
+                if (keyboardHeightModel.getOnKeyboardShowListener() == null) {
+                    keyboardHeightModel.setOnKeyboardShowListener(isShow -> {
+                        if (isShow) {
+                            stickerViewModel.dismissStickerSelector();
+                        }
+                    });
+                }
+            } else {
+                initKeyboardHeight();
+            }
+        }
+    }
+
+    private void initKeyboardHeight() {
+        keyboardHeightModel.setOnKeyboardHeightCaptureListener(() -> {
+            onStickerClick(findViewById(R.id.btn_message_sticker));
+            keyboardHeightModel.setOnKeyboardHeightCaptureListener(null);
+        });
+        etComment.requestFocus();
+        showKeyboard();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -673,6 +704,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
+            String rawString = getString(R.string.err_unsupported_file_type);
+            String formatString = String.format(rawString, file);
+            ColoredToast.showError(this, formatString);
+        } catch (SecurityException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);
             ColoredToast.showError(this, formatString);
@@ -805,8 +840,18 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void showManipulateMessageDialogFragment(ResMessages.CommentMessage item, boolean isMine) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(item, isMine);
+    public void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine) {
+        DialogFragment newFragment = null;
+        if (item instanceof ResMessages.CommentMessage) {
+            newFragment = ManipulateMessageDialogFragment.newInstanceByCommentMessage(
+                    (ResMessages.CommentMessage) item, isMine);
+        } else {
+            if (!isMine) {
+                return;
+            }
+            newFragment = ManipulateMessageDialogFragment.newInstanceByStickerCommentMessage(
+                    (ResMessages.CommentStickerMessage) item, isMine);
+        }
         newFragment.show(getSupportFragmentManager(), "dioalog");
     }
 
@@ -853,4 +898,12 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         ColoredToast.showError(this, message);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!stickerViewModel.isShowStickerSelector()) {
+            super.onBackPressed();
+        } else {
+            stickerViewModel.dismissStickerSelector();
+        }
+    }
 }

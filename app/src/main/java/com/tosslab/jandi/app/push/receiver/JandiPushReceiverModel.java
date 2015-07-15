@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.koushikdutta.ion.Ion;
 import com.parse.ParseInstallation;
@@ -60,6 +59,9 @@ public class JandiPushReceiverModel {
             intent.putExtra(JandiConstants.EXTRA_TEAM_ID, teamId);
         }
 
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 //        pendingIntent.cancel();
@@ -131,7 +133,6 @@ public class JandiPushReceiverModel {
 
     private Notification generateNotification(Context context, PushTO.MessagePush messagePush, Bitmap writerProfile) {
         String message = messagePush.getAlert();
-        Log.e(JandiPushReceiverModel.class.getSimpleName(), message);
         String chatName = messagePush.getChatName();
         String writerName = messagePush.getWriterName();
 
@@ -205,6 +206,7 @@ public class JandiPushReceiverModel {
         return true;
     }
 
+    @Background
     public void sendNotificationWithProfile(final Context context, final PushTO.MessagePush messagePush) {
         // 현재 디바이스 설정이 push off 라면 무시
         String writerProfile = messagePush.getWriterThumb();
