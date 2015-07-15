@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity;
 
@@ -33,6 +35,11 @@ public class PhotoViewActivity extends AppCompatActivity {
 
     @AfterViews
     void initViews() {
+
+        Glide.get(getApplicationContext()).clearMemory();
+        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
+
+
         PhotoViewFragment fragment = PhotoViewFragment_.builder()
                 .imageType(imageType)
                 .imageUrl(imageUrl)

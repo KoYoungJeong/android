@@ -1,14 +1,13 @@
 package com.tosslab.jandi.app.ui.photo;
 
 import android.animation.Animator;
-import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.MemoryCategory;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.koushikdutta.ion.Ion;
@@ -56,11 +55,13 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     @Bean
     PhotoViewPresenter presenter;
     private CarouselViewerActivity.OnCarouselImageClickListener carouselImageClickListener;
+    private boolean isForeground = true;
 
     @AfterViews
     void initView() {
-        Glide.get(getActivity().getApplicationContext()).clearMemory();
-        Glide.get(getActivity().getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
+        // 캐러셀 이미지 처리를 위해 상위 액티비티로 전환
+//        Glide.get(getActivity().getApplicationContext()).clearMemory();
+//        Glide.get(getActivity().getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
 
         setupProgress();
 
@@ -88,7 +89,12 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     @UiThread
     @Override
     public void loadImageGif() {
-        Ion.with(getActivity().getApplicationContext())
+
+        if (getActivity() == null) {
+            return;
+        }
+
+        Ion.with(this)
                 .load(imageUrl)
                 .progress((downloaded, total) -> updateProgress(total, downloaded))
                 .intoImageView(photoView)
@@ -102,8 +108,6 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
                     }
                 });
     }
-
-    private boolean isForeground = true;
 
     @Override
     public boolean isForeground() {
@@ -150,13 +154,18 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
     @UiThread
     @Override
     public <T> void loadImage(T target) {
-        Glide.with(this).load(target).asBitmap()
+
+        if (getActivity() == null) {
+            return;
+        }
+
+        Glide.with(this)
+                .load(target)
                 .fitCenter()
                 .error(R.drawable.jandi_fl_icon_deleted)
-                .listener(new RequestListener<T, Bitmap>() {
+                .listener(new RequestListener<T, GlideDrawable>() {
                     @Override
-                    public boolean onException(Exception e, T model, Target<Bitmap> target,
-                                               boolean isFirstResource) {
+                    public boolean onException(Exception e, T model, Target<GlideDrawable> target, boolean isFirstResource) {
                         if (e != null) {
                             e.printStackTrace();
                         }
@@ -165,11 +174,9 @@ public class PhotoViewFragment extends Fragment implements PhotoViewPresenter.Vi
                     }
 
                     @Override
-                    public boolean onResourceReady(Bitmap resource, T model,
-                                                   Target<Bitmap> target,
-                                                   boolean isFromMemoryCache,
-                                                   boolean isFirstResource) {
+                    public boolean onResourceReady(GlideDrawable resource, T model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                         hideProgress();
+
                         return false;
                     }
                 })

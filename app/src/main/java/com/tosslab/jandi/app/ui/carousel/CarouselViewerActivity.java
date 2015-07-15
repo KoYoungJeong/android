@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.MemoryCategory;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.carousel.domain.CarouselFileInfo;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
@@ -69,20 +71,29 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
     @AfterInject
     void initObject() {
         carouselViewerPresenter.setView(this);
+        carouselViewerPresenter.setFileId(startLinkId);
+        carouselViewerPresenter.setRoomId(roomId);
     }
 
 
     @AfterViews
     public void initViews() {
 
-        carouselViewerAdapter = new CarouselViewerAdapter(getSupportFragmentManager());
-        carouselViewerAdapter.setCarouselImageClickListener(new OnCarouselImageClickListener() {
-            @Override
-            public void onCarouselImageClick() {
+        Glide.get(getApplicationContext()).clearMemory();
+        Glide.get(getApplicationContext()).setMemoryCategory(MemoryCategory.HIGH);
 
-                isFullScreen = !isFullScreen;
-                setUpFullScreen(isFullScreen);
-            }
+
+        if (roomId <= 0) {
+            finish();
+            return;
+        }
+
+        setUpToolbar();
+
+        carouselViewerAdapter = new CarouselViewerAdapter(getSupportFragmentManager());
+        carouselViewerAdapter.setCarouselImageClickListener(() -> {
+            isFullScreen = !isFullScreen;
+            setUpFullScreen(isFullScreen);
         });
         viewPager.setAdapter(carouselViewerAdapter);
 
@@ -93,19 +104,33 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 super.onPageSelected(position);
 
                 CarouselFileInfo fileInfo = carouselViewerAdapter.getFileInfo(position);
+                int count = carouselViewerAdapter.getCount();
 
-                getSupportActionBar().setTitle(fileInfo.getFileName());
-                getSupportActionBar().setSubtitle(FileSizeUtil.fileSizeCalculation(fileInfo.getSize())
-                        + ", " + fileInfo.getExt());
+                ActionBar actionBar = getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(fileInfo.getFileName());
+                    actionBar.setSubtitle(FileSizeUtil.fileSizeCalculation(fileInfo.getSize())
+                            + ", " + fileInfo.getExt());
+                }
                 tvFileWriterName.setText(fileInfo.getFileWriter());
                 tvFileCreateTime.setText(fileInfo.getFileCreateTime());
+
+                if (position == 0) {
+                    carouselViewerPresenter.onBeforeImageFiles(getApplicationContext(), fileInfo
+                            .getFileLinkId(), count);
+                } else {
+                    if (position == count - 1) {
+                        carouselViewerPresenter.onAfterImageFiles(getApplicationContext(), fileInfo
+                                .getFileLinkId(), count);
+                    }
+                }
 
             }
         });
 
-        getImageFiles();
-        setUpToolbar();
         setUpFullScreen(isFullScreen);
+
+        carouselViewerPresenter.onInitImageFiles(getApplicationContext());
 
     }
 
@@ -123,13 +148,11 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
             }
 
-            // TODO 액션바 하단 툴바 숨기기
             if (actionBar != null) {
                 actionBar.hide();
                 vgCarouselBottom.setVisibility(View.GONE);
             }
         } else {
-            // TODO 상태바, 액션바, 하단 툴바 노출
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -149,23 +172,47 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         getWindow().getDecorView().setSystemUiVisibility(systemUiOptions);
     }
 
-    void getImageFiles() {
-        carouselViewerPresenter.getImageFiles(roomId, startLinkId, getApplicationContext());
-    }
-
 
     @UiThread
     @Override
     public void addFileInfos(List<CarouselFileInfo> fileInfoList) {
+
         carouselViewerAdapter.addAll(fileInfoList);
         carouselViewerAdapter.notifyDataSetChanged();
+
+    }
+
+    @UiThread
+    @Override
+    public void addFileInfos(int position, List<CarouselFileInfo> imageFiles) {
+
+        carouselViewerAdapter.addAll(position, imageFiles);
+        carouselViewerAdapter.notifyDataSetChanged();
+
+        viewPager.setCurrentItem(imageFiles.size(), false);
+    }
+
+    @UiThread
+    @Override
+    public void setInitFail() {
+        ColoredToast.showWarning(getApplicationContext(), getString(R.string.err_download));
+        finish();
+    }
+
+    @UiThread
+    @Override
+    public void movePosition(int startLinkPosition) {
+        viewPager.setCurrentItem(startLinkPosition, false);
     }
 
     @UiThread
     @Override
     public void setActionbarTitle(String fileName, String size, String ext) {
-        getSupportActionBar().setTitle(fileName);
-        getSupportActionBar().setSubtitle(size + ", " + ext);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(fileName);
+            actionBar.setSubtitle(size + ", " + ext);
+        }
     }
 
     @UiThread
@@ -222,7 +269,8 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         progressDialog.setMessage("Downloading " + fileInfo.getFileName());
         progressDialog.show();
 
-        carouselViewerPresenter.onFileDownload(fileInfo, progressDialog);
+        carouselViewerPresenter.onFileDownload(CarouselViewerActivity.this, fileInfo,
+                progressDialog);
     }
 
     @Click(R.id.iv_file_datail_info)

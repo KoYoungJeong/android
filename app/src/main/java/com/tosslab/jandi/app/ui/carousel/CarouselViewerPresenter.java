@@ -15,15 +15,25 @@ public interface CarouselViewerPresenter {
 
     void setView(View view);
 
-    void getImageFiles(int entityId, int startLinkId, Context context);
+    void onInitImageFiles(Context context);
 
-    void onFileDownload(CarouselFileInfo fileInfo, ProgressDialog progressDialog);
+    void onBeforeImageFiles(Context context, int fileLinkId, int count);
+
+    void onAfterImageFiles(Context context, int fileLinkId, int count);
+
+    void onFileDownload(Context context, CarouselFileInfo fileInfo, ProgressDialog progressDialog);
 
     void onFileDatail();
+
+    void setFileId(int startLinkId);
+
+    void setRoomId(int roomId);
 
     interface View {
 
         void addFileInfos(List<CarouselFileInfo> fileInfoList);
+
+        void showFailToast(String message);
 
         void setActionbarTitle(String fileName, String size, String ext);
 
@@ -33,10 +43,13 @@ public interface CarouselViewerPresenter {
 
         void moveToFileDatail();
 
-        void showFailToast(String message);
-
         void downloadDone(File file, String fileType, ProgressDialog progressDialog);
 
+        void addFileInfos(int position, List<CarouselFileInfo> imageFiles);
+
+        void setInitFail();
+
+        void movePosition(int startLinkPosition);
     }
 
 }

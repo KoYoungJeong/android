@@ -30,6 +30,15 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+//        if (isModified) {
+//            isModified = false;
+        return POSITION_NONE;
+//        }
+//        return super.getItemPosition(object);
+    }
+
+    @Override
     public Fragment getItem(int position) {
 
         CarouselFileInfo fileInfo = carouselFileInfos.get(position);
@@ -45,7 +54,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
                     .imageUrl(fileInfo.getFileLinkUrl())
                     .build();
 
-            weakHashMap.put(fileLinkId, fragment);
+//            weakHashMap.put(fileLinkId, fragment);
         }
 
         if (fragment instanceof PhotoViewFragment) {
@@ -66,14 +75,17 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
 
     public void addAll(List<CarouselFileInfo> fileInfos) {
         isModified = true;
-        for (CarouselFileInfo fileInfo : fileInfos) {
-            carouselFileInfos.add(0, fileInfo);
-        }
+        carouselFileInfos.addAll(fileInfos);
+    }
+
+    public void addAll(int position, List<CarouselFileInfo> imageFiles) {
+        isModified = true;
+        carouselFileInfos.addAll(position, imageFiles);
     }
 
     public void add(CarouselFileInfo fileInfo) {
         isModified = true;
-        carouselFileInfos.add(0, fileInfo);
+        carouselFileInfos.add(fileInfo);
     }
 
     public CarouselFileInfo getFileInfo(int position) {
