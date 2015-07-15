@@ -175,4 +175,7 @@ public class MainTopicView {
         dialog.show(fragmentManager, "dialog");
     }
 
+    public void notifyDatasetChanged() {
+        topicListAdapter.notifyDataSetChanged();
+    }
 }
