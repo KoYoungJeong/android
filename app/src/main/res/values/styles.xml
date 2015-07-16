@@ -343,7 +343,6 @@
     <style name="ImageCarousel"/>
 
     <style name="ImageCarousel.Toolbar" parent="Widget.AppCompat.Toolbar">
-        <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="theme">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 

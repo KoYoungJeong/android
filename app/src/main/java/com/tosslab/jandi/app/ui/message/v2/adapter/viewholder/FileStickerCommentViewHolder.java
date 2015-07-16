@@ -162,12 +162,6 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                         .fitCenter()
                                         .load(thumbnailUrl);
 
-                                String optimizedUrl =
-                                        BitmapUtil.getOptimizedImageUrl(context, content);
-                                fileImageView.setOnClickListener(view -> CarouselViewerActivity_.intent(context)
-                                        .roomId(roomId)
-                                        .startLinkId(link.id)
-                                        .start());
                                 break;
                         }
 
