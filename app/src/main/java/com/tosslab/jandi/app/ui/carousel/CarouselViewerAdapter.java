@@ -31,11 +31,7 @@ public class CarouselViewerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-//        if (isModified) {
-//            isModified = false;
         return POSITION_NONE;
-//        }
-//        return super.getItemPosition(object);
     }
 
     @Override

@@ -96,7 +96,7 @@ public class CarouselViewerModel {
                         .fileLinkId(fileMessage.id)
                         .fileName(fileMessage.content.name)
                         .fileType(fileMessage.content.type)
-                        .fileLinkUrl(BitmapUtil.getFileUrl(fileMessage.content.fileUrl))
+                        .fileLinkUrl(BitmapUtil.getOptimizedImageUrl(context, fileMessage.content))
                         .ext(fileMessage.content.ext)
                         .size(fileMessage.content.size)
                         .fileCreateTime(
