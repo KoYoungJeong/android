@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.ui.signup.account.model.SignUpModel;
@@ -27,6 +26,7 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 
 import retrofit.RetrofitError;
+import retrofit.mime.TypedByteArray;
 
 /**
  * Created by justinygchoi on 14. 12. 11..
@@ -185,11 +185,14 @@ public class SignUpActivity extends AppCompatActivity {
         } catch (RetrofitError e) {
             signUpViewModel.dismissProgressWheel();
 
-            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.EMAIL_ALREADY_REGISTERED) {
-                signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
+            if (e.getResponse() != null) {
+                String error = new String(((TypedByteArray) e.getResponse().getBody()).getBytes());
+                if (error.contains("40001"))
+                    signUpViewModel.showErrorToast(getString(R.string.jandi_duplicate_email));
             } else {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
+
         }
     }
 }
