@@ -73,7 +73,7 @@
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="#606263"
+            android:background="#3e3f40"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -101,7 +101,7 @@
             android:layout_width="97dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:background="#606263"
+            android:background="#3e3f40"
             android:gravity="center_vertical|right"
             android:orientation="horizontal">
 
@@ -131,7 +131,7 @@
         android:layout_width="match_parent"
         android:layout_height="36dp"
         android:layout_below="@id/ll_filename_sort"
-        android:gravity="center"
+        android:gravity="center|top"
         android:shadowColor="@color/jandi_coach_mark_text_shadow"
         android:shadowDy="1"
         android:shadowRadius="1"
@@ -142,7 +142,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
@@ -150,7 +150,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="68dp"
             android:shadowColor="@color/jandi_coach_mark_text_shadow"
             android:shadowDy="1"
             android:shadowRadius="1"

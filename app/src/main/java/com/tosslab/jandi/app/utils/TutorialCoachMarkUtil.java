@@ -27,7 +27,12 @@ public class TutorialCoachMarkUtil {
     private static void showCoachMarkDialog(Context context, int coachMarkType) {
         final Dialog dialog = new Dialog(context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        if (coachMarkType == COACH_MARK_FILE_LIST) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0x50000000));
+        } else {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0x48000000));
+        }
 
         switch (coachMarkType) {
             case COACH_MARK_TOPIC_LIST:
