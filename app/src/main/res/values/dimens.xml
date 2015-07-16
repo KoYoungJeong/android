@@ -127,7 +127,8 @@
     <dimen name="jandi_carousel_file_size_ext_txt">12sp</dimen>
     <dimen name="jandi_carousel_bottom_left">15dp</dimen>
     <dimen name="jandi_carousel_bottom_height">54dp</dimen>
-    <dimen name="jandi_carousel_bottom_line_spacing">4dp</dimen>
+    <dimen name="jandi_carousel_bottom_line_spacing">1dp</dimen>
+    <dimen name="jandi_carousel_bottom_line_spacing_date">3dp</dimen>
 
 
 </resources>
