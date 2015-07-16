@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
@@ -28,6 +27,8 @@ public interface MainTopicListPresenter {
 
     void onItemLongClick(Context context, RecyclerView.Adapter adapter, int position);
 
+    void onFocusTopic(int selectedEntity);
+
     interface View {
 
         void setEntities(Observable<Topic> joinEntities, Observable<Topic> unjoinEntities);
@@ -51,5 +52,7 @@ public interface MainTopicListPresenter {
         void dismissProgressWheel();
 
         void showEntityMenuDialog(Topic item);
+
+        void scrollToPosition(int selectedEntityPosition);
     }
 }

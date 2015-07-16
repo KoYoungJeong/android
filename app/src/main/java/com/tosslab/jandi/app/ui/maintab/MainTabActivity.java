@@ -63,6 +63,7 @@ import rx.Observable;
 @EActivity(R.layout.activity_main_tab)
 public class MainTabActivity extends BaseAnalyticsActivity {
 
+    public static final int CHAT_INDEX = 1;
     @Bean
     EntityClientManager mEntityClientManager;
     @Bean
@@ -114,6 +115,13 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
         tabs.setViewPager(mViewPager);
+
+        if (selectedEntity > 0) {
+            boolean user = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity).isUser();
+            if (user) {
+                mViewPager.setCurrentItem(CHAT_INDEX);
+            }
+        }
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

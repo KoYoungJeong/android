@@ -121,6 +121,8 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
             return true;
         });
 
+        mainTopicListPresenter.onFocusTopic(selectedEntity);
+
     }
 
     @Override
@@ -232,6 +234,14 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         EntityMenuDialogFragment_.builder().entityId(item.getEntityId())
                 .build()
                 .show(getFragmentManager(), "dialog");
+    }
+
+    @Override
+    public void scrollToPosition(int selectedEntityPosition) {
+
+        if (selectedEntityPosition > 0) {
+            rvTopic.getLayoutManager().scrollToPosition(selectedEntityPosition - 1);
+        }
     }
 
     @Click(R.id.btn_main_topic_fab)

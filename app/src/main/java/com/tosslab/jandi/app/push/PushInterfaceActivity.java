@@ -50,11 +50,13 @@ public class PushInterfaceActivity extends AppCompatActivity {
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 
         if (!used) {
+            selectedEntityId = entityId;
             checkTeamInfo();
         } else {
+            selectedEntityId = -1;
             moveIntroActivity();
+            return;
         }
-        selectedEntityId = entityId;
     }
 
     @Background

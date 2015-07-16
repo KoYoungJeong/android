@@ -27,7 +27,7 @@ public class MainChatListAdapter extends BaseAdapter {
     private Context context;
 
     private List<ChatItem> entities;
-    private int selectedEntity;
+    private int selectedEntity = -1;
 
     public MainChatListAdapter(Context context) {
         this.context = context;

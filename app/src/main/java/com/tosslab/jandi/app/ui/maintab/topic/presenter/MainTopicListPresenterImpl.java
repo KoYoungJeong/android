@@ -146,4 +146,20 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
     }
 
+    @Override
+    public void onFocusTopic(int selectedEntity) {
+        List<Topic> joinedTopics = view.getJoinedTopics();
+
+        int selectedEntityPosition = 0;
+        int size = joinedTopics.size();
+        for (int idx = 0; idx < size; idx++) {
+            if (joinedTopics.get(idx).getEntityId() == selectedEntity) {
+                selectedEntityPosition = idx;
+                break;
+            }
+        }
+
+        view.scrollToPosition(selectedEntityPosition);
+    }
+
 }
