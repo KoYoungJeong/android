@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.message.v2;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -98,6 +95,7 @@ import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -395,23 +393,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
 
-        if (!JandiPreference.isAleadyShowCoachMarkTopic(getActivity().getApplicationContext())) {
-            showCoachMark();
-        }
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
 
     }
 
-    private void showCoachMark() {
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.setContentView(R.layout.dialog_coach_mark_topic);
-        dialog.setCanceledOnTouchOutside(true);
-        View masterView = dialog.findViewById(R.id.coach_mark_master_view);
-        masterView.setOnClickListener(view -> dialog.dismiss());
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        dialog.show();
-    }
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
         messageListPresenter.showStickerPreview(stickerInfo);

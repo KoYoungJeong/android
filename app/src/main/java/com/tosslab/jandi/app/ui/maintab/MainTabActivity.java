@@ -1,6 +1,5 @@
 package com.tosslab.jandi.app.ui.maintab;
 
-import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,11 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.ImageView;
 
-import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.ChatBadgeEvent;
@@ -41,10 +36,10 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -66,11 +61,6 @@ import rx.Observable;
  */
 @EActivity(R.layout.activity_main_tab)
 public class MainTabActivity extends BaseAnalyticsActivity {
-
-    private final int COACH_MARK_TOPIC_LIST = 0;
-    private final int COACH_MARK_DIRECT_MESSAGE_LIST = 1;
-    private final int COACH_MARK_FILE_LIST = 2;
-    private final int COACH_MARK_MORE = 3;
 
     @Bean
     EntityClientManager mEntityClientManager;
@@ -128,22 +118,15 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                 LogUtil.d("onPageSelected at " + position);
                 trackGaTab(mEntityManager, position);
                 switch (position) {
-                    case COACH_MARK_DIRECT_MESSAGE_LIST:
-                        if (!JandiPreference.isAleadyShowCoachMarkDirectMessageList(MainTabActivity.this.getApplicationContext())) {
-                            showCoachMark(COACH_MARK_DIRECT_MESSAGE_LIST);
-                        }
+                    case 1:
+                        TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
+                        break;
+                    case 2:
+                        TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
                         break;
 
-                    case COACH_MARK_FILE_LIST:
-                        if (!JandiPreference.isAleadyShowCoachMarkFileList(MainTabActivity.this.getApplicationContext())) {
-                            showCoachMark(COACH_MARK_FILE_LIST);
-                        }
-                        break;
-
-                    case COACH_MARK_MORE:
-                        if (!JandiPreference.isAleadyShowCoachMarkMore(MainTabActivity.this.getApplicationContext())) {
-                            showCoachMark(COACH_MARK_MORE);
-                        }
+                    case 3:
+                        TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
                         break;
                 }
             }
@@ -213,58 +196,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
-        if (!JandiPreference.isAleadyShowCoachMarkTopicList(this.getApplicationContext())) {
-            showCoachMark(COACH_MARK_TOPIC_LIST);
-        }
-
-    }
-
-    private void showCoachMark(int coachMarkType) {
-        final Dialog dialog = new Dialog(MainTabActivity.this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-        switch (coachMarkType) {
-            case COACH_MARK_TOPIC_LIST:
-                dialog.setContentView(R.layout.dialog_coach_mark_topiclist);
-                break;
-            case COACH_MARK_FILE_LIST:
-                dialog.setContentView(R.layout.dialog_coach_mark_filelist);
-                break;
-            case COACH_MARK_DIRECT_MESSAGE_LIST:
-                dialog.setContentView(R.layout.dialog_coach_mark_messagelist);
-                break;
-            case COACH_MARK_MORE:
-                dialog.setContentView(R.layout.dialog_coach_mark_more);
-                break;
-        }
-
-        dialog.setCanceledOnTouchOutside(true);
-
-        View masterView = dialog.findViewById(R.id.coach_mark_master_view);
-        masterView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-
-        if (coachMarkType == COACH_MARK_MORE) {
-            ImageView profileImageView = (ImageView) masterView.findViewById(R.id.iv_profile_guide_image_icon);
-            if (profileImageView != null) {
-                if (mEntityManager != null) {
-                    FormattedEntity me = mEntityManager.getMe();
-                    Ion.with(profileImageView)
-                            .placeholder(R.drawable.jandi_profile)
-                            .error(R.drawable.jandi_profile)
-                            .transform(new IonCircleTransform())
-                            .load(me.getUserSmallProfileUrl());
-                }
-            }
-        }
-
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        dialog.show();
+        TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
     }
 
 
