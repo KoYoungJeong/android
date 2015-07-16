@@ -232,7 +232,9 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         CarouselFileInfo fileInfo = getCarouselFileInfo();
 
         FileDetailActivity_
-                .intent(this)
+                .intent(CarouselViewerActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .roomId(roomId)
                 .fileId(fileInfo.getFileLinkId())
                 .start();
 

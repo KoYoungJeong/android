@@ -94,7 +94,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     @Extra
-    public int fileId;
+    int fileId;
+
+    @Extra
+    int roomId = -1;
 
     @Bean
     FileDetailModel fileDetailModel;
@@ -137,6 +140,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();
+        fileHeadManager.setRoomId(roomId);
 
         progressWheel = new ProgressWheel(this);
 

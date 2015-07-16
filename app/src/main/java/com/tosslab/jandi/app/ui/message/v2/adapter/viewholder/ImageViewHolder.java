@@ -16,12 +16,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.carousel.CarouselViewerActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
 
@@ -115,7 +113,7 @@ public class ImageViewHolder implements BodyViewHolder {
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
                 fileImageView.setImageResource(R.drawable.jandi_fview_icon_deleted);
-                fileImageView.setOnClickListener(null);
+                fileImageView.setClickable(false);
             } else {
                 if (BitmapUtil.hasImageUrl(fileContent)) {
                     // Google, Dropbox 파일이 인 경우
@@ -133,20 +131,13 @@ public class ImageViewHolder implements BodyViewHolder {
                             context.startActivity(intent);
                         });
                     } else {
-                        String optimizedImageUrl =
-                                BitmapUtil.getOptimizedImageUrl(context, fileContent);
 
-                        fileImageView.setOnClickListener(view -> CarouselViewerActivity_.intent(context)
-                                .roomId(roomId)
-                                .startLinkId(link.messageId)
-                                .start());
+                        fileImageView.setClickable(false);
 
                         // small 은 80 x 80 사이즈가 로딩됨 -> medium 으로 로딩
                         String mediumThumb =
                                 BitmapUtil.getThumbnailUrlOrOriginal(
                                         fileContent, BitmapUtil.Thumbnails.MEDIUM);
-
-                        LogUtil.i("small thumb - " + mediumThumb);
 
                         Glide.with(fileImageView.getContext())
                                 .load(mediumThumb)
@@ -156,6 +147,7 @@ public class ImageViewHolder implements BodyViewHolder {
                                 .into(fileImageView);
                     }
                 } else {
+                    fileImageView.setClickable(false);
                     fileImageView.setImageResource(R.drawable.jandi_fl_icon_img);
                 }
 

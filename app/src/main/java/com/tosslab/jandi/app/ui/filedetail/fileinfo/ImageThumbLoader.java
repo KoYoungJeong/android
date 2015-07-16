@@ -23,11 +23,13 @@ public class ImageThumbLoader implements FileThumbLoader {
 
     private final ImageView iconFileType;
     private final ImageView imageViewPhotoFile;
+    private final int roomId;
     private Context context;
 
-    public ImageThumbLoader(ImageView iconFileType, ImageView imageViewPhotoFile) {
+    public ImageThumbLoader(ImageView iconFileType, ImageView imageViewPhotoFile, int roomId) {
         this.iconFileType = iconFileType;
         this.imageViewPhotoFile = imageViewPhotoFile;
+        this.roomId = roomId;
         context = imageViewPhotoFile.getContext();
     }
 
@@ -70,12 +72,20 @@ public class ImageThumbLoader implements FileThumbLoader {
                 default:
                     imageViewPhotoFile.setOnClickListener(view -> {
                         String optimizedImageUrl = BitmapUtil.getOptimizedImageUrl(context, content);
-                        PhotoViewActivity_
-                                .intent(context)
-                                .imageUrl(optimizedImageUrl)
-                                .imageName(content.name)
-                                .imageType(content.type)
-                                .start();
+
+                        if (roomId > 0) {
+                            CarouselViewerActivity_.intent(context)
+                                    .roomId(roomId)
+                                    .startLinkId(fileMessage.id)
+                                    .start();
+                        } else {
+                            PhotoViewActivity_
+                                    .intent(context)
+                                    .imageUrl(optimizedImageUrl)
+                                    .imageName(content.name)
+                                    .imageType(content.type)
+                                    .start();
+                        }
                     });
                     break;
             }

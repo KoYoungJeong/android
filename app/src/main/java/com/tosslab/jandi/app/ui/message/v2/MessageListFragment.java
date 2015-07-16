@@ -797,13 +797,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         if (messageListModel.isFileType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId, entityId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId,
+                    roomId);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
-                    .feedbackId, entityId);
+                    .feedbackId, roomId);
         } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
-                    .feedbackId, entityId);
+                    .feedbackId, roomId);
         }
     }
 
