@@ -2,17 +2,18 @@ package com.tosslab.jandi.app.network.models;
 
 import android.text.TextUtils;
 
-import android.util.Log;
+import com.tosslab.jandi.app.network.jackson.deserialize.EventInfoDeserialize;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by justinygchoi on 2014. 6. 18..
@@ -46,7 +47,7 @@ public class ResMessages {
         public String status;
         public int feedbackId;
 
-        public Map<String, Object> info; // How to convert other type
+        public EventInfo info; // How to convert other type
         public OriginalMessage feedback;
         public OriginalMessage message;
 
@@ -85,19 +86,7 @@ public class ResMessages {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @JsonTypeInfo(
-            use = JsonTypeInfo.Id.NAME,
-            include = JsonTypeInfo.As.PROPERTY,
-            property = "eventType",
-            defaultImpl = EventInfo.class)
-    @JsonSubTypes({
-            @JsonSubTypes.Type(value = AnnouncementCreateEvent.class, name = "announcement_created"),
-            @JsonSubTypes.Type(value = AnnouncementDeleteEvent.class, name = "announcement_deleted"),
-            @JsonSubTypes.Type(value = AnnouncementUpdateEvent.class, name = "announcement_status_updated"),
-            @JsonSubTypes.Type(value = CreateEvent.class, name = "create"),
-            @JsonSubTypes.Type(value = InviteEvent.class, name = "invite"),
-            @JsonSubTypes.Type(value = LeaveEvent.class, name = "leave"),
-            @JsonSubTypes.Type(value = JoinEvent.class, name = "join")})
+    @JsonDeserialize(using = EventInfoDeserialize.class)
     public static class EventInfo {
     }
 
@@ -264,6 +253,7 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class CreateEvent extends EventInfo {
 
         @JsonTypeInfo(
@@ -278,16 +268,17 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class AnnouncementCreateEvent extends EventInfo {
 
         private Info eventInfo;
 
-        public void setEventInfo(Info eventInfo) {
-            this.eventInfo = eventInfo;
-        }
-
         public Info getEventInfo() {
             return eventInfo;
+        }
+
+        public void setEventInfo(Info eventInfo) {
+            this.eventInfo = eventInfo;
         }
 
         @Override
@@ -319,16 +310,17 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class AnnouncementUpdateEvent extends EventInfo {
 
         private Info eventInfo;
 
-        public void setEventInfo(Info eventInfo) {
-            this.eventInfo = eventInfo;
-        }
-
         public Info getEventInfo() {
             return eventInfo;
+        }
+
+        public void setEventInfo(Info eventInfo) {
+            this.eventInfo = eventInfo;
         }
 
         @Override
@@ -360,12 +352,14 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class AnnouncementDeleteEvent extends EventInfo {
 
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class InviteEvent extends EventInfo {
         public int invitorId;
         public List<Integer> inviteUsers;
@@ -373,12 +367,14 @@ public class ResMessages {
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class LeaveEvent extends EventInfo {
 
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class JoinEvent extends EventInfo {
     }
 
