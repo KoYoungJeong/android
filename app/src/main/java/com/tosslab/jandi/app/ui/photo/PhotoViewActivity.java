@@ -60,8 +60,13 @@ public class PhotoViewActivity extends AppCompatActivity {
             }
         });
 
-        setUpFullScreen(isFullScreen);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpFullScreen(isFullScreen);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {

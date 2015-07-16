@@ -128,10 +128,15 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             }
         });
 
-        setUpFullScreen(isFullScreen);
 
         carouselViewerPresenter.onInitImageFiles(getApplicationContext());
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpFullScreen(isFullScreen);
     }
 
     private void setUpFullScreen(boolean isFullScreen) {
