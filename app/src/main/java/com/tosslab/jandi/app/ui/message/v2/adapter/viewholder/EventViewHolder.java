@@ -15,21 +15,11 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 9..
@@ -47,86 +37,63 @@ public class EventViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
-        Observable.from(Arrays.asList(link.info))
-                .subscribeOn(Schedulers.io())
-                .map(stringObjectMap -> {
-                    Map<String, Object> info = link.info;
-                    if (link.info.containsKey(KEY_PARSING_DATA)) {
-                        return link.info.get(KEY_PARSING_DATA);
-                    }
+    public void bindData(ResMessages.Link link, int teamId, int roomId) {
 
-                    ObjectMapper objectMapper = JacksonMapper.getInstance().getObjectMapper();
-                    try {
+        ResMessages.EventInfo eventInfo = link.info;
 
-                        String s = objectMapper.writeValueAsString(info);
-                        ResMessages.EventInfo eventInfo =
-                                objectMapper.readValue(s, ResMessages.EventInfo.class);
-                        link.info.put(KEY_PARSING_DATA, eventInfo);
-                        return eventInfo;
+        SpannableStringBuilder builder = new SpannableStringBuilder();
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                })
-                .filter(eventInfo -> eventInfo != null)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(eventInfo -> {
+        EntityManager entityManager = EntityManager.getInstance(context);
 
-                    SpannableStringBuilder builder = new SpannableStringBuilder();
+        if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
+            buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
+                    link.fromEntity, builder, entityManager);
 
-                    EntityManager entityManager = EntityManager.getInstance(context);
+        } else if (eventInfo instanceof ResMessages.AnnouncementUpdateEvent) {
+            buildAnnouncementUpdateEvent((ResMessages.AnnouncementUpdateEvent) eventInfo,
+                    link.fromEntity, builder, entityManager);
 
-                    if (eventInfo instanceof ResMessages.AnnouncementCreateEvent) {
-                        buildAnnouncementCreateEvent((ResMessages.AnnouncementCreateEvent) eventInfo,
-                                link.fromEntity, builder, entityManager);
+        } else if (eventInfo instanceof ResMessages.AnnouncementDeleteEvent) {
+            buildAnnouncementDeleteEvent(link.fromEntity, builder, entityManager);
 
-                    } else if (eventInfo instanceof ResMessages.AnnouncementUpdateEvent) {
-                        buildAnnouncementUpdateEvent((ResMessages.AnnouncementUpdateEvent) eventInfo,
-                                link.fromEntity, builder, entityManager);
+        } else if (eventInfo instanceof ResMessages.CreateEvent) {
+            buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, entityManager);
 
-                    } else if (eventInfo instanceof ResMessages.AnnouncementDeleteEvent) {
-                        buildAnnouncementDeleteEvent(link.fromEntity, builder, entityManager);
+        } else if (eventInfo instanceof ResMessages.InviteEvent) {
 
-                    } else if (eventInfo instanceof ResMessages.CreateEvent) {
-                        buildCreateEvent((ResMessages.CreateEvent) eventInfo, builder, entityManager);
+            buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, entityManager);
 
-                    } else if (eventInfo instanceof ResMessages.InviteEvent) {
+        } else {
+            int fromEntity = link.fromEntity;
+            if (eventInfo instanceof ResMessages.JoinEvent) {
+                buildJoinEvent(builder, fromEntity);
 
-                        buildInviteEvent((ResMessages.InviteEvent) eventInfo, builder, entityManager);
+            } else if (eventInfo instanceof ResMessages.LeaveEvent) {
+                buildLeaveEvent(builder, fromEntity);
+            }
+        }
 
-                    } else {
-                        int fromEntity = link.fromEntity;
-                        if (eventInfo instanceof ResMessages.JoinEvent) {
-                            buildJoinEvent(builder, fromEntity);
+        builder.append(" ");
+        int eventTextSize = context.getResources()
+                .getDimensionPixelSize(R.dimen.jandi_messages_content);
+        ColorStateList eventTextColor = ColorStateList.valueOf(
+                context.getResources().getColor(R.color.jandi_messages_date));
+        int eventLength = builder.length();
+        TextAppearanceSpan eventTextAppearance =
+                new TextAppearanceSpan(null, Typeface.NORMAL,
+                        eventTextSize, eventTextColor, eventTextColor);
+        builder.setSpan(eventTextAppearance,
+                0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                        } else if (eventInfo instanceof ResMessages.LeaveEvent) {
-                            buildLeaveEvent(builder, fromEntity);
-                        }
-                    }
+        int startIndex = builder.length();
+        builder.append(" ");
+        DateViewSpannable spannable =
+                new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));
+        builder.setSpan(spannable, startIndex, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                    builder.append(" ");
-                    int eventTextSize = context.getResources()
-                            .getDimensionPixelSize(R.dimen.jandi_messages_content);
-                    ColorStateList eventTextColor = ColorStateList.valueOf(
-                            context.getResources().getColor(R.color.jandi_messages_date));
-                    int eventLength = builder.length();
-                    TextAppearanceSpan eventTextAppearance =
-                            new TextAppearanceSpan(null, Typeface.NORMAL,
-                                    eventTextSize, eventTextColor, eventTextColor);
-                    builder.setSpan(eventTextAppearance,
-                            0, eventLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        eventContentView.setText(builder);
+        eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
 
-                    int startIndex = builder.length();
-                    builder.append(" ");
-                    DateViewSpannable spannable =
-                            new DateViewSpannable(context, DateTransformator.getTimeStringForSimple(link.time));
-                    builder.setSpan(spannable, startIndex, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    eventContentView.setText(builder);
-                    eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
-                });
 
     }
 
