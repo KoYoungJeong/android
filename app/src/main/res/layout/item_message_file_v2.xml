@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="9dp"
+            android:layout_marginRight="14dp"
             android:layout_toRightOf="@id/img_message_common_file"
             android:orientation="vertical">
 
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:singleLine="true"
-                android:text="file name"
+                android:text="file name asjhdklajdlkjhsdlkajsdhflkjahsdf"
                 android:textColor="@color/jandi_messages_file_name"
                 android:textSize="17sp"
                 android:textStyle="bold"/>
@@ -139,7 +139,7 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right"/>
+            android:src="@drawable/jandi_icon_comment_arrow"/>
     </RelativeLayout>
 
     <View

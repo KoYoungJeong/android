@@ -158,7 +158,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 vgCarouselBottom.setVisibility(View.GONE);
             }
 
-            viewPager.setBackgroundColor(getResources().getColor(R.color.black));
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
@@ -174,7 +173,6 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
                 actionBar.show();
                 vgCarouselBottom.setVisibility(View.VISIBLE);
             }
-            viewPager.setBackgroundColor(getResources().getColor(R.color.white));
         }
 
         getWindow().getDecorView().setSystemUiVisibility(systemUiOptions);

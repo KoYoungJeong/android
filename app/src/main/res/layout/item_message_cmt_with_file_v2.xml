@@ -172,7 +172,7 @@
             android:id="@+id/txt_message_commented_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="9dp"
+            android:layout_marginRight="14dp"
             android:focusable="false"
             android:text="Comment"
             android:textColor="@color/jandi_messages_file_content"
@@ -184,7 +184,7 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right"/>
+            android:src="@drawable/jandi_icon_comment_arrow"/>
     </RelativeLayout>
 
 </RelativeLayout>

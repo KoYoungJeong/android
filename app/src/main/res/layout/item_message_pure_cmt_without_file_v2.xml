@@ -14,9 +14,11 @@
         android:id="@+id/tv_pure_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="9dp"
+        android:layout_marginRight="14dp"
         android:focusable="false"
         android:text="Text"
+        android:layout_toLeftOf="@+id/iv_img_file_arrow"
+        android:layout_alignParentLeft="true"
         android:textColor="@color/jandi_messages_file_content"
         android:textSize="@dimen/jandi_messages_comment"/>
 
@@ -26,6 +28,6 @@
         android:layout_height="@dimen/jandi_messages_arrow_right_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/jandi_arrow_right"/>
+        android:src="@drawable/jandi_icon_comment_arrow"/>
 
 </RelativeLayout>

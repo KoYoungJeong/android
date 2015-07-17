@@ -114,10 +114,12 @@ public class PhotoViewActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(
-                new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setIcon(
+                    new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        }
     }
 
     @OptionsItem(android.R.id.home)

@@ -12,20 +12,11 @@
     android:paddingLeft="@dimen/jandi_messages_padding_left"
     android:paddingTop="8dp">
 
-    <View
-        android:id="@+id/vg_divider_messages_image_top"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignLeft="@+id/ly_message_nested_comment"
-        android:layout_marginBottom="14dp"
-        android:background="@color/jandi_message_indicator"/>
-
     <!-- 내부에 포함된 댓글일 경우 -->
     <RelativeLayout
         android:id="@+id/ly_message_nested_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/vg_divider_messages_image_top"
         android:layout_marginLeft="43dp"
         android:layout_marginRight="@dimen/jandi_messages_padding_right">
 
@@ -81,7 +72,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txt_message_nested_comment_user_name"
-            android:layout_marginRight="9dp"
+            android:layout_marginRight="14dp"
             android:layout_marginTop="12dp"
             android:layout_toLeftOf="@+id/iv_img_file_arrow"
             android:focusable="false"
@@ -95,7 +86,7 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right"/>
+            android:src="@drawable/jandi_icon_comment_arrow"/>
     </RelativeLayout>
 
 
