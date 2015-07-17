@@ -5,12 +5,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_chat_detail"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"
-        app:title="@string/jandi_chat_detail"/>
-
     <LinearLayout
         android:id="@+id/vg_chat_detail_starred"
         style="@style/JandiTopicDetail.Layout"
