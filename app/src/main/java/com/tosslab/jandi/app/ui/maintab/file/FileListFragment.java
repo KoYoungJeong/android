@@ -151,7 +151,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id);
+            moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position)
+                    .id, mSearchQuery.mSearchEntity);
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
             }
@@ -293,7 +294,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onResume() {
-        LogUtil.d("FileListFragment onResume");
         super.onResume();
         isForeground = true;
     }
@@ -518,7 +518,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
     }
 
-    private void moveToFileDetailActivity(int fileId) {
+    private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)

@@ -7,6 +7,11 @@
                 android:background="?android:attr/selectableItemBackground"
                 android:orientation="horizontal">
 
+    <View
+        android:id="@+id/view_entity_listitem_selector"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_topic_selector"
+        android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/img_entity_listitem_icon"

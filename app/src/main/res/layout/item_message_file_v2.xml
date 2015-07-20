@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout android:id="@+id/ly_message_item"
+<RelativeLayout
+    android:id="@+id/ly_message_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,8 +10,7 @@
     android:orientation="horizontal"
     android:paddingBottom="10dp"
     android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingTop="5dp"
+    android:paddingTop="8dp"
     android:visibility="visible">
     <!-- 사용자 프로필 사진 -->
     <ImageView
@@ -86,42 +86,52 @@
     <RelativeLayout
         android:id="@+id/ry_message_common_file"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_below="@+id/txt_message_user_name"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginRight="@dimen/jandi_messages_padding_right"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/img_message_user_profile">
         <!-- 일반 파일일 경우 -->
         <ImageView
             android:id="@+id/img_message_common_file"
             android:layout_width="@dimen/jandi_messages_image_size"
             android:layout_height="@dimen/jandi_messages_image_size"
+            android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="5dp"
             android:src="@drawable/jandi_sicon_text"/>
 
-        <TextView
-            android:id="@+id/txt_message_common_file_name"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_toLeftOf="@+id/iv_img_file_arrow"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="14dp"
             android:layout_toRightOf="@id/img_message_common_file"
-            android:text="file name"
-            android:textColor="@color/jandi_messages_file_name"
-            android:textSize="14sp"
-            android:textStyle="bold"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txt_common_file_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/txt_message_common_file_name"
-            android:layout_below="@id/txt_message_common_file_name"
-            android:layout_marginTop="4dp"
-            android:text="file type"
-            android:textColor="#999999"
-            android:textSize="12dp"/>
+            <TextView
+                android:id="@+id/txt_message_common_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="file name asjhdklajdlkjhsdlkajsdhflkjahsdf"
+                android:textColor="@color/jandi_messages_file_name"
+                android:textSize="17sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txt_common_file_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/txt_message_common_file_name"
+                android:layout_marginTop="8dp"
+                android:text="file type"
+                android:textColor="#999999"
+                android:textSize="11sp"/>
+
+        </LinearLayout>
+
 
         <ImageView
             android:id="@+id/iv_img_file_arrow"
@@ -129,8 +139,14 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right"/>
+            android:src="@drawable/jandi_icon_comment_arrow"/>
     </RelativeLayout>
 
-
+    <View
+        android:id="@+id/vg_divider_messages_image_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignLeft="@+id/ry_message_common_file"
+        android:layout_below="@+id/ry_message_common_file"
+        android:background="@color/jandi_message_indicator"/>
 </RelativeLayout>

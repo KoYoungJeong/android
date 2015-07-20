@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/ly_message_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/message_list_selector"
     android:descendantFocusability="blocksDescendants"
     android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
     android:paddingBottom="10dp"
     android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingTop="5dp">
+    android:paddingTop="8dp">
 
     <!-- 내부에 포함된 댓글일 경우 -->
     <RelativeLayout
         android:id="@+id/ly_message_nested_comment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="43dp">
-
-        <View
-            android:id="@+id/divider_messages_nested_comment"
-            android:layout_width="292dp"
-            android:layout_height="0.5dp"
-            android:background="#999999" />
+        android:layout_marginLeft="43dp"
+        android:layout_marginRight="@dimen/jandi_messages_padding_right">
 
         <TextView
             android:id="@+id/txt_message_nested_comment_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/divider_messages_nested_comment"
-            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
             android:text="User Name"
             android:textColor="@color/jandi_messages_name"
             android:textSize="@dimen/jandi_messages_comment_name"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <ImageView
             android:id="@+id/img_entity_listitem_line_through"
@@ -45,7 +39,7 @@
             android:layout_alignLeft="@+id/txt_message_nested_comment_user_name"
             android:layout_alignRight="@+id/txt_message_nested_comment_user_name"
             android:layout_alignTop="@+id/txt_message_nested_comment_user_name"
-            android:src="@drawable/line_gray" />
+            android:src="@drawable/line_gray"/>
 
         <TextView
             android:id="@+id/txt_message_commented_create_date"
@@ -57,7 +51,7 @@
             android:gravity="bottom"
             android:text="AM ??:??"
             android:textColor="@color/jandi_messages_date"
-            android:textSize="@dimen/jandi_messages_date" />
+            android:textSize="@dimen/jandi_messages_date"/>
 
 
         <TextView
@@ -70,7 +64,7 @@
             android:text="99"
             android:textColor="@color/jandi_accent_color"
             android:textSize="@dimen/jandi_text_size_smaller"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
 
         <TextView
@@ -78,13 +72,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/txt_message_nested_comment_user_name"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginRight="14dp"
+            android:layout_marginTop="12dp"
             android:layout_toLeftOf="@+id/iv_img_file_arrow"
             android:focusable="false"
             android:text="Nested comment"
-            android:textColor="@color/jandi_messages_content"
-            android:textSize="@dimen/jandi_messages_comment" />
+            android:textColor="@color/jandi_messages_file_content"
+            android:textSize="@dimen/jandi_messages_comment"/>
 
         <ImageView
             android:id="@+id/iv_img_file_arrow"
@@ -92,8 +86,8 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right" />
+            android:src="@drawable/jandi_icon_comment_arrow"/>
     </RelativeLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -4,11 +4,6 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_topic_detail"
-        style="@style/Jandi.Default.ActionBar"
-        android:layout_width="match_parent"/>
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -76,7 +71,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="14dp"
                     android:layout_marginTop="6dp"
-                    android:maxLines="6"
                     android:lineSpacingExtra="6dp"
                     android:textColor="@color/jandi_text_topic_detail_content"
                     android:textSize="@dimen/jandi_text_size_medium"/>
@@ -163,7 +157,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/jandi_topic_starred"
+                    android:text="@string/jandi_starred"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
 

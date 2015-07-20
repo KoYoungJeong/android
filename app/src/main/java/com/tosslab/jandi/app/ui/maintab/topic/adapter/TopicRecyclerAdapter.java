@@ -28,6 +28,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
+    private int selectedEntity;
 
     public TopicRecyclerAdapter(Context context) {
         this.context = context;
@@ -41,6 +42,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         View view = LayoutInflater.from(context).inflate(R.layout.item_topic_body, parent, false);
 
         TopicViewHolder viewHolder = new TopicViewHolder(view);
+        viewHolder.selector = view.findViewById(R.id.view_entity_listitem_selector);
         viewHolder.tvName = (TextView) view.findViewById(R.id.txt_entity_listitem_name);
         viewHolder.imageViewIcon = (ImageView) view.findViewById(R.id.img_entity_listitem_icon);
         viewHolder.imageViewFavorite = (ImageView) view.findViewById(R.id.img_entity_listitem_fav);
@@ -64,6 +66,9 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         Topic topic = getItem(position);
 
         holder.draw(topic);
+
+        holder.selector.setSelected(topic.getEntityId() == selectedEntity);
+
 
         holder.itemView.setOnClickListener(view -> {
             if (onRecyclerItemClickListener != null) {
@@ -113,10 +118,15 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
         topicList.clear();
     }
 
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
+    }
+
     static class TopicViewHolder extends RecyclerView.ViewHolder {
 
         public View vgBadge;
         public TextView tvDescription;
+        public View selector;
         private ImageView imageViewIcon;
         private ImageView imageViewFavorite;
         private TextView tvName;

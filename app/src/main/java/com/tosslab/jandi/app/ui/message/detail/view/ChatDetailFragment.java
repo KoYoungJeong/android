@@ -59,7 +59,7 @@ public class ChatDetailFragment extends Fragment {
     private void setUpActionbar() {
 
         AppCompatActivity activity = ((AppCompatActivity) getActivity());
-        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar_chat_detail);
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar_topic_detail);
         activity.setSupportActionBar(toolbar);
 
         ActionBar actionBar = activity.getSupportActionBar();

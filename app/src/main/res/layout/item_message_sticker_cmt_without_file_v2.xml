@@ -20,17 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="43dp">
 
-        <View
-            android:id="@+id/divider_messages_nested_comment"
-            android:layout_width="292dp"
-            android:layout_height="0.5dp"
-            android:background="#999999" />
-
         <TextView
             android:id="@+id/txt_message_nested_comment_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/divider_messages_nested_comment"
             android:layout_marginTop="8dp"
             android:text="User Name"
             android:textColor="@color/jandi_messages_name"
@@ -87,7 +80,7 @@
             android:layout_height="@dimen/jandi_messages_arrow_right_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/jandi_arrow_right" />
+            android:src="@drawable/jandi_icon_comment_arrow" />
     </RelativeLayout>
 
 

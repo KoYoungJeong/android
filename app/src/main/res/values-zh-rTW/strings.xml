@@ -400,6 +400,17 @@
     <string name="jandi_view_all">"檢視全部"</string>
 
     <string name="jandi_title_name_required">"名字*"</string>
+    <string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
+    <string name="jandi_is_topic_required">" 公開/私人"</string>
+    <string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
+    <string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
+    <string name="jandi_save">"儲存"</string>
+    <string name="jandi_topic_delete">"刪除議題"</string>
+    <string name="jandi_topic_description">"議題內容"</string>
+    <string name="jandi_topic_leave">"離開議題"</string>
+    <string name="jandi_topic_detail">"議題資訊"</string>
+    <string name="jandi_explain_topic_description">"說明 (選項)"</string>
+    <string name="jandi_topic_starred">"標記議題"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜尋訊息</string>
