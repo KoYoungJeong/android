@@ -133,6 +133,19 @@ public class MixpanelMemberAnalyticsClient {
         memberMixpanel.track(PROP_DOWNLOAD_FILE, props);
     }
 
+    public void trackDownloadFile(String type, String ext, int size)
+            throws JSONException {
+        String mimeType = type;
+        String extension = ext;
+
+        JSONObject props = new JSONObject();
+        props.put("category", getMimeTypeCategory(mimeType));
+        props.put("extension", extension);
+        props.put("mime type", mimeType);
+        props.put("size", size);
+        memberMixpanel.track(PROP_DOWNLOAD_FILE, props);
+    }
+
     public void trackSharingFile(int entityType, ResMessages.FileMessage fileInfo)
             throws JSONException {
         String mimeType = fileInfo.content.type;

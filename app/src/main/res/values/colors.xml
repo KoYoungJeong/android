@@ -86,10 +86,12 @@
     <color name="jandi_messages_content">@color/jandi_text</color>
     <color name="jandi_messages_joined_cdp">@color/jandi_text_light</color>
     <color name="jandi_messages_commented">@color/jandi_primary_color</color>
-    <color name="jandi_messages_file_name">@color/jandi_text</color>
+    <color name="jandi_messages_file_name">#00a6e9</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
     <color name="jandi_announcement_divider">#FFD0D0D0</color>
     <color name="jandi_linkpreview_divider">#FFE6E6E6</color>
+    <color name="jandi_messages_file_writer">#000000</color>
+    <color name="jandi_messages_file_content">#353535</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -197,5 +199,8 @@
 
     <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
 
+    <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
+    <color name="jandi_carousel_transparent_45">#45000000</color>
 
+    <color name="jandi_message_indicator">#D2D2D2</color>
 </resources>

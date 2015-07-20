@@ -4,7 +4,11 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
+import java.util.List;
+
+import retrofit.http.GET;
 import retrofit.http.Headers;
 import retrofit.http.Path;
 import retrofit.http.Query;
@@ -18,5 +22,23 @@ public interface FileApiV2Client {
     @DELETEWithBody("/files/{fileId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResCommon deleteFile(@Query("teamId") int teamId, @Path("fileId") int fileId);
+
+    @GET("/teams/{teamId}/rooms/{roomId}/images")
+    List<ResMessages.FileMessage> searchInitImageFile(@Path("teamId") int teamId
+            , @Path("roomId") int roomId
+            , @Query("messageId") int messageId
+            , @Query("count") int count);
+
+    @GET("/teams/{teamId}/rooms/{roomId}/images?type=old")
+    List<ResMessages.FileMessage> searchOldImageFile(@Path("teamId") int teamId
+            , @Path("roomId") int roomId
+            , @Query("messageId") int messageId
+            , @Query("count") int count);
+
+    @GET("/teams/{teamId}/rooms/{roomId}/images?type=new")
+    List<ResMessages.FileMessage> searchNewImageFile(@Path("teamId") int teamId
+            , @Path("roomId") int roomId
+            , @Query("messageId") int messageId
+            , @Query("count") int count);
 
 }

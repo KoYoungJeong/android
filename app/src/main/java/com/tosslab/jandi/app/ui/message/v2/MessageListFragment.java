@@ -256,6 +256,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
+        messageListPresenter.setEntityInfo(entityId);
         messageListModel.updateMarkerInfo(teamId, roomId);
         fileUploadStateViewModel.setEntityId(entityId);
 
@@ -340,7 +341,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             @Override
             public void onItemClick(RecyclerView.Adapter adapter, int position) {
 
-                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem(position));
+                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem
+                        (position), entityId);
             }
         });
 
@@ -750,7 +752,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     }
 
-    void onMessageItemClick(ResMessages.Link link) {
+    void onMessageItemClick(ResMessages.Link link, int entityId) {
         if (link instanceof DummyMessageLink) {
             DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 
@@ -760,11 +762,14 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         if (messageListModel.isFileType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.messageId,
+                    roomId);
         } else if (messageListModel.isCommentType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
+                    .feedbackId, roomId);
         } else if (messageListModel.isStickerCommentType(link.message)) {
-            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message.feedbackId);
+            messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
+                    .feedbackId, roomId);
         }
     }
 
