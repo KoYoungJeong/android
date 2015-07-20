@@ -401,4 +401,18 @@ Contact us at support@tosslab.com"</string>
     <string name="jandi_view_all">"View All"</string>
     <string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
     <string name="jandi_decide_choose">"Select Photos"</string>
+    <string name="jandi_input_topic_name">"Enter the topic name"</string>
+
+    <string name="jandi_title_name_required">"Name*"</string>
+    <string name="jandi_is_topic_required">"Type*"</string>
+    <string name="jandi_topic_description">"Topic description"</string>
+    <string name="jandi_explain_topic_description">"Description (optional)"</string>
+    <string name="jandi_topic_leave">"Leave topic"</string>
+    <string name="jandi_topic_delete">"Delete topic"</string>
+    <string name="jandi_topic_detail">"Topic Info"</string>
+    <string name="jandi_chat_detail">대화창 상세보기</string>
+    <string name="jandi_chat_leave">대화창 나가기</string>
+    <string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
+    <string name="jandi_plz_input_topic_description">"Description (optional)"</string>
+    <string name="jandi_save">"Save"</string>
 </resources>

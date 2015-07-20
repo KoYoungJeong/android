@@ -68,6 +68,8 @@ public class MenuCommandBuilder {
                 SearchMenuCommand command = SearchMenuCommand_.getInstance_(activity);
                 command.setEntityId(chattingInfomations.entityId);
                 return command;
+            case R.id.action_entity_more:
+                return new TopicDetailCommand(activity, chattingInfomations.entityId);
         }
         return null;
     }

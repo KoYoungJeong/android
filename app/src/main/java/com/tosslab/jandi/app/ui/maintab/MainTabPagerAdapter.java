@@ -23,10 +23,12 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
     private static final int TAB_MORE = 3;
 
     View[] mTabs;
+    private int selectedEntity;
 
-    public MainTabPagerAdapter(FragmentManager fm, View[] tabs) {
+    public MainTabPagerAdapter(FragmentManager fm, View[] tabs, int selectedEntity) {
         super(fm);
         mTabs = tabs;
+        this.selectedEntity = selectedEntity;
     }
 
     @Override
@@ -35,10 +37,12 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             case TAB_TOPIC:
                 return MainTopicListFragment_
                         .builder()
+                        .selectedEntity(selectedEntity)
                         .build();
             case TAB_CHAT:
                 return MainChatListFragment_
                         .builder()
+                        .selectedEntity(selectedEntity)
                         .build();
             case TAB_FILE:
                 return FileListFragment_
@@ -101,5 +105,9 @@ public class MainTabPagerAdapter extends FragmentPagerAdapter
             return tabView.findViewById(R.id.tab_badge_chat_new);
         }
         return null;
+    }
+
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
     }
 }

@@ -192,7 +192,7 @@ public class FileDetailModel {
 
     public ResCommon joinEntity(FormattedEntity entityId) throws RetrofitError {
 
-        return entityClientManager.joinChannel(entityId.getChannel());
+        return entityClientManager.joinChannel(entityId.getChannel().id);
 
     }
 

@@ -18,6 +18,7 @@ import com.tosslab.jandi.app.events.ChatBadgeEvent;
 import com.tosslab.jandi.app.events.InvitationDisableCheckEvent;
 import com.tosslab.jandi.app.events.ServiceMaintenanceEvent;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
+import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
@@ -28,6 +29,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.push.PushInterfaceActivity;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -61,6 +63,7 @@ import rx.Observable;
 @EActivity(R.layout.activity_main_tab)
 public class MainTabActivity extends BaseAnalyticsActivity {
 
+    public static final int CHAT_INDEX = 1;
     @Bean
     EntityClientManager mEntityClientManager;
     @Bean
@@ -69,6 +72,8 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     ClipboardManager clipboardManager;
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
+
+    int selectedEntity = -1;
     private ProgressWheel mProgressWheel;
     private Context mContext;
     private EntityManager mEntityManager;
@@ -91,21 +96,32 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         setupActionBar(selectedTeamInfo.getName());
 
+        selectedEntity = PushInterfaceActivity.selectedEntityId;
+
         // ViewPager
         View[] tabViews = new View[4];
         tabViews[0] = getLayoutInflater().inflate(R.layout.tab_topic, null);
         tabViews[1] = getLayoutInflater().inflate(R.layout.tab_chat, null);
         tabViews[2] = getLayoutInflater().inflate(R.layout.tab_file, null);
         tabViews[3] = getLayoutInflater().inflate(R.layout.tab_more, null);
-        mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews);
+        mMainTabPagerAdapter = new MainTabPagerAdapter(getSupportFragmentManager(), tabViews, selectedEntity);
         mViewPager = (ViewPager) findViewById(R.id.pager_main_tab);
         mViewPager.setOverScrollMode(ViewPager.OVER_SCROLL_NEVER);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mMainTabPagerAdapter);
 
+        PushInterfaceActivity.selectedEntityId = -1;
+
         // Bind the tabs to the ViewPager
         PagerSlidingTabStrip tabs = (PagerSlidingTabStrip) findViewById(R.id.sliding_tabs);
         tabs.setViewPager(mViewPager);
+
+        if (selectedEntity > 0) {
+            boolean user = EntityManager.getInstance(getApplicationContext()).getEntityById(selectedEntity).isUser();
+            if (user) {
+                mViewPager.setCurrentItem(CHAT_INDEX);
+            }
+        }
 
         tabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -275,6 +291,11 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     private void postShowChattingListEvent() {
         EventBus.getDefault().post(new RetrieveTopicListEvent());
     }
+
+    public void onEvent(MainSelectTopicEvent event) {
+        selectedEntity = event.getSelectedEntity();
+    }
+
 
     public void onEvent(InvitationDisableCheckEvent event) {
         invitationDialogExecutor.execute();
