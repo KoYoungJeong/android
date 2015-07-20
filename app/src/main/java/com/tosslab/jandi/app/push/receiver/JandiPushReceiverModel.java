@@ -15,13 +15,20 @@ import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.services.BadgeHandleService;
+import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -38,6 +45,8 @@ import java.util.List;
 @EBean
 public class JandiPushReceiverModel {
 
+    public static final String JSON_KEY_DATA = "com.parse.Data";
+
     @SystemService
     AudioManager audioManager;
 
@@ -53,11 +62,9 @@ public class JandiPushReceiverModel {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        pendingIntent.cancel();
+//        pendingIntent.cancel();
 
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -76,20 +83,30 @@ public class JandiPushReceiverModel {
         }
     }
 
-    @Background
     public void updateEntityAndBadge(Context context) {
-        Intent intent = new Intent(context, BadgeHandleService.class);
-        context.startService(intent);
+        EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
+        ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+
+        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+
+        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+        LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + totalUnreadCount);
+        BadgeUtils.setBadge(context, totalUnreadCount);
+        JandiPreference.setBadgeCount(context, totalUnreadCount);
+
+        EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+//        Intent intent = new Intent(context, BadgeHandleService.class);
+//        context.startService(intent);
     }
 
     public PushTO parsingPushTO(Bundle extras) {
 
-        if (extras == null || !extras.containsKey(JandiBroadcastReceiver.JSON_KEY_DATA)) {
+        if (extras == null || !extras.containsKey(JSON_KEY_DATA)) {
             return null;
         }
 
         try {
-            String jsonData = extras.getString(JandiBroadcastReceiver.JSON_KEY_DATA);
+            String jsonData = extras.getString(JSON_KEY_DATA);
             ObjectMapper mapper = JacksonMapper.getInstance().getObjectMapper();
             return mapper.readValue(jsonData, PushTO.class);
         } catch (IOException e) {
@@ -212,13 +229,12 @@ public class JandiPushReceiverModel {
         sendNotification(context, notification);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
     void sendNotification(Context context, Notification notification) {
         NotificationManager nm =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notification != null) {
-            nm.cancel(JandiConstants.NOTIFICATION_ID);
+//            nm.cancel(JandiConstants.NOTIFICATION_ID);
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
