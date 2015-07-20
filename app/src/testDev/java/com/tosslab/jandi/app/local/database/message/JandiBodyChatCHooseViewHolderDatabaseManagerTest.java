@@ -4,11 +4,10 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
@@ -42,10 +41,8 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
     @Test
     public void testUpsertMessage() throws Exception {
 
-        ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).upsertAccountTeams(accountInfo.getMemberships());
-        int teamId = accountInfo.getMemberships().get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 

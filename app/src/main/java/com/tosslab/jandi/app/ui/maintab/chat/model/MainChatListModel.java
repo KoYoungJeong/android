@@ -6,9 +6,9 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -42,12 +42,12 @@ public class MainChatListModel {
     }
 
     public int getMemberId(Context context) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
     public int getTeamId(Context context) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
     }
 

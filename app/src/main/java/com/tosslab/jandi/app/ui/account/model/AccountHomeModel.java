@@ -4,8 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -32,7 +32,7 @@ public class AccountHomeModel {
 
         ArrayList<Team> teams = new ArrayList<Team>();
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
         teams.addAll(convertJoinedTeamList(userTeams));
 
@@ -80,15 +80,15 @@ public class AccountHomeModel {
 
     }
 
-    public ResAccountInfo updateAccountName(Context context, String newName) throws RetrofitError {
+    public ResAccountInfo updateAccountName(String newName) throws RetrofitError {
         return RequestApiManager.getInstance().changeNameByAccountProfileApi(new ReqProfileName(newName));
     }
 
-    public void updateSelectTeam(Context context, int teamId) {
-        JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+    public void updateSelectTeam(int teamId) {
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
-    public ResLeftSideMenu getEntityInfo(final Context context, int teamId) throws RetrofitError {
+    public ResLeftSideMenu getEntityInfo(int teamId) throws RetrofitError {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
     }
 
@@ -104,11 +104,11 @@ public class AccountHomeModel {
     }
 
     public ResAccountInfo.UserTeam getSelectedTeamInfo(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
     public ResAccountInfo.UserEmail getSelectedEmailInfo(Context context) {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
                 return userEmail;
@@ -118,10 +118,10 @@ public class AccountHomeModel {
     }
 
     public String getAccountName(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo().getName();
+        return AccountRepository.getRepository().getAccountInfo().getName();
     }
 
     public boolean checkAccount(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getAccountInfo() != null;
+        return AccountRepository.getRepository().getAccountInfo() != null;
     }
 }

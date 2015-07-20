@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.publictopic;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqDeleteTopic;
@@ -33,7 +33,7 @@ public class ChannelApiClientTest {
     @Test
     public void testDeleteChannel() throws Exception {
 
-        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
+        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
 
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = teamId;

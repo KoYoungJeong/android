@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -216,7 +216,7 @@ public class FileDetailModel {
 
     public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws RetrofitError {
         try {
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
             ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment);
             RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
         } catch (RetrofitError e) {

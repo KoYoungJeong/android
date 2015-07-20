@@ -15,7 +15,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -119,7 +119,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             Activity activity = getActivity();
 
-            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(activity).getAccountInfo();
+            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient
                     .getInstance(activity, accountInfo.getId())
                     .trackAccountSigningOut()
@@ -152,7 +152,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         ParseUpdateUtil.deleteChannelOnServer();
 
-        JandiAccountDatabaseManager.getInstance(getActivity()).clearAllData();
+        AccountRepository.getRepository();
     }
 
     private void setPushSubState(boolean isEnabled) {

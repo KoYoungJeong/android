@@ -1,33 +1,55 @@
 package com.tosslab.jandi.app.network.models;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Created by Steve SeongUg Jung on 14. 12. 11..
  */
+@DatabaseTable(tableName = "accounts")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAccountInfo {
+
+    @DatabaseField(id = true)
     private String id;
+    @DatabaseField
     private String name;
+    @DatabaseField
     private String tutoredAt;
+    @DatabaseField
     private String updatedAt;
+    @DatabaseField
     private String createdAt;
+    @DatabaseField
     private String loggedAt;
+    @DatabaseField
     private String activatedAt;
+    @DatabaseField
     private String notificationTarget;
+    @DatabaseField
     private String status;
 
-    private List<UserDevice> devices;
-    private List<UserTeam> memberships;
-    private List<UserEmail> emails;
+    @ForeignCollectionField
+    private Collection<UserDevice> devices;
+    @ForeignCollectionField
+    private Collection<UserTeam> memberships;
+    @ForeignCollectionField
+    private Collection<UserEmail> emails;
 
+    @DatabaseField(foreign = true, foreignAutoRefresh = true)
     @JsonProperty("u_photoThumbnailUrl")
-    private ResMessages.ThumbnailUrls photoThumbnailUrl;
+    private ThumbnailInfo thumbnailInfo;
+
+    @DatabaseField
     @JsonProperty("u_photoUrl")
     private String photoUrl;
 
@@ -96,27 +118,27 @@ public class ResAccountInfo {
         this.status = status;
     }
 
-    public List<UserDevice> getDevices() {
+    public Collection<UserDevice> getDevices() {
         return devices;
     }
 
-    public void setDevices(List<UserDevice> devices) {
+    public void setDevices(Collection<UserDevice> devices) {
         this.devices = devices;
     }
 
-    public List<UserTeam> getMemberships() {
+    public Collection<UserTeam> getMemberships() {
         return memberships;
     }
 
-    public void setMemberships(List<UserTeam> memberships) {
+    public void setMemberships(Collection<UserTeam> memberships) {
         this.memberships = memberships;
     }
 
-    public List<UserEmail> getEmails() {
+    public Collection<UserEmail> getEmails() {
         return emails;
     }
 
-    public void setEmails(List<UserEmail> emails) {
+    public void setEmails(Collection<UserEmail> emails) {
         this.emails = emails;
     }
 
@@ -137,12 +159,12 @@ public class ResAccountInfo {
                 '}';
     }
 
-    public ResMessages.ThumbnailUrls getPhotoThumbnailUrl() {
-        return photoThumbnailUrl;
+    public ThumbnailInfo getThumbnailInfo() {
+        return thumbnailInfo;
     }
 
-    public void setPhotoThumbnailUrl(ResMessages.ThumbnailUrls photoThumbnailUrl) {
-        this.photoThumbnailUrl = photoThumbnailUrl;
+    public void setThumbnailInfo(ThumbnailInfo thumbnailInfo) {
+        this.thumbnailInfo = thumbnailInfo;
     }
 
     public String getPhotoUrl() {
@@ -161,11 +183,33 @@ public class ResAccountInfo {
         this.id = id;
     }
 
+    @DatabaseTable(tableName = "account_devices")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class UserDevice {
+
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        ResAccountInfo accountInfo;
+        @DatabaseField(generatedId = true, readOnly = true)
+        @JsonIgnore
+        private long _id;
+        @DatabaseField
         private String token;
+        @DatabaseField
         private String type;
+        @DatabaseField
         private int badgeCount;
+        @DatabaseField
         private boolean subscribe;
+
+        public ResAccountInfo getAccountInfo() {
+            return accountInfo;
+        }
+
+        public void setAccountInfo(ResAccountInfo accountInfo) {
+            this.accountInfo = accountInfo;
+        }
 
         public String getToken() {
             return token;
@@ -208,20 +252,45 @@ public class ResAccountInfo {
                     ", subscribe=" + subscribe +
                     '}';
         }
+
+        public long get_id() {
+            return _id;
+        }
+
+        public void set_id(long _id) {
+            this._id = _id;
+        }
     }
 
 
+    @DatabaseTable(tableName = "account_teams")
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class UserTeam {
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        ResAccountInfo accountInfo;
+        @DatabaseField(id = true)
         private int teamId;
+        @DatabaseField
         private int memberId;
+        @DatabaseField
         private String name;
-
+        @DatabaseField
         @JsonProperty("t_domain")
         private String teamDomain;
+        @DatabaseField
         private int unread;
+        @DatabaseField
         private String status;
+
+        public ResAccountInfo getAccountInfo() {
+            return accountInfo;
+        }
+
+        public void setAccountInfo(ResAccountInfo accountInfo) {
+            this.accountInfo = accountInfo;
+        }
 
         public int getTeamId() {
             return teamId;
@@ -281,16 +350,32 @@ public class ResAccountInfo {
                     ", unread=" + unread +
                     '}';
         }
+
     }
 
+    @DatabaseTable(tableName = "account_emails")
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class UserEmail {
-
+        @DatabaseField(foreign = true)
+        @JsonIgnore
+        ResAccountInfo accountInfo;
+        @DatabaseField(id = true)
         private String id;
+        @DatabaseField
         private boolean primary;
+        @DatabaseField
         private String confirmedAt;
+        @DatabaseField
         private String status;
+
+        public ResAccountInfo getAccountInfo() {
+            return accountInfo;
+        }
+
+        public void setAccountInfo(ResAccountInfo accountInfo) {
+            this.accountInfo = accountInfo;
+        }
 
         public String getId() {
             return id;
@@ -333,5 +418,64 @@ public class ResAccountInfo {
                     ", status='" + status + '\'' +
                     '}';
         }
+    }
+
+    @DatabaseTable(tableName = "account_thumbnail")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ThumbnailInfo {
+
+        @DatabaseField(generatedId = true)
+        @JsonIgnore
+        private long _id;
+
+        @DatabaseField
+        private String smallThumbnailUrl;
+        @DatabaseField
+        private String mediumThumbnailUrl;
+        @DatabaseField
+        private String largeThumbnailUrl;
+
+        @Override
+        public String toString() {
+            return "ThumbnailUrls{" +
+                    "smallThumbnailUrl='" + getSmallThumbnailUrl() + '\'' +
+                    ", mediumThumbnailUrl='" + getMediumThumbnailUrl() + '\'' +
+                    ", largeThumbnailUrl='" + getLargeThumbnailUrl() + '\'' +
+                    '}';
+        }
+
+        public String getSmallThumbnailUrl() {
+            return smallThumbnailUrl;
+        }
+
+        public void setSmallThumbnailUrl(String smallThumbnailUrl) {
+            this.smallThumbnailUrl = smallThumbnailUrl;
+        }
+
+        public String getMediumThumbnailUrl() {
+            return mediumThumbnailUrl;
+        }
+
+        public void setMediumThumbnailUrl(String mediumThumbnailUrl) {
+            this.mediumThumbnailUrl = mediumThumbnailUrl;
+        }
+
+        public String getLargeThumbnailUrl() {
+            return largeThumbnailUrl;
+        }
+
+        public void setLargeThumbnailUrl(String largeThumbnailUrl) {
+            this.largeThumbnailUrl = largeThumbnailUrl;
+        }
+
+        public long get_id() {
+            return _id;
+        }
+
+        public void set_id(long _id) {
+            this._id = _id;
+        }
+
     }
 }

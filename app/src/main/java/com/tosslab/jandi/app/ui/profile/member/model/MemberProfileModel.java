@@ -7,7 +7,7 @@ import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -77,7 +77,7 @@ public class MemberProfileModel {
     }
 
     public String[] getAccountEmails() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         Iterator<String> confirmedEmails = Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))

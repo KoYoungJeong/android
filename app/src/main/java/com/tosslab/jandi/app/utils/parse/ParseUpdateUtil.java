@@ -8,7 +8,7 @@ import com.crashlytics.android.Crashlytics;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -78,7 +78,7 @@ public class ParseUpdateUtil {
                     @Override
                     public void call(List<String> subscriber) {
                         ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-                        int memberId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
+                        int memberId = AccountRepository.getRepository().getSelectedTeamInfo().getMemberId();
                         currentInstallation.put(JandiConstants.PARSE_MY_ENTITY_ID, memberId);
                         if (currentInstallation.containsKey(JandiConstants.PARSE_CHANNELS)) {
                             List<String> savedChannels = (List<String>) currentInstallation.get(JandiConstants.PARSE_CHANNELS);
@@ -125,7 +125,7 @@ public class ParseUpdateUtil {
     }
 
     private static List<ResAccountInfo.UserTeam> getUserTeams(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+        return AccountRepository.getRepository().getAccountTeams();
     }
 
 }

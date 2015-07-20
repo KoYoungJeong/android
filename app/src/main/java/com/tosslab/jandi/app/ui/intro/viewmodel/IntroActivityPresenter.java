@@ -120,7 +120,7 @@ public class IntroActivityPresenter {
                 }
             } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {
                 model.clearTokenInfo();
-                model.clearAccountInfo(context);
+                model.clearAccountInfo();
 
                 model.sleep(initTime, MAX_DELAY_MS);
                 view.moveToIntroTutorialActivity();

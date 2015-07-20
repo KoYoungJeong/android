@@ -3,8 +3,8 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 import android.app.Application;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -37,7 +37,7 @@ public class MainChatListModelTest {
         BaseInitUtil.initData(application);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        JandiAccountDatabaseManager.getInstance(application).updateSelectedTeam(accountInfo.getMemberships().get(0).getTeamId());
+        AccountRepository.getRepository().updateSelectedTeamInfo(accountInfo.getMemberships().iterator().next().getTeamId());
     }
 
     @After
@@ -58,7 +58,7 @@ public class MainChatListModelTest {
         List<ResChat> chatList = mainChatListModel.getChatList(totalEntitiesInfo.user.id);
 
         List<ChatItem> chatItems = mainChatListModel.convertChatItem(application,
-                JandiAccountDatabaseManager.getInstance(application).getSelectedTeamInfo().getTeamId(), chatList);
+                AccountRepository.getRepository().getSelectedTeamInfo().getTeamId(), chatList);
 
         assertThat(chatItems.size(), is(equalTo(chatList.size())));
 

@@ -9,7 +9,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.profile.ForgotPasswordEvent;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.login.login.model.IntroLoginModel;
@@ -51,7 +51,7 @@ public class IntroLoginFragment extends Fragment {
             introLoginViewModel.loginSuccess(email);
             JandiPreference.setFirstLogin(getActivity());
 
-            ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(getActivity()).getAccountInfo();
+            ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
             MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
             mixpanelAccountAnalyticsClient.trackAccountSingingIn();
         } else if (httpCode == JandiConstants.NetworkError.DATA_NOT_FOUND) {

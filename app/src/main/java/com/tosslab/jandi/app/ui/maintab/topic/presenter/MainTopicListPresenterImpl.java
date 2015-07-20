@@ -8,7 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
@@ -74,7 +74,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
         if (item.isJoined() || !item.isPublic()) {
             int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo()
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
             view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
             int selectedEntity = item.getEntityId();
@@ -108,7 +108,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
                         .trackJoinChannel();
             }
             int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-            int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo()
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
         } catch (RetrofitError e) {

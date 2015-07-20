@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.local.database.rooms.marker;
 
 import com.jayway.awaitility.Awaitility;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -40,7 +40,7 @@ public class JandiMarkerDatabaseManagerTest {
     @Test
     public void testMultiThreadUpsert() throws Exception {
 
-        ResAccountInfo.UserTeam userTeam = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0);
+        ResAccountInfo.UserTeam userTeam = AccountRepository.getRepository().getAccountTeams().get(0);
         int teamId = userTeam.getTeamId();
         List<ResChat> chatList = RequestApiManager.getInstance().getChatListByChatApi(teamId);
         ResRoomInfo roomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, chatList.get(0).getEntityId());

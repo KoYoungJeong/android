@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.sticker;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -39,9 +39,9 @@ public class StickerApiClientTest {
     @Test
     public void testSendSticker() throws Exception {
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
         int teamId = userTeams.get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
@@ -72,9 +72,9 @@ public class StickerApiClientTest {
     @Test
     public void testSendStickerForComment() throws Exception {
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
         int teamId = userTeams.get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
 
         ReqSearchFile reqSearchFile = new ReqSearchFile();

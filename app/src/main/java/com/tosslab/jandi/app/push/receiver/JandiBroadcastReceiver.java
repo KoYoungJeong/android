@@ -3,17 +3,11 @@ package com.tosslab.jandi.app.push.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.parse.ParsePush;
-import com.tosslab.jandi.app.events.push.MessagePushEvent;
-import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by justinygchoi on 14. 12. 3..
@@ -31,7 +25,7 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
         }
         final PushTO pushTO = JandiPushReceiverModel_.getInstance_(context).parsingPushTO(intent.getExtras());
         PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTO.getInfo();
-        Log.i(TAG, messagePush.getAlert());
+        LogUtil.i(TAG, messagePush.getAlert());
 
         intent.setClass(context, JandiPushIntentService.class);
         context.startService(intent);

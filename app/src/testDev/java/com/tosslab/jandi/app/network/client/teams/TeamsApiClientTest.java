@@ -70,7 +70,7 @@ public class TeamsApiClientTest {
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(accountInfo.getMemberships().get(0).getTeamId());
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(accountInfo.getMemberships().iterator().next().getTeamId());
 
     }
 
@@ -79,7 +79,7 @@ public class TeamsApiClientTest {
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        int teamId = accountInfo.getMemberships().get(0).getTeamId();
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         List<ResInvitationMembers> resInvitationMemberses = RequestApiManager.getInstance().inviteToTeamByTeamApi(teamId, new ReqInvitationMembers(teamId, Arrays.asList("jsuch2362@naver.com"), LanguageUtil.getLanguage(Robolectric.application)));
 
         assertThat(resInvitationMemberses, is(notNullValue()));
@@ -91,7 +91,7 @@ public class TeamsApiClientTest {
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        int teamId = accountInfo.getMemberships().get(0).getTeamId();
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
 
         ResTeamDetailInfo.InviteTeam teamInfo = RequestApiManager.getInstance().getTeamInfoByTeamApi(teamId);
 

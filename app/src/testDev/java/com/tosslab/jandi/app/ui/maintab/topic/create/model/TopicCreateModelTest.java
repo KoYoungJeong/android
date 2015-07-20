@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic.create.model;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -31,8 +31,8 @@ public class TopicCreateModelTest {
     public void setUp() throws Exception {
         BaseInitUtil.initData(Robolectric.application);
 
-        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         topicCreateModel = TopicCreateModel_.getInstance_(Robolectric.application);
     }

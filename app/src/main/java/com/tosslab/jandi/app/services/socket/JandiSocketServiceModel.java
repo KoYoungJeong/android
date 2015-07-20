@@ -15,8 +15,8 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -74,7 +74,7 @@ public class JandiSocketServiceModel {
 
     public ConnectTeam getConnectTeam() {
         ResAccountInfo.UserTeam selectedTeamInfo =
-                JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+                AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo == null) {
             return null;
@@ -114,7 +114,7 @@ public class JandiSocketServiceModel {
     public void refreshAccountInfo() {
         try {
             ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
             postEvent(new TeamInfoChangeEvent());
         } catch (RetrofitError e) {
             e.printStackTrace();

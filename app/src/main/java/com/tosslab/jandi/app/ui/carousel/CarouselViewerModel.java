@@ -10,7 +10,7 @@ import android.webkit.MimeTypeMap;
 
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -137,7 +137,7 @@ public class CarouselViewerModel {
     }
 
     public int getTeamId(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
     public int findLinkPosition(List<CarouselFileInfo> imageFiles, int fileId) {

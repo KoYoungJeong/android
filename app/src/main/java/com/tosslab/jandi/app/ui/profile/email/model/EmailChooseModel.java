@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.profile.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
@@ -32,7 +32,7 @@ public class EmailChooseModel {
 
         List<AccountEmail> accountEmails = new ArrayList<AccountEmail>();
 
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
 
@@ -61,7 +61,7 @@ public class EmailChooseModel {
 
     public boolean isConfirmedEmail(String email) {
 
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (TextUtils.equals(email, userEmail.getId())) {
@@ -73,7 +73,7 @@ public class EmailChooseModel {
     }
 
     public String getPrimaryEmail() {
-        List<ResAccountInfo.UserEmail> userEmails = JandiAccountDatabaseManager.getInstance(context.getApplicationContext()).getUserEmails();
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {

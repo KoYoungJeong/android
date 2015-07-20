@@ -16,8 +16,8 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -25,7 +25,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -33,7 +32,6 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -117,7 +115,7 @@ public class JandiPushReceiverModel {
     }
 
     public boolean isMyEntityId(Context context, int writerId) {
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(context).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
         for (ResAccountInfo.UserTeam userTeam : userTeams) {
             if (userTeam.getMemberId() == writerId) {

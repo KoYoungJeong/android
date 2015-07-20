@@ -17,7 +17,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
@@ -175,7 +175,7 @@ public class FilePickerModel {
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (comment != null && !comment.isEmpty()) {
@@ -206,7 +206,7 @@ public class FilePickerModel {
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (comment != null && !comment.isEmpty()) {

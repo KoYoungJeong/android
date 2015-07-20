@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.rooms;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -31,8 +31,8 @@ public class RoomsApiClientTest {
     @Test
     public void testGetRoomInfo() throws Exception {
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(userTeams.get(0).getTeamId());
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
+        AccountRepository.getRepository().updateSelectedTeamInfo(userTeams.get(0).getTeamId());
 
         EntityClientManager_ entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();

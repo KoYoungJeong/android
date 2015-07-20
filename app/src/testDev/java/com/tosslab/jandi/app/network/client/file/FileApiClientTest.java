@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.file;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -33,8 +33,8 @@ public class FileApiClientTest {
 
         BaseInitUtil.initData(Robolectric.application);
 
-        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
-        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
+        int teamId = AccountRepository.getRepository().getAccountTeams().get(0).getTeamId();
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         sideMenu = getSideMenu();
 
@@ -46,7 +46,7 @@ public class FileApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getSelectedTeamInfo().getTeamId();
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance()
                 .getInfosForSideMenuByMainRest(teamId);
 
@@ -64,8 +64,7 @@ public class FileApiClientTest {
 
         reqSearchFile.startMessageId = -1;
         reqSearchFile.keyword = "";
-        reqSearchFile.teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application)
-                .getSelectedTeamInfo().getTeamId();
+        reqSearchFile.teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         return RequestApiManager.getInstance().searchFileByMainRest(reqSearchFile);
     }

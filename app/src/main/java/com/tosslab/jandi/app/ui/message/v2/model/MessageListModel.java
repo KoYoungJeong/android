@@ -22,10 +22,10 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -213,7 +213,7 @@ public class MessageListModel {
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (event.comment != null && !event.comment.isEmpty()) {
@@ -394,7 +394,7 @@ public class MessageListModel {
 
     public void upsertMyMarker(int roomId, int lastLinkId) {
         int myId = EntityManager.getInstance(activity).getMe().getId();
-        int teamId = JandiAccountDatabaseManager.getInstance(activity).getSelectedTeamInfo().getTeamId();
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
     }
 

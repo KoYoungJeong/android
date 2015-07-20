@@ -13,7 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -105,7 +105,7 @@ public class ShareModel {
     }
 
     public int getTeamId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
     public boolean isStarredEntity(int entityId) {
@@ -136,7 +136,7 @@ public class ShareModel {
                 .setMultipartParameter("title", titleText)
                 .setMultipartParameter("share", "" + entityInfo.getEntityId())
                 .setMultipartParameter("permission", permissionCode)
-                .setMultipartParameter("teamId", String.valueOf(JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId()));
+                .setMultipartParameter("teamId", String.valueOf(AccountRepository.getRepository().getSelectedTeamInfo().getTeamId()));
 
         // Comment가 함께 등록될 경우 추가
         if (!TextUtils.isEmpty(commentText)) {

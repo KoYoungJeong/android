@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccessToken;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
@@ -50,7 +50,7 @@ public class IntroLoginModel {
                 // Save Token & Get TeamList
                 TokenUtil.saveTokenInfoByPassword(accessToken);
                 ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-                JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
+                AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
                 return JandiConstants.NETWORK_SUCCESS;
             } else {
                 // Login Fail

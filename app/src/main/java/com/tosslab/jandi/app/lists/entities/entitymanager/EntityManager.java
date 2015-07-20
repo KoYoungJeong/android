@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -49,7 +49,7 @@ public class EntityManager {
     private List<FormattedEntity> mSortedGroups = null;
 
     protected EntityManager(Context context) {
-        int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
         if (resLeftSideMenu != null) {
             init(resLeftSideMenu);
@@ -87,7 +87,7 @@ public class EntityManager {
 
     public void refreshEntity(Context context) {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if (selectedTeamInfo != null) {
             int teamId = selectedTeamInfo.getTeamId();

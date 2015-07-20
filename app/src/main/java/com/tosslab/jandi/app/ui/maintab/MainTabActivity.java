@@ -24,8 +24,8 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -92,7 +92,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(mContext).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         setupActionBar(selectedTeamInfo.getName());
 
@@ -196,7 +196,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         EventBus.getDefault().register(this);
         getEntities();
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
     }
@@ -348,7 +348,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(TeamInfoChangeEvent event) {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
     }

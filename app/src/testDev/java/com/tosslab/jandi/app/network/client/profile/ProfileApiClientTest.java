@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.network.client.profile;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
@@ -84,7 +84,7 @@ public class ProfileApiClientTest {
     @Ignore
     @Test
     public void testUpdateUserEmail() throws Exception {
-        ResLeftSideMenu.User user = RequestApiManager.getInstance().updateMemberEmailByProfileApi(sideMenu.user.id, new ReqAccountEmail(JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserEmails().get(0).getId()));
+        ResLeftSideMenu.User user = RequestApiManager.getInstance().updateMemberEmailByProfileApi(sideMenu.user.id, new ReqAccountEmail(AccountRepository.getRepository().getAccountEmails().get(0).getId()));
         assertThat(user, is(notNullValue()));
     }
 

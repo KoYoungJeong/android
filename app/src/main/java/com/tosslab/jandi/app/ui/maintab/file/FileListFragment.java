@@ -34,7 +34,7 @@ import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
@@ -148,7 +148,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         actualListView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
         actualListView.setAdapter(searchedFileItemListAdapter);
 
-        selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+        selectedTeamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
             moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position)

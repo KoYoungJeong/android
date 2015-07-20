@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.signup.verify.model;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqAccountActivate;
@@ -69,7 +69,7 @@ public class SignUpVerifyModel {
         TokenUtil.saveTokenInfoByPassword(context, accountActivate.getAccessToken(),
                 accountActivate.getRefreshToken(), accountActivate.getTokenType());
 
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
         JandiPreference.setFirstLogin(context);
 

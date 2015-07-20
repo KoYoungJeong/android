@@ -6,8 +6,8 @@ import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -18,7 +18,6 @@ import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import retrofit.RetrofitError;
 
@@ -78,19 +77,15 @@ public class IntroActivityModel {
     public void refreshAccountInfo(Context context) throws RetrofitError {
 
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
-        JandiAccountDatabaseManager.getInstance(context.getApplicationContext())
-                .upsertAccountAllInfo(resAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
     }
 
     public void clearTokenInfo() {
         TokenUtil.clearTokenInfo();
     }
 
-    public void clearAccountInfo(Context context) {
-        JandiAccountDatabaseManager.getInstance(context).deleteAccountDevices();
-        JandiAccountDatabaseManager.getInstance(context).deleteAccountEmails();
-        JandiAccountDatabaseManager.getInstance(context).deleteAccountInfo();
-        JandiAccountDatabaseManager.getInstance(context).deleteAccountTeams();
+    public void clearAccountInfo() {
+        AccountRepository.getRepository().deleteAccountInfo();
     }
 
     public void sleep(long initTime, long maxDelayMs) {
@@ -118,7 +113,7 @@ public class IntroActivityModel {
 
     public boolean refreshEntityInfo(Context context) {
         ResAccountInfo.UserTeam selectedTeamInfo =
-                JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+                AccountRepository.getRepository().getSelectedTeamInfo();
         if (selectedTeamInfo == null) {
             return false;
         }
@@ -149,7 +144,7 @@ public class IntroActivityModel {
     }
 
     public boolean hasSelectedTeam(Context context) {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo() != null;
+        return AccountRepository.getRepository().getSelectedTeamInfo() != null;
     }
 
 }

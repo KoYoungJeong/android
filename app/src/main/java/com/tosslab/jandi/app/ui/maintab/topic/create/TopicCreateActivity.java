@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.ui.maintab.topic.create.model.TopicCreateModel;
@@ -121,7 +121,7 @@ public class TopicCreateActivity extends AppCompatActivity {
             topicCreatePresenter.dismissProgressWheel();
 
             EntityManager.getInstance(TopicCreateActivity.this).refreshEntity(TopicCreateActivity.this);
-            int teamId = JandiAccountDatabaseManager.getInstance(TopicCreateActivity.this).getSelectedTeamInfo().getTeamId();
+            int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
             topicCreatePresenter.createTopicSuccess(teamId, topic.id, topicTitle, publicSelected);
         } catch (RetrofitError e) {
             topicCreatePresenter.dismissProgressWheel();

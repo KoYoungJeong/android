@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
@@ -37,7 +37,7 @@ public class MessageManipulator {
 
     @AfterInject
     void initSelectedTeam() {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 

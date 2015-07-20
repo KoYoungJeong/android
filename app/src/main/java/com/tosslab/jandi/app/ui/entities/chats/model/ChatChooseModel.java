@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 
@@ -134,7 +134,7 @@ public class ChatChooseModel {
     }
 
     public int getTeamId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return AccountRepository.getRepository().getSelectedTeamId();
     }
 
     public boolean isStarred(int entityId) {

@@ -47,8 +47,8 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -151,9 +151,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         mEntityManager = EntityManager.getInstance(mContext);
 
         if (isFromPush) {
-            ResAccountInfo.UserTeam teamInfo = JandiAccountDatabaseManager.getInstance(mContext).getTeamInfo(teamId);
+            ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
             if (teamInfo != null) {
-                JandiAccountDatabaseManager.getInstance(mContext).updateSelectedTeam(teamId);
+                AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
             }
         }
 

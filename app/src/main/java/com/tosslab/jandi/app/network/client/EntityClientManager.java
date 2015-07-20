@@ -2,7 +2,7 @@ package com.tosslab.jandi.app.network.client;
 
 import android.content.Context;
 
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqAccountEmail;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
@@ -39,7 +39,7 @@ public class EntityClientManager {
 
     @AfterInject
     void initAuthentication() {
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         selectedTeamId = selectedTeamInfo.getTeamId();
     }
 

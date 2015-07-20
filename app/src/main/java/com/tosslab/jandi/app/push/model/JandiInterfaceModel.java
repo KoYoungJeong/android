@@ -4,8 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -37,7 +37,7 @@ public class JandiInterfaceModel {
     public void refreshAccountInfo() throws RetrofitError {
         ResAccountInfo resAccountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
-        JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(resAccountInfo);
+        AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
 
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
@@ -57,13 +57,13 @@ public class JandiInterfaceModel {
     }
 
     public boolean hasTeamInfo(int teamId) {
-        ResAccountInfo.UserTeam teamInfo = JandiAccountDatabaseManager.getInstance(context).getTeamInfo(teamId);
+        ResAccountInfo.UserTeam teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
         if (teamInfo == null) {
 
             try {
                 refreshAccountInfo();
-                teamInfo = JandiAccountDatabaseManager.getInstance(context).getTeamInfo(teamId);
+                teamInfo = AccountRepository.getRepository().getTeamInfo(teamId);
 
                 if (teamInfo == null) {
                     return false;
@@ -80,11 +80,11 @@ public class JandiInterfaceModel {
 
     public boolean setupSelectedTeam(int teamId) {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
 
         if ((selectedTeamInfo == null || selectedTeamInfo.getTeamId() != teamId)) {
 
-            JandiAccountDatabaseManager.getInstance(context).updateSelectedTeam(teamId);
+            AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
             return getEntityInfo();
 

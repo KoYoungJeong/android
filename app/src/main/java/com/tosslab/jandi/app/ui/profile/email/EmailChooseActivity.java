@@ -11,7 +11,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.DeleteEmailEvent;
 import com.tosslab.jandi.app.events.profile.NewEmailEvent;
 import com.tosslab.jandi.app.events.profile.RetryNewEmailEvent;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.model.EmailChooseModel;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
@@ -25,6 +25,7 @@ import org.androidannotations.annotations.ItemLongClick;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -79,11 +80,13 @@ public class EmailChooseActivity extends AppCompatActivity {
 
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.updatePrimaryEmail(selectedEmail);
-            JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
+            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
             emailChoosePresenter.finishWithResultOK();
         } catch (RetrofitError e) {
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -99,10 +102,12 @@ public class EmailChooseActivity extends AppCompatActivity {
     void getAccountEmailFromServer() {
         try {
             ResAccountInfo accountInfo = emailChooseModel.getAccountEmailsFromServer();
-            JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(accountInfo.getEmails());
+            AccountRepository.getRepository().upsertUserEmail(accountInfo.getEmails());
             List<AccountEmail> accountEmails = emailChooseModel.getAccountEmails();
             emailChoosePresenter.refreshEmails(accountEmails);
         } catch (RetrofitError e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -193,11 +198,13 @@ public class EmailChooseActivity extends AppCompatActivity {
 
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.requestDeleteEmail(email);
-            JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
+            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
         } catch (RetrofitError e) {
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_network));
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }
@@ -208,12 +215,14 @@ public class EmailChooseActivity extends AppCompatActivity {
         emailChoosePresenter.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = emailChooseModel.requestNewEmail(email);
-            JandiAccountDatabaseManager.getInstance(EmailChooseActivity.this).upsertAccountEmail(resAccountInfo.getEmails());
+            AccountRepository.getRepository().upsertUserEmail(resAccountInfo.getEmails());
             emailChoosePresenter.refreshEmails(emailChooseModel.getAccountEmails());
             emailChoosePresenter.showSuccessToast(getString(R.string.sent_auth_email));
         } catch (RetrofitError e) {
             e.printStackTrace();
             emailChoosePresenter.showFailToast(getString(R.string.err_team_creation_failed));
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
             emailChoosePresenter.dismissProgressWheel();
         }

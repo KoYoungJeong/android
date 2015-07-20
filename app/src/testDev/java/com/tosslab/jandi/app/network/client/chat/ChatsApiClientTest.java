@@ -48,7 +48,8 @@ public class ChatsApiClientTest {
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
 //        List<ResChat> chatList = chatsApiClient.getChatList(accountInfo.getMemberships().get(0).getMemberId());
-        List<ResChat> chatList = RequestApiManager.getInstance().getChatListByChatApi(accountInfo.getMemberships().get(0).getMemberId());
+        List<ResChat> chatList = RequestApiManager.getInstance().getChatListByChatApi(accountInfo
+                .getMemberships().iterator().next().getMemberId());
         assertTrue(chatList.size() > 0);
     }
 }

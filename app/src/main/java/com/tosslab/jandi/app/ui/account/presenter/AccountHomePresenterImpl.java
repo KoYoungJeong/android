@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.ui.account.presenter;
 import android.content.Context;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
@@ -82,8 +82,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            accountHomeModel.updateSelectTeam(context, teamId);
-            ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
+            accountHomeModel.updateSelectTeam(teamId);
+            ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
             view.dismissProgressWheel();
             view.moveSelectedTeam(firstJoin);
@@ -111,12 +111,12 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     public void onChangeName(String newName) {
         view.showProgressWheel();
         try {
-            ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(context, newName);
+            ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(newName);
             MixpanelAccountAnalyticsClient
                     .getInstance(context, resAccountInfo.getId())
                     .trackSetAccount();
 
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+            AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
             view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));

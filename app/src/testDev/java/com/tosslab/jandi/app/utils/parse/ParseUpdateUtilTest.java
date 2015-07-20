@@ -3,7 +3,7 @@ package com.tosslab.jandi.app.utils.parse;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.JandiConstants;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -40,7 +40,7 @@ public class ParseUpdateUtilTest {
     @Test
     public void testRxJavaCollect() throws Exception {
 
-        List<ResAccountInfo.UserTeam> userTeams = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams();
+        List<ResAccountInfo.UserTeam> userTeams = AccountRepository.getRepository().getAccountTeams();
 
         Observable.from(userTeams)
                 .map(new Func1<ResAccountInfo.UserTeam, ResLeftSideMenu>() {

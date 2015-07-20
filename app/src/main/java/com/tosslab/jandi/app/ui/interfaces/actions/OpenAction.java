@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -65,12 +65,12 @@ public class OpenAction implements Action {
             ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
-            JandiAccountDatabaseManager.getInstance(activity).upsertAccountAllInfo(accountInfo);
+            AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
         } catch (Exception e) {
             TokenUtil.clearTokenInfo();
-            JandiAccountDatabaseManager.getInstance(activity).clearAllData();
+            AccountRepository.getRepository().clearAccountData();
             failAccessToken();
             LogUtil.d(e.getMessage());
         } finally {
@@ -117,6 +117,6 @@ public class OpenAction implements Action {
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .startForInvite(true)
                 .start();
-        ((Activity) activity).finish();
+        activity.finish();
     }
 }

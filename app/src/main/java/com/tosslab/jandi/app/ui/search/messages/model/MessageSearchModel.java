@@ -5,7 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.adapter.strategy.TextStrategy;
@@ -35,7 +35,7 @@ public class MessageSearchModel {
     }
 
     public int getCurrentTeamId() {
-        return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
+        return AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
     }
 
     public int getEntityType(int entityId) {
