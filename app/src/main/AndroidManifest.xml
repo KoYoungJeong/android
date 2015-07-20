@@ -274,7 +274,6 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="24a73214fd9000841e8d34390de55bdfd4150668"/>
-            android:value="24a73214fd9000841e8d34390de55bdfd4150668"/>
 
         <!-- Push Intent Service -->
         <service android:name=".push.receiver.JandiPushIntentService"/>
