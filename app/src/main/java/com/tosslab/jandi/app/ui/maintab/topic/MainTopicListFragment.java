@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.topic;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -68,18 +69,6 @@ public class MainTopicListFragment extends Fragment {
         super.onDestroy();
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        EventBus.getDefault().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        EventBus.getDefault().unregister(this);
-//        super.onStop();
-//    }
-
     @Click(R.id.btn_main_topic_fab)
     void onAddTopicClick() {
         TopicCreateActivity_
@@ -91,6 +80,7 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterInject
     void initObject() {
+        mainTopicPresenter.initObject(getActivity());
 
         LogUtil.d("MainTopicListFragment");
 
@@ -104,7 +94,6 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterViews
     void initView() {
-
         LogUtil.d("MainTopicListFragment initView");
         topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
@@ -113,6 +102,7 @@ public class MainTopicListFragment extends Fragment {
             }
         });
         topicListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            //TODO 메세지 진입시 네트워크 체킹 ?
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
@@ -124,12 +114,17 @@ public class MainTopicListFragment extends Fragment {
                 entity.alarmCount = 0;
                 adapter.notifyDataSetChanged();
 
-                EventBus.getDefault().post(new TopicBadgeEvent(mainTopicModel.hasAlarmCount(mainTopicPresenter.getJoinedTopics())));
+                final TopicBadgeEvent event =
+                        new TopicBadgeEvent(mainTopicModel.hasAlarmCount(mainTopicPresenter.getJoinedTopics()));
+                EventBus.getDefault().post(event);
 
                 if (entity.isJoined || entity.isPrivateGroup()) {
-                    int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
-                    mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
+                    int entityType = entity.isPublicTopic()
+                            ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity())
+                            .getSelectedTeamInfo().getTeamId();
+                    mainTopicPresenter.moveToMessageActivity(getActivity(),
+                            entity.getId(), entityType, entity.isStarred, teamId);
                 } else {
                     joinChannelInBackground(entity);
                 }
@@ -180,7 +175,8 @@ public class MainTopicListFragment extends Fragment {
         mainTopicPresenter.showProgressWheel();
 
         String message = getString(R.string.jandi_message_join_entity, entity.getChannel().name);
-        mainTopicPresenter.showToast(message);
+        final Context context = getActivity().getApplicationContext();
+        mainTopicPresenter.showToast(context, message);
 
         try {
             mainTopicModel.joinPublicTopic(entity.getChannel());
@@ -193,15 +189,16 @@ public class MainTopicListFragment extends Fragment {
             }
             int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
-            mainTopicPresenter.moveToMessageActivity(entity.getId(), entityType, entity.isStarred, teamId);
+            mainTopicPresenter.moveToMessageActivity(getActivity(),
+                    entity.getId(), entityType, entity.isStarred, teamId);
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
+            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(getString(R.string.err_entity_join));
+            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
         } finally {
             mainTopicPresenter.dismissProgressWheel();
         }

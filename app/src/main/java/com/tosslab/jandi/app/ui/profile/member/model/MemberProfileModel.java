@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -64,6 +65,7 @@ public class MemberProfileModel {
                 .load(HttpPut.METHOD_NAME, requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();

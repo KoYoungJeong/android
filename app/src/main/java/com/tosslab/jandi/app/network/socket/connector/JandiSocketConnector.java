@@ -14,9 +14,13 @@ import java.net.URISyntaxException;
  * Created by Steve SeongUg Jung on 15. 4. 1..
  */
 public class JandiSocketConnector implements SocketConnector {
+    enum Status {
+        READY, CONNECTING, CONNECTED, DISCONNECTING
+    }
 
     public static final String TAG = "SocketConnector";
     private Socket socket;
+    private Status status = Status.READY;
 
     @Override
     public Emitter connect(String url, EventListener disconnectListener) {
@@ -24,6 +28,7 @@ public class JandiSocketConnector implements SocketConnector {
             return socket;
         }
 
+        status = Status.CONNECTING;
         if (socket == null) {
             try {
                 IO.Options options = new IO.Options();
@@ -38,24 +43,26 @@ public class JandiSocketConnector implements SocketConnector {
         }
 
         if (socket != null) {
+            socket.on(Socket.EVENT_CONNECT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT);
+                status = Status.CONNECTED;
 
-            socket.on(Socket.EVENT_CONNECT, args -> LogUtil.e(TAG, Socket.EVENT_CONNECT))
-                    .on(Socket.EVENT_ERROR, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_ERROR);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_DISCONNECT, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_CONNECT_ERROR, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
-                        disconnectCallback(disconnectListener, args);
-                    })
-                    .on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
-                        LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
-                        disconnectCallback(disconnectListener, args);
-                    });
+            }).on(Socket.EVENT_ERROR, args -> {
+                LogUtil.e(TAG, Socket.EVENT_ERROR);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_DISCONNECT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_DISCONNECT);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_CONNECT_ERROR, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT_ERROR);
+                disconnectCallback(disconnectListener, args);
+
+            }).on(Socket.EVENT_CONNECT_TIMEOUT, args -> {
+                LogUtil.e(TAG, Socket.EVENT_CONNECT_TIMEOUT);
+                disconnectCallback(disconnectListener, args);
+            });
 
             socket.connect();
         }
@@ -64,6 +71,7 @@ public class JandiSocketConnector implements SocketConnector {
     }
 
     private void disconnectCallback(EventListener disconnectListener, Object[] args) {
+        status = Status.READY;
         if (args != null) {
             for (Object arg : args) {
                 LogUtil.e(TAG, "Disconnect Reason : " + arg.toString());
@@ -78,6 +86,7 @@ public class JandiSocketConnector implements SocketConnector {
     @Override
     public void disconnect() {
         if (socket != null && socket.connected()) {
+            status = Status.DISCONNECTING;
             socket.off();
             socket.disconnect();
 
@@ -89,12 +98,18 @@ public class JandiSocketConnector implements SocketConnector {
                     e.printStackTrace();
                 }
             }
+            //FIXME NullPointerException 여지가 있을지?
+            socket = null;
+            status = Status.READY;
         }
     }
 
     @Override
     public boolean isConnectingOrConnected() {
-        return socket != null && socket.connected();
+        if (status == Status.READY || status == Status.DISCONNECTING) {
+            return false;
+        }
+        boolean alreadyConnect = socket != null && socket.connected();
+        return alreadyConnect || status == Status.CONNECTING || status == Status.CONNECTED;
     }
-
 }

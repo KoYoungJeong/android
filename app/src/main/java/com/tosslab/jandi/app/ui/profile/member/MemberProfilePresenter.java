@@ -60,7 +60,6 @@ public class MemberProfilePresenter {
     @AfterInject
     void initObject() {
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @UiThread
@@ -127,7 +126,9 @@ public class MemberProfilePresenter {
     }
 
     public void displayProfileImage(String profileImageUrlPath) {
-        if (!TextUtils.isEmpty(profileImageUrlPath)) {
+        if (!TextUtils.isEmpty(profileImageUrlPath)
+                && activity != null
+                && !activity.isFinishing()) {
             Glide.with(activity)
                     .load(JandiConstantsForFlavors.SERVICE_ROOT_URL + profileImageUrlPath)
                     .placeholder(R.drawable.jandi_profile)

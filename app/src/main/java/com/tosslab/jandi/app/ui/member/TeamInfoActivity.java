@@ -102,7 +102,6 @@ public class TeamInfoActivity extends BaseAnalyticsActivity {
     void initProgressWheel() {
         // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(this);
-        mProgressWheel.init();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.web;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,9 +42,6 @@ import de.greenrobot.event.EventBus;
 @EBean
 public class InternalWebPresenter {
 
-    @RootContext
-    Context context;
-
     @ViewById(R.id.web_internal_web)
     WebView webView;
 
@@ -57,10 +55,8 @@ public class InternalWebPresenter {
 
     public static final String SUPPORT_URL = "http://support.jandi.com";
 
-    @AfterInject
-    void initObject() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+    public void initObject(Activity activity) {
+        progressWheel = new ProgressWheel(activity);
     }
 
     @AfterViews
@@ -148,13 +144,14 @@ public class InternalWebPresenter {
         return webView.getUrl();
     }
 
-    public void showShareEntity(List<FormattedEntity> entities, String text) {
+    public void showShareEntity(Activity activity, List<FormattedEntity> entities, String text) {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
 
-        EntitySimpleListAdapter adapter = new EntitySimpleListAdapter(context, entities);
+        EntitySimpleListAdapter adapter =
+                new EntitySimpleListAdapter(activity.getApplicationContext(), entities);
 
         dialog.setTitle(R.string.jandi_title_cdp_to_be_shared)
                 .setAdapter(adapter, new DialogInterface.OnClickListener() {
@@ -200,16 +197,16 @@ public class InternalWebPresenter {
     }
 
     @UiThread
-    public void showSuccessToast(String message) {
+    public void showSuccessToast(Context context, String message) {
         ColoredToast.show(context, message);
     }
 
     @UiThread
-    public void showErrorToast(String message) {
+    public void showErrorToast(Context context, String message) {
         ColoredToast.showError(context, message);
     }
 
-    public void moveOtherBrowser(String currentUrl) {
+    public void moveOtherBrowser(Context context, String currentUrl) {
 
         String url;
 
@@ -227,7 +224,7 @@ public class InternalWebPresenter {
 
     }
 
-    public void sendOtherApp(String currentTitle, String currentUrl) {
+    public void sendOtherApp(Context context, String currentTitle, String currentUrl) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plan");
         intent.putExtra(Intent.EXTRA_SUBJECT, currentTitle);
@@ -244,7 +241,7 @@ public class InternalWebPresenter {
         webView.onPause();
     }
 
-    public void zendeskCookieRemove() {
+    public void zendeskCookieRemove(Context context) {
         CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(context);
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);

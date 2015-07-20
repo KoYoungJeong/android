@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.maintab.file;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -103,7 +102,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
-    private Context mContext;
 
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
@@ -118,7 +116,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @AfterInject
     void init() {
         LogUtil.d("FileListFragment");
-        mContext = getActivity();
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
@@ -142,8 +139,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         // myToken 획득
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(mContext);
-        mProgressWheel.init();
+        mProgressWheel = new ProgressWheel(getActivity());
 
         fileListModel.retrieveEntityManager();
 
@@ -516,7 +512,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @UiThread
     void searchFailed(int errMessageRes) {
-        ColoredToast.showError(mContext, getString(errMessageRes));
+        FragmentActivity activity = getActivity();
+        if (activity != null && !(activity.isFinishing())) {
+            ColoredToast.showError(activity, activity.getString(errMessageRes));
+        }
     }
 
     private void moveToFileDetailActivity(int fileId) {

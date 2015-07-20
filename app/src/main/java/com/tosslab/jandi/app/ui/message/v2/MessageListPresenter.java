@@ -168,7 +168,6 @@ public class MessageListPresenter {
         mEntityManager = EntityManager.getInstance(activity);
 
         progressWheel = new ProgressWheel(activity);
-        progressWheel.init();
     }
 
     @AfterViews

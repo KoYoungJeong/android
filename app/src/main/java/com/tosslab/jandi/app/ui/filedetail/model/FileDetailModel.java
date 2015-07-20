@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -29,6 +30,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,9 +52,20 @@ public class FileDetailModel {
     @Bean
     EntityClientManager entityClientManager;
 
+    private ResMessages.FileMessage fileMessage;
+
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
+    }
+
+    public ResMessages.FileMessage getFileMessage() {
+        return fileMessage;
+    }
+
     public void deleteFile(int fileId) throws RetrofitError {
         entityClientManager.deleteFile(fileId);
     }
+
     public ResFileDetail getFileDetailInfo(int fileId) throws RetrofitError {
         return entityClientManager.getFileDetail(fileId);
     }
@@ -80,6 +93,7 @@ public class FileDetailModel {
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .write(new File(dir, fileName))
                 .get();
     }
@@ -126,7 +140,12 @@ public class FileDetailModel {
         return context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     }
 
-    public List<FormattedEntity> getUnsharedEntities(List<Integer> shareEntities) {
+    public List<FormattedEntity> getUnsharedEntities() {
+        if (fileMessage == null) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> shareEntities = fileMessage.shareEntities;
 
         EntityManager entityManager = EntityManager.getInstance(context);
 

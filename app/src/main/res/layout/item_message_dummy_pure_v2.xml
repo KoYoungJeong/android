@@ -40,7 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/ly_message_default"
         android:layout_marginLeft="43dp"
-        android:autoLink="web"
         android:text="Text"
         android:textColor="@color/jandi_messages_content"
         android:textSize="@dimen/jandi_messages_content"/>

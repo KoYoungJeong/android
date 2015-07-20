@@ -82,47 +82,52 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @Override
-    public void startUpload(Context context, String title, int entityId, String realFilePath, String comment) {
-
+    public void startUpload(Activity activity, String title, int entityId, String realFilePath, String comment) {
+        Context context = activity.getApplicationContext();
         if (GoogleImagePickerUtil.isUrl(realFilePath)) {
 
             String downloadDir = GoogleImagePickerUtil.getDownloadPath();
             String downloadName = GoogleImagePickerUtil.getWebImageName();
-            ProgressDialog downloadProgress = GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
-            downloadImageAndShowFileUploadDialog(context, downloadProgress, realFilePath, downloadDir, downloadName);
+            ProgressDialog downloadProgress =
+                    GoogleImagePickerUtil.getDownloadProgress(context, downloadDir, downloadName);
+            downloadImageAndShowFileUploadDialog(activity,
+                    downloadProgress, realFilePath, downloadDir, downloadName);
         } else {
-            uploadProfileImage(context, new File(realFilePath));
+            uploadProfileImage(activity, new File(realFilePath));
         }
     }
 
     @Background
-    void downloadImageAndShowFileUploadDialog(Context context, ProgressDialog downloadProgress, String url, String downloadDir, String downloadName) {
+    void downloadImageAndShowFileUploadDialog(Activity activity,
+                                              ProgressDialog downloadProgress,
+                                              String url, String downloadDir, String downloadName) {
 
         try {
-            File file = GoogleImagePickerUtil.downloadFile(context, downloadProgress, url, downloadDir, downloadName);
+            File file = GoogleImagePickerUtil.downloadFile(
+                    activity.getApplicationContext(), downloadProgress, url, downloadDir, downloadName);
             dismissProgressDialog(downloadProgress);
-            uploadProfileImage(context, file);
+            uploadProfileImage(activity, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Background
-    void uploadProfileImage(Context context, File profileFile) {
-        showProgressWheel(context);
+    void uploadProfileImage(Activity activity, File profileFile) {
+        showProgressWheel(activity);
         try {
-            filePickerModel.uploadProfilePhoto(context, profileFile);
-            successPhotoUpload(context);
+            filePickerModel.uploadProfilePhoto(activity.getApplicationContext(), profileFile);
+            successPhotoUpload(activity.getApplicationContext());
             dismissProgressWheel();
 
         } catch (ExecutionException e) {
             dismissProgressWheel();
             LogUtil.e("uploadFileDone: FAILED", e);
-            failPhotoUpload(context);
+            failPhotoUpload(activity.getApplicationContext());
         } catch (InterruptedException e) {
             dismissProgressWheel();
             LogUtil.e("uploadFileDone: FAILED", e);
-            failPhotoUpload(context);
+            failPhotoUpload(activity.getApplicationContext());
         }
 
 
@@ -148,11 +153,11 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     }
 
     @UiThread(propagation = UiThread.Propagation.ENQUEUE)
-    void showProgressWheel(Context context) {
+    void showProgressWheel(Activity activity) {
 
         if (progressWheel == null) {
-            progressWheel = new ProgressWheel(context);
-            progressWheel.init();
+            progressWheel = new ProgressWheel(activity);
+            progressWheel.setCancelable(false);
         }
 
         if (!progressWheel.isShowing()) {

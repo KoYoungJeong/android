@@ -30,7 +30,7 @@ public interface AccountHomePresenter {
 
     void onRequestJoin(Team selectedTeam);
 
-    void onRequestIgnore(Team selectedTeam);
+    void onRequestIgnore(Team selectedTeam, boolean showErrorToast);
 
     void onHelpOptionSelect();
 
@@ -64,8 +64,10 @@ public interface AccountHomePresenter {
 
         void showHelloDialog();
 
-        void moveAfterinvitaionAccept();
+        void moveAfterInvitaionAccept();
 
         void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener);
+
+        void invalidAccess();
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
@@ -48,6 +49,12 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @AfterViews
     void initViews() {
+
+        if (!accountHomeModel.checkAccount(context)) {
+            view.invalidAccess();
+            return ;
+        }
+
         getAccountInfo();
         getTeamInfo();
     }
@@ -68,6 +75,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         this.view = view;
     }
 
+    //TODO 진입 시점에 네트워크 체킹 ?
     @Background
     @Override
     public void onJoinedTeamSelect(int teamId, boolean firstJoin) {
@@ -77,13 +85,14 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             accountHomeModel.updateSelectTeam(context, teamId);
             ResLeftSideMenu entityInfo = accountHomeModel.getEntityInfo(context, teamId);
             accountHomeModel.updateEntityInfo(context, entityInfo);
+            view.dismissProgressWheel();
             view.moveSelectedTeam(firstJoin);
         } catch (RetrofitError e) {
+            view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             view.dismissProgressWheel();
+            e.printStackTrace();
         }
     }
 
@@ -108,14 +117,18 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                     .trackSetAccount();
 
             JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
+            view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (RetrofitError e) {
+            view.dismissProgressWheel();
+            if (e.getCause() instanceof ConnectionNotFoundException) {
+                view.showErrorToast(context.getResources().getString(R.string.err_network));
+            }
             e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             view.dismissProgressWheel();
+            e.printStackTrace();
         }
     }
 
@@ -146,35 +159,34 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
+            teamDomainInfoModel.acceptOrDclineInvite(
+                    selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.ACCEPT.getType());
             teamDomainInfoModel.updateTeamInfo(selectedTeam.getTeamId());
             MixpanelMemberAnalyticsClient.getInstance(context, null)
                     .pageViewMemberCreateSuccess();
 
             view.removePendingTeamView(selectedTeam);
             view.dismissProgressWheel();
-            view.moveAfterinvitaionAccept();
+            view.moveAfterInvitaionAccept();
         } catch (RetrofitError e) {
             view.dismissProgressWheel();
             e.printStackTrace();
 
-            String alertText = getJoinErrorMessage(selectedTeam, e.getResponse().getStatus());
-
+            String alertText = getJoinErrorMessage(selectedTeam, e);
             view.showTextAlertDialog(alertText, (dialog, which) -> {
-                view.dismissProgressWheel();
-                onRequestIgnore(selectedTeam);
+                onRequestIgnore(selectedTeam, false);
                 view.removePendingTeamView(selectedTeam);
             });
-
         } catch (Exception e) {
             view.dismissProgressWheel();
             e.printStackTrace();
         }
     }
 
-    private String getJoinErrorMessage(Team selectedTeam, int errCode) {
+    private String getJoinErrorMessage(Team selectedTeam, RetrofitError e) {
+        int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
         String alertText;
-        switch (errCode) {
+        switch (errorCode) {
             case NOT_AVAILABLE_INVITATION_CODE:
                 alertText = context.getResources().getString(R.string.jandi_expired_invitation_link);
                 break;
@@ -200,16 +212,19 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Background
     @Override
-    public void onRequestIgnore(Team selectedTeam) {
+    public void onRequestIgnore(Team selectedTeam, boolean showErrorToast) {
         view.showProgressWheel();
 
         try {
-            teamDomainInfoModel.acceptOrDclineInvite(selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
+            teamDomainInfoModel.acceptOrDclineInvite(
+                    selectedTeam.getInvitationId(), ReqInvitationAcceptOrIgnore.Type.DECLINE.getType());
             view.dismissProgressWheel();
             view.removePendingTeamView(selectedTeam);
         } catch (RetrofitError e) {
             view.dismissProgressWheel();
-            view.showErrorToast(getJoinErrorMessage(selectedTeam, e.getResponse().getStatus()));
+            if (showErrorToast) {
+                view.showErrorToast(getJoinErrorMessage(selectedTeam, e));
+            }
             view.removePendingTeamView(selectedTeam);
         } catch (Exception e) {
             view.dismissProgressWheel();

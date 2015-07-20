@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.interfaces.actions;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -30,14 +29,13 @@ import org.androidannotations.annotations.UiThread;
 public class OpenAction implements Action {
 
     @RootContext
-    Context context;
+    Activity activity;
 
     ProgressWheel progressWheel;
 
     @AfterInject
     void initObject() {
-        progressWheel = new ProgressWheel(context);
-        progressWheel.init();
+        progressWheel = new ProgressWheel(activity);
     }
 
     @Override
@@ -67,12 +65,12 @@ public class OpenAction implements Action {
             ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
 
             TokenUtil.saveTokenInfoByRefresh(accessToken);
-            JandiAccountDatabaseManager.getInstance(context).upsertAccountAllInfo(accountInfo);
+            JandiAccountDatabaseManager.getInstance(activity).upsertAccountAllInfo(accountInfo);
 
             successAccessToken(accountInfo);
         } catch (Exception e) {
             TokenUtil.clearTokenInfo();
-            JandiAccountDatabaseManager.getInstance(context).clearAllData();
+            JandiAccountDatabaseManager.getInstance(activity).clearAllData();
             failAccessToken();
             LogUtil.d(e.getMessage());
         } finally {
@@ -105,20 +103,20 @@ public class OpenAction implements Action {
 
     @UiThread
     void failAccessToken() {
-        ColoredToast.showWarning(context, context.getString(R.string.jandi_error_web_token));
+        ColoredToast.showWarning(activity, activity.getString(R.string.jandi_error_web_token));
     }
 
     @UiThread
     void successAccessToken(ResAccountInfo accountInfo) {
-        ColoredToast.show(context, context.getString(R.string.jandi_success_web_token));
+        ColoredToast.show(activity, activity.getString(R.string.jandi_success_web_token));
     }
 
     @UiThread
     void startIntroActivity() {
-        IntroActivity_.intent(context)
+        IntroActivity_.intent(activity)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .startForInvite(true)
                 .start();
-        ((Activity) context).finish();
+        ((Activity) activity).finish();
     }
 }

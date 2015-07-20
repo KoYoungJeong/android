@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -84,7 +85,7 @@ public class FilePickerModel {
     }
 
     public void openExplorerForActivityResult(Fragment fragment) {
-        Intent intent = new Intent(fragment.getActivity().getApplicationContext(), FileExplorerActivity.class);
+        Intent intent = new Intent(fragment.getActivity(), FileExplorerActivity.class);
         fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
     }
 
@@ -170,6 +171,7 @@ public class FilePickerModel {
                 .uploadProgress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
@@ -200,6 +202,7 @@ public class FilePickerModel {
                 .uploadProgress(progressCallback)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartParameter("title", title)
                 .setMultipartParameter("share", String.valueOf(entityId))
                 .setMultipartParameter("permission", permissionCode)
@@ -251,6 +254,7 @@ public class FilePickerModel {
                 .load(HttpPut.METHOD_NAME, requestURL)
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
                 .setMultipartFile("photo", URLConnection.guessContentTypeFromName(file.getName()), file)
                 .asString()
                 .get();

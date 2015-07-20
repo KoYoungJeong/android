@@ -1,51 +1,35 @@
 package com.tosslab.jandi.app.ui.filedetail;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.MimeTypeMap;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
-import com.tosslab.jandi.app.events.files.ConfirmDeleteFileEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
+import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
-import com.tosslab.jandi.app.ui.sticker.StickerManager;
-import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.BitmapUtil;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
+import com.tosslab.jandi.app.utils.mimetype.placeholder.PlaceholderUtil;
 
-import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
-import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
-import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import retrofit.RetrofitError;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -54,237 +38,370 @@ import de.greenrobot.event.EventBus;
 public class FileDetailPresenter {
 
     @RootContext
-    AppCompatActivity activity;
-
-    @SystemService
-    InputMethodManager inputMethodManager;     // 메시지 전송 버튼 클릭시, 키보드 내리기를 위한 매니저.
-
-    @SystemService
-    ClipboardManager clipboardManager;
+    Activity activity;
 
     @Bean
-    FileDetailCommentListAdapter fileDetailCommentListAdapter;
+    FileDetailModel fileDetailModel;
 
-    @Bean
-    FileHeadManager fileHeadManager;
+    private View view;
 
-    @ViewById(R.id.list_file_detail_comments)
-    ListView listFileDetailComments;
-
-    @ViewById(R.id.ly_file_detail_input_comment)
-    ViewGroup inputCommentLayout;
-
-    @ViewById(R.id.et_file_detail_comment)
-    EditText editTextComment;
-    @ViewById(R.id.btn_file_detail_send_comment)
-    Button buttonSendComment;
-
-    @ViewById(R.id.vg_file_detail_preview_sticker)
-    ViewGroup vgStickerPreview;
-
-    @ViewById(R.id.iv_file_detail_preview_sticker_image)
-    ImageView ivStickerPreview;
-
-    private ProgressWheel mProgressWheel;
-
-
-    @AfterViews
-    void initViews() {
-        addFileDetailViewAsListviewHeader();
-        mProgressWheel = new ProgressWheel(activity);
-        mProgressWheel.init();
-
+    public void setView(View view) {
+        this.view = view;
     }
 
-    private void addFileDetailViewAsListviewHeader() {
-        // ListView(댓글에 대한 List)의 Header에 File detail 정보를 보여주는 View 연결한다.
-        View header = fileHeadManager.getHeaderView();
-
-        listFileDetailComments.addHeaderView(header);
-        listFileDetailComments.setAdapter(fileDetailCommentListAdapter);
-    }
-
-
-    public void setSendButtonSelected(boolean selected) {
-        buttonSendComment.setSelected(selected);
-    }
-
-    @UiThread
-    public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
-
-        ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
-
-        final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
-
-        fileHeadManager.setFileInfo(fileMessage);
-
-        if (TextUtils.equals(fileMessage.status, "archived")) {
-
-            inputCommentLayout.setVisibility(View.GONE);
-
-            activity.getSupportActionBar().setTitle(R.string.jandi_deleted_file);
-
+    /**
+     * *********************************************************
+     * 파일 상세 출력 관련
+     * **********************************************************
+     */
+    @Background
+    public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog) {
+        LogUtil.d("try to get file detail having ID, " + fileId);
+        if (showDialog) {
+            view.showProgress();
         }
+        try {
+            ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
 
-        fileDetailCommentListAdapter.clear();
-        fileDetailCommentListAdapter.updateFileComments(resFileDetail);
-        fileDetailCommentListAdapter.notifyDataSetChanged();
+            for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
+                if (messageDetail instanceof ResMessages.FileMessage) {
+                    fileDetailModel.setFileMessage((ResMessages.FileMessage) messageDetail);
+                    break;
+                }
+            }
 
-        if (isSendAction) {
-            listFileDetailComments.setSelection(fileDetailCommentListAdapter.getCount());
+            Collections.sort(resFileDetail.messageDetails,
+                    (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
+
+            view.dismissProgress();
+
+            view.onGetFileDetailSucceed(resFileDetail, isSendAction);
+
+            boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(resFileDetail);
+            view.drawFileWriterState(enableUserFromUploader);
+        } catch (RetrofitError e) {
+            LogUtil.e("fail to get file detail.", e);
+            view.dismissProgress();
+            String errorMessage;
+            if (e.getResponse() != null
+                    && e.getResponse().getStatus() == 403) {
+                errorMessage = activity.getResources().getString(R.string.jandi_unshared_message);
+            } else {
+                if (e.getCause() instanceof ConnectionNotFoundException) {
+                    errorMessage = activity.getResources().getString(R.string.err_network);
+                } else {
+                    errorMessage = activity.getResources().getString(R.string.err_file_detail);
+                }
+            }
+            view.showToast(errorMessage);
+            view.finishOnMainThread();
+        } catch (Exception e) {
+            view.dismissProgress();
+            view.showToast(activity.getResources().getString(R.string.err_file_detail));
+            view.finishOnMainThread();
         }
     }
 
-    private ResMessages.OriginalMessage getFileMessage(List<ResMessages.OriginalMessage> messageDetails) {
+    public void onLongClickComment(ResMessages.OriginalMessage item) {
+        if (item == null) {
+            return;
+        }
+        boolean isMine = fileDetailModel.isMyComment(item.writerId);
+        view.showManipulateMessageDialogFragment(item, isMine);
+    }
 
-        for (ResMessages.OriginalMessage messageDetail : messageDetails) {
-            if (messageDetail instanceof ResMessages.FileMessage) {
-                return messageDetail;
+    public void onClickShare() {
+        final List<FormattedEntity> unSharedEntities = fileDetailModel.getUnsharedEntities();
+        view.initShareListDialog(unSharedEntities);
+    }
+
+    public void onClickUnShare() {
+        final List<Integer> shareEntities = fileDetailModel.getFileMessage().shareEntities;
+        view.initUnShareListDialog(shareEntities);
+    }
+
+    @Background
+    public void shareMessage(int fileId, int entityIdToBeShared) {
+        view.showProgress();
+        try {
+            fileDetailModel.shareMessage(fileId, entityIdToBeShared);
+            LogUtil.d("success to share message");
+            view.dismissProgress();
+            view.onShareMessageSucceed(entityIdToBeShared, fileDetailModel.getFileMessage());
+            view.showMoveDialog(entityIdToBeShared);
+        } catch (RetrofitError e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+        } catch (Exception e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+            view.showErrorToast(activity.getResources().getString(R.string.err_share));
+        }
+    }
+
+    @Background
+    public void unShareMessage(int fileId, int entityIdToBeUnshared) {
+        view.showProgress();
+        try {
+            fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
+            LogUtil.d("success to unshare message");
+
+            view.dismissProgress();
+
+            view.onUnShareMessageSucceed(entityIdToBeUnshared, fileDetailModel.getFileMessage());
+
+        } catch (RetrofitError e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+        } catch (Exception e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+            view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
+        }
+    }
+
+    @Background
+    public void joinAndMove(FormattedEntity entityId) {
+        view.showProgress();
+
+        try {
+            EntityManager entityManager = EntityManager.getInstance(activity);
+            fileDetailModel.joinEntity(entityId);
+
+            MixpanelMemberAnalyticsClient
+                    .getInstance(activity, entityManager.getDistictId())
+                    .trackJoinChannel();
+
+            int entityType = JandiConstants.TYPE_PUBLIC_TOPIC;
+
+            fileDetailModel.refreshEntity();
+
+            view.dismissProgress();
+
+            view.moveToMessageListActivity(entityId.getId(), entityType, entityManager.getTeamId(), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.dismissProgress();
+        }
+    }
+
+    @Background
+    public void sendComment(int fileId, String message) {
+        view.showProgress();
+        try {
+            fileDetailModel.sendMessageComment(fileId, message);
+
+            view.dismissProgress();
+
+            getFileDetail(fileId, true, true);
+            LogUtil.d("success to send message");
+        } catch (RetrofitError e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+        } catch (Exception e) {
+            LogUtil.e("fail to send message", e);
+            view.dismissProgress();
+        }
+    }
+
+    @Background
+    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) {
+        view.showProgress();
+        try {
+            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment);
+
+            view.dismissProgress();
+
+            getFileDetail(fileId, true, true);
+        } catch (RetrofitError e) {
+            view.dismissProgress();
+            e.printStackTrace();
+        } catch (Exception e) {
+            view.dismissProgress();
+            e.printStackTrace();
+        }
+    }
+
+    @Background
+    public void deleteComment(int fileId, int messageType, int messageId, int feedbackId) {
+        view.showProgress();
+        try {
+            if (messageType == MessageItem.TYPE_STICKER_COMMNET) {
+                fileDetailModel.deleteStickerComment(messageId, MessageItem.TYPE_STICKER_COMMNET);
+            } else {
+                fileDetailModel.deleteComment(messageId, feedbackId);
+            }
+
+            view.dismissProgress();
+
+            getFileDetail(fileId, false, true);
+        } catch (RetrofitError e) {
+            view.dismissProgress();
+        } catch (Exception e) {
+            view.dismissProgress();
+        }
+    }
+
+    /**
+     * 파일 삭제
+     *
+     * @param fileId
+     */
+    @Background
+    public void deleteFile(int fileId) {
+        view.showProgress();
+        try {
+            fileDetailModel.deleteFile(fileId);
+            LogUtil.d("success to delete file");
+            view.dismissProgress();
+            view.onDeleteFileSucceed(true);
+        } catch (RetrofitError e) {
+            LogUtil.e("delete file failed", e);
+            view.dismissProgress();
+            view.onDeleteFileSucceed(false);
+        } catch (Exception e) {
+            view.dismissProgress();
+            view.onDeleteFileSucceed(false);
+        }
+    }
+
+    public void checkSharedEntity(int eventId) {
+        final ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+        if (fileMessage == null) {
+            return;
+        }
+        int size = fileMessage.shareEntities.size();
+
+        int entityId;
+        for (int idx = 0; idx < size; ++idx) {
+            entityId = fileMessage.shareEntities.get(idx);
+
+            if (eventId == entityId) {
+                view.finishOnMainThread();
+                return;
             }
         }
-
-        return null;
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void drawFileSharedEntities(ResMessages.FileMessage resFileDetail) {
-        fileHeadManager.drawFileSharedEntities(resFileDetail);
-    }
-
-
-    public void clearAdapter() {
-        fileDetailCommentListAdapter.clear();
-    }
-
-    @UiThread
-    public void showProgressWheel() {
-        if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.dismiss();
+    @Background
+    public void onClickDownload(ProgressDialog progressDialog) {
+        ResMessages.FileMessage fileMessage = fileDetailModel.getFileMessage();
+        if (fileMessage == null) {
+            return;
         }
 
-        if (mProgressWheel != null) {
-            mProgressWheel.show();
+        ResMessages.FileContent content = fileMessage.content;
+        MimeTypeUtil.PlaceholderType placeholderType =
+                PlaceholderUtil.getPlaceholderType(content.serverUrl, content.icon);
+
+        switch (placeholderType) {
+            case Google:
+            case Dropbox:
+                String photoUrl = BitmapUtil.getFileUrl(content.fileUrl);
+                view.startGoogleOrDropboxFileActivity(photoUrl);
+                return;
         }
+
+        String fileName = content.fileUrl.replace(" ", "%20");
+
+        view.showDownloadProgressDialog(fileName);
+
+        downloadFile(BitmapUtil.getFileUrl(content.fileUrl), content.name, content.type, progressDialog);
     }
 
-    @UiThread
-    public void dismissProgressWheel() {
-
-        if (mProgressWheel != null && mProgressWheel.isShowing()) {
-            mProgressWheel.dismiss();
-        }
-
-    }
-
-
-    @UiThread
-    public void unshareMessageSucceed(int entityIdToBeUnshared) {
-        ColoredToast.show(activity, activity.getString(R.string.jandi_unshare_succeed, activity.getSupportActionBar().getTitle()));
-        fileDetailCommentListAdapter.clear();
-    }
-
-
-    public void hideSoftKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
-        editTextComment.setText("");
-    }
-
-    @UiThread
-    public void downloadDone(File file, String fileType, ProgressDialog progressDialog) {
-
-        progressDialog.dismiss();
-
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
+    @Background
+    public void downloadFile(String url, String fileName, final String fileType, ProgressDialog progressDialog) {
         try {
-            activity.startActivity(intent);
-        } catch (ActivityNotFoundException e) {
-            String rawString = activity.getString(R.string.err_unsupported_file_type);
-            String formatString = String.format(rawString, file);
-            ColoredToast.showError(activity, formatString);
-        }
+            File result = fileDetailModel.download(url, fileName, fileType, progressDialog);
 
-    }
+            if (fileDetailModel.isMediaFile(fileType)) {
+                fileDetailModel.addGallery(result, fileType);
+            }
 
-    private String getFileType(File file, String fileType) {
-
-        String fileName = file.getName();
-        int idx = fileName.lastIndexOf(".");
-
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-        if (idx >= 0) {
-            return mimeTypeMap.getMimeTypeFromExtension(fileName.substring(idx + 1, fileName.length()).toLowerCase());
-        } else {
-            return mimeTypeMap.getExtensionFromMimeType(fileType.toLowerCase());
+            view.dismissDownloadProgressDialog();
+            view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage());
+        } catch (Exception e) {
+            LogUtil.e("Download failed", e);
+            view.dismissDownloadProgressDialog();
+            view.showErrorToast(activity.getResources().getString(R.string.err_download));
         }
     }
 
-    @UiThread
-    public void showUserInfoDialog(FormattedEntity user) {
-        FragmentManager fragmentManager = activity.getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        Fragment prev = fragmentManager.findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
+    @Background
+    public void getProfile(int userEntityId) {
+        try {
+            ResLeftSideMenu.User user = fileDetailModel.getUserProfile(userEntityId);
+            view.showUserInfoDialog(new FormattedEntity(user));
+        } catch (RetrofitError e) {
+            LogUtil.e("get profile failed", e);
+            view.onGetProfileFailed();
+        } catch (Exception e) {
+            LogUtil.e("get profile failed", e);
+            view.onGetProfileFailed();
         }
-        UserInfoDialogFragment_.builder().entityId(user.getId()).build().show(activity.getSupportFragmentManager(), "dialog");
-
     }
 
-    public String getCommentText() {
-        return editTextComment.getText().toString();
-    }
+    public interface View {
+        void drawFileWriterState(boolean isEnabled);
 
-    public void copyToClipboard(String contentString) {
-        ClipData clipData = ClipData.newPlainText("", contentString);
-        clipboardManager.setPrimaryClip(clipData);
-    }
+        void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction);
 
-    public void showDeleteFileDialog(int fileId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle(R.string.jandi_action_delete)
-                .setMessage(activity.getString(R.string.jandi_file_delete_message))
-                .setNegativeButton(R.string.jandi_cancel, null)
-                .setPositiveButton(R.string.jandi_action_delete, (dialog, which) -> EventBus.getDefault().post(new ConfirmDeleteFileEvent(fileId)))
-                .create().show();
+        void onGetFileDetailSucceed(ResFileDetail resFileDetail, boolean isSendAction);
 
-    }
+        void showDeleteFileDialog(int fileId);
 
-    @UiThread
-    public void drawFileWriterState(boolean isEnabled) {
-        fileHeadManager.drawFileWriterState(isEnabled);
-    }
+        void showUserInfoDialog(FormattedEntity user);
 
-    @UiThread
-    public void showFailToast(String message) {
-        ColoredToast.showError(activity, message);
-    }
+        void showMoveDialog(int entityIdToBeShared);
 
-    public void hideKeyboard() {
-        inputMethodManager.hideSoftInputFromWindow(editTextComment.getWindowToken(), 0);
-    }
+        void showManipulateMessageDialogFragment(ResMessages.OriginalMessage item, boolean isMine);
 
-    public EditText getSendEditTextView() {
-        return editTextComment;
-    }
+        void initShareListDialog(List<FormattedEntity> unSharedEntities);
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showKeyboard() {
-        inputMethodManager.showSoftInput(editTextComment, InputMethodManager.SHOW_IMPLICIT);
-    }
+        void initUnShareListDialog(List<Integer> shareEntitiesIds);
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void showStickerPreview() {
-        vgStickerPreview.setVisibility(View.VISIBLE);
-    }
+        void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
 
-    public void loadSticker(StickerInfo stickerInfo) {
-        StickerManager.getInstance().loadStickerDefaultOption(ivStickerPreview, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-    }
+        void onUnShareMessageSucceed(int entityIdToBeUnshared, ResMessages.FileMessage fileMessage);
 
-    @UiThread(propagation = UiThread.Propagation.REUSE)
-    public void dismissStickerPreview() {
-        vgStickerPreview.setVisibility(View.GONE);
+        void onDeleteFileSucceed(boolean isOk);
+
+        void onDownloadFileSucceed(File file, String fileType, ResMessages.FileMessage fileMessage);
+
+        void onGetProfileFailed();
+
+        void setSendButtonSelected(boolean selected);
+
+        void showProgress();
+
+        void dismissProgress();
+
+        void showDownloadProgressDialog(String fileName);
+
+        void dismissDownloadProgressDialog();
+
+        void clearAdapter();
+
+        void showToast(String message);
+
+        void showErrorToast(String message);
+
+        void hideSoftKeyboard();
+
+        void moveToMessageListActivity(int entityId, int entityType, int teamId, boolean isStarred);
+
+        void startGoogleOrDropboxFileActivity(String fileUrl);
+
+        void finishOnMainThread();
+
+        void showKeyboard();
+
+        void showStickerPreview();
+
+        void loadSticker(StickerInfo stickerInfo);
+
+        void dismissStickerPreview();
     }
 }
