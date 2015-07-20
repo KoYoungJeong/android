@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.network.client.privatetopic;
 
+import com.tosslab.jandi.app.lists.FormattedEntity;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateTopic;
 import com.tosslab.jandi.app.network.models.ReqTeam;
@@ -10,6 +13,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.shadows.ShadowLog;
@@ -30,6 +34,9 @@ public class GroupApiClientTest {
 
     @Before
     public void setUp() throws Exception {
+        BaseInitUtil.initData(Robolectric.application);
+        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getUserTeams().get(0).getTeamId();
+        JandiAccountDatabaseManager.getInstance(Robolectric.application).updateSelectedTeam(teamId);
         sideMenu = getSideMenu();
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
         System.setProperty("robolectric.logging", "stdout");
@@ -37,7 +44,9 @@ public class GroupApiClientTest {
     }
 
     private ResLeftSideMenu getSideMenu() {
-        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
+        int teamId = JandiAccountDatabaseManager.getInstance(Robolectric.application).getSelectedTeamInfo().getTeamId();
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance()
+                .getInfosForSideMenuByMainRest(teamId);
 
         return infosForSideMenu;
     }
@@ -83,23 +92,64 @@ public class GroupApiClientTest {
     }
 
     @Test
-    public void testModifyGroup() throws Exception {
+    public void testModifyGroup_이름변경() throws Exception {
 
         sideMenu = getSideMenu();
         ResLeftSideMenu.PrivateGroup privateTopic = getMyPrivateTopic();
+
+        String oldDescription = privateTopic.description;
 
         ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = sideMenu.team.id;
         reqCreateTopic.name = "mod_" + new Timestamp(System.currentTimeMillis());
 
-        ResCommon resCommon = null;
         try {
-            resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
+            ResCommon resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
+            assertThat(resCommon, is(notNullValue()));
         } catch (RetrofitError e) {
             fail(e.getResponse().getBody().toString());
         }
 
-        assertThat(resCommon, is(notNullValue()));
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
+        EntityManager.getInstance(Robolectric.application).refreshEntity(infosForSideMenu);
+
+        FormattedEntity entity = EntityManager.getInstance(Robolectric.application).getEntityById(privateTopic.id);
+        assertThat(entity.getName(), is(reqCreateTopic.name));
+        assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description, is(oldDescription));
+
+
+    }
+
+    @Test
+    public void testModifyGroup_소개변경() throws Exception {
+
+        sideMenu = getSideMenu();
+        ResLeftSideMenu.PrivateGroup privateTopic = getMyPrivateTopic();
+
+        String oldName = privateTopic.name;
+
+        ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
+        reqCreateTopic.teamId = sideMenu.team.id;
+        reqCreateTopic.description = privateTopic.description
+                + "_mod_"
+                + new Timestamp(System.currentTimeMillis());
+
+        ResCommon resCommon = null;
+        try {
+            resCommon = RequestApiManager.getInstance().modifyGroupByGroupApi(reqCreateTopic, privateTopic.id);
+            assertThat(resCommon, is(notNullValue()));
+        } catch (RetrofitError e) {
+            fail(e.getResponse().getBody().toString());
+        }
+
+        ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(279);
+        EntityManager.getInstance(Robolectric.application).refreshEntity(infosForSideMenu);
+
+        FormattedEntity entity = EntityManager.getInstance(Robolectric.application).getEntityById(privateTopic.id);
+        assertThat(entity.getName(), is(oldName));
+        assertThat(((ResLeftSideMenu.PrivateGroup) entity.getEntity()).description,
+                is(reqCreateTopic.description));
+
 
     }
 

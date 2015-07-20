@@ -23,13 +23,15 @@ public interface GroupApiV2Client {
 
     // Private Group 생성
     @POST("/privateGroup")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon createPrivateGroup(@Body ReqCreateTopic group);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon createPrivateGroup(@Query("teamId") int teamId, @Body ReqCreateTopic group);
 
     // Private Group 수정
     @PUT("/privateGroups/{groupId}")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon modifyGroup(@Body ReqCreateTopic channel, @Path("groupId") int groupId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyGroup(@Query("teamId") int teamId,
+                          @Body ReqCreateTopic channel,
+                          @Path("groupId") int groupId);
 
     // Private Group 삭제
     @DELETEWithBody("/privateGroups/{groupId}")

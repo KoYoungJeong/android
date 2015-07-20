@@ -4,26 +4,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ExpandableListView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
-import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
-import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicListAdapter;
+import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
 import com.tosslab.jandi.app.ui.maintab.topic.dialog.EntityMenuDialogFragment_;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.BadgeUtils;
-import com.tosslab.jandi.app.utils.FAButtonUtil;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
@@ -35,12 +31,12 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
-import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -52,10 +48,7 @@ public class MainTopicListFragment extends Fragment {
     @Bean
     MainTopicModel mainTopicModel;
     @Bean
-    MainTopicPresenter mainTopicPresenter;
-
-    @ViewById(R.id.list_main_topic)
-    ExpandableListView topicListView;
+    MainTopicView mainTopicView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,87 +73,62 @@ public class MainTopicListFragment extends Fragment {
 
     @AfterInject
     void initObject() {
-        mainTopicPresenter.initObject(getActivity());
 
         LogUtil.d("MainTopicListFragment");
 
         EntityManager entityManager = EntityManager.getInstance(getActivity());
 
-        List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
-        List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
+        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels
+                (), entityManager.getGroups());
+        Observable<Topic> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager
+                .getUnjoinedChannels());
 
-        mainTopicPresenter.setEntities(joinEntities, unjoinEntities);
+        mainTopicView.setEntities(joinEntities, unjoinEntities);
     }
 
     @AfterViews
     void initView() {
         LogUtil.d("MainTopicListFragment initView");
-        topicListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                return true;
-            }
-        });
-        topicListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            //TODO 메세지 진입시 네트워크 체킹 ?
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                TopicListAdapter adapter = (TopicListAdapter) parent.getExpandableListAdapter();
-                FormattedEntity entity = adapter.getChild(groupPosition, childPosition);
-                int badgeCount = JandiPreference.getBadgeCount(getActivity()) - entity.alarmCount;
-                JandiPreference.setBadgeCount(getActivity(), badgeCount);
-                BadgeUtils.setBadge(getActivity(), badgeCount);
-                entity.alarmCount = 0;
-                adapter.notifyDataSetChanged();
+        mainTopicView.setOnItemClickListener((view, adapter, position) -> {
 
-                final TopicBadgeEvent event =
-                        new TopicBadgeEvent(mainTopicModel.hasAlarmCount(mainTopicPresenter.getJoinedTopics()));
-                EventBus.getDefault().post(event);
+            Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+            item.setUnreadCount(0);
+            adapter.notifyItemChanged(position);
 
-                if (entity.isJoined || entity.isPrivateGroup()) {
-                    int entityType = entity.isPublicTopic()
-                            ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
-                    int teamId = JandiAccountDatabaseManager.getInstance(getActivity())
-                            .getSelectedTeamInfo().getTeamId();
-                    mainTopicPresenter.moveToMessageActivity(getActivity(),
-                            entity.getId(), entityType, entity.isStarred, teamId);
-                } else {
-                    joinChannelInBackground(entity);
-                }
+            mainTopicModel.resetBadge(getActivity().getApplicationContext(), item.getEntityId());
+            int badgeCount = JandiPreference.getBadgeCount(getActivity()) - item.getUnreadCount();
+            JandiPreference.setBadgeCount(getActivity(), badgeCount);
+            BadgeUtils.setBadge(getActivity(), badgeCount);
 
-                return false;
+
+            boolean isBadge = mainTopicModel.hasAlarmCount(Observable.from(mainTopicView.getJoinedTopics()));
+            EventBus.getDefault().post(new TopicBadgeEvent(isBadge));
+
+            if (item.isJoined() || !item.isPublic()) {
+                int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+                int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
+                mainTopicView.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
+            } else {
+                mainTopicView.showUnjoinDialog(getFragmentManager(), item,
+                        (dialog, which) -> joinChannelInBackground(item));
             }
         });
 
-        topicListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        mainTopicView.setOnItemLongClickListener((view, adapter, position) -> {
 
-                if (ExpandableListView.getPackedPositionType(id) != ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-                    return false;
-                }
-
-                ExpandableListView expandableListView = (ExpandableListView) parent;
-                long expandableListPosition = expandableListView.getExpandableListPosition(position);
-
-                int groupPosition = ExpandableListView.getPackedPositionGroup(expandableListPosition);
-                int childPosition = ExpandableListView.getPackedPositionChild(expandableListPosition);
-
-                TopicListAdapter expandableListAdapter = (TopicListAdapter) expandableListView.getExpandableListAdapter();
-                FormattedEntity child = expandableListAdapter.getChild(groupPosition, childPosition);
-
-                if (child.isPublicTopic() && !child.isJoined) {
-                    return false;
-                }
-
-                EntityMenuDialogFragment_.builder().entityId(child.getId()).build().show(getFragmentManager(), "dialog");
-
-                return true;
+            Topic item = ((TopicRecyclerAdapter) adapter).getItem(position);
+            if (item.isJoined() || !item.isPublic()) {
+                EntityMenuDialogFragment_.builder().entityId(item.getEntityId())
+                        .build()
+                        .show(getFragmentManager(), "dialog");
+            } else {
+                mainTopicView.showUnjoinDialog(getFragmentManager(), item, (dialog, which) -> joinChannelInBackground(item));
             }
+            return true;
+
         });
 
-        FAButtonUtil.setFAButtonController(topicListView, getView().findViewById(R.id.btn_main_topic_fab));
     }
 
     @OptionsItem(R.id.action_main_search)
@@ -170,16 +138,16 @@ public class MainTopicListFragment extends Fragment {
     }
 
     @Background
-    public void joinChannelInBackground(final FormattedEntity entity) {
+    public void joinChannelInBackground(final Topic topic) {
 
-        mainTopicPresenter.showProgressWheel();
+        mainTopicView.showProgressWheel();
 
-        String message = getString(R.string.jandi_message_join_entity, entity.getChannel().name);
+        String message = getString(R.string.jandi_message_join_entity, topic.getName());
         final Context context = getActivity().getApplicationContext();
-        mainTopicPresenter.showToast(context, message);
+        mainTopicView.showToast(message);
 
         try {
-            mainTopicModel.joinPublicTopic(entity.getChannel());
+            mainTopicModel.joinPublicTopic(topic.getEntityId());
             mainTopicModel.refreshEntity();
             EntityManager entityManager = EntityManager.getInstance(getActivity());
             if (entityManager != null) {
@@ -187,49 +155,42 @@ public class MainTopicListFragment extends Fragment {
                         .getInstance(getActivity(), entityManager.getDistictId())
                         .trackJoinChannel();
             }
-            int entityType = entity.isPublicTopic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
+            int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
-            mainTopicPresenter.moveToMessageActivity(getActivity(),
-                    entity.getId(), entityType, entity.isStarred, teamId);
+            mainTopicView.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
+            mainTopicView.showErrorToast(getString(R.string.err_entity_join));
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
-            mainTopicPresenter.showErrorToast(context, getString(R.string.err_entity_join));
+            mainTopicView.showErrorToast(getString(R.string.err_entity_join));
         } finally {
-            mainTopicPresenter.dismissProgressWheel();
+            mainTopicView.dismissProgressWheel();
         }
     }
 
     public void onEventMainThread(RetrieveTopicListEvent event) {
         EntityManager entityManager = EntityManager.getInstance(getActivity());
 
-        List<FormattedEntity> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
-        List<FormattedEntity> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
+        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels(), entityManager.getGroups());
+        Observable<Topic> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
-        mainTopicPresenter.setEntities(joinEntities, unjoinEntities);
+        mainTopicView.setEntities(joinEntities, unjoinEntities);
 
         boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
     }
-
-//    public void onEvent(MessagePushEvent event) {
-//        if (!TextUtils.equals(event.getEntityType(), "user")) {
-//
-//        }
-//    }
 
     public void onEvent(SocketMessageEvent event) {
         if (TextUtils.equals(event.getMessageType(), "chat")) {
             return;
         }
 
-        List<FormattedEntity> joinedTopics = mainTopicPresenter.getJoinedTopics();
+        List<Topic> joinedTopics = mainTopicView.getJoinedTopics();
         if (mainTopicModel.updateBadge(event, joinedTopics)) {
-            mainTopicPresenter.refreshList();
+            mainTopicView.refreshList();
             EventBus.getDefault().post(new TopicBadgeEvent(true));
         }
     }

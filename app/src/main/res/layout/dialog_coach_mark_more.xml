@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coach_mark_master_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_more_invite_guide_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="108dp"
+        android:src="@drawable/icon_more_invite_guide" />
+
+    <TextView
+        android:layout_width="115dp"
+        android:layout_height="105dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:gravity="center|bottom"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="@string/jandi_coach_mark_more_invite"
+        android:textColor="@color/jandi_coach_mark_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_more_member_guide_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="108dp"
+        android:src="@drawable/icon_more_member_guide" />
+
+    <TextView
+        android:layout_width="115dp"
+        android:layout_height="35dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:gravity="center|bottom"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="@string/jandi_coach_mark_more_members"
+        android:textColor="@color/jandi_coach_mark_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_more_profile_guide_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="108dp"
+        android:src="@drawable/icon_more_profile_guide" />
+
+    <TextView
+        android:layout_width="115dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="70dp"
+        android:gravity="center|bottom"
+        android:shadowColor="@color/jandi_coach_mark_text_shadow"
+        android:shadowDy="1"
+        android:shadowRadius="1"
+        android:text="@string/jandi_coach_mark_more_profile"
+        android:textColor="@color/jandi_coach_mark_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_profile_guide_image_icon"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:layout_marginLeft="42.6dp"
+        android:layout_marginTop="131dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="47dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="@string/jandi_coach_mark_more_explain1"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="@string/jandi_coach_mark_more_explain2"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:shadowColor="@color/jandi_coach_mark_text_shadow"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="@string/jandi_coach_mark_more_explain3"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="59dp"
+            android:layout_height="59dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/icon_check_btn" />
+
+    </LinearLayout>
+
+</RelativeLayout>

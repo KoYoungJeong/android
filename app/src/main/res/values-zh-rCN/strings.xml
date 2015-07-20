@@ -397,4 +397,40 @@
     <string name="jandi_decide_choose">"选择照片"</string>
     <string name="jandI_select_gallery">"选择照片"</string>
     <string name="jandi_view_all">"查看全部"</string>
+
+    <string name="jandi_title_name_required">"名字*"</string>
+
+    <!-- tutorial -->
+    <string name="jandi_coach_mark_search_message">搜索信息</string>
+    <string name="jandi_coach_mark_create_new_topics">建立新议题</string>
+    <string name="jandi_coach_mark_topic_list_welcome">欢迎！</string>
+    <string name="jandi_coach_mark_topic_list_explain1">可多元使用的议题功能帮助你区分群组</string>
+    <string name="jandi_coach_mark_topic_list_explain2">并将信息有系统地归类、储存</string>
+    <string name="jandi_coach_mark_topic_list_explain3"></string>
+
+    <string name="jandi_coach_mark_topic_explain1">实时传送信息和文</string>
+    <string name="jandi_coach_mark_topic_explain2">件给该议题成员</string>
+
+    <string name="jandi_coach_mark_topic_message_search">信息搜索</string>
+    <string name="jandi_coach_mark_topic_file_search">文件夹和搜索</string>
+    <string name="jandi_coach_mark_topic_setting">其他议题设置\n(邀请、离开\n、重新命名)</string>
+    <string name="jandi_coach_mark_upload_file">上传文件</string>
+    <string name="jandi_coach_mark_stickers">贴图</string>
+
+    <string name="jandi_coach_mark_filelist_search">关键词搜索</string>
+    <string name="jandi_coach_mark_filelist_sort">利用文件上传者、文件类型或议题进行搜索</string>
+    <string name="jandi_coach_mark_filelist_explain1">在JANDI文件夹</string>
+    <string name="jandi_coach_mark_filelist_explain2">一次浏览所有档案</string>
+
+    <string name="jandi_coach_mark_directmessage_explain1">在这里找到直接传信</string>
+    <string name="jandi_coach_mark_directmessage_explain2">里的信息对话</string>
+    <string name="jandi_coach_mark_directmessage_choose_member">选择成员开始传信</string>
+
+    <string name="jandi_coach_mark_more_profile">编辑你的个\n人简历</string>
+    <string name="jandi_coach_mark_more_members">浏览成员列表</string>
+    <string name="jandi_coach_mark_more_invite">透过电邮或\n通讯软件邀\n请伙伴加入团队</string>
+    <string name="jandi_coach_mark_more_explain1">此为设定菜单</string>
+    <string name="jandi_coach_mark_more_explain2">别忘了邀请伙伴加入！</string>
+    <string name="jandi_coach_mark_more_explain3"></string>
+
 </resources>

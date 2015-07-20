@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.topic.create.model;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -21,18 +22,17 @@ import retrofit.RetrofitError;
 @EBean
 public class TopicCreateModel {
 
-    public static final int TITLE_MAX_LENGTH = 60;
     @Bean
     EntityClientManager entityClientManager;
 
     @RootContext
     Context context;
 
-    public ResCommon createTopic(String entityName, boolean publicSelected) throws RetrofitError {
+    public ResCommon createTopic(String entityName, boolean publicSelected, String topicDescription) throws RetrofitError {
         if (publicSelected) {
-            return entityClientManager.createPublicTopic(entityName);
+            return entityClientManager.createPublicTopic(entityName, topicDescription);
         } else {
-            return entityClientManager.createPrivateGroup(entityName);
+            return entityClientManager.createPrivateGroup(entityName, topicDescription);
         }
 
     }
@@ -46,7 +46,7 @@ public class TopicCreateModel {
 
     }
 
-    public boolean isOverMaxLength(CharSequence text) {
-        return text.length() > TITLE_MAX_LENGTH;
+    public boolean validTitle(String topicTitle) {
+        return TextUtils.isEmpty(topicTitle);
     }
 }

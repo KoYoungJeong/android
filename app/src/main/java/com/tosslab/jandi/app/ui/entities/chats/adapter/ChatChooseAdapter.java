@@ -127,7 +127,7 @@ public class ChatChooseAdapter extends BaseAdapter {
             chatCHooseViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
             chatCHooseViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             chatCHooseViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
+            chatCHooseViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
             chatCHooseViewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
             chatCHooseViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
             chatCHooseViewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);

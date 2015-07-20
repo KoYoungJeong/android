@@ -26,7 +26,7 @@
 
 
     <TextView
-        android:id="@+id/txt_entity_listitem_additional"
+        android:id="@+id/txt_entity_listitem_user_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/vg_entity_listitem_name"

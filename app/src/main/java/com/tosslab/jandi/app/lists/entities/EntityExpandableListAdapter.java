@@ -146,7 +146,7 @@ public class EntityExpandableListAdapter extends BaseExpandableListAdapter {
             viewHolder.imageViewFavorite
                     = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
             viewHolder.textViewAdditional
-                    = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
+                    = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
             viewHolder.textViewBadgeCount
                     = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
 

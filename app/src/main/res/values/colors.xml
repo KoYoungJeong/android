@@ -34,7 +34,9 @@
     <color name="jandi_border_green">#31C08A</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
+    <color name="jandi_text_topic_detail_content">#FF6E6E6E</color>
 
+    <color name="jandi_text_hint">#FFBDBDBD</color>
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>
@@ -191,6 +193,11 @@
     <color name="jandi_sticker_view_selector">#FFDDE4E9</color>
 
     <color name="jandi_file_upload_divider">#B5B5B5</color>
+
+    <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
+
+    <color name="jandi_coach_mark_text">#FF19c1ff</color>
+    <color name="jandi_coach_mark_text_shadow">#DD000000</color>
 
 
 </resources>

@@ -88,13 +88,14 @@ import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
-import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
+import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.AnnouncementViewModel;
 import com.tosslab.jandi.app.ui.message.v2.viewmodel.FileUploadStateViewModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
@@ -391,10 +392,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
         sendMessagePublisherEvent(new NewMessageQueue(messageState));
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
+
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+
     }
 
-    private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
 
+    private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
         messageListPresenter.showStickerPreview(stickerInfo);
         if (oldSticker.getStickerGroupId() != stickerInfo.getStickerGroupId() || !TextUtils.equals(oldSticker.getStickerId(), stickerInfo.getStickerId())) {
             messageListPresenter.loadSticker(stickerInfo);
@@ -463,43 +467,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         MenuInflater inflater = getActivity().getMenuInflater();
 
         inflater.inflate(R.menu.message_list_menu_basic, menu);
-        MenuItem starredItem;
-
-        // DirectMessage의 경우 확장 메뉴가 없음.
-        if (!messageListModel.isDirectMessage(entityType)) {
-            if (messageListModel.isMyTopic(entityId)) {
-                if (messageListModel.isDefaultTopic(entityId)) {
-                    inflater.inflate(R.menu.manipulate_my_entity_menu_default, menu);
-                } else {
-                    inflater.inflate(R.menu.manipulate_my_entity_menu, menu);
-                }
-            } else {
-                if (messageListModel.isDefaultTopic(entityId)) {
-                    inflater.inflate(R.menu.manipulate_entity_menu_default, menu);
-                } else {
-                    inflater.inflate(R.menu.manipulate_entity_menu, menu);
-                }
-            }
-        } else {
-            inflater.inflate(R.menu.manipulate_direct_message_menu, menu);
-        }
-
-        starredItem = menu.findItem(R.id.action_entity_starred);
-
-        FormattedEntity entity = EntityManager.getInstance(getActivity()).getEntityById(entityId);
-        if (entity != null && entity.isUser()) {
-            if (!TextUtils.equals(entity.getUser().status, "enabled")) {
-                menu.removeItem(starredItem.getItemId());
-            }
-        }
-
-        if (starredItem != null) {
-            if (isFavorite) {
-                starredItem.setTitle(R.string.jandi_unstarred);
-            } else {
-                starredItem.setTitle(R.string.jandi_starred);
-            }
-        }
 
     }
 
@@ -1080,13 +1047,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         UserInfoDialogFragment_.builder().entityId(event.userId).build().show(getFragmentManager(), "dialog");
     }
 
-    public void onEvent(ChatCloseEvent event) {
+    public void onEventMainThread(ChatCloseEvent event) {
         if (entityId == event.getCompanionId()) {
             getActivity().finish();
         }
     }
 
-    public void onEvent(TopicDeleteEvent event) {
+    public void onEventMainThread(TopicDeleteEvent event) {
         if (entityId == event.getId()) {
             getActivity().finish();
         }

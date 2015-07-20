@@ -13,6 +13,7 @@ import retrofit.http.Headers;
 import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Path;
+import retrofit.http.Query;
 
 /**
  * Created by tee on 15. 6. 16..
@@ -23,12 +24,14 @@ public interface ChannelApiV2Client {
 
     // 채널 생성
     @POST("/channel")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon createChannel(@Body ReqCreateTopic channel);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon createChannel(@Query("teamId") int teamId, @Body ReqCreateTopic channel);
 
     @PUT("/channels/{channelId}")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon modifyPublicTopicName(@Body ReqCreateTopic channel, @Path("channelId") int channelId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon modifyPublicTopicName(@Query("teamId") int teamId,
+                                    @Body ReqCreateTopic channel,
+                                    @Path("channelId") int channelId);
 
     // 채널 삭제
     @DELETEWithBody("/channels/{channelId}")
