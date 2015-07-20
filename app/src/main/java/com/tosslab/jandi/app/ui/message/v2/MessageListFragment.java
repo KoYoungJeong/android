@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
-import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -62,6 +61,7 @@ import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseMana
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
@@ -1194,8 +1194,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 checkAnnouncementExistsAndCreate(event.getMessageId());
                 break;
             case DELETE:
-                messageListPresenter.showProgressWheel();
-                announcementModel.deleteAnnouncement(teamId, roomId);
+                deleteAnnouncement();
                 break;
         }
     }
@@ -1203,6 +1202,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Background
     void checkAnnouncementExistsAndCreate(int messageId) {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+
         if (announcement == null || announcement.isEmpty()) {
             createAnnouncement(messageId);
             return;
@@ -1211,9 +1211,28 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         announcementViewModel.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
     }
 
-    private void createAnnouncement(int messageId) {
+    @Background
+    void createAnnouncement(int messageId) {
+        JandiSocketManager.getInstance().disconnect();
+
         messageListPresenter.showProgressWheel();
         announcementModel.createAnnouncement(teamId, roomId, messageId);
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            getAnnouncement();
+        }
+    }
+
+    @Background
+    void deleteAnnouncement() {
+        messageListPresenter.showProgressWheel();
+        announcementModel.deleteAnnouncement(teamId, roomId);
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            getAnnouncement();
+        }
     }
 
     @Override
