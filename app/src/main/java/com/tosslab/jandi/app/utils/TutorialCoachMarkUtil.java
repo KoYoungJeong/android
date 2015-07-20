@@ -51,8 +51,6 @@ public class TutorialCoachMarkUtil {
                 dialog.setContentView(R.layout.dialog_coach_mark_topic);
         }
 
-        dialog.setCanceledOnTouchOutside(true);
-
         View masterView = dialog.findViewById(R.id.coach_mark_master_view);
         masterView.setOnClickListener(new View.OnClickListener() {
             @Override
