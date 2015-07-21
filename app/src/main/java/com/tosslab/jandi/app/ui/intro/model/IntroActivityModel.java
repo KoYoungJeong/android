@@ -6,8 +6,9 @@ import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
@@ -121,9 +122,7 @@ public class IntroActivityModel {
             int selectedTeamId = selectedTeamInfo.getTeamId();
             ResLeftSideMenu totalEntitiesInfo =
                     RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
-            JandiEntityDatabaseManager.getInstance(context.getApplicationContext())
-                    .upsertLeftSideMenu(totalEntitiesInfo);
-
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(totalEntitiesInfo);
             JandiPreference.setBadgeCount(context.getApplicationContext(), totalUnreadCount);
             BadgeUtils.setBadge(context.getApplicationContext(), totalUnreadCount);

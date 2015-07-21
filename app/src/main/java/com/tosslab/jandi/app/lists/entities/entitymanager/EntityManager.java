@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
@@ -50,7 +50,7 @@ public class EntityManager {
 
     protected EntityManager(Context context) {
         int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-        ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+        ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
         if (resLeftSideMenu != null) {
             init(resLeftSideMenu);
         }
@@ -91,7 +91,7 @@ public class EntityManager {
 
         if (selectedTeamInfo != null) {
             int teamId = selectedTeamInfo.getTeamId();
-            ResLeftSideMenu resLeftSideMenu = JandiEntityDatabaseManager.getInstance(context).getEntityInfoAtWhole(teamId);
+            ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
             init(resLeftSideMenu);
         }
     }
@@ -119,10 +119,10 @@ public class EntityManager {
     private synchronized void arrangeEntities(ResLeftSideMenu resLeftSideMenu) {
         // HashTable 로 빼야하나? 즐겨찾기처럼 길이가 작을 경우 어떤게 더 유리한지 모르겠넹~
         LogUtil.d("EntityManger.arrangeEntities");
-        Collection<ResLeftSideMenu.UserRef> starredEntities =
+        Collection<Integer> starredEntities =
                 (resLeftSideMenu.user.u_starredEntities != null)
                         ? resLeftSideMenu.user.u_starredEntities
-                        : new ArrayList<ResLeftSideMenu.UserRef>();
+                        : new ArrayList<Integer>();
 
         // Unjoined topic 혹은 User 리스트 정리
         for (ResLeftSideMenu.Entity entity : resLeftSideMenu.entities) {
@@ -135,8 +135,8 @@ public class EntityManager {
             } else if (entity instanceof ResLeftSideMenu.User) {
                 FormattedEntity user = new FormattedEntity((ResLeftSideMenu.User) entity);
                 user = patchMarkerToFormattedEntity(user);
-                for (ResLeftSideMenu.EntityRef starredEntity : starredEntities) {
-                    if (starredEntity.value == entity.id) {
+                for (int starredEntity : starredEntities) {
+                    if (starredEntity == entity.id) {
                         user.isStarred = true;
                         mStarredUsers.put(entity.id, user);
                     } else {
@@ -373,13 +373,13 @@ public class EntityManager {
         return extractExclusivedUser(entity.getMembers());
     }
 
-    private List<FormattedEntity> extractExclusivedUser(Collection<ResLeftSideMenu.EntityRef> joinedMembers) {
+    private List<FormattedEntity> extractExclusivedUser(Collection<Integer> joinedMembers) {
         ArrayList<FormattedEntity> ret = new ArrayList<FormattedEntity>();
 
         Observable.merge(Observable.from(mStarredUsers.values()), Observable.from(mUsers.values()))
                 .filter(formattedEntity ->
                                 Observable.from(joinedMembers)
-                                        .filter(entityRef -> entityRef.value == formattedEntity.getId())
+                                        .filter(entityRef -> entityRef == formattedEntity.getId())
                                         .map(entityRef -> false)
                                         .firstOrDefault(true)
                                         .toBlocking()

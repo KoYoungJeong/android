@@ -3,8 +3,9 @@ package com.tosslab.jandi.app.ui.maintab.chat.model;
 import android.app.Application;
 
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -51,7 +52,7 @@ public class MainChatListModelTest {
 
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
-        JandiEntityDatabaseManager.getInstance(application).upsertLeftSideMenu(totalEntitiesInfo);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
 
         MainChatListModel mainChatListModel = MainChatListModel_.getInstance_(application);
 

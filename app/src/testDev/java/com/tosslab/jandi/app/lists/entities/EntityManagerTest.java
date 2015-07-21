@@ -2,8 +2,9 @@ package com.tosslab.jandi.app.lists.entities;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
@@ -37,7 +38,7 @@ public class EntityManagerTest {
         AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
 
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
-        JandiEntityDatabaseManager.getInstance(Robolectric.application).upsertLeftSideMenu(infosForSideMenu);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(infosForSideMenu);
 
         EntityManager instance = EntityManager.getInstance(Robolectric.application);
 

@@ -6,8 +6,12 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
+import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
+import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -30,30 +34,43 @@ public class LeftSideMenuRepository {
     }
 
 
-    public void upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
+    public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
+        LeftSideMenu rawLeftSideMenu = new LeftSideMenu();
         try {
-            Dao<ResLeftSideMenu, Long> leftSideMenuDao = openHelper.getDao(ResLeftSideMenu.class);
-            Dao<ResLeftSideMenu.Team, Integer> teamDao = openHelper.getDao(ResLeftSideMenu.Team
-                    .class);
-            Dao<ResLeftSideMenu.User, Integer> userDao = openHelper.getDao(ResLeftSideMenu.User.class);
-            Dao<ResLeftSideMenu.AlarmInfo, Long> alarmDao = openHelper.getDao(ResLeftSideMenu
-                    .AlarmInfo.class);
+            String rawString = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(leftSideMenu);
+            rawLeftSideMenu.setRawLeftSideMenu(rawString);
+            rawLeftSideMenu.setTeam(AccountRepository.getRepository().getSelectedTeamInfo());
 
-            Dao<ResLeftSideMenu.PrivateGroup, Integer> privateTopicDao = openHelper.getDao
-                    (ResLeftSideMenu.PrivateGroup.class);
-            Dao<ResLeftSideMenu.Channel, Integer> publicTopicDao = openHelper.getDao(ResLeftSideMenu
-                    .Channel.class);
-            Dao<ResLeftSideMenu.UserThumbNailInfo, Long> thumbDao = openHelper.getDao
-                    (ResLeftSideMenu.UserThumbNailInfo.class);
-            Dao<ResLeftSideMenu.MessageMarker, Long> markerDao = openHelper.getDao(ResLeftSideMenu
-                    .MessageMarker.class);
-            Dao<ResLeftSideMenu.ExtraData, Long> extraDataDao = openHelper.getDao(ResLeftSideMenu
-                    .ExtraData.class);
-
-
-            leftSideMenuDao.create(leftSideMenu);
+            Dao<LeftSideMenu, ?> dao = openHelper.getDao(LeftSideMenu.class);
+            dao.createOrUpdate(rawLeftSideMenu);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return false;
+    }
+
+    public ResLeftSideMenu getCurrentLeftSideMenu() {
+
+        try {
+            Dao<SelectedTeam, ?> selectedTeamDao = openHelper.getDao(SelectedTeam.class);
+            SelectedTeam selectedTeam = selectedTeamDao.queryBuilder().queryForFirst();
+            int selectedTeamId = selectedTeam.getSelectedTeamId();
+
+            Dao<LeftSideMenu, ?> leftSideMenuDao = openHelper.getDao(LeftSideMenu.class);
+            LeftSideMenu leftSideMenu = leftSideMenuDao.queryBuilder().where().eq("team_id", selectedTeamId).queryForFirst();
+            return JacksonMapper.getInstance()
+                    .getObjectMapper()
+                    .readValue(leftSideMenu.getRawLeftSideMenu(), ResLeftSideMenu.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

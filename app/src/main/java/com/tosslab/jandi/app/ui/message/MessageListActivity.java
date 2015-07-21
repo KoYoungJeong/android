@@ -47,8 +47,9 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -424,7 +425,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         try {
             // TODO Temp TeamId
             ResLeftSideMenu resLeftSideMenu = mEntityClientManager.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MessageListActivity.this).upsertLeftSideMenu(resLeftSideMenu);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
             JandiPreference.setBadgeCount(MessageListActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MessageListActivity.this, totalUnreadCount);

@@ -52,7 +52,7 @@ public class TopicCreateModelTest {
                 .getInstance_(Robolectric.application)
                 .getTotalEntitiesInfo();
 
-        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity();
+        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
         ResLeftSideMenu.Entity createdEntity = Observable.from(totalEntitiesInfo.joinEntities)
                 .filter(entity -> entity.id == createdId)
                 .firstOrDefault(defaultValue)
@@ -88,7 +88,7 @@ public class TopicCreateModelTest {
                 .getInstance_(Robolectric.application)
                 .getTotalEntitiesInfo();
 
-        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity();
+        ResLeftSideMenu.Entity defaultValue = new ResLeftSideMenu.Entity() {};
         ResLeftSideMenu.Entity createdEntity = Observable.from(totalEntitiesInfo.joinEntities)
                 .filter(entity -> entity.id == createdId)
                 .firstOrDefault(defaultValue)

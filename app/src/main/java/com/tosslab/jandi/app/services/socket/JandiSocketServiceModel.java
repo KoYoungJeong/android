@@ -15,8 +15,9 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.team.TeamInfoChangeEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -252,7 +253,7 @@ public class JandiSocketServiceModel {
         try {
             EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu totalEntitiesInfo = jandiEntityClient.getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(totalEntitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(totalEntitiesInfo);
             EntityManager.getInstance(context).refreshEntity(totalEntitiesInfo);
 
             SocketAnnouncementEvent socketAnnouncementEvent =
@@ -281,7 +282,7 @@ public class JandiSocketServiceModel {
                     EntityClientManager entityClientManager = EntityClientManager_.getInstance_(context);
                     try {
                         ResLeftSideMenu entitiesInfo = entityClientManager.getTotalEntitiesInfo();
-                        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(entitiesInfo);
+                        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
                         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
                         JandiPreference.setBadgeCount(context, totalUnreadCount);
                         BadgeUtils.setBadge(context, totalUnreadCount);

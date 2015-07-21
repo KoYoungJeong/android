@@ -16,8 +16,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -85,7 +86,7 @@ public class JandiPushReceiverModel {
         EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
         ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
 
-        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+        LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
 
         int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
         LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + totalUnreadCount);

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 
 import org.androidannotations.annotations.EBean;
@@ -31,13 +30,13 @@ public class MembersModel {
     Context context;
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        Collection<ResLeftSideMenu.EntityRef> members = EntityManager.getInstance(context).getEntityById(entityId)
+        Collection<Integer> members = EntityManager.getInstance(context).getEntityById(entityId)
                 .getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
 
         Iterator<ChatChooseItem> iterator = Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
-                        .filter(entity -> entity.getId() == memberEntityId.value)
+                        .filter(entity -> entity.getId() == memberEntityId)
                         .map(entity -> {
 
                             ChatChooseItem chatChooseItem = new ChatChooseItem();

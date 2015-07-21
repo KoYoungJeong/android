@@ -67,7 +67,7 @@ public class PushTO {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class MessagePush extends PushInfo {
+    public static class MessagePush extends PushInfo {
         private int chatId;
         private String contentType;
         private String chatName;
@@ -153,7 +153,7 @@ public class PushTO {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class SubscribePush extends PushInfo {
+    public static class SubscribePush extends PushInfo {
         private String chatId;
 
         public String getChatId() {
@@ -167,7 +167,7 @@ public class PushTO {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    static public class UnSubscribePush extends PushInfo {
+    public static class UnSubscribePush extends PushInfo {
         private String chatId;
 
         public String getChatId() {

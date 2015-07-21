@@ -64,8 +64,8 @@ public class StarredEntityApiClientTest {
 
         ResLeftSideMenu sideMenu1 = getSideMenu();
 
-        for (ResLeftSideMenu.EntityRef u_starredEntity : sideMenu1.user.u_starredEntities) {
-            if (u_starredEntity.value == defaultChannel.id) {
+        for (int u_starredEntity : sideMenu1.user.u_starredEntities) {
+            if (u_starredEntity == defaultChannel.id) {
                 return;
             }
         }
@@ -84,8 +84,8 @@ public class StarredEntityApiClientTest {
 
         ResLeftSideMenu sideMenu1 = getSideMenu();
 
-        for (ResLeftSideMenu.EntityRef u_starredEntity : sideMenu1.user.u_starredEntities) {
-            if (u_starredEntity.value == defaultChannel.id) {
+        for (int u_starredEntity : sideMenu1.user.u_starredEntities) {
+            if (u_starredEntity == defaultChannel.id) {
                 fail("Must be not Find Favorite Entity");
                 return;
             }

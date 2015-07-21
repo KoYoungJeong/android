@@ -8,7 +8,8 @@ import android.util.Log;
 
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -44,7 +45,7 @@ public class BadgeHandleService extends IntentService {
             EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
             ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
 
-            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(resLeftSideMenu);
 
             setBadgeCount(context, resLeftSideMenu);
 

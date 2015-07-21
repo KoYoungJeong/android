@@ -21,7 +21,8 @@ import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
+
+import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
@@ -293,7 +294,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
         try {
             ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
-            JandiEntityDatabaseManager.getInstance(MemberProfileActivity.this).upsertLeftSideMenu(entitiesInfo);
+            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
             int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
             JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
             BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);

@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,7 +37,8 @@ public class BadgeUtils {
                         ResLeftSideMenu.Entity entity = Observable.from(resLeftSideMenu.joinEntities)
                                 .filter(joinEntity -> alarmInfo.entityId == joinEntity.id)
                                 .toBlocking()
-                                .firstOrDefault(new ResLeftSideMenu.Entity());
+                                .firstOrDefault(new ResLeftSideMenu.Entity() {
+                                });
 
                         return entity.id != 0;
                     }

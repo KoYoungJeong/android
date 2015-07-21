@@ -182,17 +182,17 @@ public class FormattedEntity {
                 : null;
     }
 
-    public Collection<ResLeftSideMenu.EntityRef> getMembers() {
+    public Collection<Integer> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
             return Observable.from(getChannel().ch_members)
-                    .collect((Func0<ArrayList<ResLeftSideMenu.EntityRef>>) ArrayList::new,
+                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
                             ArrayList::add)
                     .toBlocking()
                     .first();
 
         } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
             return Observable.from(getPrivateGroup().pg_members)
-                    .collect((Func0<ArrayList<ResLeftSideMenu.EntityRef>>) ArrayList::new,
+                    .collect((Func0<ArrayList<Integer>>) ArrayList::new,
                             ArrayList::add)
                     .toBlocking()
                     .first();
@@ -205,10 +205,6 @@ public class FormattedEntity {
         ResLeftSideMenu.User me = getUser();
         return me.u_statusMessage;
     }
-//    public String getUserNickName() {
-//        ResLeftSideMenu.User me = getUser();
-//        return (me.u_nickname != null) ? me.u_nickname : me.name;
-//    }
 
     public String getUserEmail() {
         ResLeftSideMenu.User me = getUser();
