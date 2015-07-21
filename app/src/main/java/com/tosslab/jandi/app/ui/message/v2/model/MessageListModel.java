@@ -48,6 +48,7 @@ import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
+import com.tosslab.jandi.app.utils.UserAgentUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -208,6 +209,7 @@ public class MessageListModel {
                 .progress((downloaded, total) -> progressDialog.setProgress((int) (downloaded / total)))
                 .setHeader(JandiConstants.AUTH_HEADER, TokenUtil.getRequestAuthentication().getHeaderValue())
                 .setHeader("Accept", JandiV2HttpMessageConverter.APPLICATION_VERSION_FULL_NAME)
+                .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(activity))
                 .setMultipartParameter("title", event.title)
                 .setMultipartParameter("share", "" + event.entityId)
                 .setMultipartParameter("permission", permissionCode)

@@ -37,5 +37,6 @@ public interface FileUploadPresenter {
 
         void exitOnOK();
 
+        void setShareEntity(int entityId);
     }
 }

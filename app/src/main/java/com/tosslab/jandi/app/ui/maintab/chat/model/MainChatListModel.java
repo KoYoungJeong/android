@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,10 +29,7 @@ import rx.Observable;
 @EBean
 public class MainChatListModel {
 
-    @RootContext
-    Context context;
-
-    public static boolean hasAlarmCount(List<ChatItem> chatItems) {
+    public boolean hasAlarmCount(List<ChatItem> chatItems) {
 
         for (ChatItem chatItem : chatItems) {
             if (chatItem.getUnread() > 0) {
@@ -45,12 +41,12 @@ public class MainChatListModel {
 
     }
 
-    public int getMemberId() {
+    public int getMemberId(Context context) {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
     }
 
-    public int getTeamId() {
+    public int getTeamId(Context context) {
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
         return selectedTeamInfo != null ? selectedTeamInfo.getTeamId() : -1;
     }
@@ -59,7 +55,7 @@ public class MainChatListModel {
         return RequestApiManager.getInstance().getChatListByChatApi(memberId);
     }
 
-    public List<ChatItem> convertChatItem(int teamId, List<ResChat> chatList) {
+    public List<ChatItem> convertChatItem(Context context, int teamId, List<ResChat> chatList) {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
@@ -94,15 +90,15 @@ public class MainChatListModel {
         return chatItems;
     }
 
-    public List<ChatItem> getSavedChatList(int teamId) {
+    public List<ChatItem> getSavedChatList(Context context, int teamId) {
         return JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
     }
 
-    public void saveChatList(int teamId, List<ChatItem> chatItems) {
+    public void saveChatList(Context context, int teamId, List<ChatItem> chatItems) {
         JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
     }
 
-    public int getRoomId(int teamId, int userId) {
+    public int getRoomId(Context context, int teamId, int userId) {
 
         List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
 
@@ -112,5 +108,9 @@ public class MainChatListModel {
                 .toBlocking().first();
 
         return first.getRoomId();
+    }
+
+    public boolean isStarred(Context context, int entityId) {
+        return EntityManager.getInstance(context).getEntityById(entityId).isStarred;
     }
 }

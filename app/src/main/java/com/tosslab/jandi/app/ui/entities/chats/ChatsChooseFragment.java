@@ -24,7 +24,6 @@ import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
-import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -70,11 +69,6 @@ public class ChatsChooseFragment extends Fragment {
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
     private PublishSubject<String> publishSubject;
-    private String invitationUrl;
-    private String teamName;
-
-    private EntityManager mEntityManager;
-    private ProgressWheel progressWheel;
 
     @AfterViews
     void initViews() {
@@ -98,7 +92,6 @@ public class ChatsChooseFragment extends Fragment {
 
         initSearchTextObserver();
 
-        mEntityManager = EntityManager.getInstance(getActivity());
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -112,7 +105,7 @@ public class ChatsChooseFragment extends Fragment {
     private void initSearchTextObserver() {
         publishSubject = PublishSubject.create();
         publishSubject
-                .throttleLast(500, TimeUnit.MILLISECONDS)
+                .throttleWithTimeout(500, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
                 .map(name -> {
                     if (!TextUtils.isEmpty(name)) {

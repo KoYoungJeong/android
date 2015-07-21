@@ -102,7 +102,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     private SearchQuery mSearchQuery;
     private ProgressWheel mProgressWheel;
-    private Activity activity;
 
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
@@ -117,7 +116,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     @AfterInject
     void init() {
         LogUtil.d("FileListFragment");
-        activity = getActivity();
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
@@ -141,7 +139,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
         // myToken 획득
         // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(activity);
+        mProgressWheel = new ProgressWheel(getActivity());
 
         fileListModel.retrieveEntityManager();
 
@@ -153,7 +151,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         selectedTeamId = JandiAccountDatabaseManager.getInstance(getActivity()).getSelectedTeamInfo().getTeamId();
 
         searchedFileItemListAdapter.setOnRecyclerItemClickListener((view, adapter, position) -> {
-            moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position).id);
+            moveToFileDetailActivity(((SearchedFileItemListAdapter) adapter).getItem(position)
+                    .id, mSearchQuery.mSearchEntity);
             if (onSearchItemSelect != null) {
                 onSearchItemSelect.onSearchItemSelect();
             }
@@ -295,7 +294,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @Override
     public void onResume() {
-        LogUtil.d("FileListFragment onResume");
         super.onResume();
         isForeground = true;
     }
@@ -514,10 +512,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
     @UiThread
     void searchFailed(int errMessageRes) {
-        ColoredToast.showError(activity, getString(errMessageRes));
+        FragmentActivity activity = getActivity();
+        if (activity != null && !(activity.isFinishing())) {
+            ColoredToast.showError(activity, activity.getString(errMessageRes));
+        }
     }
 
-    private void moveToFileDetailActivity(int fileId) {
+    private void moveToFileDetailActivity(int fileId, int mSearchEntity) {
         FileDetailActivity_
                 .intent(this)
                 .fileId(fileId)

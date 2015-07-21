@@ -20,9 +20,11 @@
     <color name="jandi_primary_color_transparent_b2">#B2003658</color>
 
     <color name="jandi_accent_color_b2">#007eb0</color>
+    <color name="jandi_accent_color_50">#1F00A3E1</color>
 
     <color name="jandi_black_89">#89000000</color>
     <color name="jandi_black_b2">#B2000000</color>
+    <color name="jandi_black_de">#de000000</color>
 
 
     <color name="jandi_text">#FF333333</color>
@@ -33,7 +35,9 @@
     <color name="jandi_border_green">#31C08A</color>
     <color name="jandi_inactive_button">#B4B4B4</color>
     <color name="jandi_intro_edittext_bg">#e5e5e5</color>
+    <color name="jandi_text_topic_detail_content">#FF6E6E6E</color>
 
+    <color name="jandi_text_hint">#FFBDBDBD</color>
 
     <!-- Actionbar menu -->
     <color name="jandi_dropdown_menu_text">@color/jandi_primary_color</color>
@@ -82,10 +86,12 @@
     <color name="jandi_messages_content">@color/jandi_text</color>
     <color name="jandi_messages_joined_cdp">@color/jandi_text_light</color>
     <color name="jandi_messages_commented">@color/jandi_primary_color</color>
-    <color name="jandi_messages_file_name">@color/jandi_text</color>
+    <color name="jandi_messages_file_name">#00a6e9</color>
     <color name="jandi_messages_item_click">#EEEEEE</color>
     <color name="jandi_announcement_divider">#FFD0D0D0</color>
     <color name="jandi_linkpreview_divider">#FFE6E6E6</color>
+    <color name="jandi_messages_file_writer">#000000</color>
+    <color name="jandi_messages_file_content">#353535</color>
 
     <!-- Main panel -->
     <color name="jandi_messages_bottom_bg">#FFFFFF</color>
@@ -191,5 +197,13 @@
 
     <color name="jandi_file_upload_divider">#B5B5B5</color>
 
+    <color name="jandi_topic_is_public_divider">#FFF0F0F0</color>
 
+    <color name="jandi_carousel_file_size_ext_create_time">#FFCCCCCC</color>
+    <color name="jandi_carousel_transparent_45">#45000000</color>
+
+    <color name="jandi_message_indicator">#D2D2D2</color>
+
+    <color name="jandi_coach_mark_text">#FF19c1ff</color>
+    <color name="jandi_coach_mark_text_shadow">#DD000000</color>
 </resources>

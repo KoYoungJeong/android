@@ -41,7 +41,7 @@ public class TopicCreateActivity extends AppCompatActivity {
     TopicCreateModel topicCreateModel;
 
     @Bean
-    TopicCreatePresenter topicCreatePresenter;
+    TopicCreateView topicCreatePresenter;
 
     @OptionsMenuItem(R.id.action_add_topic)
     MenuItem menuCreatTopic;
@@ -56,23 +56,13 @@ public class TopicCreateActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayUseLogoEnabled(false);
-        actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayUseLogoEnabled(false);
+            actionBar.setIcon(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
 
-    }
-
-    @OptionsItem(R.id.action_add_topic)
-    void onAddOptionClick() {
-        String topicTitle = topicCreatePresenter.getTopicTitle();
-
-        if (TextUtils.isEmpty(topicTitle)) {
-            return;
         }
 
-        boolean publicSelected = topicCreatePresenter.isPublicSelected();
-
-        createTopic(topicTitle, publicSelected);
     }
 
     @OptionsItem(android.R.id.home)
@@ -81,25 +71,39 @@ public class TopicCreateActivity extends AppCompatActivity {
     }
 
     @TextChange(R.id.et_topic_create_title)
-    void onTitleTextChange(TextView textView, CharSequence text) {
-
-        if (topicCreateModel.isOverMaxLength(text)) {
-
-            textView.setText(text.subSequence(0, TopicCreateModel.TITLE_MAX_LENGTH));
-        }
+    void onTitleTextChange(TextView textView) {
 
         if (TextUtils.isEmpty(textView.getText())) {
             menuCreatTopic.setEnabled(false);
         } else {
             menuCreatTopic.setEnabled(true);
         }
+
+        topicCreatePresenter.setTitleCount(textView.length());
     }
 
+    @TextChange(R.id.et_topic_create_description)
+    void onDescriptionTextChange(TextView textView) {
+        topicCreatePresenter.setDescriptionCount(textView.length());
+    }
+
+    @OptionsItem(R.id.action_add_topic)
     @Background
-    void createTopic(String topicTitle, boolean publicSelected) {
+    void createTopic() {
+
+        String topicTitle = topicCreatePresenter.getTopicTitle();
+
+        if (topicCreateModel.validTitle(topicTitle)) {
+            return;
+        }
+
+        String topicDescriptionText = topicCreatePresenter.getTopicDescriptionText();
+
+        boolean publicSelected = topicCreatePresenter.isPublicSelected();
+
         topicCreatePresenter.showProgressWheel();
         try {
-            ResCommon topic = topicCreateModel.createTopic(topicTitle, publicSelected);
+            ResCommon topic = topicCreateModel.createTopic(topicTitle, publicSelected, topicDescriptionText);
 
             try {
                 EntityManager mEntityManager = EntityManager.getInstance(TopicCreateActivity.this);
@@ -135,16 +139,13 @@ public class TopicCreateActivity extends AppCompatActivity {
     @Click(R.id.layout_topic_create_public_check)
     void onPublicTypeClick() {
         topicCreatePresenter.setTopicType(true);
-        topicCreatePresenter.setTopicTip(true);
     }
 
 
     @Click(R.id.layout_topic_create_private_check)
     void onPrivateTypeClick() {
         topicCreatePresenter.setTopicType(false);
-        topicCreatePresenter.setTopicTip(false);
 
     }
-
 
 }

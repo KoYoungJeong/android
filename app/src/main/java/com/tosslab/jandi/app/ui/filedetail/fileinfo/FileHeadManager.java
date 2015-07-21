@@ -48,6 +48,7 @@ public class FileHeadManager {
     private ImageView imageViewPhotoFile;
     private ImageView iconFileType;
     private LinearLayout fileInfoLayout;
+    private int roomId;
 
 
     public View getHeaderView() {
@@ -180,7 +181,7 @@ public class FileHeadManager {
 
                 FileThumbLoader thumbLoader;
                 if (fileMessage.content.type.startsWith("image")) {
-                    thumbLoader = new ImageThumbLoader(iconFileType, imageViewPhotoFile);
+                    thumbLoader = new ImageThumbLoader(iconFileType, imageViewPhotoFile, roomId);
                 } else {
                     thumbLoader = new NormalThumbLoader(iconFileType, imageViewPhotoFile);
                 }
@@ -188,5 +189,10 @@ public class FileHeadManager {
                 thumbLoader.loadThumb(fileMessage);
             }
         }
+    }
+
+    public void setRoomId(int roomId) {
+
+        this.roomId = roomId;
     }
 }

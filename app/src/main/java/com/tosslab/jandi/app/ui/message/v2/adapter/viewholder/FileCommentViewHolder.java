@@ -17,7 +17,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
@@ -66,7 +65,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -162,14 +161,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                         .fitCenter()
                                         .load(thumbnailUrl);
 
-                                String optimizedUrl =
-                                        BitmapUtil.getOptimizedImageUrl(context, content);
-                                fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                        .intent(context)
-                                        .imageUrl(optimizedUrl)
-                                        .imageName(content.name)
-                                        .imageType(content.type)
-                                        .start());
                                 break;
                         }
 

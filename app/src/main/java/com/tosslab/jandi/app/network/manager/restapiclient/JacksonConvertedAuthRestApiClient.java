@@ -174,12 +174,14 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
 
     @Override
     public ResCommon createChannelByChannelApi(ReqCreateTopic channel) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().createChannel(channel);
+        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().createChannel
+                (channel.teamId, channel);
     }
 
     @Override
     public ResCommon modifyPublicTopicNameByChannelApi(ReqCreateTopic channel, int channelId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create().modifyPublicTopicName(channel, channelId);
+        return RestAdapterBuilder.newInstance(ChannelApiV2Client.class).create()
+                .modifyPublicTopicName(channel.teamId, channel, channelId);
     }
 
     @Override
@@ -309,12 +311,15 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
 
     @Override
     public ResCommon createPrivateGroupByGroupApi(ReqCreateTopic group) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().createPrivateGroup(group);
+        return RestAdapterBuilder.newInstance(GroupApiV2Client.class)
+                .create()
+                .createPrivateGroup(group.teamId, group);
     }
 
     @Override
     public ResCommon modifyGroupByGroupApi(ReqCreateTopic channel, int groupId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroup(channel, groupId);
+        return RestAdapterBuilder.newInstance(GroupApiV2Client.class).create().modifyGroup
+                (channel.teamId, channel, groupId);
     }
 
     @Override
@@ -515,5 +520,20 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     @Override
     public ResCommon deleteFileByFileApi(int teamId, int fileId) {
         return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().deleteFile(teamId, fileId);
+    }
+
+    @Override
+    public List<ResMessages.FileMessage> searchInitImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchInitImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public List<ResMessages.FileMessage> searchOldImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchOldImageFile(teamId, roomId, messageId, count);
+    }
+
+    @Override
+    public List<ResMessages.FileMessage> searchNewImageFileByFileApi(int teamId, int roomId, int messageId, int count) {
+        return RestAdapterBuilder.newInstance(FileApiV2Client.class).create().searchNewImageFile(teamId, roomId, messageId, count);
     }
 }

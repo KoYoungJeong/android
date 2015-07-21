@@ -406,4 +406,52 @@
     <string name="jandi_decide_choose">"写真を選択"</string>
     <string name="jandI_select_gallery">"写真を選択"</string>
     <string name="jandi_view_all">"すべて表示"</string>
+
+    <string name="jandi_title_name_required">"名前*"</string>
+    <string name="jandi_input_topic_name">"トピック名を入力してください"</string>
+    <string name="jandi_is_topic_required">"公開/非公開"</string>
+    <string name="jandi_it_has_no_topic_description">"（トピック説明なし）"</string>
+    <string name="jandi_plz_input_topic_description">"トピックの説明（選択）"</string>
+    <string name="jandi_save">"保存"</string>
+    <string name="jandi_topic_delete">"このトピックを削除"</string>
+    <string name="jandi_topic_description">"トピック説明"</string>
+    <string name="jandi_topic_leave">"このトピックから退出"</string>
+    <string name="jandi_topic_detail">"トピックの詳細情報"</string>
+    <string name="jandi_explain_topic_description">"トピックの説明（選択）"</string>
+    <string name="jandi_topic_starred">"このトピックをお気に入りに追加する"</string>
+
+    <!-- tutorial -->
+    <string name="jandi_coach_mark_search_message">トピックメッセー\nジ検索</string>
+    <string name="jandi_coach_mark_create_new_topics">トピック作成</string>
+    <string name="jandi_coach_mark_topic_list_welcome">ようこそ！</string>
+    <string name="jandi_coach_mark_topic_list_explain1">トピックとはプロジェクト・ 部署・</string>
+    <string name="jandi_coach_mark_topic_list_explain2">主題別に作成して会話をするグループ</string>
+    <string name="jandi_coach_mark_topic_list_explain3">メッセージングの単位です</string>
+
+    <string name="jandi_coach_mark_topic_explain1">トピックでメッセージと</string>
+    <string name="jandi_coach_mark_topic_explain2">とァイルを送信することができます</string>
+
+    <string name="jandi_coach_mark_topic_message_search">メッセージ\n検索</string>
+    <string name="jandi_coach_mark_topic_file_search">ファイル\n検索</string>
+    <string name="jandi_coach_mark_topic_setting">トピックに招\n待、トピック\n退出などの\n管理メニュー</string>
+    <string name="jandi_coach_mark_upload_file">ファイルをアッ\nプロードする</string>
+    <string name="jandi_coach_mark_stickers">スタンプ</string>
+
+
+    <string name="jandi_coach_mark_filelist_search">キーワードで検索</string>
+    <string name="jandi_coach_mark_filelist_sort">共有範囲、共有したメンバー、\nファイル種類別に検索</string>
+    <string name="jandi_coach_mark_filelist_explain1">ここからチーム内に共有され</string>
+    <string name="jandi_coach_mark_filelist_explain2">た全てのファイル一覧ができます</string>
+
+    <string name="jandi_coach_mark_directmessage_explain1">ここからメンバー達に送ったダイレク</string>
+    <string name="jandi_coach_mark_directmessage_explain2">トメッセージの一覧ができます</string>
+    <string name="jandi_coach_mark_directmessage_choose_member">ダイレクトメッセージを\n送るメンバー検索</string>
+
+    <string name="jandi_coach_mark_more_profile">プロフィール\n設定</string>
+    <string name="jandi_coach_mark_more_members">チームメンバー\n一覧</string>
+    <string name="jandi_coach_mark_more_invite">メールやよく\n使っている\nメッセンジャーで\nメンバー招待</string>
+    <string name="jandi_coach_mark_more_explain1">これはジャンディーの設定画面です。</string>
+    <string name="jandi_coach_mark_more_explain2">ご一緒に利用できる</string>
+    <string name="jandi_coach_mark_more_explain3">ように他のチームメンバーを招待してみましょう！</string>
+
 </resources>

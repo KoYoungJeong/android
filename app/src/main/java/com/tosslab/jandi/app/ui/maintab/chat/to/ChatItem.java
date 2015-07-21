@@ -104,4 +104,5 @@ public class ChatItem {
     public int getRoomId() {
         return roomId;
     }
+
 }

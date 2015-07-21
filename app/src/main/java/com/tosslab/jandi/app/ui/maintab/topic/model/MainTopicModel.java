@@ -7,9 +7,9 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
-import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 
@@ -17,13 +17,10 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
-import rx.functions.Func1;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -38,73 +35,82 @@ public class MainTopicModel {
     EntityClientManager entityClientManager;
 
 
-    /**
-     * topic 생성
-     */
-    public ResCommon createTopicInBackground(String entityName) throws RetrofitError {
-        return entityClientManager.createPublicTopic(entityName);
+    public Observable<Topic> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity>
+            groups) {
+
+        return Observable.merge(Observable.from(joinedChannels), Observable.from(groups))
+                .map(formattedEntity -> new Topic.Builder()
+                        .entityId(formattedEntity.getId())
+                        .description(formattedEntity.getDescription())
+                        .isJoined(true)
+                        .isPublic(formattedEntity.isPublicTopic())
+                        .isStarred(formattedEntity.isStarred)
+                        .memberCount(formattedEntity.getMemberCount())
+                        .name(formattedEntity.getName())
+                        .unreadCount(formattedEntity.alarmCount)
+                        .build());
     }
 
-    public List<FormattedEntity> getJoinEntities(List<FormattedEntity> joinedChannels, List<FormattedEntity> groups) {
-        List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
+    public Observable<Topic> getUnjoinEntities(List<FormattedEntity> unjoinedChannels) {
+        return Observable.from(unjoinedChannels).map(formattedEntity -> {
 
-        entities.addAll(joinedChannels);
-        entities.addAll(groups);
+            int creatorId = ((ResLeftSideMenu.Channel) formattedEntity.getEntity()).ch_creatorId;
 
-        Collections.sort(entities, new EntityComparator());
 
-        return entities;
+            return new Topic.Builder()
+                    .entityId(formattedEntity.getId())
+                    .description(formattedEntity.getDescription())
+                    .isJoined(false)
+                    .creatorId(creatorId)
+                    .isPublic(formattedEntity.isPublicTopic())
+                    .isStarred(formattedEntity.isStarred)
+                    .memberCount(formattedEntity.getMemberCount())
+                    .name(formattedEntity.getName())
+                    .unreadCount(formattedEntity.alarmCount)
+                    .build();
+        });
+
     }
 
-    public List<FormattedEntity> getUnjoinEntities(List<FormattedEntity> unjoinedChannels) {
-        List<FormattedEntity> entities = new ArrayList<FormattedEntity>();
-        entities.addAll(unjoinedChannels);
-        Collections.sort(entities, new EntityComparator());
-
-
-        return entities;
+    public void joinPublicTopic(int id) throws RetrofitError {
+        entityClientManager.joinChannel(id);
     }
 
-    public void joinPublicTopic(ResLeftSideMenu.Channel channel) throws RetrofitError {
-        entityClientManager.joinChannel(channel);
+    public boolean hasAlarmCount(Observable<Topic> joinEntities) {
+
+        Topic defaultValue = new Topic.Builder().build();
+        Topic first = joinEntities.filter(topic -> topic.getUnreadCount() > 0)
+                .firstOrDefault(defaultValue)
+                .toBlocking()
+                .first();
+
+        return first != defaultValue;
+
     }
 
-    public boolean hasAlarmCount(List<FormattedEntity> joinEntities) {
-        for (FormattedEntity joinEntity : joinEntities) {
-            if (joinEntity.alarmCount > 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean updateBadge(SocketMessageEvent event, List<FormattedEntity> joinedTopics) {
-        FormattedEntity emptyEntity = new FormattedEntity();
-        FormattedEntity entity = Observable.from(joinedTopics)
-                .filter(new Func1<FormattedEntity, Boolean>() {
-                    @Override
-                    public Boolean call(FormattedEntity entity) {
-                        if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
-                            return entity.getId() == event.getRoom().getId();
-                        } else if(TextUtils.equals(event.getMessageType(), "link_preview_create")) {
-                            // 단순 메세지 업데이트인 경우
-                            return false;
-                        } else {
-                            for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
-                                if (entity.getId() == messageRoom.getId()) {
-                                        return true;
-                                }
+    public boolean updateBadge(SocketMessageEvent event, List<Topic> joinedTopics) {
+        Topic emptyEntity = new Topic.Builder().build();
+        Topic entity = Observable.from(joinedTopics)
+                .filter(entity1 -> {
+                    if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
+                        return entity1.getEntityId() == event.getRoom().getId();
+                    } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
+                        // 단순 메세지 업데이트인 경우
+                        return false;
+                    } else {
+                        for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
+                            if (entity1.getEntityId() == messageRoom.getId()) {
+                                return true;
                             }
-                            return false;
                         }
+                        return false;
                     }
                 })
                 .firstOrDefault(emptyEntity)
                 .toBlocking()
                 .first();
 
-        if (entity != emptyEntity && entity.getId() > 0) {
-            entity.alarmCount++;
+        if (entity != emptyEntity && entity.getEntityId() > 0) {
             return true;
         } else {
             return false;
@@ -127,5 +133,9 @@ public class MainTopicModel {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public void resetBadge(Context context, int entityId) {
+        EntityManager.getInstance(context).getEntityById(entityId).alarmCount = 0;
     }
 }

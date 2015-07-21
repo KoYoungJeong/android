@@ -98,8 +98,8 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
         setupActionbar();
 
         fileUploadPresenter.setView(this);
-        fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
         fileUploadPresenter.onInitEntity(selectedEntityIdToBeShared);
+        fileUploadPresenter.onInitViewPager(selectedEntityIdToBeShared, realFilePathList);
 
 
         scrollButtonPublishSubject = PublishSubject.create();
@@ -330,6 +330,11 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
     public void exitOnOK() {
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void setShareEntity(int entityId) {
+        this.selectedEntityIdToBeShared = entityId;
     }
 
 }

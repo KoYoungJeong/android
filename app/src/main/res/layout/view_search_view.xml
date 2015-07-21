@@ -30,8 +30,8 @@
         android:layout_marginBottom="2dip"
         android:drawablePadding="0dip"
         android:gravity="center_vertical"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="?android:attr/textColorPrimary"
+        android:textAppearance="@color/jandi_black_89"
+        android:textColor="@color/jandi_black_de"
         android:visibility="gone" />
 
     <android.support.v7.internal.widget.TintImageView

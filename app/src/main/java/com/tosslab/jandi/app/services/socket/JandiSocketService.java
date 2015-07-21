@@ -10,7 +10,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.network.socket.domain.ConnectTeam;
 import com.tosslab.jandi.app.network.socket.events.EventListener;
@@ -41,7 +43,8 @@ public class JandiSocketService extends Service {
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtil.e(TAG, "Received connect status has changed. isRegister ? - " + isRegister);
+            LogUtil.i(TAG, "Received connect status has changed. isRegister ? - " + isRegister);
+
             if (isRegister) {
                 isRegister = false;
                 return;
@@ -83,6 +86,9 @@ public class JandiSocketService extends Service {
 
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
         jandiSocketManager = JandiSocketManager.getInstance();
+
+        IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
+        registerReceiver(connectReceiver, filter);
     }
 
     @Override
@@ -108,14 +114,12 @@ public class JandiSocketService extends Service {
         setUpSocketListener();
 
         isRunning = true;
-
-        IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
-        registerReceiver(connectReceiver, filter);
         return START_NOT_STICKY;
     }
 
     private void initEventMapper() {
-        EventListener entityRefreshListener = objects -> jandiSocketServiceModel.refreshEntity();
+        EventListener entityRefreshListener = objects ->
+                jandiSocketServiceModel.refreshEntity(null, true);
 
         eventHashMap.put("team_joined", entityRefreshListener);
         eventHashMap.put("topic_created", entityRefreshListener);
@@ -231,7 +235,15 @@ public class JandiSocketService extends Service {
         closeAll();
 
         isRunning = false;
-        unregisterReceiver(connectReceiver);
+
+        try {
+            unregisterReceiver(connectReceiver);
+        } catch (IllegalArgumentException e) {
+            LogUtil.e("unregister receiver fail. - " + e.getMessage());
+            Crashlytics.log(Log.WARN
+                    , "Socket Service"
+                    , "Socket Connect Receiver was unregisted : " + e.getMessage());
+        }
         super.onDestroy();
         if (!isStopForcibly) {
             sendBroadcastForRestart();
@@ -248,6 +260,7 @@ public class JandiSocketService extends Service {
         jandiSocketManager.disconnect();
         jandiSocketManager.release();
         jandiSocketServiceModel.stopMarkerObserver();
+        jandiSocketServiceModel.stopRefreshEntityObserver();
     }
 
     private void sendBroadcastForRestart() {

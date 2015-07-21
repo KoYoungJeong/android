@@ -398,4 +398,51 @@
     <string name="jandi_decide_choose">"選擇照片"</string>
     <string name="jandI_select_gallery">"選擇照片"</string>
     <string name="jandi_view_all">"檢視全部"</string>
+
+    <string name="jandi_title_name_required">"名字*"</string>
+    <string name="jandi_input_topic_name">"請輸入議題群組名稱"</string>
+    <string name="jandi_is_topic_required">" 公開/私人"</string>
+    <string name="jandi_it_has_no_topic_description">"(無議題內容)"</string>
+    <string name="jandi_plz_input_topic_description">"說明 (選項)"</string>
+    <string name="jandi_save">"儲存"</string>
+    <string name="jandi_topic_delete">"刪除議題"</string>
+    <string name="jandi_topic_description">"議題內容"</string>
+    <string name="jandi_topic_leave">"離開議題"</string>
+    <string name="jandi_topic_detail">"議題資訊"</string>
+    <string name="jandi_explain_topic_description">"說明 (選項)"</string>
+    <string name="jandi_topic_starred">"標記議題"</string>
+
+    <!-- tutorial -->
+    <string name="jandi_coach_mark_search_message">搜尋訊息</string>
+    <string name="jandi_coach_mark_create_new_topics">建立新議題</string>
+    <string name="jandi_coach_mark_topic_list_welcome">歡迎！</string>
+    <string name="jandi_coach_mark_topic_list_explain1">可多元使用的議題功能幫助你區分群組</string>
+    <string name="jandi_coach_mark_topic_list_explain2">並將資訊有系統地歸類、儲存</string>
+    <string name="jandi_coach_mark_topic_list_explain3"></string>
+
+    <string name="jandi_coach_mark_topic_explain1">即時傳送訊息和檔案</string>
+    <string name="jandi_coach_mark_topic_explain2">給該議題成員</string>
+
+    <string name="jandi_coach_mark_topic_message_search">訊息搜尋</string>
+    <string name="jandi_coach_mark_topic_file_search">檔案庫和搜尋	</string>
+    <string name="jandi_coach_mark_topic_setting">其他議題設定\n(邀請、離開\n、重新命名)	</string>
+    <string name="jandi_coach_mark_upload_file">上傳檔案</string>
+    <string name="jandi_coach_mark_stickers">貼圖</string>
+
+    <string name="jandi_coach_mark_filelist_search">關鍵字搜尋</string>
+    <string name="jandi_coach_mark_filelist_sort">利用檔案上傳者、檔案類型或議題進行搜尋</string>
+    <string name="jandi_coach_mark_filelist_explain1">在JANDI檔案庫一次</string>
+    <string name="jandi_coach_mark_filelist_explain2">瀏覽所有檔案</string>
+
+    <string name="jandi_coach_mark_directmessage_explain1">在這裡找到直接傳訊</string>
+    <string name="jandi_coach_mark_directmessage_explain2">裡的訊息對話</string>
+    <string name="jandi_coach_mark_directmessage_choose_member">選擇成員開始傳訊</string>
+
+    <string name="jandi_coach_mark_more_profile">編輯你的個\n人簡介</string>
+    <string name="jandi_coach_mark_more_members">瀏覽成員列表</string>
+    <string name="jandi_coach_mark_more_invite">透過電郵或\n通訊軟體邀\n請夥伴加入團隊</string>
+    <string name="jandi_coach_mark_more_explain1">此為設定選單</string>
+    <string name="jandi_coach_mark_more_explain2">別忘了邀請夥伴加入！</string>
+    <string name="jandi_coach_mark_more_explain3"></string>
 </resources>
+

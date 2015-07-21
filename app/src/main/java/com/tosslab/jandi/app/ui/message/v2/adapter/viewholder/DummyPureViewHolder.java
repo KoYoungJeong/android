@@ -25,7 +25,7 @@ public class DummyPureViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         DummyMessageLink dummyMessageLink = (DummyMessageLink) link;
 

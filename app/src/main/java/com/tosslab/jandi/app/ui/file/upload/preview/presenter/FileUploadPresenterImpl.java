@@ -36,7 +36,16 @@ public class FileUploadPresenterImpl implements FileUploadPresenter {
     @Override
     public void onInitEntity(int selectedEntityIdToBeShared) {
 
-        String entityName = fileUploadModel.getEntityString(context, selectedEntityIdToBeShared);
+        String entityName;
+        if (fileUploadModel.isValid(context, selectedEntityIdToBeShared)) {
+            entityName = fileUploadModel.getEntityString(context, selectedEntityIdToBeShared);
+        } else {
+            FormattedEntity entity = fileUploadModel.getEntityInfoWithoutMe(context).get(0);
+            int id = entity.getId();
+            view.setShareEntity(id);
+            entityName = entity.getName();
+        }
+
         view.setEntityInfo(entityName);
     }
 

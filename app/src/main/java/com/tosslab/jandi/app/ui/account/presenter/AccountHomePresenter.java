@@ -67,5 +67,7 @@ public interface AccountHomePresenter {
         void moveAfterInvitaionAccept();
 
         void showTextAlertDialog(String msg, DialogInterface.OnClickListener clickListener);
+
+        void invalidAccess();
     }
 }

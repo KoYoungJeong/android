@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/vg_chat_detail_starred"
+        style="@style/JandiTopicDetail.Layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/jandi_starred"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large"/>
+
+        <ImageView
+            android:id="@+id/iv_chat_detail_starred"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/jandi_topic_starred_status"/>
+
+    </LinearLayout>
+
+    <View
+        style="@style/JandiTopicDetail.Layout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/account_home_divide_line"/>
+
+    <LinearLayout
+        android:id="@+id/vg_chat_detail_leave"
+        style="@style/JandiTopicDetail.Layout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/jandi_chat_leave"
+            android:textColor="@color/jandi_text"
+            android:textSize="@dimen/jandi_text_size_large"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
