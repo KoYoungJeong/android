@@ -2,6 +2,9 @@ package com.tosslab.jandi.app.network.models;
 
 import android.text.TextUtils;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -36,18 +39,33 @@ public class ResMessages {
                 '}';
     }
 
+    public enum EventType {
+        CREATE, JOIN, INVITE, LEAVE, ANNOUNCE_CREATE, ANNOUNCE_UPDATE, ANNOUNCE_DELETE, UNKNOWN
+    }
+
+    @DatabaseTable(tableName = "message_link", daoClass = LinkDaoImpl.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class Link {
+        @DatabaseField(id = true)
         public int id;
+        @DatabaseField
         public int teamId;
+        @DatabaseField
         public int fromEntity;
+        @DatabaseField
         public Date time;
+        @DatabaseField
         public int messageId;
+        @DatabaseField
         public String status;
+        @DatabaseField
         public int feedbackId;
 
+        @DatabaseField(foreign = true)
         public EventInfo info; // How to convert other type
+        @DatabaseField
+        public String eventType;
         public OriginalMessage feedback;
         public OriginalMessage message;
 
@@ -80,14 +98,10 @@ public class ResMessages {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    public static class Info {
-
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonDeserialize(using = EventInfoDeserialize.class)
     public static class EventInfo {
+        @DatabaseField(generatedId = true)
+        public long _id;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -202,7 +216,6 @@ public class ResMessages {
         public int version;
     }
 
-
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileContent {
@@ -251,10 +264,12 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_info_create")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class CreateEvent extends EventInfo {
+
 
         @JsonTypeInfo(
                 use = JsonTypeInfo.Id.NAME,
@@ -263,14 +278,17 @@ public class ResMessages {
         @JsonSubTypes({
                 @JsonSubTypes.Type(value = PublicCreateInfo.class, name = "channel"),
                 @JsonSubTypes.Type(value = PrivateCreateInfo.class, name = "privateGroup")})
+        @DatabaseField(foreign = true)
         public CreateInfo createInfo;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
+    @DatabaseTable(tableName = "message_info_announce_create")
     public static class AnnouncementCreateEvent extends EventInfo {
 
+        @DatabaseField(foreign = true)
         private Info eventInfo;
 
         public Info getEventInfo() {
@@ -288,7 +306,13 @@ public class ResMessages {
                     '}';
         }
 
+        @DatabaseTable(tableName = "message_info_annouce_create_writer")
         public static class Info {
+
+            @DatabaseField(generatedId = true)
+            public int _id;
+
+            @DatabaseField
             private int writerId;
 
             public int getWriterId() {
@@ -308,11 +332,14 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_info_announce_update")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class AnnouncementUpdateEvent extends EventInfo {
 
+
+        @DatabaseField(foreign = true)
         private Info eventInfo;
 
         public Info getEventInfo() {
@@ -330,7 +357,13 @@ public class ResMessages {
                     '}';
         }
 
+        @DatabaseTable(tableName = "message_info_announce_update_writer")
         public static class Info {
+
+            @DatabaseField(generatedId = true)
+            public long _id;
+
+            @DatabaseField
             private int writerId;
 
             public int getWriterId() {
@@ -350,6 +383,7 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_info_announce_delete")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
@@ -357,50 +391,72 @@ public class ResMessages {
 
     }
 
+    @DatabaseTable(tableName = "message_info_invite")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class InviteEvent extends EventInfo {
+
+
+        @DatabaseField
         public int invitorId;
         public List<Integer> inviteUsers;
     }
 
+    @DatabaseTable(tableName = "message_info_leave")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class LeaveEvent extends EventInfo {
 
+
     }
 
+    @DatabaseTable(tableName = "message_info_join")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
     public static class JoinEvent extends EventInfo {
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class CreateInfo {
+        @DatabaseField(generatedId = true)
+        public int _id;
     }
 
+    @DatabaseTable(tableName = "message_info_create_topic")
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class PublicCreateInfo extends CreateInfo {
+
+        @DatabaseField
         @JsonProperty("ch_creatorId")
         public int creatorId;
+        @DatabaseField
         @JsonProperty("ch_createTime")
         public Date createTime;
+        @DatabaseField
         @JsonProperty("ch_isDefault")
         public boolean isDefault;
         @JsonProperty("ch_members")
         public List<Integer> members;
     }
 
+    @DatabaseTable(tableName = "message_info_create_topic")
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class PrivateCreateInfo extends CreateInfo {
+
+        @DatabaseField
         @JsonProperty("pg_creatorId")
         public int creatorId;
+        @DatabaseField
         @JsonProperty("pg_createTime")
         public Date createTime;
+        @DatabaseField
         @JsonProperty("pg_isDefault")
         public boolean isDefault;
         @JsonProperty("pg_members")

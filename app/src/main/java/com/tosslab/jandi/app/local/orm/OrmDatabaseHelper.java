@@ -9,6 +9,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
 
@@ -37,6 +38,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             TableUtils.createTableIfNotExists(connectionSource, LeftSideMenu.class);
 
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.Link.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.CreateEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.PublicCreateInfo.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.JoinEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.InviteEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.LeaveEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementCreateEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages
+                    .AnnouncementCreateEvent.Info.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages
+                    .AnnouncementUpdateEvent.Info.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,6 +70,21 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, SelectedTeam.class, true);
 
             TableUtils.dropTable(connectionSource, LeftSideMenu.class, true);
+
+            TableUtils.dropTable(connectionSource, ResMessages.Link.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.CreateEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.PublicCreateInfo.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.JoinEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.InviteEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.LeaveEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class,
+                    true);
+            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class, true);
+            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class,
+                    true);
+            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class, true);
+
 
         } catch (SQLException e) {
             e.printStackTrace();
