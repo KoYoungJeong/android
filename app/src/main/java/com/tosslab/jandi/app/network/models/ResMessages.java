@@ -2,8 +2,7 @@ package com.tosslab.jandi.app.network.models;
 
 import android.text.TextUtils;
 
-import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.network.jackson.deserialize.EventInfoDeserialize;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;

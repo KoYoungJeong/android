@@ -46,7 +46,7 @@ public class StickerApiClientTest {
         EntityClientManager entityClientManager = EntityClientManager_.getInstance_(Robolectric.application);
         ResLeftSideMenu totalEntitiesInfo = entityClientManager.getTotalEntitiesInfo();
 
-        ResLeftSideMenu.Entity entity = totalEntitiesInfo.entities.get(0);
+        ResLeftSideMenu.Entity entity = totalEntitiesInfo.entities.iterator().next();
 
         String type;
 

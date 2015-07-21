@@ -1,4 +1,4 @@
-package com.tosslab.jandi.app.network.jackson.deserialize;
+package com.tosslab.jandi.app.network.jackson.deserialize.message;
 
 import android.text.TextUtils;
 

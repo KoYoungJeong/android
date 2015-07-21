@@ -47,7 +47,7 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
         ResLeftSideMenu infosForSideMenu = RequestApiManager.getInstance().getInfosForSideMenuByMainRest(teamId);
 
         MessageManipulator messageManipulator = MessageManipulator_.getInstance_(Robolectric.application);
-        int entityId = infosForSideMenu.joinEntities.get(0).id;
+        int entityId = infosForSideMenu.joinEntities.iterator().next().id;
         messageManipulator.initEntity(JandiConstants.TYPE_PUBLIC_TOPIC, entityId);
         ResMessages messages = messageManipulator.getMessages(-1, 20);
 

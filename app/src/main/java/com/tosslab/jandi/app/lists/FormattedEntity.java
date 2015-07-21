@@ -8,7 +8,12 @@ import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import rx.Observable;
+import rx.functions.Func0;
 
 /**
  * Created by justinygchoi on 2014. 8. 12..
@@ -177,11 +182,20 @@ public class FormattedEntity {
                 : null;
     }
 
-    public List<Integer> getMembers() {
+    public Collection<ResLeftSideMenu.EntityRef> getMembers() {
         if (this.type == TYPE_REAL_CHANNEL) {
-            return getChannel().ch_members;
+            return Observable.from(getChannel().ch_members)
+                    .collect((Func0<ArrayList<ResLeftSideMenu.EntityRef>>) ArrayList::new,
+                            ArrayList::add)
+                    .toBlocking()
+                    .first();
+
         } else if (this.type == TYPE_REAL_PRIVATE_GROUP) {
-            return getPrivateGroup().pg_members;
+            return Observable.from(getPrivateGroup().pg_members)
+                    .collect((Func0<ArrayList<ResLeftSideMenu.EntityRef>>) ArrayList::new,
+                            ArrayList::add)
+                    .toBlocking()
+                    .first();
         } else {
             return null;
         }

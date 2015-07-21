@@ -3,24 +3,27 @@ package com.tosslab.jandi.app.network.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.network.jackson.deserialize.leftsidemenu.PrivateTopicRefDeserialize;
-import com.tosslab.jandi.app.network.jackson.deserialize.leftsidemenu.PublicTopicRefDeserialize;
-import com.tosslab.jandi.app.network.jackson.deserialize.leftsidemenu.UserRefDeserialize;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
 @DatabaseTable(tableName = "entity_left_side_menu")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ResLeftSideMenu {
+public class ResLeftSideMenuV2 {
     @DatabaseField(generatedId = true, readOnly = true)
     @JsonIgnore
     public long _id;
@@ -91,8 +94,8 @@ public class ResLeftSideMenu {
             @JsonSubTypes.Type(value = User.class, name = "user")})
     static public class Entity {
         @DatabaseField(foreign = true)
-        public ResLeftSideMenu leftSideMenu;
-        @DatabaseField(id = true)
+        public ResLeftSideMenuV2 leftSideMenu;
+        @DatabaseField(id = true, readOnly = true)
         public int id;
         @DatabaseField
         public int teamId;
@@ -110,7 +113,7 @@ public class ResLeftSideMenu {
         @DatabaseField
         public Date ch_createTime;
         @ForeignCollectionField
-        public Collection<PublicTopicRef> ch_members;
+        public Collection<EntityRef> ch_members;
         @DatabaseField
         public String description;
     }
@@ -144,14 +147,11 @@ public class ResLeftSideMenu {
         @ForeignCollectionField
         public Collection<MessageMarker> u_messageMarkers;
         @ForeignCollectionField
-        public Collection<UserRef> u_starredEntities;
-        /*
-        아직 사용하는 곳이 없기 때문에 주석 처리
-                @ForeignCollectionField
-                public Collection<Integer> u_joinEntities;
-                @ForeignCollectionField
-                public Collection<Integer> u_starredMessages;
-        */
+        public Collection<EntityRef> u_starredEntities;
+        @ForeignCollectionField
+        public Collection<EntityRef> u_joinEntities;
+        @ForeignCollectionField
+        public Collection<EntityRef> u_starredMessages;
         @DatabaseField
         public String status;
     }
@@ -165,7 +165,7 @@ public class ResLeftSideMenu {
         @DatabaseField
         public Date pg_createTime;
         @ForeignCollectionField
-        public Collection<PrivateTopicRef> pg_members;
+        public Collection<EntityRef> pg_members;
         @DatabaseField
         public String description;
 
@@ -177,7 +177,6 @@ public class ResLeftSideMenu {
     static public class MessageMarker {
 
         @DatabaseField(foreign = true)
-
         public User user;
         @DatabaseField
         public String entityType;
@@ -214,7 +213,7 @@ public class ResLeftSideMenu {
         public long _id;
 
         @DatabaseField(foreign = true)
-        public ResLeftSideMenu leftSideMenu;
+        public ResLeftSideMenuV2 leftSideMenu;
         @DatabaseField
         public String entityType;
         @DatabaseField
@@ -250,7 +249,17 @@ public class ResLeftSideMenu {
         }
     }
 
+    @DatabaseTable(tableName = "entity_ref_info")
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonDeserialize(using = EntityRefDeserializeV2.class)
     public static class EntityRef {
+        @DatabaseField(foreign = true, foreignColumnName = "id")
+        public Channel channel;
+        @DatabaseField(foreign = true, foreignColumnName = "id")
+        public User user;
+        @DatabaseField(foreign = true, foreignColumnName = "id")
+        public PrivateGroup privateGroup;
 
         @DatabaseField(generatedId = true)
         public long _id;
@@ -260,36 +269,17 @@ public class ResLeftSideMenu {
 
     }
 
-    @DatabaseTable(tableName = "entity_user_ref")
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonDeserialize(using = UserRefDeserialize.class)
-    public static class UserRef extends EntityRef {
+    private static class EntityRefDeserializeV2 extends JsonDeserializer<EntityRef> {
+        @Override
+        public EntityRef deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+            ObjectMapper mapper = (ObjectMapper) jp.getCodec();
+            JsonNode root = mapper.readTree(jp);
 
-        @DatabaseField(foreign = true)
-        public User user;
+            ResLeftSideMenuV2.EntityRef entityRef = new ResLeftSideMenuV2.EntityRef();
+            entityRef.value = root.getIntValue();
 
+            return entityRef;
+        }
     }
 
-    @DatabaseTable(tableName = "entity_public_topic_ref")
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonDeserialize(using = PublicTopicRefDeserialize.class)
-    public static class PublicTopicRef extends EntityRef {
-
-        @DatabaseField(foreign = true)
-        public Channel channel;
-
-    }
-
-    @DatabaseTable(tableName = "entity_private_topic_ref")
-    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @JsonDeserialize(using = PrivateTopicRefDeserialize.class)
-    public static class PrivateTopicRef extends EntityRef {
-
-        @DatabaseField(foreign = true)
-        public PrivateGroup privateGroup;
-
-    }
 }

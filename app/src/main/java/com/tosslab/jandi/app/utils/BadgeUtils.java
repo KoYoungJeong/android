@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,8 +28,7 @@ public class BadgeUtils {
 
         int totalUnread = 0;
 
-        List<ResLeftSideMenu.AlarmInfo> alarmInfos = resLeftSideMenu.alarmInfos;
-        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(alarmInfos)
+        Iterator<ResLeftSideMenu.AlarmInfo> alarmInfoIterator = Observable.from(resLeftSideMenu.alarmInfos)
                 .filter(alarmInfo -> {
 
                     if (TextUtils.equals(alarmInfo.entityType, "chat")) {

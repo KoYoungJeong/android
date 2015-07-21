@@ -8,6 +8,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.sql.SQLException;
 
@@ -33,6 +34,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.UserEmail.class);
             TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.UserTeam.class);
             TableUtils.createTableIfNotExists(connectionSource, SelectedTeam.class);
+
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.AlarmInfo.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.Channel.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.ExtraData.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.MessageMarker.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.PrivateGroup.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.Team.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.User.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.UserThumbNailInfo.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.UserRef.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.PublicTopicRef.class);
+            TableUtils.createTableIfNotExists(connectionSource, ResLeftSideMenu.PrivateTopicRef.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -48,6 +63,20 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, ResAccountInfo.UserTeam.class, true);
             TableUtils.dropTable(connectionSource, ResAccountInfo.class, true);
             TableUtils.dropTable(connectionSource, SelectedTeam.class, true);
+
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.AlarmInfo.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.Channel.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.ExtraData.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.MessageMarker.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.PrivateGroup.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.Team.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.User.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.UserThumbNailInfo.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.UserRef.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.PrivateTopicRef.class, true);
+            TableUtils.dropTable(connectionSource, ResLeftSideMenu.PublicTopicRef.class, true);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

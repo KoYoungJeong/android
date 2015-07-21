@@ -5,12 +5,14 @@ import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -29,12 +31,13 @@ public class MembersModel {
     Context context;
 
     public List<ChatChooseItem> getTopicMembers(int entityId) {
-        List<Integer> members = EntityManager.getInstance(context).getEntityById(entityId).getMembers();
+        Collection<ResLeftSideMenu.EntityRef> members = EntityManager.getInstance(context).getEntityById(entityId)
+                .getMembers();
         List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
 
         Iterator<ChatChooseItem> iterator = Observable.from(members)
                 .map(memberEntityId -> Observable.from(formattedUsers)
-                        .filter(entity -> entity.getId() == memberEntityId)
+                        .filter(entity -> entity.getId() == memberEntityId.value)
                         .map(entity -> {
 
                             ChatChooseItem chatChooseItem = new ChatChooseItem();
@@ -92,7 +95,7 @@ public class MembersModel {
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
                             .name(entity.getName());
                 })
-                .filter(chatChooseItem -> chatChooseItem.isEnabled() )
+                .filter(chatChooseItem -> chatChooseItem.isEnabled())
                 .toBlocking()
                 .getIterator();
 
