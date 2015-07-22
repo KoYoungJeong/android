@@ -12,6 +12,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -19,10 +20,10 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 }
 
 dependencies {
@@ -30,8 +31,9 @@ dependencies {
         jcenter()
     }
 
+//    compile 'com.google.android.gms:play-services-base:7.5.0'
     compile 'com.j256.ormlite:ormlite-android:4.+'
-    compile 'io.realm:realm-android:0.81.1'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
     testCompile 'org.robolectric:robolectric:2.4'
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'
     testCompile 'junit:junit:4.12'
