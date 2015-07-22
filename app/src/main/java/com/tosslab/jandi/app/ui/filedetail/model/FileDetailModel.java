@@ -146,25 +146,28 @@ public class FileDetailModel {
             return Collections.emptyList();
         }
 
-        Collection<Integer> shareEntities = fileMessage.shareEntities;
+        Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileMessage.shareEntities;
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
+        List<Integer> list = new ArrayList<>();
+
         boolean include = false;
         int myEntityId = entityManager.getMe().getId();
-        Iterator<Integer> iterator = shareEntities.iterator();
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next() == myEntityId) {
+            int shareEntity = iterator.next().getShareEntity();
+            list.add(shareEntity);
+            if (shareEntity == myEntityId) {
                 include = true;
-                break;
             }
         }
 
         if (!include) {
-            shareEntities.add(myEntityId);
+            list.add(myEntityId);
         }
 
-        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(shareEntities);
+        List<FormattedEntity> entities = entityManager.retrieveExclusivedEntities(list);
 
         Iterator<FormattedEntity> enabledEntities = Observable.from(entities)
                 .filter(entity -> !entity.isUser() || TextUtils.equals(entity.getUser().status, "enabled"))

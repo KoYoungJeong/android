@@ -26,6 +26,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -118,8 +119,15 @@ public class FileDetailPresenter {
     }
 
     public void onClickUnShare() {
-        final Collection<Integer> shareEntities = fileDetailModel.getFileMessage().shareEntities;
-        view.initUnShareListDialog(shareEntities);
+        final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileDetailModel.getFileMessage().shareEntities;
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
+        List<Integer> list = new ArrayList<>();
+        while (iterator.hasNext()) {
+            ResMessages.OriginalMessage.IntegerWrapper next = iterator.next();
+            list.add(next.getShareEntity());
+        }
+
+        view.initUnShareListDialog(list);
     }
 
     @Background
@@ -277,9 +285,9 @@ public class FileDetailPresenter {
         int size = fileMessage.shareEntities.size();
 
         int entityId;
-        Iterator<Integer> iterator = fileMessage.shareEntities.iterator();
+        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = fileMessage.shareEntities.iterator();
         while (iterator.hasNext()) {
-            entityId = iterator.next();
+            entityId = iterator.next().getShareEntity();
 
             if (eventId == entityId) {
                 view.finishOnMainThread();

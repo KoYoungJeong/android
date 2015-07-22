@@ -103,9 +103,9 @@ public class FileHeadManager {
             spannableStringBuilder.append(" ");
             int firstLength = spannableStringBuilder.length();
 
-            Iterator<Integer> iterator = resFileDetail.shareEntities.iterator();
+            Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = resFileDetail.shareEntities.iterator();
             while (iterator.hasNext()) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next());
+                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next().getShareEntity());
 
                 if (sharedEntity == null) {
                     continue;

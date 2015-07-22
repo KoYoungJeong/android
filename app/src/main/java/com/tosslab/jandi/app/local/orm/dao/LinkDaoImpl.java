@@ -25,16 +25,81 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
         List<ResMessages.Link> links = super.query(preparedQuery);
 
         for (ResMessages.Link link : links) {
-            if (link.info == null) {
-                continue;
+            if (TextUtils.equals(link.status, "event")) {
+                link.info = getEventInfo(link.info, link.eventType);
+                queryIfCreateEvent(link.info);
+            } else {
+                queryMessage(link);
             }
-
-            link.info = getEventInfo(link.info, link.eventType);
-            queryIfCreateEvent(link.info);
-
         }
 
         return links;
+    }
+
+    private void queryMessage(ResMessages.Link link) throws SQLException {
+
+        if (TextUtils.isEmpty(link.messageType)) {
+            return;
+        }
+
+        ResMessages.MessageType messageType = ResMessages.MessageType.valueOf(link.messageType);
+
+        switch (messageType) {
+            case TEXT: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.TextMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.messageId)
+                        .queryForFirst();
+                break;
+            }
+            case FILE: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.messageId)
+                        .queryForFirst();
+                break;
+            }
+            case STICKER: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.StickerMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.messageId)
+                        .queryForFirst();
+                break;
+            }
+            case COMMENT: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.CommentMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.messageId)
+                        .queryForFirst();
+
+                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.feedbackId)
+                        .queryForFirst();
+                break;
+            }
+            case COMMENT_STICKER: {
+                link.message = DaoManager.createDao(getConnectionSource(), ResMessages.CommentStickerMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.messageId)
+                        .queryForFirst();
+
+                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                        .queryBuilder()
+                        .where()
+                        .eq("id", link.feedbackId)
+                        .queryForFirst();
+                break;
+            }
+            case NONE:
+                break;
+        }
     }
 
     private void queryIfCreateEvent(ResMessages.EventInfo info) throws SQLException {
@@ -43,7 +108,7 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
         }
 
         ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) info;
-        if (TextUtils.equals(createEvent.createType, ResMessages.PublicCreateInfo.class.getSimpleName() )) {
+        if (TextUtils.equals(createEvent.createType, ResMessages.PublicCreateInfo.class.getSimpleName())) {
             ResMessages.PublicCreateInfo createInfo =
                     DaoManager.createDao(getConnectionSource(), ResMessages.PublicCreateInfo.class)
                             .queryBuilder()

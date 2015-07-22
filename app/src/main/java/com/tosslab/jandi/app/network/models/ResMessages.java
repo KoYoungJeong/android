@@ -9,7 +9,9 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
-import com.tosslab.jandi.app.network.jackson.deserialize.message.TopicCreateInfoDeserializer;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.PrivateTopicCreateInfoDeserializer;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.PublicTopicCreateInfoDeserializer;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -48,6 +50,10 @@ public class ResMessages {
         CREATE, JOIN, INVITE, LEAVE, ANNOUNCE_CREATE, ANNOUNCE_UPDATE, ANNOUNCE_DELETE, NONE
     }
 
+    public enum MessageType {
+        TEXT, FILE, COMMENT, STICKER, COMMENT_STICKER, NONE
+    }
+
     @DatabaseTable(tableName = "message_link", daoClass = LinkDaoImpl.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -71,8 +77,12 @@ public class ResMessages {
         public EventInfo info; // How to convert other type
         @DatabaseField
         public String eventType;
+        @DatabaseField(foreign = true)
         public OriginalMessage feedback;
+        @DatabaseField(foreign = true)
         public OriginalMessage message;
+        @DatabaseField
+        public String messageType;
 
         public boolean hasLinkPreview() {
             boolean isTextMessage = message != null && message instanceof TextMessage;
@@ -122,17 +132,27 @@ public class ResMessages {
             @JsonSubTypes.Type(value = CommentStickerMessage.class, name = "comment_sticker"),
             @JsonSubTypes.Type(value = CommentMessage.class, name = "comment")})
     public static class OriginalMessage {
+        @DatabaseField(id = true)
         public int id;
+        @DatabaseField
         public int teamId;
+        @DatabaseField
         public int writerId;
+        @DatabaseField
         public Date createTime;
+        @DatabaseField
         public Date updateTime;
+        @DatabaseField
         public String contentType;
+        @DatabaseField
         public String status;
-        public Collection<Integer> shareEntities;
+        @DatabaseField
         public int permission;
+        @DatabaseField
         public int feedbackId;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public FileMessage feedback;
+        @DatabaseField
         public String linkPreviewId;
 
         @Override
@@ -145,19 +165,82 @@ public class ResMessages {
                     ", updateTime=" + updateTime +
                     ", contentType='" + contentType + '\'' +
                     ", status='" + status + '\'' +
-                    ", shareEntities=" + shareEntities +
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
                     ", feedback=" + feedback +
                     ", linkPreviewId=" + linkPreviewId +
                     '}';
         }
+
+        @DatabaseTable(tableName = "message_shareentity")
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonDeserialize(using = LinkShareEntityDeserializer.class)
+        public static class IntegerWrapper {
+            @DatabaseField(generatedId = true)
+            private long _id;
+            @DatabaseField
+            private int shareEntity;
+
+            @DatabaseField(foreign = true)
+            private TextMessage textOf;
+            @DatabaseField(foreign = true)
+            private StickerMessage stickerOf;
+            @DatabaseField(foreign = true)
+            private CommentMessage commentOf;
+            @DatabaseField(foreign = true)
+            private CommentStickerMessage commentStickerOf;
+            @DatabaseField(foreign = true)
+            private FileMessage fileOf;
+
+            public long get_id() {
+                return _id;
+            }
+
+            public void set_id(long _id) {
+                this._id = _id;
+            }
+
+            public int getShareEntity() {
+                return shareEntity;
+            }
+
+            public void setShareEntity(int shareEntity) {
+                this.shareEntity = shareEntity;
+            }
+
+
+            public void setStickerOf(StickerMessage stickerOf) {
+                this.stickerOf = stickerOf;
+            }
+
+            public void setCommentOf(CommentMessage commentOf) {
+                this.commentOf = commentOf;
+            }
+
+            public void setCommentStickerOf(CommentStickerMessage commentStickerOf) {
+                this.commentStickerOf = commentStickerOf;
+            }
+
+            public void setFileOf(FileMessage fileOf) {
+                this.fileOf = fileOf;
+            }
+
+            public void setTextOf(TextMessage textOf) {
+                this.textOf = textOf;
+            }
+        }
     }
 
+    @DatabaseTable(tableName = "message_text")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextMessage extends OriginalMessage {
+        @ForeignCollectionField(foreignFieldName = "textOf")
+        public Collection<IntegerWrapper> shareEntities;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public LinkPreview linkPreview;
 
         @Override
@@ -181,22 +264,38 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "messagec_comment")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CommentMessage extends OriginalMessage {
+        @ForeignCollectionField(foreignFieldName = "commentOf")
+        public Collection<IntegerWrapper> shareEntities;
+
+        @DatabaseField(foreign = true)
         public TextContent content;
     }
 
+    @DatabaseTable(tableName = "message_file")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileMessage extends OriginalMessage {
+        @ForeignCollectionField(foreignFieldName = "fileOf")
+        public Collection<IntegerWrapper> shareEntities;
+
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public FileContent content;
+        @DatabaseField
         public int commentCount;
     }
 
+    @DatabaseTable(tableName = "message_text_content")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class TextContent {
+        @DatabaseField(generatedId = true)
+        public long _id;
+
+        @DatabaseField
         public String body;
 
         @Override
@@ -207,32 +306,55 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_sticker")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class StickerMessage extends OriginalMessage {
+        @ForeignCollectionField(foreignFieldName = "stickerOf")
+        public Collection<IntegerWrapper> shareEntities;
+
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public StickerContent content;
+        @DatabaseField
         public int version;
     }
 
+    @DatabaseTable(tableName = "message_commentsticker")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class CommentStickerMessage extends OriginalMessage {
+        @ForeignCollectionField(foreignFieldName = "commentStickerOf")
+        public Collection<IntegerWrapper> shareEntities;
+
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public StickerContent content;
+        @DatabaseField
         public int version;
     }
 
+    @DatabaseTable(tableName = "message_file_content")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FileContent {
+        @DatabaseField
         public String title;
+        @DatabaseField
         public String name;
+        @DatabaseField
         public String type;
+        @DatabaseField
         public String icon;
+        @DatabaseField
         public String serverUrl;
+        @DatabaseField
         public String filterType;
+        @DatabaseField(id = true)
         public String fileUrl;
+        @DatabaseField
         public String ext;
+        @DatabaseField
         public int size;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public ThumbnailUrls extraInfo;
 
         @Override
@@ -252,11 +374,16 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_file_content_thumb")
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ThumbnailUrls {
+
+        @DatabaseField
         public String smallThumbnailUrl;
+        @DatabaseField
         public String mediumThumbnailUrl;
+        @DatabaseField(id = true)
         public String largeThumbnailUrl;
 
         @Override
@@ -494,7 +621,7 @@ public class ResMessages {
         @DatabaseTable(tableName = "message_info_create_topic_member")
         @JsonIgnoreProperties(ignoreUnknown = true)
         @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-        @JsonDeserialize(using = TopicCreateInfoDeserializer.class)
+        @JsonDeserialize(using = PublicTopicCreateInfoDeserializer.class)
         public static class IntegerWrapper {
             @DatabaseField(generatedId = true)
             private long _id;
@@ -550,7 +677,7 @@ public class ResMessages {
         @DatabaseTable(tableName = "message_info_create_topic_member")
         @JsonIgnoreProperties(ignoreUnknown = true)
         @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-        @JsonDeserialize(using = TopicCreateInfoDeserializer.class)
+        @JsonDeserialize(using = PrivateTopicCreateInfoDeserializer.class)
         public static class IntegerWrapper {
             @DatabaseField(generatedId = true)
             private long _id;
@@ -585,21 +712,41 @@ public class ResMessages {
         }
     }
 
+    @DatabaseTable(tableName = "message_sticker_content")
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class StickerContent {
+        @DatabaseField(id = true, useGetSet = true)
+        public String _id;
+        @DatabaseField
         public int groupId;
+        @DatabaseField
         public String stickerId;
+        @DatabaseField
         public String url;
+
+        public String get_id() {
+            return groupId + "_" + stickerId;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
+        }
     }
 
+    @DatabaseTable(tableName = "message_text_linkpreview")
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class LinkPreview {
+        @DatabaseField(id = true)
         public String linkUrl;
+        @DatabaseField
         public String description;
+        @DatabaseField
         public String title;
+        @DatabaseField
         public String imageUrl;
+        @DatabaseField
         public String domain;
 
         public boolean isEmpty() {

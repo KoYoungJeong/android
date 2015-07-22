@@ -40,6 +40,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, LeftSideMenu.class);
 
             createTable(connectionSource, ResMessages.Link.class);
+            createTable(connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
             createTable(connectionSource, ResMessages.CreateEvent.class);
             createTable(connectionSource, ResMessages.PublicCreateInfo.class);
             createTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
@@ -53,14 +54,21 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
             createTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
 
+            createTable(connectionSource, ResMessages.TextMessage.class);
+            createTable(connectionSource, ResMessages.TextContent.class);
+            createTable(connectionSource, ResMessages.LinkPreview.class);
+            createTable(connectionSource, ResMessages.FileMessage.class);
+            createTable(connectionSource, ResMessages.FileContent.class);
+            createTable(connectionSource, ResMessages.ThumbnailUrls.class);
+            createTable(connectionSource, ResMessages.StickerMessage.class);
+            createTable(connectionSource, ResMessages.StickerContent.class);
+            createTable(connectionSource, ResMessages.CommentStickerMessage.class);
+            createTable(connectionSource, ResMessages.CommentStickerMessage.class);
+            createTable(connectionSource, ResMessages.CommentMessage.class);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    private void createTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
-        TableUtils.createTableIfNotExists(connectionSource, dataClass);
     }
 
     @Override
@@ -78,6 +86,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, LeftSideMenu.class);
 
             dropTable(connectionSource, ResMessages.Link.class);
+            dropTable(connectionSource, ResMessages.OriginalMessage.IntegerWrapper.class);
             dropTable(connectionSource, ResMessages.CreateEvent.class);
             dropTable(connectionSource, ResMessages.PublicCreateInfo.class);
             dropTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
@@ -91,10 +100,28 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
             dropTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
 
+            dropTable(connectionSource, ResMessages.TextMessage.class);
+            dropTable(connectionSource, ResMessages.TextContent.class);
+            dropTable(connectionSource, ResMessages.LinkPreview.class);
+            dropTable(connectionSource, ResMessages.FileMessage.class);
+            dropTable(connectionSource, ResMessages.FileContent.class);
+            dropTable(connectionSource, ResMessages.ThumbnailUrls.class);
+            dropTable(connectionSource, ResMessages.StickerMessage.class);
+            dropTable(connectionSource, ResMessages.StickerContent.class);
+            dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
+            dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
+            dropTable(connectionSource, ResMessages.CommentMessage.class);
+
+
+            onCreate(database, connectionSource);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
+        TableUtils.createTableIfNotExists(connectionSource, dataClass);
     }
 
     private void dropTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {

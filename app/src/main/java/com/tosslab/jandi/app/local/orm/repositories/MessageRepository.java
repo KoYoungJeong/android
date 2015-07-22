@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
@@ -36,17 +37,103 @@ public class MessageRepository {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
             for (ResMessages.Link message : messages) {
-                message.eventType = getEventType(message.info);
-                ResMessages.EventInfo info = message.info;
-                setTypeIfCreateEvent(info);
+                if (TextUtils.equals(message.status, "event")) {
 
-                upsertEventInfo(message.info);
+                    message.eventType = getEventType(message.info);
+                    ResMessages.EventInfo info = message.info;
+                    setTypeIfCreateEvent(info);
+
+                    upsertEventInfo(message.info);
+                } else if (message != null) {
+                    upsertMessage(message);
+                }
                 dao.createOrUpdate(message);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void upsertMessage(ResMessages.Link message) throws SQLException {
+        ResMessages.OriginalMessage contentMessage = message.message;
+
+
+        if (contentMessage instanceof ResMessages.TextMessage) {
+            message.messageType = ResMessages.MessageType.TEXT.name();
+
+            ResMessages.TextMessage textMessage = (ResMessages.TextMessage) contentMessage;
+
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : textMessage.shareEntities) {
+                shareEntity.setTextOf(textMessage);
+                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+            }
+
+
+            Dao<ResMessages.TextContent, ?> textContentDao = helper.getDao(ResMessages.TextContent.class);
+            textContentDao.create(textMessage.content);
+
+            if (message.hasLinkPreview()) {
+                Dao<ResMessages.LinkPreview, ?> linkPreviewDao = helper.getDao(ResMessages.LinkPreview.class);
+                linkPreviewDao.create(textMessage.linkPreview);
+            }
+
+            helper.getDao(ResMessages.TextMessage.class).createOrUpdate(textMessage);
+
+        } else if (contentMessage instanceof ResMessages.StickerMessage) {
+            message.messageType = ResMessages.MessageType.STICKER.name();
+            ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) contentMessage;
+
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
+                shareEntity.setStickerOf(stickerMessage);
+                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+            }
+
+
+            helper.getDao(ResMessages.StickerContent.class).createOrUpdate(stickerMessage.content);
+            helper.getDao(ResMessages.StickerMessage.class).createOrUpdate(stickerMessage);
+
+        } else if (contentMessage instanceof ResMessages.FileMessage) {
+            message.messageType = ResMessages.MessageType.FILE.name();
+
+            upsertFileMessage((ResMessages.FileMessage) contentMessage);
+        } else if (contentMessage instanceof ResMessages.CommentStickerMessage) {
+            message.messageType = ResMessages.MessageType.COMMENT_STICKER.name();
+            ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) contentMessage;
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
+                shareEntity.setCommentStickerOf(stickerMessage);
+                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+            }
+            helper.getDao(ResMessages.StickerContent.class).createOrUpdate(stickerMessage.content);
+            helper.getDao(ResMessages.CommentStickerMessage.class).createOrUpdate(stickerMessage);
+
+        } else if (contentMessage instanceof ResMessages.CommentMessage) {
+            message.messageType = ResMessages.MessageType.COMMENT.name();
+
+            ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) contentMessage;
+
+            for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : commentMessage.shareEntities) {
+                shareEntity.setCommentOf(commentMessage);
+                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+            }
+
+            helper.getDao(ResMessages.TextContent.class).create(commentMessage.content);
+            helper.getDao(ResMessages.CommentMessage.class).create(commentMessage);
+
+        }
+    }
+
+    private void upsertFileMessage(ResMessages.FileMessage fileMessage) throws SQLException {
+
+        for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
+            shareEntity.setFileOf(fileMessage);
+            helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+        }
+
+
+        helper.getDao(ResMessages.FileContent.class).createOrUpdate(fileMessage.content);
+        helper.getDao(ResMessages.ThumbnailUrls.class).createOrUpdate(fileMessage.content.extraInfo);
+        helper.getDao(ResMessages.FileMessage.class).createOrUpdate(fileMessage);
     }
 
     private void setTypeIfCreateEvent(ResMessages.EventInfo info) {
