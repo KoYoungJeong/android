@@ -2,10 +2,14 @@ package com.tosslab.jandi.app.network.models;
 
 import android.text.TextUtils;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
+import com.tosslab.jandi.app.network.jackson.deserialize.message.TopicCreateInfoDeserializer;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -15,6 +19,7 @@ import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -40,7 +45,7 @@ public class ResMessages {
     }
 
     public enum EventType {
-        CREATE, JOIN, INVITE, LEAVE, ANNOUNCE_CREATE, ANNOUNCE_UPDATE, ANNOUNCE_DELETE, UNKNOWN
+        CREATE, JOIN, INVITE, LEAVE, ANNOUNCE_CREATE, ANNOUNCE_UPDATE, ANNOUNCE_DELETE, NONE
     }
 
     @DatabaseTable(tableName = "message_link", daoClass = LinkDaoImpl.class)
@@ -124,7 +129,7 @@ public class ResMessages {
         public Date updateTime;
         public String contentType;
         public String status;
-        public List<Integer> shareEntities;
+        public Collection<Integer> shareEntities;
         public int permission;
         public int feedbackId;
         public FileMessage feedback;
@@ -280,6 +285,8 @@ public class ResMessages {
                 @JsonSubTypes.Type(value = PrivateCreateInfo.class, name = "privateGroup")})
         @DatabaseField(foreign = true)
         public CreateInfo createInfo;
+        @DatabaseField(dataType = DataType.LONG_STRING)
+        public String createType;
     }
 
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
@@ -288,7 +295,7 @@ public class ResMessages {
     @DatabaseTable(tableName = "message_info_announce_create")
     public static class AnnouncementCreateEvent extends EventInfo {
 
-        @DatabaseField(foreign = true)
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         private Info eventInfo;
 
         public Info getEventInfo() {
@@ -339,7 +346,7 @@ public class ResMessages {
     public static class AnnouncementUpdateEvent extends EventInfo {
 
 
-        @DatabaseField(foreign = true)
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         private Info eventInfo;
 
         public Info getEventInfo() {
@@ -400,7 +407,46 @@ public class ResMessages {
 
         @DatabaseField
         public int invitorId;
-        public List<Integer> inviteUsers;
+        @ForeignCollectionField
+        public Collection<IntegerWrapper> inviteUsers;
+
+        @DatabaseTable(tableName = "message_info_invite_user")
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonDeserialize(using = InviteInfoDeserializer.class)
+        public static class IntegerWrapper {
+
+            @DatabaseField(generatedId = true)
+            private long _id;
+            @DatabaseField(foreign = true, foreignAutoRefresh = true)
+            private InviteEvent inviteEvent;
+            @DatabaseField
+            private int inviteUserId;
+
+            public long get_id() {
+                return _id;
+            }
+
+            public void set_id(long _id) {
+                this._id = _id;
+            }
+
+            public int getInviteUserId() {
+                return inviteUserId;
+            }
+
+            public void setInviteUserId(int inviteUserId) {
+                this.inviteUserId = inviteUserId;
+            }
+
+            public InviteEvent getInviteEvent() {
+                return inviteEvent;
+            }
+
+            public void setInviteEvent(InviteEvent inviteEvent) {
+                this.inviteEvent = inviteEvent;
+            }
+        }
     }
 
     @DatabaseTable(tableName = "message_info_leave")
@@ -442,7 +488,45 @@ public class ResMessages {
         @JsonProperty("ch_isDefault")
         public boolean isDefault;
         @JsonProperty("ch_members")
-        public List<Integer> members;
+        @ForeignCollectionField
+        public Collection<IntegerWrapper> members;
+
+        @DatabaseTable(tableName = "message_info_create_topic_member")
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+        @JsonDeserialize(using = TopicCreateInfoDeserializer.class)
+        public static class IntegerWrapper {
+            @DatabaseField(generatedId = true)
+            private long _id;
+            @DatabaseField(foreign = true, foreignAutoRefresh = true)
+            private PublicCreateInfo createInfo;
+            @DatabaseField
+            private int memberId;
+
+            public long get_id() {
+                return _id;
+            }
+
+            public void set_id(long _id) {
+                this._id = _id;
+            }
+
+            public int getMemberId() {
+                return memberId;
+            }
+
+            public void setMemberId(int memberId) {
+                this.memberId = memberId;
+            }
+
+            public PublicCreateInfo getCreateInfo() {
+                return createInfo;
+            }
+
+            public void setCreateInfo(PublicCreateInfo createInfo) {
+                this.createInfo = createInfo;
+            }
+        }
     }
 
     @DatabaseTable(tableName = "message_info_create_topic")
@@ -460,7 +544,45 @@ public class ResMessages {
         @JsonProperty("pg_isDefault")
         public boolean isDefault;
         @JsonProperty("pg_members")
-        public List<Integer> members;
+        @ForeignCollectionField
+        public Collection<IntegerWrapper> members;
+
+        @DatabaseTable(tableName = "message_info_create_topic_member")
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+        @JsonDeserialize(using = TopicCreateInfoDeserializer.class)
+        public static class IntegerWrapper {
+            @DatabaseField(generatedId = true)
+            private long _id;
+            @DatabaseField(foreign = true, foreignAutoRefresh = true)
+            private PrivateCreateInfo createInfo;
+            @DatabaseField
+            private int memberId;
+
+            public long get_id() {
+                return _id;
+            }
+
+            public void set_id(long _id) {
+                this._id = _id;
+            }
+
+            public int getMemberId() {
+                return memberId;
+            }
+
+            public void setMemberId(int memberId) {
+                this.memberId = memberId;
+            }
+
+            public PrivateCreateInfo getCreateInfo() {
+                return createInfo;
+            }
+
+            public void setCreateInfo(PrivateCreateInfo createInfo) {
+                this.createInfo = createInfo;
+            }
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

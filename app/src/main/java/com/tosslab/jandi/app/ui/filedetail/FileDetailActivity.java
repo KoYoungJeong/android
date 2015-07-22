@@ -81,6 +81,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -426,7 +427,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     }
 
     @Override
-    public void initUnShareListDialog(List<Integer> shareEntitiesIds) {
+    public void initUnShareListDialog(Collection<Integer> shareEntitiesIds) {
         /**
          * CDP 리스트 Dialog 를 보여준 뒤, 선택된 CDP에 Share
          */

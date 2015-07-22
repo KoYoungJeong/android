@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -31,6 +30,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -55,12 +55,12 @@ public class FileDetailModel {
 
     private ResMessages.FileMessage fileMessage;
 
-    public void setFileMessage(ResMessages.FileMessage fileMessage) {
-        this.fileMessage = fileMessage;
-    }
-
     public ResMessages.FileMessage getFileMessage() {
         return fileMessage;
+    }
+
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
     }
 
     public void deleteFile(int fileId) throws RetrofitError {
@@ -146,14 +146,15 @@ public class FileDetailModel {
             return Collections.emptyList();
         }
 
-        List<Integer> shareEntities = fileMessage.shareEntities;
+        Collection<Integer> shareEntities = fileMessage.shareEntities;
 
         EntityManager entityManager = EntityManager.getInstance(context);
 
         boolean include = false;
         int myEntityId = entityManager.getMe().getId();
-        for (int idx = shareEntities.size() - 1; idx >= 0; idx--) {
-            if (shareEntities.get(idx) == myEntityId) {
+        Iterator<Integer> iterator = shareEntities.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() == myEntityId) {
                 include = true;
                 break;
             }

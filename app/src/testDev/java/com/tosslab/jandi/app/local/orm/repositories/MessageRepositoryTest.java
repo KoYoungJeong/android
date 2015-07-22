@@ -11,6 +11,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class MessageRepositoryTest {
         helper = OpenHelperManager.getHelper(Robolectric.application, OrmDatabaseHelper.class);
         assertThat(helper, is(notNullValue()));
 
-        List<ResMessages.Link> query = helper.getDao(ResMessages.Link.class).queryBuilder().query();
+        List<ResMessages.Link> savedLinks = helper.getDao(ResMessages.Link.class).queryBuilder().query();
 
-        assertThat(query.size(), is(equalTo(messages.size())));
+        assertThat(savedLinks.size(), is(equalTo(messages.size())));
 
     }
 
@@ -66,6 +67,15 @@ public class MessageRepositoryTest {
             ResMessages.PublicCreateInfo createInfo = new ResMessages.PublicCreateInfo();
             createInfo.createTime = new Date();
             createInfo.creatorId = 10;
+
+            ResMessages.PublicCreateInfo.IntegerWrapper integerWrapper = new ResMessages.PublicCreateInfo.IntegerWrapper();
+            integerWrapper.setMemberId(1);
+            ResMessages.PublicCreateInfo.IntegerWrapper integerWrapper1 = new ResMessages.PublicCreateInfo.IntegerWrapper();
+            integerWrapper1.setMemberId(2);
+            ResMessages.PublicCreateInfo.IntegerWrapper integerWrapper2 = new ResMessages.PublicCreateInfo.IntegerWrapper();
+            integerWrapper2.setMemberId(3);
+
+            createInfo.members = Arrays.asList(integerWrapper, integerWrapper1, integerWrapper2);
             createEvent.createInfo = createInfo;
 
             link.info = createEvent;
@@ -85,6 +95,15 @@ public class MessageRepositoryTest {
             ResMessages.PrivateCreateInfo createInfo = new ResMessages.PrivateCreateInfo();
             createInfo.createTime = new Date();
             createInfo.creatorId = 11;
+
+            ResMessages.PrivateCreateInfo.IntegerWrapper integerWrapper = new ResMessages.PrivateCreateInfo.IntegerWrapper();
+            integerWrapper.setMemberId(4);
+            ResMessages.PrivateCreateInfo.IntegerWrapper integerWrapper1 = new ResMessages.PrivateCreateInfo.IntegerWrapper();
+            integerWrapper1.setMemberId(5);
+            ResMessages.PrivateCreateInfo.IntegerWrapper integerWrapper2 = new ResMessages.PrivateCreateInfo.IntegerWrapper();
+            integerWrapper2.setMemberId(6);
+
+            createInfo.members = Arrays.asList(integerWrapper, integerWrapper1, integerWrapper2);
             createEvent.createInfo = createInfo;
 
             link.info = createEvent;
@@ -102,6 +121,18 @@ public class MessageRepositoryTest {
 
             ResMessages.InviteEvent inviteEvent = new ResMessages.InviteEvent();
             inviteEvent.invitorId = 10;
+
+            ResMessages.InviteEvent.IntegerWrapper integerWrapper = new ResMessages.InviteEvent
+                    .IntegerWrapper();
+            integerWrapper.setInviteUserId(7);
+            ResMessages.InviteEvent.IntegerWrapper integerWrapper1 = new ResMessages.InviteEvent
+                    .IntegerWrapper();
+            integerWrapper1.setInviteUserId(8);
+            ResMessages.InviteEvent.IntegerWrapper integerWrapper2 = new ResMessages.InviteEvent
+                    .IntegerWrapper();
+            integerWrapper2.setInviteUserId(9);
+
+            inviteEvent.inviteUsers = Arrays.asList(integerWrapper, integerWrapper1, integerWrapper2);
 
             link.info = inviteEvent;
 

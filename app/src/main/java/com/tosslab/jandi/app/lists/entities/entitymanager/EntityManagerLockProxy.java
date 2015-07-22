@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -153,7 +154,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public List<FormattedEntity> retrieveGivenEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveGivenEntities(Collection<Integer> givenEntityIds) {
         lock.lock();
         try {
             return super.retrieveGivenEntities(givenEntityIds);
@@ -163,7 +164,7 @@ class EntityManagerLockProxy extends EntityManager {
     }
 
     @Override
-    public List<FormattedEntity> retrieveExclusivedEntities(List<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveExclusivedEntities(Collection<Integer> givenEntityIds) {
         lock.lock();
         try {
             return super.retrieveExclusivedEntities(givenEntityIds);

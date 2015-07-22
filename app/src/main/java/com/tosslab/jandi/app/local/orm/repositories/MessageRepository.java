@@ -36,6 +36,10 @@ public class MessageRepository {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
             for (ResMessages.Link message : messages) {
+                message.eventType = getEventType(message.info);
+                ResMessages.EventInfo info = message.info;
+                setTypeIfCreateEvent(info);
+
                 upsertEventInfo(message.info);
                 dao.createOrUpdate(message);
             }
@@ -45,6 +49,48 @@ public class MessageRepository {
         }
     }
 
+    private void setTypeIfCreateEvent(ResMessages.EventInfo info) {
+        if (!(info instanceof ResMessages.CreateEvent)) {
+            return;
+        }
+
+        ResMessages.CreateEvent info1 = (ResMessages.CreateEvent) info;
+
+        if (info1.createInfo instanceof ResMessages.PublicCreateInfo) {
+            info1.createType = ResMessages.PublicCreateInfo.class.getSimpleName();
+            for (ResMessages.PublicCreateInfo.IntegerWrapper member : ((ResMessages.PublicCreateInfo) info1.createInfo).members) {
+                member.setCreateInfo((ResMessages.PublicCreateInfo) info1.createInfo);
+            }
+        } else {
+            info1.createType = ResMessages.PrivateCreateInfo.class.getSimpleName();
+            for (ResMessages.PrivateCreateInfo.IntegerWrapper member : ((ResMessages.PrivateCreateInfo) info1
+                    .createInfo).members) {
+                member.setCreateInfo((ResMessages.PrivateCreateInfo) info1.createInfo);
+            }
+        }
+    }
+
+    private String getEventType(ResMessages.EventInfo info) {
+
+        if (info instanceof ResMessages.CreateEvent) {
+            return ResMessages.EventType.CREATE.name();
+        } else if (info instanceof ResMessages.JoinEvent) {
+            return ResMessages.EventType.JOIN.name();
+        } else if (info instanceof ResMessages.LeaveEvent) {
+            return ResMessages.EventType.LEAVE.name();
+        } else if (info instanceof ResMessages.InviteEvent) {
+            return ResMessages.EventType.INVITE.name();
+        } else if (info instanceof ResMessages.AnnouncementUpdateEvent) {
+            return ResMessages.EventType.ANNOUNCE_UPDATE.name();
+        } else if (info instanceof ResMessages.AnnouncementDeleteEvent) {
+            return ResMessages.EventType.ANNOUNCE_DELETE.name();
+        } else if (info instanceof ResMessages.AnnouncementCreateEvent) {
+            return ResMessages.EventType.ANNOUNCE_CREATE.name();
+        }
+
+        return ResMessages.EventType.NONE.name();
+    }
+
     private void upsertEventInfo(ResMessages.EventInfo info) throws SQLException {
 
         if (info instanceof ResMessages.CreateEvent) {
@@ -52,11 +98,20 @@ public class MessageRepository {
             ResMessages.CreateEvent createEvent = (ResMessages.CreateEvent) info;
 
             if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
-                helper.getDao(ResMessages.PublicCreateInfo.class).createOrUpdate((ResMessages
-                        .PublicCreateInfo) createEvent.createInfo);
+                ResMessages.PublicCreateInfo createInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
+                helper.getDao(ResMessages.PublicCreateInfo.class).createOrUpdate(createInfo);
+                for (ResMessages.PublicCreateInfo.IntegerWrapper member : (createInfo).members) {
+                    member.setCreateInfo(createInfo);
+                    helper.getDao(ResMessages.PublicCreateInfo.IntegerWrapper.class).createOrUpdate(member);
+                }
             } else {
-                helper.getDao(ResMessages.PrivateCreateInfo.class).createOrUpdate((ResMessages
-                        .PrivateCreateInfo) createEvent.createInfo);
+                ResMessages.PrivateCreateInfo createInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
+                helper.getDao(ResMessages.PrivateCreateInfo.class).createOrUpdate(createInfo);
+                for (ResMessages.PrivateCreateInfo.IntegerWrapper member : (createInfo).members) {
+                    member.setCreateInfo(createInfo);
+                    helper.getDao(ResMessages.PrivateCreateInfo.IntegerWrapper.class)
+                            .createOrUpdate(member);
+                }
             }
 
             helper.getDao(ResMessages.CreateEvent.class).createOrUpdate(createEvent);
@@ -66,7 +121,15 @@ public class MessageRepository {
             helper.getDao(ResMessages.JoinEvent.class).createOrUpdate((ResMessages.JoinEvent) info);
 
         } else if (info instanceof ResMessages.InviteEvent) {
-            helper.getDao(ResMessages.InviteEvent.class).createOrUpdate((ResMessages.InviteEvent) info);
+            ResMessages.InviteEvent info1 = (ResMessages.InviteEvent) info;
+            helper.getDao(ResMessages.InviteEvent.class).createOrUpdate(info1);
+
+            for (ResMessages.InviteEvent.IntegerWrapper inviteUser : info1.inviteUsers) {
+                inviteUser.setInviteEvent(info1);
+                helper.getDao(ResMessages.InviteEvent.IntegerWrapper.class)
+                        .createOrUpdate(inviteUser);
+            }
+
 
         } else if (info instanceof ResMessages.LeaveEvent) {
             helper.getDao(ResMessages.LeaveEvent.class).createOrUpdate((ResMessages.LeaveEvent) info);

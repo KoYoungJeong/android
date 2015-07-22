@@ -29,28 +29,29 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
         try {
             // ResAccountInfo.java
-            TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.ThumbnailInfo.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.UserDevice.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.UserEmail.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResAccountInfo.UserTeam.class);
-            TableUtils.createTableIfNotExists(connectionSource, SelectedTeam.class);
+            createTable(connectionSource, ResAccountInfo.class);
+            createTable(connectionSource, ResAccountInfo.class);
+            createTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
+            createTable(connectionSource, ResAccountInfo.UserDevice.class);
+            createTable(connectionSource, ResAccountInfo.UserEmail.class);
+            createTable(connectionSource, ResAccountInfo.UserTeam.class);
+            createTable(connectionSource, SelectedTeam.class);
 
-            TableUtils.createTableIfNotExists(connectionSource, LeftSideMenu.class);
+            createTable(connectionSource, LeftSideMenu.class);
 
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.Link.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.CreateEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.PublicCreateInfo.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.JoinEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.InviteEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.LeaveEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementCreateEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages
-                    .AnnouncementCreateEvent.Info.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages
-                    .AnnouncementUpdateEvent.Info.class);
-            TableUtils.createTableIfNotExists(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
+            createTable(connectionSource, ResMessages.Link.class);
+            createTable(connectionSource, ResMessages.CreateEvent.class);
+            createTable(connectionSource, ResMessages.PublicCreateInfo.class);
+            createTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
+            createTable(connectionSource, ResMessages.JoinEvent.class);
+            createTable(connectionSource, ResMessages.InviteEvent.class);
+            createTable(connectionSource, ResMessages.InviteEvent.IntegerWrapper.class);
+            createTable(connectionSource, ResMessages.LeaveEvent.class);
+            createTable(connectionSource, ResMessages.AnnouncementCreateEvent.class);
+            createTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class);
+            createTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
+            createTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
+            createTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
 
 
         } catch (SQLException e) {
@@ -58,36 +59,45 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
+    private void createTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
+        TableUtils.createTableIfNotExists(connectionSource, dataClass);
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             // ResAccountInfo.java
-            TableUtils.dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class, true);
-            TableUtils.dropTable(connectionSource, ResAccountInfo.UserDevice.class, true);
-            TableUtils.dropTable(connectionSource, ResAccountInfo.UserEmail.class, true);
-            TableUtils.dropTable(connectionSource, ResAccountInfo.UserTeam.class, true);
-            TableUtils.dropTable(connectionSource, ResAccountInfo.class, true);
-            TableUtils.dropTable(connectionSource, SelectedTeam.class, true);
+            dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
+            dropTable(connectionSource, ResAccountInfo.ThumbnailInfo.class);
+            dropTable(connectionSource, ResAccountInfo.UserDevice.class);
+            dropTable(connectionSource, ResAccountInfo.UserEmail.class);
+            dropTable(connectionSource, ResAccountInfo.UserTeam.class);
+            dropTable(connectionSource, ResAccountInfo.class);
+            dropTable(connectionSource, SelectedTeam.class);
 
-            TableUtils.dropTable(connectionSource, LeftSideMenu.class, true);
+            dropTable(connectionSource, LeftSideMenu.class);
 
-            TableUtils.dropTable(connectionSource, ResMessages.Link.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.CreateEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.PublicCreateInfo.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.JoinEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.InviteEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.LeaveEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class,
-                    true);
-            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class, true);
-            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class,
-                    true);
-            TableUtils.dropTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class, true);
+            dropTable(connectionSource, ResMessages.Link.class);
+            dropTable(connectionSource, ResMessages.CreateEvent.class);
+            dropTable(connectionSource, ResMessages.PublicCreateInfo.class);
+            dropTable(connectionSource, ResMessages.PublicCreateInfo.IntegerWrapper.class);
+            dropTable(connectionSource, ResMessages.JoinEvent.class);
+            dropTable(connectionSource, ResMessages.InviteEvent.class);
+            dropTable(connectionSource, ResMessages.InviteEvent.IntegerWrapper.class);
+            dropTable(connectionSource, ResMessages.LeaveEvent.class);
+            dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.class);
+            dropTable(connectionSource, ResMessages.AnnouncementCreateEvent.Info.class);
+            dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.class);
+            dropTable(connectionSource, ResMessages.AnnouncementUpdateEvent.Info.class);
+            dropTable(connectionSource, ResMessages.AnnouncementDeleteEvent.class);
 
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void dropTable(ConnectionSource connectionSource, Class<?> dataClass) throws SQLException {
+        TableUtils.dropTable(connectionSource, dataClass, true);
     }
 }

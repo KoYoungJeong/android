@@ -19,7 +19,8 @@ import com.tosslab.jandi.app.utils.DateTransformator;
 import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
 import com.tosslab.jandi.app.views.spannable.ProfileSpannable;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Created by Steve SeongUg Jung on 15. 2. 9..
@@ -155,12 +156,15 @@ public class EventViewHolder implements BodyViewHolder {
         int tempIndex = nameIndexOf;
 
         FormattedEntity tempEntity;
-        List<Integer> inviteUsers = eventInfo.inviteUsers;
+        Collection<ResMessages.InviteEvent.IntegerWrapper> inviteUsers = eventInfo.inviteUsers;
         int size = inviteUsers.size();
-        for (int idx = 0; idx < size; idx++) {
-            tempEntity = entityManager.getEntityById(inviteUsers.get(idx));
+        Iterator<ResMessages.InviteEvent.IntegerWrapper> iterator = inviteUsers.iterator();
+        boolean first = true;
+        while (iterator.hasNext()) {
+            tempEntity = entityManager.getEntityById(iterator.next().getInviteUserId());
             if (tempEntity != null) {
-                if (idx > 0) {
+                first = false;
+                if (!first) {
                     builder.insert(tempIndex, ", ");
                     tempIndex += 2;
                 }

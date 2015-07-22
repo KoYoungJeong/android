@@ -26,7 +26,9 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
@@ -116,7 +118,7 @@ public class FileDetailPresenter {
     }
 
     public void onClickUnShare() {
-        final List<Integer> shareEntities = fileDetailModel.getFileMessage().shareEntities;
+        final Collection<Integer> shareEntities = fileDetailModel.getFileMessage().shareEntities;
         view.initUnShareListDialog(shareEntities);
     }
 
@@ -275,8 +277,9 @@ public class FileDetailPresenter {
         int size = fileMessage.shareEntities.size();
 
         int entityId;
-        for (int idx = 0; idx < size; ++idx) {
-            entityId = fileMessage.shareEntities.get(idx);
+        Iterator<Integer> iterator = fileMessage.shareEntities.iterator();
+        while (iterator.hasNext()) {
+            entityId = iterator.next();
 
             if (eventId == entityId) {
                 view.finishOnMainThread();
@@ -360,7 +363,7 @@ public class FileDetailPresenter {
 
         void initShareListDialog(List<FormattedEntity> unSharedEntities);
 
-        void initUnShareListDialog(List<Integer> shareEntitiesIds);
+        void initUnShareListDialog(Collection<Integer> shareEntitiesIds);
 
         void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
 

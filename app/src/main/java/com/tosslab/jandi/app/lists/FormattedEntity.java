@@ -10,7 +10,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import rx.Observable;
 import rx.functions.Func0;
@@ -315,7 +314,7 @@ public class FormattedEntity {
         return (this.entity.id == entityId);
     }
 
-    public boolean hasGivenIds(List<Integer> entityIds) {
+    public boolean hasGivenIds(Collection<Integer> entityIds) {
         for (int entityId : entityIds) {
             if (hasGivenId(entityId)) {
                 return true;

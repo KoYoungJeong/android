@@ -27,6 +27,8 @@ import com.tosslab.jandi.app.views.spannable.MessageSpannable;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.util.Iterator;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 29..
  */
@@ -101,8 +103,9 @@ public class FileHeadManager {
             spannableStringBuilder.append(" ");
             int firstLength = spannableStringBuilder.length();
 
-            for (int idx = 0; idx < nSharedEntities; idx++) {
-                FormattedEntity sharedEntity = mEntityManager.getEntityById(resFileDetail.shareEntities.get(idx));
+            Iterator<Integer> iterator = resFileDetail.shareEntities.iterator();
+            while (iterator.hasNext()) {
+                FormattedEntity sharedEntity = mEntityManager.getEntityById(iterator.next());
 
                 if (sharedEntity == null) {
                     continue;

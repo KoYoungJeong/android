@@ -10,8 +10,8 @@ import java.sql.SQLException;
 /**
  * Created by Steve SeongUg Jung on 15. 7. 21..
  */
-public class LeftSideMenuDao extends BaseDaoImpl<ResLeftSideMenu, Long> {
-    public LeftSideMenuDao(ConnectionSource connectionSource, Class<ResLeftSideMenu> dataClass) throws SQLException {
+public class LeftSideMenuDaoImpl extends BaseDaoImpl<ResLeftSideMenu, Long> {
+    public LeftSideMenuDaoImpl(ConnectionSource connectionSource, Class<ResLeftSideMenu> dataClass) throws SQLException {
         super(connectionSource, dataClass);
     }
 
