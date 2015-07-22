@@ -30,7 +30,9 @@ public class BaseInitUtil {
         TokenUtil.saveTokenInfoByPassword(accessToken);
 
         ResAccountInfo accountInfo = RequestApiManager.getInstance().getAccountInfoByMainRest();
+        int teamId = accountInfo.getMemberships().iterator().next().getTeamId();
         AccountRepository.getRepository().upsertAccountAllInfo(accountInfo);
+        AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
     }
 
     public static void logOn() {

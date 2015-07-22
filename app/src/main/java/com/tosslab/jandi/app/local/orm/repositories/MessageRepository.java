@@ -5,11 +5,13 @@ import android.text.TextUtils;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +22,7 @@ public class MessageRepository {
     private static MessageRepository repository;
     private OrmDatabaseHelper helper;
 
-    public MessageRepository(Context context) {
+    private MessageRepository(Context context) {
         helper = OpenHelperManager.getHelper(context, OrmDatabaseHelper.class);
     }
 
@@ -32,7 +34,7 @@ public class MessageRepository {
         return repository;
     }
 
-    public void upsertMessages(List<ResMessages.Link> messages) {
+    public boolean upsertMessages(List<ResMessages.Link> messages) {
         try {
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
@@ -49,10 +51,52 @@ public class MessageRepository {
                 }
                 dao.createOrUpdate(message);
             }
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int deleteMessage(int messageId) {
+
+        if (messageId <= 0) {
+            // 이벤트는 삭제하지 않기 위함
+            return 0;
+        }
+
+        try {
+            Dao<ResMessages.Link, ?> linkDao = helper.getDao(ResMessages.Link.class);
+            DeleteBuilder<ResMessages.Link, ?> deleteBuilder = linkDao.deleteBuilder();
+            deleteBuilder
+                    .where()
+                    .eq("messageId", messageId);
+            return deleteBuilder.delete();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return 0;
+
+    }
+
+    public List<ResMessages.Link> getMessages(int roomId) {
+
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return helper.getDao(ResMessages.Link.class)
+                    .queryBuilder()
+                    .where()
+                    .eq("teamId", teamId)
+                    .and()
+                    .eq("roomId", roomId)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 
     private void upsertMessage(ResMessages.Link message) throws SQLException {
@@ -64,9 +108,16 @@ public class MessageRepository {
 
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) contentMessage;
 
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder
+                    = dao.deleteBuilder();
+
+            deleteBuilder.where().eq("textOf_id", textMessage.id);
+            deleteBuilder.delete();
+
             for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : textMessage.shareEntities) {
                 shareEntity.setTextOf(textMessage);
-                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+                dao.create(shareEntity);
             }
 
 
@@ -84,9 +135,13 @@ public class MessageRepository {
             message.messageType = ResMessages.MessageType.STICKER.name();
             ResMessages.StickerMessage stickerMessage = (ResMessages.StickerMessage) contentMessage;
 
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("stickerOf_id", stickerMessage.id);
+            deleteBuilder.delete();
             for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
                 shareEntity.setStickerOf(stickerMessage);
-                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+                dao.create(shareEntity);
             }
 
 
@@ -100,9 +155,14 @@ public class MessageRepository {
         } else if (contentMessage instanceof ResMessages.CommentStickerMessage) {
             message.messageType = ResMessages.MessageType.COMMENT_STICKER.name();
             ResMessages.CommentStickerMessage stickerMessage = (ResMessages.CommentStickerMessage) contentMessage;
+
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("commentStickerOf_id", stickerMessage.id);
+
             for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : stickerMessage.shareEntities) {
                 shareEntity.setCommentStickerOf(stickerMessage);
-                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+                dao.create(shareEntity);
             }
             helper.getDao(ResMessages.StickerContent.class).createOrUpdate(stickerMessage.content);
             helper.getDao(ResMessages.CommentStickerMessage.class).createOrUpdate(stickerMessage);
@@ -112,9 +172,14 @@ public class MessageRepository {
 
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) contentMessage;
 
+            Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+            DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("commentOf_id", commentMessage.id);
+            deleteBuilder.delete();
+
             for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : commentMessage.shareEntities) {
                 shareEntity.setCommentOf(commentMessage);
-                helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+                dao.create(shareEntity);
             }
 
             helper.getDao(ResMessages.TextContent.class).create(commentMessage.content);
@@ -125,9 +190,13 @@ public class MessageRepository {
 
     private void upsertFileMessage(ResMessages.FileMessage fileMessage) throws SQLException {
 
+        Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
+        DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
+        deleteBuilder.where().eq("fileOf_id", fileMessage.id);
+
         for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
             shareEntity.setFileOf(fileMessage);
-            helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class).create(shareEntity);
+            dao.create(shareEntity);
         }
 
 
@@ -187,6 +256,15 @@ public class MessageRepository {
             if (createEvent.createInfo instanceof ResMessages.PublicCreateInfo) {
                 ResMessages.PublicCreateInfo createInfo = (ResMessages.PublicCreateInfo) createEvent.createInfo;
                 helper.getDao(ResMessages.PublicCreateInfo.class).createOrUpdate(createInfo);
+
+                DeleteBuilder<ResMessages.PublicCreateInfo.IntegerWrapper, ?> deleteBuilder
+                        = helper.getDao(ResMessages.PublicCreateInfo.IntegerWrapper.class)
+                        .deleteBuilder();
+                deleteBuilder.where()
+                        .eq("createInfo_id", createInfo._id);
+                deleteBuilder.delete();
+
+
                 for (ResMessages.PublicCreateInfo.IntegerWrapper member : (createInfo).members) {
                     member.setCreateInfo(createInfo);
                     helper.getDao(ResMessages.PublicCreateInfo.IntegerWrapper.class).createOrUpdate(member);
@@ -194,6 +272,14 @@ public class MessageRepository {
             } else {
                 ResMessages.PrivateCreateInfo createInfo = (ResMessages.PrivateCreateInfo) createEvent.createInfo;
                 helper.getDao(ResMessages.PrivateCreateInfo.class).createOrUpdate(createInfo);
+
+                DeleteBuilder<ResMessages.PrivateCreateInfo.IntegerWrapper, ?> deleteBuilder
+                        = helper.getDao(ResMessages.PrivateCreateInfo.IntegerWrapper.class)
+                        .deleteBuilder();
+                deleteBuilder.where()
+                        .eq("createInfo_id", createInfo._id);
+                deleteBuilder.delete();
+
                 for (ResMessages.PrivateCreateInfo.IntegerWrapper member : (createInfo).members) {
                     member.setCreateInfo(createInfo);
                     helper.getDao(ResMessages.PrivateCreateInfo.IntegerWrapper.class)
@@ -210,6 +296,13 @@ public class MessageRepository {
         } else if (info instanceof ResMessages.InviteEvent) {
             ResMessages.InviteEvent info1 = (ResMessages.InviteEvent) info;
             helper.getDao(ResMessages.InviteEvent.class).createOrUpdate(info1);
+
+            DeleteBuilder<ResMessages.InviteEvent.IntegerWrapper, ?> deleteBuilder
+                    = helper.getDao(ResMessages.InviteEvent.IntegerWrapper.class)
+                    .deleteBuilder();
+            deleteBuilder.where()
+                    .eq("inviteEvent_id", info1._id);
+            deleteBuilder.delete();
 
             for (ResMessages.InviteEvent.IntegerWrapper inviteUser : info1.inviteUsers) {
                 inviteUser.setInviteEvent(info1);

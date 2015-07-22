@@ -21,7 +21,7 @@ public class LeftSideMenuRepository {
     private static LeftSideMenuRepository repository;
     private final OrmDatabaseHelper openHelper;
 
-    public LeftSideMenuRepository(Context context) {
+    private LeftSideMenuRepository(Context context) {
         openHelper = OpenHelperManager.getHelper(context, OrmDatabaseHelper.class);
     }
 

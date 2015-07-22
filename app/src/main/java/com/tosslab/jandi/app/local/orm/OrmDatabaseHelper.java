@@ -9,6 +9,7 @@ import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
@@ -66,6 +67,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResMessages.CommentStickerMessage.class);
             createTable(connectionSource, ResMessages.CommentMessage.class);
 
+            createTable(connectionSource, ResChat.class);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -112,6 +114,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             dropTable(connectionSource, ResMessages.CommentStickerMessage.class);
             dropTable(connectionSource, ResMessages.CommentMessage.class);
 
+            dropTable(connectionSource, ResChat.class);
 
             onCreate(database, connectionSource);
 

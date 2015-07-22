@@ -63,6 +63,8 @@ public class ResMessages {
         @DatabaseField
         public int teamId;
         @DatabaseField
+        public int roomId;
+        @DatabaseField
         public int fromEntity;
         @DatabaseField
         public Date time;

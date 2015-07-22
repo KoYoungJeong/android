@@ -7,8 +7,10 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.BaseInitUtil;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
@@ -16,9 +18,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -27,30 +29,48 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @RunWith(RobolectricGradleTestRunner.class)
 public class MessageRepositoryTest {
 
+    public static final int ROOM_ID = 11162328;
+    public static final int TEAM_ID = 279;
     private static final String MESSAGE_JSON = "{\"entityId\":11162328,\"globalLastLinkId\":430456," +
             "\"firstLinkId\":430437,\"lastLinkId\":430456,\"records\":[{\"id\":430437,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"entityType\":\"privateGroup\",\"eventType\":\"create\",\"inviteUsers\":[],\"createInfo\":{\"pg_creatorId\":6098,\"pg_createTime\":1437551059830,\"pg_members\":[6098],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551059844,\"toEntity\":[11162328]},{\"id\":430438,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"invitorId\":6098,\"eventType\":\"invite\",\"inviteUsers\":[11159859],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551068951,\"toEntity\":[11162328]},{\"id\":430439,\"teamId\":279,\"fromEntity\":11159859,\"info\":{\"eventType\":\"leave\",\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551079716,\"toEntity\":[11162328]},{\"id\":430440,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"created\",\"messageId\":379012,\"time\":1437551086763,\"toEntity\":[11162328],\"message\":{\"id\":379012,\"teamId\":279,\"writerId\":6098,\"contentType\":\"text\",\"permission\":740,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"body\":\"test\"},\"updateTime\":1437551086755,\"createTime\":1437551086755,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430442,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"created\",\"messageId\":379014,\"time\":1437551092435,\"toEntity\":[11162328],\"message\":{\"id\":379014,\"permission\":750,\"contentType\":\"sticker\",\"writerId\":6098,\"teamId\":279,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"stickerId\":\"1\",\"groupId\":100,\"url\":\"http://jandi.io:8888/files-sticker/100/1\"},\"updateTime\":1437551092433,\"createTime\":1437551092432,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430443,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"shared\",\"messageId\":379015,\"time\":1437551125545,\"toEntity\":[11162328],\"message\":{\"id\":379015,\"permission\":750,\"contentType\":\"file\",\"writerId\":6098,\"teamId\":279,\"info\":{\"mention\":[]},\"commentCount\":2,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"title\":\"sprinkler-android.db\",\"name\":\"sprinkler-android.db\",\"filename\":\"80ece39ac975b8360f0ee2bd11677aac.db\",\"type\":\"application/octet-stream\",\"icon\":\"etc\",\"size\":24576,\"ext\":\"db\",\"serverUrl\":\"s3\",\"fileUrl\":\"files-private/279/80ece39ac975b8360f0ee2bd11677aac.db\",\"filterType\":\"etc\"},\"updateTime\":1437551125542,\"createTime\":1437551125536,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430444,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":379015,\"status\":\"created\",\"messageId\":379016,\"time\":1437551125578,\"toEntity\":[11162328],\"message\":{\"id\":379016,\"permission\":744,\"contentType\":\"comment\",\"writerId\":6098,\"teamId\":279,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":379015,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"body\":\"1234\"},\"updateTime\":1437551125564,\"createTime\":1437551125550,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}},\"feedback\":{\"id\":379015,\"permission\":750,\"contentType\":\"file\",\"writerId\":6098,\"teamId\":279,\"info\":{\"mention\":[]},\"commentCount\":2,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"title\":\"sprinkler-android.db\",\"name\":\"sprinkler-android.db\",\"filename\":\"80ece39ac975b8360f0ee2bd11677aac.db\",\"type\":\"application/octet-stream\",\"icon\":\"etc\",\"size\":24576,\"ext\":\"db\",\"serverUrl\":\"s3\",\"fileUrl\":\"files-private/279/80ece39ac975b8360f0ee2bd11677aac.db\",\"filterType\":\"etc\"},\"updateTime\":1437551125542,\"createTime\":1437551125536,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430445,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":379015,\"status\":\"created\",\"messageId\":379017,\"time\":1437551131948,\"toEntity\":[11162328],\"message\":{\"id\":379017,\"teamId\":279,\"writerId\":6098,\"contentType\":\"comment_sticker\",\"permission\":744,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":379015,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"stickerId\":\"1\",\"groupId\":100,\"url\":\"http://jandi.io:8888/files-sticker/100/1\"},\"updateTime\":1437551131944,\"createTime\":1437551131944,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}},\"feedback\":{\"id\":379015,\"permission\":750,\"contentType\":\"file\",\"writerId\":6098,\"teamId\":279,\"info\":{\"mention\":[]},\"commentCount\":2,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"title\":\"sprinkler-android.db\",\"name\":\"sprinkler-android.db\",\"filename\":\"80ece39ac975b8360f0ee2bd11677aac.db\",\"type\":\"application/octet-stream\",\"icon\":\"etc\",\"size\":24576,\"ext\":\"db\",\"serverUrl\":\"s3\",\"fileUrl\":\"files-private/279/80ece39ac975b8360f0ee2bd11677aac.db\",\"filterType\":\"etc\"},\"updateTime\":1437551125542,\"createTime\":1437551125536,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430446,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"eventType\":\"announcement_created\",\"eventInfo\":{\"writerId\":6098},\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551135772,\"toEntity\":[11162328]},{\"id\":430447,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"created\",\"messageId\":379018,\"time\":1437551147510,\"toEntity\":[11162328],\"message\":{\"id\":379018,\"teamId\":279,\"writerId\":6098,\"contentType\":\"text\",\"permission\":740,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"body\":\"qaz\"},\"updateTime\":1437551147506,\"createTime\":1437551147506,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430448,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"eventType\":\"announcement_created\",\"eventInfo\":{\"writerId\":6098},\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551150503,\"toEntity\":[11162328]},{\"id\":430449,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"eventType\":\"announcement_deleted\",\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551169721,\"toEntity\":[11162328]},{\"id\":430450,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"invitorId\":6098,\"eventType\":\"invite\",\"inviteUsers\":[11159859],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551209852,\"toEntity\":[11162328]},{\"id\":430451,\"fromEntity\":11159859,\"teamId\":279,\"info\":{\"eventType\":\"announcement_created\",\"eventInfo\":{\"writerId\":6098},\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551219880,\"toEntity\":[11162328]},{\"id\":430452,\"fromEntity\":6098,\"teamId\":279,\"info\":{\"eventType\":\"announcement_created\",\"eventInfo\":{\"writerId\":6098},\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551225645,\"toEntity\":[11162328]},{\"id\":430453,\"teamId\":279,\"fromEntity\":6098,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"created\",\"messageId\":379019,\"time\":1437551234804,\"toEntity\":[11162328],\"message\":{\"id\":379019,\"teamId\":279,\"writerId\":6098,\"contentType\":\"text\",\"permission\":740,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"body\":\"qweasdzxc\"},\"updateTime\":1437551234799,\"createTime\":1437551234799,\"writer\":{\"id\":6098,\"type\":\"user\",\"name\":\"Steve Jung\",\"u_photoUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg\",\"u_statusMessage\":\"개발은 근성!!\",\"u_extraData\":{\"phoneNumber\":\"+821050409730\",\"department\":\"부서닷\",\"position\":\"직책이닷!\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=80\",\"mediumThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=360\",\"largeThumbnailUrl\":\"files-profile/c9464bba5d62977eed5cb4d432d743dc.jpg?size=640\"}},\"linkPreview\":{}}},{\"id\":430454,\"teamId\":279,\"fromEntity\":11159859,\"info\":{\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"created\",\"messageId\":379020,\"time\":1437551238431,\"toEntity\":[11162328],\"message\":{\"id\":379020,\"teamId\":279,\"writerId\":11159859,\"contentType\":\"text\",\"permission\":740,\"info\":{\"mention\":[]},\"commentCount\":0,\"feedbackId\":-1,\"shareEntities\":[11162328],\"status\":\"created\",\"linkPreviewId\":null,\"content\":{\"body\":\"qweasdzxc\"},\"updateTime\":1437551238426,\"createTime\":1437551238426,\"writer\":{\"id\":11159859,\"name\":\"steve.test\",\"u_statusMessage\":\"\",\"u_photoUrl\":\"images/profile_80.png\",\"type\":\"user\",\"u_extraData\":{\"position\":\"\",\"department\":\"\",\"phoneNumber\":\"\"},\"u_photoThumbnailUrl\":{\"smallThumbnailUrl\":\"images/profile_80.png\",\"mediumThumbnailUrl\":\"images/profile_180.png\",\"largeThumbnailUrl\":\"images/profile_180.png\"}},\"linkPreview\":{}}},{\"id\":430455,\"fromEntity\":11159859,\"teamId\":279,\"info\":{\"eventType\":\"announcement_created\",\"eventInfo\":{\"writerId\":11159859},\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551242748,\"toEntity\":[11162328]},{\"id\":430456,\"fromEntity\":11159859,\"teamId\":279,\"info\":{\"eventType\":\"announcement_deleted\",\"inviteUsers\":[],\"createInfo\":{\"pg_members\":[],\"ch_members\":[]}},\"feedbackId\":-1,\"status\":\"event\",\"messageId\":-1,\"time\":1437551251118,\"toEntity\":[11162328]}]}";
 
-    private OrmDatabaseHelper helper;
+    @Before
+    public void setUp() throws Exception {
+        BaseInitUtil.initData(Robolectric.application);
+    }
 
     @After
     public void tearDown() throws Exception {
-
-        String path = helper.getReadableDatabase().getPath();
-        System.out.println("cp " + path + " ~/Desktop/");
-
-        System.out.println("Finish");
+        OpenHelperManager.getHelper(Robolectric.application, OrmDatabaseHelper.class)
+                .getDao(ResMessages.Link.class)
+                .deleteBuilder()
+                .delete();
 
     }
 
     @Test
     public void testUpsertMessages() throws Exception {
         List<ResMessages.Link> messages = getMessages();
+        for (ResMessages.Link message : messages) {
+            message.roomId = ROOM_ID;
+        }
+        boolean success = MessageRepository.getRepository().upsertMessages(messages);
+
+        assertTrue(success);
+
+    }
+
+    @Test
+    public void testGetMessages() throws Exception {
+
+        List<ResMessages.Link> messages = getMessages();
+        for (ResMessages.Link message : messages) {
+            message.roomId = ROOM_ID;
+        }
         MessageRepository.getRepository().upsertMessages(messages);
 
-        helper = OpenHelperManager.getHelper(Robolectric.application, OrmDatabaseHelper.class);
-        assertThat(helper, is(notNullValue()));
 
-        List<ResMessages.Link> savedLinks = helper.getDao(ResMessages.Link.class).queryBuilder().query();
+        List<ResMessages.Link> savedLinks = MessageRepository.getRepository().getMessages(ROOM_ID);
 
         assertThat(savedLinks.size(), is(equalTo(messages.size())));
         assertThat(savedLinks.get(0).eventType, is(equalTo(messages.get(0).eventType)));
@@ -65,7 +85,21 @@ public class MessageRepositoryTest {
                 is(equalTo(((ResMessages.CommentStickerMessage) messages.get(7).message).content.stickerId)));
 
         assertThat(savedLinks.get(10).eventType, is(equalTo(messages.get(10).eventType)));
+    }
 
+
+    @Test
+    public void testDeleteMessage() throws Exception {
+        List<ResMessages.Link> messages = getMessages();
+        for (ResMessages.Link message : messages) {
+            message.roomId = ROOM_ID;
+        }
+        MessageRepository.getRepository().upsertMessages(messages);
+
+        MessageRepository.getRepository().deleteMessage(messages.get(3).messageId);
+
+        List<ResMessages.Link> savedMessage = MessageRepository.getRepository().getMessages(ROOM_ID);
+        assertThat(messages.size() - 1, is(equalTo(savedMessage.size())));
     }
 
     private List<ResMessages.Link> getMessages() {
@@ -80,6 +114,4 @@ public class MessageRepositoryTest {
 
         return new ArrayList<>();
     }
-
-
 }

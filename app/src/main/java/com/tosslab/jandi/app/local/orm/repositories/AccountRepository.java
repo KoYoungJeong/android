@@ -27,7 +27,7 @@ public class AccountRepository {
 
     private OrmLiteSqliteOpenHelper openHelper;
 
-    public AccountRepository(Context context) {
+    private AccountRepository(Context context) {
         openHelper = OpenHelperManager.getHelper(context, OrmDatabaseHelper.class);
     }
 
