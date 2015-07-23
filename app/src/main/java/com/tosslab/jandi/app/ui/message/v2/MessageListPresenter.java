@@ -34,13 +34,13 @@ import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.filedetail.FileDetailActivity_;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
@@ -493,7 +493,7 @@ public class MessageListPresenter {
     }
 
     public void insertSendingMessage(long localId, String message, String name, String userLargeProfileUrl) {
-        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendingState.Sending);
+        DummyMessageLink dummyMessageLink = new DummyMessageLink(localId, message, SendMessage.Status.SENDING.name());
         dummyMessageLink.message.writerId = EntityManager.getInstance(activity).getMe().getId();
         dummyMessageLink.message.createTime = new Date();
         dummyMessageLink.message.updateTime = new Date();
@@ -504,7 +504,7 @@ public class MessageListPresenter {
         messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getItemCount() - 1);
     }
 
-    public void updateDummyMessageState(long localId, SendingState state) {
+    public void updateDummyMessageState(long localId, SendMessage.Status state) {
         messageListAdapter.updateDummyMessageState(localId, state);
         justRefresh();
     }

@@ -63,6 +63,6 @@ public class SendMessage {
     }
 
     public enum Status {
-        SENDING, FIAL, COMPLETE
+        SENDING, FAIL, COMPLETE
     }
 }

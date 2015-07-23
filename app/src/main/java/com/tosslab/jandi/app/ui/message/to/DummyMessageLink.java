@@ -10,9 +10,9 @@ import java.util.Date;
 public class DummyMessageLink extends ResMessages.Link {
 
     private final long localId;
-    private SendingState sendingState;
+    private String status;
 
-    public DummyMessageLink(long localId, String message, SendingState sendingState) {
+    public DummyMessageLink(long localId, String message, String status) {
         this.localId = localId;
 
         ResMessages.TextMessage textMessage = new ResMessages.TextMessage();
@@ -23,7 +23,7 @@ public class DummyMessageLink extends ResMessages.Link {
 
         this.time = new Date(System.currentTimeMillis());
         this.message = textMessage;
-        this.sendingState = sendingState;
+        this.status = status;
     }
 
     public long getLocalId() {
@@ -38,12 +38,12 @@ public class DummyMessageLink extends ResMessages.Link {
         this.messageId = messageId;
     }
 
-    public SendingState getSendingState() {
-        return sendingState;
+    public String getStatus() {
+        return status;
     }
 
-    public void setSendingState(SendingState sendingState) {
-        this.sendingState = sendingState;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
@@ -133,6 +134,38 @@ public class MessageRepositoryTest {
         readyMessage = MessageRepository.getRepository().getReadyMessage(roomId);
         assertThat(readyMessage.getText(), is(""));
 
+    }
+
+    @Test
+    public void testSendMessage() throws Exception {
+        SendMessage sendMessage = new SendMessage();
+        int roomId = 1;
+        sendMessage.setRoomId(roomId);
+        String message = "hahaha";
+        sendMessage.setMessage(message);
+        MessageRepository.getRepository().insertSendMessage(sendMessage);
+
+
+        List<SendMessage> sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+        sendMessage = sendMessages.get(0);
+
+        assertThat(sendMessages.size(), is(equalTo(roomId)));
+        assertThat(sendMessage.getMessage(), is(equalTo(message)));
+        assertThat(sendMessage.getStatus(), is(equalTo(SendMessage.Status.SENDING.name())));
+
+        sendMessage.setStatus(SendMessage.Status.COMPLETE.name());
+        MessageRepository.getRepository().updateSendMessageStatus(sendMessage.getId(),
+                SendMessage.Status.COMPLETE);
+
+        sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+        sendMessage = sendMessages.get(0);
+
+        assertThat(sendMessage.getStatus(), is(equalTo(SendMessage.Status.COMPLETE.name())));
+
+        MessageRepository.getRepository().deleteSendMessage(sendMessage.getId());
+        sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+
+        assertThat(sendMessages.size(), is(equalTo(0)));
     }
 
     private List<ResMessages.Link> getMessages() {

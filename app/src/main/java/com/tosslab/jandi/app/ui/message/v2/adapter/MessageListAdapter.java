@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +13,9 @@ import android.view.ViewGroup;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.messages.RefreshNewMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewFactory;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.RecyclerBodyViewHolder;
@@ -57,10 +56,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public void setTeamId(int teamId) {
         this.teamId = teamId;
-    }
-
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
     }
 
     public int getCount() {
@@ -182,7 +177,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
             ResMessages.Link link = messageList.get(idx);
             if (link instanceof DummyMessageLink) {
                 DummyMessageLink dummyLink = (DummyMessageLink) link;
-                if (dummyLink.getSendingState() == SendingState.Complete) {
+                if (TextUtils.equals(dummyLink.getStatus(), SendMessage.Status.COMPLETE.name())) {
                     messageList.remove(idx);
                 }
             } else {
@@ -371,10 +366,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     }
 
-    public void updateDummyMessageState(long localId, SendingState state) {
+    public void updateDummyMessageState(long localId, SendMessage.Status state) {
         int dummeMessagePositionByLocalId = getDummeMessagePositionByLocalId(localId);
         if (dummeMessagePositionByLocalId >= 0) {
-            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setSendingState(state);
+            ((DummyMessageLink) getItem(dummeMessagePositionByLocalId)).setStatus(state.name());
         }
     }
 
@@ -438,6 +433,10 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public int getRoomId() {
         return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
     public MessageListAdapter setEntityId(int entityId) {

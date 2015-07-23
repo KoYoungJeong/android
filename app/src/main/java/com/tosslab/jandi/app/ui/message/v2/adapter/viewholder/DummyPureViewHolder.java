@@ -5,6 +5,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 
@@ -34,16 +35,17 @@ public class DummyPureViewHolder implements BodyViewHolder {
             messageTextView.setText(textMessage.content.body);
         }
 
-        switch (dummyMessageLink.getSendingState()) {
-            case Fail:
+        SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+        switch (status) {
+            case FAIL:
                 failAlertTextView.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.GONE);
                 break;
-            case Sending:
+            case SENDING:
                 failAlertTextView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 break;
-            case Complete:
+            case COMPLETE:
                 failAlertTextView.setVisibility(View.GONE);
                 progressBar.setVisibility(View.GONE);
                 break;

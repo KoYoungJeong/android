@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
@@ -72,7 +73,6 @@ import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.to.UpdateMessage;
 import com.tosslab.jandi.app.ui.message.to.queue.CheckAnnouncementQueue;
@@ -297,10 +297,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
         }
         if (linkId > 0) {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.COMPLETE);
             EventBus.getDefault().post(new RefreshNewMessageEvent());
         } else {
-            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Fail);
+            messageListPresenter.updateDummyMessageState(data.getLocalId(), SendMessage.Status.FAIL);
         }
     }
 
@@ -379,7 +379,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.setEntityInfo(entityType, entityId);
 
         String tempMessage;
-        if (messageListModel.isUser(entityId) ) {
+        if (messageListModel.isUser(entityId)) {
 
             if (roomId > 0) {
                 tempMessage = messageListModel.getReadyMessage(roomId);
@@ -645,7 +645,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         } else if (!TextUtils.isEmpty(message)) {
             // insert to db
-            long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
+            long localId;
+            if (messageListModel.isUser(entityId)) {
+                if (roomId > 0) {
+                    localId = messageListModel.insertSendingMessage(roomId, message);
+                } else {
+                    // roomId 를 할당받지 못하면 메세지를 보내지 않음
+                    return;
+                }
+            } else {
+                localId = messageListModel.insertSendingMessage(entityId, message);
+            }
 
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
 
@@ -681,7 +691,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendingState.Fail);
+        messageListPresenter.updateDummyMessageState(event.getLocalId(), SendMessage.Status.FAIL);
     }
 
     public void onEventMainThread(ChatModeChangeEvent event) {
@@ -843,7 +853,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             return;
         }
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
-        dummyMessage.setSendingState(SendingState.Sending);
+        dummyMessage.setStatus(SendMessage.Status.SENDING.name());
         messageListPresenter.justRefresh();
         sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body)));
     }

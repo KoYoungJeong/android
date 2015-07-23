@@ -22,8 +22,8 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
@@ -45,7 +45,6 @@ import com.tosslab.jandi.app.ui.message.model.menus.MenuCommandBuilder;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 import com.tosslab.jandi.app.ui.message.to.SendingMessage;
-import com.tosslab.jandi.app.ui.message.to.SendingState;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -60,6 +59,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -176,23 +176,29 @@ public class MessageListModel {
         SendingMessage sendingMessage = new SendingMessage(localId, message);
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
-            JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
+            MessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
         } catch (RetrofitError e) {
             e.printStackTrace();
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            MessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
+                    , SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         } catch (Exception e) {
-            JandiMessageDatabaseManager.getInstance(activity).updateSendState(sendingMessage.getLocalId(), SendingState.Fail);
+            MessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
+                    , SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         }
     }
 
-    public long insertSendingMessage(int teamId, int entityId, String message) {
-        return JandiMessageDatabaseManager.getInstance(activity).insertSendMessage(teamId, entityId, message);
+    public long insertSendingMessage(int roomId, String message) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setRoomId(roomId);
+        sendMessage.setMessage(message);
+        MessageRepository.getRepository().insertSendMessage(sendMessage);
+        return sendMessage.getId();
     }
 
     public boolean isMyMessage(int writerId) {
@@ -301,26 +307,31 @@ public class MessageListModel {
     }
 
     public void deleteSendingMessage(long localId) {
-        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+        MessageRepository.getRepository().deleteSendMessage(localId);
     }
 
-    public List<ResMessages.Link> getDummyMessages(int teamId, int entityId, String name, String userLargeProfileUrl) {
-        List<ResMessages.Link> sendMessage = JandiMessageDatabaseManager.getInstance(activity).getSendMessage(teamId, entityId);
+    public List<ResMessages.Link> getDummyMessages(int teamId, int roomId, String name, String userLargeProfileUrl) {
+        List<SendMessage> sendMessage = MessageRepository.getRepository().getSendMessage
+                (roomId);
         int id = EntityManager.getInstance(activity).getMe().getId();
-        for (ResMessages.Link link : sendMessage) {
+        List<ResMessages.Link> links = new ArrayList<>();
+        for (SendMessage link : sendMessage) {
 
-            link.message.writerId = id;
-            link.message.createTime = new Date();
+            DummyMessageLink dummyMessageLink = new DummyMessageLink(link.getId(), link.getMessage(),
+                    link.getStatus());
+            dummyMessageLink.message.writerId = id;
+            dummyMessageLink.message.createTime = new Date();
+            links.add(dummyMessageLink);
         }
-        return sendMessage;
+        return links;
     }
 
     public boolean isFailedDummyMessage(DummyMessageLink dummyMessageLink) {
-        return dummyMessageLink.getSendingState() == SendingState.Fail;
+        return TextUtils.equals(dummyMessageLink.getStatus(), SendMessage.Status.FAIL.name());
     }
 
     public void deleteDummyMessageAtDatabase(long localId) {
-        JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(localId);
+        MessageRepository.getRepository().deleteSendMessage(localId);
     }
 
     public boolean isDefaultTopic(int entityId) {

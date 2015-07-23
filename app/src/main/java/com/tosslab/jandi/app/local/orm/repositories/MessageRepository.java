@@ -179,7 +179,7 @@ public class MessageRepository {
         return new ArrayList<>();
     }
 
-    public int deleteSendMessage(int id) {
+    public int deleteSendMessage(long id) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
@@ -193,7 +193,7 @@ public class MessageRepository {
         return 0;
     }
 
-    public int updateSendMessageStatus(int id, SendMessage.Status status) {
+    public int updateSendMessageStatus(long id, SendMessage.Status status) {
         try {
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             UpdateBuilder<SendMessage, ?> updateBuilder = dao.updateBuilder();
