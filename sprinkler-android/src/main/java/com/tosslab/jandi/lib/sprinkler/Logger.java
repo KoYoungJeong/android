@@ -59,4 +59,9 @@ public class Logger {
         }
         throwable.printStackTrace();
     }
+
+    public static String makeTag(Class<?> clazz) {
+        return "Sprinkler" + "." + clazz.getSimpleName();
+    }
+
 }

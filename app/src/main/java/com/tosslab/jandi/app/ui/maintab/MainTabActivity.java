@@ -43,6 +43,10 @@ import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.track.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -86,6 +90,14 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
     @AfterViews
     void initView() {
+
+        // for Sprinkler test
+        Sprinkler.with(getApplicationContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .build());
+
         LogUtil.d("시작은 여기");
         mContext = getApplicationContext();
         mEntityManager = EntityManager.getInstance(mContext);

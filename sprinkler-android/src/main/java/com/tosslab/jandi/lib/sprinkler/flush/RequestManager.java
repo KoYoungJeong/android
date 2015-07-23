@@ -12,11 +12,12 @@ import retrofit.RetrofitError;
  * Created by tonyjs on 15. 7. 21..
  */
 final class RequestManager {
+    public static final String TAG = Logger.makeTag(RequestManager.class);
+
     public interface Request<RESPONSE> {
         RESPONSE performRequest() throws RetrofitError;
     }
 
-    public static final String TAG = RequestManager.class.getSimpleName();
     private static final int RETRY_COUNT = 3;
 
     private boolean isCanceled = false;
@@ -40,21 +41,21 @@ final class RequestManager {
         while (i <= RETRY_COUNT) {
             try {
                 response = request.performRequest();
-                Logger.i(TAG, "You can see the response");
+                Logger.i(TAG, "Request success.");
                 break;
             } catch (RetrofitError retrofitError) {
                 if (isCanceled) {
-                    Logger.i(TAG, "holly shit request has cancelled.");
+                    Logger.i(TAG, "Request has cancelled.");
                     throw retrofitError;
                 }
                 Logger.print(retrofitError);
                 if (i >= RETRY_COUNT) {
-                    Log.i(TAG, "holly shit can not request more.");
+                    Log.i(TAG, "Request fail - retry has exceeded.");
                     throw retrofitError;
                 }
 
                 i++;
-                Logger.i(TAG, "retry - " + i);
+                Logger.i(TAG, "Request retry - " + i);
             }
         }
         return response;
@@ -89,8 +90,7 @@ final class RequestManager {
 
         @Override
         public String getEndPoint() {
-            return "https://api.github.com/users/tonyjs";
-//            return "http://112.219.215.148:50080/log";
+            return "http://112.219.215.148:50080/log";
         }
 
         @Override
@@ -104,6 +104,5 @@ final class RequestManager {
 
         RestAdapter.LogLevel getLogLevel();
     }
-
 
 }

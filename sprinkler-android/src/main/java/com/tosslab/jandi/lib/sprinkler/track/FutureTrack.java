@@ -1,8 +1,8 @@
 package com.tosslab.jandi.lib.sprinkler.track;
 
-import com.tosslab.jandi.lib.sprinkler.model.IdentifierKey;
-import com.tosslab.jandi.lib.sprinkler.model.event.Event;
-import com.tosslab.jandi.lib.sprinkler.model.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 
 import java.io.Serializable;
 import java.util.HashMap;

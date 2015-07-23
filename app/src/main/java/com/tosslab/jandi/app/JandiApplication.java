@@ -54,8 +54,7 @@ public class JandiApplication extends MultiDexApplication {
 
     @Override
     public void onTrimMemory(int level) {
-        Sprinkler.with(this)
-                .stopAll();
+        Sprinkler.with(this).stopAll();
         super.onTrimMemory(level);
     }
 

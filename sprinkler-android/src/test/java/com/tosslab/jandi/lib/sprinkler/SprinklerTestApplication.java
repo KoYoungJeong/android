@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.track;
+package com.tosslab.jandi.lib.sprinkler;
 
 import android.app.Application;
 

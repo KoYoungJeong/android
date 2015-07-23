@@ -1,8 +1,8 @@
 package com.tosslab.jandi.lib.sprinkler.track.factory;
 
 import com.tosslab.jandi.lib.sprinkler.Config;
-import com.tosslab.jandi.lib.sprinkler.model.event.Event;
-import com.tosslab.jandi.lib.sprinkler.model.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.track.FutureTrack;
 
 /**

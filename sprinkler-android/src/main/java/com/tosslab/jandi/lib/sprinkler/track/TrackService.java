@@ -3,10 +3,8 @@ package com.tosslab.jandi.lib.sprinkler.track;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.google.gson.Gson;
 import com.tosslab.jandi.lib.sprinkler.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -14,62 +12,73 @@ import java.util.Map;
  * Created by tonyjs on 15. 7. 22..
  */
 public class TrackService extends IntentService {
-    public static final String TAG = TrackService.class.getSimpleName();
+    public static final String TAG = Logger.makeTag(TrackService.class);
     public static final String KEY_TRACK = "track";
 
     public TrackService() {
         super(TAG);
     }
 
-    private TrackDatabaseHelper trackDatabaseHelper;
+    private Tracker tracker;
+    private TrackUncaughtExceptionHandler exceptionHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        trackDatabaseHelper = TrackDatabaseHelper.getInstance(getApplicationContext());
+        tracker = new Tracker(getApplicationContext());
+        exceptionHandler = new TrackUncaughtExceptionHandler();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Logger.d(TAG, ">> track start");
-        Serializable passingData = intent.getSerializableExtra(KEY_TRACK);
-        if (passingData == null || !(passingData instanceof FutureTrack)) {
-            Logger.e(TAG, "You need to passing FutureTrack data.");
+
+        setUncaughtException();
+
+        Serializable data = intent.getSerializableExtra(KEY_TRACK);
+        if (!tracker.validateFutureTrack(data)) {
+            Logger.e(TAG, "<< track end(invalidate track)");
             return;
         }
 
-        FutureTrack track = (FutureTrack) passingData;
+        FutureTrack track = (FutureTrack) data;
 
         String event = track.getEvent();
-        String identifiers = mapToJSONFormat(track.getIdentifiersMap());
+        Map<String, String> identifiers = track.getIdentifiersMap();
         String platform = track.getPlatform();
-        String properties = mapToJSONFormat(track.getPropertiesMap());
+        Map<String, Object> properties = track.getPropertiesMap();
         long time = track.getTime();
-        boolean insert = trackDatabaseHelper.insert(event, identifiers, platform, properties, time);
+
+        boolean insert = tracker.insert(event, identifiers, platform, properties, time);
+
         if (insert) {
-            Logger.i(TAG, "FutureTrack insert Success !!!!!!!!!");
+            Logger.i(TAG, "Track insert Success.");
         } else {
-            Logger.e(TAG, "FutureTrack insert Fail !!!!!!!!!");
+            Logger.e(TAG, "Track insert Fail.");
         }
 
         Logger.d(TAG, "<< track end");
     }
 
-    public String mapToJSONFormat(Map<String, ?> map) {
-        if (map == null || map.isEmpty()) {
-            return null;
-        }
+    private void setUncaughtException() {
+        Thread.UncaughtExceptionHandler uncaughtExceptionHandler =
+                Thread.currentThread().getUncaughtExceptionHandler();
 
-        JSONObject jsonObject = new JSONObject();
-        for (Map.Entry<String, ?> entry : map.entrySet()) {
-            try {
-                jsonObject.put(entry.getKey(), entry.getValue());
-            } catch (JSONException e) {
-                Logger.e(TAG, "JSONException has occurred.");
-                Logger.print(e);
-            }
+        if (uncaughtExceptionHandler != null
+                && uncaughtExceptionHandler instanceof TrackUncaughtExceptionHandler) {
+            return;
         }
-        return jsonObject.toString();
+        Thread.currentThread().setUncaughtExceptionHandler(exceptionHandler);
+    }
+
+    private class TrackUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread thread, Throwable ex) {
+            Logger.e(TAG, "Catch the Exception ! \n" + ex.getMessage());
+            Logger.print(ex);
+            stopSelf();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ package com.tosslab.jandi.lib.sprinkler.track;
  * Flush 를 위한 Track
  */
 public class Track {
+    // Gson Serialize 붎필요.
     private transient int index;
     private String ev;
     private String id;
@@ -32,5 +33,29 @@ public class Track {
                 ", pr='" + pr + '\'' +
                 ", time=" + time +
                 '}';
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+//    public String getEv() {
+//        return ev;
+//    }
+//
+//    public String getId() {
+//        return id;
+//    }
+//
+//    public String getPl() {
+//        return pl;
+//    }
+//
+//    public String getPr() {
+//        return pr;
+//    }
+
+    public long getTime() {
+        return time;
     }
 }

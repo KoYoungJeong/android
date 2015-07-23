@@ -5,17 +5,20 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
+import com.tosslab.jandi.lib.sprinkler.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 /**
  * Created by tonyjs on 15. 7. 20..
  */
 public class FlushRetriever {
-    public static final String TAG = FlushRetriever.class.getSimpleName();
+    public static final String TAG = Logger.makeTag(FlushRetriever.class);
+
     //    private static final long INTERVAL = 1000 * 60;
     private static final long INTERVAL = 1000 * 15;
-    private boolean isStop = false;
+    private boolean isStopped = true;
     private Handler handler;
     private Context context;
 
@@ -24,23 +27,30 @@ public class FlushRetriever {
     }
 
     public void start() {
-        HandlerThread handlerThread = new HandlerThread("flush_retrieve_thread");
+        if (!isStopped && handler != null) {
+            return;
+        }
+        HandlerThread handlerThread = new HandlerThread("FlushRetriever.HandlerThread");
         handlerThread.start();
         handler = new FlushHandler(handlerThread.getLooper());
         handler.sendEmptyMessageDelayed(0, INTERVAL);
-        isStop = false;
+        isStopped = false;
     }
 
     public void stop() {
         quit();
-        isStop = true;
+        isStopped = true;
     }
 
-    public boolean isStop() {
-        return isStop;
+    public boolean isStopped() {
+        return isStopped;
     }
 
     private void quit() {
+        if (handler == null) {
+            return;
+        }
+        handler.removeMessages(0);
         handler.getLooper().quit();
         handler = null;
     }
@@ -53,8 +63,9 @@ public class FlushRetriever {
 
         @Override
         public void handleMessage(Message msg) {
+            Log.d(TAG, "handleMessage");
             Sprinkler.with(context).flush();
-            sendEmptyMessageDelayed(0, INTERVAL);
+            handler.sendEmptyMessageDelayed(0, INTERVAL);
         }
     }
 }

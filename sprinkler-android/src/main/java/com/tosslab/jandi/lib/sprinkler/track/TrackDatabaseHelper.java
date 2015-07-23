@@ -19,7 +19,7 @@ import java.util.List;
  * Created by tonyjs on 15. 7. 21..
  */
 public class TrackDatabaseHelper extends SQLiteOpenHelper {
-    public static final String TAG = TrackDatabaseHelper.class.getSimpleName();
+    public static final String TAG = Logger.makeTag(TrackDatabaseHelper.class);
 
     interface TableColumns {
         String _ID = "_id";
@@ -37,7 +37,7 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME_TRACK = "track";
 
     private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME_TRACK + "("
-            + TableColumns._ID + " INTEGER AUTO_INCREMENT, "
+            + TableColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + TableColumns.EVENT + " TEXT, "
             + TableColumns.IDENTIFIERS + " TEXT, "
             + TableColumns.PLATFORM + " TEXT, "
@@ -109,6 +109,20 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             Logger.i(TAG, "query end");
             return new Pair<>(count, list);
+        }
+    }
+
+    public void deleteAll() {
+        database.delete(TABLE_NAME_TRACK, null, null);
+    }
+
+    public void deleteRows(int startIndex, int lastIndex) {
+        try {
+            database.delete(TABLE_NAME_TRACK,
+                    TableColumns._ID + " >= ? AND " + TableColumns._ID + " <= ?",
+                    new String[]{String.valueOf(startIndex), String.valueOf(lastIndex)});
+        } catch (Exception e) {
+            Logger.print(e);
         }
     }
 

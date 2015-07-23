@@ -2,8 +2,8 @@ package com.tosslab.jandi.lib.sprinkler.track.factory;
 
 import android.text.TextUtils;
 
-import com.tosslab.jandi.lib.sprinkler.model.event.Event;
-import com.tosslab.jandi.lib.sprinkler.model.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
 import com.tosslab.jandi.lib.sprinkler.track.FutureTrack;
 
 /**

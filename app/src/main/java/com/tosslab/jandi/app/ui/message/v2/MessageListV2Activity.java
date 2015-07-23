@@ -9,6 +9,11 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.services.socket.monitor.SocketServiceStarter;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.track.FutureTrack;
 
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -41,6 +46,15 @@ public class MessageListV2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // for Sprinkler test
+        Sprinkler.with(getApplicationContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.AppVersion, true)
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_PANEL)
+                        .build());
 
         JandiSocketService.stopService(this);
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
