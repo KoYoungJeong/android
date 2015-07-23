@@ -6,8 +6,8 @@ import android.text.TextUtils;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -90,24 +90,21 @@ public class MainChatListModel {
         return chatItems;
     }
 
-    public List<ChatItem> getSavedChatList(Context context, int teamId) {
-        return JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+    public List<ResChat> getSavedChatList() {
+        return ChatRepository.getRepository().getChats();
     }
 
-    public void saveChatList(Context context, int teamId, List<ChatItem> chatItems) {
-        JandiChatsDatabaseManager.getInstance(context).upsertChatList(teamId, chatItems);
+    public void saveChatList(int teamId, List<ResChat> chatItems) {
+        for (ResChat chatItem : chatItems) {
+            chatItem.setTeamId(teamId);
+        }
+        ChatRepository.getRepository().upsertChats(chatItems);
     }
 
-    public int getRoomId(Context context, int teamId, int userId) {
+    public int getRoomId(int userId) {
 
-        List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(context).getSavedChatItems(teamId);
+        return ChatRepository.getRepository().getChat(userId).getEntityId();
 
-        ChatItem first = Observable.from(savedChatItems)
-                .filter(chatItem -> chatItem.getEntityId() == userId)
-                .firstOrDefault(new ChatItem())
-                .toBlocking().first();
-
-        return first.getRoomId();
     }
 
     public boolean isStarred(Context context, int entityId) {

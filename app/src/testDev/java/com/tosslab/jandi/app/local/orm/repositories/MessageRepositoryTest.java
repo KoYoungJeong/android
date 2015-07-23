@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
@@ -102,6 +103,38 @@ public class MessageRepositoryTest {
         assertThat(messages.size() - 1, is(equalTo(savedMessage.size())));
     }
 
+    @Test
+    public void testReadyMessage() throws Exception {
+        int roomId = 1;
+
+        ReadyMessage readyMessage = new ReadyMessage();
+        String text = "asda";
+        readyMessage.setText(text);
+        readyMessage.setRoomId(roomId);
+        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+
+        String newText = "qwe";
+        int newRoomId = 2;
+        readyMessage = new ReadyMessage();
+        readyMessage.setRoomId(newRoomId);
+        readyMessage.setText(newText);
+
+        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+
+        ReadyMessage message = MessageRepository.getRepository().getReadyMessage(roomId);
+
+        assertThat(message.getRoomId(), is(equalTo(roomId)));
+        assertThat(message.getText(), is(equalTo(text)));
+
+
+        int deleeteRow = MessageRepository.getRepository().deleteReadyMessage(roomId);
+        assertThat(deleeteRow, is(equalTo(1)));
+
+        readyMessage = MessageRepository.getRepository().getReadyMessage(roomId);
+        assertThat(readyMessage.getText(), is(""));
+
+    }
+
     private List<ResMessages.Link> getMessages() {
 
         try {
@@ -114,4 +147,6 @@ public class MessageRepositoryTest {
 
         return new ArrayList<>();
     }
+
+
 }

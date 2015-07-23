@@ -48,13 +48,14 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         }
 
         if (!view.hasChatItems()) {
-            List<ChatItem> savedChatList = mainChatListModel.getSavedChatList(context, teamId);
-            view.setChatItems(savedChatList);
+            List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
+            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, savedChatList);
+            view.setChatItems(chatItems);
         }
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
+            mainChatListModel.saveChatList(teamId, chatList);
             List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, chatList);
-            mainChatListModel.saveChatList(context, teamId, chatItems);
             view.setChatItems(chatItems);
 
             view.setSelectedItem(selectedEntity);
@@ -93,8 +94,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
+            mainChatListModel.saveChatList(teamId, chatList);
             List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, chatList);
-            mainChatListModel.saveChatList(context, teamId, chatItems);
             view.setChatItems(chatItems);
 
             boolean hasAlarmCount = mainChatListModel.hasAlarmCount(chatItems);
@@ -112,7 +113,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Override
     public void onMoveDirectMessage(Context context, int entityId) {
         EntityManager entityManager = EntityManager.getInstance(context);
-        int roomId = mainChatListModel.getRoomId(context, entityManager.getTeamId(), entityId);
+        int roomId = mainChatListModel.getRoomId(entityId);
 
         view.moveMessageActivity(entityManager.getTeamId()
                 , entityId

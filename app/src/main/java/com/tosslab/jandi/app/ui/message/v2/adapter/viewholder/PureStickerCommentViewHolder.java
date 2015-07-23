@@ -59,7 +59,7 @@ public class PureStickerCommentViewHolder implements BodyViewHolder {
         nameTextView.setText(fromEntity.name);
         dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(unreadTextView.getContext(),
+        int unreadCount = UnreadCountUtil.getUnreadCount(
                 teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
 
         unreadTextView.setText(String.valueOf(unreadCount));

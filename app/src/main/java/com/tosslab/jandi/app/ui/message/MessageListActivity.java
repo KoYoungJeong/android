@@ -47,7 +47,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
@@ -183,14 +182,14 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     }
 
     private void initTempMessage() {
-        String tempMessage = messageListModel.getTempMessage(teamId, entityId);
+        String tempMessage = messageListModel.getTempMessage(entityId);
         etMessage.setText(tempMessage);
         etMessage.setSelection(etMessage.getText().length());
     }
 
     private void showCachedMessage() {
 
-        List<ResMessages.Link> cachedMessage = messageListModel.getCachedMessage(teamId, entityId);
+        List<ResMessages.Link> cachedMessage = messageListModel.getCachedMessage(entityId);
 
         mMessageItemConverter.insertMessageItem(cachedMessage);
         messageItemListAdapter.replaceMessageItem(mMessageItemConverter.reformatMessages());
@@ -329,7 +328,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         super.onStop();
 
         messageListModel.saveMessagesForCache(teamId, entityId, messageItemListAdapter);
-        messageListModel.saveTempMessage(teamId, entityId, etMessage.getText().toString());
+        messageListModel.saveTempMessage(entityId, etMessage.getText().toString());
     }
 
     @Override

@@ -55,7 +55,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
                         DateTransformator.getTimeStringForSimple(link.message.createTime));
         builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(context, teamId, roomId,
+        int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
                 link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
 
         if (unreadCount > 0) {

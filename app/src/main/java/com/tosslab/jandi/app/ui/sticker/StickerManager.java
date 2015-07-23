@@ -15,8 +15,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
-import com.tosslab.jandi.app.network.models.sticker.ResSticker;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
+import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.util.HashSet;
 import java.util.List;
@@ -65,7 +65,7 @@ public class StickerManager {
 
         if (isLocalSticker(groupId)) {
             Context context = view.getContext();
-            String stickerAssetPath = getStickerAssetPath(context, groupId, stickerId);
+            String stickerAssetPath = getStickerAssetPath(groupId, stickerId);
 
             AlphaAnimation animation = new AlphaAnimation(0f, 1f);
             animation.setDuration(300);
@@ -109,18 +109,18 @@ public class StickerManager {
         return localStickerGroupIds.contains(groupId);
     }
 
-    private String getStickerAssetPath(Context context, int groupId, String stickerId) {
-        List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(context).getStickers(groupId);
+    private String getStickerAssetPath(int groupId, String stickerId) {
+        List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(groupId);
 
-        ResSticker defaultSticker = new ResSticker();
-        ResSticker stickerItem = Observable.from(stickers)
-                .filter(resSticker -> TextUtils.equals(resSticker.getId(), stickerId))
+        ResMessages.StickerContent defaultSticker = new ResMessages.StickerContent();
+        ResMessages.StickerContent stickerItem = Observable.from(stickers)
+                .filter(resSticker -> TextUtils.equals(resSticker.stickerId, stickerId))
                 .firstOrDefault(defaultSticker)
                 .toBlocking().first();
 
         if (stickerItem != defaultSticker) {
 
-            String fileName = stickerItem.getGroupId() + "_" + stickerItem.getId();
+            String fileName = stickerItem.groupId + "_" + stickerItem.stickerId;
 
             return "file:///android_asset/stickers/default/mozzi/" + fileName + ".png";
         } else {

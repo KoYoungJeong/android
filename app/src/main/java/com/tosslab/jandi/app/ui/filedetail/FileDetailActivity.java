@@ -52,7 +52,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
-import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -567,8 +567,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
-            JandiStickerDatabaseManager.getInstance(FileDetailActivity.this.getApplicationContext())
-                    .upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), comment);

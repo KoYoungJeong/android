@@ -6,8 +6,11 @@ import android.text.TextUtils;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
+import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
+import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import java.sql.SQLException;
@@ -98,6 +101,113 @@ public class MessageRepository {
 
         return new ArrayList<>();
     }
+
+    public boolean upsertReadyMessage(ReadyMessage readyMessage) {
+        try {
+            Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
+            readyMessageDao.createOrUpdate(readyMessage);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public int deleteReadyMessage(int roomId) {
+        try {
+            Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
+            DeleteBuilder<ReadyMessage, ?> deleteBuilder = readyMessageDao.deleteBuilder();
+            deleteBuilder
+                    .where()
+                    .eq("roomId", roomId);
+            return deleteBuilder.delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public ReadyMessage getReadyMessage(int roomId) {
+        try {
+            Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
+            ReadyMessage readyMessage = readyMessageDao.queryBuilder()
+                    .where()
+                    .eq("roomId", roomId)
+                    .queryForFirst();
+
+            if (readyMessage == null) {
+                readyMessage = new ReadyMessage();
+                readyMessage.setRoomId(roomId);
+                readyMessage.setText("");
+            }
+
+            return readyMessage;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        ReadyMessage readyMessage = new ReadyMessage();
+        readyMessage.setRoomId(roomId);
+        readyMessage.setText("");
+        return readyMessage;
+    }
+
+    public boolean insertSendMessage(SendMessage sendMessage) {
+        try {
+            Dao<SendMessage, ?> sendMessageDao = helper.getDao(SendMessage.class);
+            sendMessage.setStatus(SendMessage.Status.SENDING.name());
+            sendMessageDao.create(sendMessage);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+    public List<SendMessage> getSendMessage(int roomId) {
+        try {
+            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+            return dao.queryBuilder()
+                    .where()
+                    .eq("roomId", roomId)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public int deleteSendMessage(int id) {
+        try {
+            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+            DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
+            deleteBuilder.where().eq("id", id);
+            return deleteBuilder.delete();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    public int updateSendMessageStatus(int id, SendMessage.Status status) {
+        try {
+            Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
+            UpdateBuilder<SendMessage, ?> updateBuilder = dao.updateBuilder();
+            updateBuilder.updateColumnValue("status", status.name());
+            updateBuilder.where()
+                    .eq("id", id);
+
+            return updateBuilder.update();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 
     private void upsertMessage(ResMessages.Link message) throws SQLException {
         ResMessages.OriginalMessage contentMessage = message.message;

@@ -7,12 +7,11 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-import com.tosslab.jandi.app.local.database.chats.JandiChatsDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.ChatRepository;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.push.model.JandiInterfaceModel;
 import com.tosslab.jandi.app.ui.intro.IntroActivity_;
 import com.tosslab.jandi.app.ui.maintab.MainTabActivity_;
-import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 
 import org.androidannotations.annotations.AfterInject;
@@ -21,8 +20,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
-
-import java.util.List;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 15..
@@ -99,13 +96,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
         if (!isUser) {
             roomId = entityId;
         } else {
-            List<ChatItem> savedChatItems = JandiChatsDatabaseManager.getInstance(PushInterfaceActivity.this).getSavedChatItems(teamId);
-            for (ChatItem savedChatItem : savedChatItems) {
-                if (savedChatItem.getEntityId() == entityId) {
-                    roomId = savedChatItem.getRoomId();
-                    break;
-                }
-            }
+            roomId = ChatRepository.getRepository().getChat(entityId).getEntityId();
         }
 
         MainTabActivity_.intent(PushInterfaceActivity.this)

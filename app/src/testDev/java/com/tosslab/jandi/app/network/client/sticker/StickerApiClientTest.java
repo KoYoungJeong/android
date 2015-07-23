@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.network.client.sticker;
 
-import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.models.sticker.ReqSendSticker;
-import com.tosslab.jandi.app.network.models.sticker.ResSticker;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -58,14 +57,16 @@ public class StickerApiClientTest {
             type = "users";
         }
 
-        List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
-        ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
+        List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(100);
+        ResMessages.StickerContent resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
+        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.groupId, resSticker.stickerId, teamId, entity.id, type, ""));
         assertNotNull(resCommon);
 
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
-        resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
+        resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create
+                (resSticker.groupId, resSticker.stickerId, teamId, entity.id, type, "test sticker with " +
+                        "message"));
         assertNotNull(resCommon);
     }
 
@@ -94,10 +95,11 @@ public class StickerApiClientTest {
 
         ResMessages.FileMessage fileMessage = ((ResMessages.FileMessage) resSearchFile.files.get(0));
 
-        List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
-        ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
+        List<ResMessages.StickerContent> stickers = StickerRepository.getRepository().getStickers(100);
+        ResMessages.StickerContent resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
+        RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create
+                (resSticker.groupId, resSticker.stickerId, teamId, fileMessage.id, "", "asdasd"));
 
     }
 }

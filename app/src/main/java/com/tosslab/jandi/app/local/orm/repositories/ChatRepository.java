@@ -63,6 +63,22 @@ public class ChatRepository {
         return new ArrayList<>();
     }
 
+    public ResChat getChat(int userId) {
+        int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+        try {
+            return helper.getDao(ResChat.class)
+                    .queryBuilder()
+                    .where()
+                    .eq("teamId", selectedTeamId)
+                    .and()
+                    .eq("userId", userId)
+                    .queryForFirst();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new ResChat();
+    }
+
     public int deleteChat(int roomId) {
         try {
             Dao<ResChat, ?> dao = helper.getDao(ResChat.class);

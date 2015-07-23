@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
-import com.tosslab.jandi.app.network.models.sticker.ResSticker;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
+import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.views.ViewPagerIndicator;
 
 import org.androidannotations.annotations.AfterViews;
@@ -65,16 +65,17 @@ public class StickerViewModel {
     }
 
     private void updateStickerItems(int groupIdx, ViewPager vgStickerItems) {
-        List<ResSticker> stickers;
+        List<ResMessages.StickerContent> stickers;
         switch (groupIdx) {
             case STICKER_GROUP_RECENT:
-                stickers = JandiStickerDatabaseManager.getInstance(context).getRecentStickers();
+                stickers = StickerRepository.getRepository().getRecentStickers();
                 break;
             case STICKER_GROUP_MOZZI:
-                stickers = JandiStickerDatabaseManager.getInstance(context).getStickers(JandiStickerDatabaseManager.DEFAULT_GROUP_ID_MOZZI);
+                stickers = StickerRepository.getRepository().getStickers(StickerRepository
+                        .DEFAULT_GROUP_ID_MOZZI);
                 break;
             default:
-                stickers = new ArrayList<ResSticker>();
+                stickers = new ArrayList<>();
                 break;
         }
 
@@ -82,7 +83,7 @@ public class StickerViewModel {
 
     }
 
-    private void addStickerView(List<ResSticker> stickers, ViewPager vgStickerItems) {
+    private void addStickerView(List<ResMessages.StickerContent> stickers, ViewPager vgStickerItems) {
         int size = stickers.size();
 
         if (size <= 0) {
@@ -99,7 +100,7 @@ public class StickerViewModel {
         viewPagerIndicator.setIndicatorCount(adapter.getCount());
         viewPagerIndicator.invalidate();
 
-        vgStickerItems.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+        vgStickerItems.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (viewPagerIndicator != null) {

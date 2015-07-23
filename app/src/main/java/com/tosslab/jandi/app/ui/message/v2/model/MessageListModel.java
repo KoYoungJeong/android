@@ -22,11 +22,12 @@ import com.tosslab.jandi.app.events.messages.SendCompleteEvent;
 import com.tosslab.jandi.app.events.messages.SendFailEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
-import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -233,12 +234,15 @@ public class MessageListModel {
         messageManipulator.setMarker(lastUpdateLinkId);
     }
 
-    public void saveMessages(int teamId, int entityId, List<ResMessages.Link> lastItems) {
-        JandiMessageDatabaseManager.getInstance(activity).upsertMessage(teamId, entityId, lastItems);
+    public void saveMessages(List<ResMessages.Link> lastItems) {
+        MessageRepository.getRepository().upsertMessages(lastItems);
     }
 
-    public void saveTempMessage(int teamId, int entityId, String sendEditText) {
-        JandiMessageDatabaseManager.getInstance(activity).upsertTempMessage(teamId, entityId, sendEditText);
+    public void saveTempMessage(int roomId, String sendEditText) {
+        ReadyMessage readyMessage = new ReadyMessage();
+        readyMessage.setRoomId(roomId);
+        readyMessage.setText(sendEditText);
+        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
     public void deleteTopic(int entityId, int entityType) throws RetrofitError {
@@ -364,7 +368,7 @@ public class MessageListModel {
 
         try {
             ResRoomInfo resRoomInfo = RequestApiManager.getInstance().getRoomInfoByRoomsApi(teamId, roomId);
-            JandiMarkerDatabaseManager.getInstance(activity.getApplicationContext()).upsertMarkers(resRoomInfo);
+            MarkerRepository.getRepository().upsertRoomInfo(resRoomInfo);
             EventBus.getDefault().post(new RoomMarkerEvent());
         } catch (RetrofitError e) {
             e.printStackTrace();
@@ -373,11 +377,11 @@ public class MessageListModel {
     }
 
     public void deleteMarker(int teamId, int roomId, int memberId) {
-        JandiMarkerDatabaseManager.getInstance(activity).deleteMarker(teamId, roomId, memberId);
+        MarkerRepository.getRepository().deleteRoomMarker(roomId, memberId);
     }
 
     public void insertMarker(int teamId, int roomId, int memberId) {
-        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, memberId, -1);
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, memberId, -1);
     }
 
     public void updateEntityInfo() {
@@ -396,7 +400,7 @@ public class MessageListModel {
     public void upsertMyMarker(int roomId, int lastLinkId) {
         int myId = EntityManager.getInstance(activity).getMe().getId();
         int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
-        JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
+        MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, myId, lastLinkId);
     }
 
     public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
@@ -419,4 +423,13 @@ public class MessageListModel {
 
     }
 
+    public boolean isUser(int entityId) {
+        return EntityManager
+                .getInstance(JandiApplication.getContext())
+                .getEntityById(entityId).isUser();
+    }
+
+    public String getReadyMessage(int roomId) {
+        return MessageRepository.getRepository().getReadyMessage(roomId).getText();
+    }
 }

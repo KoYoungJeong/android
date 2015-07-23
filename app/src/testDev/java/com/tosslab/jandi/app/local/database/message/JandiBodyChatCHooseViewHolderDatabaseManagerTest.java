@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemConverter;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.client.MessageManipulator_;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -67,9 +68,9 @@ public class JandiBodyChatCHooseViewHolderDatabaseManagerTest {
             links.add(item.getLink());
         }
 
-        JandiMessageDatabaseManager.getInstance(Robolectric.application).upsertMessage(teamId, entityId, links);
+        MessageRepository.getRepository().upsertMessages(links);
 
-        List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(Robolectric.application).getSavedMessages(teamId, entityId);
+        List<ResMessages.Link> savedMessages = MessageRepository.getRepository().getMessages(entityId);
 
         assertNotNull(savedMessages);
 

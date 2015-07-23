@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
-import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -57,9 +56,9 @@ import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
-import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
-import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
-import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
@@ -110,6 +109,7 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -318,7 +318,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     }
 
     private void getSavedMessageList() {
-        List<ResMessages.Link> savedMessages = JandiMessageDatabaseManager.getInstance(getActivity()).getSavedMessages(teamId, entityId);
+        List<ResMessages.Link> savedMessages;
+        if (messageListModel.isUser(entityId)) {
+            if (roomId > 0) {
+                savedMessages = MessageRepository.getRepository().getMessages(roomId);
+            } else {
+                savedMessages = new ArrayList<>();
+            }
+        } else {
+            savedMessages = MessageRepository.getRepository().getMessages(entityId);
+
+        }
         if (savedMessages != null && !savedMessages.isEmpty()) {
             messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
@@ -368,7 +378,18 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         messageListModel.setEntityInfo(entityType, entityId);
 
-        String tempMessage = JandiMessageDatabaseManager.getInstance(getActivity()).getTempMessage(teamId, entityId);
+        String tempMessage;
+        if (messageListModel.isUser(entityId) ) {
+
+            if (roomId > 0) {
+                tempMessage = messageListModel.getReadyMessage(roomId);
+            } else {
+                tempMessage = "";
+            }
+        } else {
+            tempMessage = messageListModel.getReadyMessage(entityId);
+
+        }
         messageListPresenter.setSendEditText(tempMessage);
 
         if (!messageListModel.isEnabledIfUser(entityId)) {
@@ -530,8 +551,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.stopRefreshTimer();
         }
 
-        messageListModel.saveMessages(teamId, entityId, messageListPresenter.getLastItemsWithoutDummy());
-        messageListModel.saveTempMessage(teamId, entityId, messageListPresenter.getSendEditText());
+        messageListModel.saveMessages(messageListPresenter.getLastItemsWithoutDummy());
+        if (roomId > 0) {
+            messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
+        }
         PushMonitor.getInstance().unregister(entityId);
 
         super.onPause();
@@ -616,7 +639,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
 
-            JandiStickerDatabaseManager.getInstance(getActivity()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            StickerRepository.getRepository().upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
 
@@ -1036,7 +1059,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (event.getRoom().getId() == roomId) {
             SocketRoomMarkerEvent.Marker marker = event.getMarker();
-            JandiMarkerDatabaseManager.getInstance(getActivity()).updateMarker(teamId, roomId, marker.getMemberId(), marker.getLastLinkId());
+            MarkerRepository.getRepository().upsertRoomMarker(teamId, roomId, marker.getMemberId(), marker
+                    .getLastLinkId());
             messageListPresenter.justRefresh();
         }
     }
