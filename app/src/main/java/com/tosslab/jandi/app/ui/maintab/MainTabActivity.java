@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.PagerSlidingTabStrip;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterViews;
@@ -133,6 +134,18 @@ public class MainTabActivity extends BaseAnalyticsActivity {
             public void onPageSelected(int position) {
                 LogUtil.d("onPageSelected at " + position);
                 trackGaTab(mEntityManager, position);
+                switch (position) {
+                    case 1:
+                        TutorialCoachMarkUtil.showCoachMarkDirectMessageListIfNotShown(MainTabActivity.this);
+                        break;
+                    case 2:
+                        TutorialCoachMarkUtil.showCoachMarkFileListIfNotShown(MainTabActivity.this);
+                        break;
+
+                    case 3:
+                        TutorialCoachMarkUtil.showCoachMarkMoreIfNotShown(MainTabActivity.this);
+                        break;
+                }
             }
 
             @Override
@@ -200,7 +213,9 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());
 
+        TutorialCoachMarkUtil.showCoachMarkTopicListIfNotShown(this);
     }
+
 
     /**
      * *********************************************************

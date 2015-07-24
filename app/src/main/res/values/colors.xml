@@ -203,4 +203,7 @@
     <color name="jandi_carousel_transparent_45">#45000000</color>
 
     <color name="jandi_message_indicator">#D2D2D2</color>
+
+    <color name="jandi_coach_mark_text">#FF19c1ff</color>
+    <color name="jandi_coach_mark_text_shadow">#DD000000</color>
 </resources>

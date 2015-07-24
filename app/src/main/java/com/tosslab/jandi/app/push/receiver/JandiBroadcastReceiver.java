@@ -13,11 +13,8 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
  * Created by justinygchoi on 14. 12. 3..
  */
 public class JandiBroadcastReceiver extends BroadcastReceiver {
-    public static final String TAG = JandiBroadcastReceiver.class.getSimpleName();
-
     @Override
     public void onReceive(Context context, Intent intent) {
-//        Log.e(TAG, "onReceive");
         if (TextUtils.isEmpty(JandiPreference.getRefreshToken(context))) {
             // 이전에 JANDI 를 설치하고 삭제한 경우, 해당 디바이스 ID 가 남아있어 push 가 전송될 수 있다.
             // 새로 설치하고 아직 sign-in 을 하지 않은 경우 이전 사용자에 대한 push 가 전송됨으로 이를 무시한다.
@@ -29,6 +26,5 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
 
         intent.setClass(context, JandiPushIntentService.class);
         context.startService(intent);
-        setResult(-1, null, null);
     }
 }

@@ -429,4 +429,39 @@
     <string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
     <string name="jandi_topic_starred">"즐겨찾기"</string>
 
+    <!-- tutorial -->
+    <string name="jandi_coach_mark_search_message">토픽 메시지 검색</string>
+    <string name="jandi_coach_mark_create_new_topics">토픽 만들기</string>
+    <string name="jandi_coach_mark_topic_list_welcome">안녕하세요!</string>
+    <string name="jandi_coach_mark_topic_list_explain1">토픽은 프로젝트, 부서, 주제별로</string>
+    <string name="jandi_coach_mark_topic_list_explain2">만들어 대화를 나눌 수 있습니다.</string>
+    <string name="jandi_coach_mark_topic_list_explain3"></string>
+
+    <string name="jandi_coach_mark_topic_explain1">토픽방에 메시지와 파일을</string>
+    <string name="jandi_coach_mark_topic_explain2">보낼 수 있습니다.</string>
+
+    <string name="jandi_coach_mark_topic_message_search">메시지\n검색</string>
+    <string name="jandi_coach_mark_topic_file_search">파일 검색</string>
+    <string name="jandi_coach_mark_topic_setting">토픽 초대,\n토픽 나가기등의\n관리 메뉴</string>
+    <string name="jandi_coach_mark_upload_file">파일 올리기</string>
+    <string name="jandi_coach_mark_stickers">스티커</string>
+
+
+    <string name="jandi_coach_mark_filelist_search">파일명으로 검색</string>
+    <string name="jandi_coach_mark_filelist_sort">파일이 공유된 토픽, 파일 업로더, 파일 종류별 검색</string>
+    <string name="jandi_coach_mark_filelist_explain1">이 곳에서는 팀에 공유된</string>
+    <string name="jandi_coach_mark_filelist_explain2">모든 파일을 볼 수 있습니다</string>
+
+    <string name="jandi_coach_mark_directmessage_explain1">팀 멤버에게 1:1로 보낸 메시지는</string>
+    <string name="jandi_coach_mark_directmessage_explain2">여기서 볼 수 있습니다.</string>
+    <string name="jandi_coach_mark_directmessage_choose_member">1:1 메시지를 보낼 멤버 찾기</string>
+
+    <string name="jandi_coach_mark_more_profile">프로필\n변경하기</string>
+    <string name="jandi_coach_mark_more_members">팀 전체\n멤버 보기</string>
+    <string name="jandi_coach_mark_more_invite">이메일이나 자주\n사용하는 메신저로\n팀 초대하기</string>
+    <string name="jandi_coach_mark_more_explain1">이 곳은 잔디 설정 화면입니다.</string>
+    <string name="jandi_coach_mark_more_explain2">함께 사용할 수 있도록</string>
+    <string name="jandi_coach_mark_more_explain3">팀 멤버 초대를 잊지 말아주세요!</string>
+
+
 </resources>
