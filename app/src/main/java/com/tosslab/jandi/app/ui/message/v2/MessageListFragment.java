@@ -803,9 +803,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
-            boolean isPublicTopic = messageListModel.isPublicTopic(entityType);
+            boolean isDirectMessage = messageListModel.isDirectMessage(entityType);
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
-            messageListPresenter.showMessageMenuDialog(isPublicTopic, isMyMessage, textMessage);
+            messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {

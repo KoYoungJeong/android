@@ -28,7 +28,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     private static final String FEEDBACK_ID = "feedbackId";
     private static final String CURRENT_MESSAGE = "currentMessage";
     private static final String IS_MINE = "isMine";
-    private static final String IS_PUBLIC_TOPIC = "isPublicTopic";
+    private static final String IS_DIRECT_MESSAGE = "isDirectMessage";
 
     public static ManipulateMessageDialogFragment newInstance(MessageItem item) {
         return newInstance(item, false);
@@ -56,7 +56,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
     }
 
     public static ManipulateMessageDialogFragment newInstanceByTextMessage(
-            ResMessages.TextMessage item, boolean isMine, boolean isPublicTopic) {
+            ResMessages.TextMessage item, boolean isMine, boolean isDirectMessage) {
         String title = DateTransformator.getTimeString(item.createTime);
 
         ManipulateMessageDialogFragment frag = new ManipulateMessageDialogFragment();
@@ -66,7 +66,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         args.putInt(MESSAGE_TYPE, MessageItem.TYPE_STRING);
         args.putString(CURRENT_MESSAGE, item.content.body);
         args.putBoolean(IS_MINE, isMine);
-        args.putBoolean(IS_PUBLIC_TOPIC, isPublicTopic);
+        args.putBoolean(IS_DIRECT_MESSAGE, isDirectMessage);
         frag.setArguments(args);
         return frag;
     }
@@ -132,7 +132,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
 
         final boolean isTextMessage = messageType == MessageItem.TYPE_STRING;
         final boolean isMine = getArguments().getBoolean(IS_MINE, false);
-        final boolean isPublicTopic = getArguments().getBoolean(IS_PUBLIC_TOPIC, false);
+        final boolean isDirectMessage = getArguments().getBoolean(IS_DIRECT_MESSAGE, false);
 
         final String currentMessage = getArguments().getString(CURRENT_MESSAGE);
 
@@ -155,7 +155,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionCopy.setVisibility(View.GONE);
         }
 
-        final boolean canShowAnnouncement = isPublicTopic && isTextMessage;
+        final boolean canShowAnnouncement = !isDirectMessage;
         actionSetAnnouncement.setVisibility(canShowAnnouncement ? View.VISIBLE : View.GONE);
 
         // Delete 메뉴 클릭시.

@@ -353,10 +353,10 @@ public class MessageListPresenter {
         ColoredToast.showError(activity, message);
     }
 
-    public void showMessageMenuDialog(boolean isPublicTopic, boolean myMessage,
+    public void showMessageMenuDialog(boolean isDirectMessage, boolean myMessage,
                                       ResMessages.TextMessage textMessage) {
         DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(
-                textMessage, myMessage, isPublicTopic);
+                textMessage, myMessage, isDirectMessage);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 
