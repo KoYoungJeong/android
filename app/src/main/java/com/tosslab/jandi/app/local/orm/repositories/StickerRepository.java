@@ -22,12 +22,8 @@ public class StickerRepository {
     public static final int DEFAULT_GROUP_ID_MOZZI = 100;
     public static final int DEFAULT_MOZZI_COUNT = 26;
     private static StickerRepository repository;
-    private final OrmDatabaseHelper helper;
 
-    private StickerRepository() {
-        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-
-    }
+    private StickerRepository() {}
 
     public static StickerRepository getRepository() {
         if (repository == null) {
@@ -38,11 +34,14 @@ public class StickerRepository {
 
     public List<ResMessages.StickerContent> getStickers() {
         try {
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             return helper.getDao(ResMessages.StickerContent.class)
                     .queryBuilder()
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return new ArrayList<>();
@@ -50,6 +49,7 @@ public class StickerRepository {
 
     public List<ResMessages.StickerContent> getStickers(int groupId) {
         try {
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             return helper.getDao(ResMessages.StickerContent.class)
                     .queryBuilder()
                     .where()
@@ -57,6 +57,8 @@ public class StickerRepository {
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return new ArrayList<>();
@@ -68,11 +70,14 @@ public class StickerRepository {
         recentSticker.setStickerContent(sticker);
         recentSticker.setLastDate(new Date());
         try {
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<RecentSticker, ?> dao = helper.getDao(RecentSticker.class);
             dao.createOrUpdate(recentSticker);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return false;
@@ -82,6 +87,7 @@ public class StickerRepository {
     public boolean upsertRecentSticker(int groupId, String stickerId) {
 
         try {
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResMessages.StickerContent, ?> stickerContentDao = helper.getDao(ResMessages.StickerContent.class);
             ResMessages.StickerContent stickerContent = stickerContentDao.queryBuilder()
                     .where()
@@ -99,6 +105,8 @@ public class StickerRepository {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return false;
@@ -109,6 +117,8 @@ public class StickerRepository {
     public List<ResMessages.StickerContent> getRecentStickers() {
         List<ResMessages.StickerContent> stickerContents = new ArrayList<>();
         try {
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+
             Dao<RecentSticker, ?> dao = helper.getDao(RecentSticker.class);
             List<RecentSticker> recentStickers = dao.queryBuilder()
                     .orderBy("lastDate", false)
@@ -121,6 +131,8 @@ public class StickerRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
         return stickerContents;
     }

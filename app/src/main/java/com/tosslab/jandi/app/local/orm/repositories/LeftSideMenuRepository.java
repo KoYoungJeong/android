@@ -1,13 +1,11 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import android.content.Context;
-
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
-import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
@@ -19,15 +17,12 @@ import java.sql.SQLException;
  */
 public class LeftSideMenuRepository {
     private static LeftSideMenuRepository repository;
-    private final OrmDatabaseHelper openHelper;
 
-    private LeftSideMenuRepository(Context context) {
-        openHelper = OpenHelperManager.getHelper(context, OrmDatabaseHelper.class);
-    }
+    private LeftSideMenuRepository() { }
 
     public static LeftSideMenuRepository getRepository() {
         if (repository == null) {
-            repository = new LeftSideMenuRepository(JandiApplication.getContext());
+            repository = new LeftSideMenuRepository();
         }
 
         return repository;
@@ -35,19 +30,25 @@ public class LeftSideMenuRepository {
 
 
     public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
-        LeftSideMenu rawLeftSideMenu = new LeftSideMenu();
         try {
+            ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(),
+                    OrmDatabaseHelper.class);
+            LeftSideMenu rawLeftSideMenu = new LeftSideMenu();
             String rawString = JacksonMapper.getInstance().getObjectMapper().writeValueAsString(leftSideMenu);
             rawLeftSideMenu.setRawLeftSideMenu(rawString);
-            rawLeftSideMenu.setTeam(AccountRepository.getRepository().getSelectedTeamInfo());
+            rawLeftSideMenu.setTeam(selectedTeamInfo);
 
-            Dao<LeftSideMenu, ?> dao = openHelper.getDao(LeftSideMenu.class);
+            Dao<LeftSideMenu, ?> dao = helper.getDao(LeftSideMenu.class);
             dao.createOrUpdate(rawLeftSideMenu);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return false;
@@ -56,11 +57,11 @@ public class LeftSideMenuRepository {
     public ResLeftSideMenu getCurrentLeftSideMenu() {
 
         try {
-            Dao<SelectedTeam, ?> selectedTeamDao = openHelper.getDao(SelectedTeam.class);
-            SelectedTeam selectedTeam = selectedTeamDao.queryBuilder().queryForFirst();
-            int selectedTeamId = selectedTeam.getSelectedTeamId();
+            int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
+            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(),
+                    OrmDatabaseHelper.class);
 
-            Dao<LeftSideMenu, ?> leftSideMenuDao = openHelper.getDao(LeftSideMenu.class);
+            Dao<LeftSideMenu, ?> leftSideMenuDao = helper.getDao(LeftSideMenu.class);
             LeftSideMenu leftSideMenu = leftSideMenuDao.queryBuilder().where().eq("team_id", selectedTeamId).queryForFirst();
             return JacksonMapper.getInstance()
                     .getObjectMapper()
@@ -69,6 +70,8 @@ public class LeftSideMenuRepository {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            OpenHelperManager.releaseHelper();
         }
 
         return null;
