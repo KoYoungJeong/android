@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.util.Pair;
 
 import com.tosslab.jandi.lib.sprinkler.Logger;
 import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.track.Track;
+import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class FlushService extends IntentService {
         }
 
         int num = query.first;
-        String deviceId = Sprinkler.with(context).getConfig().getDeviceId();
+        String deviceId = Sprinkler.with(context).getDefaultProperties().getDeviceId();
         final List<Track> data = query.second;
         for (Track track : data) {
             Logger.d(TAG, track.toString());

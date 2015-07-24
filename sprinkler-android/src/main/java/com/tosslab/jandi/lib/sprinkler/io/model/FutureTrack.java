@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.track;
+package com.tosslab.jandi.lib.sprinkler.io.model;
 
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -102,7 +102,7 @@ public class FutureTrack implements Serializable {
         }
 
         private boolean containsKey(PropertyKey key) {
-            if (availablePropertyKeys.length > 0) {
+            if (availablePropertyKeys != null && availablePropertyKeys.length > 0) {
                 for (PropertyKey pk : availablePropertyKeys) {
                     if (pk.getName().equals(key.getName())) {
                         return true;

@@ -5,7 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.tosslab.jandi.lib.sprinkler.track.factory.SystemTrackFactory;
+import com.tosslab.jandi.lib.sprinkler.trackfactory.SystemTrackFactory;
 
 /**
  * Created by tonyjs on 15. 7. 16..
@@ -73,7 +73,7 @@ public class LifecycleChecker implements Application.ActivityLifecycleCallbacks 
     }
 
     private void trackDefaultProperty(Sprinkler sprinkler) {
-        sprinkler.track(SystemTrackFactory.getAppOpenTrack(sprinkler.getConfig()));
+        sprinkler.track(SystemTrackFactory.getAppOpenTrack(sprinkler.getDefaultProperties()));
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * Created by tonyjs on 15. 7. 22..
  */
-public class Config {
+public class DefaultProperties {
     private static final String PLATFORM = "android";
 
     private static final String PREFERENCES_NAME = "sprinkler_preferences";
@@ -41,7 +41,7 @@ public class Config {
     private String googlePlayAvailable = "not included";
 
     @SuppressLint("CommitPrefEdits")
-    public Config(Context context) {
+    public DefaultProperties(Context context) {
         SharedPreferences pref = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         String uuid = pref.getString(KEY_DEVICE_ID, null);
         if (TextUtils.isEmpty(uuid)) {
@@ -171,7 +171,7 @@ public class Config {
 
     @Override
     public String toString() {
-        return "Config{" +
+        return "DefaultProperties{" +
                 "appVersion='" + appVersion + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", deviceCarrier='" + deviceCarrier + '\'' +

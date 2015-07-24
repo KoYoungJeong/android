@@ -1,9 +1,10 @@
-package com.tosslab.jandi.lib.sprinkler.track;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.app.IntentService;
 import android.content.Intent;
 
 import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import java.io.Serializable;
 import java.util.Map;

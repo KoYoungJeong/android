@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler;
 
 import android.content.Context;
 import android.os.Handler;
@@ -6,9 +6,6 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-
-import com.tosslab.jandi.lib.sprinkler.Logger;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
 
 /**
  * Created by tonyjs on 15. 7. 20..

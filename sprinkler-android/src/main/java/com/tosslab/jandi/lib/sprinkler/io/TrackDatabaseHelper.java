@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.track;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.tosslab.jandi.lib.sprinkler.Logger;
+import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by tonyjs on 15. 7. 21..
  */
-public class TrackDatabaseHelper extends SQLiteOpenHelper {
+final class TrackDatabaseHelper extends SQLiteOpenHelper {
     public static final String TAG = Logger.makeTag(TrackDatabaseHelper.class);
 
     interface TableColumns {
@@ -44,6 +45,8 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
             + TableColumns.PROPERTIES + " TEXT, "
             + TableColumns.TIME + " INTEGER );";
 
+    private static final String LIMIT = String.valueOf(500);
+
     private static TrackDatabaseHelper sInstance;
     private final Object sLock = new Object();
     private SQLiteDatabase database;
@@ -60,9 +63,10 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
         return sInstance;
     }
 
+    // FIXME 읽고 쓰는 것에 Lock 이 필요한지 더 생각해봐야 함.
     public boolean insert(String event, String identifiers, String platform, String properties, long time)
             throws SQLiteException {
-        synchronized (sLock) {
+//        synchronized (sLock) {
             Logger.d(TAG, "insert start");
             if (TextUtils.isEmpty(event)) {
                 Logger.e(TAG, "Insert fail.(\'event\' must be set.");
@@ -84,15 +88,19 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
             }
             Logger.d(TAG, "insert end");
             return true;
-        }
+//        }
     }
 
+    // FIXME 읽고 쓰는 것에 Lock 이 필요한지 더 생각해봐야 함.
     public Pair<Integer, List<Track>> query() {
-        synchronized (sLock) {
+//        synchronized (sLock) {
             Logger.i(TAG, "query start");
             List<Track> list = new ArrayList<>();
             Cursor cursor =
-                    database.query(TABLE_NAME_TRACK, TableColumns.COLUMNS, null, null, null, null, null);
+                    database.query(TABLE_NAME_TRACK, TableColumns.COLUMNS,
+                            null, null, null, null,
+                            // LIMIT 500
+                            TableColumns._ID + " DESC", LIMIT);
 
             int count = cursor.getCount();
             while (cursor.moveToNext()) {
@@ -109,13 +117,15 @@ public class TrackDatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             Logger.i(TAG, "query end");
             return new Pair<>(count, list);
-        }
+//        }
     }
 
+    // FIXME 읽고 쓰는 것에 Lock 이 필요한지 더 생각해봐야 함.
     public void deleteAll() {
         database.delete(TABLE_NAME_TRACK, null, null);
     }
 
+    // FIXME 읽고 쓰는 것에 Lock 이 필요한지 더 생각해봐야 함.
     public void deleteRows(int startIndex, int lastIndex) {
         try {
             database.delete(TABLE_NAME_TRACK,

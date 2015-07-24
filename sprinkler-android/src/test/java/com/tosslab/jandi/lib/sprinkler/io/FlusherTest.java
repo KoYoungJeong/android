@@ -1,9 +1,9 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.util.Pair;
 
 import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
-import com.tosslab.jandi.lib.sprinkler.track.Track;
+import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class FlusherTest {
         Pair<Integer, List<Track>> query = flusher.query();
 
         int num = query.first;
-        String deviceId = "Sprinkler.with(context).getConfig().getDeviceId()";
+        String deviceId = "Sprinkler.with(context).getDefaultProperties().getDeviceId()";
         final List<Track> data = query.second;
         Track lastTrack = data.get(data.size() - 1);
         long lastDate = lastTrack.getTime();

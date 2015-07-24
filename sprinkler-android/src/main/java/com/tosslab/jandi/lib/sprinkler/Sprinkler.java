@@ -6,12 +6,11 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.tosslab.jandi.lib.sprinkler.flush.FlushRetriever;
-import com.tosslab.jandi.lib.sprinkler.flush.FlushService;
+import com.tosslab.jandi.lib.sprinkler.io.FlushService;
 import com.tosslab.jandi.lib.sprinkler.constant.IdentifierKey;
-import com.tosslab.jandi.lib.sprinkler.track.factory.SystemTrackFactory;
-import com.tosslab.jandi.lib.sprinkler.track.FutureTrack;
-import com.tosslab.jandi.lib.sprinkler.track.TrackService;
+import com.tosslab.jandi.lib.sprinkler.trackfactory.SystemTrackFactory;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
+import com.tosslab.jandi.lib.sprinkler.io.TrackService;
 
 import java.util.Date;
 
@@ -29,14 +28,14 @@ public class Sprinkler {
     //    private static final Object sFlushLock = new Object();
     private Context context;
     private FlushRetriever flushRetriever;
-    private Config config;
+    private DefaultProperties defaultProperties;
 
     private Sprinkler(Context context) {
         this.context = context;
         flushRetriever = new FlushRetriever(context);
-        config = new Config(context);
+        defaultProperties = new DefaultProperties(context);
 
-        Logger.d(TAG, config.toString());
+        Logger.d(TAG, defaultProperties.toString());
     }
 
     public static synchronized Sprinkler with(Context context) {
@@ -70,8 +69,8 @@ public class Sprinkler {
                 return this;
             }
 
-            track.getIdentifiersMap().put(IdentifierKey.DEVICE_ID, getConfig().getDeviceId());
-            track.setPlatform(getConfig().getPlatform());
+            track.getIdentifiersMap().put(IdentifierKey.DEVICE_ID, getDefaultProperties().getDeviceId());
+            track.setPlatform(getDefaultProperties().getPlatform());
             track.setTime(new Date().getTime());
 
             Logger.d(TAG, "track");
@@ -117,8 +116,8 @@ public class Sprinkler {
         stopFlushRetriever();
     }
 
-    public Config getConfig() {
-        return config;
+    public DefaultProperties getDefaultProperties() {
+        return defaultProperties;
     }
 
 }

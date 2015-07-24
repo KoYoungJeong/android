@@ -1,6 +1,6 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler.io;
 
-import com.tosslab.jandi.lib.sprinkler.track.Track;
+import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import java.util.List;
 

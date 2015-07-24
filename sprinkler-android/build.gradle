@@ -32,7 +32,6 @@ dependencies {
     }
 
 //    compile 'com.google.android.gms:play-services-base:7.5.0'
-    compile 'com.j256.ormlite:ormlite-android:4.+'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     testCompile 'org.robolectric:robolectric:2.4'
     testCompile 'com.jayway.awaitility:awaitility:1.6.+'

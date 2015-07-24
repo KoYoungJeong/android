@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,8 +6,7 @@ import android.net.NetworkInfo;
 import android.util.Pair;
 
 import com.tosslab.jandi.lib.sprinkler.Logger;
-import com.tosslab.jandi.lib.sprinkler.track.Track;
-import com.tosslab.jandi.lib.sprinkler.track.TrackDatabaseHelper;
+import com.tosslab.jandi.lib.sprinkler.io.model.Track;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ import retrofit.RetrofitError;
 /**
  * Created by tonyjs on 15. 7. 23..
  */
-public class Flusher {
+final class Flusher {
     public static final String TAG = Logger.makeTag(Flusher.class);
 
     private TrackDatabaseHelper databaseHelper;
@@ -40,8 +39,8 @@ public class Flusher {
 
         boolean availableNetworking = wifiAvailable || mobileAvailable;
         if (availableNetworking) {
-            String log = wifiAvailable ? "Available networking with Wifi."
-                    : "Available networking with Mobile.";
+            String log = wifiAvailable
+                    ? "Available networking with Wifi." : "Available networking with Mobile.";
             Logger.i(TAG, log);
             return true;
         } else {
@@ -74,7 +73,7 @@ public class Flusher {
     private RequestManager.Request<ResponseBody> getRequest(
             final int num, final String deviceId, final long lastDate, final List<Track> data) {
 
-        final SprinklerClient client = requestManager.getClient(SprinklerClient.class);
+        final RequestClient client = requestManager.getClient(RequestClient.class);
         return new RequestManager.Request<ResponseBody>() {
             @Override
             public ResponseBody performRequest() throws RetrofitError {

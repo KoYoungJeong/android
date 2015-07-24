@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.flush;
+package com.tosslab.jandi.lib.sprinkler.io;
 
 import retrofit.http.Body;
 import retrofit.http.POST;
@@ -6,7 +6,7 @@ import retrofit.http.POST;
 /**
  * Created by tonyjs on 15. 7. 21..
  */
-public interface SprinklerClient {
+interface RequestClient {
     @POST("/android")
     ResponseBody post(@Body RequestBody body);
 }

@@ -1,4 +1,4 @@
-package com.tosslab.jandi.lib.sprinkler.track;
+package com.tosslab.jandi.lib.sprinkler.io.model;
 
 /**
  * Created by tonyjs on 15. 7. 22..
@@ -39,21 +39,21 @@ public class Track {
         return index;
     }
 
-//    public String getEv() {
-//        return ev;
-//    }
-//
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public String getPl() {
-//        return pl;
-//    }
-//
-//    public String getPr() {
-//        return pr;
-//    }
+    public String getEvent() {
+        return ev;
+    }
+
+    public String getIdentifiers() {
+        return id;
+    }
+
+    public String getPlatform() {
+        return pl;
+    }
+
+    public String getProperties() {
+        return pr;
+    }
 
     public long getTime() {
         return time;
