@@ -155,7 +155,7 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
             actionCopy.setVisibility(View.GONE);
         }
 
-        final boolean canShowAnnouncement = !isDirectMessage;
+        final boolean canShowAnnouncement = isTextMessage && !isDirectMessage;
         actionSetAnnouncement.setVisibility(canShowAnnouncement ? View.VISIBLE : View.GONE);
 
         // Delete 메뉴 클릭시.
