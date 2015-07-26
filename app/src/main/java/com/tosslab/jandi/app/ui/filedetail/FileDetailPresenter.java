@@ -2,6 +2,8 @@ package com.tosslab.jandi.app.ui.filedetail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -26,6 +28,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +48,20 @@ public class FileDetailPresenter {
 
     private View view;
 
+    public List<Integer> getSharedTopicIds(Context context, ResMessages.OriginalMessage fileDetail) {
+        List<Integer> sharedTopicIds = new ArrayList<>();
+
+        EntityManager entityManager = EntityManager.getInstance(context);
+
+        for (int entity : fileDetail.shareEntities) {
+            FormattedEntity formattedEntity = entityManager.getEntityById(entity);
+            if (formattedEntity.isPublicTopic() || formattedEntity.isPrivateGroup()) {
+                sharedTopicIds.add(formattedEntity.getId());
+            }
+        }
+        return sharedTopicIds;
+    }
+
     public void setView(View view) {
         this.view = view;
     }
@@ -57,6 +74,7 @@ public class FileDetailPresenter {
     @Background
     public void getFileDetail(int fileId, boolean isSendAction, boolean showDialog) {
         LogUtil.d("try to get file detail having ID, " + fileId);
+
         if (showDialog) {
             view.showProgress();
         }
@@ -100,6 +118,7 @@ public class FileDetailPresenter {
             view.showToast(activity.getResources().getString(R.string.err_file_detail));
             view.finishOnMainThread();
         }
+
     }
 
     public void onLongClickComment(ResMessages.OriginalMessage item) {
@@ -405,3 +424,5 @@ public class FileDetailPresenter {
         void dismissStickerPreview();
     }
 }
+
+

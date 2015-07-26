@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +49,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.events.messages.SelectedMemberInfoForMensionEvent;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -56,8 +58,9 @@ import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.filedetail.fileinfo.FileHeadManager;
-import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.ui.message.v2.MessageListFragment;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
@@ -85,6 +88,7 @@ import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
+
 /**
  * Created by justinygchoi on 2014. 7. 19..
  */
@@ -100,8 +104,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     int roomId = -1;
 
     @Bean
-    FileDetailModel fileDetailModel;
-    @Bean
     FileDetailPresenter fileDetailPresenter;
     @Bean
     FileDetailCommentListAdapter fileDetailCommentListAdapter;
@@ -111,9 +113,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     ListView lvFileDetailComments;
     @ViewById(R.id.vg_file_detail_input_comment)
     RelativeLayout vgCommentLayout;
-    @ViewById(R.id.et_file_detail_comment)
+    @ViewById(R.id.et_message)
     EditText etComment;
-    @ViewById(R.id.btn_file_detail_send_comment)
+    @ViewById(R.id.btn_send_message)
     Button btnSend;
     @ViewById(R.id.vg_file_detail_preview_sticker)
     ViewGroup vgStickerPreview;
@@ -127,6 +129,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     InputMethodManager inputMethodManager;
     @SystemService
     ClipboardManager clipboardManager;
+
     private EntityManager entityManager;
     private boolean isMyFile;
     private boolean isDeleted = true;
@@ -134,6 +137,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
+
+    private MentionControlViewModel mentionControlViewModel;
+
 
     @AfterViews
     public void initForm() {
@@ -305,7 +311,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         overridePendingTransition(R.anim.pull_in_left, R.anim.push_out_right);
     }
 
-    @AfterTextChange(R.id.et_file_detail_comment)
+    @AfterTextChange(R.id.et_message)
     void onCommentTextChange(Editable editable) {
         int inputLength = editable.length();
         setSendButtonSelected(inputLength > 0);
@@ -341,6 +347,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         drawFileDetail(resFileDetail, isSendAction);
+        refreshMentionVM(resFileDetail, etComment.getRootView());
     }
 
     /**
@@ -557,7 +564,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
      * 댓글 작성 관련
      * **********************************************************
      */
-    @Click(R.id.btn_file_detail_send_comment)
+    @Click(R.id.btn_send_message)
     void sendComment() {
         CharSequence text = etComment.getText();
         String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
@@ -805,7 +812,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     @Override
     public void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction) {
         ResMessages.OriginalMessage fileDetail = getFileMessage(resFileDetail.messageDetails);
-
+        //todo
         final ResMessages.FileMessage fileMessage = (ResMessages.FileMessage) fileDetail;
 
         fileHeadManager.setFileInfo(fileMessage);
@@ -909,4 +916,27 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
             stickerViewModel.dismissStickerSelector();
         }
     }
+
+    public void onEvent(SelectedMemberInfoForMensionEvent event) {
+        SearchedItemVO searchedItemVO = new SearchedItemVO();
+        searchedItemVO.setId(event.getId());
+        searchedItemVO.setName(event.getName());
+        searchedItemVO.setType(event.getType());
+        mentionControlViewModel.changeMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
+    }
+
+    public void refreshMentionVM(ResFileDetail resFileDetail, android.view.View rootView) {
+        if (mentionControlViewModel == null) {
+            mentionControlViewModel = MentionControlViewModel.getInstance();
+        }
+
+        List<Integer> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(
+                getApplicationContext(), getFileMessage(resFileDetail.messageDetails));
+
+        mentionControlViewModel.init(rootView, this,
+                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                sharedTopicIds);
+    }
+
+
 }

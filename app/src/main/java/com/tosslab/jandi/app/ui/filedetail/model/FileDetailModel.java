@@ -54,12 +54,12 @@ public class FileDetailModel {
 
     private ResMessages.FileMessage fileMessage;
 
-    public void setFileMessage(ResMessages.FileMessage fileMessage) {
-        this.fileMessage = fileMessage;
-    }
-
     public ResMessages.FileMessage getFileMessage() {
         return fileMessage;
+    }
+
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
     }
 
     public void deleteFile(int fileId) throws RetrofitError {

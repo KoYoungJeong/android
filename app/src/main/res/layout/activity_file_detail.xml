@@ -28,6 +28,23 @@
         android:paddingBottom="5dp"
         android:transcriptMode="alwaysScroll" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_list_search_members"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/space_file_detail_divider"
+        android:layout_below="@+id/layout_search_bar"
+        android:layout_weight="1"
+        android:background="@color/jandi_file_detail_comments_bg"
+        android:choiceMode="singleChoice"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:paddingBottom="5dp"
+        android:transcriptMode="alwaysScroll"
+        android:visibility="invisible" />
+
+
     <RelativeLayout
         android:id="@+id/vg_file_detail_preview_sticker"
         android:layout_width="match_parent"
@@ -75,13 +92,13 @@
         android:paddingRight="10dp">
 
         <EditText
-            android:id="@+id/et_file_detail_comment"
+            android:id="@+id/et_message"
             style="@style/JandiChat.EditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btn_file_detail_send_comment"
+            android:layout_toLeftOf="@+id/btn_send_message"
             android:hint="@string/comment"
             android:paddingRight="34dp" />
 
@@ -89,9 +106,9 @@
             android:id="@+id/btn_message_sticker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/et_file_detail_comment"
-            android:layout_alignRight="@+id/et_file_detail_comment"
-            android:layout_alignTop="@+id/et_file_detail_comment"
+            android:layout_alignBottom="@+id/et_message"
+            android:layout_alignRight="@+id/et_message"
+            android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
@@ -99,11 +116,11 @@
             android:src="@drawable/btn_sticker" />
 
         <Button
-            android:id="@+id/btn_file_detail_send_comment"
+            android:id="@+id/btn_send_message"
             style="@style/JandiChat.Button.Dynamic"
-            android:layout_alignBottom="@+id/et_file_detail_comment"
+            android:layout_alignBottom="@+id/et_message"
             android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/et_file_detail_comment"
+            android:layout_alignTop="@+id/et_message"
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
             android:text="@string/jandi_message_send" />

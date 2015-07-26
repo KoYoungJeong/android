@@ -100,7 +100,6 @@ public class ChatChooseModel {
 
     public List<ChatChooseItem> getChatListWithoutMe(String name) {
 
-
         List<FormattedEntity> formattedUsersWithoutMe = EntityManager.getInstance(context).getFormattedUsersWithoutMe();
 
         List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();

@@ -130,5 +130,12 @@
     <dimen name="jandi_carousel_bottom_line_spacing">1dp</dimen>
     <dimen name="jandi_carousel_bottom_line_spacing_date">3dp</dimen>
 
+    <!-- search member list for mension -->
+
+    <dimen name="jandi_search_member_list_item_height_size">56dp</dimen>
+    <dimen name="jandi_search_member_list_item_icon_size">40dp</dimen>
+    <dimen name="jandi_search_member_list_item_name_font_size">16sp</dimen>
+    <dimen name="jandi_mention_edit_text_item_font_size">18sp</dimen>
+
 
 </resources>

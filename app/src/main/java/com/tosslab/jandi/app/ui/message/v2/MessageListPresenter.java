@@ -46,6 +46,7 @@ import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.MessageListHeaderAdapter;
 import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.BodyViewHolder;
 import com.tosslab.jandi.app.ui.message.v2.dialog.DummyMessageDialog_;
+import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -134,6 +135,14 @@ public class MessageListPresenter {
     InvitationDialogExecutor invitationDialogExecutor;
     @Bean
     TeamDomainInfoModel teamDomainInfoModel;
+
+    @Bean
+    KeyboardHeightModel keyboardHeightModel;
+
+
+//    SettingEditText settingEditText;
+
+
     private MessageListAdapter messageListAdapter;
     private ProgressWheel progressWheel;
     private String tempMessage;
@@ -143,6 +152,8 @@ public class MessageListPresenter {
     private EntityManager mEntityManager;
     private String invitationUrl;
     private String teamName;
+    private String currentSearchText;
+
 
     @AfterInject
     void initObject() {
@@ -166,13 +177,11 @@ public class MessageListPresenter {
         });
 
         mEntityManager = EntityManager.getInstance(activity);
-
         progressWheel = new ProgressWheel(activity);
     }
 
     @AfterViews
     void initViews() {
-
         messageListView.setAdapter(messageListAdapter);
         messageListView.setItemAnimator(null);
         LinearLayoutManager layoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
@@ -189,7 +198,6 @@ public class MessageListPresenter {
                 .build();
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 
-
         setSendEditText(tempMessage);
 
         if (isDisabled) {
@@ -205,6 +213,12 @@ public class MessageListPresenter {
         if (gotoLatestLayoutVisible) {
             setGotoLatestLayoutVisible();
         }
+
+//        settingEditText = new SettingEditText(activity, messageEditText, getRoomId());
+
+//        messageEditText.addTextChangedListener(tw);
+
+//        mentionControlViewModel.setTextEditWatcher(messageEditText);
     }
 
     public void sendLayoutVisibleGone() {
@@ -339,7 +353,6 @@ public class MessageListPresenter {
     public String getSendEditText() {
         return messageEditText.getText().toString();
     }
-
 
     public void setSendEditText(String text) {
         tempMessage = text;
@@ -604,7 +617,6 @@ public class MessageListPresenter {
         }
     }
 
-
     public void setMoreNewFromAdapter(boolean isMoreNew) {
         messageListAdapter.setMoreFromNew(isMoreNew);
     }
@@ -647,7 +659,6 @@ public class MessageListPresenter {
             moveRealChatView.setVisibility(View.GONE);
         }
     }
-
 
     public void setOnItemClickListener(MessageListAdapter.OnItemClickListener onItemClickListener) {
         messageListAdapter.setOnItemClickListener(onItemClickListener);
@@ -790,7 +801,6 @@ public class MessageListPresenter {
     }
 
     public void showStickerPreview(StickerInfo stickerInfo) {
-
         vgStickerPreview.setVisibility(View.VISIBLE);
     }
 
@@ -799,12 +809,11 @@ public class MessageListPresenter {
     }
 
     public void dismissStickerPreview() {
-
         vgStickerPreview.setVisibility(View.GONE);
-
     }
 
     public void setEntityInfo(int entityId) {
         messageListAdapter.setEntityId(entityId);
     }
+
 }
