@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/jandi_search_member_list_item_height_size"
+    android:background="@drawable/message_list_selector"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/img_member_item_icon"
+        android:layout_width="@dimen/jandi_search_member_list_item_icon_size"
+        android:layout_height="@dimen/jandi_search_member_list_item_icon_size"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/jandi_topic_icon" />
+
+    <TextView
+        android:id="@+id/tv_member_item_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Member Name"
+        android:textColor="#000000"
+        android:textSize="@dimen/jandi_search_member_list_item_name_font_size"
+        android:textStyle="bold" />
+
+</LinearLayout>
