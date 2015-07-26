@@ -10,8 +10,10 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -42,6 +44,13 @@ public class InvitationDialogExecutor {
 
     @Background
     public void execute() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            AlertUtil_.getInstance_(activity)
+                    .showCheckNetworkDialog(activity, null);
+            return;
+        }
+
         entityManager = EntityManager.getInstance(activity);
         showProgressWheel();
 

@@ -239,17 +239,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.setMoreNewFromAdapter(true);
             messageListPresenter.setGotoLatestLayoutVisible();
         } else {
-            NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader(getActivity());
+            NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader();
             newsMessageLoader.setMessageListModel(messageListModel);
             newsMessageLoader.setMessageListPresenter(messageListPresenter);
             newsMessageLoader.setMessageState(messageState);
-            newsMessageLoader.setMessageSubscription(messageSubscription);
 
             NormalOldMessageLoader oldMessageLoader = new NormalOldMessageLoader(getActivity());
             oldMessageLoader.setMessageListModel(messageListModel);
             oldMessageLoader.setMessageListPresenter(messageListPresenter);
             oldMessageLoader.setMessageState(messageState);
             oldMessageLoader.setEntityId(entityId);
+            oldMessageLoader.setRoomId(roomId);
             oldMessageLoader.setTeamId(teamId);
 
             this.newsMessageLoader = newsMessageLoader;
@@ -259,6 +259,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListPresenter.setEntityInfo(entityId);
         messageListModel.updateMarkerInfo(teamId, roomId);
+        if (roomId > 0) {
+            messageListModel.setRoomId(roomId);
+        }
         fileUploadStateViewModel.setEntityId(entityId);
 
         JandiPreference.setKeyboardHeight(getActivity(), 0);
@@ -268,10 +271,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (oldMessageLoader != null) {
             ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
 
-            if (roomId <= 0) {
+            if (resMessages != null && roomId <= 0) {
                 roomId = resMessages.entityId;
                 messageListPresenter.setMarkerInfo(teamId, roomId);
                 messageListModel.updateMarkerInfo(teamId, roomId);
+                messageListModel.setRoomId(roomId);
             }
 
         }
@@ -704,19 +708,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         isFromSearch = false;
         messageListPresenter.setMarker(-1);
-        NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader(getActivity());
-        normalNewMessageLoader.setMessageSubscription(messageSubscription);
+        NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader();
+        normalNewMessageLoader.setMessageListModel(messageListModel);
         normalNewMessageLoader.setMessageState(messageState);
         normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
-        normalNewMessageLoader.setMessageListModel(messageListModel);
         newsMessageLoader = normalNewMessageLoader;
 
         NormalOldMessageLoader normalOldMessageLoader = new NormalOldMessageLoader(getActivity());
         normalOldMessageLoader.setMessageListModel(messageListModel);
+        normalOldMessageLoader.setMessageState(messageState);
+        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
         normalOldMessageLoader.setTeamId(teamId);
         normalOldMessageLoader.setEntityId(entityId);
-        normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
-        normalOldMessageLoader.setMessageState(messageState);
+        normalOldMessageLoader.setRoomId(roomId);
         oldMessageLoader = normalOldMessageLoader;
 
         messageListPresenter.setMoreNewFromAdapter(false);

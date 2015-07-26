@@ -21,8 +21,10 @@ public class JandiBroadcastReceiver extends BroadcastReceiver {
             return;
         }
         final PushTO pushTO = JandiPushReceiverModel_.getInstance_(context).parsingPushTO(intent.getExtras());
-        PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTO.getInfo();
-        LogUtil.i(TAG, messagePush.getAlert());
+        if (pushTO.getInfo() instanceof PushTO.MessagePush) {
+            PushTO.MessagePush messagePush = (PushTO.MessagePush) pushTO.getInfo();
+            LogUtil.i(messagePush.getAlert());
+        }
 
         intent.setClass(context, JandiPushIntentService.class);
         context.startService(intent);

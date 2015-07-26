@@ -10,14 +10,20 @@ import com.tosslab.jandi.app.network.models.ResRoomInfo;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 23..
  */
 public class MarkerRepository {
     private static MarkerRepository repository;
+    private final OrmDatabaseHelper helper;
+    private final Lock lock;
 
     private MarkerRepository() {
+        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+        lock = new ReentrantLock();
     }
 
     public static MarkerRepository getRepository() {
@@ -29,9 +35,9 @@ public class MarkerRepository {
     }
 
     public boolean upsertRoomInfo(ResRoomInfo roomInfo) {
+        lock.lock();
         try {
 
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResRoomInfo, ?> roomInfoDao = helper.getDao(ResRoomInfo.class);
             roomInfoDao.createOrUpdate(roomInfo);
 
@@ -41,7 +47,7 @@ public class MarkerRepository {
             deleteBuilder.delete();
             for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
                 markerInfo.setRoom(roomInfo);
-                markerInfoDao.create(markerInfo);
+                markerInfoDao.createOrUpdate(markerInfo);
             }
 
             return true;
@@ -50,58 +56,56 @@ public class MarkerRepository {
             e.printStackTrace();
             return false;
         } finally {
-            OpenHelperManager.releaseHelper();
+            lock.unlock();
         }
     }
 
     public boolean upsertRoomMarker(int teamId, int roomId, int memberId, int lastLinkId) {
+        lock.lock();
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-            Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = helper.getDao(ResRoomInfo.MarkerInfo.class);
-            ResRoomInfo.MarkerInfo markerInfo = markerInfoDao
-                    .queryBuilder()
+
+            Dao<ResRoomInfo, ?> roomInfoDao = helper.getDao(ResRoomInfo.class);
+            ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
                     .where()
                     .eq("roomId", roomId)
                     .and()
-                    .eq("memberId", memberId)
+                    .eq("teamId", teamId)
                     .queryForFirst();
-            if (markerInfo == null) {
 
-                Dao<ResRoomInfo, ?> roomInfoDao = helper.getDao(ResRoomInfo.class);
-                ResRoomInfo resRoomInfo = roomInfoDao.queryBuilder()
-                        .where()
-                        .eq("roomId", roomId)
-                        .and()
-                        .eq("teamId", teamId)
-                        .queryForFirst();
+            if (roomInfo != null) {
+                boolean find = false;
+                for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
+                    if (markerInfo.getMemberId() == memberId) {
+                        find = true;
+                        markerInfo.setLastLinkId(lastLinkId);
+                        break;
+                    }
 
-                if (resRoomInfo == null) {
-                    return false;
                 }
 
-                ResRoomInfo.MarkerInfo data = new ResRoomInfo.MarkerInfo();
-                data.setLastLinkId(lastLinkId);
-                data.setMemberId(memberId);
-                data.setRoom(resRoomInfo);
-                markerInfoDao.create(data);
-                return true;
-            } else {
-                markerInfo.setLastLinkId(lastLinkId);
-                markerInfoDao.update(markerInfo);
-                return true;
-            }
+                if (!find) {
+                    ResRoomInfo.MarkerInfo markerInfo = new ResRoomInfo.MarkerInfo();
+                    markerInfo.setLastLinkId(lastLinkId);
+                    markerInfo.setMemberId(memberId);
+                    markerInfo.setRoom(roomInfo);
+                    roomInfo.getMarkers().add(markerInfo);
+                }
 
+                return upsertRoomInfo(roomInfo);
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         } finally {
-            OpenHelperManager.releaseHelper();
+            lock.unlock();
         }
     }
 
     public Collection<ResRoomInfo.MarkerInfo> getRoomMarker(int teamId, int roomId) {
+        lock.lock();
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResRoomInfo, ?> roomInfoDao = helper.getDao(ResRoomInfo.class);
             ResRoomInfo roomInfo = roomInfoDao.queryBuilder()
                     .where()
@@ -114,14 +118,14 @@ public class MarkerRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            OpenHelperManager.releaseHelper();
+            lock.unlock();
         }
         return new ArrayList<>();
     }
 
     public int deleteRoomMarker(int roomId, int memberId) {
+        lock.lock();
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = helper.getDao(ResRoomInfo.MarkerInfo.class);
 
             DeleteBuilder<ResRoomInfo.MarkerInfo, ?> deleteBuilder = markerInfoDao.deleteBuilder();
@@ -134,9 +138,8 @@ public class MarkerRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            OpenHelperManager.releaseHelper();
+            lock.unlock();
         }
-
         return 0;
     }
 }

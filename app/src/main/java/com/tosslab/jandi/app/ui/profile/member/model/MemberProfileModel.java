@@ -42,16 +42,16 @@ public class MemberProfileModel {
     Context context;
 
     @Bean
-    EntityClientManager mEntityClientManager;
+    EntityClientManager entityClientManager;
 
     public ResLeftSideMenu.User getProfile() throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mEntityClientManager.getUserProfile(entityManager.getMe().getId());
+        return entityClientManager.getUserProfile(entityManager.getMe().getId());
     }
 
     public ResLeftSideMenu.User updateProfile(ReqUpdateProfile reqUpdateProfile) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mEntityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
+        return entityClientManager.updateUserProfile(entityManager.getMe().getId(), reqUpdateProfile);
     }
 
     public String uploadProfilePhoto(File file) throws ExecutionException, InterruptedException {
@@ -73,7 +73,7 @@ public class MemberProfileModel {
 
     public com.tosslab.jandi.app.network.models.ResCommon updateProfileName(ReqProfileName reqProfileName) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mEntityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
+        return entityClientManager.updateMemberName(entityManager.getMe().getId(), reqProfileName);
     }
 
     public String[] getAccountEmails() {
@@ -106,10 +106,16 @@ public class MemberProfileModel {
 
     public ResLeftSideMenu.User updateProfileEmail(String email) throws RetrofitError {
         EntityManager entityManager = EntityManager.getInstance(context);
-        return mEntityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
+        return entityClientManager.updateMemberEmail(entityManager.getMe().getId(), email);
     }
 
     public boolean isMyId(int id) {
         return EntityManager.getInstance(context).getMe().getId() == id;
+    }
+
+    public ResLeftSideMenu.User getSavedProfile(Context context) {
+
+        return EntityManager.getInstance(context).getMe().getUser();
+
     }
 }

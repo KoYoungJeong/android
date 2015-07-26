@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.local.orm.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.tosslab.jandi.app.network.models.ResAccountInfo;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 21..
@@ -13,17 +12,17 @@ public class LeftSideMenu {
     @DatabaseField(generatedId = true)
     private long _id;
 
-    @DatabaseField(foreign = true, unique = true)
-    private ResAccountInfo.UserTeam team;
+    @DatabaseField
+    private int teamId;
     @DatabaseField
     private String rawLeftSideMenu;
 
-    public ResAccountInfo.UserTeam getTeam() {
-        return team;
+    public int getTeamId() {
+        return teamId;
     }
 
-    public void setTeam(ResAccountInfo.UserTeam team) {
-        this.team = team;
+    public void setTeamId(int team) {
+        this.teamId = team;
     }
 
     public String getRawLeftSideMenu() {

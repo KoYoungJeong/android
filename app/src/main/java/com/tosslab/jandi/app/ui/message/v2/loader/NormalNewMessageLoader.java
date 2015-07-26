@@ -1,6 +1,8 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
-import android.content.Context;
+import android.text.TextUtils;
+
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
@@ -9,25 +11,18 @@ import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collections;
+import java.util.List;
 
 import retrofit.RetrofitError;
-import rx.Subscription;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
  */
 public class NormalNewMessageLoader implements NewsMessageLoader {
 
-    private final Context context;
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
-
-    private Subscription messageSubscription;
-
-    public NormalNewMessageLoader(Context context) {
-        this.context = context;
-    }
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -41,22 +36,19 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         this.messageState = messageState;
     }
 
-    public void setMessageSubscription(Subscription messageSubscription) {
-        this.messageSubscription = messageSubscription;
-    }
-
     @Override
     public void load(int linkId) {
         if (linkId <= 0) {
             return;
         }
 
-        messageListModel.stopRefreshTimer();
-
         try {
             ResUpdateMessages newMessage = messageListModel.getNewMessage(linkId);
 
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
+
+                saveToDatabase(newMessage.updateInfo.messages);
+
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
@@ -85,9 +77,15 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (!messageSubscription.isUnsubscribed()) {
-                messageListModel.startRefreshTimer();
+        }
+    }
+
+    private void saveToDatabase(List<ResMessages.Link> messages) {
+        for (ResMessages.Link message : messages) {
+            if (TextUtils.equals(message.status, "archived")) {
+                MessageRepository.getRepository().deleteMessage(message.messageId);
+            } else {
+                MessageRepository.getRepository().upsertMessage(message);
             }
         }
     }

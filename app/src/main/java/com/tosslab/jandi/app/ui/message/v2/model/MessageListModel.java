@@ -67,6 +67,7 @@ import java.util.concurrent.ExecutionException;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -113,7 +114,8 @@ public class MessageListModel {
         return TextUtils.isEmpty(text);
     }
 
-    public ResUpdateMessages getNewMessage(int linkId) throws RetrofitError {
+    public ResUpdateMessages getNewMessage(int linkId) throws
+            RetrofitError {
         return messageManipulator.updateMessages(linkId);
     }
 
@@ -442,5 +444,17 @@ public class MessageListModel {
 
     public String getReadyMessage(int roomId) {
         return MessageRepository.getRepository().getReadyMessage(roomId).getText();
+    }
+
+    public void upsertMessages(ResMessages messages) {
+        Observable.from(messages.records)
+                .subscribe(link -> link.roomId = messages.entityId);
+
+        MessageRepository.getRepository().upsertMessages(messages.records);
+
+    }
+
+    public void setRoomId(int roomId) {
+        messageManipulator.setRoomId(roomId);
     }
 }

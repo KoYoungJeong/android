@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapt
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
 
@@ -392,6 +393,13 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
         });
 
         animation.startNow();
+    }
+
+    @UiThread
+    @Override
+    public void showInvalidNetworkDialog() {
+        AlertUtil_.getInstance_(getActivity())
+                .showCheckNetworkDialog(getActivity(), null);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
 import com.tosslab.jandi.app.local.orm.domain.SelectedTeam;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
+import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResChat;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResRoomInfo;
@@ -87,6 +88,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             createTable(connectionSource, ResRoomInfo.class);
             createTable(connectionSource, ResRoomInfo.MarkerInfo.class);
+
+            createTable(connectionSource, ResAnnouncement.class);
 
             prepareStickerContent();
 
@@ -167,6 +170,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             dropTable(connectionSource, ResRoomInfo.class);
             dropTable(connectionSource, ResRoomInfo.MarkerInfo.class);
+
+            dropTable(connectionSource, ResAnnouncement.class);
 
 
             onCreate(database, connectionSource);

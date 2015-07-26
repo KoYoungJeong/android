@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.AnnouncementRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
@@ -43,6 +44,7 @@ public class AnnouncementModel {
         ResAnnouncement announcement = null;
         try {
             announcement = RequestApiManager.getInstance().getAnnouncement(teamId, topicId);
+            AnnouncementRepository.getRepository().upsertAnnounce(announcement);
         } catch (RetrofitError e) {
             e.printStackTrace();
         }

@@ -12,7 +12,6 @@ import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
@@ -26,7 +25,7 @@ import retrofit.RetrofitError;
 // TODO Must be seperate logic
 @EBean
 public class MessageManipulator {
-    private static final int NUMBER_OF_MESSAGES = 20;
+    public static final int NUMBER_OF_MESSAGES = 20;
 
     @RootContext
     Context context;
@@ -34,6 +33,7 @@ public class MessageManipulator {
     int entityType;
     int entityId;
     private int selectedTeamId;
+    private int roomId;
 
     @AfterInject
     void initSelectedTeam() {
@@ -76,17 +76,9 @@ public class MessageManipulator {
     }
 
     public ResUpdateMessages updateMessages(final int fromCurrentId) throws RetrofitError {
-        switch (entityType) {
-            case JandiConstants.TYPE_PUBLIC_TOPIC:
-                LogUtil.e(String.valueOf("selectedTeamId:" + selectedTeamId + "EntityId:" + entityId + "fromCurrentId:" + fromCurrentId));
-                return RequestApiManager.getInstance().getPublicTopicUpdatedMessagesByChannelMessageApi(selectedTeamId, entityId, fromCurrentId);
-            case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return RequestApiManager.getInstance().getDirectMessagesUpdatedByDirectMessageApi(selectedTeamId, entityId, fromCurrentId);
-            case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return RequestApiManager.getInstance().getGroupMessagesUpdatedByGroupMessageApi(selectedTeamId, entityId, fromCurrentId);
-            default:
-                return null;
-        }
+
+        return RequestApiManager.getInstance().getRoomUpdateMessageByMessagesApiAuth
+                (selectedTeamId, roomId, fromCurrentId);
     }
 
     public ResCommon setMarker(final int lastLinkId) throws RetrofitError {
@@ -189,5 +181,9 @@ public class MessageManipulator {
 
     public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
         return RequestApiManager.getInstance().getMessage(teamId, messageId);
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

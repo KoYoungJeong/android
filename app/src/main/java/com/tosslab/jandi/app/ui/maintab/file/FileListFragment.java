@@ -44,8 +44,8 @@ import com.tosslab.jandi.app.ui.maintab.file.model.FileListModel;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity;
 import com.tosslab.jandi.app.ui.search.main.view.SearchActivity_;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 import com.tosslab.jandi.app.views.SimpleDividerItemDecoration;
 
 import org.androidannotations.annotations.AfterInject;
@@ -61,7 +61,6 @@ import org.androidannotations.annotations.SystemService;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
-import java.io.File;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -101,14 +100,12 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     InputMethodManager inputMethodManager;
 
     private SearchQuery mSearchQuery;
-    private ProgressWheel mProgressWheel;
 
     /**
      * File tab 을 위한 액션바와 카테고리 선택 다이얼로그, 이벤트 전달
      */
     private int selectedTeamId;
     private boolean isSearchLayoutFirst = true;
-    private File photoFileByCamera;
     private boolean isForeground;
     private PublishSubject<Integer> initSearchSubject;
     private SearchActivity.OnSearchItemSelect onSearchItemSelect;
@@ -136,12 +133,6 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void bindAdapter() {
         LogUtil.d("FileListFragment AfterViews");
         setHasOptionsMenu(true);
-
-        // myToken 획득
-        // Progress Wheel 설정
-        mProgressWheel = new ProgressWheel(getActivity());
-
-        fileListModel.retrieveEntityManager();
 
         // Empty View를 가진 ListView 설정
         actualListView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -244,6 +235,10 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
     void getPreviousFile() {
 
         int justGetFilesSize;
+
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
 
         fileListPresenter.showMoreProgressBar();
         try {
@@ -397,6 +392,13 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         fileListPresenter.setInitLoadingViewVisible(View.VISIBLE);
         fileListPresenter.setEmptyViewVisible(View.GONE);
         fileListPresenter.setSearchEmptryViewVisible(View.GONE);
+
+        if (!NetworkCheckUtil.isConnected()) {
+            fileListPresenter.setInitLoadingViewVisible(View.GONE);
+            fileListPresenter.setSearchEmptryViewVisible(View.VISIBLE);
+            fileListPresenter.setInitLoadingViewVisible(View.GONE);
+            return;
+        }
 
         try {
             ReqSearchFile reqSearchFile = mSearchQuery.getRequestQuery();

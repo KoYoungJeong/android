@@ -10,6 +10,7 @@ import com.tosslab.jandi.app.ui.maintab.chat.model.MainChatListModel;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -52,6 +53,11 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, savedChatList);
             view.setChatItems(chatItems);
         }
+
+        if (!NetworkCheckUtil.isConnected()) {
+            return;
+        }
+
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
             mainChatListModel.saveChatList(teamId, chatList);
@@ -89,6 +95,10 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         int teamId = mainChatListModel.getTeamId(context);
 
         if (memberId < 0 || teamId < 0) {
+            return;
+        }
+
+        if (!NetworkCheckUtil.isConnected()) {
             return;
         }
 

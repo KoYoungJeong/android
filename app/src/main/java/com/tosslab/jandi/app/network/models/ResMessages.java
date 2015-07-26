@@ -79,8 +79,8 @@ public class ResMessages {
         public EventInfo info; // How to convert other type
         @DatabaseField
         public String eventType;
-        @DatabaseField(foreign = true)
-        public OriginalMessage feedback;
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
+        public FileMessage feedback;
         @DatabaseField(foreign = true)
         public OriginalMessage message;
         @DatabaseField
@@ -152,8 +152,6 @@ public class ResMessages {
         public int permission;
         @DatabaseField
         public int feedbackId;
-        @DatabaseField(foreign = true, foreignAutoRefresh = true)
-        public FileMessage feedback;
         @DatabaseField
         public String linkPreviewId;
 
@@ -169,7 +167,6 @@ public class ResMessages {
                     ", status='" + status + '\'' +
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
-                    ", feedback=" + feedback +
                     ", linkPreviewId=" + linkPreviewId +
                     '}';
         }
@@ -258,7 +255,6 @@ public class ResMessages {
                     ", shareEntities=" + shareEntities +
                     ", permission=" + permission +
                     ", feedbackId=" + feedbackId +
-                    ", feedback=" + feedback +
                     ", linkPreviewId=" + linkPreviewId +
                     ". content=" + content +
                     ", linkPreview=" + linkPreview +
@@ -273,7 +269,7 @@ public class ResMessages {
         @ForeignCollectionField(foreignFieldName = "commentOf")
         public Collection<IntegerWrapper> shareEntities;
 
-        @DatabaseField(foreign = true)
+        @DatabaseField(foreign = true, foreignAutoRefresh = true)
         public TextContent content;
     }
 

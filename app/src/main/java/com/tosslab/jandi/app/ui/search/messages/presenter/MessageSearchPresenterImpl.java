@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.network.models.ReqMessageSearchQeury;
 import com.tosslab.jandi.app.network.models.ResMessageSearch;
 import com.tosslab.jandi.app.ui.search.messages.model.MessageSearchModel;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
@@ -57,6 +58,12 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     public void onSearchRequest(String query) {
 
         BackgroundExecutor.cancelAll(MORE_SEARCH_TASK, true);
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showInvalidNetworkDialog();
+            return;
+        }
+
         view.clearSearchResult();
         view.showLoading(query);
 
@@ -84,6 +91,11 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
     @Override
     @Background(id = MORE_SEARCH_TASK)
     public void onMoreSearchRequest() {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showInvalidNetworkDialog();
+            return;
+        }
 
         view.showMoreLoadingProgressBar();
 

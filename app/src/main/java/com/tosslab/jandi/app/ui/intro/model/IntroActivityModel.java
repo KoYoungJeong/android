@@ -3,10 +3,13 @@ package com.tosslab.jandi.app.ui.intro.model;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
+import com.tosslab.jandi.app.local.database.DatabaseConsts;
+import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -15,7 +18,6 @@ import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
-import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.EBean;
@@ -81,14 +83,6 @@ public class IntroActivityModel {
         AccountRepository.getRepository().upsertAccountAllInfo(resAccountInfo);
     }
 
-    public void clearTokenInfo() {
-        TokenUtil.clearTokenInfo();
-    }
-
-    public void clearAccountInfo() {
-        AccountRepository.getRepository().deleteAccountInfo();
-    }
-
     public void sleep(long initTime, long maxDelayMs) {
         long currentTimeMillis = System.currentTimeMillis();
         long currentTimeGap = currentTimeMillis - initTime;
@@ -142,8 +136,26 @@ public class IntroActivityModel {
         return RequestApiManager.getInstance().getConfigByMainRest();
     }
 
-    public boolean hasSelectedTeam(Context context) {
-        return AccountRepository.getRepository().getSelectedTeamInfo() != null;
+    public boolean hasMigration() {
+        ResAccountInfo accountInfo = AccountRepository.getRepository().getAccountInfo();
+        return accountInfo != null && !TextUtils.isEmpty(accountInfo.getId());
     }
 
+    public long setSelectedTeamId(int teamId) {
+        return AccountRepository.getRepository().updateSelectedTeamInfo(teamId);
+    }
+
+    public int getSelectedTeamInfoByOldData(Context context) {
+        SQLiteDatabase database = JandiDatabaseOpenHelper.getInstance(context).getReadableDatabase();
+        String[] columns = {DatabaseConsts.AccountTeam.teamId.name()};
+        String selection = DatabaseConsts.AccountTeam.selected.name() + " = 1";
+        Cursor cursor = database.query(DatabaseConsts.Table.account_team.name(), columns, selection, null, null, null, null);
+
+        if (cursor == null || cursor.getCount() <= 0) {
+            return 0;
+        }
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
 }

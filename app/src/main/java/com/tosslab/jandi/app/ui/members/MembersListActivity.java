@@ -107,7 +107,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @SupposeUiThread
     void initProgressWheel() {
-        // Progress Wheel 설정
         mProgressWheel = new ProgressWheel(MembersListActivity.this);
     }
 
@@ -128,7 +127,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     }
 
     @OptionsItem(R.id.action_invitation)
-        //FIXME
     void onInviteOptionSelect() {
         invitationDialogExecutor.execute();
     }

@@ -22,8 +22,10 @@ import java.util.List;
 public class MessageRepository {
 
     private static MessageRepository repository;
+    private final OrmDatabaseHelper helper;
 
     private MessageRepository() {
+        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
     }
 
     public static MessageRepository getRepository() {
@@ -36,7 +38,6 @@ public class MessageRepository {
 
     public boolean upsertMessages(List<ResMessages.Link> messages) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
 
             for (ResMessages.Link message : messages) {
@@ -55,8 +56,28 @@ public class MessageRepository {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
+        }
+        return false;
+    }
+
+    public boolean upsertMessage(ResMessages.Link message) {
+        try {
+            Dao<ResMessages.Link, ?> dao = helper.getDao(ResMessages.Link.class);
+
+            if (TextUtils.equals(message.status, "event")) {
+
+                message.eventType = getEventType(message.info);
+                ResMessages.EventInfo info = message.info;
+                setTypeIfCreateEvent(info);
+
+                upsertEventInfo(message.info, helper);
+            } else if (message != null) {
+                upsertMessage(message, helper);
+            }
+            dao.createOrUpdate(message);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
@@ -69,7 +90,6 @@ public class MessageRepository {
         }
 
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResMessages.Link, ?> linkDao = helper.getDao(ResMessages.Link.class);
             DeleteBuilder<ResMessages.Link, ?> deleteBuilder = linkDao.deleteBuilder();
             deleteBuilder
@@ -79,8 +99,6 @@ public class MessageRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return 0;
@@ -90,10 +108,10 @@ public class MessageRepository {
     public List<ResMessages.Link> getMessages(int roomId) {
 
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             int teamId = AccountRepository.getRepository().getSelectedTeamId();
             return helper.getDao(ResMessages.Link.class)
                     .queryBuilder()
+                    .orderBy("time", false)
                     .where()
                     .eq("teamId", teamId)
                     .and()
@@ -101,30 +119,46 @@ public class MessageRepository {
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return new ArrayList<>();
     }
 
+    public List<ResMessages.Link> getOldMessages(int roomId, int lastLinkId, long count) {
+        try {
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            return helper.getDao(ResMessages.Link.class)
+                    .queryBuilder()
+                    .limit(count)
+                    .orderBy("time", false)
+                    .where()
+                    .eq("teamId", teamId)
+                    .and()
+                    .eq("roomId", roomId)
+                    .and()
+                    .lt("id", lastLinkId > 0 ? lastLinkId : Integer.MAX_VALUE)
+                    .query();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
+
+    }
+
     public boolean upsertReadyMessage(ReadyMessage readyMessage) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
             readyMessageDao.createOrUpdate(readyMessage);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return false;
     }
 
     public int deleteReadyMessage(int roomId) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
             DeleteBuilder<ReadyMessage, ?> deleteBuilder = readyMessageDao.deleteBuilder();
             deleteBuilder
@@ -133,15 +167,12 @@ public class MessageRepository {
             return deleteBuilder.delete();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return 0;
     }
 
     public ReadyMessage getReadyMessage(int roomId) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ReadyMessage, ?> readyMessageDao = helper.getDao(ReadyMessage.class);
             ReadyMessage readyMessage = readyMessageDao.queryBuilder()
                     .where()
@@ -157,8 +188,6 @@ public class MessageRepository {
             return readyMessage;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         ReadyMessage readyMessage = new ReadyMessage();
@@ -169,15 +198,12 @@ public class MessageRepository {
 
     public boolean insertSendMessage(SendMessage sendMessage) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<SendMessage, ?> sendMessageDao = helper.getDao(SendMessage.class);
             sendMessage.setStatus(SendMessage.Status.SENDING.name());
             sendMessageDao.create(sendMessage);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return false;
@@ -186,7 +212,6 @@ public class MessageRepository {
 
     public List<SendMessage> getSendMessage(int roomId) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             return dao.queryBuilder()
                     .where()
@@ -194,15 +219,12 @@ public class MessageRepository {
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return new ArrayList<>();
     }
 
     public int deleteSendMessage(long id) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             DeleteBuilder<SendMessage, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder.where().eq("id", id);
@@ -210,16 +232,14 @@ public class MessageRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return 0;
     }
 
+
     public int updateSendMessageStatus(long id, SendMessage.Status status) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<SendMessage, ?> dao = helper.getDao(SendMessage.class);
             UpdateBuilder<SendMessage, ?> updateBuilder = dao.updateBuilder();
             updateBuilder.updateColumnValue("status", status.name());
@@ -229,12 +249,9 @@ public class MessageRepository {
             return updateBuilder.update();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return 0;
     }
-
 
     private void upsertMessage(ResMessages.Link message, OrmDatabaseHelper helper) throws
             SQLException {
@@ -304,6 +321,8 @@ public class MessageRepository {
             helper.getDao(ResMessages.StickerContent.class).createOrUpdate(stickerMessage.content);
             helper.getDao(ResMessages.CommentStickerMessage.class).createOrUpdate(stickerMessage);
 
+            upsertFileMessage(message.feedback, helper);
+
         } else if (contentMessage instanceof ResMessages.CommentMessage) {
             message.messageType = ResMessages.MessageType.COMMENT.name();
 
@@ -322,6 +341,8 @@ public class MessageRepository {
             helper.getDao(ResMessages.TextContent.class).create(commentMessage.content);
             helper.getDao(ResMessages.CommentMessage.class).create(commentMessage);
 
+            upsertFileMessage(message.feedback, helper);
+
         }
     }
 
@@ -331,6 +352,7 @@ public class MessageRepository {
         Dao<ResMessages.OriginalMessage.IntegerWrapper, ?> dao = helper.getDao(ResMessages.OriginalMessage.IntegerWrapper.class);
         DeleteBuilder<ResMessages.OriginalMessage.IntegerWrapper, ?> deleteBuilder = dao.deleteBuilder();
         deleteBuilder.where().eq("fileOf_id", fileMessage.id);
+        deleteBuilder.delete();
 
         for (ResMessages.OriginalMessage.IntegerWrapper shareEntity : fileMessage.shareEntities) {
             shareEntity.setFileOf(fileMessage);

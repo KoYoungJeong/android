@@ -1,8 +1,11 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
+
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
@@ -25,6 +28,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     private MessageState messageState;
     private int teamId;
     private int entityId;
+    private int roomId;
 
     public NormalOldMessageLoader(Context context) {
 
@@ -56,17 +60,52 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         ResMessages oldMessage = null;
         try {
 
-            int itemCount = messageListPresenter.getItemCount();
-            oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+            int itemCount = Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messageListPresenter.getItemCount());
+
+            if (roomId > 0) {
+                // 저장된 정보를 가져옴
+                List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, linkId, itemCount);
+                if (oldMessages != null && oldMessages.size() > 0) {
+                    int firstLinkId = oldMessages.get(0).id;
+
+                    messageState.setFirstItemId(firstLinkId);
+
+                    oldMessage = new ResMessages();
+                    // 첫 메세지가 아니라고 하기 위함
+                    oldMessage.firstLinkId = firstLinkId - 1;
+                    // 마커 업로드를 하지 않기 위함
+                    oldMessage.lastLinkId = oldMessages.get(oldMessages.size() - 1).id + 1;
+                    oldMessage.entityId = roomId;
+                    oldMessage.records = oldMessages;
+                }
+            }
+
+            if (oldMessage == null) {
+                oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                messageListModel.upsertMessages(oldMessage);
+            } else if (oldMessage.records.size() < itemCount) {
+                try {
+                    ResMessages addOldMessage =
+                            messageListModel.getOldMessage(oldMessage.records.get(0).id, itemCount);
+
+                    messageListModel.upsertMessages(addOldMessage);
+
+                    addOldMessage.records.addAll(oldMessage.records);
+
+                    oldMessage = addOldMessage;
+                } catch (RetrofitError retrofitError) {
+                    retrofitError.printStackTrace();
+                }
+            }
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
                 checkItemCountIfException(linkId);
                 return oldMessage;
             }
 
-            int firstLinkId = oldMessage.records.get(0).id;
-            messageState.setFirstItemId(firstLinkId);
-            boolean isFirstMessage = oldMessage.firstLinkId == firstLinkId;
+            int firstLinkIdInMessage = oldMessage.records.get(0).id;
+            messageState.setFirstItemId(firstLinkIdInMessage);
+            boolean isFirstMessage = oldMessage.firstLinkId == firstLinkIdInMessage;
             messageState.setFirstMessage(isFirstMessage);
 
             Collections.sort(oldMessage.records, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
@@ -143,4 +182,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
         }
     }
 
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
 }

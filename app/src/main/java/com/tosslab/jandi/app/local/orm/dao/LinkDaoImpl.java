@@ -76,7 +76,8 @@ public class LinkDaoImpl extends BaseDaoImpl<ResMessages.Link, Integer> {
                         .eq("id", link.messageId)
                         .queryForFirst();
 
-                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages.FileMessage.class)
+                link.feedback = DaoManager.createDao(getConnectionSource(), ResMessages
+                        .FileMessage.class)
                         .queryBuilder()
                         .where()
                         .eq("id", link.feedbackId)

@@ -31,6 +31,10 @@ public class ResChat {
     private String lastMessage;
     @DatabaseField
     private String lastMessageStatus;
+    @DatabaseField
+    private int order;
+    @DatabaseField
+    private boolean isOld;
 
     public int getLastMessageId() {
         return lastMessageId;
@@ -95,5 +99,21 @@ public class ResChat {
 
     public void setTeamId(long teamId) {
         this.teamId = teamId;
+    }
+
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    public boolean isOld() {
+        return isOld;
+    }
+
+    public void setIsOld(boolean isOld) {
+        this.isOld = isOld;
     }
 }

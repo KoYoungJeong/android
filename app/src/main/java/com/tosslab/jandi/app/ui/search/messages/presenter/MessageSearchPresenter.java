@@ -54,5 +54,7 @@ public interface MessageSearchPresenter {
         void showMoreLoadingProgressBar();
 
         void dismissMoreLoadingProgressBar();
+
+        void showInvalidNetworkDialog();
     }
 }

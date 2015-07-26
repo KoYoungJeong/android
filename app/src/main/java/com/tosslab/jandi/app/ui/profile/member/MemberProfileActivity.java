@@ -1,7 +1,6 @@
 package com.tosslab.jandi.app.ui.profile.member;
 
 import android.app.DialogFragment;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
@@ -11,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -21,18 +21,15 @@ import com.tosslab.jandi.app.events.profile.MemberEmailChangeEvent;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.files.upload.ProfileFileUploadViewModelImpl;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
-import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
-import com.tosslab.jandi.app.network.client.EntityClientManager_;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
 import com.tosslab.jandi.app.ui.profile.member.model.MemberProfileModel;
-import com.tosslab.jandi.app.utils.BadgeUtils;
+import com.tosslab.jandi.app.utils.AlertUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
-import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -60,6 +57,9 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Bean(ProfileFileUploadViewModelImpl.class)
     FilePickerViewModel filePickerViewModel;
 
+    @Bean
+    AlertUtil alertUtil;
+
     @AfterViews
     void bindAdapter() {
 
@@ -84,10 +84,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                return true;
-            case R.id.action_update_profile:
-                ProgressDialog progressDialog = new ProgressDialog(MemberProfileActivity.this);
-                onUpdateProfile(progressDialog);
                 return true;
         }
 
@@ -121,9 +117,16 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
      */
     @Background
     void getProfileInBackground() {
+
+
         memberProfileView.showProgressWheel();
         try {
-            ResLeftSideMenu.User me = memberProfileModel.getProfile();
+            ResLeftSideMenu.User me;
+            if (!NetworkCheckUtil.isConnected()) {
+                me = memberProfileModel.getSavedProfile(JandiApplication.getContext());
+            } else {
+                me = memberProfileModel.getProfile();
+            }
             memberProfileView.displayProfile(me);
         } catch (RetrofitError e) {
             LogUtil.e("get profile failed", e);
@@ -214,6 +217,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     }
 
     public void onEvent(ConfirmModifyProfileEvent event) {
+
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
+
         memberProfileView.updateProfileTextColor(event.actionType, event.inputMessage);
         if (event.actionType == EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME) {
             updateProfileName(event.inputMessage);
@@ -234,13 +244,13 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
                     break;
             }
 
-
             updateProfileExtraInfo(reqUpdateProfile);
         }
     }
 
     @Background
     void updateProfileExtraInfo(ReqUpdateProfile reqUpdateProfile) {
+
         memberProfileView.showProgressWheel();
         try {
             ResLeftSideMenu.User me = memberProfileModel.updateProfile(reqUpdateProfile);
@@ -277,6 +287,12 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Background
     void uploadEmail(String email) {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
+
         try {
             memberProfileModel.updateProfileEmail(email);
             memberProfileView.updateProfileSucceed();
@@ -284,33 +300,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
         } catch (RetrofitError e) {
             memberProfileView.updateProfileFailed();
         }
-    }
-
-    @Background
-    void onUpdateProfile(ProgressDialog progressDialog) {
-        // TODO Refactoring...
-
-        memberProfileView.showProgressWheel();
-
-        try {
-            ResLeftSideMenu entitiesInfo = EntityClientManager_.getInstance_(MemberProfileActivity.this).getTotalEntitiesInfo();
-            LeftSideMenuRepository.getRepository().upsertLeftSideMenu(entitiesInfo);
-            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(entitiesInfo);
-            JandiPreference.setBadgeCount(MemberProfileActivity.this, totalUnreadCount);
-            BadgeUtils.setBadge(MemberProfileActivity.this, totalUnreadCount);
-            EntityManager.getInstance(MemberProfileActivity.this).refreshEntity(entitiesInfo);
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        }
-
-        memberProfileView.dismissProgressWheel();
-
-
-    }
-
-    @UiThread
-    void upateOptionMenu() {
-        invalidateOptionsMenu();
     }
 
     /**
@@ -321,6 +310,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
 
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
+        }
         filePickerViewModel.selectFileSelector(JandiConstants.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
 
     }
@@ -329,6 +322,10 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     public void onImagePickResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
             return;
+        }
+
+        if (!NetworkCheckUtil.isConnected()) {
+            alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
         }
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);

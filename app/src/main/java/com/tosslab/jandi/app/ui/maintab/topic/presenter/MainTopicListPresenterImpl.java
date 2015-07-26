@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.ui.maintab.topic.model.MainTopicModel;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -93,6 +94,12 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     @Background
     @Override
     public void onJoinTopic(Context context, Topic topic) {
+
+        if (!NetworkCheckUtil.isConnected()) {
+            view.showErrorToast(context.getString(R.string.err_entity_join));
+            return;
+        }
+
         view.showProgressWheel();
 
         String message = context.getString(R.string.jandi_message_join_entity, topic.getName());

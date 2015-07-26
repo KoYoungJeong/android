@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.UpdateBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResChat;
@@ -17,8 +18,11 @@ import java.util.List;
 public class ChatRepository {
 
     private static ChatRepository repository;
+    private final OrmDatabaseHelper helper;
 
-    private ChatRepository() { }
+    private ChatRepository() {
+        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+    }
 
     public static ChatRepository getRepository() {
         if (repository == null) {
@@ -31,18 +35,21 @@ public class ChatRepository {
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
+            UpdateBuilder<ResChat, ?> updateBuilder = chatDao.updateBuilder();
+            updateBuilder.updateColumnValue("isOld", true);
+            updateBuilder.update();
 
+            int order = 0;
             for (ResChat chat : chats) {
                 chat.setTeamId(selectedTeamId);
+                chat.setOrder(order++);
+                chat.setIsOld(false);
                 chatDao.createOrUpdate(chat);
             }
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return false;
 
@@ -51,16 +58,16 @@ public class ChatRepository {
     public List<ResChat> getChats() {
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResChat, ?> chatDao = helper.getDao(ResChat.class);
             return chatDao.queryBuilder()
+                    .orderBy("order", true)
                     .where()
                     .eq("teamId", selectedTeamId)
+                    .and()
+                    .eq("isOld", false)
                     .query();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return new ArrayList<>();
@@ -69,7 +76,6 @@ public class ChatRepository {
     public ResChat getChat(int userId) {
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             return helper.getDao(ResChat.class)
                     .queryBuilder()
                     .where()
@@ -79,15 +85,12 @@ public class ChatRepository {
                     .queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return new ResChat();
     }
 
     public int deleteChat(int roomId) {
         try {
-            OrmDatabaseHelper helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
             Dao<ResChat, ?> dao = helper.getDao(ResChat.class);
             DeleteBuilder<ResChat, ?> deleteBuilder = dao.deleteBuilder();
             deleteBuilder
@@ -98,8 +101,6 @@ public class ChatRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return 0;
     }

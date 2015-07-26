@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.network.manager.apiexecutor;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v4.util.Pools;
 
 import com.tosslab.jandi.app.JandiApplication;
@@ -15,6 +13,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import retrofit.RetrofitError;
 
@@ -26,7 +25,7 @@ public class PoolableRequestApiExecutor {
     public static final int MAX_POOL_SIZE = 10;
     private static final int RETRY_COUNT = 2;
     private static final Pools.SynchronizedPool sExecutorPool = new Pools.SynchronizedPool(MAX_POOL_SIZE);
-//    private static final AwaitablePool sExecutorPool = new AwaitablePool(MAX_POOL_SIZE);
+    //    private static final AwaitablePool sExecutorPool = new AwaitablePool(MAX_POOL_SIZE);
     private int retryCnt = 0;
 
     private PoolableRequestApiExecutor() {
@@ -97,9 +96,7 @@ public class PoolableRequestApiExecutor {
 
     //Todo 네트워크 상태를 체크하는 공용 클래스 생성 필요 - 중복 사용이 예상되는 메서드
     public boolean isActiveNetwork() {
-        NetworkInfo activeNetworkInfo = ((ConnectivityManager) JandiApplication.getContext().
-                getSystemService(JandiApplication.getContext().CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        return NetworkCheckUtil.isConnected();
     }
 
     private ResAccessToken refreshToken() {

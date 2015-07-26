@@ -22,8 +22,11 @@ import java.util.List;
 public class AccountRepository {
 
     private static AccountRepository repository;
+    private final OrmDatabaseHelper helper;
 
-    private AccountRepository() { }
+    private AccountRepository() {
+        helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+    }
 
     public static AccountRepository getRepository() {
         if (repository == null) {
@@ -34,15 +37,14 @@ public class AccountRepository {
     }
 
     public void upsertAccountAllInfo(ResAccountInfo accountInfo) {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         try {
-            Dao<ResAccountInfo, String> accountInfoDao = openHelper.getDao(ResAccountInfo.class);
-            Dao<ResAccountInfo.UserDevice, Long> userDeviceDao = openHelper.getDao(ResAccountInfo.UserDevice.class);
-            Dao<ResAccountInfo.UserTeam, Integer> userTeamDao = openHelper.getDao(ResAccountInfo
+            Dao<ResAccountInfo, String> accountInfoDao = helper.getDao(ResAccountInfo.class);
+            Dao<ResAccountInfo.UserDevice, Long> userDeviceDao = helper.getDao(ResAccountInfo.UserDevice.class);
+            Dao<ResAccountInfo.UserTeam, Integer> userTeamDao = helper.getDao(ResAccountInfo
                     .UserTeam.class);
-            Dao<ResAccountInfo.UserEmail, String> userEmailDao = openHelper.getDao(ResAccountInfo
+            Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
                     .UserEmail.class);
-            Dao<ResAccountInfo.ThumbnailInfo, Long> thumbnailDao = openHelper.getDao(ResAccountInfo.ThumbnailInfo.class);
+            Dao<ResAccountInfo.ThumbnailInfo, Long> thumbnailDao = helper.getDao(ResAccountInfo.ThumbnailInfo.class);
 
             ResAccountInfo.ThumbnailInfo photoThumbnailUrl = accountInfo.getThumbnailInfo();
             thumbnailDao.create(photoThumbnailUrl);
@@ -55,17 +57,13 @@ public class AccountRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
     }
 
     public ResAccountInfo.UserTeam getTeamInfo(int teamId) {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(),
-                OrmDatabaseHelper.class);
         try {
-            Dao<ResAccountInfo.UserTeam, Integer> dao = openHelper.getDao(ResAccountInfo.UserTeam
+            Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
 
             QueryBuilder<ResAccountInfo.UserTeam, Integer> queryBuilder = dao.queryBuilder();
@@ -75,61 +73,49 @@ public class AccountRepository {
             return userTeam;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return null;
     }
 
     public List<ResAccountInfo.UserEmail> getAccountEmails() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
 
         try {
-            Dao<ResAccountInfo.UserEmail, String> dao = openHelper.getDao(ResAccountInfo.UserEmail
+            Dao<ResAccountInfo.UserEmail, String> dao = helper.getDao(ResAccountInfo.UserEmail
                     .class);
             QueryBuilder<ResAccountInfo.UserEmail, String> queryBuilder = dao.queryBuilder();
             return queryBuilder.query();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return new ArrayList<>();
     }
 
     public int deleteAccountInfo() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         try {
-            Dao<ResAccountInfo, String> dao = openHelper.getDao(ResAccountInfo.class);
+            Dao<ResAccountInfo, String> dao = helper.getDao(ResAccountInfo.class);
             return dao.deleteBuilder().delete();
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
     }
 
     public List<ResAccountInfo.UserTeam> getAccountTeams() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         try {
-            Dao<ResAccountInfo.UserTeam, Integer> dao = openHelper.getDao(ResAccountInfo.UserTeam
+            Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
             return dao.queryBuilder().query();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return new ArrayList<>();
     }
 
     public long updateSelectedTeamInfo(int teamId) {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
         try {
-            Dao<SelectedTeam, Long> dao = openHelper.getDao(SelectedTeam.class);
+            Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
 
             dao.deleteBuilder().delete();
 
@@ -143,16 +129,13 @@ public class AccountRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
     }
 
     public int getSelectedTeamId() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
 
         try {
-            Dao<SelectedTeam, Long> dao = openHelper.getDao(SelectedTeam.class);
+            Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
             SelectedTeam selectedTeam = dao.queryForId(SelectedTeam.DEFAULT_ID);
 
             if (selectedTeam == null) {
@@ -163,19 +146,16 @@ public class AccountRepository {
             return selectedTeamId;
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return 0;
     }
 
     public ResAccountInfo.UserTeam getSelectedTeamInfo() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
 
         try {
             int selectedTeamId = getSelectedTeamId();
 
-            Dao<ResAccountInfo.UserTeam, Integer> teamDao = openHelper.getDao(ResAccountInfo
+            Dao<ResAccountInfo.UserTeam, Integer> teamDao = helper.getDao(ResAccountInfo
                     .UserTeam.class);
             ResAccountInfo.UserTeam userTeam = teamDao.queryForId(selectedTeamId);
 
@@ -183,8 +163,6 @@ public class AccountRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
         return null;
     }
@@ -192,23 +170,17 @@ public class AccountRepository {
 
     public void upsertUserEmail(Collection<ResAccountInfo.UserEmail> userEmails) throws
             SQLException {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-        try {
+        Dao<ResAccountInfo, String> accountDao = helper.getDao(ResAccountInfo.class);
+        ResAccountInfo accountInfo = accountDao.queryBuilder().queryForFirst();
+        Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
+                .UserEmail.class);
+        DeleteBuilder<ResAccountInfo.UserEmail, String> deleteBuilder = userEmailDao.deleteBuilder();
+        deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
+        deleteBuilder.delete();
 
-            Dao<ResAccountInfo, String> accountDao = openHelper.getDao(ResAccountInfo.class);
-            ResAccountInfo accountInfo = accountDao.queryBuilder().queryForFirst();
-            Dao<ResAccountInfo.UserEmail, String> userEmailDao = openHelper.getDao(ResAccountInfo
-                    .UserEmail.class);
-            DeleteBuilder<ResAccountInfo.UserEmail, String> deleteBuilder = userEmailDao.deleteBuilder();
-            deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
-            deleteBuilder.delete();
-
-            for (ResAccountInfo.UserEmail userEmail : userEmails) {
-                userEmail.setAccountInfo(accountInfo);
-                userEmailDao.create(userEmail);
-            }
-        } finally {
-            OpenHelperManager.releaseHelper();
+        for (ResAccountInfo.UserEmail userEmail : userEmails) {
+            userEmail.setAccountInfo(accountInfo);
+            userEmailDao.create(userEmail);
         }
 
     }
@@ -250,15 +222,12 @@ public class AccountRepository {
     }
 
     public ResAccountInfo getAccountInfo() {
-        OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
 
         try {
-            Dao<ResAccountInfo, String> dao = openHelper.getDao(ResAccountInfo.class);
+            Dao<ResAccountInfo, String> dao = helper.getDao(ResAccountInfo.class);
             return dao.queryBuilder().queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            OpenHelperManager.releaseHelper();
         }
 
         return null;
@@ -266,14 +235,12 @@ public class AccountRepository {
 
     public void clearAccountData() {
         try {
-            OrmDatabaseHelper openHelper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
-            openHelper.getDao(ResAccountInfo.class)
+            helper.getDao(ResAccountInfo.class)
                     .deleteBuilder()
                     .delete();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            OpenHelperManager.releaseHelper();
         }
     }
 }
