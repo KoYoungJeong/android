@@ -10,7 +10,9 @@ import android.text.TextUtils;
 import com.koushikdutta.ion.Ion;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
+import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
+import com.tosslab.jandi.app.local.orm.repositories.FileDetailRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
@@ -37,6 +39,7 @@ import java.util.List;
 
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -231,4 +234,30 @@ public class FileDetailModel {
         }
     }
 
+    public List<FileDetail> getFileDetail(int fileId) {
+        return FileDetailRepository.getRepository().getFileDetail(fileId);
+    }
+
+    public void saveFileDetailInfo(ResFileDetail resFileDetail) {
+        ResMessages.FileMessage fileMessage = getFileMessage();
+
+        Observable.from(resFileDetail.messageDetails)
+                .observeOn(Schedulers.io())
+                .onBackpressureBuffer()
+                .filter(originalMessage -> !(originalMessage instanceof ResMessages.FileMessage))
+                .map(originalMessage -> {
+                    FileDetail fileDetail = new FileDetail();
+                    fileDetail.setFile(fileMessage);
+
+                    if (originalMessage instanceof ResMessages.CommentStickerMessage) {
+                        fileDetail.setSticker(((ResMessages.CommentStickerMessage) originalMessage));
+                    } else if (originalMessage instanceof ResMessages.CommentMessage) {
+                        fileDetail.setComment(((ResMessages.CommentMessage) originalMessage));
+                    }
+
+                    return fileDetail;
+                })
+                .subscribe(fileDetail ->
+                        FileDetailRepository.getRepository().upsertFileDetail(fileDetail));
+    }
 }

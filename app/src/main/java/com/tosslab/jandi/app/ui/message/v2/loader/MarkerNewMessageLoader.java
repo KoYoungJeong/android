@@ -46,7 +46,7 @@ public class MarkerNewMessageLoader implements NewsMessageLoader {
     }
 
     @Override
-    public void load(int linkId) {
+    public void load(int roomId, int linkId) {
         if (linkId <= 0) {
             return;
         }

@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
@@ -23,6 +25,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
+    private int roomId;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -37,7 +40,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     }
 
     @Override
-    public void load(int linkId) {
+    public void load(int roomId, int linkId) {
         if (linkId <= 0) {
             return;
         }
@@ -47,9 +50,10 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
             if (newMessage.updateInfo.messages != null && newMessage.updateInfo.messages.size() > 0) {
 
-                saveToDatabase(newMessage.updateInfo.messages);
+                saveToDatabase(roomId, newMessage.updateInfo.messages);
 
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
+                LogUtil.d("visibleLastItemPosition : " + visibleLastItemPosition);
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
@@ -58,7 +62,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 updateMarker();
 
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (visibleLastItemPosition < lastItemPosition - 1 && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
+                if (visibleLastItemPosition >= 0 && visibleLastItemPosition < lastItemPosition - 1
+                        && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 } else {
                     int messageId = lastUpdatedMessage.messageId;
@@ -80,14 +85,20 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
-    private void saveToDatabase(List<ResMessages.Link> messages) {
-        for (ResMessages.Link message : messages) {
-            if (TextUtils.equals(message.status, "archived")) {
-                MessageRepository.getRepository().deleteMessage(message.messageId);
-            } else {
-                MessageRepository.getRepository().upsertMessage(message);
-            }
-        }
+    private void saveToDatabase(int roomId, List<ResMessages.Link> messages) {
+
+        Observable.from(messages)
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe(message -> {
+                    message.roomId = roomId;
+                    if (TextUtils.equals(message.status, "archived")
+                            && !(message.message instanceof ResMessages.FileMessage)) {
+                        MessageRepository.getRepository().deleteMessage(message.messageId);
+                    } else {
+                        MessageRepository.getRepository().upsertMessage(message);
+                    }
+                });
     }
 
     private void updateMarker() {
@@ -102,5 +113,9 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             e.printStackTrace();
             LogUtil.e("set marker failed", e);
         }
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 }

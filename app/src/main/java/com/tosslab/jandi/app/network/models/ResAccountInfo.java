@@ -45,7 +45,7 @@ public class ResAccountInfo {
     @ForeignCollectionField
     private Collection<UserEmail> emails;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, foreignAutoCreate = true)
     @JsonProperty("u_photoThumbnailUrl")
     private ThumbnailInfo thumbnailInfo;
 

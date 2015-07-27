@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.tosslab.jandi.app.JandiApplication;
+import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.local.orm.domain.LeftSideMenu;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.domain.RecentSticker;
@@ -90,6 +91,8 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
             createTable(connectionSource, ResRoomInfo.MarkerInfo.class);
 
             createTable(connectionSource, ResAnnouncement.class);
+
+            createTable(connectionSource, FileDetail.class);
 
             prepareStickerContent();
 
@@ -173,6 +176,7 @@ public class OrmDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
             dropTable(connectionSource, ResAnnouncement.class);
 
+            dropTable(connectionSource, FileDetail.class);
 
             onCreate(database, connectionSource);
 

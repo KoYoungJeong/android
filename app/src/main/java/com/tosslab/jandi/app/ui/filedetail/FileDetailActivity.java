@@ -64,9 +64,11 @@ import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -165,6 +167,15 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 setSendButtonSelected(true);
             }
         });
+
+        boolean loadFromCache = fileDetailPresenter.onLoadFromCache(fileId);
+        if (NetworkCheckUtil.isConnected()) {
+            fileDetailPresenter.getFileDetail(fileId, false, false);
+        } else if (!loadFromCache) {
+            AlertUtil_.getInstance_(FileDetailActivity.this)
+                    .showCheckNetworkDialog(FileDetailActivity.this, (dialog, which) -> finish());
+        }
+
 
         JandiPreference.setKeyboardHeight(FileDetailActivity.this, 0);
     }
@@ -278,7 +289,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     public void onResume() {
         super.onResume();
         isForeground = true;
-        fileDetailPresenter.getFileDetail(fileId, false, true);
         trackGaFileDetail(entityManager);
     }
 
@@ -318,9 +328,9 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         finish();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
-    public void onGetFileDetailSucceed(ResFileDetail resFileDetail, boolean isSendAction) {
+    public void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction) {
         for (ResMessages.OriginalMessage fileDetail : resFileDetail.messageDetails) {
             if (fileDetail instanceof ResMessages.FileMessage) {
 
@@ -795,7 +805,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                 .create().show();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void drawFileWriterState(boolean isEnabled) {
         fileHeadManager.drawFileWriterState(isEnabled);

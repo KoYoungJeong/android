@@ -10,6 +10,8 @@ import com.tosslab.jandi.app.network.spring.JacksonMapper;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 20..
@@ -17,9 +19,11 @@ import java.sql.SQLException;
 public class LeftSideMenuRepository {
     private static LeftSideMenuRepository repository;
     private final OrmDatabaseHelper helper;
+    private final Lock lock;
 
     private LeftSideMenuRepository() {
         helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+        lock = new ReentrantLock();
     }
 
     public static LeftSideMenuRepository getRepository() {
@@ -32,6 +36,7 @@ public class LeftSideMenuRepository {
 
 
     public boolean upsertLeftSideMenu(ResLeftSideMenu leftSideMenu) {
+        lock.lock();
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
@@ -47,13 +52,15 @@ public class LeftSideMenuRepository {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
         return false;
     }
 
     public ResLeftSideMenu getCurrentLeftSideMenu() {
-
+        lock.lock();
         try {
             int selectedTeamId = AccountRepository.getRepository().getSelectedTeamId();
 
@@ -69,8 +76,9 @@ public class LeftSideMenuRepository {
             e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
-
         return null;
     }
 }

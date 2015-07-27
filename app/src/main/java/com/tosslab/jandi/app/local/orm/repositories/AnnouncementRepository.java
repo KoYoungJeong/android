@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.local.orm.repositories;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.orm.OrmDatabaseHelper;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -51,5 +52,21 @@ public class AnnouncementRepository {
             e.printStackTrace();
         }
         return new ResAnnouncement();
+    }
+
+    public int deleteAnnouncement(int roomId) {
+        try {
+            Dao<ResAnnouncement, ?> announcementDao = helper.getDao(ResAnnouncement.class);
+            DeleteBuilder<ResAnnouncement, ?> deleteBuilder = announcementDao.deleteBuilder();
+            deleteBuilder.where()
+                    .eq("teamId", roomId);
+            return deleteBuilder.delete();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }

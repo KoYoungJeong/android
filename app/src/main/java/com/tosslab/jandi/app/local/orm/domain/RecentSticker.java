@@ -38,7 +38,7 @@ public class RecentSticker {
     }
 
     public String getId() {
-        return stickerContent.get_id();
+        return stickerContent != null ? stickerContent.get_id() : id;
     }
 
     public void setId(String id) {

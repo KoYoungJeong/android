@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/jandi_file_detail_bg"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/jandi_file_detail_bg"
+              android:orientation="vertical">
     <!-- 파일 제목과 사용자 프로필 부분 -->
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,7 +25,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/img_file_detail_user_profile"
-            android:text="name"
             android:textSize="@dimen/jandi_file_detail_text_user_name"
             android:textStyle="bold"/>
 
@@ -37,7 +36,6 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/txt_file_detail_user_name"
             android:gravity="right"
-            android:text="asdlkjadklj"
             android:textColor="@color/jandi_file_detail_date"
             android:textSize="@dimen/jandi_file_detail_text_date"/>
 
@@ -49,7 +47,8 @@
             android:layout_alignLeft="@+id/txt_file_detail_user_name"
             android:layout_alignRight="@+id/txt_file_detail_user_name"
             android:layout_alignTop="@+id/txt_file_detail_user_name"
-            android:src="@drawable/line_gray"/>
+            android:src="@drawable/line_gray"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/view_entity_listitem_warning"
@@ -60,7 +59,7 @@
             android:layout_alignRight="@+id/img_file_detail_user_profile"
             android:layout_alignTop="@+id/img_file_detail_user_profile"
             android:background="#99ffffff"
-            android:visibility="visible"/>
+            android:visibility="gone"/>
 
 
     </RelativeLayout>

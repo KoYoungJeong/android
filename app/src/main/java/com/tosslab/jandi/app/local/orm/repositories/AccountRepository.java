@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 20..
@@ -23,9 +25,11 @@ public class AccountRepository {
 
     private static AccountRepository repository;
     private final OrmDatabaseHelper helper;
+    private final Lock lock;
 
     private AccountRepository() {
         helper = OpenHelperManager.getHelper(JandiApplication.getContext(), OrmDatabaseHelper.class);
+        lock = new ReentrantLock();
     }
 
     public static AccountRepository getRepository() {
@@ -37,6 +41,7 @@ public class AccountRepository {
     }
 
     public void upsertAccountAllInfo(ResAccountInfo accountInfo) {
+        lock.lock();
         try {
             Dao<ResAccountInfo, String> accountInfoDao = helper.getDao(ResAccountInfo.class);
             Dao<ResAccountInfo.UserDevice, Long> userDeviceDao = helper.getDao(ResAccountInfo.UserDevice.class);
@@ -44,10 +49,6 @@ public class AccountRepository {
                     .UserTeam.class);
             Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
                     .UserEmail.class);
-            Dao<ResAccountInfo.ThumbnailInfo, Long> thumbnailDao = helper.getDao(ResAccountInfo.ThumbnailInfo.class);
-
-            ResAccountInfo.ThumbnailInfo photoThumbnailUrl = accountInfo.getThumbnailInfo();
-            thumbnailDao.create(photoThumbnailUrl);
 
             upsertUserDevice(accountInfo, userDeviceDao);
             upsertUserTeam(accountInfo, userTeamDao);
@@ -57,11 +58,14 @@ public class AccountRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
     }
 
     public ResAccountInfo.UserTeam getTeamInfo(int teamId) {
+        lock.lock();
         try {
             Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
@@ -73,12 +77,14 @@ public class AccountRepository {
             return userTeam;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return null;
     }
 
     public List<ResAccountInfo.UserEmail> getAccountEmails() {
-
+        lock.lock();
         try {
             Dao<ResAccountInfo.UserEmail, String> dao = helper.getDao(ResAccountInfo.UserEmail
                     .class);
@@ -86,34 +92,43 @@ public class AccountRepository {
             return queryBuilder.query();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return new ArrayList<>();
     }
 
     public int deleteAccountInfo() {
+        lock.lock();
         try {
             Dao<ResAccountInfo, String> dao = helper.getDao(ResAccountInfo.class);
             return dao.deleteBuilder().delete();
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        } finally {
+            lock.unlock();
         }
 
     }
 
     public List<ResAccountInfo.UserTeam> getAccountTeams() {
+        lock.lock();
         try {
             Dao<ResAccountInfo.UserTeam, Integer> dao = helper.getDao(ResAccountInfo.UserTeam
                     .class);
             return dao.queryBuilder().query();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
 
         return new ArrayList<>();
     }
 
     public long updateSelectedTeamInfo(int teamId) {
+        lock.lock();
         try {
             Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
 
@@ -129,11 +144,13 @@ public class AccountRepository {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        } finally {
+            lock.unlock();
         }
     }
 
     public int getSelectedTeamId() {
-
+        lock.lock();
         try {
             Dao<SelectedTeam, Long> dao = helper.getDao(SelectedTeam.class);
             SelectedTeam selectedTeam = dao.queryForId(SelectedTeam.DEFAULT_ID);
@@ -146,12 +163,14 @@ public class AccountRepository {
             return selectedTeamId;
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return 0;
     }
 
     public ResAccountInfo.UserTeam getSelectedTeamInfo() {
-
+        lock.lock();
         try {
             int selectedTeamId = getSelectedTeamId();
 
@@ -163,6 +182,8 @@ public class AccountRepository {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
         return null;
     }
@@ -170,17 +191,22 @@ public class AccountRepository {
 
     public void upsertUserEmail(Collection<ResAccountInfo.UserEmail> userEmails) throws
             SQLException {
-        Dao<ResAccountInfo, String> accountDao = helper.getDao(ResAccountInfo.class);
-        ResAccountInfo accountInfo = accountDao.queryBuilder().queryForFirst();
-        Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
-                .UserEmail.class);
-        DeleteBuilder<ResAccountInfo.UserEmail, String> deleteBuilder = userEmailDao.deleteBuilder();
-        deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
-        deleteBuilder.delete();
+        lock.lock();
+        try {
+            Dao<ResAccountInfo, String> accountDao = helper.getDao(ResAccountInfo.class);
+            ResAccountInfo accountInfo = accountDao.queryBuilder().queryForFirst();
+            Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
+                    .UserEmail.class);
+            DeleteBuilder<ResAccountInfo.UserEmail, String> deleteBuilder = userEmailDao.deleteBuilder();
+            deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
+            deleteBuilder.delete();
 
-        for (ResAccountInfo.UserEmail userEmail : userEmails) {
-            userEmail.setAccountInfo(accountInfo);
-            userEmailDao.create(userEmail);
+            for (ResAccountInfo.UserEmail userEmail : userEmails) {
+                userEmail.setAccountInfo(accountInfo);
+                userEmailDao.create(userEmail);
+            }
+        } finally {
+            lock.unlock();
         }
 
     }
@@ -222,18 +248,21 @@ public class AccountRepository {
     }
 
     public ResAccountInfo getAccountInfo() {
+        lock.lock();
 
         try {
             Dao<ResAccountInfo, String> dao = helper.getDao(ResAccountInfo.class);
             return dao.queryBuilder().queryForFirst();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            lock.unlock();
         }
-
         return null;
     }
 
     public void clearAccountData() {
+        lock.lock();
         try {
             helper.getDao(ResAccountInfo.class)
                     .deleteBuilder()
@@ -241,6 +270,7 @@ public class AccountRepository {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            lock.unlock();
         }
     }
 }

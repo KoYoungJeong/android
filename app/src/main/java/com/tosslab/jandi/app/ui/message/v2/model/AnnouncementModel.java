@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
+import com.tosslab.jandi.app.network.models.ResCommon;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -43,6 +45,11 @@ public class AnnouncementModel {
     public ResAnnouncement getAnnouncement(int teamId, int topicId) {
         ResAnnouncement announcement = null;
         try {
+
+            if (!NetworkCheckUtil.isConnected()) {
+                return AnnouncementRepository.getRepository().getAnnounce(topicId);
+            }
+
             announcement = RequestApiManager.getInstance().getAnnouncement(teamId, topicId);
             AnnouncementRepository.getRepository().upsertAnnounce(announcement);
         } catch (RetrofitError e) {
@@ -78,7 +85,10 @@ public class AnnouncementModel {
     @Background
     public void deleteAnnouncement(int teamId, int topicId) {
         try {
-            RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);
+            ResCommon resCommon = RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);
+            if (resCommon != null) {
+                AnnouncementRepository.getRepository().deleteAnnouncement(topicId);
+            }
         } catch (RetrofitError e) {
             e.printStackTrace();
         }

@@ -28,6 +28,8 @@ import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.SendMessageRepository;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -68,6 +70,7 @@ import java.util.concurrent.ExecutionException;
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 20..
@@ -178,17 +181,17 @@ public class MessageListModel {
         SendingMessage sendingMessage = new SendingMessage(localId, message);
         try {
             ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
-            MessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
+            SendMessageRepository.getRepository().deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
         } catch (RetrofitError e) {
             e.printStackTrace();
-            MessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
+            SendMessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
                     , SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
         } catch (Exception e) {
-            MessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
+            SendMessageRepository.getRepository().updateSendMessageStatus(sendingMessage.getLocalId()
                     , SendMessage.Status.FAIL);
             EventBus.getDefault().post(new SendFailEvent(sendingMessage.getLocalId()));
             return -1;
@@ -199,7 +202,7 @@ public class MessageListModel {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setRoomId(roomId);
         sendMessage.setMessage(message);
-        MessageRepository.getRepository().insertSendMessage(sendMessage);
+        SendMessageRepository.getRepository().insertSendMessage(sendMessage);
         return sendMessage.getId();
     }
 
@@ -250,7 +253,7 @@ public class MessageListModel {
         ReadyMessage readyMessage = new ReadyMessage();
         readyMessage.setRoomId(roomId);
         readyMessage.setText(sendEditText);
-        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
     public void deleteTopic(int entityId, int entityType) throws RetrofitError {
@@ -309,11 +312,11 @@ public class MessageListModel {
     }
 
     public void deleteSendingMessage(long localId) {
-        MessageRepository.getRepository().deleteSendMessage(localId);
+        SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
-    public List<ResMessages.Link> getDummyMessages(int teamId, int roomId, String name, String userLargeProfileUrl) {
-        List<SendMessage> sendMessage = MessageRepository.getRepository().getSendMessage
+    public List<ResMessages.Link> getDummyMessages(int roomId) {
+        List<SendMessage> sendMessage = SendMessageRepository.getRepository().getSendMessage
                 (roomId);
         int id = EntityManager.getInstance(activity).getMe().getId();
         List<ResMessages.Link> links = new ArrayList<>();
@@ -333,7 +336,7 @@ public class MessageListModel {
     }
 
     public void deleteDummyMessageAtDatabase(long localId) {
-        MessageRepository.getRepository().deleteSendMessage(localId);
+        SendMessageRepository.getRepository().deleteSendMessage(localId);
     }
 
     public boolean isDefaultTopic(int entityId) {
@@ -443,14 +446,18 @@ public class MessageListModel {
     }
 
     public String getReadyMessage(int roomId) {
-        return MessageRepository.getRepository().getReadyMessage(roomId).getText();
+        return ReadyMessageRepository.getRepository().getReadyMessage(roomId).getText();
     }
 
     public void upsertMessages(ResMessages messages) {
         Observable.from(messages.records)
-                .subscribe(link -> link.roomId = messages.entityId);
+                .onBackpressureBuffer()
+                .observeOn(Schedulers.io())
+                .subscribe(link -> {
+                    link.roomId = messages.entityId;
+                    MessageRepository.getRepository().upsertMessage(link);
+                });
 
-        MessageRepository.getRepository().upsertMessages(messages.records);
 
     }
 

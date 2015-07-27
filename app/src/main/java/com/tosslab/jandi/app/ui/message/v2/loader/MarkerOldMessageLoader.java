@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.message.v2.loader;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
@@ -39,14 +40,16 @@ public class MarkerOldMessageLoader implements OldMessageLoader {
     }
 
     @Override
-    public ResMessages load(int linkId) {
+    public ResMessages load(int roomId, int linkId) {
         ResMessages oldMessage = null;
         try {
 
             boolean isCallByMarker = messageListPresenter.getFirstVisibleItemLinkId() > 0;
             if (isCallByMarker) {
                 // 일반적인 Old Message 요청
-                int itemCount = messageListPresenter.getItemCount();
+                int itemCount = Math.min(
+                        Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messageListPresenter.getItemCount()),
+                        MessageManipulator.MAX_OF_MESSAGES);
                 oldMessage = messageListModel.getOldMessage(linkId, itemCount);
             } else {
                 // 마커 기준으로 위 아래 요청

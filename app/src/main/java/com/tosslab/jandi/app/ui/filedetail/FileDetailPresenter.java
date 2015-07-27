@@ -8,6 +8,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
+import com.tosslab.jandi.app.local.orm.domain.FileDetail;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
@@ -52,6 +53,43 @@ public class FileDetailPresenter {
         this.view = view;
     }
 
+    public boolean onLoadFromCache(int fileId) {
+        List<FileDetail> fileDetail = fileDetailModel.getFileDetail(fileId);
+        if (fileDetail != null && !fileDetail.isEmpty()) {
+            ResMessages.FileMessage file = fileDetail.get(0).getFile();
+
+            ResFileDetail fakeFile = new ResFileDetail();
+            fakeFile.messageDetails = new ArrayList<>();
+            fakeFile.messageDetails.add(file);
+
+            for (FileDetail detail : fileDetail) {
+                ResMessages.OriginalMessage message = null;
+                if (detail.getComment() != null) {
+                    message = detail.getComment();
+                } else if (detail.getSticker() != null) {
+                    message = detail.getSticker();
+                }
+
+                if (message != null) {
+                    fakeFile.messageDetails.add(message);
+                }
+            }
+
+            Collections.sort(fakeFile.messageDetails,
+                    (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
+
+            view.loadSuccess(fakeFile, false);
+
+            boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(fakeFile);
+            view.drawFileWriterState(enableUserFromUploader);
+
+            return true;
+        }
+
+        return false;
+
+    }
+
     /**
      * *********************************************************
      * 파일 상세 출력 관련
@@ -66,6 +104,7 @@ public class FileDetailPresenter {
         try {
             ResFileDetail resFileDetail = fileDetailModel.getFileDetailInfo(fileId);
 
+
             for (ResMessages.OriginalMessage messageDetail : resFileDetail.messageDetails) {
                 if (messageDetail instanceof ResMessages.FileMessage) {
                     fileDetailModel.setFileMessage((ResMessages.FileMessage) messageDetail);
@@ -73,12 +112,15 @@ public class FileDetailPresenter {
                 }
             }
 
+            // 저장하기 (멀티 쓰레딩)
+            fileDetailModel.saveFileDetailInfo(resFileDetail);
+
             Collections.sort(resFileDetail.messageDetails,
                     (lhs, rhs) -> lhs.createTime.compareTo(rhs.createTime));
 
             view.dismissProgress();
 
-            view.onGetFileDetailSucceed(resFileDetail, isSendAction);
+            view.loadSuccess(resFileDetail, isSendAction);
 
             boolean enableUserFromUploader = fileDetailModel.isEnableUserFromUploder(resFileDetail);
             view.drawFileWriterState(enableUserFromUploader);
@@ -359,7 +401,7 @@ public class FileDetailPresenter {
 
         void drawFileDetail(ResFileDetail resFileDetail, boolean isSendAction);
 
-        void onGetFileDetailSucceed(ResFileDetail resFileDetail, boolean isSendAction);
+        void loadSuccess(ResFileDetail resFileDetail, boolean isSendAction);
 
         void showDeleteFileDialog(int fileId);
 

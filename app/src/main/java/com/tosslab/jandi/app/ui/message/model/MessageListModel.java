@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.lists.messages.MessageItemListAdapter;
 import com.tosslab.jandi.app.local.orm.domain.ReadyMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
+import com.tosslab.jandi.app.local.orm.repositories.ReadyMessageRepository;
 import com.tosslab.jandi.app.network.models.ResMessages;
 
 import org.androidannotations.annotations.Background;
@@ -54,10 +55,10 @@ public class MessageListModel {
         ReadyMessage readyMessage = new ReadyMessage();
         readyMessage.setRoomId(entityId);
         readyMessage.setText(message);
-        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
     }
 
     public String getTempMessage(int entityId) {
-        return MessageRepository.getRepository().getReadyMessage(entityId).getText();
+        return ReadyMessageRepository.getRepository().getReadyMessage(entityId).getText();
     }
 }

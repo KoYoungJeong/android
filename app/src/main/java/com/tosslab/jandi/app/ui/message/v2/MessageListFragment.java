@@ -243,13 +243,13 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             newsMessageLoader.setMessageListModel(messageListModel);
             newsMessageLoader.setMessageListPresenter(messageListPresenter);
             newsMessageLoader.setMessageState(messageState);
+            newsMessageLoader.setRoomId(roomId);
 
             NormalOldMessageLoader oldMessageLoader = new NormalOldMessageLoader(getActivity());
             oldMessageLoader.setMessageListModel(messageListModel);
             oldMessageLoader.setMessageListPresenter(messageListPresenter);
             oldMessageLoader.setMessageState(messageState);
             oldMessageLoader.setEntityId(entityId);
-            oldMessageLoader.setRoomId(roomId);
             oldMessageLoader.setTeamId(teamId);
 
             this.newsMessageLoader = newsMessageLoader;
@@ -269,7 +269,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     private void loadOldMessage(MessageQueue messageQueue) {
         if (oldMessageLoader != null) {
-            ResMessages resMessages = oldMessageLoader.load(((MessageState) messageQueue.getData()).getFirstItemId());
+            ResMessages resMessages = oldMessageLoader.load(roomId, ((MessageState) messageQueue
+                    .getData()).getFirstItemId());
 
             if (resMessages != null && roomId <= 0) {
                 roomId = resMessages.entityId;
@@ -287,9 +288,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
             if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
-                oldMessageLoader.load(lastUpdateLinkId);
+                oldMessageLoader.load(roomId, lastUpdateLinkId);
             }
-            newsMessageLoader.load(lastUpdateLinkId);
+            newsMessageLoader.load(roomId, lastUpdateLinkId);
         }
     }
 
@@ -337,7 +338,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (savedMessages != null && !savedMessages.isEmpty()) {
             messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
-            List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(teamId, entityId, me.getName(), me.getUserLargeProfileUrl());
+            List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(entityId);
             messageListPresenter.addDummyMessages(dummyMessages);
 
             messageListPresenter.moveLastPage();
@@ -559,7 +560,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListModel.stopRefreshTimer();
         }
 
-        messageListModel.saveMessages(messageListPresenter.getLastItemsWithoutDummy());
         if (roomId > 0) {
             messageListModel.saveTempMessage(roomId, messageListPresenter.getSendEditText());
         }
@@ -720,7 +720,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
         normalOldMessageLoader.setTeamId(teamId);
         normalOldMessageLoader.setEntityId(entityId);
-        normalOldMessageLoader.setRoomId(roomId);
         oldMessageLoader = normalOldMessageLoader;
 
         messageListPresenter.setMoreNewFromAdapter(false);
@@ -747,7 +746,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
     @Background
     void loadLastMessage() {
-        newsMessageLoader.load(messageState.getLastUpdateLinkId());
+        newsMessageLoader.load(roomId, messageState.getLastUpdateLinkId());
         messageListPresenter.setGotoLatestLayoutVisibleGone();
         messageListPresenter.moveLastPage();
         messageListModel.startRefreshTimer();

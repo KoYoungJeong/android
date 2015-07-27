@@ -74,24 +74,29 @@ public class MarkerRepository {
 
             if (roomInfo != null) {
                 boolean find = false;
+                ResRoomInfo.MarkerInfo savedMarker = null;
                 for (ResRoomInfo.MarkerInfo markerInfo : roomInfo.getMarkers()) {
                     if (markerInfo.getMemberId() == memberId) {
                         find = true;
                         markerInfo.setLastLinkId(lastLinkId);
+                        savedMarker = markerInfo;
                         break;
                     }
 
                 }
+
+                Dao<ResRoomInfo.MarkerInfo, ?> markerInfoDao = helper.getDao(ResRoomInfo.MarkerInfo.class);
 
                 if (!find) {
                     ResRoomInfo.MarkerInfo markerInfo = new ResRoomInfo.MarkerInfo();
                     markerInfo.setLastLinkId(lastLinkId);
                     markerInfo.setMemberId(memberId);
                     markerInfo.setRoom(roomInfo);
-                    roomInfo.getMarkers().add(markerInfo);
+                    return markerInfoDao.create(markerInfo) > 0;
+                } else {
+                    return markerInfoDao.update(savedMarker) > 0;
                 }
 
-                return upsertRoomInfo(roomInfo);
             } else {
                 return false;
             }

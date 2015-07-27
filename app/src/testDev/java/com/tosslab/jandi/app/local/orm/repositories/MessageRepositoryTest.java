@@ -112,7 +112,7 @@ public class MessageRepositoryTest {
         String text = "asda";
         readyMessage.setText(text);
         readyMessage.setRoomId(roomId);
-        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
 
         String newText = "qwe";
         int newRoomId = 2;
@@ -120,18 +120,18 @@ public class MessageRepositoryTest {
         readyMessage.setRoomId(newRoomId);
         readyMessage.setText(newText);
 
-        MessageRepository.getRepository().upsertReadyMessage(readyMessage);
+        ReadyMessageRepository.getRepository().upsertReadyMessage(readyMessage);
 
-        ReadyMessage message = MessageRepository.getRepository().getReadyMessage(roomId);
+        ReadyMessage message = ReadyMessageRepository.getRepository().getReadyMessage(roomId);
 
         assertThat(message.getRoomId(), is(equalTo(roomId)));
         assertThat(message.getText(), is(equalTo(text)));
 
 
-        int deleeteRow = MessageRepository.getRepository().deleteReadyMessage(roomId);
+        int deleeteRow = ReadyMessageRepository.getRepository().deleteReadyMessage(roomId);
         assertThat(deleeteRow, is(equalTo(1)));
 
-        readyMessage = MessageRepository.getRepository().getReadyMessage(roomId);
+        readyMessage = ReadyMessageRepository.getRepository().getReadyMessage(roomId);
         assertThat(readyMessage.getText(), is(""));
 
     }
@@ -143,10 +143,10 @@ public class MessageRepositoryTest {
         sendMessage.setRoomId(roomId);
         String message = "hahaha";
         sendMessage.setMessage(message);
-        MessageRepository.getRepository().insertSendMessage(sendMessage);
+        SendMessageRepository.getRepository().insertSendMessage(sendMessage);
 
 
-        List<SendMessage> sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+        List<SendMessage> sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
         sendMessage = sendMessages.get(0);
 
         assertThat(sendMessages.size(), is(equalTo(roomId)));
@@ -154,16 +154,16 @@ public class MessageRepositoryTest {
         assertThat(sendMessage.getStatus(), is(equalTo(SendMessage.Status.SENDING.name())));
 
         sendMessage.setStatus(SendMessage.Status.COMPLETE.name());
-        MessageRepository.getRepository().updateSendMessageStatus(sendMessage.getId(),
+        SendMessageRepository.getRepository().updateSendMessageStatus(sendMessage.getId(),
                 SendMessage.Status.COMPLETE);
 
-        sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+        sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
         sendMessage = sendMessages.get(0);
 
         assertThat(sendMessage.getStatus(), is(equalTo(SendMessage.Status.COMPLETE.name())));
 
-        MessageRepository.getRepository().deleteSendMessage(sendMessage.getId());
-        sendMessages = MessageRepository.getRepository().getSendMessage(roomId);
+        SendMessageRepository.getRepository().deleteSendMessage(sendMessage.getId());
+        sendMessages = SendMessageRepository.getRepository().getSendMessage(roomId);
 
         assertThat(sendMessages.size(), is(equalTo(0)));
     }
