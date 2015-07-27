@@ -17,10 +17,10 @@ import java.util.Map;
 final class Tracker {
     public static final String TAG = Logger.makeTag(Tracker.class);
 
-    private TrackDatabaseHelper databaseHelper;
+    private SprinklerDatabaseHelper databaseHelper;
 
     public Tracker(Context context) {
-        databaseHelper = TrackDatabaseHelper.getInstance(context);
+        databaseHelper = SprinklerDatabaseHelper.getInstance(context);
     }
 
     public boolean validateFutureTrack(Serializable data) {
@@ -32,7 +32,7 @@ final class Tracker {
         return true;
     }
 
-    public String mapToJSONFormat(Map<String, ?> map) {
+    public String getJSONFormatFromMap(Map<String, ?> map) {
         if (map == null || map.isEmpty()) {
             return null;
         }
@@ -41,7 +41,7 @@ final class Tracker {
     }
 
     public boolean insert(String event,
-                          Map<String, String> identifiersMap,
+                          Map<String, Object> identifiersMap,
                           String platform,
                           Map<String, Object> propertiesMap,
                           long time) {
@@ -50,8 +50,8 @@ final class Tracker {
             return false;
         }
 
-        String identifiers = mapToJSONFormat(identifiersMap);
-        String properties = mapToJSONFormat(propertiesMap);
+        String identifiers = getJSONFormatFromMap(identifiersMap);
+        String properties = getJSONFormatFromMap(propertiesMap);
 
         boolean insert = databaseHelper.insert(event, identifiers, platform, properties, time);
 

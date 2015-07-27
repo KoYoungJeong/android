@@ -67,11 +67,6 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -142,14 +137,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     @AfterViews
     public void initForm() {
-
-        // for Sprinkler test
-        Sprinkler.with(getApplicationContext())
-                .track(new FutureTrack.Builder()
-                        .event(Event.ScreenView)
-                        .property(PropertyKey.ScreenView, ScreenViewProperty.FILE_DETAIL)
-                        .build());
-
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();

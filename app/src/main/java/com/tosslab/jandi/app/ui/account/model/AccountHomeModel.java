@@ -14,6 +14,10 @@ import com.tosslab.jandi.app.network.models.ResPendingTeamInfo;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 
@@ -124,4 +128,36 @@ public class AccountHomeModel {
     public boolean checkAccount(Context context) {
         return JandiAccountDatabaseManager.getInstance(context).getAccountInfo() != null;
     }
+
+    private String getAccountId(Context context) {
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context)
+                .getAccountInfo();
+        String accountId = accountInfo != null ? accountInfo.getId() : null;
+        return accountId;
+    }
+
+    public void trackSignInSuccessAndFlush(Context context) {
+        String accountId = getAccountId(context);
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.AutoSignIn, false)
+                        .build())
+                .flush();
+    }
+
+    public void trackSignInFailAndFlush(Context context, int errorCode) {
+        String accountId = getAccountId(context);
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build())
+                .flush();
+    }
+
 }

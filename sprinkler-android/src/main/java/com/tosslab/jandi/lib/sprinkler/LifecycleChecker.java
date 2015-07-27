@@ -5,12 +5,14 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.tosslab.jandi.lib.sprinkler.trackfactory.SystemTrackFactory;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 /**
  * Created by tonyjs on 15. 7. 16..
  */
-public class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
+class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public static final String TAG = Logger.makeTag(LifecycleChecker.class);
 
     @Override
@@ -73,7 +75,21 @@ public class LifecycleChecker implements Application.ActivityLifecycleCallbacks 
     }
 
     private void trackDefaultProperty(Sprinkler sprinkler) {
-        sprinkler.track(SystemTrackFactory.getAppOpenTrack(sprinkler.getDefaultProperties()));
+        DefaultProperties defaultProperties = sprinkler.getDefaultProperties();
+        sprinkler.track(new FutureTrack.Builder()
+                .event(Event.AppOpen)
+                .property(PropertyKey.AppVersion, defaultProperties.getAppVersion())
+                .property(PropertyKey.Brand, defaultProperties.getDeviceBrand())
+                .property(PropertyKey.Manufacturer, defaultProperties.getDeviceManufacturer())
+                .property(PropertyKey.Model, defaultProperties.getDeviceModel())
+                .property(PropertyKey.OS, defaultProperties.getOs())
+                .property(PropertyKey.OSVersion, defaultProperties.getOsVersion())
+                .property(PropertyKey.ScreenDPI, defaultProperties.getScreenDpi())
+                .property(PropertyKey.ScreenHeight, defaultProperties.getScreenHeight())
+                .property(PropertyKey.ScreenWidth, defaultProperties.getScreenWidth())
+                .property(PropertyKey.Carrier, defaultProperties.getDeviceCarrier())
+                .property(PropertyKey.Wifi, defaultProperties.isWifiEnabled())
+                .property(PropertyKey.GooglePlayServices, defaultProperties.getGooglePlayAvailable())
+                .build());
     }
-
 }

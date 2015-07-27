@@ -10,7 +10,7 @@ import android.util.Log;
 /**
  * Created by tonyjs on 15. 7. 20..
  */
-public class FlushRetriever {
+class FlushRetriever {
     public static final String TAG = Logger.makeTag(FlushRetriever.class);
 
     //    private static final long INTERVAL = 1000 * 60;

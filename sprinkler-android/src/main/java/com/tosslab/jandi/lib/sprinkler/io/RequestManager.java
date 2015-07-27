@@ -95,7 +95,7 @@ final class RequestManager {
 
         @Override
         public RestAdapter.LogLevel getLogLevel() {
-            return RestAdapter.LogLevel.BASIC;
+            return RestAdapter.LogLevel.FULL;
         }
     }
 

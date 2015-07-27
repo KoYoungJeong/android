@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * Created by tonyjs on 15. 7. 22..
  */
-public class DefaultProperties {
+class DefaultProperties {
     private static final String PLATFORM = "android";
 
     private static final String PREFERENCES_NAME = "sprinkler_preferences";

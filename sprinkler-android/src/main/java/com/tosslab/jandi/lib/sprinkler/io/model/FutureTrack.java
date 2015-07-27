@@ -17,7 +17,7 @@ public class FutureTrack implements Serializable {
     private static final long serialVersionUID = -19881222;
 
     private String event;
-    private Map<String, String> identifiersMap = new HashMap<>();
+    private Map<String, Object> identifiersMap = new HashMap<>();
     private String platform;
     private Map<String, Object> propertiesMap = new HashMap<>();
     private long time;
@@ -33,11 +33,11 @@ public class FutureTrack implements Serializable {
         this.event = event;
     }
 
-    public Map<String, String> getIdentifiersMap() {
+    public Map<String, Object> getIdentifiersMap() {
         return identifiersMap;
     }
 
-    public void setIdentifiersMap(Map<String, String> identifiersMap) {
+    public void setIdentifiersMap(Map<String, Object> identifiersMap) {
         this.identifiersMap = identifiersMap;
     }
 
@@ -67,7 +67,7 @@ public class FutureTrack implements Serializable {
 
     public static final class Builder {
         private Event event;
-        private Map<String, String> identifiersMap = new HashMap<>();
+        private Map<String, Object> identifiersMap = new HashMap<>();
         private Map<String, Object> propertiesMap = new HashMap<>();
         private PropertyKey[] availablePropertyKeys;
 
@@ -87,7 +87,7 @@ public class FutureTrack implements Serializable {
             return this;
         }
 
-        public Builder memberId(String memberId) {
+        public Builder memberId(int memberId) {
             identifiersMap.put(IdentifierKey.MEMBER_ID, memberId);
             return this;
         }
@@ -113,8 +113,11 @@ public class FutureTrack implements Serializable {
         }
 
         public FutureTrack build() {
+            if (event == null) {
+                throw new IllegalArgumentException(
+                        "FutureTrack.Builder - Can not build without \'event\'. \'event\' must be set up.");
+            }
             FutureTrack track = new FutureTrack();
-
             track.setEvent(event.getName());
             track.setIdentifiersMap(identifiersMap);
             track.setPropertiesMap(propertiesMap);

@@ -4,10 +4,16 @@ import android.content.Context;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -114,17 +120,25 @@ public class IntroActivityPresenter {
                 model.sleep(initTime, MAX_DELAY_MS);
                 if (model.hasSelectedTeam(context) && !startForInvite) {
                     ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
+
+                    // Track Auto Sign In (with flush)
+                    model.trackAutoSignInSuccessAndFlush(context);
+
                     view.moveToMainActivity();
                 } else {
                     view.moveTeamSelectActivity();
                 }
             } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {
+                model.trackSignInFailAndFlush(context, JandiConstants.NetworkError.UNAUTHORIZED);
+
                 model.clearTokenInfo();
                 model.clearAccountInfo(context);
 
                 model.sleep(initTime, MAX_DELAY_MS);
                 view.moveToIntroTutorialActivity();
             } else {
+                model.trackSignInFailAndFlush(context, o);
+
                 view.showWarningToast(context.getResources().getString(R.string.err_network));
                 view.finishOnUiThread();
             }

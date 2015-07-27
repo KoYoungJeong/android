@@ -16,6 +16,10 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -152,4 +156,45 @@ public class IntroActivityModel {
         return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo() != null;
     }
 
+    private String getAccountId(Context context) {
+        ResAccountInfo accountInfo =
+                JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        String accountId = accountInfo != null ? accountInfo.getId() : null;
+        return accountId;
+    }
+
+    private int getMemberId(Context context) {
+        ResAccountInfo.UserTeam selectedTeamInfo =
+                JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo();
+        int memberId = selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
+        return memberId;
+    }
+
+    public void trackAutoSignInSuccessAndFlush(Context context) {
+        String accountId = getAccountId(context);
+        int memberId = getMemberId(context);
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .accountId(accountId)
+                        .memberId(memberId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.AutoSignIn, true)
+                        .build())
+                .flush();
+    }
+
+    public void trackSignInFailAndFlush(Context context, int errorCode) {
+        String accountId = getAccountId(context);
+        int memberId = getMemberId(context);
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .accountId(accountId)
+                        .memberId(memberId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build())
+                .flush();
+    }
 }
