@@ -13,8 +13,8 @@ import android.util.Log;
 class FlushRetriever {
     public static final String TAG = Logger.makeTag(FlushRetriever.class);
 
-    //    private static final long INTERVAL = 1000 * 60;
-    private static final long INTERVAL = 1000 * 15;
+    private static final long INTERVAL = 1000 * 60;
+//    private static final long INTERVAL = 1000 * 15;
     private boolean isStopped = true;
     private Handler handler;
     private Context context;
