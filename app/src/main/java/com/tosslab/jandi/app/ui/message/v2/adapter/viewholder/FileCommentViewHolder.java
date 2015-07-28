@@ -121,6 +121,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileImageView.setBackgroundDrawable(null);
                 fileImageView.setImageResource(R.drawable.jandi_fl_icon_deleted);
                 fileImageView.setOnClickListener(null);
             } else {
@@ -144,6 +145,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(
                                                 content.serverUrl, content.icon);
+                                fileImageView.setBackgroundDrawable(null);
                                 fileImageView.setImageResource(mimeTypeIconImage);
                                 fileImageView.setOnClickListener(view -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -154,6 +156,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
+                                fileImageView.setBackgroundResource(R.drawable.jandi_message_image_frame);
                                 Ion.with(fileImageView)
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)
@@ -165,10 +168,12 @@ public class FileCommentViewHolder implements BodyViewHolder {
                         }
 
                     } else {
+                        fileImageView.setBackgroundDrawable(null);
                         fileImageView.setImageResource(
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                     }
                 } else {
+                    fileImageView.setBackgroundDrawable(null);
                     fileImageView.setImageResource(
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                 }

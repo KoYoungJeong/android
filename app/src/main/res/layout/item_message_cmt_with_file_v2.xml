@@ -99,7 +99,6 @@
             android:layout_height="@dimen/jandi_messages_image_size"
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
-            android:background="@drawable/jandi_message_image_frame"
             android:src="@drawable/jandi_fl_icon_deleted"/>
 
         <LinearLayout
