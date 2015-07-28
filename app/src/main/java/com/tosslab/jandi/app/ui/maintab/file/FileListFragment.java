@@ -33,6 +33,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -119,6 +120,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
+            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance(getActivity())
+                    .getEntityById(entityIdForCategorizing).getName();
         }
         fileListPresenter.setEntityIdForCategorizing(entityIdForCategorizing);
         fileListPresenter.setCurrentEntityCategorizingAccodingBy(mCurrentEntityCategorizingAccodingBy);
@@ -165,6 +168,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 
         initSearchSubject.onNext(-1);
+
     }
 
     @Override
