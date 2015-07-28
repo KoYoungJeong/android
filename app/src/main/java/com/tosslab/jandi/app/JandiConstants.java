@@ -74,7 +74,6 @@ public class JandiConstants {
         public static final int DATA_NOT_FOUND = 1839;
         public static final int DUPLICATED_NAME = 400;
         public static final int BAD_REQUEST = 400;
-        public static final int EMAIL_ALREADY_REGISTERED = 40001;
     }
 
 }

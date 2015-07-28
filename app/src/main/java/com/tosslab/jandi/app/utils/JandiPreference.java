@@ -26,6 +26,57 @@ public class JandiPreference {
     private static final String PREF_ALARM_LED = "setting_push_alarm_led";
     private static final String PREF_INVITE_POPUP = "invite_popup";
     private static final String PREF_KEYBOARD_HEIGHT = "keyboard_height";
+    private static final String PREF_COACH_MARK_TOPIC = "coach_mark_topic";
+    private static final String PREF_COACH_MARK_TOPIC_LIST = "coach_mark_topic_list";
+    private static final String PREF_COACH_MARK_MORE = "coach_mark_more";
+    private static final String PREF_COACH_MARK_FILE_LIST = "coach_mark_file_list";
+    private static final String PREF_COACH_MARK_DIRECT_MESSAGE_LIST = "coach_mark_direct_messege_list";
+
+    public static boolean isAleadyShowCoachMarkTopic(Context context) {
+        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_TOPIC, false)) {
+            getSharedPreferences(context).edit()
+                    .putBoolean(PREF_COACH_MARK_TOPIC, true).commit();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isAleadyShowCoachMarkTopicList(Context context) {
+        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_TOPIC_LIST, false)) {
+            getSharedPreferences(context).edit()
+                    .putBoolean(PREF_COACH_MARK_TOPIC_LIST, true).commit();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isAleadyShowCoachMarkFileList(Context context) {
+        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_FILE_LIST, false)) {
+            getSharedPreferences(context).edit()
+                    .putBoolean(PREF_COACH_MARK_FILE_LIST, true).commit();
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isAleadyShowCoachMarkMore(Context context) {
+        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_MORE, false)) {
+            getSharedPreferences(context).edit()
+                    .putBoolean(PREF_COACH_MARK_MORE, true).commit();
+            return false;
+        }
+        return true;
+    }
+
+
+    public static boolean isAleadyShowCoachMarkDirectMessageList(Context context) {
+        if (!getSharedPreferences(context).getBoolean(PREF_COACH_MARK_DIRECT_MESSAGE_LIST, false)) {
+            getSharedPreferences(context).edit()
+                    .putBoolean(PREF_COACH_MARK_DIRECT_MESSAGE_LIST, true).commit();
+            return false;
+        }
+        return true;
+    }
 
     public static int getChatIdFromPush(Context context) {
         SharedPreferences pref = getSharedPreferences(context);
@@ -75,7 +126,6 @@ public class JandiPreference {
         editor.putInt(PREF_MY_ENTITY_ID, myEntityId);
         editor.commit();
     }
-
 
     // JANDI Access Token
     public static String getMyToken(Context context) {
@@ -140,7 +190,6 @@ public class JandiPreference {
     private static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
-
 
     public static boolean isAlarmLED(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_ALARM_LED, true);
