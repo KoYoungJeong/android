@@ -49,7 +49,6 @@ public class EntityManager {
     private List<FormattedEntity> mSortedGroups = null;
 
     protected EntityManager(Context context) {
-        int teamId = AccountRepository.getRepository().getSelectedTeamInfo().getTeamId();
         ResLeftSideMenu resLeftSideMenu = LeftSideMenuRepository.getRepository().getCurrentLeftSideMenu();
         if (resLeftSideMenu != null) {
             init(resLeftSideMenu);
@@ -135,14 +134,11 @@ public class EntityManager {
             } else if (entity instanceof ResLeftSideMenu.User) {
                 FormattedEntity user = new FormattedEntity((ResLeftSideMenu.User) entity);
                 user = patchMarkerToFormattedEntity(user);
-                for (int starredEntity : starredEntities) {
-                    if (starredEntity == entity.id) {
-                        user.isStarred = true;
-                        mStarredUsers.put(entity.id, user);
-                    } else {
-                        mUsers.put(entity.id, user);
-                    }
-
+                if (starredEntities.contains(entity.id)) {
+                    user.isStarred = true;
+                    mStarredUsers.put(entity.id, user);
+                } else {
+                    mUsers.put(entity.id, user);
                 }
             } else {
                 // DO NOTHING

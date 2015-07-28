@@ -26,6 +26,7 @@ import com.tosslab.jandi.app.ui.profile.email.EmailChooseActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.team.info.TeamDomainInfoActivity_;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.AlertUtil_;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
@@ -317,6 +318,12 @@ public class AccountHomeActivity extends AppCompatActivity implements AccountHom
     @Override
     public void invalidAccess() {
         finish();
+    }
+
+    @Override
+    public void showNetworCheckDialog() {
+        AlertUtil_.getInstance_(AccountHomeActivity.this)
+                .showCheckNetworkDialog(AccountHomeActivity.this, (dialog, which) -> finish());
     }
 
     @Override

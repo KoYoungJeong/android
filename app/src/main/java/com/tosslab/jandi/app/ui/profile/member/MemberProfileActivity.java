@@ -147,57 +147,71 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_user_status_message)
     void editStatusMessage(View view) {
         // 닉네임
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_STATUS,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_phone_number)
     void editPhoneNumber(View view) {
         // 핸드폰 번호
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_PHONE,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_realname)
     void editName(View view) {
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_division)
     void editDivision(View view) {
         // 부서
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_DIVISION,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_position)
     void editPosition(View view) {
         // 직책
-        memberProfileView.launchEditDialog(
-                EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
-                ((TextView) view)
-        );
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.launchEditDialog(
+                    EditTextDialogFragment.ACTION_MODIFY_PROFILE_POSITION,
+                    ((TextView) view)
+            );
+        }
     }
 
     @Click(R.id.profile_user_email)
     void editEmail(View view) {
-        String[] accountEmails = memberProfileModel.getAccountEmails();
-        String email = memberProfileView.getEmail();
-        memberProfileView.showEmailChooseDialog(accountEmails, email);
+        if (NetworkCheckUtil.isConnected()) {
+            String[] accountEmails = memberProfileModel.getAccountEmails();
+            String email = memberProfileView.getEmail();
+            memberProfileView.showEmailChooseDialog(accountEmails, email);
+        }
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
-        memberProfileView.updateEmailTextColor(event.getEmail());
-        uploadEmail(event.getEmail());
+        if (NetworkCheckUtil.isConnected()) {
+            memberProfileView.updateEmailTextColor(event.getEmail());
+            uploadEmail(event.getEmail());
+        }
     }
 
     public void onEvent(ProfileChangeEvent event) {
@@ -326,6 +340,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
         if (!NetworkCheckUtil.isConnected()) {
             alertUtil.showCheckNetworkDialog(MemberProfileActivity.this, null);
+            return;
         }
 
         String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);

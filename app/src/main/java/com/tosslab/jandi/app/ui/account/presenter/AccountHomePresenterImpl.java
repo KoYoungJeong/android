@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -56,7 +57,13 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         }
 
         getAccountInfo();
-        getTeamInfo();
+
+        if (NetworkCheckUtil.isConnected()) {
+            getTeamInfo();
+        } else {
+            view.showNetworCheckDialog();
+        }
+
     }
 
     private void getAccountInfo() {
