@@ -462,6 +462,7 @@
     <string name="jandi_coach_mark_more_explain1">이 곳은 잔디 설정 화면입니다.</string>
     <string name="jandi_coach_mark_more_explain2">함께 사용할 수 있도록</string>
     <string name="jandi_coach_mark_more_explain3">팀 멤버 초대를 잊지 말아주세요!</string>
+    <string name="jandi_chat_detail">"대화창 설정"</string>
 
 
 </resources>

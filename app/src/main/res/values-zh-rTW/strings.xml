@@ -444,5 +444,6 @@
     <string name="jandi_coach_mark_more_explain1">此為設定選單</string>
     <string name="jandi_coach_mark_more_explain2">別忘了邀請夥伴加入！</string>
     <string name="jandi_coach_mark_more_explain3"></string>
+    <string name="jandi_chat_detail">"聊天設定"</string>
 </resources>
 
