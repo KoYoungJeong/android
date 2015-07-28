@@ -308,11 +308,15 @@ public class FileDetailPresenter {
 
         view.showDownloadProgressDialog(fileName);
 
-        downloadFile(BitmapUtil.getFileUrl(content.fileUrl), content.name, content.type, progressDialog);
+        downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
+                content.name,
+                content.type,
+                content.ext,
+                progressDialog);
     }
 
     @Background
-    public void downloadFile(String url, String fileName, final String fileType, ProgressDialog progressDialog) {
+    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog) {
         try {
             File result = fileDetailModel.download(url, fileName, fileType, progressDialog);
 

@@ -54,12 +54,12 @@ public class FileDetailModel {
 
     private ResMessages.FileMessage fileMessage;
 
-    public void setFileMessage(ResMessages.FileMessage fileMessage) {
-        this.fileMessage = fileMessage;
-    }
-
     public ResMessages.FileMessage getFileMessage() {
         return fileMessage;
+    }
+
+    public void setFileMessage(ResMessages.FileMessage fileMessage) {
+        this.fileMessage = fileMessage;
     }
 
     public void deleteFile(int fileId) throws RetrofitError {
@@ -90,12 +90,23 @@ public class FileDetailModel {
         File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS + "/Jandi");
         dir.mkdirs();
 
+        String downloadFileName;
+        if (!hasFileExt(fileName)) {
+            downloadFileName = fileName + "." + fileType;
+        } else {
+            downloadFileName = fileName;
+        }
+
         return Ion.with(context)
                 .load(url)
                 .progressDialog(progressDialog)
                 .setHeader("User-Agent", UserAgentUtil.getDefaultUserAgent(context))
-                .write(new File(dir, fileName))
+                .write(new File(dir, downloadFileName))
                 .get();
+    }
+
+    private boolean hasFileExt(String fileName) {
+        return !TextUtils.isEmpty(fileName) && fileName.lastIndexOf(".") > 0;
     }
 
     public boolean isMyComment(int writerId) {

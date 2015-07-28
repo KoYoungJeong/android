@@ -661,6 +661,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setCancelable(false);
         }
 
         if (progressDialog.isShowing()) {
@@ -692,8 +693,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         showDownloadProgressDialog(fileDownloadStartEvent.getFileName());
 
-        fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(), fileDownloadStartEvent.getFileName(),
-                fileDownloadStartEvent.getFileType(), progressDialog);
+        fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
+                fileDownloadStartEvent.getFileName(),
+                fileDownloadStartEvent.getFileType(),
+                fileDownloadStartEvent.getExt(),
+                progressDialog);
     }
 
     @UiThread
@@ -706,6 +710,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
         try {
             startActivity(intent);
+            ColoredToast.show(FileDetailActivity.this, file.getPath());
         } catch (ActivityNotFoundException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);

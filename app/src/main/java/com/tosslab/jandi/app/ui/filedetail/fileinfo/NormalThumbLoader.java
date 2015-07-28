@@ -48,7 +48,10 @@ public class NormalThumbLoader implements FileThumbLoader {
                 imageViewPhotoFile.setOnClickListener(view -> imageViewPhotoFile.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(photoUrl))));
                 break;
             default:
-                imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new FileDownloadStartEvent(BitmapUtil.getFileUrl(fileMessage.content.fileUrl), fileMessage.content.name, fileMessage.content.type)));
+                imageViewPhotoFile.setOnClickListener(view -> EventBus.getDefault().post(new
+                        FileDownloadStartEvent(BitmapUtil.getFileUrl(fileMessage.content.fileUrl)
+                        , fileMessage.content.title, fileMessage.content.type, fileMessage
+                        .content.ext)));
                 break;
         }
 
