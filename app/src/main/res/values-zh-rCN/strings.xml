@@ -443,5 +443,6 @@
     <string name="jandi_coach_mark_more_explain1">此为设定菜单</string>
     <string name="jandi_coach_mark_more_explain2">别忘了邀请伙伴加入！</string>
     <string name="jandi_coach_mark_more_explain3"></string>
+    <string name="jandi_chat_detail">"聊天设置"</string>
 
 </resources>

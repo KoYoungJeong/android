@@ -453,5 +453,6 @@
     <string name="jandi_coach_mark_more_explain1">これはジャンディーの設定画面です。</string>
     <string name="jandi_coach_mark_more_explain2">ご一緒に利用できる</string>
     <string name="jandi_coach_mark_more_explain3">ように他のチームメンバーを招待してみましょう！</string>
+    <string name="jandi_chat_detail">"トピック設定"</string>
 
 </resources>
