@@ -65,6 +65,7 @@ import rx.Observable;
 public class MainTabActivity extends BaseAnalyticsActivity {
 
     public static final int CHAT_INDEX = 1;
+    public static final int REQ_START_MESSAGE = 1211;
     @Bean
     EntityClientManager mEntityClientManager;
     @Bean
@@ -158,6 +159,7 @@ public class MainTabActivity extends BaseAnalyticsActivity {
         }
 
         sendBroadcast(new Intent(SocketServiceStarter.START_SOCKET_SERVICE));
+        getEntities();
     }
 
     private void showInvitePopup() {
@@ -207,7 +209,6 @@ public class MainTabActivity extends BaseAnalyticsActivity {
 
         // Entity의 리스트를 획득하여 저장한다.
         EventBus.getDefault().register(this);
-        getEntities();
 
         ResAccountInfo.UserTeam selectedTeamInfo = JandiAccountDatabaseManager.getInstance(MainTabActivity.this).getSelectedTeamInfo();
         setupActionBar(selectedTeamInfo.getName());

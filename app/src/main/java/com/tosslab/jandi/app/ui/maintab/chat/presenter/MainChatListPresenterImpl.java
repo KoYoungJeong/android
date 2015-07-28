@@ -123,12 +123,13 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Override
     public void onEntityItemClick(Context context, int position) {
         ChatItem chatItem = view.getChatItem(position);
-        view.setSelectedItem(chatItem.getEntityId());
-        EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
         int unread = chatItem.getUnread();
         chatItem.unread(0);
         view.refreshListView();
+
+        view.setSelectedItem(chatItem.getEntityId());
+        EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
         int badgeCount = JandiPreference.getBadgeCount(context) - unread;
         JandiPreference.setBadgeCount(context, badgeCount);
