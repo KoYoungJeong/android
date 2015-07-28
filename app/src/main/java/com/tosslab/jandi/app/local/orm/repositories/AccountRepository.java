@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.local.orm.repositories;
 
-import android.text.TextUtils;
-
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -44,15 +42,6 @@ public class AccountRepository {
         lock.lock();
         try {
             Dao<ResAccountInfo, String> accountInfoDao = helper.getDao(ResAccountInfo.class);
-            Dao<ResAccountInfo.UserDevice, Long> userDeviceDao = helper.getDao(ResAccountInfo.UserDevice.class);
-            Dao<ResAccountInfo.UserTeam, Integer> userTeamDao = helper.getDao(ResAccountInfo
-                    .UserTeam.class);
-            Dao<ResAccountInfo.UserEmail, String> userEmailDao = helper.getDao(ResAccountInfo
-                    .UserEmail.class);
-
-            upsertUserDevice(accountInfo, userDeviceDao);
-            upsertUserTeam(accountInfo, userTeamDao);
-            upsertUserEmail(accountInfo, userEmailDao);
 
             accountInfoDao.createOrUpdate(accountInfo);
 
@@ -209,42 +198,6 @@ public class AccountRepository {
             lock.unlock();
         }
 
-    }
-
-    private void upsertUserEmail(ResAccountInfo accountInfo, Dao<ResAccountInfo.UserEmail, String> userEmailDao) throws SQLException {
-        DeleteBuilder<ResAccountInfo.UserEmail, String> deleteBuilder = userEmailDao.deleteBuilder();
-        deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
-        deleteBuilder.delete();
-
-        for (ResAccountInfo.UserEmail userEmail : accountInfo.getEmails()) {
-            userEmail.setAccountInfo(accountInfo);
-            userEmailDao.create(userEmail);
-        }
-    }
-
-    private void upsertUserTeam(ResAccountInfo accountInfo, Dao<ResAccountInfo.UserTeam, Integer> userTeamDao) throws SQLException {
-        DeleteBuilder<ResAccountInfo.UserTeam, Integer> deleteBuilder = userTeamDao.deleteBuilder();
-        deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
-        deleteBuilder.delete();
-
-        for (ResAccountInfo.UserTeam userTeam : accountInfo.getMemberships()) {
-            if (!TextUtils.equals(userTeam.getStatus(), "enabled")) {
-                continue;
-            }
-            userTeam.setAccountInfo(accountInfo);
-            userTeamDao.create(userTeam);
-        }
-    }
-
-    private void upsertUserDevice(ResAccountInfo accountInfo, Dao<ResAccountInfo.UserDevice, Long> userDeviceDao) throws SQLException {
-        DeleteBuilder<ResAccountInfo.UserDevice, Long> deleteBuilder = userDeviceDao.deleteBuilder();
-        deleteBuilder.where().eq("accountInfo_id", accountInfo.getId());
-        deleteBuilder.delete();
-
-        for (ResAccountInfo.UserDevice userDevice : accountInfo.getDevices()) {
-            userDevice.setAccountInfo(accountInfo);
-            userDeviceDao.create(userDevice);
-        }
     }
 
     public ResAccountInfo getAccountInfo() {

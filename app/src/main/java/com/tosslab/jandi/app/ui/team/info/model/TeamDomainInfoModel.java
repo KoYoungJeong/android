@@ -44,6 +44,7 @@ public class TeamDomainInfoModel {
     }
 
     public List<ResAccountInfo.UserEmail> initUserEmailInfo() {
+
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         Iterator<ResAccountInfo.UserEmail> confirmed = Observable.from(userEmails)

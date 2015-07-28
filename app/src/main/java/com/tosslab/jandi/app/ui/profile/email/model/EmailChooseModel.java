@@ -73,6 +73,7 @@ public class EmailChooseModel {
     }
 
     public String getPrimaryEmail() {
+
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {

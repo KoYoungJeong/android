@@ -50,7 +50,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @AfterViews
     void initViews() {
 
-        if (!accountHomeModel.checkAccount(context)) {
+        if (!accountHomeModel.checkAccount()) {
             view.invalidAccess();
             return ;
         }
@@ -60,8 +60,8 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     }
 
     private void getAccountInfo() {
-        String accountName = accountHomeModel.getAccountName(context);
-        ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo(context);
+        String accountName = accountHomeModel.getAccountName();
+        ResAccountInfo.UserEmail accountEmail = accountHomeModel.getSelectedEmailInfo();
 
         view.setAccountName(accountName);
 
@@ -135,7 +135,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     @Override
     public void onTeamCreateAcceptResult() {
 
-        ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
+        ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
         onJoinedTeamSelect(selectedTeamInfo.getTeamId(), true);
     }
 
@@ -147,7 +147,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
     @Override
     public void onEmailChooseResult() {
-        ResAccountInfo.UserEmail selectedEmailInfo = accountHomeModel.getSelectedEmailInfo(context);
+        ResAccountInfo.UserEmail selectedEmailInfo = accountHomeModel.getSelectedEmailInfo();
         if (selectedEmailInfo != null) {
             view.setUserEmailText(selectedEmailInfo.getId());
         }
@@ -240,7 +240,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
     void getTeamInfo() {
         try {
             List<Team> teamList = accountHomeModel.getTeamInfos(context);
-            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo(context);
+            ResAccountInfo.UserTeam selectedTeamInfo = accountHomeModel.getSelectedTeamInfo();
             view.setTeamInfo((ArrayList<Team>) teamList, selectedTeamInfo);
         } catch (RetrofitError e) {
             view.showErrorToast(context.getString(R.string.err_network));

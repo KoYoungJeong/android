@@ -4,7 +4,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
-
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.local.orm.repositories.LeftSideMenuRepository;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -104,12 +103,13 @@ public class AccountHomeModel {
         return entityManager;
     }
 
-    public ResAccountInfo.UserTeam getSelectedTeamInfo(Context context) {
+    public ResAccountInfo.UserTeam getSelectedTeamInfo() {
         return AccountRepository.getRepository().getSelectedTeamInfo();
     }
 
-    public ResAccountInfo.UserEmail getSelectedEmailInfo(Context context) {
-        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
+    public ResAccountInfo.UserEmail getSelectedEmailInfo() {
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository()
+                .getAccountEmails();
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (userEmail.isPrimary()) {
                 return userEmail;
@@ -118,11 +118,11 @@ public class AccountHomeModel {
         return null;
     }
 
-    public String getAccountName(Context context) {
+    public String getAccountName() {
         return AccountRepository.getRepository().getAccountInfo().getName();
     }
 
-    public boolean checkAccount(Context context) {
+    public boolean checkAccount() {
         return AccountRepository.getRepository().getAccountInfo() != null;
     }
 }

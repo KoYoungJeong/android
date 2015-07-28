@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.models;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+import com.tosslab.jandi.app.local.orm.dao.AccountInfoDaoImpl;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -14,7 +15,7 @@ import java.util.Collection;
 /**
  * Created by Steve SeongUg Jung on 14. 12. 11..
  */
-@DatabaseTable(tableName = "accounts")
+@DatabaseTable(tableName = "accounts", daoClass = AccountInfoDaoImpl.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ResAccountInfo {

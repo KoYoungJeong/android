@@ -18,6 +18,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
@@ -73,6 +74,8 @@ public class MessageRepositoryTest {
 
 
         List<ResMessages.Link> savedLinks = MessageRepository.getRepository().getMessages(ROOM_ID);
+
+        Collections.sort(savedLinks, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
 
         assertThat(savedLinks.size(), is(equalTo(messages.size())));
         assertThat(savedLinks.get(0).eventType, is(equalTo(messages.get(0).eventType)));

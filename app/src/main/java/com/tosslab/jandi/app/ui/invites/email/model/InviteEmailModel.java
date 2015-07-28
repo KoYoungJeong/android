@@ -43,7 +43,9 @@ public class InviteEmailModel {
     }
 
     public boolean isInvitedEmail(String emailText) {
-        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
+
+        List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository()
+                .getAccountEmails();
 
         for (ResAccountInfo.UserEmail userEmail : userEmails) {
             if (TextUtils.equals(emailText, userEmail.getId())) {

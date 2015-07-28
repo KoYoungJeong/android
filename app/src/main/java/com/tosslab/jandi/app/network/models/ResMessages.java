@@ -7,6 +7,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.tosslab.jandi.app.local.orm.dao.LinkDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.event.AnnounceCreateEventDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.event.CreateEventDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.event.InviteEventDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.event.PrivateCreateInfoDaoImpl;
+import com.tosslab.jandi.app.local.orm.dao.event.PublicCreateInfoDaoImpl;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.EventInfoDeserialize;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.InviteInfoDeserializer;
 import com.tosslab.jandi.app.network.jackson.deserialize.message.LinkShareEntityDeserializer;
@@ -394,7 +399,7 @@ public class ResMessages {
         }
     }
 
-    @DatabaseTable(tableName = "message_info_create")
+    @DatabaseTable(tableName = "message_info_create", daoClass = CreateEventDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
@@ -414,10 +419,11 @@ public class ResMessages {
         public String createType;
     }
 
+    @DatabaseTable(tableName = "message_info_announce_create",
+            daoClass = AnnounceCreateEventDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
-    @DatabaseTable(tableName = "message_info_announce_create")
     public static class AnnouncementCreateEvent extends EventInfo {
 
         @DatabaseField(foreign = true, foreignAutoRefresh = true)
@@ -523,7 +529,7 @@ public class ResMessages {
 
     }
 
-    @DatabaseTable(tableName = "message_info_invite")
+    @DatabaseTable(tableName = "message_info_invite", daoClass = InviteEventDaoImpl.class)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonDeserialize(using = JsonDeserializer.None.class)
@@ -598,7 +604,8 @@ public class ResMessages {
         public int _id;
     }
 
-    @DatabaseTable(tableName = "message_info_create_topic")
+    @DatabaseTable(tableName = "message_info_create_topic",
+            daoClass = PublicCreateInfoDaoImpl.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class PublicCreateInfo extends CreateInfo {
@@ -654,7 +661,8 @@ public class ResMessages {
         }
     }
 
-    @DatabaseTable(tableName = "message_info_create_topic")
+    @DatabaseTable(tableName = "message_info_create_topic",
+            daoClass = PrivateCreateInfoDaoImpl.class)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     public static class PrivateCreateInfo extends CreateInfo {

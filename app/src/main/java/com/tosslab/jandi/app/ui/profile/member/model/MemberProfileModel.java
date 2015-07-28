@@ -77,11 +77,12 @@ public class MemberProfileModel {
     }
 
     public String[] getAccountEmails() {
+
         List<ResAccountInfo.UserEmail> userEmails = AccountRepository.getRepository().getAccountEmails();
 
         Iterator<String> confirmedEmails = Observable.from(userEmails)
                 .filter(userEmail -> TextUtils.equals(userEmail.getStatus(), "confirmed"))
-                .map(userEmail -> userEmail.getId())
+                .map(ResAccountInfo.UserEmail::getId)
                 .toBlocking()
                 .getIterator();
 
