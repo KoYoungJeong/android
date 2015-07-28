@@ -34,12 +34,12 @@ import static org.junit.Assert.*;
 public class FlusherTest {
 
     private Flusher flusher;
-
+    private Tracker tracker;
     @Before
     public void setup() throws Exception {
         Robolectric.getFakeHttpLayer().interceptHttpRequests(false);
 
-        Tracker tracker = new Tracker(Robolectric.application);
+        tracker = new Tracker(Robolectric.application);
 
         for (int i = 0; i < 30; i++) {
             final int index = i;
@@ -85,6 +85,56 @@ public class FlusherTest {
     }
 
     @Test
+    public void testQueryForCount() throws Exception {
+
+        for (int i = 0; i < 50030; i++) {
+            final int index = i;
+            Map<String, Object> identifiers = new HashMap<String, Object>() {
+                {
+                    put("d", index + "gwleqnwlne casldblaksdb!$@$!@$!@%");
+                    put("a", index + "helloWo!RID");
+                    put("m", index);
+                }
+            };
+
+            tracker.insert(index + " event", identifiers, "android", identifiers, new Date().getTime());
+        }
+
+        long time = System.currentTimeMillis();
+        Pair<Integer, List<Track>> query = flusher.queryForCount();
+        long gap = System.currentTimeMillis() - time;
+        System.out.println("query end - " + gap);
+
+        assertNotNull(query);
+
+        int count = query.first;
+        System.out.println("Query count = " + count);
+
+        List<Track> list = query.second;
+        int listCount = list.size();
+        System.out.println("List count = " + listCount);
+
+        assertEquals(count, listCount);
+
+        boolean exceed = listCount >= 50000;
+        assertTrue(exceed);
+
+        if (exceed) {
+            int first = list.get(0).getIndex();
+            int last = list.get(500 - 1).getIndex();
+
+            System.out.println("first - " + first + " last - " + last);
+
+            int deletedRows = flusher.deleteRows(first, last);
+
+            System.out.println("deletedRows = " + deletedRows);
+
+            assertTrue(deletedRows == 500);
+        }
+    }
+
+
+    @Test
     public void testStringToMap() throws Exception {
         String jsonString = null;
         Map<String, Object> mapFromString1 = flusher.getMapFromString(jsonString);
@@ -110,11 +160,14 @@ public class FlusherTest {
     }
 
     @Test
-    public void testFlush() throws Exception {
-//        JSONObject response = new JSONObject();
-//        response.put("status", 400);
-//        Robolectric.getFakeHttpLayer().addPendingHttpResponse(400, response.toString(), null);
+    public void testIsEndPointAlive() throws Exception {
+        boolean alive = flusher.isEndPointAlive();
 
+        assertTrue(alive);
+    }
+
+    @Test
+    public void testFlush() throws Exception {
         Pair<Integer, List<Track>> query = flusher.query();
 
         int num = query.first;
@@ -122,7 +175,8 @@ public class FlusherTest {
         final List<Track> data = query.second;
         Track lastTrack = data.get(data.size() - 1);
         long lastDate = lastTrack.getTime();
-        ResponseBody body = flusher.flush(num, deviceId, lastDate, data);
+        boolean retry = false;
+        ResponseBody body = flusher.flush(retry, num, deviceId, lastDate, data);
 
         System.out.println(body.toString());
 

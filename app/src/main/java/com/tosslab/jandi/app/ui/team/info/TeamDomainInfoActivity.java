@@ -121,16 +121,26 @@ public class TeamDomainInfoActivity extends AppCompatActivity {
         try {
             ResTeamDetailInfo newTeam = teamDomainInfoModel.createNewTeam(teamName, teamDomain);
 
-            String distictId = newTeam.getInviteTeam().getId() + "-" + newTeam.getInviteTeam().getTeamId();
+            int teamId = newTeam.getInviteTeam().getTeamId();
+            String distictId = newTeam.getInviteTeam().getId() + "-" + teamId;
             MixpanelMemberAnalyticsClient.getInstance(TeamDomainInfoActivity.this, null)
                     .pageViewTeamCreateSuccess();
 
-            teamDomainInfoModel.updateTeamInfo(newTeam.getInviteTeam().getTeamId());
+            teamDomainInfoModel.updateTeamInfo(teamId);
+
+            teamDomainInfoModel.trackCreateTeamSuccess(teamId);
+
             teamDomainInfoPresenter.dismissProgressWheel();
             teamDomainInfoPresenter.successCreateTeam(newTeam.getInviteTeam().getName());
 
         } catch (RetrofitError e) {
             e.printStackTrace();
+            int errorCode = -1;
+            if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+            }
+            teamDomainInfoModel.trackCreateTeamFail(errorCode);
+
             teamDomainInfoPresenter.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 teamDomainInfoPresenter.showFailToast(getString(R.string.err_network));

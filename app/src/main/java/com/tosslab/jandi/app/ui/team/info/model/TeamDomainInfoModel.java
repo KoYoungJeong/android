@@ -9,6 +9,10 @@ import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -87,6 +91,32 @@ public class TeamDomainInfoModel {
         JandiAccountDatabaseManager databaseManager = JandiAccountDatabaseManager.getInstance(context);
         databaseManager.upsertAccountAllInfo(resAccountInfo);
         databaseManager.updateSelectedTeam(teamId);
+    }
+
+    public void trackCreateTeamSuccess(int teamId) {
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        String accountId = accountInfo != null ? accountInfo.getId() : null;
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.CreateTeam)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TeamId, teamId)
+                        .build());
+    }
+
+    public void trackCreateTeamFail(int errorCode) {
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        String accountId = accountInfo != null ? accountInfo.getId() : null;
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.CreateTeam)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     public String getUserName() {

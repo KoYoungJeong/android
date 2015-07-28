@@ -32,7 +32,7 @@ final class Flusher {
 
     public Flusher(Context context) {
         databaseHelper = SprinklerDatabaseHelper.getInstance(context);
-        requestManager = new RequestManager();
+        requestManager = RequestManager.get();
     }
 
     public Pair<Integer, List<Track>> query() {
@@ -60,6 +60,23 @@ final class Flusher {
         cursor.close();
 
         return new Pair<>(count, list);
+    }
+
+    public Pair<Integer, List<Track>> queryForCount() {
+        List<Track> list = new ArrayList<>();
+        Cursor cursor = databaseHelper.queryForCount();
+        int count = cursor.getCount();
+        while (cursor.moveToNext()) {
+            int index =
+                    cursor.getInt(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns._ID));
+            list.add(new Track(index));
+        }
+        cursor.close();
+        return new Pair<>(count, list);
+    }
+
+    public int deleteRows(int startIndex, int endIndex) {
+        return databaseHelper.deleteRows(startIndex, endIndex);
     }
 
     public Map<String, Object> getMapFromString(String jsonString) {
@@ -113,14 +130,34 @@ final class Flusher {
         }
     }
 
-    public ResponseBody flush(int num, String deviceId, long lastDate, List<Track> data)
-            throws RetrofitError {
-        RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data);
-        return requestManager.request(request);
+    public boolean isEndPointAlive() {
+        Logger.i(TAG, "ping start");
+        try {
+            ResponseBody responseBody = requestManager.request(new RequestManager.Request<ResponseBody>() {
+                @Override
+                public ResponseBody performRequest() throws RetrofitError {
+                    RequestClient client = requestManager.getClient(RequestClient.class);
+                    return client.ping();
+                }
+            });
+            Logger.d(TAG, "ping success");
+            Logger.i(TAG, "ping end");
+            return true;
+        } catch (RetrofitError retrofitError) {
+            Logger.print(retrofitError);
+            Logger.d(TAG, "ping fail");
+            Logger.i(TAG, "ping end");
+            return false;
+        }
     }
 
-    public void deleteRows(int startIndex, int endIndex) {
-        databaseHelper.deleteRows(startIndex, endIndex);
+    public ResponseBody flush(boolean retry, int num, String deviceId, long lastDate, List<Track> data)
+            throws RetrofitError {
+        RequestManager.Request<ResponseBody> request = getRequest(num, deviceId, lastDate, data);
+        if (retry) {
+            return requestManager.requestWithRetry(request);
+        }
+        return requestManager.request(request);
     }
 
     private RequestManager.Request<ResponseBody> getRequest(

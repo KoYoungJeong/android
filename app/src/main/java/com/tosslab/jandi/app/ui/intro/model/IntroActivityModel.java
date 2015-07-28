@@ -170,17 +170,21 @@ public class IntroActivityModel {
         return memberId;
     }
 
-    public void trackAutoSignInSuccessAndFlush(Context context) {
+    public void trackAutoSignInSuccessAndFlush(Context context, boolean hasTeamSelected) {
         String accountId = getAccountId(context);
         int memberId = getMemberId(context);
+        FutureTrack.Builder builder = new FutureTrack.Builder()
+                .event(Event.SignIn)
+                .accountId(accountId)
+                .property(PropertyKey.ResponseSuccess, true)
+                .property(PropertyKey.AutoSignIn, true);
+
+        if (hasTeamSelected) {
+            builder.memberId(memberId);
+        }
+
         Sprinkler.with(context)
-                .track(new FutureTrack.Builder()
-                        .event(Event.SignIn)
-                        .accountId(accountId)
-                        .memberId(memberId)
-                        .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.AutoSignIn, true)
-                        .build())
+                .track(builder.build())
                 .flush();
     }
 

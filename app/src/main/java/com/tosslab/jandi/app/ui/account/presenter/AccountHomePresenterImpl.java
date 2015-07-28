@@ -13,10 +13,6 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.ui.account.model.AccountHomeModel;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.ui.team.select.to.Team;
-import com.tosslab.jandi.lib.sprinkler.Sprinkler;
-import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
-import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
-import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -92,15 +88,15 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.dismissProgressWheel();
 
             // Track Team List Sign In (with flush)
-            accountHomeModel.trackSignInSuccessAndFlush(context);
+            accountHomeModel.trackLaunchTeamSuccess(context, teamId);
             view.moveSelectedTeam(firstJoin);
         } catch (RetrofitError e) {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            accountHomeModel.trackSignInFailAndFlush(context, errorCode);
+            accountHomeModel.trackLaunchTeamFail(context, errorCode);
             view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
-            accountHomeModel.trackSignInFailAndFlush(context, -1);
+            accountHomeModel.trackLaunchTeamFail(context, -1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }

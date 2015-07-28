@@ -16,6 +16,11 @@ public class Track {
     private Map<String, Object> pr;
     private long time;
 
+    // Just fot Count.
+    public Track(int index) {
+        this.index = index;
+    }
+
     public Track(int index, String ev, Map<String, Object> id, String pl, Map<String, Object> pr, long time) {
         this.index = index;
         this.ev = ev;

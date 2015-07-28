@@ -20,12 +20,21 @@ final class RequestManager {
 
     private static final int RETRY_COUNT = 3;
 
+    private static RequestManager sInstance;
     private boolean isCanceled = false;
     private RestAdapter restAdapter;
 
-    public RequestManager() {
+    public static RequestManager get() {
+        if (sInstance == null) {
+            sInstance = new RequestManager();
+        }
+        return sInstance;
+    }
+
+    private RequestManager() {
         RequestConfig config = getRequestConfig();
         restAdapter = new RestAdapter.Builder()
+                .setClient(new RequestUrlConnectionClient())
                 .setEndpoint(config.getEndPoint())
                 .setLogLevel(config.getLogLevel())
                 .build();
@@ -37,21 +46,33 @@ final class RequestManager {
 
     public <RESPONSE> RESPONSE request(Request<RESPONSE> request) throws RetrofitError {
         RESPONSE response = null;
+        try {
+            response = request.performRequest();
+            Logger.i(TAG, "Request success.");
+        } catch (RetrofitError error) {
+            Logger.i(TAG, "Request fail");
+            throw error;
+        }
+        return response;
+    }
+
+    public <RESPONSE> RESPONSE requestWithRetry(Request<RESPONSE> request) throws RetrofitError {
+        RESPONSE response = null;
         int i = 0;
         while (i <= RETRY_COUNT) {
             try {
                 response = request.performRequest();
                 Logger.i(TAG, "Request success.");
                 break;
-            } catch (RetrofitError retrofitError) {
+            } catch (RetrofitError error) {
                 if (isCanceled) {
                     Logger.i(TAG, "Request has cancelled.");
-                    throw retrofitError;
+                    throw error;
                 }
-                Logger.print(retrofitError);
+                Logger.print(error);
                 if (i >= RETRY_COUNT) {
                     Log.i(TAG, "Request fail - retry has exceeded.");
-                    throw retrofitError;
+                    throw error;
                 }
 
                 i++;
@@ -69,15 +90,14 @@ final class RequestManager {
         if (Sprinkler.IS_DEBUG_MODE) {
             return new RequestConfigDev();
         }
-//        return new RequestConfigRelease();
-        return new RequestConfigDev();
+        return new RequestConfigRelease();
     }
 
     static class RequestConfigRelease implements RequestConfig {
 
         @Override
         public String getEndPoint() {
-            return "http://112.219.215.148:50080/log";
+            return "http://112.219.215.148:50080";
         }
 
         @Override
@@ -90,7 +110,7 @@ final class RequestManager {
 
         @Override
         public String getEndPoint() {
-            return "http://112.219.215.148:50080/log";
+            return "http://112.219.215.148:50080";
         }
 
         @Override

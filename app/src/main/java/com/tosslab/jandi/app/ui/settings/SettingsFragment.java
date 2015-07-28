@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.settings;/**
  */
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
@@ -27,6 +28,9 @@ import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -107,6 +111,8 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     public void onEvent(SignOutEvent event) {
+        trackSignOut();
+
         startSignOut();
     }
 
@@ -145,6 +151,25 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         settingFragmentViewModel.returnToLoginActivity(getActivity());
+    }
+
+    private void trackSignOut() {
+        Context context = getActivity().getApplicationContext();
+
+        JandiAccountDatabaseManager db = JandiAccountDatabaseManager.getInstance(context);
+        ResAccountInfo accountInfo = db.getAccountInfo();
+        ResAccountInfo.UserTeam selectedTeamInfo = db.getSelectedTeamInfo();
+
+        String accountId = accountInfo != null ? accountInfo.getId() : null;
+        int memberId = selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignOut)
+                        .accountId(accountId)
+                        .memberId(memberId)
+                        .build())
+                .flush();
     }
 
     private void removeSignData() {

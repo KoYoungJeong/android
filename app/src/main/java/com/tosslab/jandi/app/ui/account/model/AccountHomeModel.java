@@ -136,28 +136,26 @@ public class AccountHomeModel {
         return accountId;
     }
 
-    public void trackSignInSuccessAndFlush(Context context) {
+    public void trackLaunchTeamSuccess(Context context, int teamId) {
         String accountId = getAccountId(context);
         Sprinkler.with(context)
                 .track(new FutureTrack.Builder()
-                        .event(Event.SignIn)
+                        .event(Event.LaunchTeam)
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, true)
-                        .property(PropertyKey.AutoSignIn, false)
-                        .build())
-                .flush();
+                        .property(PropertyKey.TeamId, teamId)
+                        .build());
     }
 
-    public void trackSignInFailAndFlush(Context context, int errorCode) {
+    public void trackLaunchTeamFail(Context context, int errorCode) {
         String accountId = getAccountId(context);
         Sprinkler.with(context)
                 .track(new FutureTrack.Builder()
-                        .event(Event.SignIn)
+                        .event(Event.LaunchTeam)
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
-                        .build())
-                .flush();
+                        .build());
     }
 
 }

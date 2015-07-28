@@ -20,7 +20,6 @@ import java.util.UUID;
 class DefaultProperties {
     private static final String PLATFORM = "android";
 
-    private static final String PREFERENCES_NAME = "sprinkler_preferences";
     private static final String KEY_DEVICE_ID = "device_id";
     private static final String OS = "Android";
 
@@ -42,7 +41,8 @@ class DefaultProperties {
 
     @SuppressLint("CommitPrefEdits")
     public DefaultProperties(Context context) {
-        SharedPreferences pref = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences pref =
+                context.getSharedPreferences(Sprinkler.PREFERENCES_NAME, Context.MODE_PRIVATE);
         String uuid = pref.getString(KEY_DEVICE_ID, null);
         if (TextUtils.isEmpty(uuid)) {
             uuid = UUID.randomUUID().toString();

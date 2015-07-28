@@ -20,9 +20,11 @@ public class Sprinkler {
     public static final String TAG = Logger.makeTag(Sprinkler.class);
 
     public static boolean IS_DEBUG_MODE = true;
+    public static final String PREFERENCES_NAME = "sprinkler_preferences";
 
     private static Sprinkler sInstance;
     private static final Object sTrackLock = new Object();
+
     private Context context;
     private FlushRetriever flushRetriever;
     private DefaultProperties defaultProperties;

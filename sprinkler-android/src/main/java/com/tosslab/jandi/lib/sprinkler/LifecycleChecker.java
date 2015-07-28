@@ -20,13 +20,12 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
         String activityName = activity.getClass().getName();
         Logger.d(TAG, activityName + " - onActivityCreated");
 
-        Context context = activity.getApplicationContext();
-        if (activity.isTaskRoot()) {
-            Sprinkler sprinkler = Sprinkler.with(context);
-            trackDefaultProperty(sprinkler);
-            sprinkler.flush();
-            sprinkler.startFlushRetriever();
-        }
+//        Sprinkler sprinkler = Sprinkler.with(activity.getApplicationContext());
+//        if (activity.isTaskRoot() && sprinkler.isFlushRetrieverStopped()) {
+//            trackDefaultProperty(sprinkler);
+//            sprinkler.flush();
+//            sprinkler.startFlushRetriever();
+//        }
     }
 
     @Override
@@ -40,9 +39,7 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
         String activityName = activity.getClass().getName();
         Logger.i(TAG, activityName + " - onActivityResumed");
 
-        Context context = activity.getApplicationContext();
-
-        Sprinkler sprinkler = Sprinkler.with(context);
+        Sprinkler sprinkler = Sprinkler.with(activity.getApplicationContext());
         if (sprinkler.isFlushRetrieverStopped()) {
             trackDefaultProperty(sprinkler);
             sprinkler.flush();

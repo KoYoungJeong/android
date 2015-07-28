@@ -122,10 +122,12 @@ public class IntroActivityPresenter {
                     ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
 
                     // Track Auto Sign In (with flush)
-                    model.trackAutoSignInSuccessAndFlush(context);
+                    model.trackAutoSignInSuccessAndFlush(context, true);
 
                     view.moveToMainActivity();
                 } else {
+                    model.trackAutoSignInSuccessAndFlush(context, false);
+
                     view.moveTeamSelectActivity();
                 }
             } else if (o == JandiConstants.NetworkError.UNAUTHORIZED) {

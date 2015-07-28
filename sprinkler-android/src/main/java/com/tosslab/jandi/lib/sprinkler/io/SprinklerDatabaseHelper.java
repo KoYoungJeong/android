@@ -40,7 +40,7 @@ final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
             + TableColumns.PROPERTIES + " TEXT, "
             + TableColumns.TIME + " INTEGER );";
 
-    private static final String LIMIT = String.valueOf(500);
+    public static final int QUERY_LIMIT = 500;
 
     private static SprinklerDatabaseHelper sInstance;
     private SQLiteDatabase database;
@@ -88,27 +88,41 @@ final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
         Logger.i(TAG, "query start");
         Cursor cursor =
                 database.query(TABLE_NAME_TRACK, TableColumns.COLUMNS,
-                        null, null, null, null,
-                        null,
-//                            TableColumns._ID + " DESC"
-                        // LIMIT 500
-                        LIMIT);
+                        null, null, null, null, null,
+                        String.valueOf(QUERY_LIMIT));
         Logger.i(TAG, "query end");
         return cursor;
     }
 
-    public void deleteAll() {
-        database.delete(TABLE_NAME_TRACK, null, null);
+    public Cursor queryForCount() {
+        Logger.i(TAG, "query start");
+        Cursor cursor =
+                database.query(TABLE_NAME_TRACK, new String[]{TableColumns._ID},
+                        null, null, null, null, null, null);
+        Logger.i(TAG, "query end");
+        return cursor;
     }
 
-    public void deleteRows(int startIndex, int lastIndex) {
+    public int deleteAll() {
+        int numberOfDeletedRows = 0;
         try {
-            database.delete(TABLE_NAME_TRACK,
+            numberOfDeletedRows = database.delete(TABLE_NAME_TRACK, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return numberOfDeletedRows;
+    }
+
+    public int deleteRows(int startIndex, int lastIndex) {
+        int numberOfDeletedRows = 0;
+        try {
+            numberOfDeletedRows = database.delete(TABLE_NAME_TRACK,
                     TableColumns._ID + " >= ? AND " + TableColumns._ID + " <= ?",
                     new String[]{String.valueOf(startIndex), String.valueOf(lastIndex)});
         } catch (Exception e) {
             Logger.print(e);
         }
+        return numberOfDeletedRows;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.tosslab.jandi.lib.sprinkler.io;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -28,6 +30,9 @@ public class SprinklerService extends IntentService {
     public static final String KEY_DEVICE_ID = "device_id";
     public static final int TYPE_TRACK = 0;
     public static final int TYPE_FLUSH = 1;
+
+    private static final String PREF_KEY_PRE_REQUEST_FAIL = "pre_request_fail";
+    private static final int MAX_ROW_SIZE = 10000;
 
     public SprinklerService() {
         super(TAG);
@@ -107,6 +112,7 @@ public class SprinklerService extends IntentService {
         }
 
         Context context = getApplicationContext();
+        // 네트워크 체크
         if (!flusher.availableNetworking(context)) {
             Logger.e(TAG, "Stop flush. Unavailable Networking.");
             Logger.d(TAG, "<< flush end");
@@ -116,16 +122,69 @@ public class SprinklerService extends IntentService {
 
         final Pair<Integer, List<Track>> query = flusher.query();
 
+        // 쌓인 데이터가 하나도 없는 경우
         if (!flusher.needToFlush(query)) {
             Logger.e(TAG, "Do not need to flush. Track data count is 0.");
             Logger.d(TAG, "<< flush end");
             return;
         }
 
+        // 이전 Flush 가 fail 인 경우
+        //  - 서버가 살아있는지(ping api 이용) 확인
+        //        true > Retry 없이 Flush
+        //        fail > 데이터가 10000건 이상 쌓인 경우 첫 데이터로부터 500건 삭제
+        boolean isPreRequestFailed = isPreRequestFailed();
+        if (isPreRequestFailed && !flusher.isEndPointAlive()) {
+            deleteRowsIfNeed();
+            return;
+        }
+
+        // 이전 Flush 가 fail 인 경우만 Retry
+        boolean retry = !isPreRequestFailed;
+
+        flush(retry, query, deviceId);
+
+        Logger.d(TAG, "<< flush end");
+    }
+
+    private void deleteRowsIfNeed() {
+        Pair<Integer, List<Track>> queryForCount = flusher.queryForCount();
+        int rowCount = queryForCount.first;
+        List<Track> list = queryForCount.second;
+        if (rowCount < MAX_ROW_SIZE) {
+            return;
+        }
+
+        Track first = list.get(0);
+        Track last = list.get(SprinklerDatabaseHelper.QUERY_LIMIT - 1);
+
+        flusher.deleteRows(first.getIndex(), last.getIndex());
+    }
+
+    private boolean isPreRequestFailed() {
+        SharedPreferences preferences =
+                getApplicationContext().getSharedPreferences(
+                        Sprinkler.PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        return preferences.getBoolean(PREF_KEY_PRE_REQUEST_FAIL, false);
+    }
+
+    @SuppressLint("CommitPrefEdits")
+    private void setPreRequestFailed(boolean failed) {
+        SharedPreferences preferences =
+                getApplicationContext().getSharedPreferences(
+                        Sprinkler.PREFERENCES_NAME, Context.MODE_PRIVATE);
+
+        preferences.edit()
+                .putBoolean(PREF_KEY_PRE_REQUEST_FAIL, failed)
+                .commit();
+    }
+
+    private void flush(boolean retry, Pair<Integer, List<Track>> query, String deviceId) {
         int num = query.first;
         final List<Track> data = query.second;
         for (Track track : data) {
-            Logger.d(TAG, "track - " + track.getIndex());
+            Logger.d(TAG, String.format("track(%d, %s)", track.getIndex(), track.getEvent()));
         }
         Track firstTrack = data.get(0);
         Track lastTrack = data.get(data.size() - 1);
@@ -135,19 +194,19 @@ public class SprinklerService extends IntentService {
         int endIndex = lastTrack.getIndex();
 
         try {
-            ResponseBody response = flusher.flush(num, deviceId, lastDate, data);
+            ResponseBody response = flusher.flush(retry, num, deviceId, lastDate, data);
             Logger.d(TAG, response.toString());
 
             if (response.isSuccess()) {
+                Logger.i(TAG, "flush success");
+                setPreRequestFailed(false);
                 flusher.deleteRows(startIndex, endIndex);
             }
         } catch (RetrofitError retrofitError) {
-            String errorBody = (String) retrofitError.getBodyAs(String.class);
-            Logger.e(TAG, "error - " + errorBody);
+            Logger.e(TAG, "flush fail");
             Logger.print(retrofitError);
+            setPreRequestFailed(true);
         }
-
-        Logger.d(TAG, "<< flush end");
     }
 
     private void setUncaughtException() {
