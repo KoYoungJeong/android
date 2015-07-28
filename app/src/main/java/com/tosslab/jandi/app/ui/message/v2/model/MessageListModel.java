@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.message.v2.model;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -163,8 +164,10 @@ public class MessageListModel {
         return EntityManager.getInstance(activity).isMyTopic(entityId);
     }
 
-    public MenuCommand getMenuCommand(ChattingInfomations chattingInfomations, MenuItem item) {
+    public MenuCommand getMenuCommand(Fragment fragmet, ChattingInfomations
+            chattingInfomations, MenuItem item) {
         return MenuCommandBuilder.init(activity)
+                .with(fragmet)
                 .with(entityClientManager)
                 .with(chattingInfomations)
                 .build(item);

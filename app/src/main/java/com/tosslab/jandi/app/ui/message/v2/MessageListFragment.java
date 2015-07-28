@@ -29,7 +29,6 @@ import com.tosslab.jandi.app.events.RequestUserInfoEvent;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
-import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.MemberStarredEvent;
 import com.tosslab.jandi.app.events.entities.ProfileChangeEvent;
 import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
@@ -68,6 +67,7 @@ import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -478,7 +478,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
         isStarred = entityById != null ? entityById.isStarred : false;
-        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
+        ChattingInfomations infomations = new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred);
+        MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this,
+                infomations,
+                item);
 
         if (menuCommand != null) {
             menuCommand.execute(item);
@@ -774,6 +777,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
                     .feedbackId, roomId);
+        }
+    }
+
+    @OnActivityResult(TopicDetailActivity.REQUEST_DETAIL)
+    void onTopicDetailResult(int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        boolean leave = data.getBooleanExtra(TopicDetailActivity.EXTRA_LEAVE, false);
+
+        if (leave) {
+            getActivity().finish();
         }
     }
 
