@@ -111,6 +111,8 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
             int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo()
                     .getTeamId();
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
+            view.setSelectedItem(topic.getEntityId());
+
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);

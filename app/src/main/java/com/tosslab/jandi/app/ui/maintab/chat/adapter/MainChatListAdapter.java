@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.chat.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ public class MainChatListAdapter extends BaseAdapter {
 
     private List<ChatItem> entities;
     private int selectedEntity = -1;
+    private AnimStatus animStatus = AnimStatus.READY;
 
     public MainChatListAdapter(Context context) {
         this.context = context;
@@ -107,7 +112,25 @@ public class MainChatListAdapter extends BaseAdapter {
 
         }
 
-        viewHolder.selector.setSelected(item.getEntityId() == selectedEntity);
+        if (item.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
+            animStatus = AnimStatus.IN_ANIM;
+            Integer colorFrom = context.getResources().getColor(R.color.transparent);
+            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+            final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+            colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+            colorAnimation.setRepeatCount(1);
+            colorAnimation.addUpdateListener(animator -> viewHolder.selector.setBackgroundColor((Integer)
+                    animator.getAnimatedValue()));
+
+            colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStatus = AnimStatus.FINISH;
+                }
+            });
+            colorAnimation.start();
+        }
 
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
         viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
@@ -138,6 +161,14 @@ public class MainChatListAdapter extends BaseAdapter {
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public void startAnimation() {
+        animStatus = AnimStatus.READY;
+    }
+
+    private enum AnimStatus {
+        READY, IN_ANIM, FINISH
     }
 
     static class ViewHolder {

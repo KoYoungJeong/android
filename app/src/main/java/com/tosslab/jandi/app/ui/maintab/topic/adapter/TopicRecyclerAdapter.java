@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.topic.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -13,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.maintab.topic.domain.Topic;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemLongClickListener;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +33,7 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
     private OnRecyclerItemLongClickListener onRecyclerItemLongClickListener;
     private int selectedEntity;
+    private AnimStatus animStatus = AnimStatus.READY;
 
     public TopicRecyclerAdapter(Context context) {
         this.context = context;
@@ -67,7 +72,26 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
         holder.draw(topic);
 
-        holder.selector.setSelected(topic.getEntityId() == selectedEntity);
+        if (topic.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
+
+            animStatus = AnimStatus.IN_ANIM;
+            Integer colorFrom = context.getResources().getColor(R.color.transparent);
+            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+            final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+            colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+            colorAnimation.setRepeatCount(1);
+            colorAnimation.addUpdateListener(animator -> holder.selector.setBackgroundColor((Integer)
+                    animator.getAnimatedValue()));
+
+            colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStatus = AnimStatus.FINISH;
+                }
+            });
+            colorAnimation.start();
+        }
 
 
         holder.itemView.setOnClickListener(view -> {
@@ -120,6 +144,14 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
+    }
+
+    public void startAnimation() {
+        animStatus = AnimStatus.READY;
+    }
+
+    private enum AnimStatus {
+        READY, IN_ANIM, FINISH
     }
 
     static class TopicViewHolder extends RecyclerView.ViewHolder {

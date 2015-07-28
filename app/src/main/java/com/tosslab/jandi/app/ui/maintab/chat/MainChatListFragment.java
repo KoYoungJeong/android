@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -34,6 +35,7 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.ItemClick;
 import org.androidannotations.annotations.ItemLongClick;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -127,20 +129,26 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Override
     public void setSelectedItem(int selectedEntityId) {
         mainChatListAdapter.setSelectedEntity(selectedEntityId);
-        mainChatListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred) {
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainChatListFragment.this)
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
                 .entityId(entityId)
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
+
+    @OnActivityResult(value = MainTabActivity.REQ_START_MESSAGE)
+    void onResultFromMessage() {
+        mainChatListAdapter.startAnimation();
+        mainChatListAdapter.notifyDataSetChanged();
+    }
+
 
     @UiThread
     @Override

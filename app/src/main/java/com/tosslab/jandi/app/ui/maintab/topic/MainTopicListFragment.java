@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerStickyHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
@@ -35,6 +36,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -168,14 +170,20 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId) {
-        MessageListV2Activity_.intent(getActivity())
+        MessageListV2Activity_.intent(MainTopicListFragment.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(entityId)
                 .isFavorite(starred)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
+    }
+
+    @OnActivityResult(value = MainTabActivity.REQ_START_MESSAGE)
+    void onResultFromMessage() {
+        topicListAdapter.startAnimation();
+        topicListAdapter.notifyDataSetChanged();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
