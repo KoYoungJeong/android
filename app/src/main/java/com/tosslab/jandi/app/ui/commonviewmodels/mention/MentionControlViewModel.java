@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
@@ -22,6 +23,7 @@ import com.tosslab.jandi.app.ui.commonviewmodels.mention.vo.SearchedItemVO;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel;
 import com.tosslab.jandi.app.ui.sticker.KeyboardHeightModel_;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,8 +61,10 @@ public class MentionControlViewModel {
     private List<Integer> roomIds;
     private String currentSearchText;
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
+    private List<ReqSendMessageV3.ReqMention> resultMentions;
     private String type = MENTION_TYPE_MESSAGE;
 
+    // finally generated mention info.
 
     public static final MentionControlViewModel getInstance() {
         return new MentionControlViewModel();
@@ -257,7 +261,7 @@ public class MentionControlViewModel {
         }
     }
 
-    public void changeMentionedMemberText(SearchedItemVO searchedItemVO, String currentSearchText) {
+    public void convertMentionedMemberText(SearchedItemVO searchedItemVO, String currentSearchText) {
         int selectionIndex = editText.getSelectionStart();
         int startIndex = selectionIndex - currentSearchText.length();
         SpannableStringBuilder ssb = new SpannableStringBuilder(editText.getEditableText());
@@ -276,11 +280,18 @@ public class MentionControlViewModel {
         StringBuilder builder = new StringBuilder(message);
 
         Iterator iterator = selectedMemberHashMap.keySet().iterator();
+
+        if (iterator.hasNext()) {
+            resultMentions = new ArrayList<>();
+        }
+
         while (iterator.hasNext()) {
             int key = (Integer) iterator.next();
             StringBuilder memberInfoStringSB = new StringBuilder();
-            String name = selectedMemberHashMap.get(Integer.valueOf(key)).getName();
+            SearchedItemVO searchedItemVO = selectedMemberHashMap.get(Integer.valueOf(key));
+            String name = searchedItemVO.getName();
             String id = String.valueOf(key);
+            String type = searchedItemVO.getType();
             memberInfoStringSB.append(name);
             memberInfoStringSB.append("!^$");
             memberInfoStringSB.append(id);
@@ -289,13 +300,18 @@ public class MentionControlViewModel {
             builder.replace(startIndexOfMemberString,
                     startIndexOfMemberString + memberInfoStringSB.length(), name);
 
-            Log.e(name + "offset", String.valueOf(startIndexOfMemberString - 1));
-            Log.e(name + "length", String.valueOf(name.length() + 1));
+            int offset = startIndexOfMemberString - 1;
+            int length = name.length() + 1;
+
+            Log.e(name + "offset", offset + "");
+            Log.e(name + "length", length + "");
+
+            ReqSendMessageV3.ReqMention mentionInfo = new ReqSendMessageV3.ReqMention(key, type, offset, length);
+
+            resultMentions.add(mentionInfo);
         }
 
-        selectedMemberHashMap.clear();
         return builder.toString();
-
     }
 
     public boolean hasMentionMember() {
@@ -305,4 +321,13 @@ public class MentionControlViewModel {
         return false;
     }
 
+    public List<ReqSendMessageV3.ReqMention> getResultMentions() {
+        return resultMentions;
+    }
+
+    public void clear() {
+        selectedMemberHashMap.clear();
+        resultMentions.clear();
+
+    }
 }

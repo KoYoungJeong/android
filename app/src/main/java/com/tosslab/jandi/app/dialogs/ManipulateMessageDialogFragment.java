@@ -140,6 +140,10 @@ public class ManipulateMessageDialogFragment extends DialogFragment {
         final TextView actionSetAnnouncement =
                 (TextView) mainView.findViewById(R.id.tv_action_announce_message);
 
+        //todo
+        final TextView actionStarred = (TextView) mainView.findViewById(R.id.tv_action_starred);
+        final TextView actionUnStarred = (TextView) mainView.findViewById(R.id.tv_action_unstarred);
+
         if (isMine) {   // 본인이 작성한 메시지가 아닌경우 삭제 메뉴가 활성화되지 않는다.
             actionDel.setVisibility(View.VISIBLE);
         } else {

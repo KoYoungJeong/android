@@ -454,4 +454,11 @@
     <string name="jandi_coach_mark_more_explain2">ご一緒に利用できる</string>
     <string name="jandi_coach_mark_more_explain3">ように他のチームメンバーを招待してみましょう！</string>
 
+    <!-- starred -->
+    <string name="jandi_starred_star">お気に入りに追加する</string>
+    <string name="jandi_starred_unstar">お気に入りから削除する</string>
+    <string name="jandi_starred_UNDO">取り消し</string>
+    <string name="jandi_starred_Unstarred">お気に入りが解除されました</string>
+    <string name="jandi_starred_Stars">お気に入り</string>
+
 </resources>

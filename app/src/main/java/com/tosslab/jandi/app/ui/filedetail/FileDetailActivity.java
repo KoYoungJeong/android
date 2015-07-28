@@ -18,7 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -137,8 +136,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
     private ProgressWheel progressWheel;
     private ProgressDialog progressDialog;
     private StickerInfo stickerInfo = NULL_STICKER;
-
-    private MentionControlViewModel mentionControlViewModel;
 
 
     @AfterViews
@@ -347,7 +344,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         }
 
         drawFileDetail(resFileDetail, isSendAction);
-        refreshMentionVM(resFileDetail, etComment.getRootView());
+        fileDetailPresenter.refreshMentionVM(this, getFileMessage(resFileDetail.messageDetails),
+                etComment.getRootView());
     }
 
     /**
@@ -569,7 +567,6 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         CharSequence text = etComment.getText();
         String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
-        etComment.setText("");
 
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
@@ -580,8 +577,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
                     fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), comment);
             stickerInfo = NULL_STICKER;
         } else if (!TextUtils.isEmpty(comment)) {
-            fileDetailPresenter.sendComment(fileId, comment);
+            String convertedComment = fileDetailPresenter.getMentionControlViewModel().getConvertedMessage();
+            fileDetailPresenter.sendComment(fileId, convertedComment);
         }
+
+        etComment.setText("");
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -922,20 +922,8 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
-        mentionControlViewModel.changeMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
-    }
-
-    public void refreshMentionVM(ResFileDetail resFileDetail, android.view.View rootView) {
-        if (mentionControlViewModel == null) {
-            mentionControlViewModel = MentionControlViewModel.getInstance();
-        }
-
-        List<Integer> sharedTopicIds = fileDetailPresenter.getSharedTopicIds(
-                getApplicationContext(), getFileMessage(resFileDetail.messageDetails));
-
-        mentionControlViewModel.init(rootView, this,
-                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
-                sharedTopicIds);
+        MentionControlViewModel mentionControlViewModel = fileDetailPresenter.getMentionControlViewModel();
+        mentionControlViewModel.convertMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
     }
 
 

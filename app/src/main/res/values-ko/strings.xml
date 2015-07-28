@@ -464,4 +464,12 @@
     <string name="jandi_coach_mark_more_explain3">팀 멤버 초대를 잊지 말아주세요!</string>
 
 
+    <!-- starred -->
+    <string name="jandi_starred_star">즐겨찾기</string>
+    <string name="jandi_starred_unstar">즐겨찾기 해제</string>
+    <string name="jandi_starred_UNDO">취소</string>
+    <string name="jandi_starred_Unstarred">즐겨찾기 해제됨</string>
+    <string name="jandi_starred_Stars">즐겨찾기</string>
+
+
 </resources>

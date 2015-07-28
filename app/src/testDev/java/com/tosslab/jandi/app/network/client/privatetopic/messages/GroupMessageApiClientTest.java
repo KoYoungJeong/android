@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.privatetopic.messages;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -20,6 +21,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import retrofit.RetrofitError;
 
@@ -118,7 +120,7 @@ public class GroupMessageApiClientTest {
         reqSendMessage.type = "string";
         reqSendMessage.content = "create_" + new Timestamp(System.currentTimeMillis());
         ResCommon resCommon = RequestApiManager.getInstance().
-                sendGroupMessageByGroupMessageApi(reqSendMessage, privateTopic.id);
+                sendGroupMessageByGroupMessageApi(privateTopic.id, reqSendMessage.teamId, reqSendMessage.content, new ArrayList<ReqMention>());
 
         assertThat(resCommon, is(notNullValue()));
 

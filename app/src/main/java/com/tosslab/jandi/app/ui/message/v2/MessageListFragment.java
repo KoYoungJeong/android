@@ -61,6 +61,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
@@ -301,7 +302,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (data.getStickerInfo() != null) {
             linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
         } else {
-            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage());
+            List mentions = data.getReqMentionList();
+            linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
         if (linkId > 0) {
             messageListPresenter.updateDummyMessageState(data.getLocalId(), SendingState.Complete);
@@ -637,11 +639,20 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
 
         } else if (!TextUtils.isEmpty(message)) {
+
+            ReqSendMessageV3 reqSendMessage = null;
+
             if (mentionControlViewModel.hasMentionMember()) {
                 message = mentionControlViewModel.getConvertedMessage();
+                List<ReqSendMessageV3.ReqMention> mentions = mentionControlViewModel.getResultMentions();
+                mentionControlViewModel.clear();
+                reqSendMessage = new ReqSendMessageV3(message, mentions);
+            } else {
+                reqSendMessage = new ReqSendMessageV3(message, null);
             }
 
-            // insert to db
+
+            // insert to db //todo
             long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
 
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
@@ -650,7 +661,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
 
             // networking...
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, message)));
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
 
         }
 
@@ -843,7 +854,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setSendingState(SendingState.Sending);
         messageListPresenter.justRefresh();
-        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(), ((ResMessages.TextMessage) dummyMessage.message).content.body)));
+        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(), new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
     }
 
     public void onEvent(DummyDeleteEvent event) {
@@ -1221,7 +1232,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         searchedItemVO.setId(event.getId());
         searchedItemVO.setName(event.getName());
         searchedItemVO.setType(event.getType());
-        mentionControlViewModel.changeMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
+        mentionControlViewModel.convertMentionedMemberText(searchedItemVO, mentionControlViewModel.getCurrentSearchText());
         Log.e("onEvent-name:", event.getName());
     }
 

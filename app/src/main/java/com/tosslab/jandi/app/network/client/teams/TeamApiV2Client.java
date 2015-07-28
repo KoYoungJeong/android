@@ -5,6 +5,7 @@ import com.tosslab.jandi.app.network.manager.restapiclient.annotation.Authorized
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
+import com.tosslab.jandi.app.network.models.ReqDealStarred;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
@@ -12,6 +13,7 @@ import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.models.ResStarred;
 import com.tosslab.jandi.app.network.models.ResTeamDetailInfo;
 import com.tosslab.jandi.app.network.spring.JandiV3HttpMessageConverter;
 
@@ -64,4 +66,13 @@ public interface TeamApiV2Client {
 
     @GET("/teams/{teamId}/messages/{messageId}")
     ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
+
+    @POST("/teams/{teamId}/members/{memberId}/messages/{messageId}/starred")
+    ResStarred registStarredMessage(@Path("teamId") int teamId, @Path("memberId") int memberId,
+                                    @Path("messageId") int messageId, @Body ReqDealStarred reqDealStarred);
+
+    @DELETEWithBody("/teams/{teamId}/members/{memberId}/messages/{messageId}/starred")
+    ResCommon unregistStarredMessage(@Path("teamId") int teamId, @Path("memberId") int memberId,
+                                     @Path("messageId") int messageId, @Body ReqDealStarred reqDealStarred);
+
 }

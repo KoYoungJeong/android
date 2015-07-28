@@ -374,4 +374,5 @@ public class MainTabActivity extends BaseAnalyticsActivity {
                         R.string.jandi_service_maintenance, (dialog, which) -> finish(),
                         false);
     }
+
 }

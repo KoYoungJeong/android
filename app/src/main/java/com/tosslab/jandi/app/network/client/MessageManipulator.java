@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -17,6 +18,8 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
+
+import java.util.List;
 
 import retrofit.RetrofitError;
 
@@ -108,7 +111,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(entityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message) throws RetrofitError {
+    public ResCommon sendMessage(String message, List<ReqSendMessageV3.ReqMention> mentions) throws RetrofitError {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -116,11 +119,11 @@ public class MessageManipulator {
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
-                return RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 return RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(sendingMessage, entityId);
             case JandiConstants.TYPE_PRIVATE_TOPIC:
-                return RequestApiManager.getInstance().sendGroupMessageByGroupMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendGroupMessageByGroupMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             default:
                 return null;
         }

@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -170,10 +171,11 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int sendMessage(long localId, String message) {
-        SendingMessage sendingMessage = new SendingMessage(localId, message);
+    public int sendMessage(long localId, String message, List<ReqSendMessageV3.ReqMention> mentions) {
+
+        SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
-            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage());
+            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getReqMentionList());
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;

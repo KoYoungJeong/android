@@ -1,42 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <!--<TextView-->
-        <!--android:id="@+id/txt_action_edit_message"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="60dp"-->
-        <!--android:paddingLeft="10dp"-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:text="Edit Message"-->
-        <!--android:textSize="20sp"/>-->
+    <!--android:id="@+id/txt_action_edit_message"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="60dp"-->
+    <!--android:paddingLeft="10dp"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:text="Edit Message"-->
+    <!--android:textSize="20sp"/>-->
     <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:background="#DDDDDD"/>-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="1dp"-->
+    <!--android:background="#DDDDDD"/>-->
     <TextView
         android:id="@+id/tv_action_del_message"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingLeft="10dp"
         android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="@string/jandi_action_delete"
         android:textSize="20sp" />
+
     <TextView
         android:id="@+id/tv_action_copy_message"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingLeft="10dp"
         android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="@string/jandi_action_menu_message_copy"
         android:textSize="20sp" />
+
     <TextView
         android:id="@+id/tv_action_announce_message"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingLeft="10dp"
         android:gravity="center_vertical"
+        android:paddingLeft="10dp"
         android:text="@string/jandi_announcement_create"
         android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_action_starred"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:text="@string/jandi_starred_star"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv_action_unstarred"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:paddingLeft="10dp"
+        android:text="@string/jandi_starred_unstar"
+        android:textSize="20sp"
+        android:visibility="gone" />
 </LinearLayout>

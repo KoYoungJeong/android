@@ -444,5 +444,12 @@
     <string name="jandi_coach_mark_more_explain1">此為設定選單</string>
     <string name="jandi_coach_mark_more_explain2">別忘了邀請夥伴加入！</string>
     <string name="jandi_coach_mark_more_explain3"></string>
+
+    <!-- starred -->
+    <string name="jandi_starred_star">標示</string>
+    <string name="jandi_starred_unstar">取消標示</string>
+    <string name="jandi_starred_UNDO">復原</string>
+    <string name="jandi_starred_Unstarred">已取消標示</string>
+    <string name="jandi_starred_Stars">已標示</string>
 </resources>
 

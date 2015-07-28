@@ -61,6 +61,7 @@ import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
 import com.tosslab.jandi.app.network.models.ReqSubscibeToken;
@@ -230,8 +231,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendPublicTopicMessageByChannelMessageApi(ReqSendMessage message, int channelId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(message, channelId);
+    public ResCommon sendPublicTopicMessageByChannelMessageApi(int channelId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(ChannelMessageApiV2Client.class).create().sendPublicTopicMessage(channelId, teamId, reqSendMessageV3);
     }
 
     @Override
@@ -363,8 +364,8 @@ public class JacksonConvertedAuthRestApiClient implements IAccountDeviceApiAuth,
     }
 
     @Override
-    public ResCommon sendGroupMessageByGroupMessageApi(ReqSendMessage message, int groupId) throws RetrofitError {
-        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(message, groupId);
+    public ResCommon sendGroupMessageByGroupMessageApi(int privateGroupId, int teamId, ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return RestAdapterBuilder.newInstance(GroupMessageApiV2Client.class).create().sendGroupMessage(privateGroupId, teamId, reqSendMessageV3);
     }
 
     @Override

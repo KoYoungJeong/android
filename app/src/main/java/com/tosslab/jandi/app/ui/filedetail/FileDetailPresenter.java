@@ -3,7 +3,6 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -15,6 +14,7 @@ import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.ui.commonviewmodels.mention.MentionControlViewModel;
 import com.tosslab.jandi.app.ui.filedetail.model.FileDetailModel;
 import com.tosslab.jandi.app.ui.message.to.StickerInfo;
 import com.tosslab.jandi.app.utils.BitmapUtil;
@@ -45,6 +45,8 @@ public class FileDetailPresenter {
 
     @Bean
     FileDetailModel fileDetailModel;
+
+    private MentionControlViewModel mentionControlViewModel;
 
     private View view;
 
@@ -211,7 +213,6 @@ public class FileDetailPresenter {
         view.showProgress();
         try {
             fileDetailModel.sendMessageComment(fileId, message);
-
             view.dismissProgress();
 
             getFileDetail(fileId, true, true);
@@ -362,6 +363,24 @@ public class FileDetailPresenter {
         }
     }
 
+    public void refreshMentionVM(Activity activity, ResMessages.OriginalMessage fileMessage,
+                                 android.view.View rootView) {
+        if (mentionControlViewModel == null) {
+            mentionControlViewModel = MentionControlViewModel.getInstance();
+        }
+
+        List<Integer> sharedTopicIds = getSharedTopicIds(
+                activity.getApplicationContext(), fileMessage);
+
+        mentionControlViewModel.init(rootView, activity,
+                MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
+                sharedTopicIds);
+    }
+
+    public MentionControlViewModel getMentionControlViewModel() {
+        return mentionControlViewModel;
+    }
+
     public interface View {
         void drawFileWriterState(boolean isEnabled);
 
@@ -422,6 +441,8 @@ public class FileDetailPresenter {
         void loadSticker(StickerInfo stickerInfo);
 
         void dismissStickerPreview();
+
+
     }
 }
 
