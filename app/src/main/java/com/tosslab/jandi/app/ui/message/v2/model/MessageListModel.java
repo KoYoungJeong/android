@@ -30,6 +30,7 @@ import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -79,7 +80,6 @@ public class MessageListModel {
     EntityClientManager entityClientManager;
     @Bean
     MessageListTimer messageListTimer;
-
     @RootContext
     AppCompatActivity activity;
 
@@ -171,11 +171,11 @@ public class MessageListModel {
                 .build(item);
     }
 
-    public int sendMessage(long localId, String message, List<ReqSendMessageV3.ReqMention> mentions) {
+    public int sendMessage(long localId, String message, List<ReqMention> mentions) {
 
         SendingMessage sendingMessage = new SendingMessage(localId, new ReqSendMessageV3(message, mentions));
         try {
-            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getReqMentionList());
+            ResCommon resCommon = messageManipulator.sendMessage(sendingMessage.getMessage(), sendingMessage.getMentions());
             JandiMessageDatabaseManager.getInstance(activity).deleteSendMessage(sendingMessage.getLocalId());
             EventBus.getDefault().post(new SendCompleteEvent(sendingMessage.getLocalId(), resCommon.id));
             return resCommon.id;
@@ -400,7 +400,7 @@ public class MessageListModel {
         JandiMarkerDatabaseManager.getInstance(activity).updateMarker(teamId, roomId, myId, lastLinkId);
     }
 
-    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message) {
+    public int sendStickerMessage(int teamId, int entityId, StickerInfo stickerInfo, String message, List<ReqMention> mentions) {
 
         FormattedEntity entity = EntityManager.getInstance(activity.getApplicationContext()).getEntityById(entityId);
         String type = null;
@@ -408,7 +408,7 @@ public class MessageListModel {
             type = entity.isPublicTopic() ? JandiConstants.RoomType.TYPE_PUBLIC : entity.isPrivateGroup() ? JandiConstants.RoomType.TYPE_PRIVATE : JandiConstants.RoomType.TYPE_USER;
         }
 
-        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message);
+        ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), teamId, entityId, type, message, mentions);
 
         try {
             RequestApiManager.getInstance().sendStickerByStickerApi(reqSendSticker);

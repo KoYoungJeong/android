@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.network.client.messages.comments;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
 import com.tosslab.jandi.app.network.models.ResCommon;
 
@@ -21,13 +22,13 @@ public interface CommentsApiV2Client {
 
     // Send Comment
     @POST("/messages/{messageId}/comment")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon sendMessageComment(@Body ReqSendComment comment, @Path("messageId") int messageId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon sendMessageComment(@Path("messageId") int messageId, @Query("teamId") int teamId, @Body ReqSendComment reqSendComment);
 
     // Modify comment
     @PUT("/messages/{messageId}/comments/{commentId}")
     @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon modifyMessageComment(@Body ReqSendComment comment, @Path("messageId") int messageId, @Path("commentId") int commentId);
+    ResCommon modifyMessageComment(@Body ReqModifyComment comment, @Path("messageId") int messageId, @Path("commentId") int commentId);
 
     // Delete comment
     @DELETEWithBody("/messages/{messageId}/comments/{commentId}")

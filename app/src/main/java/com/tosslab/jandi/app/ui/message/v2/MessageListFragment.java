@@ -61,6 +61,7 @@ import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.message.JandiMessageDatabaseManager;
 import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseManager;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -299,10 +300,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private void sendMessage(MessageQueue messageQueue) {
         SendingMessage data = (SendingMessage) messageQueue.getData();
         int linkId;
+        List mentions = data.getMentions();
         if (data.getStickerInfo() != null) {
-            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage());
+            linkId = messageListModel.sendStickerMessage(teamId, entityId, data.getStickerInfo(), data.getMessage(), mentions);
         } else {
-            List mentions = data.getReqMentionList();
             linkId = messageListModel.sendMessage(data.getLocalId(), data.getMessage(), mentions);
         }
         if (linkId > 0) {
@@ -613,7 +614,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!(oldMessageLoader instanceof NormalOldMessageLoader)) {
             EventBus.getDefault().post(new ChatModeChangeEvent(true));
         }
-//        messageListPresenter.restartMessageApp(entityId, entityType, isFavorite, teamId);
     }
 
     @Click(R.id.layout_messages_preview_last_item)
@@ -632,37 +632,31 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         String message = messageListPresenter.getSendEditText().trim();
 
-        if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+        ReqSendMessageV3 reqSendMessage = null;
+        List<ReqMention> mentions = null;
 
-            JandiStickerDatabaseManager.getInstance(getActivity()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
-
-            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo))));
-
-        } else if (!TextUtils.isEmpty(message)) {
-
-            ReqSendMessageV3 reqSendMessage = null;
-
+        if (!TextUtils.isEmpty(message)) {
             if (mentionControlViewModel.hasMentionMember()) {
                 message = mentionControlViewModel.getConvertedMessage();
-                List<ReqSendMessageV3.ReqMention> mentions = mentionControlViewModel.getResultMentions();
+                mentions = mentionControlViewModel.getResultMentions();
                 mentionControlViewModel.clear();
                 reqSendMessage = new ReqSendMessageV3(message, mentions);
             } else {
                 reqSendMessage = new ReqSendMessageV3(message, null);
             }
+        }
 
-
-            // insert to db //todo
+        if (stickerInfo != null && stickerInfo != NULL_STICKER) {
+            JandiStickerDatabaseManager.getInstance(getActivity()).upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
+            sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(-1, message, new StickerInfo(stickerInfo), mentions)));
+        } else {
+            // insert to db //todo 데이터 베이스에 삽입해야함.
             long localId = messageListModel.insertSendingMessage(teamId, entityId, message);
-
             FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
-
             // insert to ui
             messageListPresenter.insertSendingMessage(localId, message, me.getName(), me.getUserLargeProfileUrl());
-
             // networking...
             sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(localId, reqSendMessage)));
-
         }
 
         messageListPresenter.dismissStickerPreview();
@@ -854,7 +848,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         DummyMessageLink dummyMessage = messageListPresenter.getDummyMessage(event.getLocalId());
         dummyMessage.setSendingState(SendingState.Sending);
         messageListPresenter.justRefresh();
-        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(), new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
+        sendMessagePublisherEvent(new SendingMessageQueue(new SendingMessage(event.getLocalId(),
+                new ReqSendMessageV3((((ResMessages.TextMessage) dummyMessage.message).content.body), null))));
     }
 
     public void onEvent(DummyDeleteEvent event) {

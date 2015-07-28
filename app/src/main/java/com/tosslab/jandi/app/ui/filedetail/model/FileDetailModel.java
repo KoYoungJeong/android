@@ -15,6 +15,7 @@ import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -78,8 +79,8 @@ public class FileDetailModel {
         entityClientManager.unshareMessage(fileId, entityIdToBeUnshared);
     }
 
-    public void sendMessageComment(int fileId, String message) throws RetrofitError {
-        entityClientManager.sendMessageComment(fileId, message);
+    public void sendMessageComment(int fileId, String message, List<ReqMention> mentions) throws RetrofitError {
+        entityClientManager.sendMessageComment(fileId, message, mentions);
     }
 
     public ResLeftSideMenu.User getUserProfile(int userEntityId) throws RetrofitError {
@@ -214,10 +215,10 @@ public class FileDetailModel {
         }
     }
 
-    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) throws RetrofitError {
+    public void sendMessageCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<ReqMention> mentions) throws RetrofitError {
         try {
             int teamId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getTeamId();
-            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment);
+            ReqSendSticker reqSendSticker = ReqSendSticker.create(stickerGroupId, stickerId, teamId, fileId, "", comment, mentions);
             RequestApiManager.getInstance().sendStickerCommentByStickerApi(reqSendSticker);
         } catch (RetrofitError e) {
             e.printStackTrace();

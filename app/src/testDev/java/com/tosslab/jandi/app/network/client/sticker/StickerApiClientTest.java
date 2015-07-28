@@ -61,11 +61,11 @@ public class StickerApiClientTest {
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, ""));
+        ResCommon resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "", null));
         assertNotNull(resCommon);
 
         resSticker = stickers.get((int) (Math.random() * stickers.size()));
-        resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message"));
+        resCommon = RequestApiManager.getInstance().sendStickerByStickerApi(ReqSendSticker.create(resSticker.getGroupId(), resSticker.getId(), teamId, entity.id, type, "test sticker with message", null));
         assertNotNull(resCommon);
     }
 
@@ -97,7 +97,7 @@ public class StickerApiClientTest {
         List<ResSticker> stickers = JandiStickerDatabaseManager.getInstance(Robolectric.application).getStickers(100);
         ResSticker resSticker = stickers.get((int) (Math.random() * stickers.size()));
 
-        RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd"));
+        RequestApiManager.getInstance().sendStickerCommentByStickerApi(ReqSendSticker.create(100, resSticker.getId(), teamId, fileMessage.id, "", "asdasd", null));
 
     }
 }

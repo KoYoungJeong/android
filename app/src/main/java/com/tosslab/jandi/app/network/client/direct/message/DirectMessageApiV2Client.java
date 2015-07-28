@@ -4,7 +4,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.AuthorizedHeader;
 import com.tosslab.jandi.app.network.manager.restapiclient.annotation.DELETEWithBody;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
+import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResUpdateMessages;
@@ -51,8 +51,9 @@ public interface DirectMessageApiV2Client {
 
     // Direct Message 생성
     @POST("/users/{userId}/message")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
-    ResCommon sendDirectMessage(@Body ReqSendMessage message, @Path("userId") int userId);
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
+    ResCommon sendDirectMessage(@Path("userId") int userId, @Query("teamId") int teamId,
+                                @Body ReqSendMessageV3 reqSendMessageV3);
 
     // Direct Message 수정
     @PUT("/users/{userId}/messages/{messageId}")

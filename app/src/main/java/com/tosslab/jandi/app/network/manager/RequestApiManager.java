@@ -40,13 +40,13 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -304,12 +304,12 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon sendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) throws RetrofitError {
-        return requestApiExecute(RestApiLoader.getInstance().loadSendMessageCommentByCommentsApi(comment, messageId));
+    public ResCommon sendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadSendMessageCommentByCommentsApi(messageId, teamId, reqSendComment));
     }
 
     @Override
-    public ResCommon modifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) throws RetrofitError {
+    public ResCommon modifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadModifyMessageCommentByCommentsApi(comment, messageId, commentId));
     }
 
@@ -344,8 +344,9 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     }
 
     @Override
-    public ResCommon sendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) throws RetrofitError {
-        return requestApiExecute(RestApiLoader.getInstance().loadSendDirectMessageByDirectMessageApi(message, userId));
+    public ResCommon sendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                         ReqSendMessageV3 reqSendMessageV3) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadSendDirectMessageByDirectMessageApi(userId, teamId, reqSendMessageV3));
     }
 
     @Override

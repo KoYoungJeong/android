@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.adapter.MentionListAdapter;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel;
 import com.tosslab.jandi.app.ui.commonviewmodels.mention.model.SearchMemberModel_;
@@ -61,7 +61,7 @@ public class MentionControlViewModel {
     private List<Integer> roomIds;
     private String currentSearchText;
     private LinkedHashMap<Integer, SearchedItemVO> selectedMemberHashMap;
-    private List<ReqSendMessageV3.ReqMention> resultMentions;
+    private List<ReqMention> resultMentions;
     private String type = MENTION_TYPE_MESSAGE;
 
     // finally generated mention info.
@@ -72,9 +72,12 @@ public class MentionControlViewModel {
 
     private void messageTextInit(View view) {
         editText = (EditText) view.findViewById(R.id.et_message);
+        addTextWatcher();
+    }
+
+    private void addTextWatcher() {
         editText.addTextChangedListener(
                 new TextWatcher() {
-
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                         beforeEditTextChanged(editText, s, start, count, after);
@@ -89,7 +92,6 @@ public class MentionControlViewModel {
                     public void afterTextChanged(Editable s) {
                         afterEditTextChanged(s, editText);
                     }
-
                 }
         );
     }
@@ -306,7 +308,7 @@ public class MentionControlViewModel {
             Log.e(name + "offset", offset + "");
             Log.e(name + "length", length + "");
 
-            ReqSendMessageV3.ReqMention mentionInfo = new ReqSendMessageV3.ReqMention(key, type, offset, length);
+            ReqMention mentionInfo = new ReqMention(key, type, offset, length);
 
             resultMentions.add(mentionInfo);
         }
@@ -321,13 +323,15 @@ public class MentionControlViewModel {
         return false;
     }
 
-    public List<ReqSendMessageV3.ReqMention> getResultMentions() {
-        return resultMentions;
+    public List<ReqMention> getResultMentions() {
+        List<ReqMention> result = new ArrayList<>();
+        result.addAll(resultMentions);
+        return result;
     }
 
     public void clear() {
         selectedMemberHashMap.clear();
         resultMentions.clear();
-
+        addTextWatcher();
     }
 }

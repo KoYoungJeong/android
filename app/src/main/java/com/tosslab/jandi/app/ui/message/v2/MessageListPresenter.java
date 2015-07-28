@@ -139,21 +139,12 @@ public class MessageListPresenter {
     @Bean
     KeyboardHeightModel keyboardHeightModel;
 
-
-//    SettingEditText settingEditText;
-
-
     private MessageListAdapter messageListAdapter;
     private ProgressWheel progressWheel;
     private String tempMessage;
     private boolean isDisabled;
     private boolean sendLayoutVisible;
     private boolean gotoLatestLayoutVisible;
-    private EntityManager mEntityManager;
-    private String invitationUrl;
-    private String teamName;
-    private String currentSearchText;
-
 
     @AfterInject
     void initObject() {
@@ -176,7 +167,6 @@ public class MessageListPresenter {
             }
         });
 
-        mEntityManager = EntityManager.getInstance(activity);
         progressWheel = new ProgressWheel(activity);
     }
 
@@ -214,11 +204,6 @@ public class MessageListPresenter {
             setGotoLatestLayoutVisible();
         }
 
-//        settingEditText = new SettingEditText(activity, messageEditText, getRoomId());
-
-//        messageEditText.addTextChangedListener(tw);
-
-//        mentionControlViewModel.setTextEditWatcher(messageEditText);
     }
 
     public void sendLayoutVisibleGone() {

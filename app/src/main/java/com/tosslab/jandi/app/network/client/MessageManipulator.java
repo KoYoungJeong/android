@@ -6,6 +6,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
@@ -111,7 +112,7 @@ public class MessageManipulator {
         return RequestApiManager.getInstance().setMarkerByMainRest(entityId, reqSetMarker);
     }
 
-    public ResCommon sendMessage(String message, List<ReqSendMessageV3.ReqMention> mentions) throws RetrofitError {
+    public ResCommon sendMessage(String message, List<ReqMention> mentions) throws RetrofitError {
         final ReqSendMessage sendingMessage = new ReqSendMessage();
         sendingMessage.teamId = selectedTeamId;
         sendingMessage.type = "string";
@@ -121,7 +122,7 @@ public class MessageManipulator {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
                 return RequestApiManager.getInstance().sendPublicTopicMessageByChannelMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             case JandiConstants.TYPE_DIRECT_MESSAGE:
-                return RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(sendingMessage, entityId);
+                return RequestApiManager.getInstance().sendDirectMessageByDirectMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, null));
             case JandiConstants.TYPE_PRIVATE_TOPIC:
                 return RequestApiManager.getInstance().sendGroupMessageByGroupMessageApi(entityId, selectedTeamId, new ReqSendMessageV3(message, mentions));
             default:

@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +55,7 @@ import com.tosslab.jandi.app.lists.entities.EntitySimpleListAdapter;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.FileDetailCommentListAdapter;
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.ui.BaseAnalyticsActivity;
@@ -568,17 +570,23 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         String comment = TextUtils.isEmpty(text) ? "" : text.toString().trim();
         hideSoftKeyboard();
 
+        String convertedComment = fileDetailPresenter.getMentionConvertedMessage();
+        List<ReqMention> mentions = fileDetailPresenter.getMentions();
+        Log.e("mentions", mentions.toString());
+        fileDetailPresenter.clearMentionControlViewModel();
+
         if (stickerInfo != null && stickerInfo != NULL_STICKER) {
             dismissStickerPreview();
             JandiStickerDatabaseManager.getInstance(FileDetailActivity.this.getApplicationContext())
                     .upsertRecentSticker(stickerInfo.getStickerGroupId(), stickerInfo.getStickerId());
 
             fileDetailPresenter.sendCommentWithSticker(
-                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), comment);
+                    fileId, stickerInfo.getStickerGroupId(), stickerInfo.getStickerId(), convertedComment, mentions);
             stickerInfo = NULL_STICKER;
-        } else if (!TextUtils.isEmpty(comment)) {
-            String convertedComment = fileDetailPresenter.getMentionControlViewModel().getConvertedMessage();
-            fileDetailPresenter.sendComment(fileId, convertedComment);
+        } else {
+            Log.e("converted Comment", convertedComment);
+            Log.e("mention®", mentions.toString() + "");
+            fileDetailPresenter.sendComment(fileId, convertedComment, mentions);
         }
 
         etComment.setText("");

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.filedetail;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -11,6 +12,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqMention;
 import com.tosslab.jandi.app.network.models.ResFileDetail;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -209,10 +211,10 @@ public class FileDetailPresenter {
     }
 
     @Background
-    public void sendComment(int fileId, String message) {
+    public void sendComment(int fileId, String message, List<ReqMention> mentions) {
         view.showProgress();
         try {
-            fileDetailModel.sendMessageComment(fileId, message);
+            fileDetailModel.sendMessageComment(fileId, message, mentions);
             view.dismissProgress();
 
             getFileDetail(fileId, true, true);
@@ -227,10 +229,10 @@ public class FileDetailPresenter {
     }
 
     @Background
-    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment) {
+    void sendCommentWithSticker(int fileId, int stickerGroupId, String stickerId, String comment, List<ReqMention> mentions) {
         view.showProgress();
         try {
-            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment);
+            fileDetailModel.sendMessageCommentWithSticker(fileId, stickerGroupId, stickerId, comment, mentions);
 
             view.dismissProgress();
 
@@ -375,6 +377,19 @@ public class FileDetailPresenter {
         mentionControlViewModel.init(rootView, activity,
                 MentionControlViewModel.MENTION_TYPE_FILE_COMMENT,
                 sharedTopicIds);
+    }
+
+    public String getMentionConvertedMessage() {
+        return mentionControlViewModel.getConvertedMessage();
+    }
+
+    public void clearMentionControlViewModel() {
+        mentionControlViewModel.clear();
+    }
+
+    public List<ReqMention> getMentions() {
+        Log.e("resultmention", mentionControlViewModel.getResultMentions().toString());
+        return mentionControlViewModel.getResultMentions();
     }
 
     public MentionControlViewModel getMentionControlViewModel() {

@@ -19,7 +19,7 @@ import retrofit.http.Query;
 public interface StickerApiV2Client {
 
     @POST("/stickers")
-    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_V3)
     ResCommon sendSticker(@Body ReqSendSticker reqSendSticker);
 
     @POST("/stickers/comment")

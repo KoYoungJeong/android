@@ -38,13 +38,13 @@ import com.tosslab.jandi.app.network.models.ReqDeviceToken;
 import com.tosslab.jandi.app.network.models.ReqInvitationAcceptOrIgnore;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqInviteTopicUsers;
+import com.tosslab.jandi.app.network.models.ReqModifyComment;
 import com.tosslab.jandi.app.network.models.ReqModifyMessage;
 import com.tosslab.jandi.app.network.models.ReqNotificationRegister;
 import com.tosslab.jandi.app.network.models.ReqNotificationTarget;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
 import com.tosslab.jandi.app.network.models.ReqSendComment;
-import com.tosslab.jandi.app.network.models.ReqSendMessage;
 import com.tosslab.jandi.app.network.models.ReqSendMessageV3;
 import com.tosslab.jandi.app.network.models.ReqSetMarker;
 import com.tosslab.jandi.app.network.models.ReqShareMessage;
@@ -269,12 +269,12 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(ReqSendComment comment, int messageId) {
-        return () -> authRestApiClient.sendMessageCommentByCommentsApi(comment, messageId);
+    public IExecutor<ResCommon> loadSendMessageCommentByCommentsApi(int messageId, int teamId, ReqSendComment reqSendComment) {
+        return () -> authRestApiClient.sendMessageCommentByCommentsApi(messageId, teamId, reqSendComment);
     }
 
     @Override
-    public IExecutor<ResCommon> loadModifyMessageCommentByCommentsApi(ReqSendComment comment, int messageId, int commentId) {
+    public IExecutor<ResCommon> loadModifyMessageCommentByCommentsApi(ReqModifyComment comment, int messageId, int commentId) {
         return () -> authRestApiClient.modifyMessageCommentByCommentsApi(comment, messageId, commentId);
     }
 
@@ -315,8 +315,9 @@ public class RestApiLoader implements IAccountDeviceApiLoader, IAccountEmailsApi
     }
 
     @Override
-    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(ReqSendMessage message, int userId) {
-        return () -> authRestApiClient.sendDirectMessageByDirectMessageApi(message, userId);
+    public IExecutor<ResCommon> loadSendDirectMessageByDirectMessageApi(int userId, int teamId,
+                                                                        ReqSendMessageV3 reqSendMessageV3) {
+        return () -> authRestApiClient.sendDirectMessageByDirectMessageApi(userId, teamId, reqSendMessageV3);
     }
 
     @Override
