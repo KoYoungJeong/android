@@ -304,12 +304,12 @@ public class FileDetailPresenter {
                 return;
         }
 
-        String fileName = content.fileUrl.replace(" ", "%20");
+        String fileName = fileDetailModel.getDownloadFileName(content.title, content.ext);
 
         view.showDownloadProgressDialog(fileName);
 
         downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
-                content.name,
+                content.title,
                 content.type,
                 content.ext,
                 progressDialog);
