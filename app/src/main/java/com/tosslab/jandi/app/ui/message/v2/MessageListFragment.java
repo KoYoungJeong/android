@@ -757,7 +757,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @TextChange(R.id.et_message)
     void onMessageEditChange(TextView tv, CharSequence text) {
 
-        boolean isEmptyText = messageListModel.isEmpty(text);
+        boolean isEmptyText = messageListModel.isEmpty(text) && stickerInfo == NULL_STICKER;
         messageListPresenter.setEnableSendButton(!isEmptyText);
 
     }
