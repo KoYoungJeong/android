@@ -277,6 +277,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
         progressDialog.dismiss();
 
+        ColoredToast.show(CarouselViewerActivity.this, file.getPath());
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), carouselViewerModel.getFileType(file, fileType));
