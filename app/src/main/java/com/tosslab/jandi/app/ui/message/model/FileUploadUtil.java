@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
@@ -98,7 +99,7 @@ public class FileUploadUtil {
 
         String realFilePath = "";
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 Uri targetUri = data.getData();
                 if (targetUri != null) {
                     realFilePath = getRealPathFromUri(context, targetUri);
@@ -106,12 +107,12 @@ public class FileUploadUtil {
                             + ", FilePath : " + realFilePath);
                 }
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 String path = data.getStringExtra("GetPath");
                 realFilePath = path + File.separator + data.getStringExtra("GetFileName");
                 LogUtil.d("onActivityResult : from Explorer : " + realFilePath);
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
                 Uri imageUri = (cameraRequestPath != null)
                         ? cameraRequestPath
                         : data.getData();

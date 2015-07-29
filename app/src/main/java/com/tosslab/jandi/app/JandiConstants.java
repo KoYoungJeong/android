@@ -22,41 +22,11 @@ public class JandiConstants {
 
     public static final String EXTRA_MEMBERS_LIST_TYPE = "membersListType";
 
-    public static final String PARSE_MY_ENTITY_ID = "myEntityId";
-    public static final String PARSE_CHANNELS = "channels";
-    public static final String PARSE_ACTIVATION = "activate";
-    public static final String PARSE_ACTIVATION_ON = "on";
-    public static final String PARSE_ACTIVATION_OFF = "off";
-
-    public static final String INVITE_URL_KAKAO = "com.kakao.talk";
-    public static final String INVITE_URL_LINE = "jp.naver.line.android";
-    public static final String INVITE_URL_WECHAT = "com.tencent.mm";
-    public static final String INVITE_URL_FACEBOOK_MESSENGER = "com.facebook.orca";
-    public static final String INVITE_FACEBOOK_EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
-    public static final String INVITE_FACEBOOK_EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
-    public static final String INVITE_FACEBOOK_REGISTRATION_APP_ID = "808900692521335";
-    public static final int INVITE_FACEBOOK_PROTOCOL_VERSION = 20150314;
-    public static final String INVITE_URL_FOUND_FAIL = "invite_url_not_found";
-
     public static final int TYPE_PUBLIC_TOPIC = 0x00;
     public static final int TYPE_DIRECT_MESSAGE = 0x01;
     public static final int TYPE_PRIVATE_TOPIC = 0x02;
 
-    public static final int TYPE_UPLOAD_GALLERY = 0x00;
-    public static final int TYPE_UPLOAD_TAKE_PHOTO = 0x01;
-    public static final int TYPE_UPLOAD_EXPLORER = 0x02;
     public static final int TYPE_FILE_DETAIL_REFRESH = 0x03;
-
-    public static final int TYPE_INVITATION_EMAIL = 0x01;
-    public static final int TYPE_INVITATION_KAKAO = 0x02;
-    public static final int TYPE_INVITATION_LINE = 0x03;
-    public static final int TYPE_INVITATION_WECHAT = 0x04;
-    public static final int TYPE_INVITATION_FACEBOOK_MESSENGER = 0x05;
-    public static final int TYPE_INVITATION_COPY_LINK = 0x06;
-    public static final int TYPE_INVITATION_NULL = 0x00;
-
-    public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
-    public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
     public static final int NOTIFICATION_ID = 100;
     public static final int NETWORK_SUCCESS = 200;

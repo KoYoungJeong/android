@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.files.upload.model.FilePickerModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
@@ -52,10 +51,10 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
     @Override
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_GALLERY:
                 filePickerModel.openAlbumForActivityResult(activity);
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case TYPE_UPLOAD_TAKE_PHOTO:
 
                 try {
                     File directory = new File(GoogleImagePickerUtil.getDownloadPath());
@@ -66,7 +65,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
                 }
 
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(activity);
                 break;
             default:

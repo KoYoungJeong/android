@@ -25,15 +25,14 @@ import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.spring.JacksonMapper;
 import com.tosslab.jandi.app.push.PushInterfaceActivity_;
 import com.tosslab.jandi.app.push.to.PushTO;
-import com.tosslab.jandi.app.services.BadgeHandleService;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.SystemService;
-import org.androidannotations.annotations.UiThread;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
@@ -196,10 +195,10 @@ public class JandiPushReceiverModel {
     }
 
     public boolean isPushOn() {
-        if (JandiConstants.PARSE_ACTIVATION_OFF.equals(
+        if (ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
                 ParseInstallation
                         .getCurrentInstallation()
-                        .getString(JandiConstants.PARSE_ACTIVATION))) {
+                        .getString(ParseUpdateUtil.PARSE_ACTIVATION))) {
             return false;
         }
 

@@ -82,7 +82,8 @@ public class MembersModel {
 
         List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
 
-        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsers)
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
+        Observable.from(formattedUsers)
                 .map(entity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(entity.getId())
@@ -92,21 +93,16 @@ public class MembersModel {
                             .enabled(TextUtils.equals(entity.getUser().status, "enabled"))
                             .name(entity.getName());
                 })
-                .filter(chatChooseItem -> chatChooseItem.isEnabled() )
-                .toBlocking()
-                .getIterator();
-
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
+                .filter(chatChooseItem -> chatChooseItem.isEnabled())
+                .collect(() -> chatChooseItems, List::add)
+                .subscribe();
 
         Collections.sort(chatChooseItems, new Comparator<ChatChooseItem>() {
             @Override
             public int compare(ChatChooseItem lhs, ChatChooseItem rhs) {
-                if (lhs.isEnabled()) {
-                    if (rhs.isEnabled()) {
-                        return 0;
+                if (lhs.isStarred()) {
+                    if (rhs.isStarred()) {
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
                     } else {
                         return -1;
                     }
@@ -114,7 +110,7 @@ public class MembersModel {
                     if (rhs.isEnabled()) {
                         return 1;
                     } else {
-                        return 0;
+                        return lhs.getName().compareToIgnoreCase(rhs.getName());
                     }
                 }
             }

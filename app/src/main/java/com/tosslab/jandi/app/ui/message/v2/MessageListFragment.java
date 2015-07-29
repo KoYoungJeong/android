@@ -735,10 +735,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
                 if (filePath != null && filePath.size() > 0) {
                     filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
