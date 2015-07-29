@@ -166,13 +166,11 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private void trackSignOut() {
-        Context context = getActivity().getApplicationContext();
-
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SignOut)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .build())
                 .flush();
     }

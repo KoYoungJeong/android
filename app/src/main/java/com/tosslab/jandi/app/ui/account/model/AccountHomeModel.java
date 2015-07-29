@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.account.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -131,21 +132,21 @@ public class AccountHomeModel {
         return JandiAccountDatabaseManager.getInstance(context).getAccountInfo() != null;
     }
 
-    public void trackLaunchTeamSuccess(Context context, int teamId) {
-        Sprinkler.with(context)
+    public void trackLaunchTeamSuccess(int teamId) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)
-                        .accountId(AccountUtil.getAccountId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
     }
 
-    public void trackLaunchTeamFail(Context context, int errorCode) {
-        Sprinkler.with(context)
+    public void trackLaunchTeamFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)
-                        .accountId(AccountUtil.getAccountId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
@@ -156,7 +157,7 @@ public class AccountHomeModel {
                 .getInstance(context, accountId)
                 .trackSetAccount();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ChangeAccountName)
                         .accountId(accountId)
@@ -164,11 +165,11 @@ public class AccountHomeModel {
                         .build());
     }
 
-    public void trackChangeAccountNameFail(Context context, int errorCode) {
-        Sprinkler.with(context)
+    public void trackChangeAccountNameFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.ChangeAccountName)
-                        .accountId(AccountUtil.getAccountId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());

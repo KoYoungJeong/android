@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
@@ -239,11 +240,11 @@ public class FileDetailModel {
     public void trackFileDownloadSuccess() {
         int fileId = getFileId();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileDownload)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.FileId, fileId)
                         .build());
@@ -252,11 +253,11 @@ public class FileDetailModel {
     public void trackFileShareSuccess(int topicId) {
         int fileId = getFileId();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileShare)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
@@ -264,11 +265,11 @@ public class FileDetailModel {
     }
 
     public void trackFileShareFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileShare)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
@@ -277,11 +278,11 @@ public class FileDetailModel {
     public void trackFileUnShareSuccess(int topicId) {
         int fileId = getFileId();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileUnShare)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
@@ -289,11 +290,11 @@ public class FileDetailModel {
     }
 
     public void trackFileUnShareFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileUnShare)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());
@@ -302,11 +303,11 @@ public class FileDetailModel {
     public void trackFileDeleteSuccess(int topicId) {
         int fileId = getFileId();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileDelete)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TopicId, topicId)
                         .property(PropertyKey.FileId, fileId)
@@ -314,11 +315,11 @@ public class FileDetailModel {
     }
 
     public void trackFileDeleteFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileDelete)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());

@@ -28,6 +28,7 @@ public class Sprinkler {
     private Context context;
     private FlushRetriever flushRetriever;
     private DefaultProperties defaultProperties;
+    private boolean isActive = false;
 
     private Sprinkler(Context context) {
         this.context = context;
@@ -102,7 +103,17 @@ public class Sprinkler {
         flushRetriever.stop();
     }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public void stopAll() {
+        if (!isActive) {
+            return;
+        }
+
+        setActive(false);
+
         track(new FutureTrack.Builder()
                 .event(Event.AppClose)
                 .build());

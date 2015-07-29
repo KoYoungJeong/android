@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.signup.account.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqSignUpInfo;
@@ -135,8 +136,8 @@ public class SignUpModel {
 
     }
 
-    public void trackSendEmailSuccess(Context context, String email) {
-        Sprinkler.with(context)
+    public void trackSendEmailSuccess(String email) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SendAccountVerificationMail)
                         .property(PropertyKey.ResponseSuccess, true)
@@ -144,8 +145,8 @@ public class SignUpModel {
                         .build());
     }
 
-    public void trackSendEmailFail(Context context, int errorCode) {
-        Sprinkler.with(context)
+    public void trackSendEmailFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SendAccountVerificationMail)
                         .property(PropertyKey.ResponseSuccess, false)

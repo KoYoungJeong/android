@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
@@ -174,22 +175,22 @@ public class FileListModel {
             e.printStackTrace();
         }
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
     }
 
     public void trackFileKeywordSearchFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.FileKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());

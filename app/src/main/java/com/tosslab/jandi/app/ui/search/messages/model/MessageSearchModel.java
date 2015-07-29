@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.search.messages.model;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -112,22 +113,22 @@ public class MessageSearchModel {
             e.printStackTrace();
         }
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.MessageKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.SearchKeyword, keyword)
                         .build());
     }
 
     public void trackMessageKeywordSearchFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.MessageKeywordSearch)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());

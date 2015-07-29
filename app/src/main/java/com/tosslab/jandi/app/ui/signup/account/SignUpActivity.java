@@ -181,7 +181,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             signUpViewModel.dismissProgressWheel();
 
-            signUpModel.trackSendEmailSuccess(getApplicationContext(), email);
+            signUpModel.trackSendEmailSuccess(email);
 
             signUpViewModel.requestSignUpVerify(email);
         } catch (RetrofitError e) {
@@ -198,7 +198,7 @@ public class SignUpActivity extends AppCompatActivity {
                 signUpViewModel.showErrorToast(getString(R.string.err_network));
             }
 
-            signUpModel.trackSendEmailFail(getApplicationContext(), errorCode);
+            signUpModel.trackSendEmailFail(errorCode);
         }
     }
 }

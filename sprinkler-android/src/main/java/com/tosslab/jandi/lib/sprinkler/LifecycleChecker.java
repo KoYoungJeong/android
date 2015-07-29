@@ -45,6 +45,7 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
             sprinkler.flush();
             sprinkler.startFlushRetriever();
         }
+        sprinkler.setActive(true);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.team.info.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
@@ -95,20 +96,20 @@ public class TeamDomainInfoModel {
     }
 
     public void trackCreateTeamSuccess(int teamId) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.CreateTeam)
-                        .accountId(AccountUtil.getAccountId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, true)
                         .property(PropertyKey.TeamId, teamId)
                         .build());
     }
 
     public void trackCreateTeamFail(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.CreateTeam)
-                        .accountId(AccountUtil.getAccountId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build());

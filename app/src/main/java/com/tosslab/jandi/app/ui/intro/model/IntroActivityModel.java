@@ -5,6 +5,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -157,28 +158,28 @@ public class IntroActivityModel {
         return JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo() != null;
     }
 
-    public void trackAutoSignInSuccessAndFlush(Context context, boolean hasTeamSelected) {
+    public void trackAutoSignInSuccessAndFlush(boolean hasTeamSelected) {
         FutureTrack.Builder builder = new FutureTrack.Builder()
                 .event(Event.SignIn)
-                .accountId(AccountUtil.getAccountId(context))
+                .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
                 .property(PropertyKey.ResponseSuccess, true)
                 .property(PropertyKey.AutoSignIn, true);
 
         if (hasTeamSelected) {
-            builder.memberId(AccountUtil.getMemberId(context));
+            builder.memberId(AccountUtil.getMemberId(JandiApplication.getContext()));
         }
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(builder.build())
                 .flush();
     }
 
-    public void trackSignInFailAndFlush(Context context, int errorCode) {
-        Sprinkler.with(context)
+    public void trackSignInFailAndFlush(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SignIn)
-                        .accountId(AccountUtil.getAccountId(context))
-                        .memberId(AccountUtil.getMemberId(context))
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)
                         .build())

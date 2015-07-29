@@ -7,7 +7,7 @@ public interface ScreenViewProperty {
     int LOGIN_PAGE = 500;
     int TEAM_CREATE = 501;
     int CONFIRM_VERIFICATION_NUMBER = 502;
-    int JANDI_MAIN = 503;
+    int ACCOUNT_HOME = 503;
     int TEAM_CREATE2 = 504;
     int TOPIC_PANEL = 505;
     int MESSAGE_PANEL = 506;

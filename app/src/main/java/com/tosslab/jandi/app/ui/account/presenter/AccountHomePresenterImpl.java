@@ -88,15 +88,15 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             view.dismissProgressWheel();
 
             // Track Team List Sign In (with flush)
-            accountHomeModel.trackLaunchTeamSuccess(context, teamId);
+            accountHomeModel.trackLaunchTeamSuccess(teamId);
             view.moveSelectedTeam(firstJoin);
         } catch (RetrofitError e) {
             int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
-            accountHomeModel.trackLaunchTeamFail(context, errorCode);
+            accountHomeModel.trackLaunchTeamFail(errorCode);
             view.dismissProgressWheel();
             e.printStackTrace();
         } catch (Exception e) {
-            accountHomeModel.trackLaunchTeamFail(context, -1);
+            accountHomeModel.trackLaunchTeamFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }
@@ -131,7 +131,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
                 errorCode = e.getResponse().getStatus();
             }
 
-            accountHomeModel.trackChangeAccountNameFail(context, errorCode);
+            accountHomeModel.trackChangeAccountNameFail(errorCode);
 
             view.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
@@ -139,6 +139,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
             }
             e.printStackTrace();
         } catch (Exception e) {
+            accountHomeModel.trackChangeAccountNameFail(-1);
             view.dismissProgressWheel();
             e.printStackTrace();
         }

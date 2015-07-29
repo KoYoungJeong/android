@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.signup.verify.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
@@ -88,7 +89,7 @@ public class SignUpVerifyModel {
                 MixpanelAccountAnalyticsClient.getInstance(context, accountInfo.getId());
         mixpanelAccountAnalyticsClient.trackAccountSingingIn();
 
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SignUp)
                         .accountId(accountInfo.getId())
@@ -98,7 +99,7 @@ public class SignUpVerifyModel {
     }
 
     public void trackSignUpFailAndFlush(int errorCode) {
-        Sprinkler.with(context)
+        Sprinkler.with(JandiApplication.getContext())
                 .track(new FutureTrack.Builder()
                         .event(Event.SignUp)
                         .property(PropertyKey.ResponseSuccess, false)
