@@ -36,7 +36,6 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
-import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
@@ -75,6 +74,16 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        btnFA.setAnimation(null);
+        btnFA.setVisibility(View.VISIBLE);
+
+        topicListAdapter.startAnimation();
+        mainTopicListPresenter.onRefreshTopicList();
     }
 
     @Override
@@ -171,7 +180,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     @Override
     public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId) {
-        MessageListV2Activity_.intent(MainTopicListFragment.this)
+        MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
@@ -179,12 +188,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 .roomId(entityId)
                 .isFavorite(starred)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
-    }
-
-    @OnActivityResult(value = MainTabActivity.REQ_START_MESSAGE)
-    void onResultFromMessage() {
-        topicListAdapter.startAnimation();
-        mainTopicListPresenter.onRefreshTopicList();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)

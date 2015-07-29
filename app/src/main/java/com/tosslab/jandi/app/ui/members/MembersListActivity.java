@@ -13,6 +13,7 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
@@ -166,6 +167,6 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 .entityId(userId)
                 .isFavorite(isStarred)
                 .isFromPush(false)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
 }

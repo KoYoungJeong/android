@@ -144,14 +144,17 @@ public class TopicRecyclerAdapter extends RecyclerView.Adapter<TopicRecyclerAdap
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
     }
 
     public void startAnimation() {
-        animStatus = AnimStatus.READY;
+        if (animStatus == AnimStatus.IDLE) {
+            animStatus = AnimStatus.READY;
+        }
     }
 
     private enum AnimStatus {
-        READY, IN_ANIM, FINISH
+        READY, IN_ANIM, FINISH, IDLE
     }
 
     static class TopicViewHolder extends RecyclerView.ViewHolder {

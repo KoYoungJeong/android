@@ -161,14 +161,17 @@ public class MainChatListAdapter extends BaseAdapter {
 
     public void setSelectedEntity(int selectedEntity) {
         this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
     }
 
     public void startAnimation() {
-        animStatus = AnimStatus.READY;
+        if (animStatus == AnimStatus.IDLE) {
+            animStatus = AnimStatus.READY;
+        }
     }
 
     private enum AnimStatus {
-        READY, IN_ANIM, FINISH
+        IDLE, READY, IN_ANIM, FINISH
     }
 
     static class ViewHolder {
