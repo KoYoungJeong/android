@@ -1,8 +1,10 @@
 package com.tosslab.jandi.lib.sprinkler;
 
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -48,6 +50,14 @@ public class Sprinkler {
     public static Sprinkler initialize(Application application, boolean debug) {
         IS_DEBUG_MODE = debug;
         Log.i(TAG, "Sprinkler initialized. debug mode ? " + IS_DEBUG_MODE);
+        BroadcastReceiver screenOffReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Logger.i(TAG, "ScreenOff receive");
+                Sprinkler.with(context).stopAll();
+            }
+        };
+        application.registerReceiver(screenOffReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
         application.registerActivityLifecycleCallbacks(new LifecycleChecker());
         return with(application.getApplicationContext());
     }
@@ -126,5 +136,4 @@ public class Sprinkler {
     public DefaultProperties getDefaultProperties() {
         return defaultProperties;
     }
-
 }

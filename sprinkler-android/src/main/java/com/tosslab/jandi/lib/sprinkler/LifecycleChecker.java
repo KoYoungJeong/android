@@ -2,7 +2,6 @@ package com.tosslab.jandi.lib.sprinkler;
 
 import android.app.Activity;
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 
 import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
@@ -19,13 +18,6 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         String activityName = activity.getClass().getName();
         Logger.d(TAG, activityName + " - onActivityCreated");
-
-//        Sprinkler sprinkler = Sprinkler.with(activity.getApplicationContext());
-//        if (activity.isTaskRoot() && sprinkler.isFlushRetrieverStopped()) {
-//            trackDefaultProperty(sprinkler);
-//            sprinkler.flush();
-//            sprinkler.startFlushRetriever();
-//        }
     }
 
     @Override
@@ -38,7 +30,6 @@ class LifecycleChecker implements Application.ActivityLifecycleCallbacks {
     public void onActivityResumed(Activity activity) {
         String activityName = activity.getClass().getName();
         Logger.i(TAG, activityName + " - onActivityResumed");
-
         Sprinkler sprinkler = Sprinkler.with(activity.getApplicationContext());
         if (sprinkler.isFlushRetrieverStopped()) {
             trackDefaultProperty(sprinkler);
