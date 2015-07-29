@@ -94,27 +94,23 @@ public class MembersModel {
                             .name(entity.getName());
                 })
                 .filter(chatChooseItem -> chatChooseItem.isEnabled())
-                .collect(() -> chatChooseItems, List::add)
-                .subscribe();
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isStarred()) {
+                        if (rhs.isStarred()) {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        } else {
+                            return -1;
+                        }
+                    } else {
+                        if (rhs.isEnabled()) {
+                            return 1;
+                        } else {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        }
+                    }
+                })
+                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
 
-        Collections.sort(chatChooseItems, new Comparator<ChatChooseItem>() {
-            @Override
-            public int compare(ChatChooseItem lhs, ChatChooseItem rhs) {
-                if (lhs.isStarred()) {
-                    if (rhs.isStarred()) {
-                        return lhs.getName().compareToIgnoreCase(rhs.getName());
-                    } else {
-                        return -1;
-                    }
-                } else {
-                    if (rhs.isEnabled()) {
-                        return 1;
-                    } else {
-                        return lhs.getName().compareToIgnoreCase(rhs.getName());
-                    }
-                }
-            }
-        });
 
         return chatChooseItems;
     }
