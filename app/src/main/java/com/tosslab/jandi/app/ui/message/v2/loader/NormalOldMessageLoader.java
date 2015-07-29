@@ -1,7 +1,5 @@
 package com.tosslab.jandi.app.ui.message.v2.loader;
 
-import android.content.Context;
-
 import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.network.client.MessageManipulator;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -9,6 +7,9 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,19 +19,13 @@ import retrofit.RetrofitError;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
  */
+@EBean
 public class NormalOldMessageLoader implements OldMessageLoader {
 
-    private final Context context;
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
     private int teamId;
-    private int entityId;
-
-    public NormalOldMessageLoader(Context context) {
-
-        this.context = context;
-    }
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -46,10 +41,6 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
     public void setTeamId(int teamId) {
         this.teamId = teamId;
-    }
-
-    public void setEntityId(int entityId) {
-        this.entityId = entityId;
     }
 
     @Override
@@ -74,11 +65,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     // 현재 챗의 첫 메세지가 아니라고 하기 위함
                     oldMessage.firstLinkId = -1;
                     // 마커 업로드를 하지 않기 위함
-                    if (linkId != -1) {
-                        oldMessage.lastLinkId = Integer.MAX_VALUE;
-                    } else {
-                        oldMessage.lastLinkId = oldMessages.get(0).id;
-                    }
+                    oldMessage.lastLinkId = Integer.MAX_VALUE;
                     oldMessage.entityId = roomId;
                     oldMessage.records = oldMessages;
                 }
@@ -122,6 +109,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
 
             if (linkId == -1) {
+                // 첫 로드라면...
 
                 messageListPresenter.dismissLoadingView();
                 messageListPresenter.clearMessages();
@@ -164,7 +152,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
     }
 
-    private void checkItemCountIfException(int linkId) {
+    @UiThread
+    void checkItemCountIfException(int linkId) {
         boolean hasItem = linkId > 0;
         if (!hasItem) {
             messageListPresenter.dismissLoadingView();

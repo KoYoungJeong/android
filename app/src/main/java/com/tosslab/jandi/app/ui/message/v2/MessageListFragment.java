@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteMessageDialogFragment;
@@ -86,7 +87,9 @@ import com.tosslab.jandi.app.ui.message.v2.loader.MarkerNewMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.MarkerOldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NewsMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalNewMessageLoader_;
 import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader;
+import com.tosslab.jandi.app.ui.message.v2.loader.NormalOldMessageLoader_;
 import com.tosslab.jandi.app.ui.message.v2.loader.OldMessageLoader;
 import com.tosslab.jandi.app.ui.message.v2.model.AnnouncementModel;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
@@ -241,37 +244,139 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageState.setFirstItemId(lastMarker);
 
         } else {
-            NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader();
+            NormalNewMessageLoader newsMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
             newsMessageLoader.setMessageListModel(messageListModel);
             newsMessageLoader.setMessageListPresenter(messageListPresenter);
             newsMessageLoader.setMessageState(messageState);
-            newsMessageLoader.setRoomId(roomId);
 
-            NormalOldMessageLoader oldMessageLoader = new NormalOldMessageLoader(getActivity());
+            NormalOldMessageLoader oldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
             oldMessageLoader.setMessageListModel(messageListModel);
             oldMessageLoader.setMessageListPresenter(messageListPresenter);
             oldMessageLoader.setMessageState(messageState);
-            oldMessageLoader.setEntityId(entityId);
             oldMessageLoader.setTeamId(teamId);
 
             this.newsMessageLoader = newsMessageLoader;
             this.oldMessageLoader = oldMessageLoader;
 
-            int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
-            messageListPresenter.setLastReadLinkId(lastReadLinkId);
-
             messageState.setFirstItemId(lastMarker);
         }
 
-        messageListPresenter.setMarkerInfo(teamId, roomId);
         messageListPresenter.setEntityInfo(entityId);
-        messageListModel.updateMarkerInfo(teamId, roomId);
-        if (roomId > 0) {
-            messageListModel.setRoomId(roomId);
-        }
         fileUploadStateViewModel.setEntityId(entityId);
 
         JandiPreference.setKeyboardHeight(getActivity(), 0);
+    }
+
+    @AfterViews
+    void initViews() {
+        setUpActionbar();
+        setHasOptionsMenu(true);
+
+        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(RecyclerView.Adapter adapter, int position) {
+
+                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem
+                        (position), entityId);
+            }
+        });
+
+        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
+                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
+                return true;
+            }
+        });
+
+        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getCount() - 1) {
+                    messageListPresenter.setPreviewVisibleGone();
+
+                }
+            }
+        });
+
+        messageListModel.setEntityInfo(entityType, entityId);
+
+        String tempMessage;
+        if (messageListModel.isUser(entityId)) {
+
+            if (roomId > 0) {
+                tempMessage = messageListModel.getReadyMessage(roomId);
+            } else {
+                tempMessage = "";
+            }
+        } else {
+            tempMessage = messageListModel.getReadyMessage(entityId);
+
+        }
+        messageListPresenter.setSendEditText(tempMessage);
+
+        if (!messageListModel.isEnabledIfUser(entityId)) {
+            messageListPresenter.disableChat();
+        }
+
+        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
+            @Override
+            public void onStickerClick(int groupId, String stickerId) {
+                StickerInfo oldSticker = stickerInfo;
+                stickerInfo = new StickerInfo();
+                stickerInfo.setStickerGroupId(groupId);
+                stickerInfo.setStickerId(stickerId);
+                showStickerPreview(oldSticker, stickerInfo);
+                messageListPresenter.setEnableSendButton(true);
+            }
+        });
+
+        insertEmptyMessage();
+
+        initAnnouncementListeners();
+
+        sendInitMessage();
+
+        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
+
+    }
+
+    @Background
+    void sendInitMessage() {
+        if (roomId <= 0) {
+            boolean user = EntityManager.getInstance(JandiApplication.getContext()).getEntityById(entityId).isUser();
+
+            if (!user) {
+                roomId = entityId;
+            } else {
+                initRoomId();
+            }
+        }
+
+        messageListPresenter.setMarkerInfo(teamId, roomId);
+        messageListModel.updateMarkerInfo(teamId, roomId);
+        messageListModel.setRoomId(roomId);
+
+        int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
+        messageListPresenter.setLastReadLinkId(lastReadLinkId);
+
+        sendMessagePublisherEvent(new OldMessageQueue(messageState));
+        sendMessagePublisherEvent(new NewMessageQueue(messageState));
+        sendMessagePublisherEvent(new CheckAnnouncementQueue());
+
+    }
+
+    void initRoomId() {
+        try {
+            ResMessages oldMessage = messageListModel.getOldMessage(-1, 1);
+            roomId = oldMessage.entityId;
+        } catch (RetrofitError e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private void loadOldMessage(MessageQueue messageQueue) {
@@ -353,84 +458,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else {
             messageListPresenter.showMessageLoading();
         }
-    }
-
-    @AfterViews
-    void initViews() {
-        setUpActionbar();
-        setHasOptionsMenu(true);
-
-        messageListPresenter.setOnItemClickListener(new MessageListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(RecyclerView.Adapter adapter, int position) {
-
-                MessageListFragment.this.onMessageItemClick(messageListPresenter.getItem
-                        (position), entityId);
-            }
-        });
-
-        messageListPresenter.setOnItemLongClickListener(new MessageListAdapter.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(RecyclerView.Adapter adapter, int position) {
-                MessageListFragment.this.onMessageItemLongClick(messageListPresenter.getItem(position));
-                return true;
-            }
-        });
-
-        ((RecyclerView) getView().findViewById(R.id.list_messages)).setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager.findLastVisibleItemPosition() == ((MessageListAdapter) recyclerView.getAdapter()).getCount() - 1) {
-                    messageListPresenter.setPreviewVisibleGone();
-
-                }
-            }
-        });
-
-        messageListModel.setEntityInfo(entityType, entityId);
-
-        String tempMessage;
-        if (messageListModel.isUser(entityId)) {
-
-            if (roomId > 0) {
-                tempMessage = messageListModel.getReadyMessage(roomId);
-            } else {
-                tempMessage = "";
-            }
-        } else {
-            tempMessage = messageListModel.getReadyMessage(entityId);
-
-        }
-        messageListPresenter.setSendEditText(tempMessage);
-
-        if (!messageListModel.isEnabledIfUser(entityId)) {
-            messageListPresenter.disableChat();
-        }
-
-        stickerViewModel.setOnStickerClick(new StickerViewModel.OnStickerClick() {
-            @Override
-            public void onStickerClick(int groupId, String stickerId) {
-                StickerInfo oldSticker = stickerInfo;
-                stickerInfo = new StickerInfo();
-                stickerInfo.setStickerGroupId(groupId);
-                stickerInfo.setStickerId(stickerId);
-                showStickerPreview(oldSticker, stickerInfo);
-                messageListPresenter.setEnableSendButton(true);
-            }
-        });
-
-        insertEmptyMessage();
-
-        initAnnouncementListeners();
-
-        sendMessagePublisherEvent(new OldMessageQueue(messageState));
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
-        sendMessagePublisherEvent(new CheckAnnouncementQueue());
-
-        TutorialCoachMarkUtil.showCoachMarkTopicIfNotShown(getActivity());
-
     }
 
 
@@ -715,18 +742,17 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
         isFromSearch = false;
         messageListPresenter.setMarker(-1);
-        NormalNewMessageLoader normalNewMessageLoader = new NormalNewMessageLoader();
+        NormalNewMessageLoader normalNewMessageLoader = NormalNewMessageLoader_.getInstance_(getActivity());
         normalNewMessageLoader.setMessageListModel(messageListModel);
         normalNewMessageLoader.setMessageState(messageState);
         normalNewMessageLoader.setMessageListPresenter(messageListPresenter);
         newsMessageLoader = normalNewMessageLoader;
 
-        NormalOldMessageLoader normalOldMessageLoader = new NormalOldMessageLoader(getActivity());
+        NormalOldMessageLoader normalOldMessageLoader = NormalOldMessageLoader_.getInstance_(getActivity());
         normalOldMessageLoader.setMessageListModel(messageListModel);
         normalOldMessageLoader.setMessageState(messageState);
         normalOldMessageLoader.setMessageListPresenter(messageListPresenter);
         normalOldMessageLoader.setTeamId(teamId);
-        normalOldMessageLoader.setEntityId(entityId);
         oldMessageLoader = normalOldMessageLoader;
 
         int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);

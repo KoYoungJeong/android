@@ -9,6 +9,8 @@ import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
 
+import org.androidannotations.annotations.EBean;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -19,12 +21,12 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 17..
  */
+@EBean
 public class NormalNewMessageLoader implements NewsMessageLoader {
 
     MessageListModel messageListModel;
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
-    private int roomId;
     private boolean firstLoad = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
@@ -117,7 +119,4 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
         }
     }
 
-    public void setRoomId(int roomId) {
-        this.roomId = roomId;
-    }
 }
