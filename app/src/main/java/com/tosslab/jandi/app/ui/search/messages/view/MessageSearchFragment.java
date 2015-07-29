@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SelectMemberEvent;
@@ -32,8 +33,14 @@ import com.tosslab.jandi.app.ui.search.messages.adapter.MessageSearchResultAdapt
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenter;
 import com.tosslab.jandi.app.ui.search.messages.presenter.MessageSearchPresenterImpl;
 import com.tosslab.jandi.app.ui.search.messages.to.SearchResult;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.views.listeners.OnRecyclerItemClickListener;
 import com.tosslab.jandi.app.views.listeners.SimpleEndAnimationListener;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.constant.property.ScreenViewProperty;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -88,6 +95,14 @@ public class MessageSearchFragment extends Fragment implements MessageSearchPres
 
     @AfterViews
     void initObject() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.ScreenView)
+                        .accountId(AccountUtil.getAccountId(JandiApplication.getContext()))
+                        .memberId(AccountUtil.getMemberId(JandiApplication.getContext()))
+                        .property(PropertyKey.ScreenView, ScreenViewProperty.MESSAGE_SEARCH)
+                        .build());
+
         messageSearchPresenter.setView(this);
 
         FragmentActivity parentActivity = getActivity();
