@@ -95,7 +95,15 @@ public class MainTopicModel {
                 .filter(entity1 -> {
 
                     if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
-                        return entity1.getEntityId() == event.getRoom().getId();
+                        if (TextUtils.equals(event.getMessageType(), "topic_join")
+                                || TextUtils.equals(event.getMessageType(), "topic_invite")
+                                || TextUtils.equals(event.getMessageType(), "topic_leave")
+                                || TextUtils.equals(event.getMessageType(), "message_delete")
+                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
+                            return false;
+                        } else {
+                            return entity1.getEntityId() == event.getRoom().getId();
+                        }
                     } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
                         // 단순 메세지 업데이트인 경우
                         return false;

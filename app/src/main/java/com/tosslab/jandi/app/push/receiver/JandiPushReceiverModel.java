@@ -168,7 +168,7 @@ public class JandiPushReceiverModel {
 
         builder.setDefaults(led | sound | vibrate);
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
-        builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setAutoCancel(true);
         builder.setNumber(JandiPreference.getBadgeCount(context));
 

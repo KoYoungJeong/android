@@ -136,6 +136,7 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
     @Override
     public void onNewMessage(SocketMessageEvent event) {
+
         List<Topic> joinedTopics = view.getJoinedTopics();
 
         if (mainTopicModel.isMe(event.getWriter())) {

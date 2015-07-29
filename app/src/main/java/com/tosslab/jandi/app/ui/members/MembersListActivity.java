@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.widget.ListView;
 
-import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
@@ -157,9 +156,10 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         return type;
     }
 
+    @UiThread
     @Override
     public void moveDirectMessageActivity(int teamId, int userId, boolean isStarred) {
-        MessageListV2Activity_.intent(JandiApplication.getContext())
+        MessageListV2Activity_.intent(MembersListActivity.this)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
