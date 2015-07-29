@@ -210,7 +210,7 @@
 
         <Button
             android:id="@+id/btn_send_message"
-            style="@style/JandiChat.Button.Dynamic"
+            style="@style/JandiChat.Button"
             android:layout_alignBottom="@+id/et_message"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/et_message"
