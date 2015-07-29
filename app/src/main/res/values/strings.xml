@@ -273,6 +273,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
     <string name="jandi_invite_success">"Invitation has been sent successfully"</string>
     <string name="jandi_duplicate_email">"That email is already registered"</string>
+    <string name="jandi_already_in_team">"This email is already a member of %s"</string>
     <string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
     <string name="jandi_success_web_token">"Sign-in was successful"</string>
     <string name="jandi_fail_web_token">"We were unable to sign you in automatically. Please try the process manually."</string>

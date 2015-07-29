@@ -444,5 +444,6 @@
     <string name="jandi_coach_mark_more_explain2">别忘了邀请伙伴加入！</string>
     <string name="jandi_coach_mark_more_explain3"></string>
     <string name="jandi_chat_detail">"聊天设置"</string>
+    <string name="jandi_already_in_team">"此电子邮箱已为 %s 的成员"</string>
 
 </resources>
