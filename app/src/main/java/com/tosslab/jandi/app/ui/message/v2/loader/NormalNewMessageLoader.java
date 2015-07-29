@@ -8,7 +8,6 @@ import com.tosslab.jandi.app.network.models.ResUpdateMessages;
 import com.tosslab.jandi.app.ui.message.to.MessageState;
 import com.tosslab.jandi.app.ui.message.v2.MessageListPresenter;
 import com.tosslab.jandi.app.ui.message.v2.model.MessageListModel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +25,7 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
     MessageListPresenter messageListPresenter;
     private MessageState messageState;
     private int roomId;
+    private boolean firstLoad = true;
 
     public void setMessageListModel(MessageListModel messageListModel) {
         this.messageListModel = messageListModel;
@@ -53,7 +53,6 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 saveToDatabase(roomId, newMessage.updateInfo.messages);
 
                 int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
-                LogUtil.d("visibleLastItemPosition : " + visibleLastItemPosition);
                 int lastItemPosition = messageListPresenter.getLastItemPosition();
                 Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
                 messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
@@ -62,12 +61,16 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                 updateMarker();
 
                 ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (visibleLastItemPosition >= 0 && visibleLastItemPosition < lastItemPosition - 1
+                if (!firstLoad
+                        && visibleLastItemPosition >= 0
+                        && visibleLastItemPosition < lastItemPosition - 1
                         && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                     messageListPresenter.showPreviewIfNotLastItem();
                 } else {
                     int messageId = lastUpdatedMessage.messageId;
-                    if (messageId <= 0) {
+                    if (firstLoad) {
+                        messageListPresenter.moveLastReadLink();
+                    } else if (messageId <= 0) {
                         if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
                             messageListPresenter.moveToMessageById(lastUpdatedMessage.id, 0);
                         }
@@ -75,9 +78,10 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
                         messageListPresenter.moveToMessage(messageId, 0);
                     }
                 }
+
             }
 
-
+            firstLoad = false;
         } catch (RetrofitError e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -108,10 +112,8 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
             }
         } catch (RetrofitError e) {
             e.printStackTrace();
-            LogUtil.e("set marker failed", e);
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtil.e("set marker failed", e);
         }
     }
 

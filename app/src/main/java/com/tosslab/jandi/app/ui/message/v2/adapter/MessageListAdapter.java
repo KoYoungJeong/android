@@ -47,11 +47,20 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     private int teamId;
     private int roomId;
     private int entityId;
+    private int lastReadLinkId;
 
     public MessageListAdapter(Context context) {
         this.context = context;
         this.messageList = new ArrayList<ResMessages.Link>();
         oldMoreState = MoreState.Idle;
+    }
+
+    public int getLastReadLinkId() {
+        return lastReadLinkId;
+    }
+
+    public void setLastReadLinkId(int lastReadLinkId) {
+        this.lastReadLinkId = lastReadLinkId;
     }
 
     public void setTeamId(int teamId) {
@@ -70,7 +79,6 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
         View convertView = LayoutInflater.from(context).inflate(viewHolder.getLayoutId(), parent, false);
 
         viewHolder.initView(convertView);
-
 
         RecyclerBodyViewHolder recyclerBodyViewHolder = new RecyclerBodyViewHolder(convertView, viewHolder);
 
@@ -103,6 +111,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
                 colorAnimation.start();
                 markerAnimState = AnimState.Loading;
             }
+        }
+
+        if (position > 0 && position < getItemCount() - 1) {
+            viewHolder.getViewHolder().setLastReadViewVisible(item.id, lastReadLinkId);
+        } else {
+            viewHolder.getViewHolder().setLastReadViewVisible(0, -1);
         }
 
         if (position == 0 && oldMoreState == MoreState.Idle) {
@@ -442,6 +456,16 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     public MessageListAdapter setEntityId(int entityId) {
         this.entityId = entityId;
         return this;
+    }
+
+    public int indexOfLinkId(int linkId) {
+        int size = messageList.size();
+        for (int idx = size - 1; idx >= 0; --idx) {
+            if (messageList.get(idx).id == linkId) {
+                return idx;
+            }
+        }
+        return -1;
     }
 
     private enum MoreState {

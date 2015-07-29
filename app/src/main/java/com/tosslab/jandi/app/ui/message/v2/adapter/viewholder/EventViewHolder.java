@@ -30,11 +30,13 @@ public class EventViewHolder implements BodyViewHolder {
     public static final String KEY_PARSING_DATA = "parsing_data";
     private TextView eventContentView;
     private Context context;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         eventContentView = ((TextView) rootView.findViewById(R.id.txt_message_event_title));
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -96,6 +98,15 @@ public class EventViewHolder implements BodyViewHolder {
         eventContentView.setMovementMethod(LinkMovementMethod.getInstance());
 
 
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     private void buildCreateEvent(ResMessages.CreateEvent eventInfo,

@@ -119,7 +119,12 @@ public class MarkerRepository {
                     .eq("roomId", roomId)
                     .queryForFirst();
 
-            return roomInfo.getMarkers();
+            if (roomInfo != null) {
+                return roomInfo.getMarkers();
+            } else {
+                return new ArrayList<>();
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {

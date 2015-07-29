@@ -62,6 +62,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -463,5 +464,38 @@ public class MessageListModel {
 
     public void setRoomId(int roomId) {
         messageManipulator.setRoomId(roomId);
+    }
+
+    public int getLastReadLinkId(int roomId, int entityId) {
+        if (roomId > 0) {
+            // 기존의 마커 정보 가져오기
+            int teamId = AccountRepository.getRepository().getSelectedTeamId();
+            Collection<ResRoomInfo.MarkerInfo> roomMarkers = MarkerRepository.getRepository().getRoomMarker(teamId, roomId);
+            int myEntityId = EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+
+            ResRoomInfo.MarkerInfo defaultInfo = new ResRoomInfo.MarkerInfo();
+            ResRoomInfo.MarkerInfo myMarker = Observable.from(roomMarkers)
+                    .filter(markerInfo -> markerInfo.getMemberId() == myEntityId)
+                    .firstOrDefault(defaultInfo)
+                    .toBlocking()
+                    .first();
+
+            if (myMarker != defaultInfo) {
+                return myMarker.getLastLinkId();
+            }
+        }
+
+        // 엔티티 기준으로 정보 가져오기
+        ResLeftSideMenu.User myUser = EntityManager.getInstance(JandiApplication.getContext()).getMe()
+                .getUser();
+
+        Integer lastLinkId = Observable.from(myUser.u_messageMarkers)
+                .filter(messageMarker -> messageMarker.entityId == entityId)
+                .map(messageMarker -> messageMarker.lastLinkId)
+                .firstOrDefault(-1)
+                .toBlocking()
+                .first();
+
+        return lastLinkId;
     }
 }

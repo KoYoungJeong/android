@@ -128,7 +128,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         view.moveMessageActivity(entityManager.getTeamId()
                 , entityId
                 , roomId
-                , mainChatListModel.isStarred(context, entityId));
+                , mainChatListModel.isStarred(context, entityId), -1);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
                 .isStarred;
 
         view.moveMessageActivity(mainChatListModel.getTeamId(context), entityId, chatItem
-                .getRoomId(), isStarred);
+                .getRoomId(), isStarred, chatItem.getLastLinkId());
 
     }
 }

@@ -167,13 +167,14 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
-    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId) {
+    public void moveToMessageActivity(int entityId, int entityType, boolean starred, int teamId, int markerLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .entityType(entityType)
                 .entityId(entityId)
                 .teamId(teamId)
                 .roomId(entityId)
+                .lastMarker(markerLinkId)
                 .isFavorite(starred)
                 .start();
     }

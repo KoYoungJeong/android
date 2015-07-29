@@ -187,6 +187,7 @@ public class MessageListPresenter {
                 .setRecyclerView(messageListView)
                 .setStickyHeadersAdapter(messageListHeaderAdapter, false)
                 .build();
+
         messageListView.addItemDecoration(stickyHeadersItemDecoration);
 
 
@@ -806,5 +807,21 @@ public class MessageListPresenter {
 
     public void setEntityInfo(int entityId) {
         messageListAdapter.setEntityId(entityId);
+    }
+
+    public void setLastReadLinkId(int lastReadLinkId) {
+        messageListAdapter.setLastReadLinkId(lastReadLinkId);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE, delay = 300)
+    public void moveLastReadLink() {
+        int lastReadLinkId = messageListAdapter.getLastReadLinkId();
+
+        int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
+
+        if (position > 0) {
+            messageListView.smoothScrollToPosition(position);
+        }
+
     }
 }

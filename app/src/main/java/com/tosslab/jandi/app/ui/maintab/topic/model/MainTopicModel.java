@@ -48,6 +48,7 @@ public class MainTopicModel {
                         .memberCount(formattedEntity.getMemberCount())
                         .name(formattedEntity.getName())
                         .unreadCount(formattedEntity.alarmCount)
+                        .markerLinkId(formattedEntity.lastLinkId)
                         .build());
     }
 
@@ -66,6 +67,7 @@ public class MainTopicModel {
                     .isStarred(formattedEntity.isStarred)
                     .memberCount(formattedEntity.getMemberCount())
                     .name(formattedEntity.getName())
+                    .markerLinkId(formattedEntity.lastLinkId)
                     .unreadCount(formattedEntity.alarmCount)
                     .build();
         });

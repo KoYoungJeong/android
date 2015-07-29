@@ -131,7 +131,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     @Override
-    public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred) {
+    public void moveMessageActivity(int teamId, int entityId, int roomId, boolean isStarred, int lastLinkId) {
         MessageListV2Activity_.intent(getActivity())
                 .teamId(teamId)
                 .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
@@ -139,6 +139,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .lastMarker(lastLinkId)
                 .start();
     }
 

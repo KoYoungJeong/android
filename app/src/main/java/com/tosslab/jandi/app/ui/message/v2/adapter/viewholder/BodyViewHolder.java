@@ -13,6 +13,8 @@ public interface BodyViewHolder {
 
     void bindData(ResMessages.Link link, int teamId, int roomId, int entityId);
 
+    void setLastReadViewVisible(int currentLinkId, int lastReadLinkId);
+
     int getLayoutId();
 
     enum Type {

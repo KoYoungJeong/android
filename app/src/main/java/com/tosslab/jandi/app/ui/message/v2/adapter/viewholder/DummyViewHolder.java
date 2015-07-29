@@ -76,6 +76,11 @@ public class DummyViewHolder implements BodyViewHolder {
     }
 
     @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+
+    }
+
+    @Override
     public int getLayoutId() {
         return R.layout.item_message_dummy_v2;
 

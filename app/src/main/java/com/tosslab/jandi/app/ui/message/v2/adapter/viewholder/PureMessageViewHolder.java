@@ -25,12 +25,15 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
     private TextView tvMessage;
     private LinkPreviewViewModel linkPreviewViewModel;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         tvMessage = (TextView) rootView.findViewById(R.id.tv_message_content);
         linkPreviewViewModel = new LinkPreviewViewModel(rootView.getContext());
         linkPreviewViewModel.initView(rootView);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
+
     }
 
     @Override
@@ -81,6 +84,15 @@ public class PureMessageViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel.bindData(link);
 
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

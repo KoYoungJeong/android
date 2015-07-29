@@ -48,26 +48,30 @@ public class MessageManipulator {
     }
 
     public ResMessages getMessages(final int firstItemId, int count) throws RetrofitError {
-        final int requestCount = Math.max(NUMBER_OF_MESSAGES, count);
 
         switch (entityType) {
             case JandiConstants.TYPE_PUBLIC_TOPIC:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance()
+                            .getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId,
+                                    firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance()
+                            .getPublicTopicMessagesByChannelMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             case JandiConstants.TYPE_DIRECT_MESSAGE:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi
+                            (selectedTeamId, entityId, firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance().getDirectMessagesByDirectMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             case JandiConstants.TYPE_PRIVATE_TOPIC:
                 if (firstItemId > 0) {
-                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId, firstItemId, requestCount);
+                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi
+                            (selectedTeamId, entityId, firstItemId, count);
                 } else {
-                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId);
+                    return RequestApiManager.getInstance().getGroupMessagesByGroupMessageApi(selectedTeamId, entityId, firstItemId, count);
                 }
             default:
                 return null;

@@ -38,6 +38,7 @@ public class MessageViewHolder implements BodyViewHolder {
     private View disableCoverView;
     private View disableLineThroughView;
     private LinkPreviewViewModel linkPreviewViewModel;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -50,6 +51,7 @@ public class MessageViewHolder implements BodyViewHolder {
 
         linkPreviewViewModel = new LinkPreviewViewModel(context);
         linkPreviewViewModel.initView(rootView);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -138,6 +140,15 @@ public class MessageViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
 
         linkPreviewViewModel.bindData(link);
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

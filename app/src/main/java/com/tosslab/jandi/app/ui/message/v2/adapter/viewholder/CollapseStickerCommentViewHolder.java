@@ -18,12 +18,14 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
     private ImageView ivSticker;
     private TextView tvCreatedTime;
     private TextView tvUnreadCount;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_pure_sticker_comment_content);
         tvCreatedTime = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_create_date);
         tvUnreadCount = (TextView) rootView.findViewById(R.id.tv_pure_sticker_comment_unread);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -41,6 +43,15 @@ public class CollapseStickerCommentViewHolder implements BodyViewHolder {
             tvUnreadCount.setVisibility(View.VISIBLE);
         } else {
             tvUnreadCount.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
         }
     }
 

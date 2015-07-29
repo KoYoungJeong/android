@@ -41,6 +41,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     private View disableLineThroughView;
     private TextView unreadTextView;
     private Context context;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
@@ -60,6 +61,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
 
         unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
 
     @Override
@@ -186,6 +188,15 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
         nameTextView.setOnClickListener(v ->
                 EventBus.getDefault().post(new RequestUserInfoEvent(fromEntity.id)));
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

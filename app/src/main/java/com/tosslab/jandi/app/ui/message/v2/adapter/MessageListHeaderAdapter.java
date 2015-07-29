@@ -1,14 +1,15 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.eowise.recyclerview.stickyheaders.StickyHeadersAdapter;
 import com.tosslab.jandi.app.R;
-import com.tosslab.jandi.app.ui.message.v2.adapter.viewholder.HeaderViewHolder;
 import com.tosslab.jandi.app.utils.DateTransformator;
 
 import java.util.Calendar;
@@ -16,7 +17,7 @@ import java.util.Calendar;
 /**
  * Created by Steve SeongUg Jung on 15. 3. 19..
  */
-public class MessageListHeaderAdapter implements StickyHeadersAdapter<HeaderViewHolder> {
+public class MessageListHeaderAdapter implements StickyHeadersAdapter<MessageListHeaderAdapter.HeaderViewHolder> {
 
     private final Context context;
     private final MessageListAdapter originAdapter;
@@ -58,5 +59,14 @@ public class MessageListHeaderAdapter implements StickyHeadersAdapter<HeaderView
         instance.set(Calendar.MILLISECOND, 0);
 
         return instance.getTimeInMillis();
+    }
+
+    static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        public TextView dateTextView;
+
+        public HeaderViewHolder(View itemView) {
+            super(itemView);
+            dateTextView = (TextView) itemView.findViewById(R.id.txt_message_date_devider);
+        }
     }
 }

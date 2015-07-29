@@ -1,161 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ly_message_item"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/message_list_selector"
-    android:descendantFocusability="blocksDescendants"
-    android:foreground="?android:attr/selectableItemBackground"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    android:paddingLeft="@dimen/jandi_messages_padding_left"
-    android:paddingRight="@dimen/jandi_messages_padding_right"
-    android:paddingTop="5dp">
-    <!-- 사용자 프로필 사진 -->
-    <ImageView
-        android:id="@+id/img_message_user_profile"
-        android:layout_width="@dimen/jandi_messages_profile_size"
-        android:layout_height="@dimen/jandi_messages_profile_size"
-        android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
-        android:background="@drawable/jandi_profile" />
-    <!-- 기본 표시 레이어 -->
+    android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/txt_message_user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom"
-        android:layout_marginTop="4dp"
-        android:layout_toRightOf="@+id/img_message_user_profile"
-        android:ellipsize="end"
-        android:maxWidth="200dp"
-        android:singleLine="true"
-        android:text="User name"
-        android:textColor="@color/jandi_messages_name"
-        android:textSize="@dimen/jandi_messages_user_name"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txt_message_create_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txt_message_user_name"
-        android:layout_marginLeft="6dp"
-        android:layout_toRightOf="@+id/txt_message_user_name"
-        android:gravity="bottom"
-        android:text="AM ??:??"
-        android:textColor="@color/jandi_messages_date"
-        android:textSize="@dimen/jandi_messages_date" />
-
-
-    <TextView
-        android:id="@+id/txt_entity_listitem_unread"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/txt_message_user_name"
-        android:layout_marginLeft="4dp"
-        android:layout_toRightOf="@+id/txt_message_create_date"
-        android:textColor="@color/jandi_accent_color"
-        android:text="10"
-        android:textSize="@dimen/jandi_text_size_smaller"
-        android:textStyle="bold" />
-
-
-    <ImageView
-        android:id="@+id/img_entity_listitem_line_through"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txt_message_user_name"
-        android:layout_alignLeft="@+id/txt_message_user_name"
-        android:layout_alignRight="@+id/txt_message_user_name"
-        android:layout_alignTop="@+id/txt_message_user_name"
-        android:src="@drawable/line_gray" />
-
-    <View
-        android:id="@+id/view_entity_listitem_warning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/img_message_user_profile"
-        android:layout_alignLeft="@+id/img_message_user_profile"
-        android:layout_alignRight="@+id/img_message_user_profile"
-        android:layout_alignTop="@+id/img_message_user_profile"
-        android:background="#99ffffff"
-        android:visibility="visible" />
-
-
-    <!-- 댓글일 경우 표시 레이어 -->
     <RelativeLayout
-        android:id="@+id/ly_message_commented"
+        android:id="@+id/ly_message_item"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_message_user_name"
-        android:layout_toRightOf="@+id/img_message_user_profile">
-
+        android:background="@drawable/message_list_selector"
+        android:descendantFocusability="blocksDescendants"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingLeft="@dimen/jandi_messages_padding_left"
+        android:paddingRight="@dimen/jandi_messages_padding_right"
+        android:paddingTop="5dp">
+        <!-- 사용자 프로필 사진 -->
         <ImageView
-            android:id="@+id/img_message_commented_photo"
-            android:layout_width="@dimen/jandi_messages_image_size"
-            android:layout_height="@dimen/jandi_messages_image_size"
-            android:layout_marginRight="12dp"
-            android:src="@drawable/jandi_fl_icon_deleted" />
+            android:id="@+id/img_message_user_profile"
+            android:layout_width="@dimen/jandi_messages_profile_size"
+            android:layout_height="@dimen/jandi_messages_profile_size"
+            android:layout_marginRight="@dimen/jandi_messages_profile_margin_right"
+            android:background="@drawable/jandi_profile"/>
+        <!-- 기본 표시 레이어 -->
+
 
         <TextView
-            android:id="@+id/txt_message_commented_prefix"
+            android:id="@+id/txt_message_user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/img_message_commented_photo"
-            android:text="Commented on "
-            android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_messages_comment" />
-
-        <TextView
-            android:id="@+id/txt_message_commented_owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/txt_message_commented_prefix"
-            android:text="justin"
+            android:layout_marginBottom="@dimen/jandi_messages_default_margin_bottom"
+            android:layout_marginTop="4dp"
+            android:layout_toRightOf="@+id/img_message_user_profile"
+            android:ellipsize="end"
+            android:maxWidth="200dp"
+            android:singleLine="true"
+            android:text="User name"
             android:textColor="@color/jandi_messages_name"
-            android:textSize="@dimen/jandi_messages_comment"
-            android:textStyle="bold" />
+            android:textSize="@dimen/jandi_messages_user_name"
+            android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/txt_message_commented_postfix"
+            android:id="@+id/txt_message_create_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/txt_message_commented_owner"
-            android:text="'s file"
+            android:layout_alignBaseline="@+id/txt_message_user_name"
+            android:layout_marginLeft="6dp"
+            android:layout_toRightOf="@+id/txt_message_user_name"
+            android:gravity="bottom"
+            android:text="AM ??:??"
+            android:textColor="@color/jandi_messages_date"
+            android:textSize="@dimen/jandi_messages_date"/>
+
+
+        <TextView
+            android:id="@+id/txt_entity_listitem_unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/txt_message_user_name"
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/txt_message_create_date"
+            android:text="10"
             android:textColor="@color/jandi_accent_color"
-            android:textSize="@dimen/jandi_messages_comment" />
+            android:textSize="@dimen/jandi_text_size_smaller"
+            android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/txt_message_commented_file_name"
+
+        <ImageView
+            android:id="@+id/img_entity_listitem_line_through"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/txt_message_commented_prefix"
-            android:layout_below="@id/txt_message_commented_prefix"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_toLeftOf="@+id/iv_img_file_arrow"
-            android:text="File Name"
-            android:textColor="@color/jandi_messages_name"
-            android:textSize="@dimen/jandi_messages_comment_name"
-            android:textStyle="bold" />
-        <!-- 실제 댓글 내용 -->
-        <ImageView
-            android:id="@+id/iv_sticker_message_commented_content"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_below="@id/txt_message_commented_file_name"
-            android:layout_marginTop="8dp" />
+            android:layout_alignBottom="@+id/txt_message_user_name"
+            android:layout_alignLeft="@+id/txt_message_user_name"
+            android:layout_alignRight="@+id/txt_message_user_name"
+            android:layout_alignTop="@+id/txt_message_user_name"
+            android:src="@drawable/line_gray"/>
 
-        <ImageView
-            android:id="@+id/iv_img_file_arrow"
-            android:layout_width="@dimen/jandi_messages_arrow_right_width"
-            android:layout_height="@dimen/jandi_messages_arrow_right_height"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/jandi_icon_comment_arrow" />
+        <View
+            android:id="@+id/view_entity_listitem_warning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/img_message_user_profile"
+            android:layout_alignLeft="@+id/img_message_user_profile"
+            android:layout_alignRight="@+id/img_message_user_profile"
+            android:layout_alignTop="@+id/img_message_user_profile"
+            android:background="#99ffffff"
+            android:visibility="visible"/>
+
+
+        <!-- 댓글일 경우 표시 레이어 -->
+        <RelativeLayout
+            android:id="@+id/ly_message_commented"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_message_user_name"
+            android:layout_toRightOf="@+id/img_message_user_profile">
+
+            <ImageView
+                android:id="@+id/img_message_commented_photo"
+                android:layout_width="@dimen/jandi_messages_image_size"
+                android:layout_height="@dimen/jandi_messages_image_size"
+                android:layout_marginRight="12dp"
+                android:src="@drawable/jandi_fl_icon_deleted"/>
+
+            <TextView
+                android:id="@+id/txt_message_commented_prefix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/img_message_commented_photo"
+                android:text="Commented on "
+                android:textColor="@color/jandi_accent_color"
+                android:textSize="@dimen/jandi_messages_comment"/>
+
+            <TextView
+                android:id="@+id/txt_message_commented_owner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/txt_message_commented_prefix"
+                android:text="justin"
+                android:textColor="@color/jandi_messages_name"
+                android:textSize="@dimen/jandi_messages_comment"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txt_message_commented_postfix"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/txt_message_commented_owner"
+                android:text="'s file"
+                android:textColor="@color/jandi_accent_color"
+                android:textSize="@dimen/jandi_messages_comment"/>
+
+            <TextView
+                android:id="@+id/txt_message_commented_file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/txt_message_commented_prefix"
+                android:layout_below="@id/txt_message_commented_prefix"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/iv_img_file_arrow"
+                android:text="File Name"
+                android:textColor="@color/jandi_messages_name"
+                android:textSize="@dimen/jandi_messages_comment_name"
+                android:textStyle="bold"/>
+            <!-- 실제 댓글 내용 -->
+            <ImageView
+                android:id="@+id/iv_sticker_message_commented_content"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_below="@id/txt_message_commented_file_name"
+                android:layout_marginTop="8dp"/>
+
+            <ImageView
+                android:id="@+id/iv_img_file_arrow"
+                android:layout_width="@dimen/jandi_messages_arrow_right_width"
+                android:layout_height="@dimen/jandi_messages_arrow_right_height"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/jandi_icon_comment_arrow"/>
+        </RelativeLayout>
+
+
     </RelativeLayout>
 
+    <include
+        android:id="@+id/vg_message_last_read"
+        layout="@layout/item_message_last_read_v2"/>
 
-</RelativeLayout>
+</LinearLayout>

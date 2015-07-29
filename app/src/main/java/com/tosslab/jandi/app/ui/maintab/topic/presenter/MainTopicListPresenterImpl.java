@@ -77,7 +77,8 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
             int entityType = item.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
-            view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId);
+            view.moveToMessageActivity(item.getEntityId(), entityType, item.isStarred(), teamId,
+                    item.getMarkerLinkId());
             int selectedEntity = item.getEntityId();
             view.setSelectedItem(selectedEntity);
 
@@ -117,7 +118,8 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
             int entityType = topic.isPublic() ? JandiConstants.TYPE_PUBLIC_TOPIC : JandiConstants.TYPE_PRIVATE_TOPIC;
             int teamId = AccountRepository.getRepository().getSelectedTeamInfo()
                     .getTeamId();
-            view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(), teamId);
+            view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
+                    teamId, topic.getMarkerLinkId());
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);

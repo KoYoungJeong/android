@@ -2,7 +2,9 @@ package com.tosslab.jandi.app.ui.intro.viewmodel;
 
 import android.content.Context;
 
+import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
 import com.tosslab.jandi.app.network.exception.ConnectionNotFoundException;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResConfig;
 import com.tosslab.jandi.app.ui.intro.model.IntroActivityModel;
 import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
@@ -127,7 +129,10 @@ public class IntroActivityPresenter {
         // like fork & join...but need to refactor
 
         model.sleep(initTime, MAX_DELAY_MS);
-        if (!startForInvite) {
+
+        ResAccountInfo.UserTeam selectedTeamInfo = AccountRepository.getRepository().getSelectedTeamInfo();
+
+        if (selectedTeamInfo != null && !startForInvite) {
             ParseUpdateUtil.updateParseWithoutSelectedTeam(context);
             view.moveToMainActivity();
         } else {

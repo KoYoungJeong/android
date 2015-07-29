@@ -19,12 +19,14 @@ public class PureStickerViewHolder implements BodyViewHolder {
     private ImageView ivSticker;
     private TextView tvDate;
     private TextView tvUnread;
+    private View lastReadView;
 
     @Override
     public void initView(View rootView) {
         ivSticker = (ImageView) rootView.findViewById(R.id.iv_message_sticker);
         tvDate = (TextView) rootView.findViewById(R.id.txt_message_create_date);
         tvUnread = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
+        lastReadView = rootView.findViewById(R.id.vg_message_last_read);
 
     }
 
@@ -51,6 +53,15 @@ public class PureStickerViewHolder implements BodyViewHolder {
         }
 
 
+    }
+
+    @Override
+    public void setLastReadViewVisible(int currentLinkId, int lastReadLinkId) {
+        if (currentLinkId == lastReadLinkId) {
+            lastReadView.setVisibility(View.VISIBLE);
+        } else {
+            lastReadView.setVisibility(View.GONE);
+        }
     }
 
     @Override

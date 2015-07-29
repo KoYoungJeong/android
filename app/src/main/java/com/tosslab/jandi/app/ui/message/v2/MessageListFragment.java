@@ -185,7 +185,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @AfterInject
     void initObject() {
         messageState = new MessageState();
-        messageState.setFirstItemId(lastMarker);
 
         messagePublishSubject = PublishSubject.create();
 
@@ -238,6 +237,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             messageListPresenter.setMarker(lastMarker);
             messageListPresenter.setMoreNewFromAdapter(true);
             messageListPresenter.setGotoLatestLayoutVisible();
+
+            messageState.setFirstItemId(lastMarker);
+
         } else {
             NormalNewMessageLoader newsMessageLoader = new NormalNewMessageLoader();
             newsMessageLoader.setMessageListModel(messageListModel);
@@ -254,6 +256,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             this.newsMessageLoader = newsMessageLoader;
             this.oldMessageLoader = oldMessageLoader;
+
+            int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
+            messageListPresenter.setLastReadLinkId(lastReadLinkId);
+
+            messageState.setFirstItemId(lastMarker);
         }
 
         messageListPresenter.setMarkerInfo(teamId, roomId);
@@ -722,6 +729,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         normalOldMessageLoader.setEntityId(entityId);
         oldMessageLoader = normalOldMessageLoader;
 
+        int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
+        messageListPresenter.setLastReadLinkId(lastReadLinkId);
+
         messageListPresenter.setMoreNewFromAdapter(false);
 
         getActivity().supportInvalidateOptionsMenu();
@@ -740,8 +750,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (!isForeground) {
             return;
         }
-
-//        messageListPresenter.handleInviteEvent(event);
     }
 
     @Background
