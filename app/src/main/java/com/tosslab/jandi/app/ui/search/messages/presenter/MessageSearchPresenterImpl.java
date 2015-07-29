@@ -70,12 +70,17 @@ public class MessageSearchPresenterImpl implements MessageSearchPresenter {
             List<SearchResult> searchResults = messageSearchModel.convertSearchResult(resMessageSearch.getSearchRecords(), searchQeuryInfo.getQuery());
             view.setQueryResult(query, resMessageSearch.getQueryCursor().getTotalCount());
             view.addSearchResult(searchResults);
+
+            messageSearchModel.trackMessageKeywordSearchSuccess(query);
+
             if (resMessageSearch.getQueryCursor().getRecordCount() >= ITEM_PER_PAGE) {
                 view.setOnLoadingReady();
             } else {
                 view.setOnLoadingEnd();
             }
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            messageSearchModel.trackMessageKeywordSearchFail(errorCode);
             e.printStackTrace();
         }
 

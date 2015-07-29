@@ -926,10 +926,16 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.deleteSticker(messageId, messageType);
                 LogUtil.d("deleteStickerInBackground : succeed");
             }
+
+            messageListModel.trackMessageDeleteSuccess(messageId);
+
         } catch (RetrofitError e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            messageListModel.trackMessageDeleteFail(errorCode);
         } catch (Exception e) {
             LogUtil.e("deleteMessageInBackground : FAILED", e);
+            messageListModel.trackMessageDeleteFail(-1);
         }
         messageListPresenter.dismissProgressWheel();
     }

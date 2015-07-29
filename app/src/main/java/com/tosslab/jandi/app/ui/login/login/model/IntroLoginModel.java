@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.login.login.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
@@ -15,6 +16,10 @@ import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.LanguageUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -107,4 +112,23 @@ public class IntroLoginModel {
         return isValidEmail && isValidPassword;
     }
 
+    public void trackSignInSuccess() {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.AutoSignIn, false)
+                        .build())
+                .flush();
+    }
+
+    public void trackSignInFail(int errorCode) {
+        Sprinkler.with(JandiApplication.getContext())
+                .track(new FutureTrack.Builder()
+                        .event(Event.SignIn)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build())
+                .flush();
+    }
 }

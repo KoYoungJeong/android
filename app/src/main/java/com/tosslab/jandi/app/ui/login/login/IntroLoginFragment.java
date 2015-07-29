@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
@@ -17,6 +18,10 @@ import com.tosslab.jandi.app.ui.login.login.viewmodel.IntroLoginViewModel;
 import com.tosslab.jandi.app.ui.signup.account.SignUpActivity_;
 import com.tosslab.jandi.app.utils.FormatConverter;
 import com.tosslab.jandi.app.utils.JandiPreference;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.Background;
@@ -54,9 +59,14 @@ public class IntroLoginFragment extends Fragment {
             ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(getActivity()).getAccountInfo();
             MixpanelAccountAnalyticsClient mixpanelAccountAnalyticsClient = MixpanelAccountAnalyticsClient.getInstance(getActivity(), accountInfo.getId());
             mixpanelAccountAnalyticsClient.trackAccountSingingIn();
+
+            introLoginModel.trackSignInSuccess();
+
         } else if (httpCode == JandiConstants.NetworkError.DATA_NOT_FOUND) {
+            introLoginModel.trackSignInFail(httpCode);
             introLoginViewModel.loginFail(R.string.err_login_unregistered_id);
         } else {
+            introLoginModel.trackSignInFail(httpCode);
             introLoginViewModel.loginFail(R.string.err_login_invalid_id_or_password);
         }
     }
