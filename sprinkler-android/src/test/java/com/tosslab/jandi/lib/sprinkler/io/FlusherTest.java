@@ -86,8 +86,8 @@ public class FlusherTest {
 
     @Test
     public void testQueryForCount() throws Exception {
-
-        for (int i = 0; i < 50030; i++) {
+        int max = 50030;
+        for (int i = 0; i < max; i++) {
             final int index = i;
             Map<String, Object> identifiers = new HashMap<String, Object>() {
                 {
@@ -101,38 +101,65 @@ public class FlusherTest {
         }
 
         long time = System.currentTimeMillis();
-        Pair<Integer, List<Track>> query = flusher.queryForCount();
+        int rowCount = flusher.queryForCount();
         long gap = System.currentTimeMillis() - time;
         System.out.println("query end - " + gap);
 
-        assertNotNull(query);
+        assertTrue(rowCount == max);
+    }
 
-        int count = query.first;
-        System.out.println("Query count = " + count);
+    @Test
+    public void testDeleteFromBottom() throws Exception {
+        for (int i = 0; i < 50030; i++) {
+            final int index = i;
+            Map<String, Object> identifiers = new HashMap<String, Object>() {
+                {
+                    put("d", index + "gwleqnwlne casldblaksdb!$@$!@$!@%");
+                    put("a", index + "helloWo!RID");
+                    put("m", index);
+                }
+            };
 
-        List<Track> list = query.second;
-        int listCount = list.size();
-        System.out.println("List count = " + listCount);
+            tracker.insert(index + " event", identifiers, "android", identifiers, new Date().getTime());
+        }
 
-        assertEquals(count, listCount);
+        int deletedRows = flusher.deleteFromBottom();
 
-        boolean exceed = listCount >= 50000;
-        assertTrue(exceed);
+        System.out.println("deletedRows = " + deletedRows);
 
-        if (exceed) {
-            int first = list.get(0).getIndex();
-            int last = list.get(500 - 1).getIndex();
+        assertTrue(deletedRows == 500);
+    }
 
-            System.out.println("first - " + first + " last - " + last);
+    @Test
+    public void testDeleteRowsIfNeed() throws Exception {
+        final int max = 50030;
+        for (int i = 0; i < max; i++) {
+            final int index = i;
+            Map<String, Object> identifiers = new HashMap<String, Object>() {
+                {
+                    put("d", index + "gwleqnwlne casldblaksdb!$@$!@$!@%");
+                    put("a", index + "helloWo!RID");
+                    put("m", index);
+                }
+            };
 
-            int deletedRows = flusher.deleteRows(first, last);
+            tracker.insert(index + " event", identifiers, "android", identifiers, new Date().getTime());
+        }
+
+        int rowCount = flusher.queryForCount();
+
+        System.out.println("rowCount = " + rowCount);
+
+        assertTrue(rowCount >= max);
+
+        if (rowCount >= 10000) {
+            int deletedRows = flusher.deleteFromBottom();
 
             System.out.println("deletedRows = " + deletedRows);
 
             assertTrue(deletedRows == 500);
         }
     }
-
 
     @Test
     public void testStringToMap() throws Exception {

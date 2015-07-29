@@ -4,10 +4,13 @@ import com.tosslab.jandi.lib.sprinkler.SprinklerTestApplication;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import retrofit.RetrofitError;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -18,6 +21,7 @@ import static org.junit.Assert.assertTrue;
         manifest = "src/main/AndroidManifest.xml",
         emulateSdk = 18
 )
+@RunWith(RobolectricTestRunner.class)
 public class RequestManagerTest {
 
     private RequestManager requestManager;
@@ -36,7 +40,12 @@ public class RequestManagerTest {
                 return client.post(new RequestBody(0, null, 0, null));
             }
         };
-        requestManager.requestWithRetry(request);
+
+        ResponseBody responseBody = requestManager.requestWithRetry(request);
+
+        System.out.println(responseBody != null ? responseBody.toString() : "empty");
+
+        assertNotNull(responseBody);
     }
 
     @Test
@@ -48,11 +57,12 @@ public class RequestManagerTest {
                 return client.ping();
             }
         };
+
         ResponseBody responseBody = requestManager.request(request);
 
-        System.out.println(responseBody != null ? responseBody.toString() : "empty");
+        boolean alive = responseBody != null;
 
-        boolean alive = responseBody != null && responseBody.isSuccess();
+        System.out.println(responseBody != null ? responseBody.toString() : "empty");
 
         assertTrue(alive);
     }

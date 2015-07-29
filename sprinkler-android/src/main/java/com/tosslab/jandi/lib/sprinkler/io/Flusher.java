@@ -62,21 +62,19 @@ final class Flusher {
         return new Pair<>(count, list);
     }
 
-    public Pair<Integer, List<Track>> queryForCount() {
-        List<Track> list = new ArrayList<>();
+    public int queryForCount() {
         Cursor cursor = databaseHelper.queryForCount();
         int count = cursor.getCount();
-        while (cursor.moveToNext()) {
-            int index =
-                    cursor.getInt(cursor.getColumnIndex(SprinklerDatabaseHelper.TableColumns._ID));
-            list.add(new Track(index));
-        }
         cursor.close();
-        return new Pair<>(count, list);
+        return count;
     }
 
     public int deleteRows(int startIndex, int endIndex) {
         return databaseHelper.deleteRows(startIndex, endIndex);
+    }
+
+    public int deleteFromBottom() {
+        return databaseHelper.deleteFromBottom();
     }
 
     public Map<String, Object> getMapFromString(String jsonString) {
@@ -133,7 +131,7 @@ final class Flusher {
     public boolean isEndPointAlive() {
         Logger.i(TAG, "ping start");
         try {
-            ResponseBody responseBody = requestManager.request(new RequestManager.Request<ResponseBody>() {
+            requestManager.request(new RequestManager.Request<ResponseBody>() {
                 @Override
                 public ResponseBody performRequest() throws RetrofitError {
                     RequestClient client = requestManager.getClient(RequestClient.class);

@@ -147,20 +147,6 @@ public class SprinklerService extends IntentService {
         Logger.d(TAG, "<< flush end");
     }
 
-    private void deleteRowsIfNeed() {
-        Pair<Integer, List<Track>> queryForCount = flusher.queryForCount();
-        int rowCount = queryForCount.first;
-        List<Track> list = queryForCount.second;
-        if (rowCount < MAX_ROW_SIZE) {
-            return;
-        }
-
-        Track first = list.get(0);
-        Track last = list.get(SprinklerDatabaseHelper.QUERY_LIMIT - 1);
-
-        flusher.deleteRows(first.getIndex(), last.getIndex());
-    }
-
     private boolean isPreRequestFailed() {
         SharedPreferences preferences =
                 getApplicationContext().getSharedPreferences(
@@ -178,6 +164,15 @@ public class SprinklerService extends IntentService {
         preferences.edit()
                 .putBoolean(PREF_KEY_PRE_REQUEST_FAIL, failed)
                 .commit();
+    }
+
+    private void deleteRowsIfNeed() {
+        int rowCount = flusher.queryForCount();
+        if (rowCount < MAX_ROW_SIZE) {
+            return;
+        }
+
+        flusher.deleteFromBottom();
     }
 
     private void flush(boolean retry, Pair<Integer, List<Track>> query, String deviceId) {

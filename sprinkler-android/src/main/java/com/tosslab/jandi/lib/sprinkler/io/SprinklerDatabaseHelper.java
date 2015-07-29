@@ -97,8 +97,7 @@ final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
     public Cursor queryForCount() {
         Logger.i(TAG, "query start");
         Cursor cursor =
-                database.query(TABLE_NAME_TRACK, new String[]{TableColumns._ID},
-                        null, null, null, null, null, null);
+                database.query(TABLE_NAME_TRACK, null, null, null, null, null, null, null);
         Logger.i(TAG, "query end");
         return cursor;
     }
@@ -122,6 +121,22 @@ final class SprinklerDatabaseHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
             Logger.print(e);
         }
+        return numberOfDeletedRows;
+    }
+
+    public int deleteFromBottom() {
+        int numberOfDeletedRows = 0;
+
+        try {
+            numberOfDeletedRows = database.delete(TABLE_NAME_TRACK,
+                    TableColumns._ID + " IN "
+                            + "(SELECT " + TableColumns._ID + " FROM " + TABLE_NAME_TRACK
+                            + " ORDER BY " + TableColumns._ID + " LIMIT " + QUERY_LIMIT + ")"
+                    , null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return numberOfDeletedRows;
     }
 
