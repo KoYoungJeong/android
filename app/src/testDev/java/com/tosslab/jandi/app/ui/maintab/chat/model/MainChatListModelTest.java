@@ -57,7 +57,7 @@ public class MainChatListModelTest {
 
         List<ResChat> chatList = mainChatListModel.getChatList(totalEntitiesInfo.user.id);
 
-        List<ChatItem> chatItems = mainChatListModel.convertChatItem(application,
+        List<ChatItem> chatItems = mainChatListModel.convertChatItems(application,
                 JandiAccountDatabaseManager.getInstance(application).getSelectedTeamInfo().getTeamId(), chatList);
 
         assertThat(chatItems.size(), is(equalTo(chatList.size())));

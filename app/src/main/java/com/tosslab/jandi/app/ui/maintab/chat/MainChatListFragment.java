@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.profile.UserInfoDialogFragment_;
@@ -93,8 +94,8 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     @Override
     public void onPause() {
-        EventBus.getDefault().unregister(this);
         super.onPause();
+        EventBus.getDefault().unregister(this);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -146,7 +147,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @OnActivityResult(value = MainTabActivity.REQ_START_MESSAGE)
     void onResultFromMessage() {
         mainChatListAdapter.startAnimation();
-        mainChatListAdapter.notifyDataSetChanged();
+        mainChatListPresenter.onReloadChatList(JandiApplication.getContext());
     }
 
 
@@ -159,7 +160,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     public void onEventMainThread(ProfileDetailEvent event) {
-        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
+        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build()
+                .show
+                        (getFragmentManager(), "dialog");
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

@@ -127,6 +127,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setEntities(Observable<Topic> joinTopics, Observable<Topic> unjoinTopics) {
 
@@ -183,7 +184,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     @OnActivityResult(value = MainTabActivity.REQ_START_MESSAGE)
     void onResultFromMessage() {
         topicListAdapter.startAnimation();
-        topicListAdapter.notifyDataSetChanged();
+        mainTopicListPresenter.onRefreshTopicList();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -286,7 +287,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
 
         mainTopicListPresenter.onNewMessage(event);
-
 
     }
 }
