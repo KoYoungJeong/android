@@ -19,13 +19,19 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
 import com.tosslab.jandi.app.ui.album.ImageAlbumActivity;
 import com.tosslab.jandi.app.ui.fileexplorer.FileExplorerActivity;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ImageFilePath;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.apache.http.client.methods.HttpPut;
@@ -241,6 +247,29 @@ public class FilePickerModel {
                     .trackUploadingFile(entityType, result);
         } catch (JSONException e) {
         }
+
+        int fileId = result.get("messageId").getAsInt();
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUpload)
+                        .accountId(AccountUtil.getAccountId(context))
+                        .memberId(AccountUtil.getMemberId(context))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.TopicId, entity)
+                        .property(PropertyKey.FileId, fileId)
+                        .build());
+    }
+
+    public void trackUploadingFileFail(Context context, int errorCode) {
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileUpload)
+                        .accountId(AccountUtil.getAccountId(context))
+                        .memberId(AccountUtil.getMemberId(context))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
     }
 
     public String uploadProfilePhoto(Context context, File file) throws ExecutionException, InterruptedException {

@@ -405,6 +405,11 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
                 reqSearchFile.listCount = requestCount;
             }
             ResSearchFile resSearchFile = fileListModel.searchFileList(reqSearchFile);
+
+            String keyword = reqSearchFile.keyword;
+
+            fileListModel.trackFileKeywordSearchSuccess(keyword);
+
             if (resSearchFile.fileCount < reqSearchFile.listCount) {
                 searchedFileItemListAdapter.setNoMoreLoad();
             } else {
@@ -436,11 +441,14 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
 
             searchSucceed(resSearchFile);
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileListModel.trackFileKeywordSearchFail(errorCode);
             e.printStackTrace();
             LogUtil.e("fail to get searched files.", e);
             searchFailed(R.string.err_file_search);
         } catch (Exception e) {
             e.printStackTrace();
+            fileListModel.trackFileKeywordSearchFail(-1);
             searchFailed(R.string.err_file_search);
         }
     }

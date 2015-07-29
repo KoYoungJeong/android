@@ -126,15 +126,21 @@ public class FileDetailPresenter {
         try {
             fileDetailModel.shareMessage(fileId, entityIdToBeShared);
             LogUtil.d("success to share message");
+
+            fileDetailModel.trackFileShareSuccess(entityIdToBeShared);
+
             view.dismissProgress();
             view.onShareMessageSucceed(entityIdToBeShared, fileDetailModel.getFileMessage());
             view.showMoveDialog(entityIdToBeShared);
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileShareFail(errorCode);
             view.dismissProgress();
             view.showErrorToast(activity.getResources().getString(R.string.err_share));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
+            fileDetailModel.trackFileShareFail(-1);
             view.dismissProgress();
             view.showErrorToast(activity.getResources().getString(R.string.err_share));
         }
@@ -147,16 +153,21 @@ public class FileDetailPresenter {
             fileDetailModel.unshareMessage(fileId, entityIdToBeUnshared);
             LogUtil.d("success to unshare message");
 
+            fileDetailModel.trackFileUnShareSuccess(entityIdToBeUnshared);
+
             view.dismissProgress();
 
             view.onUnShareMessageSucceed(entityIdToBeUnshared, fileDetailModel.getFileMessage());
 
         } catch (RetrofitError e) {
             LogUtil.e("fail to send message", e);
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileUnShareFail(errorCode);
             view.dismissProgress();
             view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
         } catch (Exception e) {
             LogUtil.e("fail to send message", e);
+            fileDetailModel.trackFileUnShareFail(-1);
             view.dismissProgress();
             view.showErrorToast(activity.getResources().getString(R.string.err_unshare));
         }
@@ -250,18 +261,27 @@ public class FileDetailPresenter {
      * @param fileId
      */
     @Background
-    public void deleteFile(int fileId) {
+    public void deleteFile(int fileId, int topicId) {
         view.showProgress();
         try {
             fileDetailModel.deleteFile(fileId);
             LogUtil.d("success to delete file");
+
+            fileDetailModel.trackFileDeleteSuccess(topicId);
+
             view.dismissProgress();
             view.onDeleteFileSucceed(true);
         } catch (RetrofitError e) {
             LogUtil.e("delete file failed", e);
+
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            fileDetailModel.trackFileDeleteFail(errorCode);
+
             view.dismissProgress();
             view.onDeleteFileSucceed(false);
         } catch (Exception e) {
+            fileDetailModel.trackFileDeleteFail(-1);
+
             view.dismissProgress();
             view.onDeleteFileSucceed(false);
         }
@@ -307,7 +327,6 @@ public class FileDetailPresenter {
         String fileName = content.fileUrl.replace(" ", "%20");
 
         view.showDownloadProgressDialog(fileName);
-
         downloadFile(BitmapUtil.getFileUrl(content.fileUrl), content.name, content.type, progressDialog);
     }
 
@@ -319,6 +338,8 @@ public class FileDetailPresenter {
             if (fileDetailModel.isMediaFile(fileType)) {
                 fileDetailModel.addGallery(result, fileType);
             }
+
+            fileDetailModel.trackFileDownloadSuccess();
 
             view.dismissDownloadProgressDialog();
             view.onDownloadFileSucceed(result, fileType, fileDetailModel.getFileMessage());

@@ -22,18 +22,26 @@ import com.tosslab.jandi.app.local.database.file.JandiFileDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
+import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.network.models.ResSearchFile;
 import com.tosslab.jandi.app.network.spring.JandiV2HttpMessageConverter;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.TokenUtil;
 import com.tosslab.jandi.app.utils.UserAgentUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 import org.json.JSONException;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -158,4 +166,33 @@ public class FileListModel {
         } catch (JSONException e) {
         }
     }
+
+    public void trackFileKeywordSearchSuccess(String keyword) {
+        try {
+            keyword = URLEncoder.encode(keyword, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileKeywordSearch)
+                        .accountId(AccountUtil.getAccountId(context))
+                        .memberId(AccountUtil.getMemberId(context))
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.SearchKeyword, keyword)
+                        .build());
+    }
+
+    public void trackFileKeywordSearchFail(int errorCode) {
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.FileKeywordSearch)
+                        .accountId(AccountUtil.getAccountId(context))
+                        .memberId(AccountUtil.getMemberId(context))
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
 }

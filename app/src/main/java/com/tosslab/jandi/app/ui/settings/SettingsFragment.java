@@ -24,6 +24,7 @@ import com.tosslab.jandi.app.services.socket.JandiSocketService;
 import com.tosslab.jandi.app.ui.settings.viewmodel.SettingFragmentViewModel;
 import com.tosslab.jandi.app.ui.term.TermActivity;
 import com.tosslab.jandi.app.ui.term.TermActivity_;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
@@ -156,18 +157,11 @@ public class SettingsFragment extends PreferenceFragment {
     private void trackSignOut() {
         Context context = getActivity().getApplicationContext();
 
-        JandiAccountDatabaseManager db = JandiAccountDatabaseManager.getInstance(context);
-        ResAccountInfo accountInfo = db.getAccountInfo();
-        ResAccountInfo.UserTeam selectedTeamInfo = db.getSelectedTeamInfo();
-
-        String accountId = accountInfo != null ? accountInfo.getId() : null;
-        int memberId = selectedTeamInfo != null ? selectedTeamInfo.getMemberId() : -1;
-
         Sprinkler.with(context)
                 .track(new FutureTrack.Builder()
                         .event(Event.SignOut)
-                        .accountId(accountId)
-                        .memberId(memberId)
+                        .accountId(AccountUtil.getAccountId(context))
+                        .memberId(AccountUtil.getMemberId(context))
                         .build())
                 .flush();
     }

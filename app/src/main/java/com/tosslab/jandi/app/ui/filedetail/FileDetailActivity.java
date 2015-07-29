@@ -467,7 +467,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (!isForeground) {
             return;
         }
-        fileDetailPresenter.deleteFile(event.getFileId());
+        fileDetailPresenter.deleteFile(event.getFileId(), roomId);
     }
 
     public void onEvent(DeleteFileEvent event) {

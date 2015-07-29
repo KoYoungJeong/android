@@ -144,8 +144,10 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 showFailToast(context, context.getString(R.string.err_file_upload_failed));
             }
         } catch (ExecutionException e) {
+            filePickerModel.trackUploadingFileFail(context, -1);
             showFailToast(context, context.getString(R.string.jandi_canceled));
         } catch (Exception e) {
+            filePickerModel.trackUploadingFileFail(context, -1);
             LogUtil.e("Upload Error : ", e);
             showFailToast(context, context.getString(R.string.err_file_upload_failed));
         } finally {
