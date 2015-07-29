@@ -18,6 +18,7 @@ import org.androidannotations.annotations.EBean;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Steve SeongUg Jung on 15. 7. 9..
@@ -90,8 +91,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
             if (isStarred) {
                 entityClientManager.disableFavorite(entityId);
+
+                topicDetailModel.trackTopicUnStarSuccess(entityId);
             } else {
                 entityClientManager.enableFavorite(entityId);
+
+                topicDetailModel.trackTopicStarSuccess(entityId);
                 view.showSuccessToast(context.getString(R.string.jandi_message_starred));
             }
 
@@ -100,7 +105,12 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             view.setStarred(!isStarred);
 
         } catch (RetrofitError e) {
-
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            if (isStarred) {
+                topicDetailModel.trackTopicUnStarFail(errorCode);
+            } else {
+                topicDetailModel.trackTopicStarFail(errorCode);
+            }
         }
     }
 
@@ -127,14 +137,18 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
             int entityType = topicDetailModel.getEntityType(context, entityId);
             topicDetailModel.deleteTopic(entityId, entityType);
             topicDetailModel.trackDeletingEntity(context, entityType);
+            topicDetailModel.trackTopicDeleteSuccess(entityId);
             view.leaveTopic();
         } catch (RetrofitError e) {
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            topicDetailModel.trackTopicDeleteFail(errorCode);
             e.printStackTrace();
         } catch (Exception e) {
+            topicDetailModel.trackTopicDeleteFail(-1);
+            e.printStackTrace();
         } finally {
             view.dismissProgressWheel();
         }
-
     }
 
     @Override
@@ -155,17 +169,23 @@ public class TopicDetailPresenterImpl implements TopicDetailPresenter {
 
             view.setTopicName(topicName);
 
-            topicDetailModel.trackChangingEntityName(context, entityType);
+            topicDetailModel.trackChangingEntityName(context, entityId, entityType);
             EntityManager.getInstance(context).getEntityById(entityId).getEntity().name = topicName;
             EventBus.getDefault().post(new TopicInfoUpdateEvent(entityId));
 
         } catch (RetrofitError e) {
-            if (e.getResponse() != null && e.getResponse().getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
+            Response response = e.getResponse();
+            int errorCode = response != null ? response.getStatus() : -1;
+
+            topicDetailModel.trackChangingEntityNameFail(errorCode);
+
+            if (response != null && response.getStatus() == JandiConstants.NetworkError.DUPLICATED_NAME) {
                 view.showFailToast(context.getString(R.string.err_entity_duplicated_name));
             } else {
                 view.showFailToast(context.getString(R.string.err_entity_modify));
             }
         } catch (Exception e) {
+            topicDetailModel.trackChangingEntityNameFail(-1);
             view.showFailToast(context.getString(R.string.err_entity_modify));
         } finally {
             view.dismissProgressWheel();

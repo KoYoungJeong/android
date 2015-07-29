@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.ChatCloseEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
@@ -19,7 +20,13 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.model.LeaveViewModel;
+import com.tosslab.jandi.app.ui.message.detail.model.TopicDetailModel;
+import com.tosslab.jandi.app.utils.AccountUtil;
 import com.tosslab.jandi.app.utils.ColoredToast;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -47,6 +54,9 @@ public class ChatDetailFragment extends Fragment {
 
     @Bean
     LeaveViewModel leaveViewModel;
+
+    @Bean
+    TopicDetailModel topicDetailModel;
 
     @AfterViews
     void initViews() {
@@ -110,8 +120,13 @@ public class ChatDetailFragment extends Fragment {
 
             if (isStarred) {
                 entityClientManager.disableFavorite(entityId);
+
+                topicDetailModel.trackTopicUnStarSuccess(entityId);
+
             } else {
                 entityClientManager.enableFavorite(entityId);
+
+                topicDetailModel.trackTopicStarSuccess(entityId);
                 showSuccessToast(getString(R.string.jandi_message_starred));
             }
 
@@ -120,7 +135,12 @@ public class ChatDetailFragment extends Fragment {
             setStarred(!isStarred);
 
         } catch (RetrofitError e) {
-
+            int errorCode = e.getResponse() != null ? e.getResponse().getStatus() : -1;
+            if (isStarred) {
+                topicDetailModel.trackTopicUnStarFail(errorCode);
+            } else {
+                topicDetailModel.trackTopicStarFail(errorCode);
+            }
         }
     }
 
@@ -139,6 +159,5 @@ public class ChatDetailFragment extends Fragment {
         leaveViewModel.initData(getActivity(), entityId);
         leaveViewModel.leave();
     }
-
 
 }
