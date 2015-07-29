@@ -38,6 +38,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
+import retrofit.RetrofitError;
+
 /**
  * Created by Steve SeongUg Jung on 15. 4. 10..
  */
@@ -61,9 +63,6 @@ public class JandiPushReceiverModel {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-//        pendingIntent.cancel();
 
         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
@@ -83,19 +82,21 @@ public class JandiPushReceiverModel {
     }
 
     public void updateEntityAndBadge(Context context) {
-        EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
-        ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
+        try {
+            EntityClientManager jandiEntityClient = EntityClientManager_.getInstance_(context);
+            ResLeftSideMenu resLeftSideMenu = jandiEntityClient.getTotalEntitiesInfo();
 
-        JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
+            JandiEntityDatabaseManager.getInstance(context).upsertLeftSideMenu(resLeftSideMenu);
 
-        int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
-        LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + totalUnreadCount);
-        BadgeUtils.setBadge(context, totalUnreadCount);
-        JandiPreference.setBadgeCount(context, totalUnreadCount);
+            int totalUnreadCount = BadgeUtils.getTotalUnreadCount(resLeftSideMenu);
+            LogUtil.e(JandiPushReceiverModel.class.getSimpleName(), "totalUnreadCount - " + totalUnreadCount);
+            BadgeUtils.setBadge(context, totalUnreadCount);
+            JandiPreference.setBadgeCount(context, totalUnreadCount);
 
-        EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
-//        Intent intent = new Intent(context, BadgeHandleService.class);
-//        context.startService(intent);
+            EntityManager.getInstance(context).refreshEntity(resLeftSideMenu);
+        } catch (RetrofitError retrofitError) {
+            retrofitError.printStackTrace();
+        }
     }
 
     public PushTO parsingPushTO(Bundle extras) {
@@ -233,7 +234,6 @@ public class JandiPushReceiverModel {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (notification != null) {
-//            nm.cancel(JandiConstants.NOTIFICATION_ID);
             nm.notify(JandiConstants.NOTIFICATION_ID, notification);
         }
     }
