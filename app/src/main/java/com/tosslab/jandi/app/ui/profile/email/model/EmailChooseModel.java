@@ -10,6 +10,10 @@ import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.ui.profile.email.to.AccountEmail;
 import com.tosslab.jandi.app.utils.LanguageUtil;
+import com.tosslab.jandi.lib.sprinkler.Sprinkler;
+import com.tosslab.jandi.lib.sprinkler.constant.event.Event;
+import com.tosslab.jandi.lib.sprinkler.constant.property.PropertyKey;
+import com.tosslab.jandi.lib.sprinkler.io.model.FutureTrack;
 
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
@@ -98,4 +102,53 @@ public class EmailChooseModel {
         return RequestApiManager.getInstance().updatePrimaryEmailByMainRest(new ReqUpdatePrimaryEmailInfo(selectedEmail));
     }
 
+    public void trackChangeAccountEmailSuccess(String accountId) {
+        String email = getPrimaryEmail();
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountPrimaryEmail)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.Email, email)
+                        .build());
+    }
+
+    public void trackChangeAccountEmailFail(int errorCode) {
+        String accountId = getAccountId();
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountPrimaryEmail)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackRequestVerifyEmailSuccess() {
+        String accountId = getAccountId();
+        String email = getPrimaryEmail();
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.RequestVerificationEmail)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .property(PropertyKey.Email, email)
+                        .build());
+    }
+
+    public void trackRequestVerifyEmailFail(int errorCode) {
+        String accountId = getAccountId();
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.RequestVerificationEmail)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    private String getAccountId() {
+        ResAccountInfo accountInfo = JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        return accountInfo != null ? accountInfo.getId() : null;
+    }
 }

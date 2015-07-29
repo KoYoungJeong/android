@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
+import com.tosslab.jandi.app.network.mixpanel.MixpanelAccountAnalyticsClient;
 import com.tosslab.jandi.app.network.models.ReqProfileName;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
@@ -152,6 +153,33 @@ public class AccountHomeModel {
         Sprinkler.with(context)
                 .track(new FutureTrack.Builder()
                         .event(Event.LaunchTeam)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, false)
+                        .property(PropertyKey.ErrorCode, errorCode)
+                        .build());
+    }
+
+    public void trackChangeAccountNameSuccess(Context context, String accountId) {
+        MixpanelAccountAnalyticsClient
+                .getInstance(context, accountId)
+                .trackSetAccount();
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
+                        .accountId(accountId)
+                        .property(PropertyKey.ResponseSuccess, true)
+                        .build());
+    }
+
+    public void trackChangeAccountNameFail(Context context, int errorCode) {
+        ResAccountInfo accountInfo =
+                JandiAccountDatabaseManager.getInstance(context).getAccountInfo();
+        String accountId = accountInfo.getId();
+
+        Sprinkler.with(context)
+                .track(new FutureTrack.Builder()
+                        .event(Event.ChangeAccountName)
                         .accountId(accountId)
                         .property(PropertyKey.ResponseSuccess, false)
                         .property(PropertyKey.ErrorCode, errorCode)

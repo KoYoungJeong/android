@@ -52,7 +52,7 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
 
         if (!accountHomeModel.checkAccount(context)) {
             view.invalidAccess();
-            return ;
+            return;
         }
 
         getAccountInfo();
@@ -118,15 +118,21 @@ public class AccountHomePresenterImpl implements AccountHomePresenter {
         view.showProgressWheel();
         try {
             ResAccountInfo resAccountInfo = accountHomeModel.updateAccountName(context, newName);
-            MixpanelAccountAnalyticsClient
-                    .getInstance(context, resAccountInfo.getId())
-                    .trackSetAccount();
+
+            accountHomeModel.trackChangeAccountNameSuccess(context, resAccountInfo.getId());
 
             JandiAccountDatabaseManager.getInstance(context).upsertAccountInfo(resAccountInfo);
             view.dismissProgressWheel();
             view.setAccountName(newName);
             view.showSuccessToast(context.getString(R.string.jandi_success_update_account_profile));
         } catch (RetrofitError e) {
+            int errorCode = -1;
+            if (e.getResponse() != null) {
+                errorCode = e.getResponse().getStatus();
+            }
+
+            accountHomeModel.trackChangeAccountNameFail(context, errorCode);
+
             view.dismissProgressWheel();
             if (e.getCause() instanceof ConnectionNotFoundException) {
                 view.showErrorToast(context.getResources().getString(R.string.err_network));
