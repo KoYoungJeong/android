@@ -8,11 +8,13 @@ public class FileDownloadStartEvent {
     private String url;
     private String fileName;
     private String fileType;
+    private final String ext;
 
-    public FileDownloadStartEvent(String url, String fileName, String fileType) {
+    public FileDownloadStartEvent(String url, String fileName, String fileType, String ext) {
         this.url = url;
         this.fileName = fileName;
         this.fileType = fileType;
+        this.ext = ext;
     }
 
     public String getUrl() {
@@ -37,5 +39,9 @@ public class FileDownloadStartEvent {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getExt() {
+        return ext;
     }
 }

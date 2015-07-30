@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -144,14 +143,8 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
         ActionBar actionBar = getSupportActionBar();
 
         if (isFullScreen) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                systemUiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            } else {
-                // Do Nothing
-                systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-            }
+            // Do Nothing
+            systemUiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 
             if (actionBar != null) {
                 actionBar.hide();
@@ -159,15 +152,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
             }
 
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                systemUiOptions = View.SYSTEM_UI_FLAG_IMMERSIVE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN;
-
-            } else {
-                systemUiOptions = View.SYSTEM_UI_FLAG_VISIBLE;
-            }
+            systemUiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
 
             if (actionBar != null) {
                 actionBar.show();
@@ -292,6 +277,7 @@ public class CarouselViewerActivity extends AppCompatActivity implements Carouse
 
         progressDialog.dismiss();
 
+        ColoredToast.show(CarouselViewerActivity.this, file.getPath());
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), carouselViewerModel.getFileType(file, fileType));

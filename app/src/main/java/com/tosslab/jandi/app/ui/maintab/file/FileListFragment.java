@@ -34,6 +34,7 @@ import com.tosslab.jandi.app.events.files.ShareFileEvent;
 import com.tosslab.jandi.app.events.search.SearchResultScrollEvent;
 import com.tosslab.jandi.app.files.upload.EntityFileUploadViewModelImpl;
 import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
+import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.files.SearchedFileItemListAdapter;
 import com.tosslab.jandi.app.local.database.account.JandiAccountDatabaseManager;
 import com.tosslab.jandi.app.network.models.ReqSearchFile;
@@ -126,6 +127,8 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         mSearchQuery = new SearchQuery();
         if (entityIdForCategorizing >= 0) {
             mSearchQuery.setSharedEntity(entityIdForCategorizing);
+            mCurrentEntityCategorizingAccodingBy = EntityManager.getInstance(getActivity())
+                    .getEntityById(entityIdForCategorizing).getName();
         }
         fileListPresenter.setEntityIdForCategorizing(entityIdForCategorizing);
         fileListPresenter.setCurrentEntityCategorizingAccodingBy(mCurrentEntityCategorizingAccodingBy);
@@ -184,6 +187,7 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         }
 
         initSearchSubject.onNext(-1);
+
     }
 
     @Override
@@ -485,31 +489,31 @@ public class FileListFragment extends Fragment implements SearchActivity.SearchS
         filePickerViewModel.selectFileSelector(event.type, FileListFragment.this, mSearchQuery.mSearchEntity);
     }
 
-    @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
+    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
     void onGalleryActivityResult(int resultCode, Intent intent) {
         // Do Nothing
     }
 
-    @OnActivityResult(JandiConstants.TYPE_UPLOAD_TAKE_PHOTO)
+    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO)
     void onCameraActivityResult(int resultCode, Intent intent) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_TAKE_PHOTO, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO, intent);
         if (filePath != null && filePath.size() > 0) {
             filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
         }
 
     }
 
-    @OnActivityResult(JandiConstants.TYPE_UPLOAD_EXPLORER)
+    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_EXPLORER)
     void onExplorerActivityResult(int resultCode, Intent intent) {
 
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
-        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), JandiConstants.TYPE_UPLOAD_EXPLORER, intent);
+        List<String> filePath = filePickerViewModel.getFilePath(getActivity(), FilePickerViewModel.TYPE_UPLOAD_EXPLORER, intent);
         if (filePath != null && filePath.size() > 0) {
             filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), mSearchQuery.mSearchEntity);
         }

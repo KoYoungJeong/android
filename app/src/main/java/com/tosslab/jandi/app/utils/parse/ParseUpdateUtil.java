@@ -27,6 +27,12 @@ import rx.schedulers.Schedulers;
  */
 public class ParseUpdateUtil {
 
+    public static final String PARSE_MY_ENTITY_ID = "myEntityId";
+    public static final String PARSE_CHANNELS = "channels";
+    public static final String PARSE_ACTIVATION = "activate";
+    public static final String PARSE_ACTIVATION_ON = "on";
+    public static final String PARSE_ACTIVATION_OFF = "off";
+
     public static void updateParseWithoutSelectedTeam(Context context) {
         List<ResAccountInfo.UserTeam> userTeams = getUserTeams(context);
 
@@ -79,9 +85,9 @@ public class ParseUpdateUtil {
                     public void call(List<String> subscriber) {
                         ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
                         int memberId = JandiAccountDatabaseManager.getInstance(context).getSelectedTeamInfo().getMemberId();
-                        currentInstallation.put(JandiConstants.PARSE_MY_ENTITY_ID, memberId);
-                        if (currentInstallation.containsKey(JandiConstants.PARSE_CHANNELS)) {
-                            List<String> savedChannels = (List<String>) currentInstallation.get(JandiConstants.PARSE_CHANNELS);
+                        currentInstallation.put(PARSE_MY_ENTITY_ID, memberId);
+                        if (currentInstallation.containsKey(PARSE_CHANNELS)) {
+                            List<String> savedChannels = (List<String>) currentInstallation.get(PARSE_CHANNELS);
                             List<String> removeChannles = new ArrayList<String>();
                             for (int idx = savedChannels.size() - 1; idx >= 0; idx--) {
                                 String savedChannel = savedChannels.get(idx);
@@ -90,7 +96,7 @@ public class ParseUpdateUtil {
                                 }
                             }
                             try {
-                                currentInstallation.removeAll(JandiConstants.PARSE_CHANNELS, removeChannles);
+                                currentInstallation.removeAll(PARSE_CHANNELS, removeChannles);
                                 currentInstallation.save();
                             } catch (ParseException e) {
                                 e.printStackTrace();
@@ -98,7 +104,7 @@ public class ParseUpdateUtil {
                         }
 
                         try {
-                            currentInstallation.addAllUnique(JandiConstants.PARSE_CHANNELS, subscriber);
+                            currentInstallation.addAllUnique(PARSE_CHANNELS, subscriber);
                             currentInstallation.save();
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -116,7 +122,7 @@ public class ParseUpdateUtil {
 
     public static void deleteChannelOnServer() {
         ParseInstallation currentInstallation = ParseInstallation.getCurrentInstallation();
-        currentInstallation.remove(JandiConstants.PARSE_CHANNELS);
+        currentInstallation.remove(PARSE_CHANNELS);
         try {
             currentInstallation.save();
         } catch (ParseException e) {

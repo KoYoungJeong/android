@@ -334,17 +334,17 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @Click(R.id.profile_photo)
     void getPicture() {
 
-        filePickerViewModel.selectFileSelector(JandiConstants.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
 
     }
 
-    @OnActivityResult(JandiConstants.TYPE_UPLOAD_GALLERY)
+    @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)
     public void onImagePickResult(int resultCode, Intent imageData) {
         if (resultCode != RESULT_OK) {
             return;
         }
 
-        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), JandiConstants.TYPE_UPLOAD_GALLERY, imageData).get(0);
+        String filePath = filePickerViewModel.getFilePath(getApplicationContext(), FilePickerViewModel.TYPE_UPLOAD_GALLERY, imageData).get(0);
         if (!TextUtils.isEmpty(filePath)) {
             filePickerViewModel.startUpload(MemberProfileActivity.this, null, -1, filePath, null);
         }

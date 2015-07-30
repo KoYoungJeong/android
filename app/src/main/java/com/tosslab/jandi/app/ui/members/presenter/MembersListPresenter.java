@@ -22,6 +22,8 @@ public interface MembersListPresenter {
         int getEntityId();
 
         int getType();
+
+        void moveDirectMessageActivity(int teamId, int userId, boolean isStarred);
     }
 
 }

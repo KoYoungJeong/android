@@ -1,6 +1,7 @@
 package com.tosslab.jandi.app.ui.maintab.chat;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.tosslab.jandi.app.events.push.MessagePushEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity;
 import com.tosslab.jandi.app.ui.entities.EntityChooseActivity_;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.chat.adapter.MainChatListAdapter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenter;
 import com.tosslab.jandi.app.ui.maintab.chat.presenter.MainChatListPresenterImpl;
@@ -70,6 +72,7 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     View emptyView;
 
     MainChatListAdapter mainChatListAdapter;
+    private boolean foreground;
 
     @AfterInject
     void initObject() {
@@ -98,15 +101,29 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        foreground = true;
+        mainChatListAdapter.startAnimation();
+        mainChatListPresenter.onReloadChatList(JandiApplication.getContext());
+    }
+
+    @Override
     public void onPause() {
-        EventBus.getDefault().unregister(this);
         super.onPause();
+        foreground = false;
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -141,7 +158,6 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     @Override
     public void setSelectedItem(int selectedEntityId) {
         mainChatListAdapter.setSelectedEntity(selectedEntityId);
-        mainChatListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -153,8 +169,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
                 .roomId(roomId)
                 .isFavorite(isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
+
 
     @UiThread
     @Override
@@ -164,15 +181,27 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
         }
     }
 
+
     public void onEventMainThread(ProfileDetailEvent event) {
-        UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build().show(getFragmentManager(), "dialog");
+        if (foreground) {
+            UserInfoDialogFragment_.builder().entityId(event.getEntityId()).build()
+                    .show
+                            (getFragmentManager(), "dialog");
+        }
     }
 
     public void onEvent(RetrieveTopicListEvent event) {
-        mainChatListPresenter.onReloadChatList(getActivity());
+        if (foreground) {
+            mainChatListPresenter.onReloadChatList(getActivity());
+        }
     }
 
     public void onEvent(SocketMessageEvent event) {
+
+        if (!foreground) {
+            return;
+        }
+
         if (TextUtils.equals(event.getMessageType(), "file_comment")) {
             for (SocketMessageEvent.MessageRoom messageRoom : event.getRooms()) {
                 if (TextUtils.equals(messageRoom.getType(), "chat")) {
@@ -189,6 +218,11 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
     }
 
     public void onEvent(MessagePushEvent event) {
+
+        if (!foreground) {
+            return;
+        }
+
         if (TextUtils.equals(event.getEntityType(), "user")) {
             mainChatListPresenter.onReloadChatList(getActivity());
         }
@@ -196,7 +230,9 @@ public class MainChatListFragment extends Fragment implements MainChatListPresen
 
     public void onEvent(RequestMoveDirectMessageEvent event) {
 
-        mainChatListPresenter.onMoveDirectMessage(getActivity(), event.userId);
+        if (foreground) {
+            mainChatListPresenter.onMoveDirectMessage(getActivity(), event.userId);
+        }
     }
 
     @OptionsItem(R.id.action_main_search)

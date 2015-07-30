@@ -17,6 +17,7 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.account.AccountHomeActivity_;
 import com.tosslab.jandi.app.ui.maintab.more.view.IconWithTextView;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.profile.member.MemberProfileActivity_;
 import com.tosslab.jandi.app.ui.settings.SettingsActivity_;
@@ -134,7 +135,7 @@ public class MainMoreFragment extends Fragment {
     public void moveToTeamMemberActivity() {
         MembersListActivity_.intent(mContext)
                 .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .type(JandiConstants.TYPE_MEMBERS_LIST_TEAM)
+                .type(MembersListActivity.TYPE_MEMBERS_LIST_TEAM)
                 .start();
     }
 

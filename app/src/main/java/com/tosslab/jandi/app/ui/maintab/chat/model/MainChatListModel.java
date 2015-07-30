@@ -55,7 +55,7 @@ public class MainChatListModel {
         return RequestApiManager.getInstance().getChatListByChatApi(memberId);
     }
 
-    public List<ChatItem> convertChatItem(Context context, int teamId, List<ResChat> chatList) {
+    public List<ChatItem> convertChatItems(Context context, int teamId, List<ResChat> chatList) {
 
         List<ChatItem> chatItems = new ArrayList<ChatItem>();
 
@@ -88,6 +88,24 @@ public class MainChatListModel {
         }
 
         return chatItems;
+    }
+
+    public ChatItem convertChatItem(Context context, int teamId, ResChat resChat) {
+        FormattedEntity userEntity = EntityManager.getInstance(context).getEntityById(resChat.getCompanionId());
+
+        ChatItem chatItem = new ChatItem();
+        chatItem.entityId(userEntity.getId())
+                .roomId(resChat.getEntityId())
+                .lastLinkId(resChat.getLastLinkId())
+                .lastMessage(!TextUtils.equals(resChat.getLastMessageStatus(), "archived") ? resChat.getLastMessage() : context.getString(R.string.jandi_deleted_message))
+                .lastMessageId(resChat.getLastMessageId())
+                .name(userEntity.getName())
+                .starred(JandiEntityDatabaseManager.getInstance(context).isStarredEntity(teamId, resChat.getCompanionId()))
+                .unread(resChat.getUnread())
+                .status(TextUtils.equals(userEntity.getUser().status, "enabled"))
+                .photo(userEntity.getUserLargeProfileUrl());
+
+        return chatItem;
     }
 
     public List<ChatItem> getSavedChatList(Context context, int teamId) {

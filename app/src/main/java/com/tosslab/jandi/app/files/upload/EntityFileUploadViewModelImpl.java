@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import com.google.gson.JsonObject;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.FileUploadDialogFragment;
 import com.tosslab.jandi.app.dialogs.FileUploadTypeDialogFragment;
@@ -54,13 +53,13 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     @Override
     public void selectFileSelector(int type, Fragment fragment, int entityId) {
         switch (type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_GALLERY:
                 ImageAlbumActivity_
                         .intent(fragment)
                         .entityId(entityId)
-                        .startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
+                        .startForResult(TYPE_UPLOAD_GALLERY);
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case TYPE_UPLOAD_TAKE_PHOTO:
 
                 try {
                     File directory = new File(GoogleImagePickerUtil.getDownloadPath());
@@ -71,7 +70,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 }
 
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(fragment);
                 break;
             default:
@@ -83,10 +82,10 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     @Override
     public void selectFileSelector(int type, Activity activity) {
         switch (type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
-                ImageAlbumActivity_.intent(activity).startForResult(JandiConstants.TYPE_UPLOAD_GALLERY);
+            case TYPE_UPLOAD_GALLERY:
+                ImageAlbumActivity_.intent(activity).startForResult(TYPE_UPLOAD_GALLERY);
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case TYPE_UPLOAD_TAKE_PHOTO:
 
                 try {
                     File directory = new File(GoogleImagePickerUtil.getDownloadPath());
@@ -97,7 +96,7 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
                 }
 
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case TYPE_UPLOAD_EXPLORER:
                 filePickerModel.openExplorerForActivityResult(activity);
                 break;
             default:
@@ -111,11 +110,11 @@ public class EntityFileUploadViewModelImpl implements FilePickerViewModel {
     public List<String> getFilePath(Context context, int requestCode, Intent intent) {
         ArrayList<String> filePaths = new ArrayList<>();
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case TYPE_UPLOAD_GALLERY:
                 filePaths.addAll(filePickerModel.getFilePathsFromInnerGallery(intent));
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case TYPE_UPLOAD_EXPLORER:
+            case TYPE_UPLOAD_TAKE_PHOTO:
                 filePaths.add(filePickerModel.getFilePath(context, requestCode, intent, filePath));
                 break;
         }

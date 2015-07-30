@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.database.entity.JandiEntityDatabaseManager;
@@ -92,8 +93,17 @@ public class MainTopicModel {
         Topic emptyEntity = new Topic.Builder().build();
         Topic entity = Observable.from(joinedTopics)
                 .filter(entity1 -> {
+
                     if (!TextUtils.equals(event.getMessageType(), "file_comment")) {
-                        return entity1.getEntityId() == event.getRoom().getId();
+                        if (TextUtils.equals(event.getMessageType(), "topic_join")
+                                || TextUtils.equals(event.getMessageType(), "topic_invite")
+                                || TextUtils.equals(event.getMessageType(), "topic_leave")
+                                || TextUtils.equals(event.getMessageType(), "message_delete")
+                                || TextUtils.equals(event.getMessageType(), "file_unshare")) {
+                            return false;
+                        } else {
+                            return entity1.getEntityId() == event.getRoom().getId();
+                        }
                     } else if (TextUtils.equals(event.getMessageType(), "link_preview_create")) {
                         // 단순 메세지 업데이트인 경우
                         return false;
@@ -106,6 +116,7 @@ public class MainTopicModel {
                         return false;
                     }
                 })
+                .doOnNext(topic -> topic.setUnreadCount(topic.getUnreadCount() + 1))
                 .firstOrDefault(emptyEntity)
                 .toBlocking()
                 .first();
@@ -137,5 +148,10 @@ public class MainTopicModel {
 
     public void resetBadge(Context context, int entityId) {
         EntityManager.getInstance(context).getEntityById(entityId).alarmCount = 0;
+    }
+
+    public boolean isMe(int writer) {
+        return EntityManager.getInstance(JandiApplication.getContext()).getMe()
+                .getId() == writer;
     }
 }

@@ -22,6 +22,7 @@ import com.tosslab.jandi.app.ui.entities.chats.model.ChatChooseModel;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.entities.chats.to.DisableDummyItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 
@@ -149,7 +150,7 @@ public class ChatsChooseFragment extends Fragment {
                 .roomId(-1)
                 .isFavorite(entityManager.getEntityById(event.userId).isStarred)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
 
     @ItemClick(R.id.list_chat_choose)

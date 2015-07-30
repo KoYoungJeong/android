@@ -67,6 +67,7 @@ public class VerificationCodeView extends LinearLayout
         inflate(getContext(), R.layout.item_sign_up_verification_code, this);
         etInputCode = (EditText) findViewById(R.id.et_code);
         etInputCode.addTextChangedListener(this);
+        etInputCode.setOnClickListener(v -> etInputCode.setText(""));
 
         arrTvCode = new TextView[]{
                 (TextView) findViewById(R.id.tv_verification_code_1),

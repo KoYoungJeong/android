@@ -63,12 +63,14 @@ import com.tosslab.jandi.app.local.database.rooms.marker.JandiMarkerDatabaseMana
 import com.tosslab.jandi.app.local.database.sticker.JandiStickerDatabaseManager;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
+import com.tosslab.jandi.app.network.socket.JandiSocketManager;
 import com.tosslab.jandi.app.push.monitor.PushMonitor;
 import com.tosslab.jandi.app.services.socket.to.SocketAnnouncementEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketLinkPreviewMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketRoomMarkerEvent;
 import com.tosslab.jandi.app.ui.file.upload.preview.FileUploadPreviewActivity;
+import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.model.menus.MenuCommand;
 import com.tosslab.jandi.app.ui.message.to.ChattingInfomations;
 import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
@@ -496,7 +498,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
         isStarred = entityById != null ? entityById.isStarred : false;
-        MenuCommand menuCommand = messageListModel.getMenuCommand(new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred), item);
+        ChattingInfomations infomations = new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred);
+        MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this,
+                infomations,
+                item);
 
         if (menuCommand != null) {
             menuCommand.execute(item);
@@ -539,6 +544,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.removeNotificationSameEntityId(entityId);
         fileUploadStateViewModel.initDownloadState();
 
+        EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
     }
 
     @Override
@@ -749,10 +755,10 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         }
 
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 List<String> filePath = filePickerViewModel.getFilePath(getActivity(), requestCode, intent);
                 if (filePath != null && filePath.size() > 0) {
                     filePickerViewModel.showFileUploadDialog(getActivity(), getFragmentManager(), filePath.get(0), entityId);
@@ -769,7 +775,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @TextChange(R.id.et_message)
     void onMessageEditChange(TextView tv, CharSequence text) {
 
-        boolean isEmptyText = messageListModel.isEmpty(text);
+        boolean isEmptyText = messageListModel.isEmpty(text) && stickerInfo == NULL_STICKER;
         messageListPresenter.setEnableSendButton(!isEmptyText);
 
     }
@@ -792,6 +798,19 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         } else if (messageListModel.isStickerCommentType(link.message)) {
             messageListPresenter.moveFileDetailActivity(MessageListFragment.this, link.message
                     .feedbackId, roomId);
+        }
+    }
+
+    @OnActivityResult(TopicDetailActivity.REQUEST_DETAIL)
+    void onTopicDetailResult(int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        boolean leave = data.getBooleanExtra(TopicDetailActivity.EXTRA_LEAVE, false);
+
+        if (leave) {
+            getActivity().finish();
         }
     }
 
@@ -821,8 +840,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         if (link.message instanceof ResMessages.TextMessage) {
             ResMessages.TextMessage textMessage = (ResMessages.TextMessage) link.message;
+            boolean isDirectMessage = messageListModel.isDirectMessage(entityType);
             boolean isMyMessage = messageListModel.isMyMessage(textMessage.writerId) && !isFromSearch;
-            messageListPresenter.showMessageMenuDialog(isMyMessage, textMessage);
+            messageListPresenter.showMessageMenuDialog(isDirectMessage, isMyMessage, textMessage);
         } else if (messageListModel.isCommentType(link.message)) {
             messageListPresenter.showMessageMenuDialog(((ResMessages.CommentMessage) link.message));
         } else if (messageListModel.isFileType(link.message)) {
@@ -1217,8 +1237,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 checkAnnouncementExistsAndCreate(event.getMessageId());
                 break;
             case DELETE:
-                messageListPresenter.showProgressWheel();
-                announcementModel.deleteAnnouncement(teamId, roomId);
+                deleteAnnouncement();
                 break;
         }
     }
@@ -1226,6 +1245,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     @Background
     void checkAnnouncementExistsAndCreate(int messageId) {
         ResAnnouncement announcement = announcementModel.getAnnouncement(teamId, roomId);
+
         if (announcement == null || announcement.isEmpty()) {
             createAnnouncement(messageId);
             return;
@@ -1234,9 +1254,27 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         announcementViewModel.showCreateAlertDialog((dialog, which) -> createAnnouncement(messageId));
     }
 
-    private void createAnnouncement(int messageId) {
+    @Background
+    void createAnnouncement(int messageId) {
+
         messageListPresenter.showProgressWheel();
         announcementModel.createAnnouncement(teamId, roomId, messageId);
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            getAnnouncement();
+        }
+    }
+
+    @Background
+    void deleteAnnouncement() {
+        messageListPresenter.showProgressWheel();
+        announcementModel.deleteAnnouncement(teamId, roomId);
+
+        boolean isSocketConnected = JandiSocketManager.getInstance().isConnectingOrConnected();
+        if (!isSocketConnected) {
+            getAnnouncement();
+        }
     }
 
     @Override

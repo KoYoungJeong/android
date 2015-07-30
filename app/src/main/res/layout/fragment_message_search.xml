@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list_search_messages"
@@ -10,7 +10,7 @@
         android:clipToPadding="false"
         android:paddingBottom="24dp"
         android:paddingTop="112dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"/>
 
     <LinearLayout
         android:id="@+id/layout_search_scope"
@@ -31,16 +31,15 @@
                 android:id="@+id/txt_search_scope_where"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableRight="@drawable/jandi_arrow_down"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:text="@string/jandi_file_category_everywhere"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/jandi_arrow_down" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
 
@@ -55,16 +54,15 @@
                 android:id="@+id/txt_search_scope_who"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:drawablePadding="3dp"
+                android:drawableRight="@drawable/jandi_arrow_down"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
                 android:text="@string/jandi_file_category_everyone"
                 android:textColor="@color/white"
                 android:textSize="@dimen/jadi_search_scope_txt_size"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/jandi_arrow_down" />
+                android:textStyle="bold"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -78,6 +76,6 @@
         android:layout_marginBottom="20dp"
         android:background="@drawable/bg_circle_white"
         android:indeterminate="true"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
 </RelativeLayout>
