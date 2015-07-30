@@ -15,20 +15,14 @@
         android:background="@drawable/unread_message_marker_bg"
         android:gravity="center">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="centerInside"
-            android:src="@drawable/unread_message_marker_check"/>
-
         <TextView
             android:id="@+id/tv_message_last_read"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:textSize="11sp"
+            android:text="@string/jandi_unread_messages_below"
             android:textColor="@color/text_color_gray"
-            android:text="@string/jandi_unread_messages_below"/>
+            android:textSize="11sp"/>
     </LinearLayout>
 
 </merge>
