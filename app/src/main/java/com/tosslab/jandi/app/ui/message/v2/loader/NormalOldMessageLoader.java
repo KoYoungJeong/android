@@ -95,8 +95,9 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             } else if (oldMessage.records.size() < itemCount) {
                 try {
                     // 캐시된 데이터가 부족한 경우
+                    ResMessages.Link firstLink = oldMessage.records.get(oldMessage.records.size() - 1);
                     ResMessages addOldMessage =
-                            messageListModel.getOldMessage(oldMessage.records.get(0).id, itemCount);
+                            messageListModel.getOldMessage(firstLink.id, itemCount);
 
                     messageListModel.upsertMessages(addOldMessage);
 
