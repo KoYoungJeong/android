@@ -43,7 +43,8 @@ public class JandiSocketService extends Service {
     private BroadcastReceiver connectReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            LogUtil.e(TAG, "Received connect status has changed. isRegister ? - " + isRegister);
+            LogUtil.i(TAG, "Received connect status has changed. isRegister ? - " + isRegister);
+
             if (isRegister) {
                 isRegister = false;
                 return;
@@ -85,6 +86,9 @@ public class JandiSocketService extends Service {
 
         jandiSocketServiceModel = new JandiSocketServiceModel(JandiSocketService.this);
         jandiSocketManager = JandiSocketManager.getInstance();
+
+        IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
+        registerReceiver(connectReceiver, filter);
     }
 
     @Override
@@ -110,9 +114,6 @@ public class JandiSocketService extends Service {
         setUpSocketListener();
 
         isRunning = true;
-
-        IntentFilter filter = new IntentFilter(ACTION_CONNECTIVITY_CHANGE);
-        registerReceiver(connectReceiver, filter);
         return START_NOT_STICKY;
     }
 
@@ -238,6 +239,7 @@ public class JandiSocketService extends Service {
         try {
             unregisterReceiver(connectReceiver);
         } catch (IllegalArgumentException e) {
+            LogUtil.e("unregister receiver fail. - " + e.getMessage());
             Crashlytics.log(Log.WARN
                     , "Socket Service"
                     , "Socket Connect Receiver was unregisted : " + e.getMessage());

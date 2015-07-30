@@ -67,7 +67,6 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.ProgressWheel;
-import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterTextChange;
 import org.androidannotations.annotations.AfterViews;
@@ -95,7 +94,10 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
     private static final StickerInfo NULL_STICKER = new StickerInfo();
     @Extra
-    public int fileId;
+    int fileId;
+
+    @Extra
+    int roomId = -1;
 
     @Bean
     FileDetailModel fileDetailModel;
@@ -138,6 +140,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         setUpActionBar();
 
         addFileDetailViewAsListviewHeader();
+        fileHeadManager.setRoomId(roomId);
 
         progressWheel = new ProgressWheel(this);
 
@@ -658,6 +661,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setCancelable(false);
         }
 
         if (progressDialog.isShowing()) {
@@ -689,8 +693,11 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
 
         showDownloadProgressDialog(fileDownloadStartEvent.getFileName());
 
-        fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(), fileDownloadStartEvent.getFileName(),
-                fileDownloadStartEvent.getFileType(), progressDialog);
+        fileDetailPresenter.downloadFile(fileDownloadStartEvent.getUrl(),
+                fileDownloadStartEvent.getFileName(),
+                fileDownloadStartEvent.getFileType(),
+                fileDownloadStartEvent.getExt(),
+                progressDialog);
     }
 
     @UiThread
@@ -703,6 +710,7 @@ public class FileDetailActivity extends BaseAnalyticsActivity implements FileDet
         intent.setDataAndType(Uri.fromFile(file), getFileType(file, fileType));
         try {
             startActivity(intent);
+            ColoredToast.show(FileDetailActivity.this, file.getPath());
         } catch (ActivityNotFoundException e) {
             String rawString = getString(R.string.err_unsupported_file_type);
             String formatString = String.format(rawString, file);

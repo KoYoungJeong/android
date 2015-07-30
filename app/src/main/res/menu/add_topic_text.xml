@@ -6,8 +6,9 @@
         android:enabled="false"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="@string/jandi_add"
-        app:showAsAction="always"/>
+        android:title="@string/jandi_confirm"
+        app:showAsAction="always"
+        app:title="@string/jandi_confirm"/>
 
 
 </menu>

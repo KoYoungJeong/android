@@ -273,6 +273,7 @@ All of your content is stored and indexed automatically so you can easily find w
     <string name="jandi_no_invite_email">"Provide the email addresses of the team members you want to invite"</string>
     <string name="jandi_invite_success">"Invitation has been sent successfully"</string>
     <string name="jandi_duplicate_email">"That email is already registered"</string>
+    <string name="jandi_already_in_team">"This email is already a member of %s"</string>
     <string name="jandi_error_web_token">"We encountered an issue during sign in. Please try again."</string>
     <string name="jandi_success_web_token">"Sign-in was successful"</string>
     <string name="jandi_fail_web_token">"We were unable to sign you in automatically. Please try the process manually."</string>
@@ -400,5 +401,52 @@ Contact us at support@tosslab.com"</string>
     <string name="jandI_select_gallery">"Select Pictures"</string>
     <string name="jandi_view_all">"View All"</string>
     <string name="jandi_select_maximum_10">"You can select up to 10 photos."</string>
-    <string name="jandi_decide_choose">"Select Photos"</string>
+    <string name="jandi_decide_choose">"Select"</string>
+    <string name="jandi_input_topic_name">"Enter the topic name"</string>
+
+    <string name="jandi_title_name_required">"Name*"</string>
+    <string name="jandi_is_topic_required">"Type*"</string>
+    <string name="jandi_topic_description">"Topic description"</string>
+    <string name="jandi_explain_topic_description">"Description (optional)"</string>
+    <string name="jandi_topic_leave">"Leave topic"</string>
+    <string name="jandi_topic_delete">"Delete topic"</string>
+    <string name="jandi_topic_detail">"Topic Info"</string>
+    <string name="jandi_chat_detail">"Chat setting"</string>
+    <string name="jandi_it_has_no_topic_description">"(There is no topic description)"</string>
+    <string name="jandi_plz_input_topic_description">"Description (optional)"</string>
+    <string name="jandi_save">"Save"</string>
+
+    <!-- tutorial -->
+    <string name="jandi_coach_mark_search_message">Search for messages</string>
+    <string name="jandi_coach_mark_create_new_topics">Create new topics</string>
+
+    <string name="jandi_coach_mark_topic_list_welcome">Welcome!</string>
+    <string name="jandi_coach_mark_topic_list_explain1">Use Topics to organize your</string>
+    <string name="jandi_coach_mark_topic_list_explain2">conversations and files around</string>
+    <string name="jandi_coach_mark_topic_list_explain3">projects and departments.</string>
+
+    <string name="jandi_coach_mark_topic_explain1">Instantly send messages and</string>
+    <string name="jandi_coach_mark_topic_explain2">files to members of this topic</string>
+
+    <string name="jandi_coach_mark_topic_message_search">Message\nsearch</string>
+    <string name="jandi_coach_mark_topic_file_search">File drawer\nand search</string>
+    <string name="jandi_coach_mark_topic_setting">Topic info and settings\n(eg invite,\nleave, rename)</string>
+    <string name="jandi_coach_mark_upload_file">Upload files</string>
+    <string name="jandi_coach_mark_stickers">Stickers</string>
+
+    <string name="jandi_coach_mark_filelist_search">Search by keyword</string>
+    <string name="jandi_coach_mark_filelist_sort">Search by conversation, uploader, or file type</string>
+    <string name="jandi_coach_mark_filelist_explain1">Access all of your files</string>
+    <string name="jandi_coach_mark_filelist_explain2"> in one place in the JANDI file drawer (tab)</string>
+
+    <string name="jandi_coach_mark_directmessage_explain1">You can find all of</string>
+    <string name="jandi_coach_mark_directmessage_explain2">your 1:1 conversations here</string>
+    <string name="jandi_coach_mark_directmessage_choose_member">Choose a team member\nto start messaging</string>
+
+    <string name="jandi_coach_mark_more_profile">Edit your\nprofile</string>
+    <string name="jandi_coach_mark_more_members">View the list of\nall members</string>
+    <string name="jandi_coach_mark_more_invite">Invite team\nmembers\nby email or\nwith your favorite\nmessaging app!</string>
+    <string name="jandi_coach_mark_more_explain1">Here is your Settings menu.</string>
+    <string name="jandi_coach_mark_more_explain2">Don\'t forget to invite</string>
+    <string name="jandi_coach_mark_more_explain3">your team members!</string>
 </resources>

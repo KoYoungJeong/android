@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.members;
 
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +12,11 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.invites.InvitationDialogExecutor;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.members.adapter.MembersAdapter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenter;
 import com.tosslab.jandi.app.ui.members.presenter.MembersListPresenterImpl;
+import com.tosslab.jandi.app.ui.message.v2.MessageListV2Activity_;
 import com.tosslab.jandi.app.utils.ProgressWheel;
 
 import org.androidannotations.annotations.AfterInject;
@@ -34,6 +37,9 @@ import java.util.List;
 
 @EActivity(R.layout.activity_topic_member)
 public class MembersListActivity extends AppCompatActivity implements MembersListPresenter.View {
+
+    public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
+    public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
     @Bean(MembersListPresenterImpl.class)
     MembersListPresenter membersListPresenter;
@@ -75,7 +81,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(
                 new ColorDrawable(getResources().getColor(android.R.color.transparent)));
-        if (type == JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
+        if (type == TYPE_MEMBERS_LIST_TEAM) {
             actionBar.setTitle(R.string.jandi_team_member);
         } else {
             actionBar.setTitle(R.string.jandi_topic_paricipants);
@@ -86,7 +92,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
-        if (type != JandiConstants.TYPE_MEMBERS_LIST_TEAM) {
+        if (type != TYPE_MEMBERS_LIST_TEAM) {
             menu.findItem(R.id.action_invitation).setVisible(false);
         }
         return true;
@@ -135,6 +141,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @Override
     public void showListMembers(List<ChatChooseItem> topicMembers) {
+        topicMembersAdapter.clear();
         topicMembersAdapter.addAll(topicMembers);
         topicMembersAdapter.notifyDataSetChanged();
     }
@@ -147,5 +154,19 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @Override
     public int getType() {
         return type;
+    }
+
+    @UiThread
+    @Override
+    public void moveDirectMessageActivity(int teamId, int userId, boolean isStarred) {
+        MessageListV2Activity_.intent(MembersListActivity.this)
+                .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .teamId(teamId)
+                .entityType(JandiConstants.TYPE_DIRECT_MESSAGE)
+                .roomId(-1)
+                .entityId(userId)
+                .isFavorite(isStarred)
+                .isFromPush(false)
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
 }

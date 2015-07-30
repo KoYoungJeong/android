@@ -20,7 +20,7 @@
     <dimen name="jandi_entity_item_icon">43dp</dimen>
     <dimen name="jandi_entity_item_icon_margin_left">15dp</dimen>
     <dimen name="jandi_entity_item_height">72dp</dimen>
-    <dimen name="jandi_entity_item_title_font">16sp</dimen>
+    <dimen name="jandi_entity_item_title_font">17sp</dimen>
     <dimen name="jandi_entity_item_title_margin_left">75dp</dimen>
     <dimen name="jandi_entity_item_title_margin_bottom">6dp</dimen>
     <dimen name="jandi_entity_item_subtitle_font">13dp</dimen>
@@ -50,6 +50,7 @@
     <!--// 댓글-->
     <dimen name="jandi_messages_comment_name">14sp</dimen>
     <dimen name="jandi_messages_comment">12sp</dimen>
+    <dimen name="jandi_messages_file_name">17sp</dimen>
 
 
     <!-- File Detail -->
@@ -118,6 +119,16 @@
     <dimen name="jandi_sticker_view_pager_padding">15dp</dimen>
     <dimen name="jandi_view_pager_indicator_margin">8dp</dimen>
     <dimen name="jandi_view_pager_indicator_size">6dp</dimen>
+
+    <!--이미지 슬라이드 -->
+    <dimen name="jandi_carousel_file_writer_txt">14sp</dimen>
+    <dimen name="jandi_carousel_file_create_time_txt">12sp</dimen>
+    <dimen name="jandi_carousel_file_name_txt">19sp</dimen>
+    <dimen name="jandi_carousel_file_size_ext_txt">12sp</dimen>
+    <dimen name="jandi_carousel_bottom_left">15dp</dimen>
+    <dimen name="jandi_carousel_bottom_height">54dp</dimen>
+    <dimen name="jandi_carousel_bottom_line_spacing">1dp</dimen>
+    <dimen name="jandi_carousel_bottom_line_spacing_date">3dp</dimen>
 
 
 </resources>

@@ -27,7 +27,7 @@ public class CollapseCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
         String message = ((ResMessages.CommentMessage) link.message).content.body;
 
         SpannableStringBuilder builder = new SpannableStringBuilder();

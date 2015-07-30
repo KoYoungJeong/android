@@ -83,7 +83,7 @@ dependencies {
     compile 'com.github.nkzawa:socket.io-client:0.5.2'
 
     // Cache
-    compile 'com.github.bumptech.glide:glide:3.6.0' // EXIF orientation 이슈 해결 된 것으로 보임.
+    compile 'com.github.bumptech.glide:glide:3.6.1' // EXIF orientation 이슈 해결 된 것으로 보임.
     compile 'com.koushikdutta.ion:ion:2.1.+'
     // Analytics & report
     compile 'com.mixpanel.android:mixpanel-android:4.5.0@aar'
@@ -120,9 +120,9 @@ android {
     defaultConfig {
         applicationId 'com.tosslab.jandi.app'
         minSdkVersion 14
-        targetSdkVersion 21
-        versionCode 55
-        versionName '1.0.7'
+        targetSdkVersion 22
+        versionCode 56
+        versionName '1.0.8'
 
         // Enabling multidex support.
         multiDexEnabled true

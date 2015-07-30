@@ -47,6 +47,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     private int teamId;
     private int roomId;
+    private int entityId;
 
     public MessageListAdapter(Context context) {
         this.context = context;
@@ -85,7 +86,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
     public void onBindViewHolder(RecyclerBodyViewHolder viewHolder, int position) {
 
         ResMessages.Link item = getItem(position);
-        viewHolder.getViewHolder().bindData(item, teamId, roomId);
+        viewHolder.getViewHolder().bindData(item, teamId, roomId, entityId);
 
         if (item.id == lastMarker) {
             if (markerAnimState == AnimState.Idle) {
@@ -437,6 +438,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<RecyclerBodyViewHol
 
     public int getRoomId() {
         return roomId;
+    }
+
+    public MessageListAdapter setEntityId(int entityId) {
+        this.entityId = entityId;
+        return this;
     }
 
     private enum MoreState {

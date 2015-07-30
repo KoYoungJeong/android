@@ -184,7 +184,7 @@ public class SignUpActivity extends AppCompatActivity {
             signUpViewModel.requestSignUpVerify(email);
         } catch (RetrofitError e) {
             signUpViewModel.dismissProgressWheel();
-
+            
             if (e.getResponse() != null) {
                 String error = new String(((TypedByteArray) e.getResponse().getBody()).getBytes());
                 if (error.contains("40001"))

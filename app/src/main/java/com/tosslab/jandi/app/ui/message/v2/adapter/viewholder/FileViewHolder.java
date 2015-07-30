@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
 import com.tosslab.jandi.app.utils.DateTransformator;
+import com.tosslab.jandi.app.utils.FileSizeUtil;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 
@@ -61,7 +62,7 @@ public class FileViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -113,7 +114,8 @@ public class FileViewHolder implements BodyViewHolder {
                 fileTypeTextView.setText("");
             } else {
                 fileNameTextView.setText(fileMessage.content.title);
-                fileTypeTextView.setText(fileMessage.content.ext);
+                fileTypeTextView.setText(FileSizeUtil.fileSizeCalculation(fileMessage.content.size)
+                        + ", " + fileMessage.content.ext);
 
                 int mimeTypeIconImage =
                         MimeTypeUtil.getMimeTypeIconImage(

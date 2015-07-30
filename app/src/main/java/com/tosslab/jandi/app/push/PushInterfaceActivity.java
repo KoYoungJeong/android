@@ -31,6 +31,8 @@ import java.util.List;
 public class PushInterfaceActivity extends AppCompatActivity {
 
     public static final String EXTRA_USED = "used";
+    // Push -> 선택된 엔티티 설정이 안됨에 따라...
+    public static int selectedEntityId;
     @Extra(JandiConstants.EXTRA_ENTITY_ID)
     int entityId;
     @Extra(JandiConstants.EXTRA_ENTITY_TYPE)
@@ -48,11 +50,13 @@ public class PushInterfaceActivity extends AppCompatActivity {
         boolean used = (getIntent().getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0;
 
         if (!used) {
+            selectedEntityId = entityId;
             checkTeamInfo();
         } else {
+            selectedEntityId = -1;
             moveIntroActivity();
+            return;
         }
-
     }
 
     @Background
@@ -115,7 +119,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
                 .entityType(entityType)
                 .isFromPush(true)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .startForResult(MainTabActivity_.REQ_START_MESSAGE);
 
         finish();
     }

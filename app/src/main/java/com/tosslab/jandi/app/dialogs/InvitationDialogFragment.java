@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
 
@@ -24,6 +23,25 @@ import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity_;
 
 
 public class InvitationDialogFragment extends DialogFragment {
+
+    public static final int TYPE_INVITATION_EMAIL = 0x01;
+    public static final int TYPE_INVITATION_KAKAO = 0x02;
+    public static final int TYPE_INVITATION_LINE = 0x03;
+    public static final int TYPE_INVITATION_WECHAT = 0x04;
+    public static final int TYPE_INVITATION_FACEBOOK_MESSENGER = 0x05;
+    public static final int TYPE_INVITATION_COPY_LINK = 0x06;
+    public static final int TYPE_INVITATION_NULL = 0x00;
+
+    public static final String INVITE_URL_KAKAO = "com.kakao.talk";
+    public static final String INVITE_URL_LINE = "jp.naver.line.android";
+    public static final String INVITE_URL_WECHAT = "com.tencent.mm";
+    public static final String INVITE_URL_FACEBOOK_MESSENGER = "com.facebook.orca";
+    public static final String INVITE_FACEBOOK_EXTRA_PROTOCOL_VERSION = "com.facebook.orca.extra.PROTOCOL_VERSION";
+    public static final String INVITE_FACEBOOK_EXTRA_APP_ID = "com.facebook.orca.extra.APPLICATION_ID";
+    public static final String INVITE_FACEBOOK_REGISTRATION_APP_ID = "808900692521335";
+    public static final int INVITE_FACEBOOK_PROTOCOL_VERSION = 20150314;
+
+    public static final String INVITE_URL_FOUND_FAIL = "invite_url_not_found";
 
     private static final String INVITE_TEAM_NAME = "invite_team_name";
     private static final String INVITATION_URL = "invite_url";
@@ -56,22 +74,22 @@ public class InvitationDialogFragment extends DialogFragment {
                         int eventType = 0;
                         switch (which) {
                             case 0:     // from email
-                                eventType = JandiConstants.TYPE_INVITATION_EMAIL;
+                                eventType = TYPE_INVITATION_EMAIL;
                                 break;
                             case 1:     // from kakao
-                                eventType = JandiConstants.TYPE_INVITATION_KAKAO;
+                                eventType = TYPE_INVITATION_KAKAO;
                                 break;
                             case 2:     // from LINE
-                                eventType = JandiConstants.TYPE_INVITATION_LINE;
+                                eventType = TYPE_INVITATION_LINE;
                                 break;
                             case 3:     // from WeChat
-                                eventType = JandiConstants.TYPE_INVITATION_WECHAT;
+                                eventType = TYPE_INVITATION_WECHAT;
                                 break;
                             case 4:     // from Facebook Messenger
-                                eventType = JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER;
+                                eventType = TYPE_INVITATION_FACEBOOK_MESSENGER;
                                 break;
                             case 5:     // from Copy Link
-                                eventType = JandiConstants.TYPE_INVITATION_COPY_LINK;
+                                eventType = TYPE_INVITATION_COPY_LINK;
                                 break;
 
                         }
@@ -90,7 +108,7 @@ public class InvitationDialogFragment extends DialogFragment {
     }
 
     private void startInvitation(int eventType) {
-        if (eventType == JandiConstants.TYPE_INVITATION_COPY_LINK) {
+        if (eventType == TYPE_INVITATION_COPY_LINK) {
             copyLink();
             showTextDialog(getActivity().getResources().getString(R.string.jandi_invite_succes_copy_link));
         } else {
@@ -112,20 +130,20 @@ public class InvitationDialogFragment extends DialogFragment {
         String packageName;
 
         switch (eventType) {
-            case JandiConstants.TYPE_INVITATION_KAKAO:
-                packageName = JandiConstants.INVITE_URL_KAKAO;
+            case TYPE_INVITATION_KAKAO:
+                packageName = INVITE_URL_KAKAO;
                 break;
-            case JandiConstants.TYPE_INVITATION_LINE:
-                packageName = JandiConstants.INVITE_URL_LINE;
+            case TYPE_INVITATION_LINE:
+                packageName = INVITE_URL_LINE;
                 break;
-            case JandiConstants.TYPE_INVITATION_WECHAT:
-                packageName = JandiConstants.INVITE_URL_WECHAT;
+            case TYPE_INVITATION_WECHAT:
+                packageName = INVITE_URL_WECHAT;
                 break;
-            case JandiConstants.TYPE_INVITATION_FACEBOOK_MESSENGER:
-                packageName = JandiConstants.INVITE_URL_FACEBOOK_MESSENGER;
+            case TYPE_INVITATION_FACEBOOK_MESSENGER:
+                packageName = INVITE_URL_FACEBOOK_MESSENGER;
                 break;
             default:
-            case JandiConstants.TYPE_INVITATION_EMAIL:
+            case TYPE_INVITATION_EMAIL:
                 return InviteEmailActivity_
                         .intent(getActivity())
                         .flags(Intent.FLAG_ACTIVITY_SINGLE_TOP).get();
@@ -135,11 +153,11 @@ public class InvitationDialogFragment extends DialogFragment {
         intent.setPackage(packageName);
         intent.putExtra(Intent.EXTRA_TEXT, getInvitationContents() + "\n" + publicLink);
         intent.setType("text/plain");
-        if (packageName.equals(JandiConstants.INVITE_URL_FACEBOOK_MESSENGER)) {
-            intent.putExtra(JandiConstants.INVITE_FACEBOOK_EXTRA_PROTOCOL_VERSION,
-                    JandiConstants.INVITE_FACEBOOK_PROTOCOL_VERSION);
-            intent.putExtra(JandiConstants.INVITE_FACEBOOK_EXTRA_APP_ID,
-                    JandiConstants.INVITE_FACEBOOK_REGISTRATION_APP_ID);
+        if (packageName.equals(INVITE_URL_FACEBOOK_MESSENGER)) {
+            intent.putExtra(INVITE_FACEBOOK_EXTRA_PROTOCOL_VERSION,
+                    INVITE_FACEBOOK_PROTOCOL_VERSION);
+            intent.putExtra(INVITE_FACEBOOK_EXTRA_APP_ID,
+                    INVITE_FACEBOOK_REGISTRATION_APP_ID);
             intent.setType("image/*");
         }
 

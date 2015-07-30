@@ -304,15 +304,19 @@ public class FileDetailPresenter {
                 return;
         }
 
-        String fileName = content.fileUrl.replace(" ", "%20");
+        String fileName = fileDetailModel.getDownloadFileName(content.title, content.ext);
 
         view.showDownloadProgressDialog(fileName);
 
-        downloadFile(BitmapUtil.getFileUrl(content.fileUrl), content.name, content.type, progressDialog);
+        downloadFile(BitmapUtil.getFileUrl(content.fileUrl),
+                content.title,
+                content.type,
+                content.ext,
+                progressDialog);
     }
 
     @Background
-    public void downloadFile(String url, String fileName, final String fileType, ProgressDialog progressDialog) {
+    public void downloadFile(String url, String fileName, final String fileType, String ext, ProgressDialog progressDialog) {
         try {
             File result = fileDetailModel.download(url, fileName, fileType, progressDialog);
 

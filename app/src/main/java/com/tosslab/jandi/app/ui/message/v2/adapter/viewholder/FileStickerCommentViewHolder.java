@@ -15,7 +15,6 @@ import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 import com.tosslab.jandi.app.network.models.ResMessages;
-import com.tosslab.jandi.app.ui.photo.PhotoViewActivity_;
 import com.tosslab.jandi.app.ui.sticker.StickerManager;
 import com.tosslab.jandi.app.utils.BitmapUtil;
 import com.tosslab.jandi.app.utils.DateTransformator;
@@ -64,7 +63,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
     }
 
     @Override
-    public void bindData(ResMessages.Link link, int teamId, int roomId) {
+    public void bindData(ResMessages.Link link, int teamId, int roomId, int entityId) {
 
         int fromEntityId = link.fromEntity;
 
@@ -122,6 +121,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
 
                 fileNameTextView.setText(R.string.jandi_deleted_file);
+                fileImageView.setBackgroundDrawable(null);
                 fileImageView.setVisibility(View.VISIBLE);
                 fileImageView.setOnClickListener(null);
             } else {
@@ -145,6 +145,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 int mimeTypeIconImage =
                                         MimeTypeUtil.getMimeTypeIconImage(
                                                 content.serverUrl, content.icon);
+                                fileImageView.setBackgroundDrawable(null);
                                 fileImageView.setImageResource(mimeTypeIconImage);
                                 fileImageView.setOnClickListener(view -> {
                                     Intent intent = new Intent(Intent.ACTION_VIEW,
@@ -155,6 +156,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                 });
                                 break;
                             default:
+                                fileImageView.setBackgroundResource(R.drawable.jandi_message_image_frame);
                                 Ion.with(fileImageView)
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)
@@ -162,22 +164,16 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                         .fitCenter()
                                         .load(thumbnailUrl);
 
-                                String optimizedUrl =
-                                        BitmapUtil.getOptimizedImageUrl(context, content);
-                                fileImageView.setOnClickListener(view -> PhotoViewActivity_
-                                        .intent(fileImageView.getContext())
-                                        .imageUrl(optimizedUrl)
-                                        .imageName(content.name)
-                                        .imageType(content.type)
-                                        .start());
                                 break;
                         }
 
                     } else {
+                        fileImageView.setBackgroundDrawable(null);
                         fileImageView.setImageResource(
                                 MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                     }
                 } else {
+                    fileImageView.setBackgroundDrawable(null);
                     fileImageView.setImageResource(
                             MimeTypeUtil.getMimeTypeIconImage(content.serverUrl, content.icon));
                 }

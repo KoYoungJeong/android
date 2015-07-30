@@ -53,22 +53,24 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().getInfosForSideMenuByMainRest(selectedTeamId);
     }
 
-    public ResCommon createPublicTopic(String entityName) throws RetrofitError {
+    public ResCommon createPublicTopic(String entityName, String topicDescription) throws RetrofitError {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
+        reqCreateTopic.description = topicDescription;
         return RequestApiManager.getInstance().createChannelByChannelApi(reqCreateTopic);
     }
 
-    public ResCommon createPrivateGroup(String entityName) throws RetrofitError {
+    public ResCommon createPrivateGroup(String entityName, String topicDescription) throws RetrofitError {
         final ReqCreateTopic reqCreateTopic = new ReqCreateTopic();
         reqCreateTopic.teamId = selectedTeamId;
         reqCreateTopic.name = entityName;
+        reqCreateTopic.description = topicDescription;
         return RequestApiManager.getInstance().createPrivateGroupByGroupApi(reqCreateTopic);
     }
 
-    public ResCommon joinChannel(final ResLeftSideMenu.Channel channel) throws RetrofitError {
-        return RequestApiManager.getInstance().joinTopicByChannelApi(channel.id, new ReqDeleteTopic(selectedTeamId));
+    public ResCommon joinChannel(int id) throws RetrofitError {
+        return RequestApiManager.getInstance().joinTopicByChannelApi(id, new ReqDeleteTopic(selectedTeamId));
     }
 
     public ResCommon leaveChannel(final int id) throws RetrofitError {
@@ -209,4 +211,17 @@ public class EntityClientManager {
         return RequestApiManager.getInstance().deleteFileByFileApi(selectedTeamId, fileId);
     }
 
+    public ResCommon modifyChannelDescription(int entityId, String description) throws RetrofitError {
+        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        entityInfo.teamId = selectedTeamId;
+        entityInfo.description = description;
+        return RequestApiManager.getInstance().modifyPublicTopicNameByChannelApi(entityInfo, entityId);
+    }
+
+    public ResCommon modifyPrivateGroupDescription(int entityId, String description) throws RetrofitError {
+        final ReqCreateTopic entityInfo = new ReqCreateTopic();
+        entityInfo.teamId = selectedTeamId;
+        entityInfo.description = description;
+        return RequestApiManager.getInstance().modifyGroupByGroupApi(entityInfo, entityId);
+    }
 }

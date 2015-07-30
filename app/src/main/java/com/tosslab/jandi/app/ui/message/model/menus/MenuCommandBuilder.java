@@ -1,5 +1,6 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -15,6 +16,7 @@ public class MenuCommandBuilder {
     private AppCompatActivity activity;
     private EntityClientManager mEntityClientManager;
     private ChattingInfomations chattingInfomations;
+    private Fragment fragment;
 
     public MenuCommandBuilder(AppCompatActivity activity) {
         this.activity = activity;
@@ -68,8 +70,14 @@ public class MenuCommandBuilder {
                 SearchMenuCommand command = SearchMenuCommand_.getInstance_(activity);
                 command.setEntityId(chattingInfomations.entityId);
                 return command;
+            case R.id.action_entity_more:
+                return new TopicDetailCommand(fragment, chattingInfomations.entityId);
         }
         return null;
     }
 
+    public MenuCommandBuilder with(Fragment fragment) {
+        this.fragment = fragment;
+        return this;
+    }
 }

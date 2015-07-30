@@ -1,5 +1,8 @@
 package com.tosslab.jandi.app.ui.maintab.chat.adapter;
 
+import android.animation.Animator;
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +16,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.profile.ProfileDetailEvent;
 import com.tosslab.jandi.app.ui.maintab.chat.to.ChatItem;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
+import com.tosslab.jandi.app.views.listeners.SimpleEndAnimatorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +31,8 @@ public class MainChatListAdapter extends BaseAdapter {
     private Context context;
 
     private List<ChatItem> entities;
+    private int selectedEntity = -1;
+    private AnimStatus animStatus = AnimStatus.READY;
 
     public MainChatListAdapter(Context context) {
         this.context = context;
@@ -55,10 +61,12 @@ public class MainChatListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_chat_list, parent, false);
             viewHolder = new ViewHolder();
+            viewHolder.selector = convertView.findViewById(R.id
+                    .view_entity_listitem_selector);
             viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
             viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
             viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_additional);
+            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
             viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
             viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
             viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
@@ -104,6 +112,26 @@ public class MainChatListAdapter extends BaseAdapter {
 
         }
 
+        if (item.getEntityId() == selectedEntity && animStatus == AnimStatus.READY) {
+            animStatus = AnimStatus.IN_ANIM;
+            Integer colorFrom = context.getResources().getColor(R.color.transparent);
+            Integer colorTo = context.getResources().getColor(R.color.jandi_accent_color_50);
+            final ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.setDuration(context.getResources().getInteger(R.integer.highlight_animation_time));
+            colorAnimation.setRepeatMode(ValueAnimator.REVERSE);
+            colorAnimation.setRepeatCount(1);
+            colorAnimation.addUpdateListener(animator -> viewHolder.selector.setBackgroundColor((Integer)
+                    animator.getAnimatedValue()));
+
+            colorAnimation.addListener(new SimpleEndAnimatorListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    animStatus = AnimStatus.FINISH;
+                }
+            });
+            colorAnimation.start();
+        }
+
         viewHolder.imageViewIcon.setOnClickListener(getProfileClickListener(item.getEntityId()));
         viewHolder.imageViewIcon.setImageResource(R.drawable.jandi_profile);
         Ion.with(viewHolder.imageViewIcon)
@@ -131,6 +159,21 @@ public class MainChatListAdapter extends BaseAdapter {
         return entities;
     }
 
+    public void setSelectedEntity(int selectedEntity) {
+        this.selectedEntity = selectedEntity;
+        animStatus = AnimStatus.IDLE;
+    }
+
+    public void startAnimation() {
+        if (animStatus == AnimStatus.IDLE) {
+            animStatus = AnimStatus.READY;
+        }
+    }
+
+    private enum AnimStatus {
+        IDLE, READY, IN_ANIM, FINISH
+    }
+
     static class ViewHolder {
         public Context context;
         public ImageView imageViewIcon;
@@ -141,6 +184,7 @@ public class MainChatListAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
+        public View selector;
     }
 
 }
