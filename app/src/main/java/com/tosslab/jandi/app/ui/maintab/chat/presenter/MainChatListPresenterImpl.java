@@ -56,7 +56,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         if (!view.hasChatItems()) {
             List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
-            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, savedChatList);
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+                    savedChatList);
             view.setChatItems(chatItems);
         }
 
@@ -67,7 +68,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
             mainChatListModel.saveChatList(teamId, chatList);
-            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, chatList);
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+                    chatList);
             view.setChatItems(chatItems);
 
             view.setSelectedItem(selectedEntity);
