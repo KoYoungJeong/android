@@ -6,7 +6,7 @@
         android:id="@+id/action_confirm"
         android:orderInCategory="100"
         android:showAsAction="always"
-        android:title="@string/jandi_decide_choose"
+        android:title="@string/jandi_upload"
         app:showAsAction="always"/>
 
 </menu>

@@ -14,6 +14,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.entities.MainSelectTopicEvent;
 import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
 import com.tosslab.jandi.app.services.socket.to.SocketMessageEvent;
+import com.tosslab.jandi.app.ui.maintab.MainTabActivity;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.adapter.TopicRecyclerStickyHeaderAdapter;
 import com.tosslab.jandi.app.ui.maintab.topic.create.TopicCreateActivity_;
@@ -76,6 +77,16 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        btnFA.setAnimation(null);
+        btnFA.setVisibility(View.VISIBLE);
+
+        topicListAdapter.startAnimation();
+        mainTopicListPresenter.onRefreshTopicList();
+    }
+
+    @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
@@ -125,6 +136,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
 
     }
 
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     @Override
     public void setEntities(Observable<Topic> joinTopics, Observable<Topic> unjoinTopics) {
 
@@ -175,7 +187,7 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
                 .teamId(teamId)
                 .roomId(entityId)
                 .isFavorite(starred)
-                .start();
+                .startForResult(MainTabActivity.REQ_START_MESSAGE);
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -278,7 +290,6 @@ public class MainTopicListFragment extends Fragment implements MainTopicListPres
         }
 
         mainTopicListPresenter.onNewMessage(event);
-
 
     }
 }

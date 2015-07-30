@@ -29,6 +29,7 @@ import com.tosslab.jandi.app.push.to.PushTO;
 import com.tosslab.jandi.app.utils.BadgeUtils;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.parse.ParseUpdateUtil;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -168,7 +169,7 @@ public class JandiPushReceiverModel {
 
         builder.setDefaults(led | sound | vibrate);
         builder.setSmallIcon(R.drawable.jandi_icon_push_notification);
-        builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setAutoCancel(true);
         builder.setNumber(JandiPreference.getBadgeCount(context));
 
@@ -195,10 +196,10 @@ public class JandiPushReceiverModel {
     }
 
     public boolean isPushOn() {
-        if (JandiConstants.PARSE_ACTIVATION_OFF.equals(
+        if (ParseUpdateUtil.PARSE_ACTIVATION_OFF.equals(
                 ParseInstallation
                         .getCurrentInstallation()
-                        .getString(JandiConstants.PARSE_ACTIVATION))) {
+                        .getString(ParseUpdateUtil.PARSE_ACTIVATION))) {
             return false;
         }
 

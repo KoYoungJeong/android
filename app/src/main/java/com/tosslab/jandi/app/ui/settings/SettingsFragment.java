@@ -11,7 +11,6 @@ import android.preference.PreferenceScreen;
 import android.text.TextUtils;
 
 import com.parse.ParseInstallation;
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.SignOutEvent;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
@@ -167,7 +166,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     void onPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_ON);
+        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_ON);
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {
@@ -179,7 +178,7 @@ public class SettingsFragment extends PreferenceFragment {
 
     void offPushNotification() {
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-        installation.put(JandiConstants.PARSE_ACTIVATION, JandiConstants.PARSE_ACTIVATION_OFF);
+        installation.put(ParseUpdateUtil.PARSE_ACTIVATION, ParseUpdateUtil.PARSE_ACTIVATION_OFF);
         installation.saveEventually(e -> {
             Activity activity = getActivity();
             if (activity != null && !(activity.isFinishing())) {

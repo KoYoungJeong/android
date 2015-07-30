@@ -2,6 +2,7 @@ package com.tosslab.jandi.app.ui.invites.email.presenter;
 
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.ui.invites.email.InviteEmailActivity;
 import com.tosslab.jandi.app.ui.invites.email.model.InviteEmailModel;
@@ -72,7 +73,11 @@ public class InviteEmailPresenterImpl implements InviteEmailPresenter {
                 view.moveToSelection(0);
                 emailSendingSubject.onNext(emailVO);
             } else {
-                view.showToast(view.getString(R.string.jandi_duplicate_email));
+
+                String teamName = inviteModel.getCurrentTeamName();
+
+                view.showToast(JandiApplication.getContext().getString(R.string
+                        .jandi_already_in_team, teamName));
             }
         } else {
             view.showToast(view.getString(R.string.jandi_invitation_succeed));

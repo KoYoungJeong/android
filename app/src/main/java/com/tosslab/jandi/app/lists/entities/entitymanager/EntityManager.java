@@ -274,7 +274,7 @@ public class EntityManager {
         return new FormattedEntity(mMe);
     }
 
-    public String getDistictId() {
+    public String  getDistictId() {
         // FIXME Why null???
         if (mMe != null && mMyTeam != null) {
             return mMe.id + "-" + mMyTeam.id;

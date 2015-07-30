@@ -100,7 +100,7 @@
 
         <Button
             android:id="@+id/btn_file_detail_send_comment"
-            style="@style/JandiChat.Button.Dynamic"
+            style="@style/JandiChat.Button"
             android:layout_alignBottom="@+id/et_file_detail_comment"
             android:layout_alignParentRight="true"
             android:layout_alignTop="@+id/et_file_detail_comment"

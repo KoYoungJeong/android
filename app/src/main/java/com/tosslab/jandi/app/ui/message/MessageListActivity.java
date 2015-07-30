@@ -42,6 +42,7 @@ import com.tosslab.jandi.app.events.messages.ConfirmCopyMessageEvent;
 import com.tosslab.jandi.app.events.messages.ConfirmDeleteMessageEvent;
 import com.tosslab.jandi.app.events.messages.RefreshOldMessageEvent;
 import com.tosslab.jandi.app.events.messages.RequestDeleteMessageEvent;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
@@ -823,21 +824,21 @@ public class MessageListActivity extends BaseAnalyticsActivity {
     public void onEvent(RequestFileUploadEvent event) {
         Intent intent;
         switch (event.type) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
                 LogUtil.i("RequestFileUploadEvent : from gallery");
                 // Gallery
                 intent = new Intent(Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 intent.setType("image/*");
-                startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+                startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
                 break;
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
                 getPictureFromCamera();
                 break;
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
                 LogUtil.i("RequestFileUploadEvent : from explorer");
                 intent = new Intent(mContext, FileExplorerActivity.class);
-                startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+                startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_EXPLORER);
                 break;
             default:
                 break;
@@ -853,9 +854,9 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
         String realFilePath;
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
 
                 if (resultCode == RESULT_OK) {
                     realFilePath = FileUploadUtil.getUploadFilePathFromActivityResult(mContext, requestCode, data, mImageUriFromCamera);
@@ -932,7 +933,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         mImageUriFromCamera = FileUploadUtil.createCacheFile(this);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUriFromCamera);
-        startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+        startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
     /**

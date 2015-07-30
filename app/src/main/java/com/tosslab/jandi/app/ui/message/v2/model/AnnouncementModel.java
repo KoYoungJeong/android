@@ -58,7 +58,6 @@ public class AnnouncementModel {
         return announcement;
     }
 
-    @Background
     public void createAnnouncement(int teamId, int topicId, int messageId) {
         try {
             ReqCreateAnnouncement reqCreateAnnouncement = new ReqCreateAnnouncement(messageId);
@@ -82,7 +81,6 @@ public class AnnouncementModel {
         }
     }
 
-    @Background
     public void deleteAnnouncement(int teamId, int topicId) {
         try {
             ResCommon resCommon = RequestApiManager.getInstance().deleteAnnouncement(teamId, topicId);

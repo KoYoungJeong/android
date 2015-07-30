@@ -10,18 +10,21 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.DeleteTopicDialogFragment;
 import com.tosslab.jandi.app.dialogs.EditTextDialogFragment;
 import com.tosslab.jandi.app.events.entities.ConfirmDeleteTopicEvent;
 import com.tosslab.jandi.app.events.entities.ConfirmModifyTopicEvent;
 import com.tosslab.jandi.app.events.entities.InvitationSuccessEvent;
+import com.tosslab.jandi.app.events.entities.RetrieveTopicListEvent;
+import com.tosslab.jandi.app.events.entities.TopicDeleteEvent;
 import com.tosslab.jandi.app.events.entities.TopicInfoUpdateEvent;
 import com.tosslab.jandi.app.events.entities.TopicLeaveEvent;
+import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.MembersListActivity_;
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
 import com.tosslab.jandi.app.ui.message.detail.edit.TopicDescriptionEditActivity;
@@ -39,7 +42,6 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.FragmentArg;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
-import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -49,7 +51,6 @@ import de.greenrobot.event.EventBus;
  * Created by Steve SeongUg Jung on 15. 7. 9..
  */
 @EFragment(R.layout.fragment_topic_detail)
-@OptionsMenu(R.menu.topic_detail)
 public class TopicDetailFragment extends Fragment implements TopicDetailPresenter.View {
 
     @FragmentArg
@@ -107,6 +108,12 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        getActivity().getMenuInflater().inflate(R.menu.topic_detail, menu);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
@@ -133,8 +140,18 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
                 , event.topicType);
     }
 
-    public void onEvent(TopicInfoUpdateEvent event) {
+    public void onEventMainThread(TopicInfoUpdateEvent event) {
         topicDetailPresenter.onInit(getActivity(), entityId);
+    }
+
+    public void onEventMainThread(RetrieveTopicListEvent event) {
+        topicDetailPresenter.onInit(getActivity(), entityId);
+    }
+
+    public void onEventMainThread(TopicDeleteEvent event) {
+        if (event.getId() == entityId) {
+            leaveTopic();
+        }
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
@@ -166,7 +183,7 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     void onTopicParticipantsClick() {
         MembersListActivity_.intent(getActivity())
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .type(JandiConstants.TYPE_MEMBERS_LIST_TOPIC)
+                .type(MembersListActivity.TYPE_MEMBERS_LIST_TOPIC)
                 .entityId(entityId)
                 .start();
     }

@@ -65,6 +65,7 @@ import retrofit.RetrofitError;
 public class MainTabActivity extends BaseAnalyticsActivity {
 
     public static final int CHAT_INDEX = 1;
+    public static final int REQ_START_MESSAGE = 1211;
     @Bean
     EntityClientManager entityClientManager;
     @Bean

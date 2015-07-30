@@ -15,6 +15,7 @@ import com.koushikdutta.ion.builder.Builders;
 import com.koushikdutta.ion.future.ResponseFuture;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.JandiConstantsForFlavors;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -48,7 +49,7 @@ public class FilePickerModel {
     public String getFilePath(Context context, int requestCode, Intent intent, File filePath) {
         String realFilePath;
         switch (requestCode) {
-            case JandiConstants.TYPE_UPLOAD_GALLERY:
+            case FilePickerViewModel.TYPE_UPLOAD_GALLERY:
 
                 if (intent == null) {
                     return "";
@@ -63,7 +64,7 @@ public class FilePickerModel {
                     return "";
                 }
 
-            case JandiConstants.TYPE_UPLOAD_TAKE_PHOTO:
+            case FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO:
                 if (filePath == null) {
                     LogUtil.e("filePath object is null...");
                     return "";
@@ -75,7 +76,7 @@ public class FilePickerModel {
 
                 return filePath.getAbsolutePath();
 
-            case JandiConstants.TYPE_UPLOAD_EXPLORER:
+            case FilePickerViewModel.TYPE_UPLOAD_EXPLORER:
 
                 realFilePath = intent.getStringExtra("GetPath") + File.separator + intent.getStringExtra("GetFileName");
                 return realFilePath;
@@ -86,38 +87,38 @@ public class FilePickerModel {
 
     public void openExplorerForActivityResult(Fragment fragment) {
         Intent intent = new Intent(fragment.getActivity(), FileExplorerActivity.class);
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_EXPLORER);
     }
 
     public void openExplorerForActivityResult(Activity activity) {
         Intent intent = new Intent(activity, FileExplorerActivity.class);
-        activity.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+        activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_EXPLORER);
     }
 
     public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
     public void openCameraForActivityResult(Activity activity, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        activity.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+        activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
     public void openAlbumForActivityResult(Fragment fragment) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
     public void openAlbumForActivityResult(Activity activity) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        activity.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+        activity.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
     public boolean isOverSize(String... realFilePath) {
