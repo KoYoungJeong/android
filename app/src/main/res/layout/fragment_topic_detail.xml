@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -135,6 +135,46 @@
                     android:text="@string/jandi_invite_member_to_topic"
                     android:textColor="@color/jandi_text"
                     android:textSize="@dimen/jandi_text_size_large"/>
+
+            </LinearLayout>
+
+            <View
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/account_home_divide_line"/>
+
+            <LinearLayout
+                android:id="@+id/vg_topic_detail_set_push"
+                style="@style/JandiTopicDetail.Layout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_topic_detail_set_push"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/jandi_turn_off_topic_push"
+                    android:textColor="@color/jandi_text"
+                    android:textSize="@dimen/jandi_text_size_large"/>
+
+                <FrameLayout
+                    android:layout_width="51dp"
+                    android:layout_height="wrap_content">
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/switch_topic_detail_set_push"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:checked="true"
+                        android:clickable="false"
+                        android:src="@drawable/jandi_topic_starred_status"/>
+                </FrameLayout>
 
             </LinearLayout>
 

@@ -56,6 +56,7 @@ import com.tosslab.jandi.app.network.models.ReqUnshareMessage;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
 import com.tosslab.jandi.app.network.models.ReqUpdatePrimaryEmailInfo;
 import com.tosslab.jandi.app.network.models.ReqUpdateProfile;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccessToken;
 import com.tosslab.jandi.app.network.models.ResAccountActivate;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
@@ -552,6 +553,11 @@ public class RequestApiManager implements IAccountDeviceApiAuth, IAccountEmailsA
     @Override
     public ResMessages.OriginalMessage getMessage(int teamId, int messageId) throws RetrofitError {
         return requestApiExecute(RestApiLoader.getInstance().loadGetMessage(teamId, messageId));
+    }
+
+    @Override
+    public ResCommon updateTopicPushSubscribe(int teamId, int topicId, ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe) throws RetrofitError {
+        return requestApiExecute(RestApiLoader.getInstance().loadUpdateTopicPushSubscribe(teamId, topicId, reqUpdateTopicPushSubscribe));
     }
 
     @Override

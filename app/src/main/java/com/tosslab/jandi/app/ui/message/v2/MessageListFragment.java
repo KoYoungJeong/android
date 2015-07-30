@@ -480,7 +480,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         FormattedEntity entityById = EntityManager.getInstance(getActivity()).getEntityById(entityId);
         boolean isStarred;
         isStarred = entityById != null ? entityById.isStarred : false;
-        ChattingInfomations infomations = new ChattingInfomations(getActivity(), entityId, entityType, isFromPush, isStarred);
+        ChattingInfomations infomations =
+                new ChattingInfomations(getActivity(), teamId, entityId, entityType, isFromPush, isStarred);
         MenuCommand menuCommand = messageListModel.getMenuCommand(MessageListFragment.this,
                 infomations,
                 item);

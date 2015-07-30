@@ -71,7 +71,7 @@ public class MenuCommandBuilder {
                 command.setEntityId(chattingInfomations.entityId);
                 return command;
             case R.id.action_entity_more:
-                return new TopicDetailCommand(fragment, chattingInfomations.entityId);
+                return new TopicDetailCommand(fragment, chattingInfomations.teamId, chattingInfomations.entityId);
         }
         return null;
     }

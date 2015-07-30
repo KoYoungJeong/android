@@ -137,7 +137,7 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
             viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
             viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
             viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-
+            viewHolder.disabledPush = convertView.findViewById(R.id.v_push_off);
 
             convertView.setTag(viewHolder);
         } else {
@@ -174,12 +174,14 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
+        public View disabledPush;
 
         private void init() {
             imageViewFavorite.setVisibility(View.INVISIBLE);
             textViewBadgeCount.setVisibility(View.GONE);
             disableCoverView.setVisibility(View.INVISIBLE);
             imageViewIcon.setImageResource(R.drawable.jandi_topic_icon);
+            disabledPush.setVisibility(View.GONE);
         }
 
         public void draw(FormattedEntity formattedEntity) {
@@ -209,6 +211,7 @@ public class TopicListAdapter extends BaseExpandableListAdapter {
             if (formattedEntity.isPublicTopic()) {
                 if (formattedEntity.isJoined) {
                     disableCoverView.setVisibility(View.GONE);
+                    disabledPush.setVisibility(formattedEntity.isTopicPushOn ? View.GONE : View.VISIBLE);
                 } else {
                     disableCoverView.setVisibility(View.VISIBLE);
                     textViewBadgeCount.setVisibility(View.GONE);

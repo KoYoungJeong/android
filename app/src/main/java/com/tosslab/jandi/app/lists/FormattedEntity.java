@@ -37,7 +37,8 @@ public class FormattedEntity {
     // Starred
     public boolean isStarred = false;
     private ResLeftSideMenu.Entity entity;
-
+    // Topic Push
+    public boolean isTopicPushOn = true;
 
     public FormattedEntity(ResLeftSideMenu.Channel channel, boolean isJoined) {
         this.entity = channel;

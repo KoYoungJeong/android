@@ -162,7 +162,7 @@ public class MessageListActivity extends BaseAnalyticsActivity {
 
         mMessageItemConverter = new MessageItemConverter();
 
-        mChattingInformations = new ChattingInfomations(mContext, entityId, entityType, isFromPush, isFavorite);
+        mChattingInformations = new ChattingInfomations(mContext, teamId, entityId, entityType, isFromPush, isFavorite);
         messageManipulator.initEntity(
                 mChattingInformations.entityType, mChattingInformations.entityId);
 

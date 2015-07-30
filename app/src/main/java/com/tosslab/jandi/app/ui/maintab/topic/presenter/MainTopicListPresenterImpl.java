@@ -46,10 +46,10 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
     public void onInitTopics(Context context) {
         EntityManager entityManager = EntityManager.getInstance(context);
 
-        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(entityManager.getJoinedChannels
-                (), entityManager.getGroups());
-        Observable<Topic> unjoinEntities = mainTopicModel.getUnjoinEntities(entityManager
-                .getUnjoinedChannels());
+        Observable<Topic> joinEntities = mainTopicModel.getJoinEntities(
+                entityManager.getJoinedChannels(), entityManager.getGroups());
+        Observable<Topic> unjoinEntities =
+                mainTopicModel.getUnjoinEntities(entityManager.getUnjoinedChannels());
 
         view.setEntities(joinEntities, unjoinEntities);
 

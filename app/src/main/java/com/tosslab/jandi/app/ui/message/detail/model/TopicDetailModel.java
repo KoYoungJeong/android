@@ -6,7 +6,9 @@ import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.network.client.EntityClientManager;
+import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.mixpanel.MixpanelMemberAnalyticsClient;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResLeftSideMenu;
 
 import org.androidannotations.annotations.Bean;
@@ -90,6 +92,16 @@ public class TopicDetailModel {
         } else if (entityType == JandiConstants.TYPE_PRIVATE_TOPIC) {
             entityClientManager.modifyPrivateGroupName(entityId, inputName);
         }
+    }
+
+    public void updatePushStatus(int teamId, int entityId, boolean pushOn) throws RetrofitError {
+        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(pushOn);
+        RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, entityId, req);
+    }
+
+    public boolean isPushOn(Context context, int entityId) {
+        FormattedEntity entity = EntityManager.getInstance(context).getEntityById(entityId);
+        return entity.isTopicPushOn;
     }
 
     public void trackChangingEntityName(Context context, int entityType) {

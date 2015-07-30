@@ -49,6 +49,7 @@ public class MainTopicModel {
                         .memberCount(formattedEntity.getMemberCount())
                         .name(formattedEntity.getName())
                         .unreadCount(formattedEntity.alarmCount)
+                        .isPushOn(formattedEntity.isTopicPushOn)
                         .build());
     }
 

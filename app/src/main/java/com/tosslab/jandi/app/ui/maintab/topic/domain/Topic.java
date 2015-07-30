@@ -15,8 +15,9 @@ public class Topic {
     private boolean isPublic;
     private String description;
     private boolean selected;
+    private boolean isPushOn;
 
-    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId) {
+    public Topic(String name, boolean isStarred, boolean isJoined, int entityId, int memberCount, int unreadCount, boolean isPublic, String description, int creatorId, boolean isPushOn) {
         this.name = name;
         this.isStarred = isStarred;
         this.isJoined = isJoined;
@@ -26,6 +27,7 @@ public class Topic {
         this.isPublic = isPublic;
         this.description = description;
         this.creatorId = creatorId;
+        this.isPushOn = isPushOn;
     }
 
     public String getName() {
@@ -104,6 +106,14 @@ public class Topic {
         return selected;
     }
 
+    public boolean isPushOn() {
+        return isPushOn;
+    }
+
+    public void setIsPushOn(boolean isPushOn) {
+        this.isPushOn = isPushOn;
+    }
+
     public static class Builder {
         private String name;
         private boolean isStarred;
@@ -114,6 +124,7 @@ public class Topic {
         private boolean isPublic;
         private String description;
         private int creatorId;
+        private boolean isPushOn;
 
         public Builder name(String name) {
             this.name = name;
@@ -155,14 +166,19 @@ public class Topic {
             return this;
         }
 
-        public Topic build() {
-            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
-                    isPublic, description, creatorId);
-        }
-
         public Builder creatorId(int creatorId) {
             this.creatorId = creatorId;
             return this;
+        }
+
+        public Builder isPushOn(boolean isPushOn) {
+            this.isPushOn = isPushOn;
+            return this;
+        }
+
+        public Topic build() {
+            return new Topic(name, isStarred, isJoined, entityId, memberCount, unreadCount,
+                    isPublic, description, creatorId, isPushOn);
         }
     }
 }

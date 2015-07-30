@@ -115,6 +115,7 @@ public class ResLeftSideMenu {
         public int lastLinkId;
         public int alarmCount;
         public boolean announcementOpened;
+        public boolean subscribe = true;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

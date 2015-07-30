@@ -7,6 +7,7 @@ import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
 import com.tosslab.jandi.app.network.models.ResInvitationMembers;
@@ -63,5 +64,11 @@ public interface TeamApiV2Client {
     ResCommon deleteAnnouncement(@Path("teamId") int teamId, @Path("topicId") int topicId);
 
     @GET("/teams/{teamId}/messages/{messageId}")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
     ResMessages.OriginalMessage getMessage(@Path("teamId") int teamId, @Path("messageId") int messageId);
+
+    @PUT("/teams/{teamId}/rooms/{roomId}/subscribe")
+    @Headers("Accept:" + JandiConstants.HTTP_ACCEPT_HEADER_DEFAULT)
+    ResCommon updateTopicPushSubscribe(@Path("teamId") int teamId, @Path("roomId") int topicId, @Body ReqUpdateTopicPushSubscribe reqUpdateTopicPushSubscribe);
+
 }
