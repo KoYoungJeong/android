@@ -1,11 +1,13 @@
 package com.tosslab.jandi.app.network.client.teams;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.local.database.JandiDatabaseOpenHelper;
 import com.tosslab.jandi.app.network.models.ReqCreateAnnouncement;
 import com.tosslab.jandi.app.network.manager.RequestApiManager;
 import com.tosslab.jandi.app.network.models.ReqCreateNewTeam;
 import com.tosslab.jandi.app.network.models.ReqInvitationMembers;
 import com.tosslab.jandi.app.network.models.ReqUpdateAnnouncementStatus;
+import com.tosslab.jandi.app.network.models.ReqUpdateTopicPushSubscribe;
 import com.tosslab.jandi.app.network.models.ResAccountInfo;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResCommon;
@@ -30,6 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -39,8 +42,9 @@ public class TeamsApiClientTest {
 
     @Before
     public void setUp() throws Exception {
+        JandiApplication.setContext(Robolectric.application);
         JandiPreference.setAccessTokenType(Robolectric.application, "bearer");
-        JandiPreference.setAccessToken(Robolectric.application, "463d951c-8591-4428-ac0e-f11148d82679");
+        JandiPreference.setAccessToken(Robolectric.application, "86100b73-18f4-42bd-9f6f-d5535a7b8ce3");
 
         BaseInitUtil.initData(Robolectric.application);
     }
@@ -163,6 +167,19 @@ public class TeamsApiClientTest {
         System.out.println(message.toString());
 
         assertThat(message, is(notNullValue()));
+    }
+
+    @Test
+    public void testUpdatePushSubscribe() throws Exception {
+        int teamId = 279;
+        int topicId = 8722;
+
+        ReqUpdateTopicPushSubscribe req = new ReqUpdateTopicPushSubscribe(false);
+        ResCommon resCommon = RequestApiManager.getInstance().updateTopicPushSubscribe(teamId, topicId, req);
+
+        System.out.println(resCommon);
+
+        assertThat(resCommon, is(notNullValue()));
     }
 
 }
