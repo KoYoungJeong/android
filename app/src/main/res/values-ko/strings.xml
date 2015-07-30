@@ -427,7 +427,6 @@
     <string name="jandi_topic_leave">"토픽 나가기"</string>
     <string name="jandi_topic_detail">"토픽 상세정보"</string>
     <string name="jandi_explain_topic_description">"토픽에 대해 설명해주세요. (옵션)"</string>
-    <string name="jandi_topic_starred">"즐겨찾기"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">토픽 메시지 검색</string>
@@ -464,6 +463,7 @@
     <string name="jandi_coach_mark_more_explain3">팀 멤버 초대를 잊지 말아주세요!</string>
     <string name="jandi_chat_detail">"대화창 설정"</string>
     <string name="jandi_already_in_team">"이 이메일 주소는 이미 %s의 멤버입니다."</string>
+    <string name="jandi_unread_messages_below">"여기까지 읽었습니다."</string>
 
 
 </resources>

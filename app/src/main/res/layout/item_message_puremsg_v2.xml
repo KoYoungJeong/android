@@ -19,6 +19,7 @@
             android:id="@+id/tv_message_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="14dp"
             android:focusable="false"
             android:text="Text"
             android:textColor="@color/jandi_messages_content"
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_message_content"
+            android:layout_marginRight="14dp"
             android:layout_marginTop="10dp">
 
             <include layout="@layout/item_message_layout_linkpreview_v2"/>

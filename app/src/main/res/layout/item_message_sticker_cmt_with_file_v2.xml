@@ -141,11 +141,12 @@
                 android:layout_alignLeft="@+id/txt_message_commented_prefix"
                 android:layout_below="@id/txt_message_commented_prefix"
                 android:layout_marginRight="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_toLeftOf="@+id/iv_img_file_arrow"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:singleLine="true"
                 android:text="File Name"
-                android:textColor="@color/jandi_messages_name"
-                android:textSize="@dimen/jandi_messages_comment_name"
+                android:textColor="@color/jandi_messages_file_name"
+                android:textSize="@dimen/jandi_messages_file_name"
                 android:textStyle="bold"/>
             <!-- 실제 댓글 내용 -->
             <ImageView

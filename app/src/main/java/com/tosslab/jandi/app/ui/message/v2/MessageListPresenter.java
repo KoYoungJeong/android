@@ -899,7 +899,11 @@ public class MessageListPresenter {
         int lastItemPosition = getLastItemPosition();
 
         addAll(lastItemPosition, linkList);
-        ResMessages.Link lastUpdatedMessage = linkList.get(linkList.size() - 1);
+        int location = linkList.size() - 1;
+        if (location < 0) {
+            return;
+        }
+        ResMessages.Link lastUpdatedMessage = linkList.get(location);
         if (!firstLoad
                 && visibleLastItemPosition >= 0
                 && visibleLastItemPosition < lastItemPosition - 1

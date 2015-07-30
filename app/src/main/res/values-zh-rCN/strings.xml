@@ -409,7 +409,6 @@
     <string name="jandi_topic_leave">"离开议题"</string>
     <string name="jandi_topic_detail">"议题信息"</string>
     <string name="jandi_explain_topic_description">"描述 (选项)"</string>
-    <string name="jandi_topic_starred">"标记议题"</string>
 
     <!-- tutorial -->
     <string name="jandi_coach_mark_search_message">搜索信息</string>
@@ -445,5 +444,6 @@
     <string name="jandi_coach_mark_more_explain3"></string>
     <string name="jandi_chat_detail">"聊天设置"</string>
     <string name="jandi_already_in_team">"此电子邮箱已为 %s 的成员"</string>
+    <string name="jandi_unread_messages_below">"以下为未读信息"</string>
 
 </resources>

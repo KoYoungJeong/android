@@ -1,7 +1,7 @@
 package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tosslab.jandi.app.R;
@@ -15,14 +15,12 @@ import com.tosslab.jandi.app.ui.message.to.DummyMessageLink;
 public class DummyPureViewHolder implements BodyViewHolder {
 
     private TextView messageTextView;
-    private ProgressBar progressBar;
-    private TextView failAlertTextView;
+    private ImageView ivStatus;
 
     @Override
     public void initView(View rootView) {
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
-        failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
+        ivStatus = ((ImageView) rootView.findViewById(R.id.iv_message_sending_status));
     }
 
     @Override
@@ -36,18 +34,21 @@ public class DummyPureViewHolder implements BodyViewHolder {
         }
 
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+        int textColor = messageTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
             case FAIL:
-                failAlertTextView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                ivStatus.setVisibility(View.VISIBLE);
+                ivStatus.setImageResource(R.drawable.jandi_icon_message_failure);
+                messageTextView.setTextColor(textColor & 0x30FFFFFF);
                 break;
             case SENDING:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
+                ivStatus.setVisibility(View.VISIBLE);
+                ivStatus.setImageResource(R.drawable.jandi_icon_message_sending);
+                messageTextView.setTextColor(textColor);
                 break;
             case COMPLETE:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                ivStatus.setVisibility(View.INVISIBLE);
+                messageTextView.setTextColor(textColor);
                 break;
         }
 

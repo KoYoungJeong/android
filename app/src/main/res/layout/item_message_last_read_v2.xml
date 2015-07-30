@@ -26,7 +26,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:text="여기까지 읽으셨습니다."/>
+            android:textSize="11sp"
+            android:textColor="@color/text_color_gray"
+            android:text="@string/jandi_unread_messages_below"/>
     </LinearLayout>
 
 </merge>

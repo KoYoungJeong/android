@@ -118,6 +118,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
         if (link.feedback instanceof ResMessages.FileMessage) {
 
             ResMessages.FileMessage feedbackFileMessage = (ResMessages.FileMessage) link.feedback;
+            fileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             if (TextUtils.equals(link.feedback.status, "archived")) {
                 fileOwnerTextView.setVisibility(View.INVISIBLE);
                 fileOwnerPostfixTextView.setVisibility(View.INVISIBLE);
@@ -163,7 +164,7 @@ public class FileStickerCommentViewHolder implements BodyViewHolder {
                                         .placeholder(R.drawable.jandi_fl_icon_img)
                                         .error(R.drawable.jandi_fl_icon_img)
                                         .crossfade(true)
-                                        .fitCenter()
+                                        .centerCrop()
                                         .load(thumbnailUrl);
 
                                 break;

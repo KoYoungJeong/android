@@ -154,7 +154,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_message_commented_prefix"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="5dp"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="File Name"

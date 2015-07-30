@@ -2,7 +2,6 @@ package com.tosslab.jandi.app.ui.message.v2.adapter.viewholder;
 
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
@@ -22,16 +21,14 @@ public class DummyViewHolder implements BodyViewHolder {
     private ImageView profileImageView;
     private TextView nameTextView;
     private TextView messageTextView;
-    private ProgressBar progressBar;
-    private TextView failAlertTextView;
+    private ImageView ivStatus;
 
     @Override
     public void initView(View rootView) {
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
         messageTextView = (TextView) rootView.findViewById(R.id.txt_message_content);
-        failAlertTextView = (TextView) rootView.findViewById(R.id.txt_message_fail);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_message);
+        ivStatus = ((ImageView) rootView.findViewById(R.id.iv_message_sending_status));
     }
 
     @Override
@@ -58,18 +55,23 @@ public class DummyViewHolder implements BodyViewHolder {
             messageTextView.setText(textMessage.content.body);
         }
         SendMessage.Status status = SendMessage.Status.valueOf(dummyMessageLink.getStatus());
+        int textColor = nameTextView.getContext().getResources().getColor(R.color.jandi_messages_name);
         switch (status) {
             case FAIL:
-                failAlertTextView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.GONE);
+                ivStatus.setVisibility(View.VISIBLE);
+                ivStatus.setImageResource(R.drawable.jandi_icon_message_failure);
+                profileImageView.setAlpha(0.3f);
+                nameTextView.setTextColor(textColor & 0x30FFFFFF);
                 break;
             case SENDING:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
+                ivStatus.setVisibility(View.VISIBLE);
+                ivStatus.setImageResource(R.drawable.jandi_icon_message_sending);
+                profileImageView.setAlpha(1f);
+                nameTextView.setTextColor(textColor);
                 break;
             case COMPLETE:
-                failAlertTextView.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                ivStatus.setVisibility(View.INVISIBLE);
+                messageTextView.setTextColor(textColor);
                 break;
         }
 
