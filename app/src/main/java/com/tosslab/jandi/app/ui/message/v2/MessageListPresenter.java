@@ -13,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,7 @@ import com.tosslab.jandi.app.ui.team.info.model.TeamDomainInfoModel;
 import com.tosslab.jandi.app.utils.ColoredToast;
 import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.ProgressWheel;
+import com.tosslab.jandi.app.utils.logger.LogUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -248,7 +250,7 @@ public class MessageListPresenter {
         return messageListAdapter.getCount();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastPage() {
         if (messageListView != null) {
             messageListView.getLayoutManager().scrollToPosition(messageListAdapter.getCount() - 1);
@@ -390,7 +392,7 @@ public class MessageListPresenter {
         ColoredToast.show(activity, message);
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void clearMessages() {
         messageListAdapter.clear();
 
@@ -512,7 +514,7 @@ public class MessageListPresenter {
         justRefresh();
     }
 
-    @UiThread
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void addDummyMessages(List<ResMessages.Link> dummyMessages) {
         for (ResMessages.Link dummyMessage : dummyMessages) {
             messageListAdapter.addDummyMessage(((DummyMessageLink) dummyMessage));
@@ -815,15 +817,113 @@ public class MessageListPresenter {
         messageListAdapter.setLastReadLinkId(lastReadLinkId);
     }
 
-    @UiThread(propagation = UiThread.Propagation.REUSE, delay = 300)
+    @UiThread(propagation = UiThread.Propagation.REUSE)
     public void moveLastReadLink() {
         int lastReadLinkId = messageListAdapter.getLastReadLinkId();
 
         int position = messageListAdapter.indexOfLinkId(lastReadLinkId);
 
+        int offSet = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45f, activity
+                .getResources().getDisplayMetrics());
+
         if (position > 0) {
-            messageListView.smoothScrollToPosition(position);
+            LogUtil.d("Scroll Position : " + position);
+            ((LinearLayoutManager) messageListView.getLayoutManager()).scrollToPositionWithOffset
+                    (position, offSet);
         }
 
     }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    public void moveToLink(int linkId) {
+        int position = messageListAdapter.indexOfLinkId(linkId);
+
+        if (position > 0) {
+            messageListView.smoothScrollToPosition(position);
+        }
+    }
+
+    @UiThread
+    public void setUpOldMessage(int lastReadLinkId, List<ResMessages.Link> linkList,
+                                int currentItemCount, boolean isFirstMessage, List<ResMessages.Link> dummyMessages) {
+        if (currentItemCount == 0) {
+            // 첫 로드라면...
+
+            dismissLoadingView();
+            clearMessages();
+
+            addAll(0, linkList);
+
+            addDummyMessages(dummyMessages);
+
+            if (lastReadLinkId > 0 && isContainLinkId(linkList, lastReadLinkId)) {
+                // Marker 로 이동
+                moveToLink(lastReadLinkId);
+            } else {
+                moveLastPage();
+            }
+
+
+        } else {
+
+            int latestVisibleLinkId = getFirstVisibleItemLinkId();
+            int firstVisibleItemTop = getFirstVisibleItemTop();
+
+            addAll(0, linkList);
+
+            moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+        }
+
+        if (!isFirstMessage) {
+            setOldLoadingComplete();
+        } else {
+            setOldNoMoreLoading();
+        }
+    }
+
+    private boolean isContainLinkId(List<ResMessages.Link> records, int linkId) {
+
+        return Observable.from(records)
+                .filter(link -> link.id == linkId)
+                .map(link1 -> true)
+                .firstOrDefault(false)
+                .toBlocking()
+                .first();
+
+    }
+
+    @UiThread
+    public void setUpNewMessage(List<ResMessages.Link> linkList, int myId, boolean firstLoad) {
+
+        int visibleLastItemPosition = getLastVisibleItemPosition();
+        int lastItemPosition = getLastItemPosition();
+
+        addAll(lastItemPosition, linkList);
+        ResMessages.Link lastUpdatedMessage = linkList.get(linkList.size() - 1);
+        if (!firstLoad
+                && visibleLastItemPosition >= 0
+                && visibleLastItemPosition < lastItemPosition - 1
+                && lastUpdatedMessage.fromEntity != myId) {
+            showPreviewIfNotLastItem();
+        } else {
+            int messageId = lastUpdatedMessage.messageId;
+            if (firstLoad) {
+                moveLastReadLink();
+
+                if (linkList.isEmpty()) {
+                    setLastReadLinkId(-1);
+                    justRefresh();
+                }
+
+            } else if (messageId <= 0) {
+                if (lastUpdatedMessage.fromEntity != myId) {
+                    moveToMessageById(lastUpdatedMessage.id, 0);
+                }
+            } else {
+                moveToMessage(messageId, 0);
+            }
+        }
+
+    }
+
 }

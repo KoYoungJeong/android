@@ -54,31 +54,19 @@ public class NormalNewMessageLoader implements NewsMessageLoader {
 
                 saveToDatabase(roomId, newMessage.updateInfo.messages);
 
-                int visibleLastItemPosition = messageListPresenter.getLastVisibleItemPosition();
-                int lastItemPosition = messageListPresenter.getLastItemPosition();
                 Collections.sort(newMessage.updateInfo.messages, (lhs, rhs) -> lhs.time.compareTo(rhs.time));
-                messageListPresenter.addAll(lastItemPosition, newMessage.updateInfo.messages);
                 messageState.setLastUpdateLinkId(newMessage.lastLinkId);
                 messageListModel.upsertMyMarker(messageListPresenter.getRoomId(), newMessage.lastLinkId);
                 updateMarker();
 
-                ResMessages.Link lastUpdatedMessage = newMessage.updateInfo.messages.get(newMessage.updateInfo.messages.size() - 1);
-                if (!firstLoad
-                        && visibleLastItemPosition >= 0
-                        && visibleLastItemPosition < lastItemPosition - 1
-                        && !messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
-                    messageListPresenter.showPreviewIfNotLastItem();
-                } else {
-                    int messageId = lastUpdatedMessage.messageId;
-                    if (firstLoad) {
-                        messageListPresenter.moveLastReadLink();
-                    } else if (messageId <= 0) {
-                        if (!messageListModel.isMyMessage(lastUpdatedMessage.fromEntity)) {
-                            messageListPresenter.moveToMessageById(lastUpdatedMessage.id, 0);
-                        }
-                    } else {
-                        messageListPresenter.moveToMessage(messageId, 0);
-                    }
+                messageListPresenter.setUpNewMessage(newMessage.updateInfo.messages,
+                        messageListModel.getMyId(), firstLoad);
+
+            } else {
+
+                if (firstLoad) {
+                    messageListPresenter.setLastReadLinkId(-1);
+                    messageListPresenter.justRefresh();
                 }
 
             }

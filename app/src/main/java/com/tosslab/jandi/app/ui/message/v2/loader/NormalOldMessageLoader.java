@@ -11,6 +11,7 @@ import com.tosslab.jandi.app.utils.logger.LogUtil;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,15 +47,23 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     @Override
     public ResMessages load(int roomId, int linkId) {
         ResMessages oldMessage = null;
+        int currentItemCount = messageListPresenter.getItemCount();
         try {
 
             int itemCount = Math.min(
-                    Math.max(MessageManipulator.NUMBER_OF_MESSAGES, messageListPresenter.getItemCount()),
+                    Math.max(MessageManipulator.NUMBER_OF_MESSAGES, currentItemCount),
                     MessageManipulator.MAX_OF_MESSAGES);
 
             if (roomId > 0) {
                 // 저장된 정보를 가져옴
-                List<ResMessages.Link> oldMessages = MessageRepository.getRepository().getOldMessages(roomId, linkId, itemCount);
+                List<ResMessages.Link> oldMessages;
+                if (currentItemCount > 0) {
+                    // 처음 로드 아니면 현재 링크 - 1 ~ 이전 itemCount 로드
+                    oldMessages = MessageRepository.getRepository().getOldMessages(roomId, linkId, itemCount);
+                } else {
+                    // 처음 로드면 현재 링크 ~ 이전 20개 로드
+                    oldMessages = MessageRepository.getRepository().getOldMessages(roomId, linkId + 1, itemCount);
+                }
                 if (oldMessages != null && oldMessages.size() > 0) {
 
 
@@ -65,7 +74,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     // 현재 챗의 첫 메세지가 아니라고 하기 위함
                     oldMessage.firstLinkId = -1;
                     // 마커 업로드를 하지 않기 위함
-                    oldMessage.lastLinkId = Integer.MAX_VALUE;
+                    oldMessage.lastLinkId = oldMessages.get(0).id;
                     oldMessage.entityId = roomId;
                     oldMessage.records = oldMessages;
                 }
@@ -73,7 +82,15 @@ public class NormalOldMessageLoader implements OldMessageLoader {
 
             if (oldMessage == null) {
                 // 캐시가 없는 경우
-                oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                if (currentItemCount != 0) {
+                    // 요청한 링크 ID 이전 값 가져오기
+                    oldMessage = messageListModel.getOldMessage(linkId, itemCount);
+                } else {
+                    // 첫 요청이라 판단
+                    // 마커 기준 위아래 값 요청
+                    oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
+
+                }
                 messageListModel.upsertMessages(oldMessage);
             } else if (oldMessage.records.size() < itemCount) {
                 try {
@@ -92,7 +109,7 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             }
 
             if (oldMessage.records == null || oldMessage.records.isEmpty()) {
-                checkItemCountIfException(linkId);
+                checkItemCountIfException(itemCount);
                 return oldMessage;
             }
 
@@ -103,47 +120,31 @@ public class NormalOldMessageLoader implements OldMessageLoader {
             boolean isFirstMessage = oldMessage.firstLinkId == firstLinkIdInMessage;
             messageState.setFirstMessage(isFirstMessage);
 
+            if (currentItemCount <= 0) {
+                // 처음인 경우 로드된 데이터의 마지막 것으로 설정 ( New Load 와 관련있음)
+                messageState.setLastUpdateLinkId(
+                        oldMessage.records.get(oldMessage.records.size() - 1).id);
+            }
+
             int lastLinkIdInMessage = oldMessage.records.get(oldMessage.records.size() - 1).id;
             if (oldMessage.lastLinkId <= lastLinkIdInMessage) {
                 updateMarker(teamId, oldMessage.entityId, lastLinkIdInMessage);
             }
 
-            if (linkId == -1) {
-                // 첫 로드라면...
-
-                messageListPresenter.dismissLoadingView();
-                messageListPresenter.clearMessages();
-
-                messageListPresenter.addAll(0, oldMessage.records);
-                messageListPresenter.moveLastPage();
-
-                List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(roomId);
-                messageListPresenter.addDummyMessages(dummyMessages);
-
-                messageState.setLastUpdateLinkId(oldMessage.lastLinkId);
-                messageListPresenter.moveLastPage();
-
+            List<ResMessages.Link> dummyMessages;
+            if (currentItemCount == 0) {
+                dummyMessages = messageListModel.getDummyMessages(roomId);
             } else {
-
-                int latestVisibleLinkId = messageListPresenter.getFirstVisibleItemLinkId();
-                int firstVisibleItemTop = messageListPresenter.getFirstVisibleItemTop();
-
-                messageListPresenter.addAll(0, oldMessage.records);
-
-                messageListPresenter.moveToMessage(latestVisibleLinkId, firstVisibleItemTop);
+                dummyMessages = new ArrayList<>();
             }
 
-            if (!isFirstMessage) {
-                messageListPresenter.setOldLoadingComplete();
-            } else {
-                messageListPresenter.setOldNoMoreLoading();
-            }
+            messageListPresenter.setUpOldMessage(linkId, oldMessage.records, currentItemCount, isFirstMessage, dummyMessages);
 
         } catch (RetrofitError e) {
             e.printStackTrace();
-            checkItemCountIfException(linkId);
+            checkItemCountIfException(currentItemCount);
         } catch (Exception e) {
-            checkItemCountIfException(linkId);
+            checkItemCountIfException(currentItemCount);
         } finally {
             messageListPresenter.dismissProgressWheel();
         }
@@ -153,8 +154,8 @@ public class NormalOldMessageLoader implements OldMessageLoader {
     }
 
     @UiThread
-    void checkItemCountIfException(int linkId) {
-        boolean hasItem = linkId > 0;
+    void checkItemCountIfException(int currentItemCount) {
+        boolean hasItem = currentItemCount > 0;
         if (!hasItem) {
             messageListPresenter.dismissLoadingView();
             messageListPresenter.showEmptyView();

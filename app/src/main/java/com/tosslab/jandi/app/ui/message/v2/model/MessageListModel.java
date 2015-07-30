@@ -501,4 +501,8 @@ public class MessageListModel {
 
         return lastLinkId;
     }
+
+    public int getMyId() {
+        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
+    }
 }

@@ -60,7 +60,6 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.lists.messages.MessageItem;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
 import com.tosslab.jandi.app.local.orm.repositories.MarkerRepository;
-import com.tosslab.jandi.app.local.orm.repositories.MessageRepository;
 import com.tosslab.jandi.app.local.orm.repositories.StickerRepository;
 import com.tosslab.jandi.app.network.models.ResAnnouncement;
 import com.tosslab.jandi.app.network.models.ResMessages;
@@ -116,7 +115,6 @@ import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -200,9 +198,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 .subscribe(messageQueue -> {
 
                     switch (messageQueue.getQueueType()) {
-                        case Saved:
-                            getSavedMessageList();
-                            break;
                         case Old:
                             loadOldMessage(messageQueue);
                             break;
@@ -354,7 +349,11 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
             if (!user) {
                 roomId = entityId;
             } else {
-                initRoomId();
+                int roomId = initRoomId();
+
+                if (roomId > 0) {
+                    this.roomId = roomId;
+                }
             }
         }
 
@@ -365,21 +364,21 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         int lastReadLinkId = messageListModel.getLastReadLinkId(roomId, entityId);
         messageListPresenter.setLastReadLinkId(lastReadLinkId);
 
-        sendMessagePublisherEvent(new OldMessageQueue(messageState));
-        sendMessagePublisherEvent(new NewMessageQueue(messageState));
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
+        sendMessagePublisherEvent(new OldMessageQueue(messageState));
 
     }
 
-    void initRoomId() {
+    int initRoomId() {
         try {
             ResMessages oldMessage = messageListModel.getOldMessage(-1, 1);
-            roomId = oldMessage.entityId;
+            return oldMessage.entityId;
         } catch (RetrofitError e) {
             e.printStackTrace();
         }
 
 
+        return -1;
     }
 
     private void loadOldMessage(MessageQueue messageQueue) {
@@ -402,9 +401,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         if (newsMessageLoader != null) {
             MessageState data = (MessageState) messageQueue.getData();
             int lastUpdateLinkId = data.getLastUpdateLinkId();
-            if (lastUpdateLinkId < 0 && oldMessageLoader != null) {
-                oldMessageLoader.load(roomId, lastUpdateLinkId);
-            }
             newsMessageLoader.load(roomId, lastUpdateLinkId);
         }
     }
@@ -437,32 +433,6 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
                 messageListModel.getMessage(teamId, updateMessage.getMessageId());
         messageListPresenter.updateMessage(message);
     }
-
-    private void getSavedMessageList() {
-        List<ResMessages.Link> savedMessages;
-        if (messageListModel.isUser(entityId)) {
-            if (roomId > 0) {
-                savedMessages = MessageRepository.getRepository().getMessages(roomId);
-            } else {
-                savedMessages = new ArrayList<>();
-            }
-        } else {
-            savedMessages = MessageRepository.getRepository().getMessages(entityId);
-
-        }
-        if (savedMessages != null && !savedMessages.isEmpty()) {
-            messageListPresenter.addAll(0, messageListModel.sortDescById(savedMessages));
-            FormattedEntity me = EntityManager.getInstance(getActivity()).getMe();
-            List<ResMessages.Link> dummyMessages = messageListModel.getDummyMessages(entityId);
-            messageListPresenter.addDummyMessages(dummyMessages);
-
-            messageListPresenter.moveLastPage();
-            messageListPresenter.dismissLoadingView();
-        } else {
-            messageListPresenter.showMessageLoading();
-        }
-    }
-
 
     private void showStickerPreview(StickerInfo oldSticker, StickerInfo stickerInfo) {
         messageListPresenter.showStickerPreview(stickerInfo);
