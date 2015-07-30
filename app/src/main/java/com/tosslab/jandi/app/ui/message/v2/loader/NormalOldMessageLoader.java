@@ -89,8 +89,9 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                 messageListModel.upsertMessages(oldMessage);
             } else if (oldMessage.records.size() < itemCount) {
                 try {
+                    ResMessages.Link link = oldMessage.records.get(oldMessage.records.size() - 1);
                     ResMessages addOldMessage =
-                            messageListModel.getOldMessage(oldMessage.records.get(0).id, itemCount);
+                            messageListModel.getOldMessage(link.id, itemCount);
 
                     messageListModel.upsertMessages(addOldMessage);
 
