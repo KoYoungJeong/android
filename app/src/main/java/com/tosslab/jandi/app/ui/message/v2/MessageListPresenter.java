@@ -32,6 +32,7 @@ import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.dialogs.ManipulateMessageDialogFragment;
 import com.tosslab.jandi.app.events.files.ConfirmFileUploadEvent;
 import com.tosslab.jandi.app.events.messages.TopicInviteEvent;
+import com.tosslab.jandi.app.files.upload.FilePickerViewModel;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.SendMessage;
@@ -316,20 +317,20 @@ public class MessageListPresenter {
 
     public void openExplorerForActivityResult(Fragment fragment) {
         Intent intent = new Intent(activity, FileExplorerActivity.class);
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_EXPLORER);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_EXPLORER);
     }
 
     public void openCameraForActivityResult(Fragment fragment, Uri fileUri) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_TAKE_PHOTO);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_TAKE_PHOTO);
     }
 
     public void openAlbumForActivityResult(Fragment fragment) {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        fragment.startActivityForResult(intent, JandiConstants.TYPE_UPLOAD_GALLERY);
+        fragment.startActivityForResult(intent, FilePickerViewModel.TYPE_UPLOAD_GALLERY);
     }
 
     public void exceedMaxFileSizeError() {
@@ -354,9 +355,10 @@ public class MessageListPresenter {
         ColoredToast.showError(activity, message);
     }
 
-    public void showMessageMenuDialog(boolean myMessage, ResMessages.TextMessage textMessage) {
-        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage
-                (textMessage, myMessage);
+    public void showMessageMenuDialog(boolean isDirectMessage, boolean myMessage,
+                                      ResMessages.TextMessage textMessage) {
+        DialogFragment newFragment = ManipulateMessageDialogFragment.newInstanceByTextMessage(
+                textMessage, myMessage, isDirectMessage);
         newFragment.show(activity.getSupportFragmentManager(), "dioalog");
     }
 

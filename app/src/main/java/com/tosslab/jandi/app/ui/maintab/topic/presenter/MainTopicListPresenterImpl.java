@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.maintab.topic.presenter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
 import com.tosslab.jandi.app.events.TopicBadgeEvent;
@@ -55,6 +56,13 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
         boolean hasAlarmCount = mainTopicModel.hasAlarmCount(joinEntities);
         EventBus.getDefault().post(new TopicBadgeEvent(hasAlarmCount));
+    }
+
+    @Background
+    @Override
+    public void onRefreshTopicList() {
+        mainTopicModel.refreshEntity();
+        onInitTopics(JandiApplication.getContext());
     }
 
     @Override
@@ -120,6 +128,8 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
                     .getTeamId();
             view.moveToMessageActivity(topic.getEntityId(), entityType, topic.isStarred(),
                     teamId, topic.getMarkerLinkId());
+            view.setSelectedItem(topic.getEntityId());
+            
         } catch (RetrofitError e) {
             e.printStackTrace();
             LogUtil.e("fail to join entity", e);
@@ -135,7 +145,13 @@ public class MainTopicListPresenterImpl implements MainTopicListPresenter {
 
     @Override
     public void onNewMessage(SocketMessageEvent event) {
+
         List<Topic> joinedTopics = view.getJoinedTopics();
+
+        if (mainTopicModel.isMe(event.getWriter())) {
+            return;
+        }
+
         if (mainTopicModel.updateBadge(event, joinedTopics)) {
             view.notifyDatasetChanged();
             EventBus.getDefault().post(new TopicBadgeEvent(true));

@@ -110,7 +110,7 @@ public class PushInterfaceActivity extends AppCompatActivity {
                 .entityType(entityType)
                 .isFromPush(true)
                 .flags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .start();
+                .startForResult(MainTabActivity_.REQ_START_MESSAGE);
 
         finish();
     }

@@ -84,7 +84,8 @@ public class MembersModel {
 
         List<FormattedEntity> formattedUsers = EntityManager.getInstance(context).getFormattedUsers();
 
-        Iterator<ChatChooseItem> iterator = Observable.from(formattedUsers)
+        List<ChatChooseItem> chatChooseItems = new ArrayList<>();
+        Observable.from(formattedUsers)
                 .map(entity -> {
                     ChatChooseItem chatChooseItem = new ChatChooseItem();
                     return chatChooseItem.entityId(entity.getId())
@@ -95,32 +96,23 @@ public class MembersModel {
                             .name(entity.getName());
                 })
                 .filter(chatChooseItem -> chatChooseItem.isEnabled())
-                .toBlocking()
-                .getIterator();
-
-        List<ChatChooseItem> chatChooseItems = new ArrayList<ChatChooseItem>();
-        while (iterator.hasNext()) {
-            chatChooseItems.add(iterator.next());
-        }
-
-        Collections.sort(chatChooseItems, new Comparator<ChatChooseItem>() {
-            @Override
-            public int compare(ChatChooseItem lhs, ChatChooseItem rhs) {
-                if (lhs.isEnabled()) {
-                    if (rhs.isEnabled()) {
-                        return 0;
+                .toSortedList((lhs, rhs) -> {
+                    if (lhs.isStarred()) {
+                        if (rhs.isStarred()) {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        } else {
+                            return -1;
+                        }
                     } else {
-                        return -1;
+                        if (rhs.isEnabled()) {
+                            return 1;
+                        } else {
+                            return lhs.getName().compareToIgnoreCase(rhs.getName());
+                        }
                     }
-                } else {
-                    if (rhs.isEnabled()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-        });
+                })
+                .subscribe(chatChooseItems::addAll, Throwable::printStackTrace);
+
 
         return chatChooseItems;
     }

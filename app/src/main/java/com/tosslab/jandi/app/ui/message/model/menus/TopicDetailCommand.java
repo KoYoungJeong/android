@@ -1,6 +1,6 @@
 package com.tosslab.jandi.app.ui.message.model.menus;
 
-import android.content.Context;
+import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
 import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity;
@@ -11,17 +11,17 @@ import com.tosslab.jandi.app.ui.message.detail.TopicDetailActivity_;
  */
 public class TopicDetailCommand implements MenuCommand {
 
-    private final Context context;
+    private final Fragment fragment;
     private final int entityId;
 
-    public TopicDetailCommand(Context context, int entityId) {
-        this.context = context;
+    public TopicDetailCommand(Fragment fragment, int entityId) {
+        this.fragment = fragment;
         this.entityId = entityId;
     }
 
     @Override
     public void execute(MenuItem menuItem) {
-        TopicDetailActivity_.intent(context)
+        TopicDetailActivity_.intent(fragment)
                 .entityId(entityId)
                 .startForResult(TopicDetailActivity.REQUEST_DETAIL);
     }

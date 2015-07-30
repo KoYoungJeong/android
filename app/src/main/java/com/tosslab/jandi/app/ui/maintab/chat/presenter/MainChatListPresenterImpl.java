@@ -16,10 +16,16 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import retrofit.RetrofitError;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 6..
@@ -50,7 +56,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
         if (!view.hasChatItems()) {
             List<ResChat> savedChatList = mainChatListModel.getSavedChatList();
-            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, savedChatList);
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+                    savedChatList);
             view.setChatItems(chatItems);
         }
 
@@ -61,7 +68,8 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
         try {
             List<ResChat> chatList = mainChatListModel.getChatList(memberId);
             mainChatListModel.saveChatList(teamId, chatList);
-            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, chatList);
+            List<ChatItem> chatItems = mainChatListModel.convertChatItems(context, teamId,
+                    chatList);
             view.setChatItems(chatItems);
 
             view.setSelectedItem(selectedEntity);
@@ -88,7 +96,6 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
 
     }
 
-    @Background
     @Override
     public void onReloadChatList(Context context) {
         int memberId = mainChatListModel.getMemberId(context);
@@ -98,25 +105,30 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
             return;
         }
 
-        if (!NetworkCheckUtil.isConnected()) {
-            return;
-        }
 
-        try {
-            List<ResChat> chatList = mainChatListModel.getChatList(memberId);
-            mainChatListModel.saveChatList(teamId, chatList);
-            List<ChatItem> chatItems = mainChatListModel.convertChatItem(context, teamId, chatList);
-            view.setChatItems(chatItems);
+        Observable.create(new Observable.OnSubscribe<ResChat>() {
+            @Override
+            public void call(Subscriber<? super ResChat> subscriber) {
 
-            boolean hasAlarmCount = mainChatListModel.hasAlarmCount(chatItems);
+                List<ResChat> chatList = mainChatListModel.getChatList(memberId);
+                mainChatListModel.saveChatList(teamId, chatList);
+                for (ResChat resChat : chatList) {
+                    subscriber.onNext(resChat);
+                }
 
-            EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .map(resChat -> mainChatListModel.convertChatItem(context, teamId, resChat))
+                .collect((Func0<ArrayList<ChatItem>>) ArrayList::new, ArrayList::add)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(chatItems -> {
+                    view.setChatItems(chatItems);
+                    boolean hasAlarmCount = mainChatListModel.hasAlarmCount(chatItems);
 
-        } catch (RetrofitError e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                    EventBus.getDefault().post(new ChatBadgeEvent(hasAlarmCount));
+
+                }, Throwable::printStackTrace);
 
     }
 
@@ -134,12 +146,13 @@ public class MainChatListPresenterImpl implements MainChatListPresenter {
     @Override
     public void onEntityItemClick(Context context, int position) {
         ChatItem chatItem = view.getChatItem(position);
-        view.setSelectedItem(chatItem.getEntityId());
-        EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
         int unread = chatItem.getUnread();
         chatItem.unread(0);
         view.refreshListView();
+
+        view.setSelectedItem(chatItem.getEntityId());
+        EventBus.getDefault().post(new MainSelectTopicEvent(chatItem.getEntityId()));
 
         int badgeCount = JandiPreference.getBadgeCount(context) - unread;
         JandiPreference.setBadgeCount(context, badgeCount);

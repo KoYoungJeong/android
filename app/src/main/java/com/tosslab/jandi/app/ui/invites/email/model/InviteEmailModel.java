@@ -3,6 +3,7 @@ package com.tosslab.jandi.app.ui.invites.email.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.repositories.AccountRepository;
@@ -64,4 +65,7 @@ public class InviteEmailModel {
         return isContain;
     }
 
+    public String getCurrentTeamName() {
+        return EntityManager.getInstance(JandiApplication.getContext()).getTeamName();
+    }
 }

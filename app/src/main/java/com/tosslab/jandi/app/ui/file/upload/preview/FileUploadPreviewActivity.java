@@ -233,6 +233,7 @@ public class FileUploadPreviewActivity extends AppCompatActivity implements File
             }
         });
 
+        fileUploadPresenter.onPagerSelect(0);
         setVisibleScrollButton(0);
         setupActionbarTitle(vpFilePreview.getCurrentItem() + 1, vpFilePreview.getAdapter().getCount());
     }

@@ -29,6 +29,8 @@ public interface MainTopicListPresenter {
 
     void onFocusTopic(int selectedEntity);
 
+    void onRefreshTopicList();
+
     interface View {
 
         void setEntities(Observable<Topic> joinEntities, Observable<Topic> unjoinEntities);
