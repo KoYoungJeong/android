@@ -1,10 +1,10 @@
 package com.tosslab.jandi.app.ui.members.adapter;
 
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +22,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Steve SeongUg Jung on 15. 1. 14..
  */
-public class MembersAdapter extends BaseAdapter {
+public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.MembersViewHolder> {
 
     private Context context;
 
@@ -33,14 +33,70 @@ public class MembersAdapter extends BaseAdapter {
         chatChooseItems = new ArrayList<ChatChooseItem>();
     }
 
-    @Override
     public int getCount() {
         return chatChooseItems.size();
     }
 
-    @Override
     public ChatChooseItem getItem(int position) {
         return chatChooseItems.get(position);
+    }
+
+    @Override
+    public MembersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        MembersViewHolder membersViewHolder;
+        View convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
+        membersViewHolder = new MembersViewHolder(convertView);
+        membersViewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
+        membersViewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
+        membersViewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
+        membersViewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
+        membersViewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
+        membersViewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
+        membersViewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
+        membersViewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
+
+
+        return membersViewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(MembersViewHolder membersViewHolder, int position) {
+        membersViewHolder.textViewBadgeCount.setVisibility(View.GONE);
+
+        ChatChooseItem item = getItem(position);
+
+        membersViewHolder.textViewName.setText(item.getName());
+        membersViewHolder.textViewAdditional.setText(item.getEmail());
+
+        if (item.isStarred()) {
+            membersViewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
+        } else {
+            membersViewHolder.imageViewFavorite.setVisibility(View.GONE);
+        }
+
+        Ion.with(membersViewHolder.imageViewIcon)
+                .placeholder(R.drawable.jandi_profile)
+                .error(R.drawable.jandi_profile)
+                .transform(new IonCircleTransform())
+                .load(item.getPhotoUrl());
+
+        if (item.isEnabled()) {
+
+            membersViewHolder.disableLineThrouthView.setVisibility(View.GONE);
+            membersViewHolder.disableWarningView.setVisibility(View.GONE);
+            membersViewHolder.disableCoverView.setVisibility(View.GONE);
+
+        } else {
+
+            membersViewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
+            membersViewHolder.disableWarningView.setVisibility(View.VISIBLE);
+            membersViewHolder.disableCoverView.setVisibility(View.VISIBLE);
+        }
+
+        membersViewHolder.itemView.setOnClickListener(v -> EventBus.getDefault().post(new
+                ProfileDetailEvent(item.getEntityId())));
+
     }
 
     @Override
@@ -49,67 +105,8 @@ public class MembersAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        ViewHolder viewHolder;
-        if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_entity_body, parent, false);
-            viewHolder = new ViewHolder();
-            viewHolder.textViewName = (TextView) convertView.findViewById(R.id.txt_entity_listitem_name);
-            viewHolder.imageViewIcon = (ImageView) convertView.findViewById(R.id.img_entity_listitem_icon);
-            viewHolder.imageViewFavorite = (ImageView) convertView.findViewById(R.id.img_entity_listitem_fav);
-            viewHolder.textViewAdditional = (TextView) convertView.findViewById(R.id.txt_entity_listitem_user_count);
-            viewHolder.textViewBadgeCount = (TextView) convertView.findViewById(R.id.txt_entity_listitem_badge);
-            viewHolder.disableLineThrouthView = convertView.findViewById(R.id.img_entity_listitem_line_through);
-            viewHolder.disableWarningView = convertView.findViewById(R.id.img_entity_listitem_warning);
-            viewHolder.disableCoverView = convertView.findViewById(R.id.view_entity_listitem_warning);
-            convertView.setTag(viewHolder);
-
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        viewHolder.textViewBadgeCount.setVisibility(View.GONE);
-
-        ChatChooseItem item = getItem(position);
-
-        viewHolder.textViewName.setText(item.getName());
-        viewHolder.textViewAdditional.setText(item.getEmail());
-
-        if (item.isStarred()) {
-            viewHolder.imageViewFavorite.setVisibility(View.VISIBLE);
-        } else {
-            viewHolder.imageViewFavorite.setVisibility(View.GONE);
-        }
-
-        Ion.with(viewHolder.imageViewIcon)
-                .placeholder(R.drawable.jandi_profile)
-                .error(R.drawable.jandi_profile)
-                .transform(new IonCircleTransform())
-                .load(item.getPhotoUrl());
-
-        if (item.isEnabled()) {
-
-            viewHolder.disableLineThrouthView.setVisibility(View.GONE);
-            viewHolder.disableWarningView.setVisibility(View.GONE);
-            viewHolder.disableCoverView.setVisibility(View.GONE);
-
-        } else {
-
-            viewHolder.disableLineThrouthView.setVisibility(View.VISIBLE);
-            viewHolder.disableWarningView.setVisibility(View.VISIBLE);
-            viewHolder.disableCoverView.setVisibility(View.VISIBLE);
-        }
-
-        convertView.setOnClickListener(getProfileClickListener(item.getEntityId()));
-
-        return convertView;
-    }
-
-    private View.OnClickListener getProfileClickListener(int entityId) {
-        return v -> {
-            EventBus.getDefault().post(new ProfileDetailEvent(entityId));
-        };
+    public int getItemCount() {
+        return chatChooseItems.size();
     }
 
     public void addAll(List<ChatChooseItem> chatListWithoutMe) {
@@ -120,7 +117,7 @@ public class MembersAdapter extends BaseAdapter {
         chatChooseItems.clear();
     }
 
-    static class ViewHolder {
+    static class MembersViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         public ImageView imageViewIcon;
         public ImageView imageViewFavorite;
@@ -130,6 +127,10 @@ public class MembersAdapter extends BaseAdapter {
         public View disableLineThrouthView;
         public View disableWarningView;
         public View disableCoverView;
+
+        public MembersViewHolder(View itemView) {
+            super(itemView);
+        }
     }
 
 }

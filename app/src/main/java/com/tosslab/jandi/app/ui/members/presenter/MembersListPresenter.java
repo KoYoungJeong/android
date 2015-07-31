@@ -16,7 +16,13 @@ public interface MembersListPresenter {
 
     void onEventBusUnregister();
 
-    public interface View {
+    void onSearch(CharSequence text);
+
+    void onDestory();
+
+    void inviteMemberToTopic(int entityId);
+
+    interface View {
         void showListMembers(List<ChatChooseItem> topicMembers);
 
         int getEntityId();
@@ -24,6 +30,8 @@ public interface MembersListPresenter {
         int getType();
 
         void moveDirectMessageActivity(int teamId, int userId, boolean isStarred);
+
+        String getSearchText();
     }
 
 }
