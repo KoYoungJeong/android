@@ -102,6 +102,7 @@ import com.tosslab.jandi.app.ui.sticker.StickerViewModel;
 import com.tosslab.jandi.app.utils.JandiPreference;
 import com.tosslab.jandi.app.utils.TutorialCoachMarkUtil;
 import com.tosslab.jandi.app.utils.logger.LogUtil;
+import com.tosslab.jandi.app.utils.network.NetworkCheckUtil;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -185,6 +186,7 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
     private boolean isForeground;
     private File photoFileByCamera;
     private StickerInfo stickerInfo = NULL_STICKER;
+    private boolean isRoomInit;
 
     @AfterInject
     void initObject() {
@@ -348,7 +350,8 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
             if (!user) {
                 roomId = entityId;
-            } else {
+            } else if (NetworkCheckUtil.isConnected()){
+
                 int roomId = initRoomId();
 
                 if (roomId > 0) {
@@ -366,6 +369,12 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
 
         sendMessagePublisherEvent(new CheckAnnouncementQueue());
         sendMessagePublisherEvent(new OldMessageQueue(messageState));
+
+        isRoomInit = true;
+
+        if (isForeground) {
+            sendMessage(new NewMessageQueue(messageState));
+        }
 
     }
 
@@ -557,7 +566,9 @@ public class MessageListFragment extends Fragment implements MessageListV2Activi
         messageListModel.removeNotificationSameEntityId(entityId);
         fileUploadStateViewModel.initDownloadState();
 
-        EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
+        if (isRoomInit) {
+            EventBus.getDefault().post(new MainSelectTopicEvent(entityId));
+        }
     }
 
     @Override
