@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -45,6 +46,12 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     public static final int TYPE_MEMBERS_LIST_TEAM = 0x01;
     public static final int TYPE_MEMBERS_LIST_TOPIC = 0x02;
 
+    @Extra
+    int entityId;
+
+    @Extra
+    int type;
+
     @Bean(MembersListPresenterImpl.class)
     MembersListPresenter membersListPresenter;
 
@@ -54,11 +61,8 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     @ViewById(R.id.vg_topic_member_search_bar)
     View vgSearchbar;
 
-    @Extra
-    int entityId;
-
-    @Extra
-    int type;
+    @ViewById(R.id.et_topic_member_search)
+    TextView tvSearch;
 
     @Bean
     InvitationDialogExecutor invitationDialogExecutor;
@@ -144,10 +148,8 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.clear();
         getMenuInflater().inflate(R.menu.team_info_menu, menu);
-        if (type != TYPE_MEMBERS_LIST_TEAM) {
-            menu.findItem(R.id.action_invitation).setVisible(false);
-        }
         return true;
     }
 
@@ -187,9 +189,12 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     }
 
     @OptionsItem(R.id.action_invitation)
-        //FIXME
     void onInviteOptionSelect() {
-        invitationDialogExecutor.execute();
+        if (type == TYPE_MEMBERS_LIST_TEAM) {
+            invitationDialogExecutor.execute();
+        } else {
+            membersListPresenter.inviteMemberToTopic(entityId);
+        }
     }
 
     @UiThread
@@ -222,5 +227,10 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
                 .isFavorite(isStarred)
                 .isFromPush(false)
                 .startForResult(MainTabActivity.REQ_START_MESSAGE);
+    }
+
+    @Override
+    public String getSearchText() {
+        return tvSearch.getText().toString();
     }
 }

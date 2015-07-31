@@ -12,6 +12,7 @@ import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.ui.entities.chats.to.ChatChooseItem;
 import com.tosslab.jandi.app.ui.members.MembersListActivity;
 import com.tosslab.jandi.app.ui.members.model.MembersModel;
+import com.tosslab.jandi.app.ui.message.detail.model.InvitationViewModel;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -39,9 +40,13 @@ import rx.subjects.PublishSubject;
 public class MembersListPresenterImpl implements MembersListPresenter {
 
     @RootContext
-    AppCompatActivity myActivity;
+    AppCompatActivity activity;
     @Bean
     MembersModel memberModel;
+
+    @Bean
+    InvitationViewModel invitationViewModel;
+
     private View view;
     private PublishSubject<String> objectPublishSubject;
     private Subscription subscribe;
@@ -102,13 +107,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void initMemberList() {
-        List<ChatChooseItem> members;
-        if (view.getType() == MembersListActivity.TYPE_MEMBERS_LIST_TEAM) {
-            members = memberModel.getTeamMembers();
-        } else {
-            members = memberModel.getTopicMembers(view.getEntityId());
-        }
-        view.showListMembers(members);
+        objectPublishSubject.onNext(view.getSearchText());
     }
 
     @Override
@@ -133,6 +132,12 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         subscribe.unsubscribe();
     }
 
+    @Override
+    public void inviteMemberToTopic(int entityId) {
+        invitationViewModel.initData(activity, entityId);
+        invitationViewModel.invite();
+    }
+
     public void onEventMainThread(final RequestMoveDirectMessageEvent event) {
         EntityManager entityManager = EntityManager.getInstance(JandiApplication.getContext());
         view.moveDirectMessageActivity(entityManager.getTeamId(), event.userId, entityManager.getEntityById(event.userId).isStarred);
@@ -143,7 +148,7 @@ public class MembersListPresenterImpl implements MembersListPresenter {
         UserInfoDialogFragment_.builder()
                 .entityId(entityId)
                 .build()
-                .show(myActivity.getSupportFragmentManager(), "dialog");
+                .show(activity.getSupportFragmentManager(), "dialog");
     }
 
     public void onEvent(RetrieveTopicListEvent event) {

@@ -20,6 +20,8 @@ public interface MembersListPresenter {
 
     void onDestory();
 
+    void inviteMemberToTopic(int entityId);
+
     interface View {
         void showListMembers(List<ChatChooseItem> topicMembers);
 
@@ -28,6 +30,8 @@ public interface MembersListPresenter {
         int getType();
 
         void moveDirectMessageActivity(int teamId, int userId, boolean isStarred);
+
+        String getSearchText();
     }
 
 }
