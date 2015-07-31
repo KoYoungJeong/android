@@ -217,6 +217,8 @@ public class TopicDetailFragment extends Fragment implements TopicDetailPresente
     void onPushClick() {
         boolean checked = !switchSetPush.isChecked();
 
+        setTopicPushSwitch(checked);
+
         topicDetailPresenter.updateTopicPushSubscribe(getActivity(), teamId, entityId, checked);
     }
 
