@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
-import android.widget.ListView;
+import android.view.View;
 
 import com.tosslab.jandi.app.JandiConstants;
 import com.tosslab.jandi.app.R;
@@ -26,6 +29,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.SupposeUiThread;
+import org.androidannotations.annotations.TextChange;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
@@ -45,7 +49,10 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
     MembersListPresenter membersListPresenter;
 
     @ViewById(R.id.list_topic_member)
-    ListView memberListView;
+    RecyclerView memberListView;
+
+    @ViewById(R.id.vg_topic_member_search_bar)
+    View vgSearchbar;
 
     @Extra
     int entityId;
@@ -68,11 +75,57 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
 
     @AfterViews
     void initViews() {
+
+        setupActionbar();
+
+        memberListView.setLayoutManager(new LinearLayoutManager(MembersListActivity.this,
+                RecyclerView.VERTICAL, false));
         memberListView.setAdapter(topicMembersAdapter);
         initProgressWheel();
+
+        int scropMaxY = getActionbarHeight();
+
+        if (scropMaxY > 0) {
+            memberListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    final int offset = (int) (dy * .66f);
+
+
+                    final float futureScropViewPosY = vgSearchbar.getY() - offset;
+
+                    if (futureScropViewPosY <= 0) {
+                        vgSearchbar.setY(0);
+                    } else if (futureScropViewPosY >= scropMaxY) {
+                        vgSearchbar.setY(scropMaxY);
+                    } else {
+                        vgSearchbar.setY(futureScropViewPosY);
+                    }
+                }
+            });
+        }
     }
 
-    @AfterViews
+    @TextChange(R.id.et_topic_member_search)
+    void onSearchTextChange(CharSequence text) {
+        membersListPresenter.onSearch(text);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        membersListPresenter.onDestory();
+    }
+
+    private int getActionbarHeight() {
+        TypedValue typedValue = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.actionBarSize, typedValue, true);
+
+        return TypedValue.complexToDimensionPixelOffset(typedValue.data, getResources()
+                .getDisplayMetrics());
+
+    }
+
     void setupActionbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.layout_search_bar);
         setSupportActionBar(toolbar);
@@ -139,6 +192,7 @@ public class MembersListActivity extends AppCompatActivity implements MembersLis
         invitationDialogExecutor.execute();
     }
 
+    @UiThread
     @Override
     public void showListMembers(List<ChatChooseItem> topicMembers) {
         topicMembersAdapter.clear();

@@ -16,7 +16,11 @@ public interface MembersListPresenter {
 
     void onEventBusUnregister();
 
-    public interface View {
+    void onSearch(CharSequence text);
+
+    void onDestory();
+
+    interface View {
         void showListMembers(List<ChatChooseItem> topicMembers);
 
         int getEntityId();
