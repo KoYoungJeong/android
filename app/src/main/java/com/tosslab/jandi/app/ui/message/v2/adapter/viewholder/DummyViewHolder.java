@@ -62,15 +62,19 @@ public class DummyViewHolder implements BodyViewHolder {
                 ivStatus.setImageResource(R.drawable.jandi_icon_message_failure);
                 profileImageView.setAlpha(0.3f);
                 nameTextView.setTextColor(textColor & 0x30FFFFFF);
+                messageTextView.setTextColor(textColor & 0x30FFFFFF);
                 break;
             case SENDING:
                 ivStatus.setVisibility(View.VISIBLE);
                 ivStatus.setImageResource(R.drawable.jandi_icon_message_sending);
                 profileImageView.setAlpha(1f);
                 nameTextView.setTextColor(textColor);
+                messageTextView.setTextColor(textColor);
                 break;
             case COMPLETE:
                 ivStatus.setVisibility(View.INVISIBLE);
+                profileImageView.setAlpha(1f);
+                nameTextView.setTextColor(textColor);
                 messageTextView.setTextColor(textColor);
                 break;
         }

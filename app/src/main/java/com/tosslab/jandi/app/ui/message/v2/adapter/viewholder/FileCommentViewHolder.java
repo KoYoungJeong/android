@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,6 +24,8 @@ import com.tosslab.jandi.app.utils.IonCircleTransform;
 import com.tosslab.jandi.app.utils.LinkifyUtil;
 import com.tosslab.jandi.app.utils.mimetype.MimeTypeUtil;
 import com.tosslab.jandi.app.utils.mimetype.source.SourceTypeUtil;
+import com.tosslab.jandi.app.views.spannable.DateViewSpannable;
+import com.tosslab.jandi.app.views.spannable.NameSpannable;
 
 import de.greenrobot.event.EventBus;
 
@@ -33,7 +36,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
 
     private ImageView profileImageView;
     private TextView nameTextView;
-    private TextView dateTextView;
     private TextView fileOwnerTextView;
     private TextView fileNameTextView;
     private TextView commentTextView;
@@ -41,7 +43,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
     private ImageView fileImageView;
     private View disableCoverView;
     private View disableLineThroughView;
-    private TextView unreadTextView;
     private Context context;
     private View lastReadView;
 
@@ -49,7 +50,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
     public void initView(View rootView) {
         profileImageView = (ImageView) rootView.findViewById(R.id.img_message_user_profile);
         nameTextView = (TextView) rootView.findViewById(R.id.txt_message_user_name);
-        dateTextView = (TextView) rootView.findViewById(R.id.txt_message_create_date);
 
         fileOwnerTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_owner);
         fileOwnerPostfixTextView = (TextView) rootView.findViewById(R.id.txt_message_commented_postfix);
@@ -61,7 +61,6 @@ public class FileCommentViewHolder implements BodyViewHolder {
         disableCoverView = rootView.findViewById(R.id.view_entity_listitem_warning);
         disableLineThroughView = rootView.findViewById(R.id.img_entity_listitem_line_through);
 
-        unreadTextView = (TextView) rootView.findViewById(R.id.txt_entity_listitem_unread);
         context = rootView.getContext();
         lastReadView = rootView.findViewById(R.id.vg_message_last_read);
     }
@@ -101,19 +100,7 @@ public class FileCommentViewHolder implements BodyViewHolder {
             disableLineThroughView.setVisibility(View.VISIBLE);
         }
 
-        int unreadCount = UnreadCountUtil.getUnreadCount(
-                teamId, roomId, link.id, fromEntityId, entityManager.getMe().getId());
-
-        unreadTextView.setText(String.valueOf(unreadCount));
-        if (unreadCount <= 0) {
-            unreadTextView.setVisibility(View.GONE);
-        } else {
-            unreadTextView.setVisibility(View.VISIBLE);
-        }
-
         nameTextView.setText(fromEntity.name);
-
-        dateTextView.setText(DateTransformator.getTimeStringForSimple(link.time));
 
         if (link.feedback instanceof ResMessages.FileMessage) {
 
@@ -188,18 +175,44 @@ public class FileCommentViewHolder implements BodyViewHolder {
         if (link.message instanceof ResMessages.CommentMessage) {
             ResMessages.CommentMessage commentMessage = (ResMessages.CommentMessage) link.message;
 
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-            spannableStringBuilder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            builder.append(!TextUtils.isEmpty(commentMessage.content.body) ? commentMessage.content.body : "");
 
-            boolean hasLink = LinkifyUtil.addLinks(context, spannableStringBuilder);
+            boolean hasLink = LinkifyUtil.addLinks(context, builder);
+
+            int startIndex = builder.length();
+            builder.append(DateTransformator.getTimeStringForSimple(link.message.createTime));
+            int endIndex = builder.length();
+
+            DateViewSpannable spannable =
+                    new DateViewSpannable(commentTextView.getContext(),
+                            DateTransformator.getTimeStringForSimple(link.message.createTime));
+            builder.setSpan(spannable, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+            int unreadCount = UnreadCountUtil.getUnreadCount(teamId, roomId,
+                    link.id, link.fromEntity, EntityManager.getInstance(context).getMe().getId());
+
+            if (unreadCount > 0) {
+                NameSpannable unreadCountSpannable =
+                        new NameSpannable(
+                                context.getResources().getDimensionPixelSize(R.dimen.jandi_text_size_small)
+                                , context.getResources().getColor(R.color.jandi_accent_color));
+                builder.append(" ");
+                int beforeLength = builder.length();
+                builder.append(" ");
+                builder.append(String.valueOf(unreadCount))
+                        .setSpan(unreadCountSpannable, beforeLength, builder.length(),
+                                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            }
 
             if (hasLink) {
                 commentTextView.setText(
-                        Spannable.Factory.getInstance().newSpannable(spannableStringBuilder));
+                        Spannable.Factory.getInstance().newSpannable(builder));
                 LinkifyUtil.setOnLinkClick(commentTextView);
             } else {
-                commentTextView.setText(spannableStringBuilder);
+                commentTextView.setText(builder);
             }
+
         }
 
         profileImageView.setOnClickListener(v ->
