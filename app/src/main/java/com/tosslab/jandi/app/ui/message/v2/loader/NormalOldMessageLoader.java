@@ -89,6 +89,12 @@ public class NormalOldMessageLoader implements OldMessageLoader {
                     // 첫 요청이라 판단
                     // 마커 기준 위아래 값 요청
                     oldMessage = messageListModel.getBeforeMarkerMessage(linkId);
+                    if (oldMessage != null && oldMessage.records != null && oldMessage.records.size
+                            () > 0) {
+                        if (oldMessage.records.get(oldMessage.records.size() - 1).id == linkId) {
+                            messageListPresenter.setLastReadLinkId(-1);
+                        }
+                    }
 
                 }
                 messageListModel.upsertMessages(oldMessage);
