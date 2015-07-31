@@ -301,7 +301,7 @@ public class EntityManager {
      * @param givenEntityIds
      * @return
      */
-    public List<FormattedEntity> retrieveGivenEntities(Collection<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveGivenEntities(List<Integer> givenEntityIds) {
         return retrieveByGivenEntities(givenEntityIds, true);
     }
 
@@ -311,11 +311,12 @@ public class EntityManager {
      * @param givenEntityIds
      * @return
      */
-    public List<FormattedEntity> retrieveExclusivedEntities(Collection<Integer> givenEntityIds) {
+    public List<FormattedEntity> retrieveExclusivedEntities(List<Integer> givenEntityIds) {
         return retrieveByGivenEntities(givenEntityIds, false);
     }
 
-    private List<FormattedEntity> retrieveByGivenEntities(Collection<Integer> givenEntityIds, boolean includable) {
+    private List<FormattedEntity> retrieveByGivenEntities(List<Integer> givenEntityIds, boolean
+            includable) {
         List<FormattedEntity> accessableEntities = retrieveAccessableEntities();
         ArrayList<FormattedEntity> retCdpItems = new ArrayList<FormattedEntity>();
 

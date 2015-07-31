@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 
 import com.koushikdutta.ion.Ion;
+import com.tosslab.jandi.app.JandiApplication;
 import com.tosslab.jandi.app.lists.FormattedEntity;
 import com.tosslab.jandi.app.lists.entities.entitymanager.EntityManager;
 import com.tosslab.jandi.app.local.orm.domain.FileDetail;
@@ -275,5 +276,9 @@ public class FileDetailModel {
                 })
                 .subscribe(fileDetail ->
                         FileDetailRepository.getRepository().upsertFileDetail(fileDetail));
+    }
+
+    public int getMyId() {
+        return EntityManager.getInstance(JandiApplication.getContext()).getMe().getId();
     }
 }

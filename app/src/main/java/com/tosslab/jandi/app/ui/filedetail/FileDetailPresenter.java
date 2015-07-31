@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import retrofit.RetrofitError;
+import rx.Observable;
 
 /**
  * Created by Steve SeongUg Jung on 15. 1. 8..
@@ -162,14 +163,18 @@ public class FileDetailPresenter {
 
     public void onClickUnShare() {
         final Collection<ResMessages.OriginalMessage.IntegerWrapper> shareEntities = fileDetailModel.getFileMessage().shareEntities;
-        Iterator<ResMessages.OriginalMessage.IntegerWrapper> iterator = shareEntities.iterator();
-        List<Integer> list = new ArrayList<>();
-        while (iterator.hasNext()) {
-            ResMessages.OriginalMessage.IntegerWrapper next = iterator.next();
-            list.add(next.getShareEntity());
-        }
 
-        view.initUnShareListDialog(list);
+        int myId = fileDetailModel.getMyId();
+
+        List<Integer> sharedEntityWithoutMe = new ArrayList<>();
+
+        Observable.from(shareEntities)
+                .filter(integerWrapper -> integerWrapper.getShareEntity() != myId)
+                .collect(() -> sharedEntityWithoutMe, (integers, integerWrapper1) -> integers.add(integerWrapper1.getShareEntity()));
+
+        if (!sharedEntityWithoutMe.isEmpty()) {
+            view.initUnShareListDialog(sharedEntityWithoutMe);
+        }
     }
 
     @Background
@@ -417,7 +422,7 @@ public class FileDetailPresenter {
 
         void initShareListDialog(List<FormattedEntity> unSharedEntities);
 
-        void initUnShareListDialog(Collection<Integer> shareEntitiesIds);
+        void initUnShareListDialog(List<Integer> shareEntitiesIds);
 
         void onShareMessageSucceed(int entityIdToBeShared, ResMessages.FileMessage fileMessage);
 
