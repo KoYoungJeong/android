@@ -159,6 +159,7 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.profile_user_realname)
     void editName(View view) {
+        // 이름
         memberProfileView.launchEditDialog(
                 EditTextDialogFragment.ACTION_MODIFY_PROFILE_MEMBER_NAME,
                 ((TextView) view)
@@ -185,9 +186,17 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
 
     @Click(R.id.profile_user_email)
     void editEmail(View view) {
+        // 이메일
         String[] accountEmails = memberProfileModel.getAccountEmails();
         String email = memberProfileView.getEmail();
         memberProfileView.showEmailChooseDialog(accountEmails, email);
+    }
+
+    @Click(R.id.profile_photo)
+    void getPicture() {
+        // 프로필 사진
+        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
+
     }
 
     public void onEvent(MemberEmailChangeEvent event) {
@@ -309,18 +318,6 @@ public class MemberProfileActivity extends BaseAnalyticsActivity {
     @UiThread
     void upateOptionMenu() {
         invalidateOptionsMenu();
-    }
-
-    /**
-     * *********************************************************
-     * 프로필 사진 업로드
-     * **********************************************************
-     */
-    @Click(R.id.profile_photo)
-    void getPicture() {
-
-        filePickerViewModel.selectFileSelector(FilePickerViewModel.TYPE_UPLOAD_GALLERY, MemberProfileActivity.this);
-
     }
 
     @OnActivityResult(FilePickerViewModel.TYPE_UPLOAD_GALLERY)

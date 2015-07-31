@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
@@ -21,7 +20,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -50,29 +48,7 @@ public class ProfileFileUploadViewModelImpl implements FilePickerViewModel {
 
     @Override
     public void selectFileSelector(int type, Activity activity) {
-        switch (type) {
-            case TYPE_UPLOAD_GALLERY:
-                filePickerModel.openAlbumForActivityResult(activity);
-                break;
-            case TYPE_UPLOAD_TAKE_PHOTO:
-
-                try {
-                    File directory = new File(GoogleImagePickerUtil.getDownloadPath());
-                    file = File.createTempFile("camera", ".jpg", directory);
-                    filePickerModel.openCameraForActivityResult(activity, Uri.fromFile(file));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                break;
-            case TYPE_UPLOAD_EXPLORER:
-                filePickerModel.openExplorerForActivityResult(activity);
-                break;
-            default:
-                break;
-
-        }
-
+        filePickerModel.openAlbumForActivityResult(activity);
     }
 
     @Override
